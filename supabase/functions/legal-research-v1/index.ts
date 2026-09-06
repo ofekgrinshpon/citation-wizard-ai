@@ -141,6 +141,17 @@ import {
   type CompletenessStageReport,
   type ReextractionCandidateView,
 } from "./stages/literatureBodyCompleteness.ts";
+import {
+  isInlineSizeCapFailure,
+  LARGE_PDF_LIMITS,
+  LARGE_SCHOLARSHIP_PDF_VERSION,
+  runLargeScholarshipPdfExtraction,
+  type LargePdfCandidateView,
+  type LargePdfStageReport,
+} from "./stages/largeScholarshipPdfExtraction.ts";
+import { extractPdfPagesBounded } from "./lib/largePdfChunkedExtract.ts";
+import { downloadBinaryCapped } from "./stages/secondaryBodyAcquisition.ts";
+import { tokenize } from "./stages/hebrewTopicTerms.ts";
 import { makeAdminClient, writeTelemetry, beginTraceRow } from "./lib/telemetry.ts";
 import { getWebTierHealth, resetWebTierHealth } from "./lib/webTierHealth.ts";
 import { extractAttachments, buildAnalyzerContext, ATTACHMENT_LIMITS, type AttachmentInput } from "./lib/attachments.ts";
@@ -1799,6 +1810,131 @@ async function handle(req: Request): Promise<Response> {
       added_latency_ms: literatureBodyCompleteness.added_latency_ms,
     });
   }
+
+  // ─── large_scholarship_pdf_extraction_v1 ─────────────────────────────────
+  // Strong Israeli scholarship (Dagan, Tamir …) is found, typed as scholarship
+  // and fetched, then discarded unread because the binary exceeds the inline
+  // extraction cap. Read exactly those PDFs page-by-page under hard page/char/
+  // wall-clock bounds. No discovery, no search, no model call, no paywall or
+  // court host, and every downstream gate re-runs unweakened.
+  let largePdfStage: LargePdfStageReport | null = null;
+  if (literatureModeRun && !fastLaneHit && !budget.exceeded()) {
+    const secondaryById = new Map(
+      (secondaryBodyAcquisition?.per_candidate ?? []).map((r) => [r.candidate_id, r] as const),
+    );
+    const completenessFailureById = new Map<string, string>();
+    for (const a of literatureBodyCompleteness?.attempts ?? []) {
+      if (a.rejection_reason) completenessFailureById.set(a.source_id, a.rejection_reason);
+    }
+
+    const largeViews: LargePdfCandidateView[] = pool.candidates.map((c) => {
+      const meta = (c.metadata ?? {}) as Record<string, unknown>;
+      const integ = meta.source_integrity as { reject?: boolean } | undefined;
+      const body = typeof meta.extended_text === "string" ? meta.extended_text : "";
+      const sec = secondaryById.get(c.candidate_id);
+      const failure = sec?.failure_reason ?? completenessFailureById.get(c.candidate_id) ?? null;
+      return {
+        run_id,
+        source_id: c.candidate_id,
+        title: String(c.title ?? ""),
+        author: typeof meta.author === "string" ? meta.author : null,
+        url: c.url ?? c.source_url ?? null,
+        source_type: c.source_type ? String(c.source_type) : null,
+        role: c.role ? String(c.role) : null,
+        content_type: sec?.content_type ?? null,
+        topicality_before: null,
+        previous_failure_reason: failure,
+        binary_size_bytes: Number(sec?.bytes ?? 0) || 0,
+        body_chars: body.length,
+        strong_scholarship: literatureStrongDirectIds.has(c.candidate_id),
+        hard_integrity_failure: integ?.reject === true,
+      };
+    }).filter((v) => isInlineSizeCapFailure(v.previous_failure_reason));
+
+    if (largeViews.length > 0) {
+      largePdfStage = await runLargeScholarshipPdfExtraction({
+        run_id,
+        enabled: true,
+        views: largeViews,
+        topicTerms: tokenize(question).slice(0, 24),
+        downloadPdf: (url, maxBytes) => downloadBinaryCapped(url, maxBytes, 15_000),
+        extractPages: (bytes, opts) => extractPdfPagesBounded(bytes, opts),
+        cacheLookup: async (url) => {
+          try {
+            const { data } = await admin
+              .from("secondary_source_bodies")
+              .select("body")
+              .eq("url", url)
+              .limit(1);
+            const body = String((Array.isArray(data) ? data[0] : null)?.body ?? "");
+            return body || null;
+          } catch {
+            return null;
+          }
+        },
+        cacheWrite: async (url, text) => {
+          try {
+            await admin.from("secondary_source_bodies").upsert(
+              { url, body: text },
+              { onConflict: "url" },
+            );
+            return true;
+          } catch {
+            return false;
+          }
+        },
+        applyBody: (source_id, text, extra) => {
+          const c = pool.candidates.find((x) => x.candidate_id === source_id);
+          if (!c) return 0;
+          const meta = (c.metadata ?? {}) as Record<string, unknown>;
+          const integ = meta.source_integrity as
+            | { text_usability?: string; integrity_flags?: string[] }
+            | undefined;
+          if (integ) {
+            integ.text_usability = text.length >= 1200 ? "full_text" : "substantive_excerpt";
+            integ.integrity_flags = [
+              ...(integ.integrity_flags ?? []),
+              "large_scholarship_pdf_chunked",
+              "body_acquired",
+            ];
+          }
+          c.metadata = {
+            ...meta,
+            ...(integ ? { source_integrity: integ } : {}),
+            extended_text: text,
+            body_acquired: true,
+            secondary_body_acquired: true,
+            large_scholarship_pdf_chunked: true,
+            large_scholarship_pdf_meta: extra,
+            final_text_usability: text.length >= 1200 ? "full_text" : "substantive_excerpt",
+          };
+          if ((c.snippet || "").length < 400) c.snippet = text.slice(0, 1200);
+          return text.length;
+        },
+        topicality: (source_id, body) => {
+          const c = pool.candidates.find((x) => x.candidate_id === source_id);
+          return classifyBodyTopicality(question, {
+            candidate_id: source_id,
+            title: String(c?.title ?? ""),
+            snippet: c?.snippet ?? null,
+            url: c?.url ?? null,
+            body,
+          }, run_id).role_after_body;
+        },
+        markDurable: (name, detail) => budget.markDurable(name, detail),
+      });
+
+      if (largePdfStage.improved_source_ids.length > 0) {
+        runRoleRelabelling(new Set(largePdfStage.improved_source_ids));
+        const latest = new Map(roleRelabelRows.map((r) => [r.source_id, r] as const));
+        for (const d of largePdfStage.downstream) {
+          d.role_after = latest.get(d.source_id)?.body_derived_role ?? d.role_after;
+        }
+      }
+    }
+  }
+
+
 
 
 
@@ -3594,6 +3730,50 @@ async function handle(req: Request): Promise<Response> {
           final_loss_reason: res.body_replaced ? null : res.final_reason,
         };
       }),
+
+      // large_scholarship_pdf_extraction_v1
+      large_scholarship_pdf_version: LARGE_SCHOLARSHIP_PDF_VERSION,
+      large_scholarship_pdf_limits: LARGE_PDF_LIMITS,
+      large_scholarship_pdf_eligibility: largePdfStage?.eligibility ?? [],
+      large_scholarship_pdf_extraction_attempt: largePdfStage?.attempts ?? [],
+      large_scholarship_pdf_identity_check: largePdfStage?.identity ?? [],
+      large_scholarship_pdf_body_quality: largePdfStage?.quality ?? [],
+      large_scholarship_pdf_cache_write: largePdfStage?.cache_writes ?? [],
+      large_scholarship_pdf_added_latency_ms: largePdfStage?.added_latency_ms ?? 0,
+      large_scholarship_pdf_stop_reason: largePdfStage?.stop_reason ?? "stage_not_run",
+      large_scholarship_pdf_downstream_effect: (largePdfStage?.downstream ?? []).map((d) => {
+        const packIds = new Set(
+          (drafter.input_sources ?? []).map((s) =>
+            String((s as { candidate_id?: string }).candidate_id ?? s.ref)
+          ),
+        );
+        const cited = (drafter.footnotes ?? []).some((f) =>
+          String((f as { candidate_id?: string }).candidate_id ?? "") === d.source_id
+        );
+        const inPack = packIds.has(d.source_id);
+        const verifierUsable = verifier.usable.some((u) => u.candidate_id === d.source_id);
+        const topRow = literatureBodyTopicality.find((r) => r.source_id === d.source_id);
+        return {
+          ...d,
+          topicality_after: d.topicality_after ?? topRow?.role_after_body ?? null,
+          verifier_usable: verifierUsable,
+          in_pack: inPack,
+          emitted_by_model: cited,
+          cited,
+          final_loss_stage: !d.extraction_succeeded
+            ? d.final_loss_stage
+            : cited
+            ? null
+            : inPack
+            ? "drafter_utilisation"
+            : verifierUsable
+            ? "pack_selection"
+            : "verifier",
+          final_loss_reason: !d.extraction_succeeded ? d.final_loss_reason : cited ? null : "not_cited",
+        };
+      }),
+
+
 
       academic_literature_thin_pack_recovery: thinPackRecoveryReport,
       academic_literature_named_synthesis: literatureModeRun

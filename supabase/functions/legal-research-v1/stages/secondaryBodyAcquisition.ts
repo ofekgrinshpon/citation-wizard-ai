@@ -337,6 +337,7 @@ function attachBody(
 async function fetchCapped(
   url: string,
   signal: AbortSignal,
+  maxBytes: number = SECONDARY_BODY_LIMITS.MAX_BYTES,
 ): Promise<{ bytes: Uint8Array; contentType: string; finalUrl: string; status: number }> {
   const res = await officialFetch(url, { signal });
   const finalUrl = res.url || url;
@@ -360,7 +361,7 @@ async function fetchCapped(
   }
   const contentType = (res.headers.get("content-type") || "").toLowerCase();
   const declared = Number(res.headers.get("content-length") || "0") || 0;
-  if (declared > SECONDARY_BODY_LIMITS.MAX_BYTES) {
+  if (declared > maxBytes) {
     try {
       await res.body?.cancel();
     } catch { /* already closed */ }
@@ -376,7 +377,7 @@ async function fetchCapped(
     if (!value) continue;
     chunks.push(value);
     total += value.byteLength;
-    if (total >= SECONDARY_BODY_LIMITS.MAX_BYTES) {
+    if (total >= maxBytes) {
       try {
         await reader.cancel();
       } catch { /* already closed */ }
@@ -391,6 +392,27 @@ async function fetchCapped(
     if (off >= total) break;
   }
   return { bytes, contentType, finalUrl, status };
+}
+
+/**
+ * large_scholarship_pdf_extraction_v1 — streamed, size-capped binary download
+ * for the bounded chunked PDF extractor. Same host/redirect/paywall refusals as
+ * every other secondary fetch; the ONLY difference is a higher byte ceiling,
+ * because the caller extracts page-by-page instead of inline.
+ */
+export async function downloadBinaryCapped(
+  url: string,
+  maxBytes: number,
+  timeoutMs = 15_000,
+): Promise<{ bytes: Uint8Array; content_type: string; final_url: string; status: number }> {
+  const signal = AbortSignal.timeout(timeoutMs);
+  const r = await fetchCapped(url, signal, maxBytes);
+  return {
+    bytes: r.bytes,
+    content_type: r.contentType,
+    final_url: r.finalUrl,
+    status: r.status,
+  };
 }
 
 export interface SecondaryFetchResult {
