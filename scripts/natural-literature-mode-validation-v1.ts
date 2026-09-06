@@ -67,7 +67,7 @@ for (const q of QUERIES) {
   const ms = Date.now() - t0;
   if (!row) {
     results.push({ ...q, run_id: t.run_id, ms, error: "poll_timeout" });
-    writeFileSync(`${OUT}/results.json`, JSON.stringify(results, null, 2));
+    writeFileSync(`${OUT}/${process.env.RESULTS ?? "results"}.json`, JSON.stringify(results, null, 2));
     continue;
   }
   // deno-lint-ignore no-explicit-any
@@ -105,8 +105,8 @@ for (const q of QUERIES) {
       Array.isArray(d.input_sources) ? d.input_sources.length : "?"
     } fn=${Array.isArray(row.footnotes) ? row.footnotes.length : 0} ${ms}ms`,
   );
-  writeFileSync(`${OUT}/results.json`, JSON.stringify(results, null, 2));
+  writeFileSync(`${OUT}/${process.env.RESULTS ?? "results"}.json`, JSON.stringify(results, null, 2));
 }
 
-writeFileSync(`${OUT}/results.json`, JSON.stringify(results, null, 2));
+writeFileSync(`${OUT}/${process.env.RESULTS ?? "results"}.json`, JSON.stringify(results, null, 2));
 console.log(`\nWrote ${OUT}/results.json`);
