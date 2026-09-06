@@ -934,10 +934,12 @@ async function handle(req: Request): Promise<Response> {
   // router_profiles_v1 caps the facet fan-out per path (0 = disabled).
   const facetExpansionRaw = router.max_facets === 0
     ? { enabled: false, gate_reason: `router_profile:${router.selected_router_profile}`,
-        legal_area_lock: null, lock_terms: [], facets: [], queries: [] }
+        legal_area_lock: null, lock_terms: [], facets: [], queries: [],
+        contamination_guard: [] }
     : expandClaimFacets(question, analyzer, {
       mode: plannerStage.mode_plan?.mode ?? null,
       outputShape: plannerStage.mode_plan?.output_shape ?? null,
+      run_id,
     });
   const keptFacets = facetExpansionRaw.facets.slice(0, router.max_facets);
   const keptFacetIds = new Set(keptFacets.map((f) => f.facet_id));
@@ -1528,8 +1530,20 @@ async function handle(req: Request): Promise<Response> {
   // already-found candidates are strong DIRECT legal scholarship for this
   // question, so body budget goes to them first and `discovery_only` stops
   // being a terminal state for real scholarship.
-  const literatureModeRun = sourceUseIntent.plan?.user_task_intent === "academic_writing" &&
-    isLiteratureOnlyRequest(question);
+  // natural_literature_mode_and_topic_guard_v1 — natural Hebrew literature
+  // prompts ("תעשה לי סקירת ספרות על…", seminar / theoretical-background
+  // requests) must activate the same machinery as the lab phrasing.
+  const naturalLiteratureMode = detectNaturalLiteratureMode({
+    run_id,
+    question,
+    user_task_intent: sourceUseIntent.plan?.user_task_intent ?? null,
+    answer_strategy: sourceUseIntent.plan?.answer_strategy ?? null,
+    asks_for_sources: /(מקורות|ספרות|ביבליוגרפיה|רקע\s+תיאורטי)/.test(question),
+    mode_before: sourceUseIntent.plan?.user_task_intent === "academic_writing" &&
+      isLiteratureOnlyRequest(question),
+  });
+  const literatureModeRun = naturalLiteratureMode.academic_literature_mode_after;
+  await budget.markDurable("natural_literature_mode_activation", naturalLiteratureMode);
   const literatureCandidateViews = pool.candidates.map((c) => ({
     candidate_id: c.candidate_id,
     title: String(c.title ?? ""),
@@ -2596,6 +2610,7 @@ async function handle(req: Request): Promise<Response> {
       // router_profiles_v1 — path-scoped answer shape.
       blockCeiling: router.drafter_block_ceiling,
       dropUnsupportedBlocks: router.drop_unsupported_blocks,
+      literatureMode: literatureModeRun,
 
     },
   );
