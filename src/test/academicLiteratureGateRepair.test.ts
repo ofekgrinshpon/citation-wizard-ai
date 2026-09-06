@@ -46,9 +46,9 @@ describe("decideThinPackRecovery", () => {
   const strong = [
     isStrongDirectLiteratureCandidate(Q, {
       candidate_id: "c1",
-      title: 'שפירא, "על סבירותה של עילת הסבירות" משפטים',
+      title: 'שפירא, "על סבירותה של עילת הסבירות" משפטים כרך נ',
       url: "https://www.academia.edu/1",
-      snippet: "עילת הסבירות במשפט המנהלי",
+      snippet: "מאמר על עילת הסבירות במשפט המנהלי הישראלי ואקטיביזם שיפוטי",
       source_type: "unknown",
     }),
   ];
