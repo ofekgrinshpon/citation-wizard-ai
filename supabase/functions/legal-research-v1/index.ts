@@ -1619,6 +1619,7 @@ async function handle(req: Request): Promise<Response> {
   }
   const secondaryBodyAcquisition = await runSecondaryBodyAcquisition({
     admin,
+    run_id,
     candidates: pool.candidates,
     depth_mode: sourceDepth.depth_mode ?? null,
     enabled: !fastLaneHit && !budget.exceeded(),
@@ -2575,6 +2576,7 @@ async function handle(req: Request): Promise<Response> {
     try {
       recoveryReport = await runSecondaryBodyAcquisition({
         admin,
+        run_id,
         candidates: pool.candidates,
         depth_mode: sourceDepth.depth_mode ?? null,
         enabled: true,
