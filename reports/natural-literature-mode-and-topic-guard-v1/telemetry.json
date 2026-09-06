@@ -1,0 +1,488 @@
+[
+  {
+    "id": "P1",
+    "run_id": "18db2b38-20b2-4d9c-adc6-ec270132c58e",
+    "activation": null,
+    "literature_mode": null,
+    "center_of_gravity": null,
+    "unused_pack": [],
+    "facet_guard": [],
+    "gate_trace": null,
+    "pack_size": null,
+    "pack": [],
+    "used_sources": [
+      {
+        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+        "number": 1,
+        "origin": "local_db",
+        "citable_as": "judgment",
+        "source_type": "caselaw",
+        "candidate_id": "25d02e37-fed7-4b67-a36f-dddb52fc1896",
+        "authority_tier": "primary_mirror",
+        "synthesis_role": "applying_candidate",
+        "text_usability": "full_text",
+        "integrity_flags": [
+          "judgment_document",
+          "judgment_tier_promoted",
+          "judgment_text_acquired",
+          "judgment_identity_confirmed_in_body",
+          "holding_text_present"
+        ],
+        "has_holding_text": true,
+        "is_judgment_document": true,
+        "can_satisfy_authority_role": false
+      },
+      {
+        "url": "https://law.haifa.ac.il/wp-content/uploads/2022/05/%D7%A0%D7%93%D7%91-%D7%93%D7%92%D7%9F-461.pdf",
+        "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
+        "number": 2,
+        "origin": "local_db",
+        "citable_as": "scholarship",
+        "source_type": "journal_article",
+        "candidate_id": "017a0459-f6a2-49c2-b483-bb8081f8254e",
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "full_text",
+        "integrity_flags": [
+          "secondary_body_acquired",
+          "body_acquired"
+        ],
+        "has_holding_text": false,
+        "is_judgment_document": false,
+        "can_satisfy_authority_role": true
+      },
+      {
+        "url": "https://lawjournal.huji.ac.il/article/12/1937",
+        "title": "גלגולי מושג \"שלטון החוק\" בישראל: בין פורמליזם למהות, בין ריסון לפְּעִילָנוּת",
+        "number": 3,
+        "origin": "local_db",
+        "citable_as": "scholarship",
+        "source_type": "journal_article",
+        "candidate_id": "8d73266f-bf49-4bdb-9ba3-0afa6b4809a3",
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "full_text",
+        "integrity_flags": [
+          "secondary_body_acquired",
+          "body_acquired"
+        ],
+        "has_holding_text": false,
+        "is_judgment_document": false,
+        "can_satisfy_authority_role": false
+      },
+      {
+        "url": "https://lawjournal.huji.ac.il/article/12/1954",
+        "title": "היסוד החוקתי של עילות הביקורת השיפוטית המינהליות (כרך נה)",
+        "number": 4,
+        "origin": "local_db",
+        "citable_as": "scholarship",
+        "source_type": "journal_article",
+        "candidate_id": "d8afbaf2-fc81-46de-aacb-145ea153ef46",
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "full_text",
+        "integrity_flags": [
+          "secondary_body_acquired",
+          "body_acquired"
+        ],
+        "has_holding_text": false,
+        "is_judgment_document": false,
+        "can_satisfy_authority_role": false
+      }
+    ],
+    "footnotes": [
+      {
+        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+        "number": 1,
+        "sources": [
+          {
+            "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+            "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+            "source_type": "caselaw"
+          }
+        ],
+        "source_type": "caselaw"
+      },
+      {
+        "url": "https://law.haifa.ac.il/wp-content/uploads/2022/05/%D7%A0%D7%93%D7%91-%D7%93%D7%92%D7%9F-461.pdf",
+        "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
+        "number": 2,
+        "sources": [
+          {
+            "url": "https://law.haifa.ac.il/wp-content/uploads/2022/05/%D7%A0%D7%93%D7%91-%D7%93%D7%92%D7%9F-461.pdf",
+            "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
+            "source_type": "journal_article"
+          }
+        ],
+        "source_type": "journal_article"
+      },
+      {
+        "url": "https://lawjournal.huji.ac.il/article/12/1937",
+        "title": "גלגולי מושג \"שלטון החוק\" בישראל: בין פורמליזם למהות, בין ריסון לפְּעִילָנוּת",
+        "number": 3,
+        "sources": [
+          {
+            "url": "https://lawjournal.huji.ac.il/article/12/1937",
+            "title": "גלגולי מושג \"שלטון החוק\" בישראל: בין פורמליזם למהות, בין ריסון לפְּעִילָנוּת",
+            "source_type": "journal_article"
+          }
+        ],
+        "source_type": "journal_article"
+      },
+      {
+        "url": "https://lawjournal.huji.ac.il/article/12/1954",
+        "title": "היסוד החוקתי של עילות הביקורת השיפוטית המינהליות (כרך נה)",
+        "number": 4,
+        "sources": [
+          {
+            "url": "https://lawjournal.huji.ac.il/article/12/1954",
+            "title": "היסוד החוקתי של עילות הביקורת השיפוטית המינהליות (כרך נה)",
+            "source_type": "journal_article"
+          }
+        ],
+        "source_type": "journal_article"
+      }
+    ],
+    "footnotes_count": 4
+  },
+  {
+    "id": "P2",
+    "run_id": "d91dd8bc-e59a-4697-bb83-b9ae3b936852",
+    "activation": null,
+    "literature_mode": null,
+    "center_of_gravity": null,
+    "unused_pack": [],
+    "facet_guard": [],
+    "gate_trace": null,
+    "pack_size": null,
+    "pack": [],
+    "used_sources": [
+      {
+        "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7-%D7%99%D7%A1%D7%95%D7%93%3A_%D7%9B%D7%91%D7%95%D7%93_%D7%94%D7%90%D7%93%D7%9D_%D7%95%D7%97%D7%99%D7%A8%D7%95%D7%AA%D7%95",
+        "title": "חוק יסוד: כבוד האדם וחירותו",
+        "number": 1,
+        "origin": "perplexity",
+        "citable_as": "statute",
+        "source_type": "israeli_law",
+        "candidate_id": "nominated-source:N4",
+        "authority_tier": "statute_mirror",
+        "synthesis_role": "statutory_background",
+        "text_usability": "full_text",
+        "integrity_flags": [
+          "consolidated_statute_mirror",
+          "official_discovery_body_acquired",
+          "local_corpus_primary_anchor",
+          "statute_text_acquired",
+          "body_acquired"
+        ],
+        "has_holding_text": false,
+        "is_judgment_document": false,
+        "can_satisfy_authority_role": true
+      },
+      {
+        "url": "https://runilawreview.org/2019/03/28/vol22_braverman/",
+        "title": "\"כגודל הציפייה\": היקף הביקורת השיפוטית על שינוי מדיניות עקבית של רשויות המִנהל | יונתן ברוורמן (כרך כב)",
+        "number": 2,
+        "origin": "local_db",
+        "citable_as": "scholarship",
+        "source_type": "journal_article",
+        "candidate_id": "cefad2c7-d8e9-40a3-952d-31cb79d94e5b",
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "full_text",
+        "integrity_flags": [
+          "secondary_body_acquired",
+          "body_acquired"
+        ],
+        "has_holding_text": false,
+        "is_judgment_document": false,
+        "can_satisfy_authority_role": true
+      }
+    ],
+    "footnotes": [
+      {
+        "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7-%D7%99%D7%A1%D7%95%D7%93%3A_%D7%9B%D7%91%D7%95%D7%93_%D7%94%D7%90%D7%93%D7%9D_%D7%95%D7%97%D7%99%D7%A8%D7%95%D7%AA%D7%95",
+        "title": "חוק יסוד: כבוד האדם וחירותו",
+        "number": 1,
+        "sources": [
+          {
+            "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7-%D7%99%D7%A1%D7%95%D7%93%3A_%D7%9B%D7%91%D7%95%D7%93_%D7%94%D7%90%D7%93%D7%9D_%D7%95%D7%97%D7%99%D7%A8%D7%95%D7%AA%D7%95",
+            "title": "חוק יסוד: כבוד האדם וחירותו",
+            "source_type": "israeli_law"
+          }
+        ],
+        "source_type": "israeli_law"
+      },
+      {
+        "url": "https://runilawreview.org/2019/03/28/vol22_braverman/",
+        "title": "\"כגודל הציפייה\": היקף הביקורת השיפוטית על שינוי מדיניות עקבית של רשויות המִנהל | יונתן ברוורמן (כרך כב)",
+        "number": 2,
+        "sources": [
+          {
+            "url": "https://runilawreview.org/2019/03/28/vol22_braverman/",
+            "title": "\"כגודל הציפייה\": היקף הביקורת השיפוטית על שינוי מדיניות עקבית של רשויות המִנהל | יונתן ברוורמן (כרך כב)",
+            "source_type": "journal_article"
+          }
+        ],
+        "source_type": "journal_article"
+      }
+    ],
+    "footnotes_count": 2
+  },
+  {
+    "id": "P3",
+    "run_id": "9f84535a-8c89-44ea-871a-2413b79793d5",
+    "activation": null,
+    "literature_mode": null,
+    "center_of_gravity": null,
+    "unused_pack": [],
+    "facet_guard": [],
+    "gate_trace": null,
+    "pack_size": null,
+    "pack": [],
+    "used_sources": [
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/64/3&fileName=SD3_4_11437-05.pdf&type=2",
+        "title": "בג\"ץ 11437-05 - קו לעובד נ. משרד הפנים",
+        "number": 1,
+        "origin": "local_db",
+        "citable_as": "judgment",
+        "source_type": "supreme_court_il",
+        "candidate_id": "e1ec4308-d9f5-42d1-9095-0091c8026438",
+        "authority_tier": "official_primary",
+        "synthesis_role": "applying_candidate",
+        "text_usability": "full_text",
+        "integrity_flags": [
+          "judgment_label_rejected_no_identity",
+          "judgment_text_acquired",
+          "judgment_identity_confirmed_in_body"
+        ],
+        "has_holding_text": false,
+        "is_judgment_document": true,
+        "can_satisfy_authority_role": false
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+        "number": 2,
+        "origin": "local_db",
+        "citable_as": "judgment",
+        "source_type": "caselaw",
+        "candidate_id": "a4043cce-33f9-4be1-a82c-b8c15a99dbf9",
+        "authority_tier": "primary_mirror",
+        "synthesis_role": "applying_candidate",
+        "text_usability": "full_text",
+        "integrity_flags": [
+          "judgment_document",
+          "judgment_tier_promoted",
+          "judgment_text_acquired",
+          "judgment_identity_confirmed_in_body"
+        ],
+        "has_holding_text": false,
+        "is_judgment_document": true,
+        "can_satisfy_authority_role": false
+      }
+    ],
+    "footnotes": [
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/64/3&fileName=SD3_4_11437-05.pdf&type=2",
+        "title": "בג\"ץ 11437-05 - קו לעובד נ. משרד הפנים",
+        "number": 1,
+        "sources": [
+          {
+            "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/64/3&fileName=SD3_4_11437-05.pdf&type=2",
+            "title": "בג\"ץ 11437-05 - קו לעובד נ. משרד הפנים",
+            "source_type": "supreme_court_il"
+          }
+        ],
+        "source_type": "supreme_court_il"
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+        "number": 2,
+        "sources": [
+          {
+            "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+            "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+            "source_type": "caselaw"
+          }
+        ],
+        "source_type": "caselaw"
+      }
+    ],
+    "footnotes_count": 2
+  },
+  {
+    "id": "P4",
+    "run_id": "e24c9c15-d7af-438b-b3a3-2ae4cdf0f219",
+    "activation": null,
+    "literature_mode": null,
+    "center_of_gravity": null,
+    "unused_pack": [],
+    "facet_guard": [],
+    "gate_trace": null,
+    "pack_size": null,
+    "pack": [],
+    "used_sources": [
+      {
+        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+        "number": 1,
+        "origin": "local_db",
+        "citable_as": "judgment",
+        "source_type": "caselaw",
+        "candidate_id": "935c47b1-1472-45ff-8da0-94c259fd7561",
+        "authority_tier": "primary_mirror",
+        "synthesis_role": "applying_candidate",
+        "text_usability": "full_text",
+        "integrity_flags": [
+          "judgment_document",
+          "judgment_tier_promoted",
+          "judgment_text_acquired",
+          "judgment_identity_confirmed_in_body",
+          "holding_text_present"
+        ],
+        "has_holding_text": true,
+        "is_judgment_document": true,
+        "can_satisfy_authority_role": false
+      },
+      {
+        "url": "https://lawjournal.huji.ac.il/article/12/1937",
+        "title": "גלגולי מושג \"שלטון החוק\" בישראל: בין פורמליזם למהות, בין ריסון לפְּעִילָנוּת",
+        "number": 2,
+        "origin": "local_db",
+        "citable_as": "scholarship",
+        "source_type": "journal_article",
+        "candidate_id": "6bd16f60-9f68-493b-b5f0-bb4965ac3a04",
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "full_text",
+        "integrity_flags": [
+          "secondary_body_acquired",
+          "body_acquired"
+        ],
+        "has_holding_text": false,
+        "is_judgment_document": false,
+        "can_satisfy_authority_role": true
+      }
+    ],
+    "footnotes": [
+      {
+        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+        "number": 1,
+        "sources": [
+          {
+            "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+            "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+            "source_type": "caselaw"
+          }
+        ],
+        "source_type": "caselaw"
+      },
+      {
+        "url": "https://lawjournal.huji.ac.il/article/12/1937",
+        "title": "גלגולי מושג \"שלטון החוק\" בישראל: בין פורמליזם למהות, בין ריסון לפְּעִילָנוּת",
+        "number": 2,
+        "sources": [
+          {
+            "url": "https://lawjournal.huji.ac.il/article/12/1937",
+            "title": "גלגולי מושג \"שלטון החוק\" בישראל: בין פורמליזם למהות, בין ריסון לפְּעִילָנוּת",
+            "source_type": "journal_article"
+          }
+        ],
+        "source_type": "journal_article"
+      }
+    ],
+    "footnotes_count": 2
+  },
+  {
+    "id": "P5",
+    "run_id": "0d1e48ed-a983-498d-8cf6-2ac25331f970",
+    "activation": null,
+    "literature_mode": null,
+    "center_of_gravity": null,
+    "unused_pack": [],
+    "facet_guard": [],
+    "gate_trace": null,
+    "pack_size": null,
+    "pack": [],
+    "used_sources": [
+      {
+        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-8948-22-%d7%90%d7%99%d7%9c%d7%9f-%d7%a9%d7%99%d7%99%d7%a0%d7%a4%d7%9c%d7%93-%d7%a0-%d7%94%d7%9b%d7%a0%d7%a1%d7%aa-%d7%a4%d7%a1%d7%a7-%d7%93%d7%99%d7%9f-%d7%9e%d7%99%d7%95%d7%9d-1/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "בג\"ץ 8948/22 אילן שיינפלד נ׳ הכנסת פסק דין (18.01.2023)",
+        "number": 1,
+        "origin": "local_db",
+        "citable_as": "judgment",
+        "source_type": "caselaw",
+        "candidate_id": "a00ea419-6950-4bca-823d-89e8cf9600d8",
+        "authority_tier": "primary_mirror",
+        "synthesis_role": "applying_candidate",
+        "text_usability": "full_text",
+        "integrity_flags": [
+          "judgment_document",
+          "judgment_tier_promoted",
+          "judgment_text_acquired",
+          "judgment_identity_confirmed_in_body"
+        ],
+        "has_holding_text": false,
+        "is_judgment_document": true,
+        "can_satisfy_authority_role": false
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-2237-06-%d7%91%d7%a0%d7%a7-%d7%94%d7%a4%d7%95%d7%a2%d7%9c%d7%99%d7%9d-%d7%91%d7%a2%d7%9e-%d7%a0-%d7%a8%d7%9c%d7%94-%d7%95%d7%99%d7%a0%d7%a9%d7%98%d7%99%d7%99%d7%9f/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "רע\"א 2237/06 בנק הפועלים בע\"מ נ׳ רלה וינשטיין פסק דין",
+        "number": 2,
+        "origin": "local_db",
+        "citable_as": "judgment",
+        "source_type": "caselaw",
+        "candidate_id": "3e8f3755-0a68-49ea-b4a5-8503d30889f0",
+        "authority_tier": "primary_mirror",
+        "synthesis_role": "applying_candidate",
+        "text_usability": "full_text",
+        "integrity_flags": [
+          "judgment_document",
+          "judgment_tier_promoted",
+          "judgment_text_acquired",
+          "judgment_identity_confirmed_in_body",
+          "holding_text_present"
+        ],
+        "has_holding_text": true,
+        "is_judgment_document": true,
+        "can_satisfy_authority_role": false
+      }
+    ],
+    "footnotes": [
+      {
+        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-8948-22-%d7%90%d7%99%d7%9c%d7%9f-%d7%a9%d7%99%d7%99%d7%a0%d7%a4%d7%9c%d7%93-%d7%a0-%d7%94%d7%9b%d7%a0%d7%a1%d7%aa-%d7%a4%d7%a1%d7%a7-%d7%93%d7%99%d7%9f-%d7%9e%d7%99%d7%95%d7%9d-1/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "בג\"ץ 8948/22 אילן שיינפלד נ׳ הכנסת פסק דין (18.01.2023)",
+        "number": 1,
+        "sources": [
+          {
+            "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-8948-22-%d7%90%d7%99%d7%9c%d7%9f-%d7%a9%d7%99%d7%99%d7%a0%d7%a4%d7%9c%d7%93-%d7%a0-%d7%94%d7%9b%d7%a0%d7%a1%d7%aa-%d7%a4%d7%a1%d7%a7-%d7%93%d7%99%d7%9f-%d7%9e%d7%99%d7%95%d7%9d-1/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+            "title": "בג\"ץ 8948/22 אילן שיינפלד נ׳ הכנסת פסק דין (18.01.2023)",
+            "source_type": "caselaw"
+          }
+        ],
+        "source_type": "caselaw"
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-2237-06-%d7%91%d7%a0%d7%a7-%d7%94%d7%a4%d7%95%d7%a2%d7%9c%d7%99%d7%9d-%d7%91%d7%a2%d7%9e-%d7%a0-%d7%a8%d7%9c%d7%94-%d7%95%d7%99%d7%a0%d7%a9%d7%98%d7%99%d7%99%d7%9f/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "רע\"א 2237/06 בנק הפועלים בע\"מ נ׳ רלה וינשטיין פסק דין",
+        "number": 2,
+        "sources": [
+          {
+            "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-2237-06-%d7%91%d7%a0%d7%a7-%d7%94%d7%a4%d7%95%d7%a2%d7%9c%d7%99%d7%9d-%d7%91%d7%a2%d7%9e-%d7%a0-%d7%a8%d7%9c%d7%94-%d7%95%d7%99%d7%a0%d7%a9%d7%98%d7%99%d7%99%d7%9f/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+            "title": "רע\"א 2237/06 בנק הפועלים בע\"מ נ׳ רלה וינשטיין פסק דין",
+            "source_type": "caselaw"
+          }
+        ],
+        "source_type": "caselaw"
+      }
+    ],
+    "footnotes_count": 2
+  }
+]
