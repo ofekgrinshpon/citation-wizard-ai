@@ -1,0 +1,42 @@
+[
+  {
+    "id": "P1",
+    "query": "תעשה לי סקירת ספרות על עילת הסבירות",
+    "run_id": "01b34f89-00c9-4bb1-9997-44c193065be0",
+    "ms": 901256,
+    "error": "poll_timeout"
+  },
+  {
+    "id": "P2",
+    "query": "תכתוב לי סקירת ספרות לסמינריון על הבטחה מנהלית וציפייה לגיטימית",
+    "run_id": "6ec66230-b37b-485c-88e7-8dffe3a542b4",
+    "ms": 861636,
+    "activation": null,
+    "center_of_gravity": null,
+    "unused_pack": [],
+    "facet_guard": [],
+    "gate_trace": null,
+    "body_completeness_version": null,
+    "body_completeness_assessment": [],
+    "reextraction_candidate": [],
+    "reextraction_attempt": [],
+    "reextraction_result": [],
+    "reextraction_added_latency_ms": 0,
+    "downstream_effect": [],
+    "large_pdf_version": null,
+    "large_pdf_eligibility": [],
+    "large_pdf_attempt": [],
+    "large_pdf_identity": [],
+    "large_pdf_quality": [],
+    "large_pdf_cache": [],
+    "large_pdf_latency_ms": 0,
+    "large_pdf_stop_reason": null,
+    "large_pdf_downstream": [],
+    "literature_mode": null,
+    "pack_size": null,
+    "pack": [],
+    "footnotes_count": 0,
+    "footnotes": [],
+    "answer": "המחקר הופסק בגלל תקלה תשתיתית ולא הושלמה תשובה משפטית מבוססת. לא מוצגת תשובת ביניים. הקרדיטים על ההרצה הזו הוחזרו. אפשר להריץ שוב, לצמצם את השאלה, או לצרף את המסמך הרלוונטי."
+  }
+]
