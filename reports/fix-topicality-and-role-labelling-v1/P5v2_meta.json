@@ -1,0 +1,477 @@
+{
+  "footnotes": [
+    {
+      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/6a76e2_962b41b3597d440195f4e35963cfe3df.pdf",
+      "title": "תקנת השוק במכר על ידי רשות שנפל בהליכיו פגם חוקי",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/6a76e2_962b41b3597d440195f4e35963cfe3df.pdf",
+          "title": "תקנת השוק במכר על ידי רשות שנפל בהליכיו פגם חוקי",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "journal_article"
+    }
+  ],
+  "relabel": [
+    {
+      "title": "חוק-יסוד: כבוד האדם וחירותו",
+      "reason": "body_evidence_too_weak_to_override_slot",
+      "run_id": "b66be15d-edeb-4bbf-8fb2-2ff0248b78fc",
+      "source_id": "nominated-source:N4",
+      "role_changed": false,
+      "original_role": "primary_statute",
+      "retrieval_slot": "primary_statute",
+      "body_derived_role": "regulation_or_guideline",
+      "can_satisfy_role_after": true,
+      "can_satisfy_role_before": true
+    },
+    {
+      "title": "ביהמ\"ש העליון, אב\"ד הנשיאה אסתר חיות, השופטת ענת ברון, השופט יוסף אלרון: פס\"ד בשאלה האם כאשר מוגש כתב אישום נגד אחד מבין החשודים בפרשה מסוימת עומדת למתלונן זכות ערר נגד ההחלטה על סגירת התיק בעניינו של חשוד אחר באותה הפרשה? (בג\"ץ 474/21)",
+      "reason": "body_evidence_too_weak_to_override_slot",
+      "run_id": "b66be15d-edeb-4bbf-8fb2-2ff0248b78fc",
+      "source_id": "5d6440c8-60cb-454a-8d92-a84fb47f6b2f",
+      "role_changed": false,
+      "original_role": "persuasive_case_law",
+      "retrieval_slot": "persuasive_case_law",
+      "body_derived_role": "binding_case_law",
+      "can_satisfy_role_after": true,
+      "can_satisfy_role_before": true
+    },
+    {
+      "title": "בית משפט לענייני משפחה בתל אביב -יפו, השופט תומר שלם: פס\"ד במניעות ובסיכול תנאי על פי סעיף 28 לחוק החוזים, וחיוב הנושה בפיצויים על פי סעיף 43 (ב) לחוק החוזים (תמ\"ש 35988-03-23)",
+      "reason": "body_evidence_too_weak_to_override_slot",
+      "run_id": "b66be15d-edeb-4bbf-8fb2-2ff0248b78fc",
+      "source_id": "ed5d9195-6f2e-41e8-b424-7c81787dd48f",
+      "role_changed": false,
+      "original_role": "binding_case_law",
+      "retrieval_slot": "binding_case_law",
+      "body_derived_role": "unknown",
+      "can_satisfy_role_after": true,
+      "can_satisfy_role_before": true
+    },
+    {
+      "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+      "reason": "slot_role_consistent_with_body",
+      "run_id": "b66be15d-edeb-4bbf-8fb2-2ff0248b78fc",
+      "source_id": "47aec6b0-09d0-4f7b-9cfc-28b3169cafdd",
+      "role_changed": false,
+      "original_role": "persuasive_case_law",
+      "retrieval_slot": "persuasive_case_law",
+      "body_derived_role": "binding_case_law",
+      "can_satisfy_role_after": true,
+      "can_satisfy_role_before": true
+    },
+    {
+      "title": "רע\"א 4476/20 היועץ המשפטי לממשלה נ׳ רונית פלג החלטה (16.09.2020)",
+      "reason": "body_evidence_too_weak_to_override_slot",
+      "run_id": "b66be15d-edeb-4bbf-8fb2-2ff0248b78fc",
+      "source_id": "cc77d1e5-992d-4bc9-b3df-80cf3f2b4ead",
+      "role_changed": false,
+      "original_role": "persuasive_case_law",
+      "retrieval_slot": "persuasive_case_law",
+      "body_derived_role": "binding_case_law",
+      "can_satisfy_role_after": true,
+      "can_satisfy_role_before": true
+    },
+    {
+      "title": "רע\"פ 7621/15 יצחק מוסרי נ׳ מדינת ישראל פסק דין (01.07.2021)",
+      "reason": "slot_role_consistent_with_body",
+      "run_id": "b66be15d-edeb-4bbf-8fb2-2ff0248b78fc",
+      "source_id": "654ebcd3-84f9-46a1-9eac-f398592de5ec",
+      "role_changed": false,
+      "original_role": "binding_case_law",
+      "retrieval_slot": "binding_case_law",
+      "body_derived_role": "binding_case_law",
+      "can_satisfy_role_after": true,
+      "can_satisfy_role_before": true
+    },
+    {
+      "title": "מדוע לא ביטלה הכנסת את חוק-יסוד: כבוד האדם וחירותו? על הסטטוס-קוו כקושי אנטי-רובני",
+      "reason": "journal_or_research_document_found_via_binding_case_law_slot",
+      "run_id": "b66be15d-edeb-4bbf-8fb2-2ff0248b78fc",
+      "source_id": "ebd7e26f-4dff-4c0e-914e-8a0c3eeb78ea",
+      "role_changed": true,
+      "original_role": "binding_case_law",
+      "retrieval_slot": "binding_case_law",
+      "body_derived_role": "journal_article",
+      "can_satisfy_role_after": true,
+      "can_satisfy_role_before": false
+    },
+    {
+      "title": "בימ\"ש לענייני משפחה קריות, השופט ניר זיתוני: פס\"ד תביעת אב לסילוק יד של בנו ואשת הבן מבית המגורים ולפיצוי בגין נזקי רכוש (תמ\"ש 51268-09-20)",
+      "reason": "body_evidence_too_weak_to_override_slot",
+      "run_id": "b66be15d-edeb-4bbf-8fb2-2ff0248b78fc",
+      "source_id": "be1a5d14-5512-406c-bd27-1f7d2b51b84e",
+      "role_changed": false,
+      "original_role": "binding_case_law",
+      "retrieval_slot": "binding_case_law",
+      "body_derived_role": "unknown",
+      "can_satisfy_role_after": true,
+      "can_satisfy_role_before": true
+    },
+    {
+      "title": "ביהמ\"ש לענייני משפחה קריות, השופטת שירי היימן: פס\"ד תביעה לסילוק יד ותביעה לדמי שימוש (תלה\"מ 57486-01-19 (",
+      "reason": "body_evidence_too_weak_to_override_slot",
+      "run_id": "b66be15d-edeb-4bbf-8fb2-2ff0248b78fc",
+      "source_id": "ce043e22-d293-4d1c-a665-72b3881baf32",
+      "role_changed": false,
+      "original_role": "binding_case_law",
+      "retrieval_slot": "binding_case_law",
+      "body_derived_role": "binding_case_law",
+      "can_satisfy_role_after": true,
+      "can_satisfy_role_before": true
+    },
+    {
+      "title": "עע\"מ 2065/21 ג'ולייטה ביירחטריאן נ׳ נתיב – לשכת קשר פס\"ד פסק דין (29.03.2022)",
+      "reason": "slot_role_consistent_with_body",
+      "run_id": "b66be15d-edeb-4bbf-8fb2-2ff0248b78fc",
+      "source_id": "7e237abb-5dd7-45fe-aec5-6618c7f07e5d",
+      "role_changed": false,
+      "original_role": "persuasive_case_law",
+      "retrieval_slot": "persuasive_case_law",
+      "body_derived_role": "binding_case_law",
+      "can_satisfy_role_after": false,
+      "can_satisfy_role_before": false
+    },
+    {
+      "title": "זכות הפרסום: הארות והערות לפרשת מקדונלד נ' מקדונלד'ס (אלוניאל) בע\"מ",
+      "reason": "body_evidence_too_weak_to_override_slot",
+      "run_id": "b66be15d-edeb-4bbf-8fb2-2ff0248b78fc",
+      "source_id": "01a77f8b-56b3-456d-8c4e-873ac1db274b",
+      "role_changed": false,
+      "original_role": "primary_statute",
+      "retrieval_slot": "primary_statute",
+      "body_derived_role": "unknown",
+      "can_satisfy_role_after": false,
+      "can_satisfy_role_before": false
+    },
+    {
+      "title": "עע\"מ 7834/19 ועדת ההשגות לפי סעיף 9א לפקודת הקרקעות (רכישה לצרכ נ. פסק דין (24.09.2019)",
+      "reason": "slot_role_consistent_with_body",
+      "run_id": "b66be15d-edeb-4bbf-8fb2-2ff0248b78fc",
+      "source_id": "0be0f05a-b13e-4791-b93d-15a47405f148",
+      "role_changed": false,
+      "original_role": "binding_case_law",
+      "retrieval_slot": "binding_case_law",
+      "body_derived_role": "binding_case_law",
+      "can_satisfy_role_after": false,
+      "can_satisfy_role_before": false
+    },
+    {
+      "title": "על \"פגיעה\" בזכות חוקתית ועל \"תכלית ראויה\" | ברק מדינה (כרך טו)",
+      "reason": "body_evidence_too_weak_to_override_slot",
+      "run_id": "b66be15d-edeb-4bbf-8fb2-2ff0248b78fc",
+      "source_id": "43826994-3da4-406a-982f-42d210dc265c",
+      "role_changed": false,
+      "original_role": "binding_case_law",
+      "retrieval_slot": "binding_case_law",
+      "body_derived_role": "unknown",
+      "can_satisfy_role_after": false,
+      "can_satisfy_role_before": false
+    },
+    {
+      "title": "פגם בערבות להצעה במכרז ושאלת המידתיות בדיני המכרזים",
+      "reason": "body_evidence_too_weak_to_override_slot",
+      "run_id": "b66be15d-edeb-4bbf-8fb2-2ff0248b78fc",
+      "source_id": "1bdf12e1-e593-439d-ae0e-7b6d3f85e9de",
+      "role_changed": false,
+      "original_role": "binding_case_law",
+      "retrieval_slot": "binding_case_law",
+      "body_derived_role": "journal_article",
+      "can_satisfy_role_after": false,
+      "can_satisfy_role_before": false
+    },
+    {
+      "title": "הדיאלוג החוקתי בישראל: שתי נקודות מבט | בל יוסף (כרך כב)",
+      "reason": "journal_or_research_document_found_via_binding_case_law_slot",
+      "run_id": "b66be15d-edeb-4bbf-8fb2-2ff0248b78fc",
+      "source_id": "437cb0d5-750b-47a1-b4a4-05250b36e95a",
+      "role_changed": true,
+      "original_role": "binding_case_law",
+      "retrieval_slot": "binding_case_law",
+      "body_derived_role": "book_or_chapter",
+      "can_satisfy_role_after": true,
+      "can_satisfy_role_before": false
+    },
+    {
+      "title": "מוניטין ואסטרטגיה בבית המשפט העליון על סף המאה העשרים ואחת | שי דותן (כרך כג)",
+      "reason": "body_evidence_too_weak_to_override_slot",
+      "run_id": "b66be15d-edeb-4bbf-8fb2-2ff0248b78fc",
+      "source_id": "a72eb9c2-ed78-4a52-8c20-905f4b381949",
+      "role_changed": false,
+      "original_role": "binding_case_law",
+      "retrieval_slot": "binding_case_law",
+      "body_derived_role": "journal_article",
+      "can_satisfy_role_after": false,
+      "can_satisfy_role_before": false
+    },
+    {
+      "title": "ביהמ\"ש העליון, אב\"ד השופטת יעל וילנר, השופטת גילה כנפי שטייניץ, השופטת רות רונן: פס\"ד בעתירה נגד צו החרמה והריסה לדירה של מבצע פיגוע הירי קטלני שגרם למותו של אור אשכר ז\"ל (בג\"ץ 3231/23)",
+      "reason": "slot_role_consistent_with_body",
+      "run_id": "b66be15d-edeb-4bbf-8fb2-2ff0248b78fc",
+      "source_id": "6ddcd852-8ee6-4e8a-9fb5-9fb6d965d256",
+      "role_changed": false,
+      "original_role": "binding_case_law",
+      "retrieval_slot": "binding_case_law",
+      "body_derived_role": "binding_case_law",
+      "can_satisfy_role_after": true,
+      "can_satisfy_role_before": true
+    },
+    {
+      "title": "על תורת הסעדים החוקתיים | אהרן ברק (כרך כ)",
+      "reason": "journal_or_research_document_found_via_binding_case_law_slot",
+      "run_id": "b66be15d-edeb-4bbf-8fb2-2ff0248b78fc",
+      "source_id": "39ab3512-ad3f-4dde-8df0-996c82e0848c",
+      "role_changed": true,
+      "original_role": "binding_case_law",
+      "retrieval_slot": "binding_case_law",
+      "body_derived_role": "book_or_chapter",
+      "can_satisfy_role_after": true,
+      "can_satisfy_role_before": false
+    },
+    {
+      "title": "תקנת השוק במכר על ידי רשות שנפל בהליכיו פגם חוקי",
+      "reason": "journal_or_research_document_found_via_binding_case_law_slot",
+      "run_id": "b66be15d-edeb-4bbf-8fb2-2ff0248b78fc",
+      "source_id": "1dbe45b8-c843-483d-8b1b-a45496643c30",
+      "role_changed": true,
+      "original_role": "binding_case_law",
+      "retrieval_slot": "binding_case_law",
+      "body_derived_role": "book_or_chapter",
+      "can_satisfy_role_after": true,
+      "can_satisfy_role_before": false
+    },
+    {
+      "title": "ביהמ\"ש עליון: פס\"ד בעתירות שעניינן תיקון חוק יסוד: הממשלה ומינויו של הח\"כ אריה דרעי לשר בממשלה ה-37 (בג\"ץ 8948-23)",
+      "reason": "body_evidence_too_weak_to_override_slot",
+      "run_id": "b66be15d-edeb-4bbf-8fb2-2ff0248b78fc",
+      "source_id": "e0bc6cdb-6878-42e8-b98d-ac375ffb796b",
+      "role_changed": false,
+      "original_role": "binding_case_law",
+      "retrieval_slot": "binding_case_law",
+      "body_derived_role": "unknown",
+      "can_satisfy_role_after": true,
+      "can_satisfy_role_before": true
+    },
+    {
+      "title": "ביהמ\"ש העליון, אב\"ד השופט נעם סולברג, השופטת דפנה ברק ארז, השופט חאלד כבוב: פס\"ד עתירה נגד החלטת היועצת המשפטית לממשלה שלא להורות על פתיחה בחקירה פלילית בחשד למסירת מידע שלא ברשות (בג\"ץ 3823/22)",
+      "reason": "slot_role_consistent_with_body",
+      "run_id": "b66be15d-edeb-4bbf-8fb2-2ff0248b78fc",
+      "source_id": "52020312-88e9-40de-a9bf-f20449b5d080",
+      "role_changed": false,
+      "original_role": "binding_case_law",
+      "retrieval_slot": "binding_case_law",
+      "body_derived_role": "binding_case_law",
+      "can_satisfy_role_after": true,
+      "can_satisfy_role_before": true
+    },
+    {
+      "title": "בימ\"ש עליון, אב\"ד הנשיאה אסתר חיות: פסקי דין בעתירות בעניין הרכבת הממשלה ה- 35 של מדינת ישראל (בג\"ץ 2592/20)",
+      "reason": "body_evidence_too_weak_to_override_slot",
+      "run_id": "b66be15d-edeb-4bbf-8fb2-2ff0248b78fc",
+      "source_id": "88febebf-d738-435e-b398-8432c364f7ce",
+      "role_changed": false,
+      "original_role": "binding_case_law",
+      "retrieval_slot": "binding_case_law",
+      "body_derived_role": "binding_case_law",
+      "can_satisfy_role_after": true,
+      "can_satisfy_role_before": true
+    },
+    {
+      "title": "&quot;עיוני משפט&quot; בן ארבעים היש והאין",
+      "reason": "body_evidence_too_weak_to_override_slot",
+      "run_id": "b66be15d-edeb-4bbf-8fb2-2ff0248b78fc",
+      "source_id": "6f76761a-58a9-4c54-8efb-864fde016de1",
+      "role_changed": false,
+      "original_role": "scholarship",
+      "retrieval_slot": "scholarship",
+      "body_derived_role": "journal_article",
+      "can_satisfy_role_after": true,
+      "can_satisfy_role_before": true
+    },
+    {
+      "title": "בית המשפט המחוזי ב\"ש, השופטת גאולה לוין: החלטה שעניינה חיוב בערובה במסגרת צו הגנה לפי החוק למניעת אלימות במשפחה (רמ\"ש 2750-02-25)",
+      "reason": "body_evidence_too_weak_to_override_slot",
+      "run_id": "b66be15d-edeb-4bbf-8fb2-2ff0248b78fc",
+      "source_id": "858df209-5715-4288-8557-e3d1cc7a6246",
+      "role_changed": false,
+      "original_role": "persuasive_case_law",
+      "retrieval_slot": "persuasive_case_law",
+      "body_derived_role": "binding_case_law",
+      "can_satisfy_role_after": true,
+      "can_satisfy_role_before": true
+    },
+    {
+      "title": "בית המשפט העליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת גילה כנפי-שטייניץ: פסק דין בעתירה העוסקת בדרישה לאפשר ייצוג משפטי בוועדות לתכנון טיפול והערכה בעניינם של קטינים בסיכון (בג\"ץ 8647/22)",
+      "reason": "body_evidence_too_weak_to_override_slot",
+      "run_id": "b66be15d-edeb-4bbf-8fb2-2ff0248b78fc",
+      "source_id": "98d08bd2-bb22-4bfd-8241-c9c8b83ac2d8",
+      "role_changed": false,
+      "original_role": "binding_case_law",
+      "retrieval_slot": "binding_case_law",
+      "body_derived_role": "binding_case_law",
+      "can_satisfy_role_after": true,
+      "can_satisfy_role_before": true
+    },
+    {
+      "title": "בימ\"ש עליון, אב\"ד השופטת יעל וילנר, השופט עופר גרוסקופף, השופט אלכס שטיין: פס\"ד בעתירות בעניין הבחירות לרבנים הראשיים לישראל (בג\"ץ 4266/24)",
+      "reason": "body_evidence_too_weak_to_override_slot",
+      "run_id": "b66be15d-edeb-4bbf-8fb2-2ff0248b78fc",
+      "source_id": "17299e91-53d8-4811-8c97-90fff7a3188c",
+      "role_changed": false,
+      "original_role": "binding_case_law",
+      "retrieval_slot": "binding_case_law",
+      "body_derived_role": "binding_case_law",
+      "can_satisfy_role_after": true,
+      "can_satisfy_role_before": true
+    },
+    {
+      "title": "ביהמ\"ש העליון, המשנה לנשיאה עוזי פוגלמן, השופטת דפנה ברק ארז והשופטת יעל וילנר: פס\"ד בעניין ניגוד עניינים במינוי דיינים בעלי קרבה על ידי נשיא בית הדין הרבני הגדול (בג\"ץ 6510/21)",
+      "reason": "body_evidence_too_weak_to_override_slot",
+      "run_id": "b66be15d-edeb-4bbf-8fb2-2ff0248b78fc",
+      "source_id": "e94ad517-83c2-4fb2-9783-63dbee8676e8",
+      "role_changed": false,
+      "original_role": "binding_case_law",
+      "retrieval_slot": "binding_case_law",
+      "body_derived_role": "binding_case_law",
+      "can_satisfy_role_after": true,
+      "can_satisfy_role_before": true
+    },
+    {
+      "title": "בית המשפט העליון בשבתו כבג\"ץ, השופטת דפנה ברק-ארז, השופט דוד מינץ והשופט עופר גרוסקופף: פס\"ד העוסק בחובה לעמוד בדרישות החוק ביחס להספקת מזון ברמה בסיסית לכלל האסירים הביטחוניים המוחזקים בבתי הסוהר בישראל (בג\"ץ 2858-24)",
+      "reason": "body_evidence_too_weak_to_override_slot",
+      "run_id": "b66be15d-edeb-4bbf-8fb2-2ff0248b78fc",
+      "source_id": "118c1cd2-856b-415e-873c-6c4f30366385",
+      "role_changed": false,
+      "original_role": "binding_case_law",
+      "retrieval_slot": "binding_case_law",
+      "body_derived_role": "binding_case_law",
+      "can_satisfy_role_after": true,
+      "can_satisfy_role_before": true
+    }
+  ],
+  "thresholds": [
+    {
+      "run_id": "b66be15d-edeb-4bbf-8fb2-2ff0248b78fc",
+      "source_id": "nominated-source:N4",
+      "match_ratio": 0.25,
+      "matched_stems": [
+        "רשו"
+      ],
+      "question_stems": [
+        "הסתמכ",
+        "מול",
+        "רשו",
+        "מנהל"
+      ],
+      "core_topic_match": true,
+      "final_topicality": "adjacent",
+      "negative_signals": [],
+      "new_required_matches": 3,
+      "old_required_matches": 4
+    },
+    {
+      "run_id": "b66be15d-edeb-4bbf-8fb2-2ff0248b78fc",
+      "source_id": "ebd7e26f-4dff-4c0e-914e-8a0c3eeb78ea",
+      "match_ratio": 0.5,
+      "matched_stems": [
+        "הסתמכ",
+        "רשו"
+      ],
+      "question_stems": [
+        "הסתמכ",
+        "מול",
+        "רשו",
+        "מנהל"
+      ],
+      "core_topic_match": true,
+      "final_topicality": "adjacent",
+      "negative_signals": [],
+      "new_required_matches": 3,
+      "old_required_matches": 4
+    },
+    {
+      "run_id": "b66be15d-edeb-4bbf-8fb2-2ff0248b78fc",
+      "source_id": "1bdf12e1-e593-439d-ae0e-7b6d3f85e9de",
+      "match_ratio": 0.5,
+      "matched_stems": [
+        "רשו",
+        "מנהל"
+      ],
+      "question_stems": [
+        "הסתמכ",
+        "מול",
+        "רשו",
+        "מנהל"
+      ],
+      "core_topic_match": true,
+      "final_topicality": "adjacent",
+      "negative_signals": [],
+      "new_required_matches": 3,
+      "old_required_matches": 4
+    },
+    {
+      "run_id": "b66be15d-edeb-4bbf-8fb2-2ff0248b78fc",
+      "source_id": "437cb0d5-750b-47a1-b4a4-05250b36e95a",
+      "match_ratio": 0,
+      "matched_stems": [],
+      "question_stems": [
+        "הסתמכ",
+        "מול",
+        "רשו",
+        "מנהל"
+      ],
+      "core_topic_match": false,
+      "final_topicality": "adjacent",
+      "negative_signals": [
+        "no_subject_vocabulary_in_body",
+        "no_core_topic_term_in_body"
+      ],
+      "new_required_matches": 3,
+      "old_required_matches": 4
+    },
+    {
+      "run_id": "b66be15d-edeb-4bbf-8fb2-2ff0248b78fc",
+      "source_id": "39ab3512-ad3f-4dde-8df0-996c82e0848c",
+      "match_ratio": 0.25,
+      "matched_stems": [
+        "רשו"
+      ],
+      "question_stems": [
+        "הסתמכ",
+        "מול",
+        "רשו",
+        "מנהל"
+      ],
+      "core_topic_match": true,
+      "final_topicality": "adjacent",
+      "negative_signals": [],
+      "new_required_matches": 3,
+      "old_required_matches": 4
+    },
+    {
+      "run_id": "b66be15d-edeb-4bbf-8fb2-2ff0248b78fc",
+      "source_id": "1dbe45b8-c843-483d-8b1b-a45496643c30",
+      "match_ratio": 0.75,
+      "matched_stems": [
+        "הסתמכ",
+        "רשו",
+        "מנהל"
+      ],
+      "question_stems": [
+        "הסתמכ",
+        "מול",
+        "רשו",
+        "מנהל"
+      ],
+      "core_topic_match": true,
+      "final_topicality": "direct",
+      "negative_signals": [],
+      "new_required_matches": 3,
+      "old_required_matches": 4
+    }
+  ],
+  "pack": []
+}

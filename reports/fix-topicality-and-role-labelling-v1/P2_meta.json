@@ -1,0 +1,197 @@
+{
+  "footnotes": [
+    {
+      "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-3823-20-%d7%95%d7%95%d7%a2%d7%93-%d7%94%d7%94%d7%95%d7%a8%d7%99%d7%9d-%d7%94%d7%9e%d7%a8%d7%9b%d7%96%d7%99-%d7%9c%d7%a9%d7%9b%d7%95%d7%a0%d7%aa-%d7%a1%d7%99%d7%9c%d7%95%d7%95/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "בג\"ץ 3823/20 וועד ההורים המרכזי לשכונת סילוואן – ירושלים נ׳ עמותת עידן הש פסק דין",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-3823-20-%d7%95%d7%95%d7%a2%d7%93-%d7%94%d7%94%d7%95%d7%a8%d7%99%d7%9d-%d7%94%d7%9e%d7%a8%d7%9b%d7%96%d7%99-%d7%9c%d7%a9%d7%9b%d7%95%d7%a0%d7%aa-%d7%a1%d7%99%d7%9c%d7%95%d7%95/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "בג\"ץ 3823/20 וועד ההורים המרכזי לשכונת סילוואן – ירושלים נ׳ עמותת עידן הש פסק דין",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "caselaw"
+    },
+    {
+      "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7-%D7%99%D7%A1%D7%95%D7%93%3A_%D7%9B%D7%91%D7%95%D7%93_%D7%94%D7%90%D7%93%D7%9D_%D7%95%D7%97%D7%99%D7%A8%D7%95%D7%AA%D7%95",
+      "title": "חוק יסוד: כבוד האדם וחירותו",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7-%D7%99%D7%A1%D7%95%D7%93%3A_%D7%9B%D7%91%D7%95%D7%93_%D7%94%D7%90%D7%93%D7%9D_%D7%95%D7%97%D7%99%D7%A8%D7%95%D7%AA%D7%95",
+          "title": "חוק יסוד: כבוד האדם וחירותו",
+          "source_type": "israeli_law"
+        }
+      ],
+      "source_type": "israeli_law"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/article/12/707",
+      "title": "הגנת ההסתמכות במשפט המנהלי",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://lawjournal.huji.ac.il/article/12/707",
+          "title": "הגנת ההסתמכות במשפט המנהלי",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "journal_article"
+    }
+  ],
+  "relabel": [
+    {
+      "title": "חוק יסוד: כבוד האדם וחירותו",
+      "reason": "body_evidence_too_weak_to_override_slot",
+      "run_id": "8ec84ec3-d4d0-4cce-9613-980a957e6bcf",
+      "source_id": "nominated-source:N1",
+      "role_changed": false,
+      "original_role": "primary_statute",
+      "retrieval_slot": "primary_statute",
+      "body_derived_role": "regulation_or_guideline",
+      "can_satisfy_role_after": true,
+      "can_satisfy_role_before": true
+    },
+    {
+      "title": "התביעה הייצוגית בישראל – על פרשת דרכים | מיכאיל קרייני (כרך א)",
+      "reason": "body_evidence_too_weak_to_override_slot",
+      "run_id": "8ec84ec3-d4d0-4cce-9613-980a957e6bcf",
+      "source_id": "db4abeb9-ee01-4e9c-a06a-1968b2b4feda",
+      "role_changed": false,
+      "original_role": "binding_case_law",
+      "retrieval_slot": "binding_case_law",
+      "body_derived_role": "binding_case_law",
+      "can_satisfy_role_after": false,
+      "can_satisfy_role_before": false
+    },
+    {
+      "title": "בג\"ץ 3823/20 וועד ההורים המרכזי לשכונת סילוואן – ירושלים נ׳ עמותת עידן הש פסק דין",
+      "reason": "slot_role_consistent_with_body",
+      "run_id": "8ec84ec3-d4d0-4cce-9613-980a957e6bcf",
+      "source_id": "7aa1859c-446f-444f-955c-3557e8497c7f",
+      "role_changed": false,
+      "original_role": "persuasive_case_law",
+      "retrieval_slot": "persuasive_case_law",
+      "body_derived_role": "binding_case_law",
+      "can_satisfy_role_after": true,
+      "can_satisfy_role_before": true
+    },
+    {
+      "title": "הגנת ההסתמכות במשפט המנהלי",
+      "reason": "body_evidence_too_weak_to_override_slot",
+      "run_id": "8ec84ec3-d4d0-4cce-9613-980a957e6bcf",
+      "source_id": "08212d11-d35f-46c2-95ff-b7cf8c645fe5",
+      "role_changed": false,
+      "original_role": "binding_case_law",
+      "retrieval_slot": "binding_case_law",
+      "body_derived_role": "book_or_chapter",
+      "can_satisfy_role_after": false,
+      "can_satisfy_role_before": false
+    },
+    {
+      "title": "גרסה לפני עריכה לשונית",
+      "reason": "body_evidence_too_weak_to_override_slot",
+      "run_id": "8ec84ec3-d4d0-4cce-9613-980a957e6bcf",
+      "source_id": "6e8bd008-36e3-4969-9330-f88f06379895",
+      "role_changed": false,
+      "original_role": "regulation",
+      "retrieval_slot": "regulation",
+      "body_derived_role": "regulation_or_guideline",
+      "can_satisfy_role_after": false,
+      "can_satisfy_role_before": false
+    },
+    {
+      "title": "אחריות נזיקית של רשויות רגולטוריות בישראל",
+      "reason": "body_evidence_too_weak_to_override_slot",
+      "run_id": "8ec84ec3-d4d0-4cce-9613-980a957e6bcf",
+      "source_id": "429c7669-3ec4-4fef-9763-be336b2919de",
+      "role_changed": false,
+      "original_role": "binding_case_law",
+      "retrieval_slot": "binding_case_law",
+      "body_derived_role": "binding_case_law",
+      "can_satisfy_role_after": false,
+      "can_satisfy_role_before": false
+    },
+    {
+      "title": "בש\"פ 8252-13 - מדינת ישראל נ. ליאל שיינר",
+      "reason": "statute_document_found_via_case_law_slot",
+      "run_id": "8ec84ec3-d4d0-4cce-9613-980a957e6bcf",
+      "source_id": "ba700931-c968-4f39-920c-dd7f8fc300e4",
+      "role_changed": true,
+      "original_role": "binding_case_law",
+      "retrieval_slot": "binding_case_law",
+      "body_derived_role": "primary_statute",
+      "can_satisfy_role_after": false,
+      "can_satisfy_role_before": false
+    },
+    {
+      "title": "בית המשפט המחוזי ת\"א-יפו, השופט הרי קירש: פסק דין בערעור על חיוב המערערות, ארבע חברות אשראי, במס ערך מוסף לאורך תקופות שונות בין 2012-2016 (ע\"מ 67212-03-18)",
+      "reason": "slot_role_consistent_with_body",
+      "run_id": "8ec84ec3-d4d0-4cce-9613-980a957e6bcf",
+      "source_id": "a90199c7-5930-4b6e-a9aa-2b2937398af5",
+      "role_changed": false,
+      "original_role": "binding_case_law",
+      "retrieval_slot": "binding_case_law",
+      "body_derived_role": "binding_case_law",
+      "can_satisfy_role_after": true,
+      "can_satisfy_role_before": true
+    },
+    {
+      "title": "תקנות הגנת הפרטיות (הוראות לעניין מידע שהועבר לישראל מהאזור הכלכלי האירופי)",
+      "reason": "statute_document_found_via_case_law_slot",
+      "run_id": "8ec84ec3-d4d0-4cce-9613-980a957e6bcf",
+      "source_id": "4fb98125-3223-4248-bb1e-09c0fba5539c",
+      "role_changed": true,
+      "original_role": "regulation",
+      "retrieval_slot": "regulation",
+      "body_derived_role": "primary_statute",
+      "can_satisfy_role_after": true,
+      "can_satisfy_role_before": true
+    }
+  ],
+  "thresholds": [
+    {
+      "run_id": "8ec84ec3-d4d0-4cce-9613-980a957e6bcf",
+      "source_id": "nominated-source:N1",
+      "match_ratio": 0,
+      "matched_stems": [],
+      "question_stems": [
+        "הבטח",
+        "מנהל",
+        "וציפ",
+        "לגיט"
+      ],
+      "core_topic_match": false,
+      "final_topicality": "off_topic",
+      "negative_signals": [
+        "no_subject_vocabulary_in_body",
+        "no_core_topic_term_in_body"
+      ],
+      "new_required_matches": 3,
+      "old_required_matches": 4
+    },
+    {
+      "run_id": "8ec84ec3-d4d0-4cce-9613-980a957e6bcf",
+      "source_id": "08212d11-d35f-46c2-95ff-b7cf8c645fe5",
+      "match_ratio": 0.75,
+      "matched_stems": [
+        "הבטח",
+        "מנהל",
+        "וציפ"
+      ],
+      "question_stems": [
+        "הבטח",
+        "מנהל",
+        "וציפ",
+        "לגיט"
+      ],
+      "core_topic_match": true,
+      "final_topicality": "direct",
+      "negative_signals": [],
+      "new_required_matches": 3,
+      "old_required_matches": 4
+    }
+  ],
+  "pack": []
+}

@@ -1,0 +1,572 @@
+{
+  "footnotes": [
+    {
+      "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "caselaw"
+    },
+    {
+      "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=4520",
+      "title": "ביהמ\"ש עליון: פס\"ד בעתירות שעניינן תיקון חוק יסוד: הממשלה ומינויו של הח\"כ אריה דרעי לשר בממשלה ה-37 (בג\"ץ 8948-23)",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=4520",
+          "title": "ביהמ\"ש עליון: פס\"ד בעתירות שעניינן תיקון חוק יסוד: הממשלה ומינויו של הח\"כ אריה דרעי לשר בממשלה ה-37 (בג\"ץ 8948-23)",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "caselaw"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/article/12/1956",
+      "title": "מי קובע את עקרונות היסוד של השיטה המשפטית? פסקי-הדין בעניין ביטול עילת הסבירות ובעניין נבצרות ראש הממשלה (כרך נה)",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://lawjournal.huji.ac.il/article/12/1956",
+          "title": "מי קובע את עקרונות היסוד של השיטה המשפטית? פסקי-הדין בעניין ביטול עילת הסבירות ובעניין נבצרות ראש הממשלה (כרך נה)",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "journal_article"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/article/12/1937",
+      "title": "גלגולי מושג \"שלטון החוק\" בישראל: בין פורמליזם למהות, בין ריסון לפְּעִילָנוּת",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://lawjournal.huji.ac.il/article/12/1937",
+          "title": "גלגולי מושג \"שלטון החוק\" בישראל: בין פורמליזם למהות, בין ריסון לפְּעִילָנוּת",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "journal_article"
+    },
+    {
+      "url": "http://www.hapraklit.co.il/_Uploads/dbsAttachedFiles/nun1_6.pdf",
+      "title": "על חוקתיות ועל סבירות: בעקבות בג&quot;ץ 5636/01 בקמן נ' שר העבודה והרווחה",
+      "number": 5,
+      "sources": [
+        {
+          "url": "http://www.hapraklit.co.il/_Uploads/dbsAttachedFiles/nun1_6.pdf",
+          "title": "על חוקתיות ועל סבירות: בעקבות בג&quot;ץ 5636/01 בקמן נ' שר העבודה והרווחה",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "journal_article"
+    }
+  ],
+  "relabel": [
+    {
+      "title": "חוק-יסוד: כבוד האדם וחירותו",
+      "reason": "body_evidence_too_weak_to_override_slot",
+      "run_id": "644baf40-7dcd-43e0-a50c-31be5371ba7e",
+      "source_id": "nominated-source:N1",
+      "role_changed": false,
+      "original_role": "primary_statute",
+      "retrieval_slot": "primary_statute",
+      "body_derived_role": "regulation_or_guideline",
+      "can_satisfy_role_after": true,
+      "can_satisfy_role_before": true
+    },
+    {
+      "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+      "reason": "judgment_document_found_via_scholarship_slot",
+      "run_id": "644baf40-7dcd-43e0-a50c-31be5371ba7e",
+      "source_id": "cf1e29b0-f9f0-4da4-bc5c-9ad4f0b3adb4",
+      "role_changed": true,
+      "original_role": "scholarship",
+      "retrieval_slot": "scholarship",
+      "body_derived_role": "binding_case_law",
+      "can_satisfy_role_after": false,
+      "can_satisfy_role_before": false
+    },
+    {
+      "title": "גלגולי מושג \"שלטון החוק\" בישראל: בין פורמליזם למהות, בין ריסון לפְּעִילָנוּת",
+      "reason": "body_evidence_too_weak_to_override_slot",
+      "run_id": "644baf40-7dcd-43e0-a50c-31be5371ba7e",
+      "source_id": "1752e402-e801-468a-b7d7-a2ac4cb057d6",
+      "role_changed": false,
+      "original_role": "scholarship",
+      "retrieval_slot": "scholarship",
+      "body_derived_role": "journal_article",
+      "can_satisfy_role_after": true,
+      "can_satisfy_role_before": true
+    },
+    {
+      "title": "היסוד החוקתי של עילות הביקורת השיפוטית המינהליות (כרך נה)",
+      "reason": "slot_role_consistent_with_body",
+      "run_id": "644baf40-7dcd-43e0-a50c-31be5371ba7e",
+      "source_id": "a3823b4d-1d34-457c-b900-fc10f301ef09",
+      "role_changed": false,
+      "original_role": "scholarship",
+      "retrieval_slot": "scholarship",
+      "body_derived_role": "journal_article",
+      "can_satisfy_role_after": true,
+      "can_satisfy_role_before": true
+    },
+    {
+      "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
+      "reason": "slot_role_consistent_with_body",
+      "run_id": "644baf40-7dcd-43e0-a50c-31be5371ba7e",
+      "source_id": "a23b3233-5e04-4caa-be7e-efbcffbb98a3",
+      "role_changed": false,
+      "original_role": "scholarship",
+      "retrieval_slot": "scholarship",
+      "body_derived_role": "journal_article",
+      "can_satisfy_role_after": true,
+      "can_satisfy_role_before": true
+    },
+    {
+      "title": "ביהמ\"ש עליון: פס\"ד בעתירות שעניינן תיקון חוק יסוד: הממשלה ומינויו של הח\"כ אריה דרעי לשר בממשלה ה-37 (בג\"ץ 8948-23)",
+      "reason": "slot_role_consistent_with_body",
+      "run_id": "644baf40-7dcd-43e0-a50c-31be5371ba7e",
+      "source_id": "8696901e-eed1-44e0-a75f-aa481f64b593",
+      "role_changed": false,
+      "original_role": "persuasive_case_law",
+      "retrieval_slot": "persuasive_case_law",
+      "body_derived_role": "binding_case_law",
+      "can_satisfy_role_after": true,
+      "can_satisfy_role_before": true
+    },
+    {
+      "title": "מי קובע את עקרונות היסוד של השיטה המשפטית? פסקי-הדין בעניין ביטול עילת הסבירות ובעניין נבצרות ראש הממשלה (כרך נה)",
+      "reason": "slot_role_consistent_with_body",
+      "run_id": "644baf40-7dcd-43e0-a50c-31be5371ba7e",
+      "source_id": "cd61f442-9f77-4754-9628-7d59dafcf8d6",
+      "role_changed": false,
+      "original_role": "scholarship",
+      "retrieval_slot": "scholarship",
+      "body_derived_role": "journal_article",
+      "can_satisfy_role_after": true,
+      "can_satisfy_role_before": true
+    },
+    {
+      "title": "על חוקתיות ועל סבירות: בעקבות בג&quot;ץ 5636/01 בקמן נ' שר העבודה והרווחה",
+      "reason": "journal_or_research_document_found_via_persuasive_case_law_slot",
+      "run_id": "644baf40-7dcd-43e0-a50c-31be5371ba7e",
+      "source_id": "ea78cbc0-d915-4bbd-9f1a-caaf00549d5d",
+      "role_changed": true,
+      "original_role": "persuasive_case_law",
+      "retrieval_slot": "persuasive_case_law",
+      "body_derived_role": "journal_article",
+      "can_satisfy_role_after": true,
+      "can_satisfy_role_before": false
+    },
+    {
+      "title": "סמכות, עוצמה והפרדת רשויות - ביקורת שיפוטית בישראל בפרספקטיבה השוואתית",
+      "reason": "slot_role_consistent_with_body",
+      "run_id": "644baf40-7dcd-43e0-a50c-31be5371ba7e",
+      "source_id": "7042a41a-f34c-4041-83bc-12bab12b6e01",
+      "role_changed": false,
+      "original_role": "scholarship",
+      "retrieval_slot": "scholarship",
+      "body_derived_role": "book_or_chapter",
+      "can_satisfy_role_after": true,
+      "can_satisfy_role_before": true
+    },
+    {
+      "title": "ביהמ\"ש שלום חדרה, השופטת רקפת סגל מוהר: גז\"ד למבקש להתמודד בבחירות לכנסת ה-22, שהורשע על פי הודאתו בעבירה של ניסיון לקבלת דבר במרמה (ת\"פ 19633-04-20)",
+      "reason": "judgment_document_found_via_statute_slot",
+      "run_id": "644baf40-7dcd-43e0-a50c-31be5371ba7e",
+      "source_id": "b5f81bdb-0997-40c3-a11a-680a2466c571",
+      "role_changed": true,
+      "original_role": "primary_statute",
+      "retrieval_slot": "primary_statute",
+      "body_derived_role": "binding_case_law",
+      "can_satisfy_role_after": false,
+      "can_satisfy_role_before": false
+    },
+    {
+      "title": "סמכות בתי-המשפט שאינם בג\"ץ להחיל ביקורת שיפוטית על חוק שפוגע בזכויות האדם",
+      "reason": "journal_or_research_document_found_via_persuasive_case_law_slot",
+      "run_id": "644baf40-7dcd-43e0-a50c-31be5371ba7e",
+      "source_id": "7a5292a4-ee26-4659-84c2-66c77b847a70",
+      "role_changed": true,
+      "original_role": "persuasive_case_law",
+      "retrieval_slot": "persuasive_case_law",
+      "body_derived_role": "journal_article",
+      "can_satisfy_role_after": true,
+      "can_satisfy_role_before": false
+    },
+    {
+      "title": "הזכות לפרטיות בעבודה: עיון מחודש בפרשת איסקוב-ענבר ויישומה",
+      "reason": "body_evidence_too_weak_to_override_slot",
+      "run_id": "644baf40-7dcd-43e0-a50c-31be5371ba7e",
+      "source_id": "cc08fe23-8d75-4aad-831b-0c375c51485f",
+      "role_changed": false,
+      "original_role": "binding_case_law",
+      "retrieval_slot": "binding_case_law",
+      "body_derived_role": "unknown",
+      "can_satisfy_role_after": false,
+      "can_satisfy_role_before": false
+    },
+    {
+      "title": "תקנות איסור הלבנת הון (כללים לשימוש במידע שהועבר למשטרת ישראל ולשירות הביטחון הכללי לשם חקירת עבירות נוספות ולהעברתו לרשות אחרת)",
+      "reason": "body_evidence_too_weak_to_override_slot",
+      "run_id": "644baf40-7dcd-43e0-a50c-31be5371ba7e",
+      "source_id": "294705e8-2f2f-4635-a5bd-48da872179ea",
+      "role_changed": false,
+      "original_role": "scholarship",
+      "retrieval_slot": "scholarship",
+      "body_derived_role": "regulation_or_guideline",
+      "can_satisfy_role_after": false,
+      "can_satisfy_role_before": false
+    },
+    {
+      "title": "תקנות לביצוע אמנת האג (הפרוצדורה האזרחית)",
+      "reason": "body_evidence_too_weak_to_override_slot",
+      "run_id": "644baf40-7dcd-43e0-a50c-31be5371ba7e",
+      "source_id": "24baa8af-2cd5-4fdf-be1e-b0a01568820d",
+      "role_changed": false,
+      "original_role": "scholarship",
+      "retrieval_slot": "scholarship",
+      "body_derived_role": "regulation_or_guideline",
+      "can_satisfy_role_after": false,
+      "can_satisfy_role_before": false
+    },
+    {
+      "title": "תקנות הביטוח הלאומי (הכשרת רופא המוסמך לקבוע דרגת נכות)",
+      "reason": "body_evidence_too_weak_to_override_slot",
+      "run_id": "644baf40-7dcd-43e0-a50c-31be5371ba7e",
+      "source_id": "9eec2b93-222e-4316-8f3b-49525547842e",
+      "role_changed": false,
+      "original_role": "persuasive_case_law",
+      "retrieval_slot": "persuasive_case_law",
+      "body_derived_role": "journal_article",
+      "can_satisfy_role_after": false,
+      "can_satisfy_role_before": false
+    },
+    {
+      "title": "תקנות הסדרת העיסוק בייעוץ השקעות, בשיווק השקעות ובניהול תיקי השקעות (בקשה לרשיון, בחינות, התמחות ואגרות)",
+      "reason": "statute_document_found_via_case_law_slot",
+      "run_id": "644baf40-7dcd-43e0-a50c-31be5371ba7e",
+      "source_id": "97151801-9da9-43b0-87df-3dc17fbdce43",
+      "role_changed": true,
+      "original_role": "binding_case_law",
+      "retrieval_slot": "binding_case_law",
+      "body_derived_role": "primary_statute",
+      "can_satisfy_role_after": false,
+      "can_satisfy_role_before": false
+    },
+    {
+      "title": "תקנות הירושה (אגרות בתי הדין הדתיים)",
+      "reason": "body_evidence_too_weak_to_override_slot",
+      "run_id": "644baf40-7dcd-43e0-a50c-31be5371ba7e",
+      "source_id": "3bbcce72-4c6e-407d-be4f-d458faad2d5e",
+      "role_changed": false,
+      "original_role": "binding_case_law",
+      "retrieval_slot": "binding_case_law",
+      "body_derived_role": "regulation_or_guideline",
+      "can_satisfy_role_after": false,
+      "can_satisfy_role_before": false
+    },
+    {
+      "title": "מי מפקח על המפקחת? ואת מי היא משתפת? רשות ניירות-ערך הישראלית במבט השוואתי | אסף אקשטיין (כרך יט)",
+      "reason": "slot_role_consistent_with_body",
+      "run_id": "644baf40-7dcd-43e0-a50c-31be5371ba7e",
+      "source_id": "eb667c94-cc39-4fa6-8931-b3d9fc668958",
+      "role_changed": false,
+      "original_role": "scholarship",
+      "retrieval_slot": "scholarship",
+      "body_derived_role": "book_or_chapter",
+      "can_satisfy_role_after": true,
+      "can_satisfy_role_before": true
+    },
+    {
+      "title": "ביהמ\"ש המחוזי בתל אביב- יפו, אב\"ד ש' יונה אטדגי, ש' אריאל צימרמן, ש' טל לוי-מיכאלי: פסק דין אזרחי בעניין מתי תותר הרחבת בחזית, הבחנה בין שינוי חזית בטענות עובדתיות ובטענות משפטיות (ע\"א 19249-06-23)",
+      "reason": "body_evidence_too_weak_to_override_slot",
+      "run_id": "644baf40-7dcd-43e0-a50c-31be5371ba7e",
+      "source_id": "608db703-eff2-4fc0-a6a4-54f3b47e5d5e",
+      "role_changed": false,
+      "original_role": "persuasive_case_law",
+      "retrieval_slot": "persuasive_case_law",
+      "body_derived_role": "binding_case_law",
+      "can_satisfy_role_after": true,
+      "can_satisfy_role_before": true
+    },
+    {
+      "title": "ביהמ\"ש המחוזי בתל-אביב, השופט אילן דפדי: החלטה בשאלה האם לבית המשפט המחוזי נתונה הסמכות לדון בתביעה לביטול פסק דין של בית המשפט העליון שנתן תוקף להסכמת הצדדים (ת\"א 32539-04-24)",
+      "reason": "body_evidence_too_weak_to_override_slot",
+      "run_id": "644baf40-7dcd-43e0-a50c-31be5371ba7e",
+      "source_id": "1d70e19a-4108-4613-a987-b527c7c82436",
+      "role_changed": false,
+      "original_role": "persuasive_case_law",
+      "retrieval_slot": "persuasive_case_law",
+      "body_derived_role": "binding_case_law",
+      "can_satisfy_role_after": true,
+      "can_satisfy_role_before": true
+    },
+    {
+      "title": "בית משפט השלום ת\"א-יפו, השופט אביים ברקאי: פסק דין שעניינו מחלוקת בהגדרת משק לצורך חלוקות עתידיות כ\"נחלה מלאה\" אל מול \"נחלה חסרה\" (ת\"א 45983-03-22)",
+      "reason": "slot_role_consistent_with_body",
+      "run_id": "644baf40-7dcd-43e0-a50c-31be5371ba7e",
+      "source_id": "0847c6ea-f685-45f2-908e-bc505bd1fe7c",
+      "role_changed": false,
+      "original_role": "persuasive_case_law",
+      "retrieval_slot": "persuasive_case_law",
+      "body_derived_role": "binding_case_law",
+      "can_satisfy_role_after": true,
+      "can_satisfy_role_before": true
+    },
+    {
+      "title": "בית המשפט המחוזי ת\"א-יפו, השופט גלעד הס: פסק דין בערעור על החלטה בעניין סמכות בית המשפט בישראל לדון בבקשה לאישור הגשת תביעה ייצוגית כנגד חברת \"סנאפצ'ט\"  (ע\"ר 68900-06-25)",
+      "reason": "body_evidence_too_weak_to_override_slot",
+      "run_id": "644baf40-7dcd-43e0-a50c-31be5371ba7e",
+      "source_id": "110bb835-77f9-4c62-b1a7-eb833e2d26f7",
+      "role_changed": false,
+      "original_role": "persuasive_case_law",
+      "retrieval_slot": "persuasive_case_law",
+      "body_derived_role": "binding_case_law",
+      "can_satisfy_role_after": true,
+      "can_satisfy_role_before": true
+    },
+    {
+      "title": "ביהמ\"ש לענייני משפחה בתל אביב יפו, ש' ורד שביט פינקלשטיין: פסק דין בעניין תביעה כספית שהגישה אפוטרופ בשם התובעת כנגד אחייניתה להשבת כספים שנטלו שלא כדין טרם מינוי אפוטרופוס על התובעת (תמ\"ש 32657-09-20)",
+      "reason": "slot_role_consistent_with_body",
+      "run_id": "644baf40-7dcd-43e0-a50c-31be5371ba7e",
+      "source_id": "9b5f3611-9eb6-4d7a-b8c7-5d78ce0a7d8d",
+      "role_changed": false,
+      "original_role": "persuasive_case_law",
+      "retrieval_slot": "persuasive_case_law",
+      "body_derived_role": "binding_case_law",
+      "can_satisfy_role_after": true,
+      "can_satisfy_role_before": true
+    },
+    {
+      "title": "ירידת ההסתברות , עליית המידתיות צפויות של המהפכה החוקתית והשלכותיה ...",
+      "reason": "slot_role_consistent_with_body",
+      "run_id": "644baf40-7dcd-43e0-a50c-31be5371ba7e",
+      "source_id": "086a65d2-12db-4a47-a254-5e0d2ab56393",
+      "role_changed": false,
+      "original_role": "scholarship",
+      "retrieval_slot": "scholarship",
+      "body_derived_role": "journal_article",
+      "can_satisfy_role_after": true,
+      "can_satisfy_role_before": true
+    }
+  ],
+  "thresholds": [
+    {
+      "run_id": "644baf40-7dcd-43e0-a50c-31be5371ba7e",
+      "source_id": "nominated-source:N1",
+      "match_ratio": 0,
+      "matched_stems": [],
+      "question_stems": [
+        "עיל",
+        "הסביר",
+        "והביקור",
+        "עלי"
+      ],
+      "core_topic_match": false,
+      "final_topicality": "off_topic",
+      "negative_signals": [
+        "no_subject_vocabulary_in_body",
+        "no_core_topic_term_in_body"
+      ],
+      "new_required_matches": 3,
+      "old_required_matches": 4
+    },
+    {
+      "run_id": "644baf40-7dcd-43e0-a50c-31be5371ba7e",
+      "source_id": "1752e402-e801-468a-b7d7-a2ac4cb057d6",
+      "match_ratio": 0,
+      "matched_stems": [],
+      "question_stems": [
+        "עיל",
+        "הסביר",
+        "והביקור",
+        "עלי"
+      ],
+      "core_topic_match": false,
+      "final_topicality": "adjacent",
+      "negative_signals": [
+        "no_subject_vocabulary_in_body",
+        "no_core_topic_term_in_body"
+      ],
+      "new_required_matches": 3,
+      "old_required_matches": 4
+    },
+    {
+      "run_id": "644baf40-7dcd-43e0-a50c-31be5371ba7e",
+      "source_id": "a3823b4d-1d34-457c-b900-fc10f301ef09",
+      "match_ratio": 0.75,
+      "matched_stems": [
+        "עיל",
+        "הסביר",
+        "והביקור"
+      ],
+      "question_stems": [
+        "עיל",
+        "הסביר",
+        "והביקור",
+        "עלי"
+      ],
+      "core_topic_match": true,
+      "final_topicality": "direct",
+      "negative_signals": [],
+      "new_required_matches": 3,
+      "old_required_matches": 4
+    },
+    {
+      "run_id": "644baf40-7dcd-43e0-a50c-31be5371ba7e",
+      "source_id": "a23b3233-5e04-4caa-be7e-efbcffbb98a3",
+      "match_ratio": 1,
+      "matched_stems": [
+        "עיל",
+        "הסביר",
+        "והביקור",
+        "עלי"
+      ],
+      "question_stems": [
+        "עיל",
+        "הסביר",
+        "והביקור",
+        "עלי"
+      ],
+      "core_topic_match": true,
+      "final_topicality": "direct",
+      "negative_signals": [],
+      "new_required_matches": 3,
+      "old_required_matches": 4
+    },
+    {
+      "run_id": "644baf40-7dcd-43e0-a50c-31be5371ba7e",
+      "source_id": "cd61f442-9f77-4754-9628-7d59dafcf8d6",
+      "match_ratio": 0.75,
+      "matched_stems": [
+        "עיל",
+        "הסביר",
+        "והביקור"
+      ],
+      "question_stems": [
+        "עיל",
+        "הסביר",
+        "והביקור",
+        "עלי"
+      ],
+      "core_topic_match": true,
+      "final_topicality": "direct",
+      "negative_signals": [],
+      "new_required_matches": 3,
+      "old_required_matches": 4
+    },
+    {
+      "run_id": "644baf40-7dcd-43e0-a50c-31be5371ba7e",
+      "source_id": "ea78cbc0-d915-4bbd-9f1a-caaf00549d5d",
+      "match_ratio": 0.75,
+      "matched_stems": [
+        "עיל",
+        "הסביר",
+        "והביקור"
+      ],
+      "question_stems": [
+        "עיל",
+        "הסביר",
+        "והביקור",
+        "עלי"
+      ],
+      "core_topic_match": true,
+      "final_topicality": "direct",
+      "negative_signals": [],
+      "new_required_matches": 3,
+      "old_required_matches": 4
+    },
+    {
+      "run_id": "644baf40-7dcd-43e0-a50c-31be5371ba7e",
+      "source_id": "7042a41a-f34c-4041-83bc-12bab12b6e01",
+      "match_ratio": 1,
+      "matched_stems": [
+        "עיל",
+        "הסביר",
+        "והביקור",
+        "עלי"
+      ],
+      "question_stems": [
+        "עיל",
+        "הסביר",
+        "והביקור",
+        "עלי"
+      ],
+      "core_topic_match": true,
+      "final_topicality": "direct",
+      "negative_signals": [],
+      "new_required_matches": 3,
+      "old_required_matches": 4
+    },
+    {
+      "run_id": "644baf40-7dcd-43e0-a50c-31be5371ba7e",
+      "source_id": "7a5292a4-ee26-4659-84c2-66c77b847a70",
+      "match_ratio": 0.5,
+      "matched_stems": [
+        "עיל",
+        "והביקור"
+      ],
+      "question_stems": [
+        "עיל",
+        "הסביר",
+        "והביקור",
+        "עלי"
+      ],
+      "core_topic_match": true,
+      "final_topicality": "adjacent",
+      "negative_signals": [],
+      "new_required_matches": 3,
+      "old_required_matches": 4
+    },
+    {
+      "run_id": "644baf40-7dcd-43e0-a50c-31be5371ba7e",
+      "source_id": "eb667c94-cc39-4fa6-8931-b3d9fc668958",
+      "match_ratio": 0.25,
+      "matched_stems": [
+        "עלי"
+      ],
+      "question_stems": [
+        "עיל",
+        "הסביר",
+        "והביקור",
+        "עלי"
+      ],
+      "core_topic_match": false,
+      "final_topicality": "adjacent",
+      "negative_signals": [
+        "no_core_topic_term_in_body"
+      ],
+      "new_required_matches": 3,
+      "old_required_matches": 4
+    },
+    {
+      "run_id": "644baf40-7dcd-43e0-a50c-31be5371ba7e",
+      "source_id": "086a65d2-12db-4a47-a254-5e0d2ab56393",
+      "match_ratio": 1,
+      "matched_stems": [
+        "עיל",
+        "הסביר",
+        "והביקור",
+        "עלי"
+      ],
+      "question_stems": [
+        "עיל",
+        "הסביר",
+        "והביקור",
+        "עלי"
+      ],
+      "core_topic_match": true,
+      "final_topicality": "direct",
+      "negative_signals": [],
+      "new_required_matches": 3,
+      "old_required_matches": 4
+    }
+  ],
+  "pack": []
+}

@@ -21,7 +21,14 @@
  *   5. `checkNamedSynthesis` — post-draft honesty check (report only).
  */
 
-import { scoreLiteratureTopicality, subjectStems } from "./academicLiteratureRichness.ts";
+import {
+  coreTopicTerms,
+  requiredDirectMatches,
+  scoreLiteratureTopicality,
+  sharedSubjectTerms,
+  subjectTerms,
+} from "./academicLiteratureRichness.ts";
+
 
 export const LITERATURE_GATE_REPAIR_VERSION =
   "academic_literature_gate_repair_and_thin_pack_recovery_v1";
@@ -263,6 +270,19 @@ export function buildLiteratureGateTrace(input: GateTraceInput): LiteratureGateT
 
 export type BodyTopicality = "direct" | "adjacent" | "off_topic";
 
+export interface TopicalityThresholdDecision {
+  run_id: string | null;
+  source_id: string;
+  question_stems: string[];
+  matched_stems: string[];
+  old_required_matches: number;
+  new_required_matches: number;
+  match_ratio: number;
+  core_topic_match: boolean;
+  negative_signals: string[];
+  final_topicality: BodyTopicality;
+}
+
 export interface BodyTopicalityRow {
   run_id: string | null;
   source_id: string;
@@ -274,12 +294,19 @@ export interface BodyTopicalityRow {
   role_after_body: BodyTopicality;
   eligible_for_pack: boolean;
   ineligible_reason: string | null;
+  /** fix_topicality_and_role_labelling_v1 */
+  topicality_threshold_decision: TopicalityThresholdDecision;
 }
 
 /**
  * Re-score topical fit once the real body text exists. A body that never
  * discusses the question's subject is off-topic no matter how good the title
  * looked.
+ *
+ * fix_topicality_and_role_labelling_v1: the "4 matched stems" floor is now
+ * dynamic (see `requiredDirectMatches`) and additionally requires a core topic
+ * term match, so short prompts can reach `direct` without loosening the
+ * classifier for off-topic bodies.
  */
 export function classifyBodyTopicality(
   question: string,
@@ -298,11 +325,11 @@ export function classifyBodyTopicality(
     url: source.url ?? null,
   });
   const body = String(source.body ?? "").slice(0, 20_000);
-  const q = subjectStems(question);
-  const bodyStems = subjectStems(`${source.title ?? ""} ${body}`);
-  const matched: string[] = [];
-  for (const s of q) if (bodyStems.has(s)) matched.push(s);
-  const denom = Math.max(6, Math.min(q.size, 24));
+  const qTerms = subjectTerms(question);
+  const matched = sharedSubjectTerms(question, `${source.title ?? ""} ${body}`);
+  const core = new Set(coreTopicTerms(question));
+  const core_topic_match = matched.some((m) => core.has(m));
+  const denom = Math.max(6, Math.min(qTerms.length, 24));
   const post = body
     ? Number(Math.min(1, matched.length / denom).toFixed(2))
     : pre.score;
@@ -310,8 +337,15 @@ export function classifyBodyTopicality(
   const negatives: string[] = [];
   if (body && body.length < 800) negatives.push("body_too_short_to_assess");
   if (body && matched.length === 0) negatives.push("no_subject_vocabulary_in_body");
+  if (body && !core_topic_match) negatives.push("no_core_topic_term_in_body");
 
-  const role_after_body: BodyTopicality = matched.length >= 4 || (!body && pre.direct)
+  const required = requiredDirectMatches(qTerms.length, "body");
+  const match_ratio = qTerms.length > 0
+    ? Number((matched.length / qTerms.length).toFixed(2))
+    : 0;
+  const directByBody = body.length >= 800 && matched.length >= required && core_topic_match;
+
+  const role_after_body: BodyTopicality = directByBody || (!body && pre.direct)
     ? "direct"
     : matched.length >= 1 || pre.shared_count > 0
     ? "adjacent"
@@ -330,6 +364,19 @@ export function classifyBodyTopicality(
     ineligible_reason: role_after_body === "off_topic"
       ? "body_off_topic_for_question"
       : null,
+    topicality_threshold_decision: {
+      run_id: run_id ?? null,
+      source_id: source.candidate_id,
+      question_stems: qTerms.map((t) => t.key),
+      matched_stems: matched.slice(0, 12),
+      old_required_matches: 4,
+      new_required_matches: required,
+      match_ratio,
+      core_topic_match,
+      negative_signals: negatives,
+      final_topicality: role_after_body,
+    },
+
   };
 }
 

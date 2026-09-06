@@ -1,0 +1,282 @@
+{
+  "footnotes": [
+    {
+      "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "caselaw"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/article/12/1956",
+      "title": "מי קובע את עקרונות היסוד של השיטה המשפטית? פסקי-הדין בעניין ביטול עילת הסבירות ובעניין נבצרות ראש הממשלה (כרך נה)",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://lawjournal.huji.ac.il/article/12/1956",
+          "title": "מי קובע את עקרונות היסוד של השיטה המשפטית? פסקי-הדין בעניין ביטול עילת הסבירות ובעניין נבצרות ראש הממשלה (כרך נה)",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "journal_article"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/article/12/1937",
+      "title": "גלגולי מושג \"שלטון החוק\" בישראל: בין פורמליזם למהות, בין ריסון לפְּעִילָנוּת",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://lawjournal.huji.ac.il/article/12/1937",
+          "title": "גלגולי מושג \"שלטון החוק\" בישראל: בין פורמליזם למהות, בין ריסון לפְּעִילָנוּת",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "journal_article"
+    }
+  ],
+  "relabel": [
+    {
+      "title": "בג\"ץ 456/92 כהנא נ' ראש הממשלה",
+      "reason": "slot_role_consistent_with_body",
+      "run_id": "28731736-fee0-4a21-bead-9c4fca80c23d",
+      "source_id": "nominated-source:N3",
+      "role_changed": false,
+      "original_role": "binding_case_law",
+      "retrieval_slot": "binding_case_law",
+      "body_derived_role": "binding_case_law",
+      "can_satisfy_role_after": true,
+      "can_satisfy_role_before": true
+    },
+    {
+      "title": "חוק יסוד: כבוד האדם וחירותו",
+      "reason": "body_evidence_too_weak_to_override_slot",
+      "run_id": "28731736-fee0-4a21-bead-9c4fca80c23d",
+      "source_id": "nominated-source:N4",
+      "role_changed": false,
+      "original_role": "primary_statute",
+      "retrieval_slot": "primary_statute",
+      "body_derived_role": "regulation_or_guideline",
+      "can_satisfy_role_after": true,
+      "can_satisfy_role_before": true
+    },
+    {
+      "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+      "reason": "judgment_document_found_via_statute_slot",
+      "run_id": "28731736-fee0-4a21-bead-9c4fca80c23d",
+      "source_id": "3f7e919b-562f-47be-8342-68acfcf34319",
+      "role_changed": true,
+      "original_role": "primary_statute",
+      "retrieval_slot": "primary_statute",
+      "body_derived_role": "binding_case_law",
+      "can_satisfy_role_after": false,
+      "can_satisfy_role_before": false
+    },
+    {
+      "title": "גלגולי מושג \"שלטון החוק\" בישראל: בין פורמליזם למהות, בין ריסון לפְּעִילָנוּת",
+      "reason": "body_evidence_too_weak_to_override_slot",
+      "run_id": "28731736-fee0-4a21-bead-9c4fca80c23d",
+      "source_id": "0ba27fdc-1038-4807-bb33-da999b7d99e0",
+      "role_changed": false,
+      "original_role": "primary_statute",
+      "retrieval_slot": "primary_statute",
+      "body_derived_role": "journal_article",
+      "can_satisfy_role_after": false,
+      "can_satisfy_role_before": false
+    },
+    {
+      "title": "היסוד החוקתי של עילות הביקורת השיפוטית המינהליות (כרך נה)",
+      "reason": "judgment_document_found_via_statute_slot",
+      "run_id": "28731736-fee0-4a21-bead-9c4fca80c23d",
+      "source_id": "b301ea0e-9fbc-478d-becf-5e7f7c4cd4c0",
+      "role_changed": true,
+      "original_role": "primary_statute",
+      "retrieval_slot": "primary_statute",
+      "body_derived_role": "binding_case_law",
+      "can_satisfy_role_after": false,
+      "can_satisfy_role_before": false
+    },
+    {
+      "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
+      "reason": "journal_or_research_document_found_via_primary_statute_slot",
+      "run_id": "28731736-fee0-4a21-bead-9c4fca80c23d",
+      "source_id": "447ad3c5-47d8-4edd-9309-c3423dd3fd2c",
+      "role_changed": true,
+      "original_role": "primary_statute",
+      "retrieval_slot": "primary_statute",
+      "body_derived_role": "journal_article",
+      "can_satisfy_role_after": true,
+      "can_satisfy_role_before": false
+    },
+    {
+      "title": "מי קובע את עקרונות היסוד של השיטה המשפטית? פסקי-הדין בעניין ביטול עילת הסבירות ובעניין נבצרות ראש הממשלה (כרך נה)",
+      "reason": "journal_or_research_document_found_via_primary_statute_slot",
+      "run_id": "28731736-fee0-4a21-bead-9c4fca80c23d",
+      "source_id": "6c87d031-e612-45d5-8e16-1d83a0b388ad",
+      "role_changed": true,
+      "original_role": "primary_statute",
+      "retrieval_slot": "primary_statute",
+      "body_derived_role": "journal_article",
+      "can_satisfy_role_after": true,
+      "can_satisfy_role_before": false
+    },
+    {
+      "title": "זיהוי כעיבוד של מידע: התאמת החסמים השיפוטיים לגורמי הסיכון לטעויות של עדי ראייה | גל רוזנצוויג (כרך י\"ח)",
+      "reason": "body_evidence_too_weak_to_override_slot",
+      "run_id": "28731736-fee0-4a21-bead-9c4fca80c23d",
+      "source_id": "ceb3acda-0f95-487d-8ece-9e6589960139",
+      "role_changed": false,
+      "original_role": "binding_case_law",
+      "retrieval_slot": "binding_case_law",
+      "body_derived_role": "journal_article",
+      "can_satisfy_role_after": false,
+      "can_satisfy_role_before": false
+    },
+    {
+      "title": "רע\"א 1901/20 טרוים מילר בע\"מ נ׳ facebook lreland limited פס\"ד פסק דין (26.07.2022)",
+      "reason": "slot_role_consistent_with_body",
+      "run_id": "28731736-fee0-4a21-bead-9c4fca80c23d",
+      "source_id": "e32a8df7-8ed7-4c14-bf8e-621386f3641f",
+      "role_changed": false,
+      "original_role": "binding_case_law",
+      "retrieval_slot": "binding_case_law",
+      "body_derived_role": "binding_case_law",
+      "can_satisfy_role_after": true,
+      "can_satisfy_role_before": true
+    }
+  ],
+  "thresholds": [
+    {
+      "run_id": "28731736-fee0-4a21-bead-9c4fca80c23d",
+      "source_id": "nominated-source:N3",
+      "match_ratio": 1,
+      "matched_stems": [
+        "עיל",
+        "הסביר",
+        "והביקור",
+        "עלי"
+      ],
+      "question_stems": [
+        "עיל",
+        "הסביר",
+        "והביקור",
+        "עלי"
+      ],
+      "core_topic_match": true,
+      "final_topicality": "direct",
+      "negative_signals": [],
+      "new_required_matches": 3,
+      "old_required_matches": 4
+    },
+    {
+      "run_id": "28731736-fee0-4a21-bead-9c4fca80c23d",
+      "source_id": "nominated-source:N4",
+      "match_ratio": 0,
+      "matched_stems": [],
+      "question_stems": [
+        "עיל",
+        "הסביר",
+        "והביקור",
+        "עלי"
+      ],
+      "core_topic_match": false,
+      "final_topicality": "off_topic",
+      "negative_signals": [
+        "no_subject_vocabulary_in_body",
+        "no_core_topic_term_in_body"
+      ],
+      "new_required_matches": 3,
+      "old_required_matches": 4
+    },
+    {
+      "run_id": "28731736-fee0-4a21-bead-9c4fca80c23d",
+      "source_id": "0ba27fdc-1038-4807-bb33-da999b7d99e0",
+      "match_ratio": 0,
+      "matched_stems": [],
+      "question_stems": [
+        "עיל",
+        "הסביר",
+        "והביקור",
+        "עלי"
+      ],
+      "core_topic_match": false,
+      "final_topicality": "adjacent",
+      "negative_signals": [
+        "no_subject_vocabulary_in_body",
+        "no_core_topic_term_in_body"
+      ],
+      "new_required_matches": 3,
+      "old_required_matches": 4
+    },
+    {
+      "run_id": "28731736-fee0-4a21-bead-9c4fca80c23d",
+      "source_id": "b301ea0e-9fbc-478d-becf-5e7f7c4cd4c0",
+      "match_ratio": 0.75,
+      "matched_stems": [
+        "עיל",
+        "הסביר",
+        "והביקור"
+      ],
+      "question_stems": [
+        "עיל",
+        "הסביר",
+        "והביקור",
+        "עלי"
+      ],
+      "core_topic_match": true,
+      "final_topicality": "direct",
+      "negative_signals": [],
+      "new_required_matches": 3,
+      "old_required_matches": 4
+    },
+    {
+      "run_id": "28731736-fee0-4a21-bead-9c4fca80c23d",
+      "source_id": "447ad3c5-47d8-4edd-9309-c3423dd3fd2c",
+      "match_ratio": 1,
+      "matched_stems": [
+        "עיל",
+        "הסביר",
+        "והביקור",
+        "עלי"
+      ],
+      "question_stems": [
+        "עיל",
+        "הסביר",
+        "והביקור",
+        "עלי"
+      ],
+      "core_topic_match": true,
+      "final_topicality": "direct",
+      "negative_signals": [],
+      "new_required_matches": 3,
+      "old_required_matches": 4
+    },
+    {
+      "run_id": "28731736-fee0-4a21-bead-9c4fca80c23d",
+      "source_id": "6c87d031-e612-45d5-8e16-1d83a0b388ad",
+      "match_ratio": 0.75,
+      "matched_stems": [
+        "עיל",
+        "הסביר",
+        "והביקור"
+      ],
+      "question_stems": [
+        "עיל",
+        "הסביר",
+        "והביקור",
+        "עלי"
+      ],
+      "core_topic_match": true,
+      "final_topicality": "direct",
+      "negative_signals": [],
+      "new_required_matches": 3,
+      "old_required_matches": 4
+    }
+  ],
+  "pack": []
+}

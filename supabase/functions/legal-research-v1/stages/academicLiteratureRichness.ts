@@ -26,26 +26,92 @@ export type RichnessDecision =
   | "thin_due_to_pipeline_loss"
   | "unsafe_or_off_topic";
 
-const GENERIC_STEM_WORDS = new Set([
+import { termForms, termKey, tokenize } from "./hebrewTopicTerms.ts";
+
+const GENERIC_STEM_SOURCE = [
   "משפט", "משפטי", "משפטית", "המשפט", "המשפטי", "המשפטית", "בית", "בתי", "דין",
   "הדין", "חוק", "החוק", "חוקי", "פסק", "פסיקה", "הפסיקה", "ישראל", "הישראלי",
   "הישראלית", "סעיף", "כללי", "עבודה", "מאמר", "ספרות", "הספרות", "ספר", "מחקר",
   "סמינריון", "אקדמית", "אקדמי", "כתוב", "נסח", "פרק", "מבוא", "רקע", "תיאורטי",
   "טיוטה", "שאלת", "נושא", "הצגת", "פסקת", "טיעון", "מקורות", "מקור", "הערות",
   "שוליים", "בלבד", "התמקד", "כתיבה", "סקירה", "סקירת", "עברית",
-]);
+  // fix_topicality_and_role_labelling_v1 — request verbs / connectives carry no
+  // subject meaning and must not count as matched topic vocabulary.
+  "תעשה", "תכתוב", "תעזור", "תסביר", "לכתוב", "לעשות", "לבנות", "בבקשה", "אנא",
+  "לגבי", "בנוגע", "אודות", "היחס", "עבור", "כולל", "אפשר", "צריך",
+];
 
-/** Crude but deterministic Hebrew/Latin stem set for subject comparison. */
-export function subjectStems(text: string): Set<string> {
-  const out = new Set<string>();
-  for (const raw of String(text ?? "").split(/[^\u0590-\u05FFA-Za-z]+/)) {
-    const w = raw.trim();
-    if (w.length < 4) continue;
-    if (GENERIC_STEM_WORDS.has(w)) continue;
-    const s = w.replace(/^(ו|ה|ב|ל|מ|כ|ש)(?=[\u0590-\u05FF]{3,})/, "");
-    out.add(s.slice(0, 5).toLowerCase());
+/** Generic vocabulary, expanded morphologically so inflections are covered. */
+const GENERIC_FORMS = new Set(GENERIC_STEM_SOURCE.flatMap((w) => termForms(w)));
+
+export interface SubjectTerm {
+  word: string;
+  key: string;
+  forms: string[];
+}
+
+/** Distinct subject terms of a text, morphologically normalized. */
+export function subjectTerms(text: string): SubjectTerm[] {
+  const seen = new Set<string>();
+  const out: SubjectTerm[] = [];
+  for (const w of tokenize(text)) {
+    const forms = termForms(w);
+    if (forms.length === 0) continue;
+    if (forms.some((f) => GENERIC_FORMS.has(f))) continue;
+    // Dedupe morphological variants of the same term within one text.
+    if (forms.some((f) => seen.has(f))) continue;
+    for (const f of forms) seen.add(f);
+    out.push({ word: w, key: termKey(w), forms });
   }
   return out;
+}
+
+/**
+ * Back-compat haystack: every normalized form of every non-generic word.
+ * Membership tests against this set are morphology-tolerant.
+ */
+export function subjectStems(text: string): Set<string> {
+  const out = new Set<string>();
+  for (const t of subjectTerms(text)) for (const f of t.forms) out.add(f);
+  return out;
+}
+
+/** Question terms that carry the actual doctrine/topic (longest first). */
+export function coreTopicTerms(question: string): string[] {
+  return subjectTerms(question)
+    .slice()
+    .sort((a, b) => b.word.length - a.word.length)
+    .slice(0, 3)
+    .map((t) => t.key);
+}
+
+/** Question terms present in `text`, returned as canonical keys. */
+export function sharedSubjectTerms(question: string, text: string): string[] {
+  const hay = subjectStems(text);
+  const shared: string[] = [];
+  for (const t of subjectTerms(question)) {
+    if (t.forms.some((f) => hay.has(f))) shared.push(t.key);
+  }
+  return shared;
+}
+
+/**
+ * fix_topicality_and_role_labelling_v1 — dynamic direct threshold.
+ *
+ * A fixed "4 matching stems" makes direct classification mathematically
+ * impossible for a short natural prompt that only contains 2–3 meaningful
+ * legal terms. The requirement now scales with the question's own vocabulary
+ * and never drops below 2 matched terms.
+ */
+export function requiredDirectMatches(
+  questionTermCount: number,
+  mode: "metadata" | "body" = "metadata",
+): number {
+  const n = Math.max(1, questionTermCount);
+  if (n <= 2) return Math.min(n, 2);
+  const ratio = mode === "body" ? 0.6 : 0.5;
+  const cap = mode === "body" ? 4 : 3;
+  return Math.min(cap, Math.max(2, Math.ceil(n * ratio)));
 }
 
 export interface TopicalityResult {
@@ -55,6 +121,11 @@ export interface TopicalityResult {
   shared_count: number;
   shared: string[];
   direct: boolean;
+  /** fix_topicality_and_role_labelling_v1 telemetry. */
+  question_term_count: number;
+  required_matches: number;
+  match_ratio: number;
+  core_topic_match: boolean;
 }
 
 /**
@@ -66,21 +137,35 @@ export function scoreLiteratureTopicality(
   question: string,
   source: { title?: string | null; snippet?: string | null; url?: string | null },
 ): TopicalityResult {
-  const q = subjectStems(question);
-  const s = subjectStems(
-    `${source.title ?? ""} ${source.snippet ?? ""} ${decodeURIComponent(String(source.url ?? ""))}`,
+  let url = String(source.url ?? "");
+  try {
+    url = decodeURIComponent(url);
+  } catch { /* malformed escapes stay as-is */ }
+  const qTerms = subjectTerms(question);
+  const shared = sharedSubjectTerms(
+    question,
+    `${source.title ?? ""} ${source.snippet ?? ""} ${url}`,
   );
-  const shared: string[] = [];
-  for (const t of q) if (s.has(t)) shared.push(t);
-  const denom = Math.max(6, Math.min(q.size, 24));
+  const core = new Set(coreTopicTerms(question));
+  const core_topic_match = shared.some((s) => core.has(s));
+  const denom = Math.max(6, Math.min(qTerms.length, 24));
   const score = Number(Math.min(1, shared.length / denom).toFixed(2));
+  const required = requiredDirectMatches(qTerms.length, "metadata");
+  const match_ratio = qTerms.length > 0
+    ? Number((shared.length / qTerms.length).toFixed(2))
+    : 0;
   return {
     score,
     shared_count: shared.length,
     shared: shared.slice(0, 8),
-    direct: shared.length >= 3,
+    direct: shared.length >= required && core_topic_match,
+    question_term_count: qTerms.length,
+    required_matches: required,
+    match_ratio,
+    core_topic_match,
   };
 }
+
 
 /**
  * A literature-only request: the user asked for a scholarship review and
