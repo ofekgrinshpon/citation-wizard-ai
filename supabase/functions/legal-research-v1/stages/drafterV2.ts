@@ -1562,9 +1562,45 @@ export async function runDrafterV2(
       }
     }
   }
+  // natural_literature_mode_and_topic_guard_v1 — scholarship is the centre of
+  // gravity in a literature review. Primary law is NOT removed (it is valid
+  // doctrinal context); it is simply ordered after scholarship, and the prompt
+  // is told to keep it in a context role. Adjacent-only source bases must be
+  // declared as adjacent.
+  let literature_center_of_gravity_directives: string[] = [];
+  if (literatureOnlyRun) {
+    const kindOf = (s: typeof inputSources[number]) => {
+      const citable = String(s.citable_as ?? "");
+      if (citable === "judgment") return "case_law" as const;
+      if (citable === "statute") return "statute" as const;
+      const t = scoreLiteratureTopicality(question, {
+        title: s.title,
+        snippet: s.snippet,
+        url: s.url,
+      });
+      return t.direct
+        ? ("direct_scholarship" as const)
+        : t.shared_count > 0
+        ? ("adjacent_scholarship" as const)
+        : ("other" as const);
+    };
+    const kinds = new Map(inputSources.map((s) => [s.ref, kindOf(s)]));
+    const rank = (k: string) =>
+      k === "direct_scholarship" ? 0 : k === "adjacent_scholarship" ? 1 : k === "other" ? 2 : 3;
+    inputSources.sort((a, b) =>
+      rank(kinds.get(a.ref) ?? "other") - rank(kinds.get(b.ref) ?? "other")
+    );
+    const count = (k: string) => [...kinds.values()].filter((v) => v === k).length;
+    literature_center_of_gravity_directives = buildCenterOfGravityDirectives({
+      direct_scholarship_in_pack: count("direct_scholarship"),
+      adjacent_scholarship_in_pack: count("adjacent_scholarship"),
+      primary_in_pack: count("case_law") + count("statute"),
+    });
+  }
   // Research-richness sufficiency, evaluated BEFORE drafting.
   let academic_richness_sufficiency: RichnessAssessment | null = null;
-  if (academicWritingRun) {
+  if (academicWritingRun || literatureOnlyRun) {
+
     const scored = inputSources.map((s) => ({
       s,
       t: scoreLiteratureTopicality(question, {
