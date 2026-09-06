@@ -26,14 +26,15 @@ for (const r of RUNS) {
   // deno-lint-ignore no-explicit-any
   const md = (rows[0].metadata ?? {}) as Record<string, any>;
   const d = md.drafter ?? {};
+  const t = d.doctrinal_sufficiency_trace ?? {};
   out.push({
     ...r,
-    activation: md.natural_literature_mode_activation ?? null,
-    literature_mode: md.academic_literature_mode ?? null,
-    center_of_gravity: md.literature_source_center_of_gravity ?? null,
-    unused_pack: md.unused_literature_pack_sources ?? [],
-    facet_guard: md.facet_contamination_guard ?? [],
-    gate_trace: md.academic_literature_gate_trace ?? null,
+    activation: t.natural_literature_mode_activation ?? null,
+    literature_mode: t.academic_literature_mode ?? null,
+    center_of_gravity: t.literature_source_center_of_gravity ?? null,
+    unused_pack: t.unused_literature_pack_sources ?? [],
+    facet_guard: t.facet_contamination_guard ?? [],
+    gate_trace: t.academic_literature_gate_trace ?? null,
     pack_size: Array.isArray(d.input_sources) ? d.input_sources.length : null,
     pack: Array.isArray(d.input_sources)
       // deno-lint-ignore no-explicit-any
@@ -48,13 +49,13 @@ for (const r of RUNS) {
     footnotes_count: Array.isArray(rows[0].footnotes) ? rows[0].footnotes.length : 0,
   });
   writeFileSync(`${OUT}/${r.id}_answer.md`, String(rows[0].answer ?? ""));
-  const a = md.natural_literature_mode_activation;
+  const a = t.natural_literature_mode_activation;
   console.log(
-    `[${r.id}] lit_mode=${md.academic_literature_mode} after=${a?.academic_literature_mode_after} signals=${
+    `[${r.id}] lit_mode=${t.academic_literature_mode} after=${a?.academic_literature_mode_after} signals=${
       (a?.activation_signals ?? []).join("|")
     } pack=${Array.isArray(d.input_sources) ? d.input_sources.length : "?"} fn=${
       Array.isArray(rows[0].footnotes) ? rows[0].footnotes.length : 0
-    } guard_rejected=${(md.facet_contamination_guard ?? []).filter((g: { accepted: boolean }) => !g.accepted).length}`,
+    } guard_rejected=${(t.facet_contamination_guard ?? []).filter((g: { accepted: boolean }) => !g.accepted).length}`,
   );
 }
 writeFileSync(`${OUT}/telemetry.json`, JSON.stringify(out, null, 2));
