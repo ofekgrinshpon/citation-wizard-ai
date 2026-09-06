@@ -613,7 +613,17 @@ export interface SecondaryBodyAcquisitionInput {
    * outright (a trusted host is not a reason to fetch an unrelated paper).
    */
   literature_mode?: boolean;
+  /**
+   * academic_literature_gate_repair_and_thin_pack_recovery_v1 — candidate ids
+   * assessed as strong DIRECT legal scholarship for this question. They get a
+   * bounded acquisition attempt even when their declared type carries no
+   * doctrinal signal, so `discovery_only` is not a terminal state for real
+   * scholarship. Ordering still runs through the topicality priority; nothing
+   * downstream (integrity, verifier, CSM) is relaxed.
+   */
+  literature_direct_ids?: string[];
 }
+
 
 
 export async function runSecondaryBodyAcquisition(
