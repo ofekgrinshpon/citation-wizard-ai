@@ -3257,27 +3257,39 @@ async function handle(req: Request): Promise<Response> {
         ? buildLiteratureGateTrace({
           run_id,
           question,
-          assessments: literatureStrongDirect,
-          body_outcome: literatureBodyOutcome,
-          body_topicality: literatureBodyTopicality,
-          pack_refs: (drafter.input_sources ?? []).map((s) => String(s.ref ?? "")),
-          cited_refs: (footnotes ?? []).map((f) =>
-            String((f as { source_id?: string }).source_id ?? "")
+          candidates: literatureCandidateViews.filter((v) =>
+            literatureStrongDirectIds.has(v.candidate_id)
           ),
-          candidate_ref_by_id: new Map(
-            (drafter.input_sources ?? []).map((
-              s,
-            ) => [String((s as { candidate_id?: string }).candidate_id ?? s.ref), String(s.ref)]),
+          admission: new Map(
+            literatureCandidateViews.map((v) => [v.candidate_id, {
+              admitted: !definitivelyRejectedIds.has(v.candidate_id),
+              reason: definitivelyRejectedIds.has(v.candidate_id)
+                ? "rejected_by_integrity_or_admission_gate"
+                : "admitted_to_pool",
+              initial_class: v.source_type ?? undefined,
+            }])
+          ),
+          body: literatureBodyOutcome,
+          verifier_usable_ids: new Set(verifier.usable.map((u) => u.candidate_id)),
+          pack_ids: new Set(
+            (drafter.input_sources ?? []).map((s) =>
+              String((s as { candidate_id?: string }).candidate_id ?? s.ref)
+            ),
+          ),
+          post_body_topicality: new Map(
+            literatureBodyTopicality.map((r) => [r.source_id, r.post_body_topicality]),
           ),
         })
         : null,
       academic_literature_body_topicality: literatureBodyTopicality,
       academic_literature_thin_pack_recovery: thinPackRecoveryReport,
       academic_literature_named_synthesis: literatureModeRun
-        ? checkNamedSynthesis(
-          answerText,
-          (drafter.input_sources ?? []).map((s) => String(s.title ?? "")),
-        )
+        ? checkNamedSynthesis(drafter.answer_markdown ?? "", {
+          run_id,
+          named_sources: (drafter.input_sources ?? []).map((s) => String(s.title ?? "")),
+          footnote_count: drafter.footnotes?.length ?? 0,
+          limitation_required: (drafter.footnotes?.length ?? 0) <= 2,
+        })
         : null,
 
 
