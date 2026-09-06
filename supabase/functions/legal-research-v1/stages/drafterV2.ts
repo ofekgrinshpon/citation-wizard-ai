@@ -81,6 +81,7 @@ import {
   scoreLiteratureTopicality,
   selectLiteraturePack,
 } from "./academicLiteratureRichness.ts";
+import { buildCenterOfGravityDirectives } from "./naturalLiteratureMode.ts";
 
 import { applyBlockCeiling, type BlockTrimReport } from "./routerProfiles.ts";
 import {
@@ -1449,6 +1450,8 @@ export async function runDrafterV2(
      */
     blockCeiling?: number | null;
     dropUnsupportedBlocks?: boolean;
+    /** natural_literature_mode_and_topic_guard_v1 — literature-review run. */
+    literatureMode?: boolean;
     /** five_mode_source_depth_policy_v1 depth mode (doctrinal sufficiency fallback). */
     depthMode?: string | null;
     /** source_use_intent_planning_v1 — planned task / source-use contract. */
@@ -1518,7 +1521,11 @@ export async function runDrafterV2(
   // primary authority, never below a 3-source floor).
   let academic_pack_fit_dropped: Array<{ ref: string; title: string; score: number }> = [];
   const academicWritingRun = opts?.sourceUsePlan?.user_task_intent === "academic_writing";
-  const literatureOnlyRun = academicWritingRun && isLiteratureOnlyRequest(question);
+  // natural_literature_mode_and_topic_guard_v1 — natural Hebrew literature
+  // prompts activate the same machinery as the narrow lab phrasing.
+  const literatureOnlyRun = opts?.literatureMode === true ||
+    (academicWritingRun && isLiteratureOnlyRequest(question));
+
   // academic_literature_richness_without_fixed_source_count_v1 — dynamic pack
   // selection: relevance and role coverage decide membership, never a count.
   let academic_pack_selection: PackSelectionDecision[] = [];
@@ -1558,9 +1565,45 @@ export async function runDrafterV2(
       }
     }
   }
+  // natural_literature_mode_and_topic_guard_v1 — scholarship is the centre of
+  // gravity in a literature review. Primary law is NOT removed (it is valid
+  // doctrinal context); it is simply ordered after scholarship, and the prompt
+  // is told to keep it in a context role. Adjacent-only source bases must be
+  // declared as adjacent.
+  let literature_center_of_gravity_directives: string[] = [];
+  if (literatureOnlyRun) {
+    const kindOf = (s: typeof inputSources[number]) => {
+      const citable = String(s.citable_as ?? "");
+      if (citable === "judgment") return "case_law" as const;
+      if (citable === "statute") return "statute" as const;
+      const t = scoreLiteratureTopicality(question, {
+        title: s.title,
+        snippet: s.snippet,
+        url: s.url,
+      });
+      return t.direct
+        ? ("direct_scholarship" as const)
+        : t.shared_count > 0
+        ? ("adjacent_scholarship" as const)
+        : ("other" as const);
+    };
+    const kinds = new Map(inputSources.map((s) => [s.ref, kindOf(s)]));
+    const rank = (k: string) =>
+      k === "direct_scholarship" ? 0 : k === "adjacent_scholarship" ? 1 : k === "other" ? 2 : 3;
+    inputSources.sort((a, b) =>
+      rank(kinds.get(a.ref) ?? "other") - rank(kinds.get(b.ref) ?? "other")
+    );
+    const count = (k: string) => [...kinds.values()].filter((v) => v === k).length;
+    literature_center_of_gravity_directives = buildCenterOfGravityDirectives({
+      direct_scholarship_in_pack: count("direct_scholarship"),
+      adjacent_scholarship_in_pack: count("adjacent_scholarship"),
+      primary_in_pack: count("case_law") + count("statute"),
+    });
+  }
   // Research-richness sufficiency, evaluated BEFORE drafting.
   let academic_richness_sufficiency: RichnessAssessment | null = null;
-  if (academicWritingRun) {
+  if (academicWritingRun || literatureOnlyRun) {
+
     const scored = inputSources.map((s) => ({
       s,
       t: scoreLiteratureTopicality(question, {
@@ -2181,6 +2224,7 @@ export async function runDrafterV2(
           inputSources.slice(0, 8).map((s) => `${s.ref}: ${String(s.title ?? "")}`),
         )
         : []),
+      ...literature_center_of_gravity_directives,
       ...(academic_richness_sufficiency?.limitation_directive
         ? [academic_richness_sufficiency.limitation_directive]
         : []),

@@ -1,0 +1,1608 @@
+[
+  {
+    "id": "P1",
+    "run_id": "18db2b38-20b2-4d9c-adc6-ec270132c58e",
+    "activation": {
+      "run_id": "18db2b38-20b2-4d9c-adc6-ec270132c58e",
+      "original_query": "תעשה לי סקירת ספרות על עילת הסבירות",
+      "answer_strategy": "map_literature",
+      "user_task_intent": "literature_map",
+      "activation_signals": [
+        "seqirat_sifrut",
+        "intent_literature_map",
+        "strategy_map_literature"
+      ],
+      "case_law_allowed_as_context": true,
+      "statutes_allowed_as_context": true,
+      "academic_literature_mode_after": true,
+      "academic_literature_mode_before": false,
+      "explicit_exclusion_of_case_law_or_statutes": false
+    },
+    "literature_mode": true,
+    "center_of_gravity": {
+      "notes": "only_adjacent_scholarship_available",
+      "run_id": "18db2b38-20b2-4d9c-adc6-ec270132c58e",
+      "statute_sources_in_pack": 1,
+      "case_law_sources_in_pack": 1,
+      "final_cited_statute_sources": 0,
+      "scholarship_sources_in_pack": 4,
+      "final_cited_case_law_sources": 1,
+      "adjacent_source_used_as_direct": false,
+      "final_cited_scholarship_sources": 3,
+      "direct_scholarship_sources_in_pack": 0,
+      "primary_law_crowded_out_scholarship": false,
+      "adjacent_scholarship_sources_in_pack": 4
+    },
+    "unused_pack": [],
+    "facet_guard": [
+      {
+        "run_id": "18db2b38-20b2-4d9c-adc6-ec270132c58e",
+        "accepted": true,
+        "original_query": "תעשה לי סקירת ספרות על עילת הסבירות",
+        "proposed_facet": "ההוראה המחייבת בבסיס: מהי עילת הסבירות במשפט המנהלי — הגדרה דוקרינטלית, מטרתה",
+        "proposed_query": "מהי עילת הסבירות במשפט המנהלי — הגדרה דוקרינטלית, מטרתה  הוראת החוק מהי עילת הסבירות במשפט המנהלי — הגדרה דוקרינטלית, מטרתה סעיף חוק נוסח",
+        "normalized_query": "תעשה לי סקירת ספרות על עילת הסבירות מהי עילת הסבירות במשפט המנהלי — הגדרה דוקרינטלית, מטרתה ותיחומה הכללי התפתחות היסטורית של עילת הסבירות בישראל — שלבים מרכזיים בפסיקה והשפעות משפט משווה מבחנים ותתי־קטגוריות בתוך עילת הסבירות (למשל: סבירות קיצונית/Wednesbury, ביקורת איזון/פרופורציונליות, סבירות לשונית או מהותית) — איך בתי המשפט בוחנים ביקורת אקדמית ושיח עיוני על עילת הסבירות — טיעונים בעד ונגד, ח",
+        "rejection_reason": null,
+        "shared_key_terms": [
+          "עילת",
+          "הסבירות",
+          "סבירות",
+          "במשפט",
+          "המנהלי",
+          "נהלי",
+          "הגדרה",
+          "גדרה",
+          "דוקרינטלית",
+          "מטרתה"
+        ],
+        "unrelated_entities": [],
+        "topical_overlap_score": 0.92
+      },
+      {
+        "run_id": "18db2b38-20b2-4d9c-adc6-ec270132c58e",
+        "accepted": true,
+        "original_query": "תעשה לי סקירת ספרות על עילת הסבירות",
+        "proposed_facet": "הלכה מחייבת בסוגיה: מהי עילת הסבירות במשפט המנהלי — הגדרה דוקרינטלית, מטרתה",
+        "proposed_query": "מהי עילת הסבירות במשפט המנהלי — הגדרה דוקרינטלית, מטרתה  בית המשפט העליון הלכה מהי עילת הסבירות במשפט המנהלי — הגדרה דוקרינטלית, מטרתה פסק דין מנחה",
+        "normalized_query": "תעשה לי סקירת ספרות על עילת הסבירות מהי עילת הסבירות במשפט המנהלי — הגדרה דוקרינטלית, מטרתה ותיחומה הכללי התפתחות היסטורית של עילת הסבירות בישראל — שלבים מרכזיים בפסיקה והשפעות משפט משווה מבחנים ותתי־קטגוריות בתוך עילת הסבירות (למשל: סבירות קיצונית/Wednesbury, ביקורת איזון/פרופורציונליות, סבירות לשונית או מהותית) — איך בתי המשפט בוחנים ביקורת אקדמית ושיח עיוני על עילת הסבירות — טיעונים בעד ונגד, ח",
+        "rejection_reason": null,
+        "shared_key_terms": [
+          "עילת",
+          "הסבירות",
+          "סבירות",
+          "במשפט",
+          "המנהלי",
+          "נהלי",
+          "הגדרה",
+          "גדרה",
+          "דוקרינטלית",
+          "מטרתה"
+        ],
+        "unrelated_entities": [],
+        "topical_overlap_score": 0.92
+      },
+      {
+        "run_id": "18db2b38-20b2-4d9c-adc6-ec270132c58e",
+        "accepted": true,
+        "original_query": "תעשה לי סקירת ספרות על עילת הסבירות",
+        "proposed_facet": "יישום וסייגים: מהי עילת הסבירות במשפט המנהלי — הגדרה דוקרינטלית, מטרתה",
+        "proposed_query": "מהי עילת הסבירות במשפט המנהלי — הגדרה דוקרינטלית, מטרתה  חריגים וסייגים מהי עילת הסבירות במשפט המנהלי — הגדרה דוקרינטלית, מטרתה יישום בפסיקה",
+        "normalized_query": "תעשה לי סקירת ספרות על עילת הסבירות מהי עילת הסבירות במשפט המנהלי — הגדרה דוקרינטלית, מטרתה ותיחומה הכללי התפתחות היסטורית של עילת הסבירות בישראל — שלבים מרכזיים בפסיקה והשפעות משפט משווה מבחנים ותתי־קטגוריות בתוך עילת הסבירות (למשל: סבירות קיצונית/Wednesbury, ביקורת איזון/פרופורציונליות, סבירות לשונית או מהותית) — איך בתי המשפט בוחנים ביקורת אקדמית ושיח עיוני על עילת הסבירות — טיעונים בעד ונגד, ח",
+        "rejection_reason": null,
+        "shared_key_terms": [
+          "עילת",
+          "הסבירות",
+          "סבירות",
+          "במשפט",
+          "המנהלי",
+          "נהלי",
+          "הגדרה",
+          "גדרה",
+          "דוקרינטלית",
+          "מטרתה"
+        ],
+        "unrelated_entities": [],
+        "topical_overlap_score": 1
+      },
+      {
+        "run_id": "18db2b38-20b2-4d9c-adc6-ec270132c58e",
+        "accepted": true,
+        "original_query": "תעשה לי סקירת ספרות על עילת הסבירות",
+        "proposed_facet": "רקע עיוני: מהי עילת הסבירות במשפט המנהלי — הגדרה דוקרינטלית, מטרתה",
+        "proposed_query": "מהי עילת הסבירות במשפט המנהלי — הגדרה דוקרינטלית, מטרתה  מאמר אקדמי",
+        "normalized_query": "תעשה לי סקירת ספרות על עילת הסבירות מהי עילת הסבירות במשפט המנהלי — הגדרה דוקרינטלית, מטרתה ותיחומה הכללי התפתחות היסטורית של עילת הסבירות בישראל — שלבים מרכזיים בפסיקה והשפעות משפט משווה מבחנים ותתי־קטגוריות בתוך עילת הסבירות (למשל: סבירות קיצונית/Wednesbury, ביקורת איזון/פרופורציונליות, סבירות לשונית או מהותית) — איך בתי המשפט בוחנים ביקורת אקדמית ושיח עיוני על עילת הסבירות — טיעונים בעד ונגד, ח",
+        "rejection_reason": null,
+        "shared_key_terms": [
+          "עיוני",
+          "עילת",
+          "הסבירות",
+          "סבירות",
+          "במשפט",
+          "המנהלי",
+          "נהלי",
+          "הגדרה",
+          "גדרה",
+          "דוקרינטלית"
+        ],
+        "unrelated_entities": [],
+        "topical_overlap_score": 1
+      },
+      {
+        "run_id": "18db2b38-20b2-4d9c-adc6-ec270132c58e",
+        "accepted": true,
+        "original_query": "תעשה לי סקירת ספרות על עילת הסבירות",
+        "proposed_facet": "ההוראה המחייבת בבסיס: התפתחות היסטורית של עילת הסבירות בישראל — שלבים מרכזיים",
+        "proposed_query": "התפתחות היסטורית של עילת הסבירות בישראל — שלבים מרכזיים  הוראת החוק התפתחות היסטורית של עילת הסבירות בישראל — שלבים מרכזיים סעיף חוק נוסח",
+        "normalized_query": "תעשה לי סקירת ספרות על עילת הסבירות מהי עילת הסבירות במשפט המנהלי — הגדרה דוקרינטלית, מטרתה ותיחומה הכללי התפתחות היסטורית של עילת הסבירות בישראל — שלבים מרכזיים בפסיקה והשפעות משפט משווה מבחנים ותתי־קטגוריות בתוך עילת הסבירות (למשל: סבירות קיצונית/Wednesbury, ביקורת איזון/פרופורציונליות, סבירות לשונית או מהותית) — איך בתי המשפט בוחנים ביקורת אקדמית ושיח עיוני על עילת הסבירות — טיעונים בעד ונגד, ח",
+        "rejection_reason": null,
+        "shared_key_terms": [
+          "התפתחות",
+          "תפתחות",
+          "היסטורית",
+          "יסטורית",
+          "עילת",
+          "הסבירות",
+          "סבירות",
+          "בישראל",
+          "שלבים",
+          "מרכזיים"
+        ],
+        "unrelated_entities": [],
+        "topical_overlap_score": 0.92
+      },
+      {
+        "run_id": "18db2b38-20b2-4d9c-adc6-ec270132c58e",
+        "accepted": true,
+        "original_query": "תעשה לי סקירת ספרות על עילת הסבירות",
+        "proposed_facet": "הלכה מחייבת בסוגיה: התפתחות היסטורית של עילת הסבירות בישראל — שלבים מרכזיים",
+        "proposed_query": "התפתחות היסטורית של עילת הסבירות בישראל — שלבים מרכזיים  בית המשפט העליון הלכה התפתחות היסטורית של עילת הסבירות בישראל — שלבים מרכזיים פסק דין מנחה",
+        "normalized_query": "תעשה לי סקירת ספרות על עילת הסבירות מהי עילת הסבירות במשפט המנהלי — הגדרה דוקרינטלית, מטרתה ותיחומה הכללי התפתחות היסטורית של עילת הסבירות בישראל — שלבים מרכזיים בפסיקה והשפעות משפט משווה מבחנים ותתי־קטגוריות בתוך עילת הסבירות (למשל: סבירות קיצונית/Wednesbury, ביקורת איזון/פרופורציונליות, סבירות לשונית או מהותית) — איך בתי המשפט בוחנים ביקורת אקדמית ושיח עיוני על עילת הסבירות — טיעונים בעד ונגד, ח",
+        "rejection_reason": null,
+        "shared_key_terms": [
+          "התפתחות",
+          "תפתחות",
+          "היסטורית",
+          "יסטורית",
+          "עילת",
+          "הסבירות",
+          "סבירות",
+          "בישראל",
+          "שלבים",
+          "מרכזיים"
+        ],
+        "unrelated_entities": [],
+        "topical_overlap_score": 0.92
+      },
+      {
+        "run_id": "18db2b38-20b2-4d9c-adc6-ec270132c58e",
+        "accepted": true,
+        "original_query": "תעשה לי סקירת ספרות על עילת הסבירות",
+        "proposed_facet": "יישום וסייגים: התפתחות היסטורית של עילת הסבירות בישראל — שלבים מרכזיים",
+        "proposed_query": "התפתחות היסטורית של עילת הסבירות בישראל — שלבים מרכזיים  חריגים וסייגים התפתחות היסטורית של עילת הסבירות בישראל — שלבים מרכזיים יישום בפסיקה",
+        "normalized_query": "תעשה לי סקירת ספרות על עילת הסבירות מהי עילת הסבירות במשפט המנהלי — הגדרה דוקרינטלית, מטרתה ותיחומה הכללי התפתחות היסטורית של עילת הסבירות בישראל — שלבים מרכזיים בפסיקה והשפעות משפט משווה מבחנים ותתי־קטגוריות בתוך עילת הסבירות (למשל: סבירות קיצונית/Wednesbury, ביקורת איזון/פרופורציונליות, סבירות לשונית או מהותית) — איך בתי המשפט בוחנים ביקורת אקדמית ושיח עיוני על עילת הסבירות — טיעונים בעד ונגד, ח",
+        "rejection_reason": null,
+        "shared_key_terms": [
+          "התפתחות",
+          "תפתחות",
+          "היסטורית",
+          "יסטורית",
+          "עילת",
+          "הסבירות",
+          "סבירות",
+          "בישראל",
+          "שלבים",
+          "מרכזיים"
+        ],
+        "unrelated_entities": [],
+        "topical_overlap_score": 1
+      },
+      {
+        "run_id": "18db2b38-20b2-4d9c-adc6-ec270132c58e",
+        "accepted": true,
+        "original_query": "תעשה לי סקירת ספרות על עילת הסבירות",
+        "proposed_facet": "רקע עיוני: התפתחות היסטורית של עילת הסבירות בישראל — שלבים מרכזיים",
+        "proposed_query": "התפתחות היסטורית של עילת הסבירות בישראל — שלבים מרכזיים  מאמר אקדמי",
+        "normalized_query": "תעשה לי סקירת ספרות על עילת הסבירות מהי עילת הסבירות במשפט המנהלי — הגדרה דוקרינטלית, מטרתה ותיחומה הכללי התפתחות היסטורית של עילת הסבירות בישראל — שלבים מרכזיים בפסיקה והשפעות משפט משווה מבחנים ותתי־קטגוריות בתוך עילת הסבירות (למשל: סבירות קיצונית/Wednesbury, ביקורת איזון/פרופורציונליות, סבירות לשונית או מהותית) — איך בתי המשפט בוחנים ביקורת אקדמית ושיח עיוני על עילת הסבירות — טיעונים בעד ונגד, ח",
+        "rejection_reason": null,
+        "shared_key_terms": [
+          "עיוני",
+          "התפתחות",
+          "תפתחות",
+          "היסטורית",
+          "יסטורית",
+          "עילת",
+          "הסבירות",
+          "סבירות",
+          "בישראל",
+          "שלבים"
+        ],
+        "unrelated_entities": [],
+        "topical_overlap_score": 1
+      }
+    ],
+    "gate_trace": [],
+    "pack_size": null,
+    "pack": [],
+    "used_sources": [
+      {
+        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+        "number": 1,
+        "origin": "local_db",
+        "citable_as": "judgment",
+        "source_type": "caselaw",
+        "candidate_id": "25d02e37-fed7-4b67-a36f-dddb52fc1896",
+        "authority_tier": "primary_mirror",
+        "synthesis_role": "applying_candidate",
+        "text_usability": "full_text",
+        "integrity_flags": [
+          "judgment_document",
+          "judgment_tier_promoted",
+          "judgment_text_acquired",
+          "judgment_identity_confirmed_in_body",
+          "holding_text_present"
+        ],
+        "has_holding_text": true,
+        "is_judgment_document": true,
+        "can_satisfy_authority_role": false
+      },
+      {
+        "url": "https://law.haifa.ac.il/wp-content/uploads/2022/05/%D7%A0%D7%93%D7%91-%D7%93%D7%92%D7%9F-461.pdf",
+        "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
+        "number": 2,
+        "origin": "local_db",
+        "citable_as": "scholarship",
+        "source_type": "journal_article",
+        "candidate_id": "017a0459-f6a2-49c2-b483-bb8081f8254e",
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "full_text",
+        "integrity_flags": [
+          "secondary_body_acquired",
+          "body_acquired"
+        ],
+        "has_holding_text": false,
+        "is_judgment_document": false,
+        "can_satisfy_authority_role": true
+      },
+      {
+        "url": "https://lawjournal.huji.ac.il/article/12/1937",
+        "title": "גלגולי מושג \"שלטון החוק\" בישראל: בין פורמליזם למהות, בין ריסון לפְּעִילָנוּת",
+        "number": 3,
+        "origin": "local_db",
+        "citable_as": "scholarship",
+        "source_type": "journal_article",
+        "candidate_id": "8d73266f-bf49-4bdb-9ba3-0afa6b4809a3",
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "full_text",
+        "integrity_flags": [
+          "secondary_body_acquired",
+          "body_acquired"
+        ],
+        "has_holding_text": false,
+        "is_judgment_document": false,
+        "can_satisfy_authority_role": false
+      },
+      {
+        "url": "https://lawjournal.huji.ac.il/article/12/1954",
+        "title": "היסוד החוקתי של עילות הביקורת השיפוטית המינהליות (כרך נה)",
+        "number": 4,
+        "origin": "local_db",
+        "citable_as": "scholarship",
+        "source_type": "journal_article",
+        "candidate_id": "d8afbaf2-fc81-46de-aacb-145ea153ef46",
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "full_text",
+        "integrity_flags": [
+          "secondary_body_acquired",
+          "body_acquired"
+        ],
+        "has_holding_text": false,
+        "is_judgment_document": false,
+        "can_satisfy_authority_role": false
+      }
+    ],
+    "footnotes": [
+      {
+        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+        "number": 1,
+        "sources": [
+          {
+            "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+            "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+            "source_type": "caselaw"
+          }
+        ],
+        "source_type": "caselaw"
+      },
+      {
+        "url": "https://law.haifa.ac.il/wp-content/uploads/2022/05/%D7%A0%D7%93%D7%91-%D7%93%D7%92%D7%9F-461.pdf",
+        "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
+        "number": 2,
+        "sources": [
+          {
+            "url": "https://law.haifa.ac.il/wp-content/uploads/2022/05/%D7%A0%D7%93%D7%91-%D7%93%D7%92%D7%9F-461.pdf",
+            "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
+            "source_type": "journal_article"
+          }
+        ],
+        "source_type": "journal_article"
+      },
+      {
+        "url": "https://lawjournal.huji.ac.il/article/12/1937",
+        "title": "גלגולי מושג \"שלטון החוק\" בישראל: בין פורמליזם למהות, בין ריסון לפְּעִילָנוּת",
+        "number": 3,
+        "sources": [
+          {
+            "url": "https://lawjournal.huji.ac.il/article/12/1937",
+            "title": "גלגולי מושג \"שלטון החוק\" בישראל: בין פורמליזם למהות, בין ריסון לפְּעִילָנוּת",
+            "source_type": "journal_article"
+          }
+        ],
+        "source_type": "journal_article"
+      },
+      {
+        "url": "https://lawjournal.huji.ac.il/article/12/1954",
+        "title": "היסוד החוקתי של עילות הביקורת השיפוטית המינהליות (כרך נה)",
+        "number": 4,
+        "sources": [
+          {
+            "url": "https://lawjournal.huji.ac.il/article/12/1954",
+            "title": "היסוד החוקתי של עילות הביקורת השיפוטית המינהליות (כרך נה)",
+            "source_type": "journal_article"
+          }
+        ],
+        "source_type": "journal_article"
+      }
+    ],
+    "footnotes_count": 4
+  },
+  {
+    "id": "P2",
+    "run_id": "d91dd8bc-e59a-4697-bb83-b9ae3b936852",
+    "activation": {
+      "run_id": "d91dd8bc-e59a-4697-bb83-b9ae3b936852",
+      "original_query": "תכתוב לי סקירת ספרות לסמינריון על הבטחה מנהלית וציפייה לגיטימית",
+      "answer_strategy": "draft_academic_text",
+      "user_task_intent": "academic_writing",
+      "activation_signals": [
+        "seqirat_sifrut",
+        "seminar",
+        "academic_writing_with_literature_request"
+      ],
+      "case_law_allowed_as_context": true,
+      "statutes_allowed_as_context": true,
+      "academic_literature_mode_after": true,
+      "academic_literature_mode_before": true,
+      "explicit_exclusion_of_case_law_or_statutes": false
+    },
+    "literature_mode": true,
+    "center_of_gravity": {
+      "notes": "only_adjacent_scholarship_available",
+      "run_id": "d91dd8bc-e59a-4697-bb83-b9ae3b936852",
+      "statute_sources_in_pack": 2,
+      "case_law_sources_in_pack": 1,
+      "final_cited_statute_sources": 1,
+      "scholarship_sources_in_pack": 2,
+      "final_cited_case_law_sources": 0,
+      "adjacent_source_used_as_direct": false,
+      "final_cited_scholarship_sources": 1,
+      "direct_scholarship_sources_in_pack": 0,
+      "primary_law_crowded_out_scholarship": false,
+      "adjacent_scholarship_sources_in_pack": 2
+    },
+    "unused_pack": [],
+    "facet_guard": [
+      {
+        "run_id": "d91dd8bc-e59a-4697-bb83-b9ae3b936852",
+        "accepted": true,
+        "original_query": "תכתוב לי סקירת ספרות לסמינריון על הבטחה מנהלית וציפייה לגיטימית",
+        "proposed_facet": "ההוראה המחייבת בבסיס: מהם ההגדרות והתיחומים המשפטיים של 'הבטחה מנהלית' ושל 'ציפייה",
+        "proposed_query": "מהם ההגדרות והתיחומים המשפטיים של 'הבטחה מנהלית' ושל 'ציפייה  הוראת החוק מהם ההגדרות והתיחומים המשפטיים של 'הבטחה מנהלית' ושל 'ציפייה סעיף חוק נוסח",
+        "normalized_query": "תכתוב לי סקירת ספרות לסמינריון על הבטחה מנהלית וציפייה לגיטימית מהם ההגדרות והתיחומים המשפטיים של הבטחה מנהלית ושל ציפייה לגיטימית בישראל והאם מדובר בשתי דוקטרינות נבדלות או בביטויים של אותה דוקטרינה? מהם הקריטריונים/יסודות שאליהם בית המשפט מתייחס כדי להכיר בהבטחה מנהלית/ציפייה לגיטימית (למשל הבטחה ברורה, הסתמכות סבירה, נזק/אינטרס שכבר הופעל, זיקה לציבור או למדיניות ציבורית), ואיך נבחנת כל יסוד בפ",
+        "rejection_reason": null,
+        "shared_key_terms": [
+          "ההגדרות",
+          "גדרות",
+          "והתיחומים",
+          "תיחומים",
+          "המשפטיים",
+          "פטיים",
+          "הבטחה",
+          "מנהלית",
+          "נהלית",
+          "ציפייה"
+        ],
+        "unrelated_entities": [],
+        "topical_overlap_score": 0.83
+      },
+      {
+        "run_id": "d91dd8bc-e59a-4697-bb83-b9ae3b936852",
+        "accepted": true,
+        "original_query": "תכתוב לי סקירת ספרות לסמינריון על הבטחה מנהלית וציפייה לגיטימית",
+        "proposed_facet": "הלכה מחייבת בסוגיה: מהם ההגדרות והתיחומים המשפטיים של 'הבטחה מנהלית' ושל 'ציפייה",
+        "proposed_query": "מהם ההגדרות והתיחומים המשפטיים של 'הבטחה מנהלית' ושל 'ציפייה  בית המשפט העליון הלכה מהם ההגדרות והתיחומים המשפטיים של 'הבטחה מנהלית' ושל 'ציפייה פסק דין מנחה",
+        "normalized_query": "תכתוב לי סקירת ספרות לסמינריון על הבטחה מנהלית וציפייה לגיטימית מהם ההגדרות והתיחומים המשפטיים של הבטחה מנהלית ושל ציפייה לגיטימית בישראל והאם מדובר בשתי דוקטרינות נבדלות או בביטויים של אותה דוקטרינה? מהם הקריטריונים/יסודות שאליהם בית המשפט מתייחס כדי להכיר בהבטחה מנהלית/ציפייה לגיטימית (למשל הבטחה ברורה, הסתמכות סבירה, נזק/אינטרס שכבר הופעל, זיקה לציבור או למדיניות ציבורית), ואיך נבחנת כל יסוד בפ",
+        "rejection_reason": null,
+        "shared_key_terms": [
+          "ההגדרות",
+          "גדרות",
+          "והתיחומים",
+          "תיחומים",
+          "המשפטיים",
+          "פטיים",
+          "הבטחה",
+          "מנהלית",
+          "נהלית",
+          "ציפייה"
+        ],
+        "unrelated_entities": [],
+        "topical_overlap_score": 0.83
+      },
+      {
+        "run_id": "d91dd8bc-e59a-4697-bb83-b9ae3b936852",
+        "accepted": true,
+        "original_query": "תכתוב לי סקירת ספרות לסמינריון על הבטחה מנהלית וציפייה לגיטימית",
+        "proposed_facet": "יישום וסייגים: מהם ההגדרות והתיחומים המשפטיים של 'הבטחה מנהלית' ושל 'ציפייה",
+        "proposed_query": "מהם ההגדרות והתיחומים המשפטיים של 'הבטחה מנהלית' ושל 'ציפייה  חריגים וסייגים מהם ההגדרות והתיחומים המשפטיים של 'הבטחה מנהלית' ושל 'ציפייה יישום בפסיקה",
+        "normalized_query": "תכתוב לי סקירת ספרות לסמינריון על הבטחה מנהלית וציפייה לגיטימית מהם ההגדרות והתיחומים המשפטיים של הבטחה מנהלית ושל ציפייה לגיטימית בישראל והאם מדובר בשתי דוקטרינות נבדלות או בביטויים של אותה דוקטרינה? מהם הקריטריונים/יסודות שאליהם בית המשפט מתייחס כדי להכיר בהבטחה מנהלית/ציפייה לגיטימית (למשל הבטחה ברורה, הסתמכות סבירה, נזק/אינטרס שכבר הופעל, זיקה לציבור או למדיניות ציבורית), ואיך נבחנת כל יסוד בפ",
+        "rejection_reason": null,
+        "shared_key_terms": [
+          "ההגדרות",
+          "גדרות",
+          "והתיחומים",
+          "תיחומים",
+          "המשפטיים",
+          "פטיים",
+          "הבטחה",
+          "מנהלית",
+          "נהלית",
+          "ציפייה"
+        ],
+        "unrelated_entities": [],
+        "topical_overlap_score": 0.92
+      },
+      {
+        "run_id": "d91dd8bc-e59a-4697-bb83-b9ae3b936852",
+        "accepted": true,
+        "original_query": "תכתוב לי סקירת ספרות לסמינריון על הבטחה מנהלית וציפייה לגיטימית",
+        "proposed_facet": "רקע עיוני: מהם ההגדרות והתיחומים המשפטיים של 'הבטחה מנהלית' ושל 'ציפייה",
+        "proposed_query": "מהם ההגדרות והתיחומים המשפטיים של 'הבטחה מנהלית' ושל 'ציפייה  מאמר אקדמי",
+        "normalized_query": "תכתוב לי סקירת ספרות לסמינריון על הבטחה מנהלית וציפייה לגיטימית מהם ההגדרות והתיחומים המשפטיים של הבטחה מנהלית ושל ציפייה לגיטימית בישראל והאם מדובר בשתי דוקטרינות נבדלות או בביטויים של אותה דוקטרינה? מהם הקריטריונים/יסודות שאליהם בית המשפט מתייחס כדי להכיר בהבטחה מנהלית/ציפייה לגיטימית (למשל הבטחה ברורה, הסתמכות סבירה, נזק/אינטרס שכבר הופעל, זיקה לציבור או למדיניות ציבורית), ואיך נבחנת כל יסוד בפ",
+        "rejection_reason": null,
+        "shared_key_terms": [
+          "ההגדרות",
+          "גדרות",
+          "והתיחומים",
+          "תיחומים",
+          "המשפטיים",
+          "פטיים",
+          "הבטחה",
+          "מנהלית",
+          "נהלית",
+          "ציפייה"
+        ],
+        "unrelated_entities": [],
+        "topical_overlap_score": 0.91
+      },
+      {
+        "run_id": "d91dd8bc-e59a-4697-bb83-b9ae3b936852",
+        "accepted": true,
+        "original_query": "תכתוב לי סקירת ספרות לסמינריון על הבטחה מנהלית וציפייה לגיטימית",
+        "proposed_facet": "ההוראה המחייבת בבסיס: מהם הקריטריונים/יסודות שאליהם בית המשפט מתייחס כדי להכיר בהבטחה",
+        "proposed_query": "מהם הקריטריונים/יסודות שאליהם בית המשפט מתייחס כדי להכיר בהבטחה  הוראת החוק מהם הקריטריונים/יסודות שאליהם בית המשפט מתייחס כדי להכיר בהבטחה סעיף חוק נוסח",
+        "normalized_query": "תכתוב לי סקירת ספרות לסמינריון על הבטחה מנהלית וציפייה לגיטימית מהם ההגדרות והתיחומים המשפטיים של הבטחה מנהלית ושל ציפייה לגיטימית בישראל והאם מדובר בשתי דוקטרינות נבדלות או בביטויים של אותה דוקטרינה? מהם הקריטריונים/יסודות שאליהם בית המשפט מתייחס כדי להכיר בהבטחה מנהלית/ציפייה לגיטימית (למשל הבטחה ברורה, הסתמכות סבירה, נזק/אינטרס שכבר הופעל, זיקה לציבור או למדיניות ציבורית), ואיך נבחנת כל יסוד בפ",
+        "rejection_reason": null,
+        "shared_key_terms": [
+          "הקריטריונים",
+          "קריטריונים",
+          "יסודות",
+          "שאליהם",
+          "אליהם",
+          "מתייחס",
+          "תייחס",
+          "להכיר",
+          "בהבטחה"
+        ],
+        "unrelated_entities": [],
+        "topical_overlap_score": 0.75
+      },
+      {
+        "run_id": "d91dd8bc-e59a-4697-bb83-b9ae3b936852",
+        "accepted": true,
+        "original_query": "תכתוב לי סקירת ספרות לסמינריון על הבטחה מנהלית וציפייה לגיטימית",
+        "proposed_facet": "הלכה מחייבת בסוגיה: מהם הקריטריונים/יסודות שאליהם בית המשפט מתייחס כדי להכיר בהבטחה",
+        "proposed_query": "מהם הקריטריונים/יסודות שאליהם בית המשפט מתייחס כדי להכיר בהבטחה  בית המשפט העליון הלכה מהם הקריטריונים/יסודות שאליהם בית המשפט מתייחס כדי להכיר בהבטחה פסק דין מנחה",
+        "normalized_query": "תכתוב לי סקירת ספרות לסמינריון על הבטחה מנהלית וציפייה לגיטימית מהם ההגדרות והתיחומים המשפטיים של הבטחה מנהלית ושל ציפייה לגיטימית בישראל והאם מדובר בשתי דוקטרינות נבדלות או בביטויים של אותה דוקטרינה? מהם הקריטריונים/יסודות שאליהם בית המשפט מתייחס כדי להכיר בהבטחה מנהלית/ציפייה לגיטימית (למשל הבטחה ברורה, הסתמכות סבירה, נזק/אינטרס שכבר הופעל, זיקה לציבור או למדיניות ציבורית), ואיך נבחנת כל יסוד בפ",
+        "rejection_reason": null,
+        "shared_key_terms": [
+          "הקריטריונים",
+          "קריטריונים",
+          "יסודות",
+          "שאליהם",
+          "אליהם",
+          "מתייחס",
+          "תייחס",
+          "להכיר",
+          "בהבטחה"
+        ],
+        "unrelated_entities": [],
+        "topical_overlap_score": 0.75
+      },
+      {
+        "run_id": "d91dd8bc-e59a-4697-bb83-b9ae3b936852",
+        "accepted": true,
+        "original_query": "תכתוב לי סקירת ספרות לסמינריון על הבטחה מנהלית וציפייה לגיטימית",
+        "proposed_facet": "יישום וסייגים: מהם הקריטריונים/יסודות שאליהם בית המשפט מתייחס כדי להכיר בהבטחה",
+        "proposed_query": "מהם הקריטריונים/יסודות שאליהם בית המשפט מתייחס כדי להכיר בהבטחה  חריגים וסייגים מהם הקריטריונים/יסודות שאליהם בית המשפט מתייחס כדי להכיר בהבטחה יישום בפסיקה",
+        "normalized_query": "תכתוב לי סקירת ספרות לסמינריון על הבטחה מנהלית וציפייה לגיטימית מהם ההגדרות והתיחומים המשפטיים של הבטחה מנהלית ושל ציפייה לגיטימית בישראל והאם מדובר בשתי דוקטרינות נבדלות או בביטויים של אותה דוקטרינה? מהם הקריטריונים/יסודות שאליהם בית המשפט מתייחס כדי להכיר בהבטחה מנהלית/ציפייה לגיטימית (למשל הבטחה ברורה, הסתמכות סבירה, נזק/אינטרס שכבר הופעל, זיקה לציבור או למדיניות ציבורית), ואיך נבחנת כל יסוד בפ",
+        "rejection_reason": null,
+        "shared_key_terms": [
+          "הקריטריונים",
+          "קריטריונים",
+          "יסודות",
+          "שאליהם",
+          "אליהם",
+          "מתייחס",
+          "תייחס",
+          "להכיר",
+          "בהבטחה",
+          "בפסיקה"
+        ],
+        "unrelated_entities": [],
+        "topical_overlap_score": 0.91
+      },
+      {
+        "run_id": "d91dd8bc-e59a-4697-bb83-b9ae3b936852",
+        "accepted": true,
+        "original_query": "תכתוב לי סקירת ספרות לסמינריון על הבטחה מנהלית וציפייה לגיטימית",
+        "proposed_facet": "רקע עיוני: מהם הקריטריונים/יסודות שאליהם בית המשפט מתייחס כדי להכיר בהבטחה",
+        "proposed_query": "מהם הקריטריונים/יסודות שאליהם בית המשפט מתייחס כדי להכיר בהבטחה  מאמר אקדמי",
+        "normalized_query": "תכתוב לי סקירת ספרות לסמינריון על הבטחה מנהלית וציפייה לגיטימית מהם ההגדרות והתיחומים המשפטיים של הבטחה מנהלית ושל ציפייה לגיטימית בישראל והאם מדובר בשתי דוקטרינות נבדלות או בביטויים של אותה דוקטרינה? מהם הקריטריונים/יסודות שאליהם בית המשפט מתייחס כדי להכיר בהבטחה מנהלית/ציפייה לגיטימית (למשל הבטחה ברורה, הסתמכות סבירה, נזק/אינטרס שכבר הופעל, זיקה לציבור או למדיניות ציבורית), ואיך נבחנת כל יסוד בפ",
+        "rejection_reason": null,
+        "shared_key_terms": [
+          "הקריטריונים",
+          "קריטריונים",
+          "יסודות",
+          "שאליהם",
+          "אליהם",
+          "מתייחס",
+          "תייחס",
+          "להכיר",
+          "בהבטחה"
+        ],
+        "unrelated_entities": [],
+        "topical_overlap_score": 0.9
+      }
+    ],
+    "gate_trace": [],
+    "pack_size": null,
+    "pack": [],
+    "used_sources": [
+      {
+        "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7-%D7%99%D7%A1%D7%95%D7%93%3A_%D7%9B%D7%91%D7%95%D7%93_%D7%94%D7%90%D7%93%D7%9D_%D7%95%D7%97%D7%99%D7%A8%D7%95%D7%AA%D7%95",
+        "title": "חוק יסוד: כבוד האדם וחירותו",
+        "number": 1,
+        "origin": "perplexity",
+        "citable_as": "statute",
+        "source_type": "israeli_law",
+        "candidate_id": "nominated-source:N4",
+        "authority_tier": "statute_mirror",
+        "synthesis_role": "statutory_background",
+        "text_usability": "full_text",
+        "integrity_flags": [
+          "consolidated_statute_mirror",
+          "official_discovery_body_acquired",
+          "local_corpus_primary_anchor",
+          "statute_text_acquired",
+          "body_acquired"
+        ],
+        "has_holding_text": false,
+        "is_judgment_document": false,
+        "can_satisfy_authority_role": true
+      },
+      {
+        "url": "https://runilawreview.org/2019/03/28/vol22_braverman/",
+        "title": "\"כגודל הציפייה\": היקף הביקורת השיפוטית על שינוי מדיניות עקבית של רשויות המִנהל | יונתן ברוורמן (כרך כב)",
+        "number": 2,
+        "origin": "local_db",
+        "citable_as": "scholarship",
+        "source_type": "journal_article",
+        "candidate_id": "cefad2c7-d8e9-40a3-952d-31cb79d94e5b",
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "full_text",
+        "integrity_flags": [
+          "secondary_body_acquired",
+          "body_acquired"
+        ],
+        "has_holding_text": false,
+        "is_judgment_document": false,
+        "can_satisfy_authority_role": true
+      }
+    ],
+    "footnotes": [
+      {
+        "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7-%D7%99%D7%A1%D7%95%D7%93%3A_%D7%9B%D7%91%D7%95%D7%93_%D7%94%D7%90%D7%93%D7%9D_%D7%95%D7%97%D7%99%D7%A8%D7%95%D7%AA%D7%95",
+        "title": "חוק יסוד: כבוד האדם וחירותו",
+        "number": 1,
+        "sources": [
+          {
+            "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7-%D7%99%D7%A1%D7%95%D7%93%3A_%D7%9B%D7%91%D7%95%D7%93_%D7%94%D7%90%D7%93%D7%9D_%D7%95%D7%97%D7%99%D7%A8%D7%95%D7%AA%D7%95",
+            "title": "חוק יסוד: כבוד האדם וחירותו",
+            "source_type": "israeli_law"
+          }
+        ],
+        "source_type": "israeli_law"
+      },
+      {
+        "url": "https://runilawreview.org/2019/03/28/vol22_braverman/",
+        "title": "\"כגודל הציפייה\": היקף הביקורת השיפוטית על שינוי מדיניות עקבית של רשויות המִנהל | יונתן ברוורמן (כרך כב)",
+        "number": 2,
+        "sources": [
+          {
+            "url": "https://runilawreview.org/2019/03/28/vol22_braverman/",
+            "title": "\"כגודל הציפייה\": היקף הביקורת השיפוטית על שינוי מדיניות עקבית של רשויות המִנהל | יונתן ברוורמן (כרך כב)",
+            "source_type": "journal_article"
+          }
+        ],
+        "source_type": "journal_article"
+      }
+    ],
+    "footnotes_count": 2
+  },
+  {
+    "id": "P3",
+    "run_id": "9f84535a-8c89-44ea-871a-2413b79793d5",
+    "activation": {
+      "run_id": "9f84535a-8c89-44ea-871a-2413b79793d5",
+      "original_query": "תעשה לי סקירת ספרות על היחס בין מידתיות לסבירות במשפט הישראלי",
+      "answer_strategy": "map_literature",
+      "user_task_intent": "literature_map",
+      "activation_signals": [
+        "seqirat_sifrut",
+        "intent_literature_map",
+        "strategy_map_literature"
+      ],
+      "case_law_allowed_as_context": true,
+      "statutes_allowed_as_context": true,
+      "academic_literature_mode_after": true,
+      "academic_literature_mode_before": false,
+      "explicit_exclusion_of_case_law_or_statutes": false
+    },
+    "literature_mode": true,
+    "center_of_gravity": {
+      "notes": "no_scholarship_reached_pack",
+      "run_id": "9f84535a-8c89-44ea-871a-2413b79793d5",
+      "statute_sources_in_pack": 0,
+      "case_law_sources_in_pack": 3,
+      "final_cited_statute_sources": 0,
+      "scholarship_sources_in_pack": 0,
+      "final_cited_case_law_sources": 2,
+      "adjacent_source_used_as_direct": false,
+      "final_cited_scholarship_sources": 0,
+      "direct_scholarship_sources_in_pack": 0,
+      "primary_law_crowded_out_scholarship": false,
+      "adjacent_scholarship_sources_in_pack": 0
+    },
+    "unused_pack": [],
+    "facet_guard": [
+      {
+        "run_id": "9f84535a-8c89-44ea-871a-2413b79793d5",
+        "accepted": true,
+        "original_query": "תעשה לי סקירת ספרות על היחס בין מידתיות לסבירות במשפט הישראלי",
+        "proposed_facet": "עילת ההתערבות של בג\"ץ בבית דין דתי",
+        "proposed_query": "התערבות בג\"ץ בפסיקת בית הדין הרבני חריגה מסמכות ביקורת שיפוטית של בג\"ץ על בתי דין דתיים",
+        "normalized_query": "תעשה לי סקירת ספרות על היחס בין מידתיות לסבירות במשפט הישראלי מהי ההבחנה התיאורטית והעקבית בין דוקטרינת המידתיות (proportionality) לבין דוקטרינת הסבירות (reasonableness) במשפט הישראלי — מבחינת הגדרות, מרכיבים וכללי יישום? כיצד התפתח היחס בין מידתיות לסבירות בפסיקה הישראלית מבחינה היסטורית — נקודות מפנה, החלטות מפתח ושינויים בעמדת בית המשפט העליון? באילו הקשרים בתי המשפט בישראל מעדיפים להפעיל מבחן ",
+        "rejection_reason": null,
+        "shared_key_terms": [
+          "סמכות",
+          "יקורת",
+          "שיפוטית",
+          "יפוטית"
+        ],
+        "unrelated_entities": [],
+        "topical_overlap_score": 0.33
+      },
+      {
+        "run_id": "9f84535a-8c89-44ea-871a-2413b79793d5",
+        "accepted": false,
+        "original_query": "תעשה לי סקירת ספרות על היחס בין מידתיות לסבירות במשפט הישראלי",
+        "proposed_facet": "תחולת הדין האזרחי על בית הדין הרבני",
+        "proposed_query": "חוק שיפוט בתי דין רבניים נישואין וגירושין סמכות החלת הדין האזרחי בענייני ממון בבית הדין הרבני",
+        "normalized_query": "תעשה לי סקירת ספרות על היחס בין מידתיות לסבירות במשפט הישראלי מהי ההבחנה התיאורטית והעקבית בין דוקטרינת המידתיות (proportionality) לבין דוקטרינת הסבירות (reasonableness) במשפט הישראלי — מבחינת הגדרות, מרכיבים וכללי יישום? כיצד התפתח היחס בין מידתיות לסבירות בפסיקה הישראלית מבחינה היסטורית — נקודות מפנה, החלטות מפתח ושינויים בעמדת בית המשפט העליון? באילו הקשרים בתי המשפט בישראל מעדיפים להפעיל מבחן ",
+        "rejection_reason": "unrelated_central_entities:family_property",
+        "shared_key_terms": [
+          "סמכות"
+        ],
+        "unrelated_entities": [
+          "family_property"
+        ],
+        "topical_overlap_score": 0.08
+      },
+      {
+        "run_id": "9f84535a-8c89-44ea-871a-2413b79793d5",
+        "accepted": true,
+        "original_query": "תעשה לי סקירת ספרות על היחס בין מידתיות לסבירות במשפט הישראלי",
+        "proposed_facet": "שיקול זר וחריגה מסמכות",
+        "proposed_query": "שיקול זר בהחלטת בית דין רבני ביטול בבג\"ץ חריגה מסמכות בית דין דתי הלכה",
+        "normalized_query": "תעשה לי סקירת ספרות על היחס בין מידתיות לסבירות במשפט הישראלי מהי ההבחנה התיאורטית והעקבית בין דוקטרינת המידתיות (proportionality) לבין דוקטרינת הסבירות (reasonableness) במשפט הישראלי — מבחינת הגדרות, מרכיבים וכללי יישום? כיצד התפתח היחס בין מידתיות לסבירות בפסיקה הישראלית מבחינה היסטורית — נקודות מפנה, החלטות מפתח ושינויים בעמדת בית המשפט העליון? באילו הקשרים בתי המשפט בישראל מעדיפים להפעיל מבחן ",
+        "rejection_reason": null,
+        "shared_key_terms": [
+          "סמכות"
+        ],
+        "unrelated_entities": [],
+        "topical_overlap_score": 0.08
+      },
+      {
+        "run_id": "9f84535a-8c89-44ea-871a-2413b79793d5",
+        "accepted": false,
+        "original_query": "תעשה לי סקירת ספרות על היחס בין מידתיות לסבירות במשפט הישראלי",
+        "proposed_facet": "איזון משאבים וחלוקת רכוש",
+        "proposed_query": "חוק יחסי ממון בין בני זוג איזון משאבים הלכת השיתוף בנכסים חלוקת רכוש בין בני זוג",
+        "normalized_query": "תעשה לי סקירת ספרות על היחס בין מידתיות לסבירות במשפט הישראלי מהי ההבחנה התיאורטית והעקבית בין דוקטרינת המידתיות (proportionality) לבין דוקטרינת הסבירות (reasonableness) במשפט הישראלי — מבחינת הגדרות, מרכיבים וכללי יישום? כיצד התפתח היחס בין מידתיות לסבירות בפסיקה הישראלית מבחינה היסטורית — נקודות מפנה, החלטות מפתח ושינויים בעמדת בית המשפט העליון? באילו הקשרים בתי המשפט בישראל מעדיפים להפעיל מבחן ",
+        "rejection_reason": "unrelated_central_entities:family_property",
+        "shared_key_terms": [],
+        "unrelated_entities": [
+          "family_property"
+        ],
+        "topical_overlap_score": 0
+      }
+    ],
+    "gate_trace": [
+      {
+        "url": "https://law.haifa.ac.il/wp-content/uploads/2022/05/%D7%A0%D7%93%D7%91-%D7%93%D7%92%D7%9F-461.pdf",
+        "host": "law.haifa.ac.il",
+        "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
+        "run_id": "9f84535a-8c89-44ea-871a-2413b79793d5",
+        "admitted": true,
+        "source_id": "81a72342-dc15-42ab-8f2b-913c18e67378",
+        "found_stage": "local_db",
+        "body_acquired": true,
+        "initial_class": "journal_article",
+        "body_attempted": true,
+        "role_candidate": "primary_statute",
+        "detected_author": false,
+        "extracted_chars": 16000,
+        "verifier_usable": false,
+        "final_loss_stage": "verifier_usability",
+        "topicality_score": 0.5,
+        "final_loss_reason": "body_acquired_but_not_verifier_usable",
+        "selected_for_pack": false,
+        "post_body_topicality": 0.67,
+        "detected_publication_type": "journal_article",
+        "admission_reason_or_rejection": "admitted_to_pool",
+        "detected_journal_or_institution": null
+      }
+    ],
+    "pack_size": null,
+    "pack": [],
+    "used_sources": [
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/64/3&fileName=SD3_4_11437-05.pdf&type=2",
+        "title": "בג\"ץ 11437-05 - קו לעובד נ. משרד הפנים",
+        "number": 1,
+        "origin": "local_db",
+        "citable_as": "judgment",
+        "source_type": "supreme_court_il",
+        "candidate_id": "e1ec4308-d9f5-42d1-9095-0091c8026438",
+        "authority_tier": "official_primary",
+        "synthesis_role": "applying_candidate",
+        "text_usability": "full_text",
+        "integrity_flags": [
+          "judgment_label_rejected_no_identity",
+          "judgment_text_acquired",
+          "judgment_identity_confirmed_in_body"
+        ],
+        "has_holding_text": false,
+        "is_judgment_document": true,
+        "can_satisfy_authority_role": false
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+        "number": 2,
+        "origin": "local_db",
+        "citable_as": "judgment",
+        "source_type": "caselaw",
+        "candidate_id": "a4043cce-33f9-4be1-a82c-b8c15a99dbf9",
+        "authority_tier": "primary_mirror",
+        "synthesis_role": "applying_candidate",
+        "text_usability": "full_text",
+        "integrity_flags": [
+          "judgment_document",
+          "judgment_tier_promoted",
+          "judgment_text_acquired",
+          "judgment_identity_confirmed_in_body"
+        ],
+        "has_holding_text": false,
+        "is_judgment_document": true,
+        "can_satisfy_authority_role": false
+      }
+    ],
+    "footnotes": [
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/64/3&fileName=SD3_4_11437-05.pdf&type=2",
+        "title": "בג\"ץ 11437-05 - קו לעובד נ. משרד הפנים",
+        "number": 1,
+        "sources": [
+          {
+            "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/64/3&fileName=SD3_4_11437-05.pdf&type=2",
+            "title": "בג\"ץ 11437-05 - קו לעובד נ. משרד הפנים",
+            "source_type": "supreme_court_il"
+          }
+        ],
+        "source_type": "supreme_court_il"
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+        "number": 2,
+        "sources": [
+          {
+            "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+            "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+            "source_type": "caselaw"
+          }
+        ],
+        "source_type": "caselaw"
+      }
+    ],
+    "footnotes_count": 2
+  },
+  {
+    "id": "P4",
+    "run_id": "e24c9c15-d7af-438b-b3a3-2ae4cdf0f219",
+    "activation": {
+      "run_id": "e24c9c15-d7af-438b-b3a3-2ae4cdf0f219",
+      "original_query": "תכתוב לי רקע תיאורטי לסמינריון על עילת הסבירות והביקורת עליה",
+      "answer_strategy": "draft_academic_text",
+      "user_task_intent": "academic_writing",
+      "activation_signals": [
+        "reka_teoreti",
+        "seminar",
+        "academic_writing_with_literature_request"
+      ],
+      "case_law_allowed_as_context": true,
+      "statutes_allowed_as_context": true,
+      "academic_literature_mode_after": true,
+      "academic_literature_mode_before": false,
+      "explicit_exclusion_of_case_law_or_statutes": false
+    },
+    "literature_mode": true,
+    "center_of_gravity": {
+      "notes": "only_adjacent_scholarship_available",
+      "run_id": "e24c9c15-d7af-438b-b3a3-2ae4cdf0f219",
+      "statute_sources_in_pack": 0,
+      "case_law_sources_in_pack": 1,
+      "final_cited_statute_sources": 0,
+      "scholarship_sources_in_pack": 1,
+      "final_cited_case_law_sources": 1,
+      "adjacent_source_used_as_direct": false,
+      "final_cited_scholarship_sources": 1,
+      "direct_scholarship_sources_in_pack": 0,
+      "primary_law_crowded_out_scholarship": false,
+      "adjacent_scholarship_sources_in_pack": 1
+    },
+    "unused_pack": [],
+    "facet_guard": [
+      {
+        "run_id": "e24c9c15-d7af-438b-b3a3-2ae4cdf0f219",
+        "accepted": false,
+        "original_query": "תכתוב לי רקע תיאורטי לסמינריון על עילת הסבירות והביקורת עליה",
+        "proposed_facet": "עילת ההתערבות של בג\"ץ בבית דין דתי",
+        "proposed_query": "התערבות בג\"ץ בפסיקת בית הדין הרבני חריגה מסמכות ביקורת שיפוטית של בג\"ץ על בתי דין דתיים",
+        "normalized_query": "תכתוב לי רקע תיאורטי לסמינריון על עילת הסבירות והביקורת עליה מהי עילת הסבירות בביקורת שיפוטית: הגדרה היסטורית ודוקטרינלית, מקורותיה (מקרי Wednesbury באנגליה) ואופן ההטמעה והניסוח בפסיקה הישראלית מהם הקריטריונים והבדיקות שעומדים בבסיס הסמכות השיפוטית לבחון סבירות (מבחנים כמו חוסר סבירות קיצוני, מידת הבדיקה/intensity, יחסיות/רציונליות) וכיצד הם מיושמים בפסיקה הישראלית מהן הטענות התיאורטיות והנורמטיב",
+        "rejection_reason": "unrelated_central_entities:rabbinical_court",
+        "shared_key_terms": [
+          "עילת",
+          "סמכות",
+          "ביקורת",
+          "יקורת",
+          "שיפוטית",
+          "יפוטית"
+        ],
+        "unrelated_entities": [
+          "rabbinical_court"
+        ],
+        "topical_overlap_score": 0.5
+      },
+      {
+        "run_id": "e24c9c15-d7af-438b-b3a3-2ae4cdf0f219",
+        "accepted": false,
+        "original_query": "תכתוב לי רקע תיאורטי לסמינריון על עילת הסבירות והביקורת עליה",
+        "proposed_facet": "תחולת הדין האזרחי על בית הדין הרבני",
+        "proposed_query": "חוק שיפוט בתי דין רבניים נישואין וגירושין סמכות החלת הדין האזרחי בענייני ממון בבית הדין הרבני",
+        "normalized_query": "תכתוב לי רקע תיאורטי לסמינריון על עילת הסבירות והביקורת עליה מהי עילת הסבירות בביקורת שיפוטית: הגדרה היסטורית ודוקטרינלית, מקורותיה (מקרי Wednesbury באנגליה) ואופן ההטמעה והניסוח בפסיקה הישראלית מהם הקריטריונים והבדיקות שעומדים בבסיס הסמכות השיפוטית לבחון סבירות (מבחנים כמו חוסר סבירות קיצוני, מידת הבדיקה/intensity, יחסיות/רציונליות) וכיצד הם מיושמים בפסיקה הישראלית מהן הטענות התיאורטיות והנורמטיב",
+        "rejection_reason": "unrelated_central_entities:rabbinical_court,family_property",
+        "shared_key_terms": [
+          "סמכות"
+        ],
+        "unrelated_entities": [
+          "rabbinical_court",
+          "family_property"
+        ],
+        "topical_overlap_score": 0.08
+      },
+      {
+        "run_id": "e24c9c15-d7af-438b-b3a3-2ae4cdf0f219",
+        "accepted": false,
+        "original_query": "תכתוב לי רקע תיאורטי לסמינריון על עילת הסבירות והביקורת עליה",
+        "proposed_facet": "שיקול זר וחריגה מסמכות",
+        "proposed_query": "שיקול זר בהחלטת בית דין רבני ביטול בבג\"ץ חריגה מסמכות בית דין דתי הלכה",
+        "normalized_query": "תכתוב לי רקע תיאורטי לסמינריון על עילת הסבירות והביקורת עליה מהי עילת הסבירות בביקורת שיפוטית: הגדרה היסטורית ודוקטרינלית, מקורותיה (מקרי Wednesbury באנגליה) ואופן ההטמעה והניסוח בפסיקה הישראלית מהם הקריטריונים והבדיקות שעומדים בבסיס הסמכות השיפוטית לבחון סבירות (מבחנים כמו חוסר סבירות קיצוני, מידת הבדיקה/intensity, יחסיות/רציונליות) וכיצד הם מיושמים בפסיקה הישראלית מהן הטענות התיאורטיות והנורמטיב",
+        "rejection_reason": "unrelated_central_entities:rabbinical_court",
+        "shared_key_terms": [
+          "סמכות"
+        ],
+        "unrelated_entities": [
+          "rabbinical_court"
+        ],
+        "topical_overlap_score": 0.08
+      },
+      {
+        "run_id": "e24c9c15-d7af-438b-b3a3-2ae4cdf0f219",
+        "accepted": false,
+        "original_query": "תכתוב לי רקע תיאורטי לסמינריון על עילת הסבירות והביקורת עליה",
+        "proposed_facet": "איזון משאבים וחלוקת רכוש",
+        "proposed_query": "חוק יחסי ממון בין בני זוג איזון משאבים הלכת השיתוף בנכסים חלוקת רכוש בין בני זוג",
+        "normalized_query": "תכתוב לי רקע תיאורטי לסמינריון על עילת הסבירות והביקורת עליה מהי עילת הסבירות בביקורת שיפוטית: הגדרה היסטורית ודוקטרינלית, מקורותיה (מקרי Wednesbury באנגליה) ואופן ההטמעה והניסוח בפסיקה הישראלית מהם הקריטריונים והבדיקות שעומדים בבסיס הסמכות השיפוטית לבחון סבירות (מבחנים כמו חוסר סבירות קיצוני, מידת הבדיקה/intensity, יחסיות/רציונליות) וכיצד הם מיושמים בפסיקה הישראלית מהן הטענות התיאורטיות והנורמטיב",
+        "rejection_reason": "unrelated_central_entities:family_property",
+        "shared_key_terms": [],
+        "unrelated_entities": [
+          "family_property"
+        ],
+        "topical_overlap_score": 0
+      },
+      {
+        "run_id": "e24c9c15-d7af-438b-b3a3-2ae4cdf0f219",
+        "accepted": false,
+        "original_query": "תכתוב לי רקע תיאורטי לסמינריון על עילת הסבירות והביקורת עליה",
+        "proposed_facet": "עילת ההתערבות של בג\"ץ בבית דין דתי",
+        "proposed_query": "התערבות בג\"ץ בפסיקת בית הדין הרבני חריגה מסמכות ביקורת שיפוטית של בג\"ץ על בתי דין דתיים",
+        "normalized_query": "תכתוב לי רקע תיאורטי לסמינריון על עילת הסבירות והביקורת עליה מהי עילת הסבירות בביקורת שיפוטית: הגדרה היסטורית ודוקטרינלית, מקורותיה (מקרי Wednesbury באנגליה) ואופן ההטמעה והניסוח בפסיקה הישראלית מהם הקריטריונים והבדיקות שעומדים בבסיס הסמכות השיפוטית לבחון סבירות (מבחנים כמו חוסר סבירות קיצוני, מידת הבדיקה/intensity, יחסיות/רציונליות) וכיצד הם מיושמים בפסיקה הישראלית מהן הטענות התיאורטיות והנורמטיב",
+        "rejection_reason": "unrelated_central_entities:rabbinical_court",
+        "shared_key_terms": [
+          "עילת",
+          "סמכות",
+          "ביקורת",
+          "יקורת",
+          "שיפוטית",
+          "יפוטית"
+        ],
+        "unrelated_entities": [
+          "rabbinical_court"
+        ],
+        "topical_overlap_score": 0.5
+      },
+      {
+        "run_id": "e24c9c15-d7af-438b-b3a3-2ae4cdf0f219",
+        "accepted": false,
+        "original_query": "תכתוב לי רקע תיאורטי לסמינריון על עילת הסבירות והביקורת עליה",
+        "proposed_facet": "תחולת הדין האזרחי על בית הדין הרבני",
+        "proposed_query": "חוק שיפוט בתי דין רבניים נישואין וגירושין סמכות החלת הדין האזרחי בענייני ממון בבית הדין הרבני",
+        "normalized_query": "תכתוב לי רקע תיאורטי לסמינריון על עילת הסבירות והביקורת עליה מהי עילת הסבירות בביקורת שיפוטית: הגדרה היסטורית ודוקטרינלית, מקורותיה (מקרי Wednesbury באנגליה) ואופן ההטמעה והניסוח בפסיקה הישראלית מהם הקריטריונים והבדיקות שעומדים בבסיס הסמכות השיפוטית לבחון סבירות (מבחנים כמו חוסר סבירות קיצוני, מידת הבדיקה/intensity, יחסיות/רציונליות) וכיצד הם מיושמים בפסיקה הישראלית מהן הטענות התיאורטיות והנורמטיב",
+        "rejection_reason": "unrelated_central_entities:rabbinical_court,family_property",
+        "shared_key_terms": [
+          "סמכות"
+        ],
+        "unrelated_entities": [
+          "rabbinical_court",
+          "family_property"
+        ],
+        "topical_overlap_score": 0.08
+      },
+      {
+        "run_id": "e24c9c15-d7af-438b-b3a3-2ae4cdf0f219",
+        "accepted": false,
+        "original_query": "תכתוב לי רקע תיאורטי לסמינריון על עילת הסבירות והביקורת עליה",
+        "proposed_facet": "שיקול זר וחריגה מסמכות",
+        "proposed_query": "שיקול זר בהחלטת בית דין רבני ביטול בבג\"ץ חריגה מסמכות בית דין דתי הלכה",
+        "normalized_query": "תכתוב לי רקע תיאורטי לסמינריון על עילת הסבירות והביקורת עליה מהי עילת הסבירות בביקורת שיפוטית: הגדרה היסטורית ודוקטרינלית, מקורותיה (מקרי Wednesbury באנגליה) ואופן ההטמעה והניסוח בפסיקה הישראלית מהם הקריטריונים והבדיקות שעומדים בבסיס הסמכות השיפוטית לבחון סבירות (מבחנים כמו חוסר סבירות קיצוני, מידת הבדיקה/intensity, יחסיות/רציונליות) וכיצד הם מיושמים בפסיקה הישראלית מהן הטענות התיאורטיות והנורמטיב",
+        "rejection_reason": "unrelated_central_entities:rabbinical_court",
+        "shared_key_terms": [
+          "סמכות"
+        ],
+        "unrelated_entities": [
+          "rabbinical_court"
+        ],
+        "topical_overlap_score": 0.08
+      },
+      {
+        "run_id": "e24c9c15-d7af-438b-b3a3-2ae4cdf0f219",
+        "accepted": false,
+        "original_query": "תכתוב לי רקע תיאורטי לסמינריון על עילת הסבירות והביקורת עליה",
+        "proposed_facet": "איזון משאבים וחלוקת רכוש",
+        "proposed_query": "חוק יחסי ממון בין בני זוג איזון משאבים הלכת השיתוף בנכסים חלוקת רכוש בין בני זוג",
+        "normalized_query": "תכתוב לי רקע תיאורטי לסמינריון על עילת הסבירות והביקורת עליה מהי עילת הסבירות בביקורת שיפוטית: הגדרה היסטורית ודוקטרינלית, מקורותיה (מקרי Wednesbury באנגליה) ואופן ההטמעה והניסוח בפסיקה הישראלית מהם הקריטריונים והבדיקות שעומדים בבסיס הסמכות השיפוטית לבחון סבירות (מבחנים כמו חוסר סבירות קיצוני, מידת הבדיקה/intensity, יחסיות/רציונליות) וכיצד הם מיושמים בפסיקה הישראלית מהן הטענות התיאורטיות והנורמטיב",
+        "rejection_reason": "unrelated_central_entities:family_property",
+        "shared_key_terms": [],
+        "unrelated_entities": [
+          "family_property"
+        ],
+        "topical_overlap_score": 0
+      },
+      {
+        "run_id": "e24c9c15-d7af-438b-b3a3-2ae4cdf0f219",
+        "accepted": false,
+        "original_query": "תכתוב לי רקע תיאורטי לסמינריון על עילת הסבירות והביקורת עליה",
+        "proposed_facet": "עילת ההתערבות של בג\"ץ בבית דין דתי",
+        "proposed_query": "התערבות בג\"ץ בפסיקת בית הדין הרבני חריגה מסמכות ביקורת שיפוטית של בג\"ץ על בתי דין דתיים",
+        "normalized_query": "תכתוב לי רקע תיאורטי לסמינריון על עילת הסבירות והביקורת עליה מהי עילת הסבירות בביקורת שיפוטית: הגדרה היסטורית ודוקטרינלית, מקורותיה (מקרי Wednesbury באנגליה) ואופן ההטמעה והניסוח בפסיקה הישראלית מהם הקריטריונים והבדיקות שעומדים בבסיס הסמכות השיפוטית לבחון סבירות (מבחנים כמו חוסר סבירות קיצוני, מידת הבדיקה/intensity, יחסיות/רציונליות) וכיצד הם מיושמים בפסיקה הישראלית מהן הטענות התיאורטיות והנורמטיב",
+        "rejection_reason": "unrelated_central_entities:rabbinical_court",
+        "shared_key_terms": [
+          "עילת",
+          "סמכות",
+          "ביקורת",
+          "יקורת",
+          "שיפוטית",
+          "יפוטית"
+        ],
+        "unrelated_entities": [
+          "rabbinical_court"
+        ],
+        "topical_overlap_score": 0.5
+      },
+      {
+        "run_id": "e24c9c15-d7af-438b-b3a3-2ae4cdf0f219",
+        "accepted": false,
+        "original_query": "תכתוב לי רקע תיאורטי לסמינריון על עילת הסבירות והביקורת עליה",
+        "proposed_facet": "תחולת הדין האזרחי על בית הדין הרבני",
+        "proposed_query": "חוק שיפוט בתי דין רבניים נישואין וגירושין סמכות החלת הדין האזרחי בענייני ממון בבית הדין הרבני",
+        "normalized_query": "תכתוב לי רקע תיאורטי לסמינריון על עילת הסבירות והביקורת עליה מהי עילת הסבירות בביקורת שיפוטית: הגדרה היסטורית ודוקטרינלית, מקורותיה (מקרי Wednesbury באנגליה) ואופן ההטמעה והניסוח בפסיקה הישראלית מהם הקריטריונים והבדיקות שעומדים בבסיס הסמכות השיפוטית לבחון סבירות (מבחנים כמו חוסר סבירות קיצוני, מידת הבדיקה/intensity, יחסיות/רציונליות) וכיצד הם מיושמים בפסיקה הישראלית מהן הטענות התיאורטיות והנורמטיב",
+        "rejection_reason": "unrelated_central_entities:rabbinical_court,family_property",
+        "shared_key_terms": [
+          "סמכות"
+        ],
+        "unrelated_entities": [
+          "rabbinical_court",
+          "family_property"
+        ],
+        "topical_overlap_score": 0.08
+      },
+      {
+        "run_id": "e24c9c15-d7af-438b-b3a3-2ae4cdf0f219",
+        "accepted": false,
+        "original_query": "תכתוב לי רקע תיאורטי לסמינריון על עילת הסבירות והביקורת עליה",
+        "proposed_facet": "שיקול זר וחריגה מסמכות",
+        "proposed_query": "שיקול זר בהחלטת בית דין רבני ביטול בבג\"ץ חריגה מסמכות בית דין דתי הלכה",
+        "normalized_query": "תכתוב לי רקע תיאורטי לסמינריון על עילת הסבירות והביקורת עליה מהי עילת הסבירות בביקורת שיפוטית: הגדרה היסטורית ודוקטרינלית, מקורותיה (מקרי Wednesbury באנגליה) ואופן ההטמעה והניסוח בפסיקה הישראלית מהם הקריטריונים והבדיקות שעומדים בבסיס הסמכות השיפוטית לבחון סבירות (מבחנים כמו חוסר סבירות קיצוני, מידת הבדיקה/intensity, יחסיות/רציונליות) וכיצד הם מיושמים בפסיקה הישראלית מהן הטענות התיאורטיות והנורמטיב",
+        "rejection_reason": "unrelated_central_entities:rabbinical_court",
+        "shared_key_terms": [
+          "סמכות"
+        ],
+        "unrelated_entities": [
+          "rabbinical_court"
+        ],
+        "topical_overlap_score": 0.08
+      },
+      {
+        "run_id": "e24c9c15-d7af-438b-b3a3-2ae4cdf0f219",
+        "accepted": false,
+        "original_query": "תכתוב לי רקע תיאורטי לסמינריון על עילת הסבירות והביקורת עליה",
+        "proposed_facet": "איזון משאבים וחלוקת רכוש",
+        "proposed_query": "חוק יחסי ממון בין בני זוג איזון משאבים הלכת השיתוף בנכסים חלוקת רכוש בין בני זוג",
+        "normalized_query": "תכתוב לי רקע תיאורטי לסמינריון על עילת הסבירות והביקורת עליה מהי עילת הסבירות בביקורת שיפוטית: הגדרה היסטורית ודוקטרינלית, מקורותיה (מקרי Wednesbury באנגליה) ואופן ההטמעה והניסוח בפסיקה הישראלית מהם הקריטריונים והבדיקות שעומדים בבסיס הסמכות השיפוטית לבחון סבירות (מבחנים כמו חוסר סבירות קיצוני, מידת הבדיקה/intensity, יחסיות/רציונליות) וכיצד הם מיושמים בפסיקה הישראלית מהן הטענות התיאורטיות והנורמטיב",
+        "rejection_reason": "unrelated_central_entities:family_property",
+        "shared_key_terms": [],
+        "unrelated_entities": [
+          "family_property"
+        ],
+        "topical_overlap_score": 0
+      },
+      {
+        "run_id": "e24c9c15-d7af-438b-b3a3-2ae4cdf0f219",
+        "accepted": false,
+        "original_query": "תכתוב לי רקע תיאורטי לסמינריון על עילת הסבירות והביקורת עליה",
+        "proposed_facet": "עילת ההתערבות של בג\"ץ בבית דין דתי",
+        "proposed_query": "התערבות בג\"ץ בפסיקת בית הדין הרבני חריגה מסמכות ביקורת שיפוטית של בג\"ץ על בתי דין דתיים",
+        "normalized_query": "תכתוב לי רקע תיאורטי לסמינריון על עילת הסבירות והביקורת עליה מהי עילת הסבירות בביקורת שיפוטית: הגדרה היסטורית ודוקטרינלית, מקורותיה (מקרי Wednesbury באנגליה) ואופן ההטמעה והניסוח בפסיקה הישראלית מהם הקריטריונים והבדיקות שעומדים בבסיס הסמכות השיפוטית לבחון סבירות (מבחנים כמו חוסר סבירות קיצוני, מידת הבדיקה/intensity, יחסיות/רציונליות) וכיצד הם מיושמים בפסיקה הישראלית מהן הטענות התיאורטיות והנורמטיב",
+        "rejection_reason": "unrelated_central_entities:rabbinical_court",
+        "shared_key_terms": [
+          "עילת",
+          "סמכות",
+          "ביקורת",
+          "יקורת",
+          "שיפוטית",
+          "יפוטית"
+        ],
+        "unrelated_entities": [
+          "rabbinical_court"
+        ],
+        "topical_overlap_score": 0.5
+      },
+      {
+        "run_id": "e24c9c15-d7af-438b-b3a3-2ae4cdf0f219",
+        "accepted": false,
+        "original_query": "תכתוב לי רקע תיאורטי לסמינריון על עילת הסבירות והביקורת עליה",
+        "proposed_facet": "תחולת הדין האזרחי על בית הדין הרבני",
+        "proposed_query": "חוק שיפוט בתי דין רבניים נישואין וגירושין סמכות החלת הדין האזרחי בענייני ממון בבית הדין הרבני",
+        "normalized_query": "תכתוב לי רקע תיאורטי לסמינריון על עילת הסבירות והביקורת עליה מהי עילת הסבירות בביקורת שיפוטית: הגדרה היסטורית ודוקטרינלית, מקורותיה (מקרי Wednesbury באנגליה) ואופן ההטמעה והניסוח בפסיקה הישראלית מהם הקריטריונים והבדיקות שעומדים בבסיס הסמכות השיפוטית לבחון סבירות (מבחנים כמו חוסר סבירות קיצוני, מידת הבדיקה/intensity, יחסיות/רציונליות) וכיצד הם מיושמים בפסיקה הישראלית מהן הטענות התיאורטיות והנורמטיב",
+        "rejection_reason": "unrelated_central_entities:rabbinical_court,family_property",
+        "shared_key_terms": [
+          "סמכות"
+        ],
+        "unrelated_entities": [
+          "rabbinical_court",
+          "family_property"
+        ],
+        "topical_overlap_score": 0.08
+      },
+      {
+        "run_id": "e24c9c15-d7af-438b-b3a3-2ae4cdf0f219",
+        "accepted": false,
+        "original_query": "תכתוב לי רקע תיאורטי לסמינריון על עילת הסבירות והביקורת עליה",
+        "proposed_facet": "שיקול זר וחריגה מסמכות",
+        "proposed_query": "שיקול זר בהחלטת בית דין רבני ביטול בבג\"ץ חריגה מסמכות בית דין דתי הלכה",
+        "normalized_query": "תכתוב לי רקע תיאורטי לסמינריון על עילת הסבירות והביקורת עליה מהי עילת הסבירות בביקורת שיפוטית: הגדרה היסטורית ודוקטרינלית, מקורותיה (מקרי Wednesbury באנגליה) ואופן ההטמעה והניסוח בפסיקה הישראלית מהם הקריטריונים והבדיקות שעומדים בבסיס הסמכות השיפוטית לבחון סבירות (מבחנים כמו חוסר סבירות קיצוני, מידת הבדיקה/intensity, יחסיות/רציונליות) וכיצד הם מיושמים בפסיקה הישראלית מהן הטענות התיאורטיות והנורמטיב",
+        "rejection_reason": "unrelated_central_entities:rabbinical_court",
+        "shared_key_terms": [
+          "סמכות"
+        ],
+        "unrelated_entities": [
+          "rabbinical_court"
+        ],
+        "topical_overlap_score": 0.08
+      },
+      {
+        "run_id": "e24c9c15-d7af-438b-b3a3-2ae4cdf0f219",
+        "accepted": false,
+        "original_query": "תכתוב לי רקע תיאורטי לסמינריון על עילת הסבירות והביקורת עליה",
+        "proposed_facet": "איזון משאבים וחלוקת רכוש",
+        "proposed_query": "חוק יחסי ממון בין בני זוג איזון משאבים הלכת השיתוף בנכסים חלוקת רכוש בין בני זוג",
+        "normalized_query": "תכתוב לי רקע תיאורטי לסמינריון על עילת הסבירות והביקורת עליה מהי עילת הסבירות בביקורת שיפוטית: הגדרה היסטורית ודוקטרינלית, מקורותיה (מקרי Wednesbury באנגליה) ואופן ההטמעה והניסוח בפסיקה הישראלית מהם הקריטריונים והבדיקות שעומדים בבסיס הסמכות השיפוטית לבחון סבירות (מבחנים כמו חוסר סבירות קיצוני, מידת הבדיקה/intensity, יחסיות/רציונליות) וכיצד הם מיושמים בפסיקה הישראלית מהן הטענות התיאורטיות והנורמטיב",
+        "rejection_reason": "unrelated_central_entities:family_property",
+        "shared_key_terms": [],
+        "unrelated_entities": [
+          "family_property"
+        ],
+        "topical_overlap_score": 0
+      },
+      {
+        "run_id": "e24c9c15-d7af-438b-b3a3-2ae4cdf0f219",
+        "accepted": false,
+        "original_query": "תכתוב לי רקע תיאורטי לסמינריון על עילת הסבירות והביקורת עליה",
+        "proposed_facet": "עילת ההתערבות של בג\"ץ בבית דין דתי",
+        "proposed_query": "התערבות בג\"ץ בפסיקת בית הדין הרבני חריגה מסמכות ביקורת שיפוטית של בג\"ץ על בתי דין דתיים",
+        "normalized_query": "תכתוב לי רקע תיאורטי לסמינריון על עילת הסבירות והביקורת עליה מהי עילת הסבירות בביקורת שיפוטית: הגדרה היסטורית ודוקטרינלית, מקורותיה (מקרי Wednesbury באנגליה) ואופן ההטמעה והניסוח בפסיקה הישראלית מהם הקריטריונים והבדיקות שעומדים בבסיס הסמכות השיפוטית לבחון סבירות (מבחנים כמו חוסר סבירות קיצוני, מידת הבדיקה/intensity, יחסיות/רציונליות) וכיצד הם מיושמים בפסיקה הישראלית מהן הטענות התיאורטיות והנורמטיב",
+        "rejection_reason": "unrelated_central_entities:rabbinical_court",
+        "shared_key_terms": [
+          "עילת",
+          "סמכות",
+          "ביקורת",
+          "יקורת",
+          "שיפוטית",
+          "יפוטית"
+        ],
+        "unrelated_entities": [
+          "rabbinical_court"
+        ],
+        "topical_overlap_score": 0.5
+      },
+      {
+        "run_id": "e24c9c15-d7af-438b-b3a3-2ae4cdf0f219",
+        "accepted": false,
+        "original_query": "תכתוב לי רקע תיאורטי לסמינריון על עילת הסבירות והביקורת עליה",
+        "proposed_facet": "תחולת הדין האזרחי על בית הדין הרבני",
+        "proposed_query": "חוק שיפוט בתי דין רבניים נישואין וגירושין סמכות החלת הדין האזרחי בענייני ממון בבית הדין הרבני",
+        "normalized_query": "תכתוב לי רקע תיאורטי לסמינריון על עילת הסבירות והביקורת עליה מהי עילת הסבירות בביקורת שיפוטית: הגדרה היסטורית ודוקטרינלית, מקורותיה (מקרי Wednesbury באנגליה) ואופן ההטמעה והניסוח בפסיקה הישראלית מהם הקריטריונים והבדיקות שעומדים בבסיס הסמכות השיפוטית לבחון סבירות (מבחנים כמו חוסר סבירות קיצוני, מידת הבדיקה/intensity, יחסיות/רציונליות) וכיצד הם מיושמים בפסיקה הישראלית מהן הטענות התיאורטיות והנורמטיב",
+        "rejection_reason": "unrelated_central_entities:rabbinical_court,family_property",
+        "shared_key_terms": [
+          "סמכות"
+        ],
+        "unrelated_entities": [
+          "rabbinical_court",
+          "family_property"
+        ],
+        "topical_overlap_score": 0.08
+      },
+      {
+        "run_id": "e24c9c15-d7af-438b-b3a3-2ae4cdf0f219",
+        "accepted": false,
+        "original_query": "תכתוב לי רקע תיאורטי לסמינריון על עילת הסבירות והביקורת עליה",
+        "proposed_facet": "שיקול זר וחריגה מסמכות",
+        "proposed_query": "שיקול זר בהחלטת בית דין רבני ביטול בבג\"ץ חריגה מסמכות בית דין דתי הלכה",
+        "normalized_query": "תכתוב לי רקע תיאורטי לסמינריון על עילת הסבירות והביקורת עליה מהי עילת הסבירות בביקורת שיפוטית: הגדרה היסטורית ודוקטרינלית, מקורותיה (מקרי Wednesbury באנגליה) ואופן ההטמעה והניסוח בפסיקה הישראלית מהם הקריטריונים והבדיקות שעומדים בבסיס הסמכות השיפוטית לבחון סבירות (מבחנים כמו חוסר סבירות קיצוני, מידת הבדיקה/intensity, יחסיות/רציונליות) וכיצד הם מיושמים בפסיקה הישראלית מהן הטענות התיאורטיות והנורמטיב",
+        "rejection_reason": "unrelated_central_entities:rabbinical_court",
+        "shared_key_terms": [
+          "סמכות"
+        ],
+        "unrelated_entities": [
+          "rabbinical_court"
+        ],
+        "topical_overlap_score": 0.08
+      },
+      {
+        "run_id": "e24c9c15-d7af-438b-b3a3-2ae4cdf0f219",
+        "accepted": false,
+        "original_query": "תכתוב לי רקע תיאורטי לסמינריון על עילת הסבירות והביקורת עליה",
+        "proposed_facet": "איזון משאבים וחלוקת רכוש",
+        "proposed_query": "חוק יחסי ממון בין בני זוג איזון משאבים הלכת השיתוף בנכסים חלוקת רכוש בין בני זוג",
+        "normalized_query": "תכתוב לי רקע תיאורטי לסמינריון על עילת הסבירות והביקורת עליה מהי עילת הסבירות בביקורת שיפוטית: הגדרה היסטורית ודוקטרינלית, מקורותיה (מקרי Wednesbury באנגליה) ואופן ההטמעה והניסוח בפסיקה הישראלית מהם הקריטריונים והבדיקות שעומדים בבסיס הסמכות השיפוטית לבחון סבירות (מבחנים כמו חוסר סבירות קיצוני, מידת הבדיקה/intensity, יחסיות/רציונליות) וכיצד הם מיושמים בפסיקה הישראלית מהן הטענות התיאורטיות והנורמטיב",
+        "rejection_reason": "unrelated_central_entities:family_property",
+        "shared_key_terms": [],
+        "unrelated_entities": [
+          "family_property"
+        ],
+        "topical_overlap_score": 0
+      }
+    ],
+    "gate_trace": [],
+    "pack_size": null,
+    "pack": [],
+    "used_sources": [
+      {
+        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+        "number": 1,
+        "origin": "local_db",
+        "citable_as": "judgment",
+        "source_type": "caselaw",
+        "candidate_id": "935c47b1-1472-45ff-8da0-94c259fd7561",
+        "authority_tier": "primary_mirror",
+        "synthesis_role": "applying_candidate",
+        "text_usability": "full_text",
+        "integrity_flags": [
+          "judgment_document",
+          "judgment_tier_promoted",
+          "judgment_text_acquired",
+          "judgment_identity_confirmed_in_body",
+          "holding_text_present"
+        ],
+        "has_holding_text": true,
+        "is_judgment_document": true,
+        "can_satisfy_authority_role": false
+      },
+      {
+        "url": "https://lawjournal.huji.ac.il/article/12/1937",
+        "title": "גלגולי מושג \"שלטון החוק\" בישראל: בין פורמליזם למהות, בין ריסון לפְּעִילָנוּת",
+        "number": 2,
+        "origin": "local_db",
+        "citable_as": "scholarship",
+        "source_type": "journal_article",
+        "candidate_id": "6bd16f60-9f68-493b-b5f0-bb4965ac3a04",
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "full_text",
+        "integrity_flags": [
+          "secondary_body_acquired",
+          "body_acquired"
+        ],
+        "has_holding_text": false,
+        "is_judgment_document": false,
+        "can_satisfy_authority_role": true
+      }
+    ],
+    "footnotes": [
+      {
+        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+        "number": 1,
+        "sources": [
+          {
+            "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+            "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+            "source_type": "caselaw"
+          }
+        ],
+        "source_type": "caselaw"
+      },
+      {
+        "url": "https://lawjournal.huji.ac.il/article/12/1937",
+        "title": "גלגולי מושג \"שלטון החוק\" בישראל: בין פורמליזם למהות, בין ריסון לפְּעִילָנוּת",
+        "number": 2,
+        "sources": [
+          {
+            "url": "https://lawjournal.huji.ac.il/article/12/1937",
+            "title": "גלגולי מושג \"שלטון החוק\" בישראל: בין פורמליזם למהות, בין ריסון לפְּעִילָנוּת",
+            "source_type": "journal_article"
+          }
+        ],
+        "source_type": "journal_article"
+      }
+    ],
+    "footnotes_count": 2
+  },
+  {
+    "id": "P5",
+    "run_id": "0d1e48ed-a983-498d-8cf6-2ac25331f970",
+    "activation": {
+      "run_id": "0d1e48ed-a983-498d-8cf6-2ac25331f970",
+      "original_query": "תעזור לי לבנות פרק סקירת ספרות על הסתמכות מול רשות מנהלית",
+      "answer_strategy": "draft_academic_text",
+      "user_task_intent": "academic_writing",
+      "activation_signals": [
+        "seqirat_sifrut",
+        "perek_sifrut",
+        "academic_writing_with_literature_request"
+      ],
+      "case_law_allowed_as_context": true,
+      "statutes_allowed_as_context": true,
+      "academic_literature_mode_after": true,
+      "academic_literature_mode_before": true,
+      "explicit_exclusion_of_case_law_or_statutes": false
+    },
+    "literature_mode": true,
+    "center_of_gravity": {
+      "notes": "primary_law_cited_while_scholarship_available_in_pack",
+      "run_id": "0d1e48ed-a983-498d-8cf6-2ac25331f970",
+      "statute_sources_in_pack": 0,
+      "case_law_sources_in_pack": 5,
+      "final_cited_statute_sources": 0,
+      "scholarship_sources_in_pack": 2,
+      "final_cited_case_law_sources": 2,
+      "adjacent_source_used_as_direct": false,
+      "final_cited_scholarship_sources": 0,
+      "direct_scholarship_sources_in_pack": 0,
+      "primary_law_crowded_out_scholarship": true,
+      "adjacent_scholarship_sources_in_pack": 2
+    },
+    "unused_pack": [],
+    "facet_guard": [
+      {
+        "run_id": "0d1e48ed-a983-498d-8cf6-2ac25331f970",
+        "accepted": true,
+        "original_query": "תעזור לי לבנות פרק סקירת ספרות על הסתמכות מול רשות מנהלית",
+        "proposed_facet": "ההוראה המחייבת בבסיס: להגדיר ולהבדיל מושגים מרכזיים: מהי 'הסתמכות' בהקשר של יחסים",
+        "proposed_query": "להגדיר ולהבדיל מושגים מרכזיים: מהי 'הסתמכות' בהקשר של יחסים  הוראת החוק להגדיר ולהבדיל מושגים מרכזיים: מהי 'הסתמכות' בהקשר של יחסים סעיף חוק נוסח",
+        "normalized_query": "תעזור לי לבנות פרק סקירת ספרות על הסתמכות מול רשות מנהלית להגדיר ולהבדיל מושגים מרכזיים: מהי הסתמכות בהקשר של יחסים בין פרטים לרשות מנהלית, וכיצד היא מתממשת בדוקטרינות השונות (legitimate expectation, estoppel/השתק/representation-based estoppel וכו). לקבוע מהם ההשפעות המשפטיות המעשיות של הסתמכות מול רשות מנהלית: האם ובאיזה מקרים ההסתמכות מקנה זכויות נוכחיות נגד הרשות (הכרה בציפייה לגיטימית, estoppe",
+        "rejection_reason": null,
+        "shared_key_terms": [
+          "להגדיר",
+          "גדיר",
+          "ולהבדיל",
+          "מושגים",
+          "מרכזיים",
+          "רכזיים",
+          "הסתמכות",
+          "סתמכות",
+          "בהקשר",
+          "יחסים"
+        ],
+        "unrelated_entities": [],
+        "topical_overlap_score": 0.83
+      },
+      {
+        "run_id": "0d1e48ed-a983-498d-8cf6-2ac25331f970",
+        "accepted": true,
+        "original_query": "תעזור לי לבנות פרק סקירת ספרות על הסתמכות מול רשות מנהלית",
+        "proposed_facet": "הלכה מחייבת בסוגיה: להגדיר ולהבדיל מושגים מרכזיים: מהי 'הסתמכות' בהקשר של יחסים",
+        "proposed_query": "להגדיר ולהבדיל מושגים מרכזיים: מהי 'הסתמכות' בהקשר של יחסים  בית המשפט העליון הלכה להגדיר ולהבדיל מושגים מרכזיים: מהי 'הסתמכות' בהקשר של יחסים פסק דין מנחה",
+        "normalized_query": "תעזור לי לבנות פרק סקירת ספרות על הסתמכות מול רשות מנהלית להגדיר ולהבדיל מושגים מרכזיים: מהי הסתמכות בהקשר של יחסים בין פרטים לרשות מנהלית, וכיצד היא מתממשת בדוקטרינות השונות (legitimate expectation, estoppel/השתק/representation-based estoppel וכו). לקבוע מהם ההשפעות המשפטיות המעשיות של הסתמכות מול רשות מנהלית: האם ובאיזה מקרים ההסתמכות מקנה זכויות נוכחיות נגד הרשות (הכרה בציפייה לגיטימית, estoppe",
+        "rejection_reason": null,
+        "shared_key_terms": [
+          "להגדיר",
+          "גדיר",
+          "ולהבדיל",
+          "מושגים",
+          "מרכזיים",
+          "רכזיים",
+          "הסתמכות",
+          "סתמכות",
+          "בהקשר",
+          "יחסים"
+        ],
+        "unrelated_entities": [],
+        "topical_overlap_score": 0.83
+      },
+      {
+        "run_id": "0d1e48ed-a983-498d-8cf6-2ac25331f970",
+        "accepted": true,
+        "original_query": "תעזור לי לבנות פרק סקירת ספרות על הסתמכות מול רשות מנהלית",
+        "proposed_facet": "יישום וסייגים: להגדיר ולהבדיל מושגים מרכזיים: מהי 'הסתמכות' בהקשר של יחסים",
+        "proposed_query": "להגדיר ולהבדיל מושגים מרכזיים: מהי 'הסתמכות' בהקשר של יחסים  חריגים וסייגים להגדיר ולהבדיל מושגים מרכזיים: מהי 'הסתמכות' בהקשר של יחסים יישום בפסיקה",
+        "normalized_query": "תעזור לי לבנות פרק סקירת ספרות על הסתמכות מול רשות מנהלית להגדיר ולהבדיל מושגים מרכזיים: מהי הסתמכות בהקשר של יחסים בין פרטים לרשות מנהלית, וכיצד היא מתממשת בדוקטרינות השונות (legitimate expectation, estoppel/השתק/representation-based estoppel וכו). לקבוע מהם ההשפעות המשפטיות המעשיות של הסתמכות מול רשות מנהלית: האם ובאיזה מקרים ההסתמכות מקנה זכויות נוכחיות נגד הרשות (הכרה בציפייה לגיטימית, estoppe",
+        "rejection_reason": null,
+        "shared_key_terms": [
+          "להגדיר",
+          "גדיר",
+          "ולהבדיל",
+          "מושגים",
+          "מרכזיים",
+          "רכזיים",
+          "הסתמכות",
+          "סתמכות",
+          "בהקשר",
+          "יחסים"
+        ],
+        "unrelated_entities": [],
+        "topical_overlap_score": 0.83
+      },
+      {
+        "run_id": "0d1e48ed-a983-498d-8cf6-2ac25331f970",
+        "accepted": true,
+        "original_query": "תעזור לי לבנות פרק סקירת ספרות על הסתמכות מול רשות מנהלית",
+        "proposed_facet": "רקע עיוני: להגדיר ולהבדיל מושגים מרכזיים: מהי 'הסתמכות' בהקשר של יחסים",
+        "proposed_query": "להגדיר ולהבדיל מושגים מרכזיים: מהי 'הסתמכות' בהקשר של יחסים  מאמר אקדמי",
+        "normalized_query": "תעזור לי לבנות פרק סקירת ספרות על הסתמכות מול רשות מנהלית להגדיר ולהבדיל מושגים מרכזיים: מהי הסתמכות בהקשר של יחסים בין פרטים לרשות מנהלית, וכיצד היא מתממשת בדוקטרינות השונות (legitimate expectation, estoppel/השתק/representation-based estoppel וכו). לקבוע מהם ההשפעות המשפטיות המעשיות של הסתמכות מול רשות מנהלית: האם ובאיזה מקרים ההסתמכות מקנה זכויות נוכחיות נגד הרשות (הכרה בציפייה לגיטימית, estoppe",
+        "rejection_reason": null,
+        "shared_key_terms": [
+          "להגדיר",
+          "גדיר",
+          "ולהבדיל",
+          "מושגים",
+          "מרכזיים",
+          "רכזיים",
+          "הסתמכות",
+          "סתמכות",
+          "בהקשר",
+          "יחסים"
+        ],
+        "unrelated_entities": [],
+        "topical_overlap_score": 0.91
+      },
+      {
+        "run_id": "0d1e48ed-a983-498d-8cf6-2ac25331f970",
+        "accepted": true,
+        "original_query": "תעזור לי לבנות פרק סקירת ספרות על הסתמכות מול רשות מנהלית",
+        "proposed_facet": "ההוראה המחייבת בבסיס: לקבוע מהם ההשפעות המשפטיות המעשיות של הסתמכות מול רשות",
+        "proposed_query": "לקבוע מהם ההשפעות המשפטיות המעשיות של הסתמכות מול רשות  הוראת החוק לקבוע מהם ההשפעות המשפטיות המעשיות של הסתמכות מול רשות סעיף חוק נוסח",
+        "normalized_query": "תעזור לי לבנות פרק סקירת ספרות על הסתמכות מול רשות מנהלית להגדיר ולהבדיל מושגים מרכזיים: מהי הסתמכות בהקשר של יחסים בין פרטים לרשות מנהלית, וכיצד היא מתממשת בדוקטרינות השונות (legitimate expectation, estoppel/השתק/representation-based estoppel וכו). לקבוע מהם ההשפעות המשפטיות המעשיות של הסתמכות מול רשות מנהלית: האם ובאיזה מקרים ההסתמכות מקנה זכויות נוכחיות נגד הרשות (הכרה בציפייה לגיטימית, estoppe",
+        "rejection_reason": null,
+        "shared_key_terms": [
+          "לקבוע",
+          "קבוע",
+          "ההשפעות",
+          "פעות",
+          "המשפטיות",
+          "פטיות",
+          "המעשיות",
+          "עשיות",
+          "הסתמכות",
+          "סתמכות"
+        ],
+        "unrelated_entities": [],
+        "topical_overlap_score": 0.92
+      },
+      {
+        "run_id": "0d1e48ed-a983-498d-8cf6-2ac25331f970",
+        "accepted": true,
+        "original_query": "תעזור לי לבנות פרק סקירת ספרות על הסתמכות מול רשות מנהלית",
+        "proposed_facet": "הלכה מחייבת בסוגיה: לקבוע מהם ההשפעות המשפטיות המעשיות של הסתמכות מול רשות",
+        "proposed_query": "לקבוע מהם ההשפעות המשפטיות המעשיות של הסתמכות מול רשות  בית המשפט העליון הלכה לקבוע מהם ההשפעות המשפטיות המעשיות של הסתמכות מול רשות פסק דין מנחה",
+        "normalized_query": "תעזור לי לבנות פרק סקירת ספרות על הסתמכות מול רשות מנהלית להגדיר ולהבדיל מושגים מרכזיים: מהי הסתמכות בהקשר של יחסים בין פרטים לרשות מנהלית, וכיצד היא מתממשת בדוקטרינות השונות (legitimate expectation, estoppel/השתק/representation-based estoppel וכו). לקבוע מהם ההשפעות המשפטיות המעשיות של הסתמכות מול רשות מנהלית: האם ובאיזה מקרים ההסתמכות מקנה זכויות נוכחיות נגד הרשות (הכרה בציפייה לגיטימית, estoppe",
+        "rejection_reason": null,
+        "shared_key_terms": [
+          "לקבוע",
+          "קבוע",
+          "ההשפעות",
+          "פעות",
+          "המשפטיות",
+          "פטיות",
+          "המעשיות",
+          "עשיות",
+          "הסתמכות",
+          "סתמכות"
+        ],
+        "unrelated_entities": [],
+        "topical_overlap_score": 0.92
+      },
+      {
+        "run_id": "0d1e48ed-a983-498d-8cf6-2ac25331f970",
+        "accepted": true,
+        "original_query": "תעזור לי לבנות פרק סקירת ספרות על הסתמכות מול רשות מנהלית",
+        "proposed_facet": "יישום וסייגים: לקבוע מהם ההשפעות המשפטיות המעשיות של הסתמכות מול רשות",
+        "proposed_query": "לקבוע מהם ההשפעות המשפטיות המעשיות של הסתמכות מול רשות  חריגים וסייגים לקבוע מהם ההשפעות המשפטיות המעשיות של הסתמכות מול רשות יישום בפסיקה",
+        "normalized_query": "תעזור לי לבנות פרק סקירת ספרות על הסתמכות מול רשות מנהלית להגדיר ולהבדיל מושגים מרכזיים: מהי הסתמכות בהקשר של יחסים בין פרטים לרשות מנהלית, וכיצד היא מתממשת בדוקטרינות השונות (legitimate expectation, estoppel/השתק/representation-based estoppel וכו). לקבוע מהם ההשפעות המשפטיות המעשיות של הסתמכות מול רשות מנהלית: האם ובאיזה מקרים ההסתמכות מקנה זכויות נוכחיות נגד הרשות (הכרה בציפייה לגיטימית, estoppe",
+        "rejection_reason": null,
+        "shared_key_terms": [
+          "לקבוע",
+          "קבוע",
+          "ההשפעות",
+          "פעות",
+          "המשפטיות",
+          "פטיות",
+          "המעשיות",
+          "עשיות",
+          "הסתמכות",
+          "סתמכות"
+        ],
+        "unrelated_entities": [],
+        "topical_overlap_score": 0.92
+      },
+      {
+        "run_id": "0d1e48ed-a983-498d-8cf6-2ac25331f970",
+        "accepted": true,
+        "original_query": "תעזור לי לבנות פרק סקירת ספרות על הסתמכות מול רשות מנהלית",
+        "proposed_facet": "רקע עיוני: לקבוע מהם ההשפעות המשפטיות המעשיות של הסתמכות מול רשות",
+        "proposed_query": "לקבוע מהם ההשפעות המשפטיות המעשיות של הסתמכות מול רשות  מאמר אקדמי",
+        "normalized_query": "תעזור לי לבנות פרק סקירת ספרות על הסתמכות מול רשות מנהלית להגדיר ולהבדיל מושגים מרכזיים: מהי הסתמכות בהקשר של יחסים בין פרטים לרשות מנהלית, וכיצד היא מתממשת בדוקטרינות השונות (legitimate expectation, estoppel/השתק/representation-based estoppel וכו). לקבוע מהם ההשפעות המשפטיות המעשיות של הסתמכות מול רשות מנהלית: האם ובאיזה מקרים ההסתמכות מקנה זכויות נוכחיות נגד הרשות (הכרה בציפייה לגיטימית, estoppe",
+        "rejection_reason": null,
+        "shared_key_terms": [
+          "לקבוע",
+          "קבוע",
+          "ההשפעות",
+          "פעות",
+          "המשפטיות",
+          "פטיות",
+          "המעשיות",
+          "עשיות",
+          "הסתמכות",
+          "סתמכות"
+        ],
+        "unrelated_entities": [],
+        "topical_overlap_score": 0.92
+      }
+    ],
+    "gate_trace": [],
+    "pack_size": null,
+    "pack": [],
+    "used_sources": [
+      {
+        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-8948-22-%d7%90%d7%99%d7%9c%d7%9f-%d7%a9%d7%99%d7%99%d7%a0%d7%a4%d7%9c%d7%93-%d7%a0-%d7%94%d7%9b%d7%a0%d7%a1%d7%aa-%d7%a4%d7%a1%d7%a7-%d7%93%d7%99%d7%9f-%d7%9e%d7%99%d7%95%d7%9d-1/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "בג\"ץ 8948/22 אילן שיינפלד נ׳ הכנסת פסק דין (18.01.2023)",
+        "number": 1,
+        "origin": "local_db",
+        "citable_as": "judgment",
+        "source_type": "caselaw",
+        "candidate_id": "a00ea419-6950-4bca-823d-89e8cf9600d8",
+        "authority_tier": "primary_mirror",
+        "synthesis_role": "applying_candidate",
+        "text_usability": "full_text",
+        "integrity_flags": [
+          "judgment_document",
+          "judgment_tier_promoted",
+          "judgment_text_acquired",
+          "judgment_identity_confirmed_in_body"
+        ],
+        "has_holding_text": false,
+        "is_judgment_document": true,
+        "can_satisfy_authority_role": false
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-2237-06-%d7%91%d7%a0%d7%a7-%d7%94%d7%a4%d7%95%d7%a2%d7%9c%d7%99%d7%9d-%d7%91%d7%a2%d7%9e-%d7%a0-%d7%a8%d7%9c%d7%94-%d7%95%d7%99%d7%a0%d7%a9%d7%98%d7%99%d7%99%d7%9f/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "רע\"א 2237/06 בנק הפועלים בע\"מ נ׳ רלה וינשטיין פסק דין",
+        "number": 2,
+        "origin": "local_db",
+        "citable_as": "judgment",
+        "source_type": "caselaw",
+        "candidate_id": "3e8f3755-0a68-49ea-b4a5-8503d30889f0",
+        "authority_tier": "primary_mirror",
+        "synthesis_role": "applying_candidate",
+        "text_usability": "full_text",
+        "integrity_flags": [
+          "judgment_document",
+          "judgment_tier_promoted",
+          "judgment_text_acquired",
+          "judgment_identity_confirmed_in_body",
+          "holding_text_present"
+        ],
+        "has_holding_text": true,
+        "is_judgment_document": true,
+        "can_satisfy_authority_role": false
+      }
+    ],
+    "footnotes": [
+      {
+        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-8948-22-%d7%90%d7%99%d7%9c%d7%9f-%d7%a9%d7%99%d7%99%d7%a0%d7%a4%d7%9c%d7%93-%d7%a0-%d7%94%d7%9b%d7%a0%d7%a1%d7%aa-%d7%a4%d7%a1%d7%a7-%d7%93%d7%99%d7%9f-%d7%9e%d7%99%d7%95%d7%9d-1/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "בג\"ץ 8948/22 אילן שיינפלד נ׳ הכנסת פסק דין (18.01.2023)",
+        "number": 1,
+        "sources": [
+          {
+            "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-8948-22-%d7%90%d7%99%d7%9c%d7%9f-%d7%a9%d7%99%d7%99%d7%a0%d7%a4%d7%9c%d7%93-%d7%a0-%d7%94%d7%9b%d7%a0%d7%a1%d7%aa-%d7%a4%d7%a1%d7%a7-%d7%93%d7%99%d7%9f-%d7%9e%d7%99%d7%95%d7%9d-1/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+            "title": "בג\"ץ 8948/22 אילן שיינפלד נ׳ הכנסת פסק דין (18.01.2023)",
+            "source_type": "caselaw"
+          }
+        ],
+        "source_type": "caselaw"
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-2237-06-%d7%91%d7%a0%d7%a7-%d7%94%d7%a4%d7%95%d7%a2%d7%9c%d7%99%d7%9d-%d7%91%d7%a2%d7%9e-%d7%a0-%d7%a8%d7%9c%d7%94-%d7%95%d7%99%d7%a0%d7%a9%d7%98%d7%99%d7%99%d7%9f/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "רע\"א 2237/06 בנק הפועלים בע\"מ נ׳ רלה וינשטיין פסק דין",
+        "number": 2,
+        "sources": [
+          {
+            "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-2237-06-%d7%91%d7%a0%d7%a7-%d7%94%d7%a4%d7%95%d7%a2%d7%9c%d7%99%d7%9d-%d7%91%d7%a2%d7%9e-%d7%a0-%d7%a8%d7%9c%d7%94-%d7%95%d7%99%d7%a0%d7%a9%d7%98%d7%99%d7%99%d7%9f/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+            "title": "רע\"א 2237/06 בנק הפועלים בע\"מ נ׳ רלה וינשטיין פסק דין",
+            "source_type": "caselaw"
+          }
+        ],
+        "source_type": "caselaw"
+      }
+    ],
+    "footnotes_count": 2
+  }
+]

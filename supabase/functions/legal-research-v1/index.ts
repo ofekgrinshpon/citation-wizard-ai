@@ -107,7 +107,17 @@ import {
 } from "./stages/requiredAnchors.ts";
 import { detectStatuteSections } from "./stages/statuteSectionDetection.ts";
 import { planSourceUseIntent } from "./stages/sourceUseIntent.ts";
-import { isLiteratureOnlyRequest } from "./stages/academicLiteratureRichness.ts";
+import {
+  isLiteratureOnlyRequest,
+  scoreLiteratureTopicality,
+} from "./stages/academicLiteratureRichness.ts";
+import {
+  assessCenterOfGravity,
+  buildUnusedLiteraturePackTelemetry,
+  type CenterOfGravityView,
+  detectNaturalLiteratureMode,
+  NATURAL_LITERATURE_MODE_VERSION,
+} from "./stages/naturalLiteratureMode.ts";
 import {
   buildLiteratureGateTrace,
   checkNamedSynthesis,
@@ -934,10 +944,12 @@ async function handle(req: Request): Promise<Response> {
   // router_profiles_v1 caps the facet fan-out per path (0 = disabled).
   const facetExpansionRaw = router.max_facets === 0
     ? { enabled: false, gate_reason: `router_profile:${router.selected_router_profile}`,
-        legal_area_lock: null, lock_terms: [], facets: [], queries: [] }
+        legal_area_lock: null, lock_terms: [], facets: [], queries: [],
+        contamination_guard: [] }
     : expandClaimFacets(question, analyzer, {
       mode: plannerStage.mode_plan?.mode ?? null,
       outputShape: plannerStage.mode_plan?.output_shape ?? null,
+      run_id,
     });
   const keptFacets = facetExpansionRaw.facets.slice(0, router.max_facets);
   const keptFacetIds = new Set(keptFacets.map((f) => f.facet_id));
@@ -1528,8 +1540,20 @@ async function handle(req: Request): Promise<Response> {
   // already-found candidates are strong DIRECT legal scholarship for this
   // question, so body budget goes to them first and `discovery_only` stops
   // being a terminal state for real scholarship.
-  const literatureModeRun = sourceUseIntent.plan?.user_task_intent === "academic_writing" &&
-    isLiteratureOnlyRequest(question);
+  // natural_literature_mode_and_topic_guard_v1 — natural Hebrew literature
+  // prompts ("תעשה לי סקירת ספרות על…", seminar / theoretical-background
+  // requests) must activate the same machinery as the lab phrasing.
+  const naturalLiteratureMode = detectNaturalLiteratureMode({
+    run_id,
+    question,
+    user_task_intent: sourceUseIntent.plan?.user_task_intent ?? null,
+    answer_strategy: sourceUseIntent.plan?.answer_strategy ?? null,
+    asks_for_sources: /(מקורות|ספרות|ביבליוגרפיה|רקע\s+תיאורטי)/.test(question),
+    mode_before: sourceUseIntent.plan?.user_task_intent === "academic_writing" &&
+      isLiteratureOnlyRequest(question),
+  });
+  const literatureModeRun = naturalLiteratureMode.academic_literature_mode_after;
+  await budget.markDurable("natural_literature_mode_activation", naturalLiteratureMode);
   const literatureCandidateViews = pool.candidates.map((c) => ({
     candidate_id: c.candidate_id,
     title: String(c.title ?? ""),
@@ -2596,6 +2620,7 @@ async function handle(req: Request): Promise<Response> {
       // router_profiles_v1 — path-scoped answer shape.
       blockCeiling: router.drafter_block_ceiling,
       dropUnsupportedBlocks: router.drop_unsupported_blocks,
+      literatureMode: literatureModeRun,
 
     },
   );
@@ -2603,6 +2628,57 @@ async function handle(req: Request): Promise<Response> {
 
   // claim_facet_expansion_v1 — per-facet coverage telemetry (no behavior).
   const facetUsedIds = new Set(drafter.used_sources.map((u) => u.candidate_id));
+
+  // ── natural_literature_mode_and_topic_guard_v1 — report-only views ───────
+  const literaturePackSources = (drafter.input_sources ?? []).map((s) => {
+    const cid = String((s as { candidate_id?: string }).candidate_id ?? s.ref);
+    const citable = String((s as { citable_as?: string }).citable_as ?? "");
+    const t = scoreLiteratureTopicality(question, {
+      title: String(s.title ?? ""),
+      snippet: (s as { snippet?: string | null }).snippet ?? null,
+      url: (s as { url?: string | null }).url ?? null,
+    });
+    const kind: CenterOfGravityView["kind"] = citable === "judgment"
+      ? "case_law"
+      : citable === "statute"
+      ? "statute"
+      : t.direct
+      ? "direct_scholarship"
+      : t.shared_count > 0
+      ? "adjacent_scholarship"
+      : "other";
+    return {
+      ref: s.ref,
+      candidate_id: cid,
+      title: String(s.title ?? ""),
+      author: (s as { author?: string | null }).author ?? null,
+      kind,
+      topicality: t.score,
+      body_available: (s as { body_acquired?: boolean }).body_acquired === true,
+      verifier_usable: usableIdSet.has(cid),
+      cited: facetUsedIds.has(cid),
+    };
+  });
+  const literatureCenterOfGravity = literatureModeRun
+    ? assessCenterOfGravity(run_id, literaturePackSources)
+    : null;
+  const unusedLiteraturePackSources = literatureModeRun
+    ? buildUnusedLiteraturePackTelemetry(
+      run_id,
+      literaturePackSources
+        .filter((s) => s.kind === "direct_scholarship" && !s.cited)
+        .map((s) => ({
+          source_id: s.candidate_id,
+          title: s.title,
+          author: s.author,
+          topicality: s.topicality,
+          body_available: s.body_available,
+          verifier_usable: s.verifier_usable,
+          model_emitted: false,
+          cited: false,
+        })),
+    )
+    : [];
   const facetSupportById = new Map<string, string>();
   for (const v of verifier.verdicts) {
     facetSupportById.set(
@@ -3255,6 +3331,12 @@ async function handle(req: Request): Promise<Response> {
 
       // ── academic_literature_gate_repair_and_thin_pack_recovery_v1 ───────
       academic_literature_gate_repair_version: LITERATURE_GATE_REPAIR_VERSION,
+      // ── natural_literature_mode_and_topic_guard_v1 ──────────────────────
+      natural_literature_mode_version: NATURAL_LITERATURE_MODE_VERSION,
+      natural_literature_mode_activation: naturalLiteratureMode,
+      literature_source_center_of_gravity: literatureCenterOfGravity,
+      unused_literature_pack_sources: unusedLiteraturePackSources,
+      facet_contamination_guard: facetExpansionRaw.contamination_guard ?? [],
       academic_literature_mode: literatureModeRun,
       academic_literature_gate_trace: literatureModeRun
         ? buildLiteratureGateTrace({
