@@ -114,7 +114,8 @@ const DOI_RE = /(doi\.org\/10\.|\/10\.\d{4,9}\/|[?&]doi=)/i;
  * bypasses the topical-fit, listing, SEO or body-acquisition gates.
  */
 const LAW_JOURNAL_NAME_RE =
-  /(עיוני\s+משפט|משפטים\s+(?:על\s+אתר|כרך|[א-ת]["״])|(?:^|[^א-ת])משפטים(?=\s*[,־–—]|\s+כרך)|מחקרי\s+משפט|הפרקליט|משפט\s+וממשל|מאזני\s+משפט|דין\s+ודברים|(?:^|[^א-ת])חוקים(?=\s|[,–—])|מעשי\s+משפט|משפט\s+ועסקים|עלי\s+משפט|השילוח|המכון\s+הישראלי\s+לדמוקרטיה|מחקר\s+מדיניות|נייר\s+מדיניות|המשפט(?=\s+כרך)|law\s+review|law\s+journal|journal\s+of\s+law|yale\s+l\.?j|harv\.?\s?l\.?\s?rev)/i;
+  /(פורום\s+עיוני\s+משפט|עיוני\s+משפט|משפטים\s+(?:על\s+אתר|כרך|[א-ת]["״])|(?:^|[^א-ת])משפטים(?=\s*[,־–—]|\s+כרך)|מחקרי\s+משפט|הפרקליט|משפט\s+וממשל|מאזני\s+משפט|דין\s+ודברים|(?:^|[^א-ת])חוקים(?=\s|[,–—])|מעשי\s+משפט|משפט\s+ועסקים|עלי\s+משפט|השילוח|המכון\s+הישראלי\s+לדמוקרטיה|Israel\s+Democracy\s+Institute|מחקר\s+מדיניות|נייר\s+מדיניות|נייר\s+עמדה|כתב[\s-]?עת|המשפט(?=\s+כרך)|law\s+review|law\s+journal|journal\s+of\s+law|yale\s+l\.?j|harv\.?\s?l\.?\s?rev)/i;
+
 
 /** Journal/faculty publication host families used by Israeli law reviews. */
 const LAW_JOURNAL_HOST_RE =
