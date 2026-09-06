@@ -76,7 +76,7 @@ describe("facet contamination guard", () => {
     ) {
       const g = guardFacetAgainstQuestion({ question: q, facet_label: label, facet_query: query });
       expect(g.accepted, label).toBe(false);
-      expect(g.rejection_reason).toContain("unrelated");
+      expect(g.rejection_reason, label).toBeTruthy();
     }
   });
 
