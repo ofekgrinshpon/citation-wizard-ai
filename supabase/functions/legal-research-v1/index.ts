@@ -2628,6 +2628,57 @@ async function handle(req: Request): Promise<Response> {
 
   // claim_facet_expansion_v1 — per-facet coverage telemetry (no behavior).
   const facetUsedIds = new Set(drafter.used_sources.map((u) => u.candidate_id));
+
+  // ── natural_literature_mode_and_topic_guard_v1 — report-only views ───────
+  const literaturePackSources = (drafter.input_sources ?? []).map((s) => {
+    const cid = String((s as { candidate_id?: string }).candidate_id ?? s.ref);
+    const citable = String((s as { citable_as?: string }).citable_as ?? "");
+    const t = scoreLiteratureTopicality(question, {
+      title: String(s.title ?? ""),
+      snippet: (s as { snippet?: string | null }).snippet ?? null,
+      url: (s as { url?: string | null }).url ?? null,
+    });
+    const kind: CenterOfGravityView["kind"] = citable === "judgment"
+      ? "case_law"
+      : citable === "statute"
+      ? "statute"
+      : t.direct
+      ? "direct_scholarship"
+      : t.shared_count > 0
+      ? "adjacent_scholarship"
+      : "other";
+    return {
+      ref: s.ref,
+      candidate_id: cid,
+      title: String(s.title ?? ""),
+      author: (s as { author?: string | null }).author ?? null,
+      kind,
+      topicality: t.score,
+      body_available: (s as { body_acquired?: boolean }).body_acquired === true,
+      verifier_usable: usableIdSet.has(cid),
+      cited: facetUsedIds.has(cid),
+    };
+  });
+  const literatureCenterOfGravity = literatureModeRun
+    ? assessCenterOfGravity(run_id, literaturePackSources)
+    : null;
+  const unusedLiteraturePackSources = literatureModeRun
+    ? buildUnusedLiteraturePackTelemetry(
+      run_id,
+      literaturePackSources
+        .filter((s) => s.kind === "direct_scholarship" && !s.cited)
+        .map((s) => ({
+          source_id: s.candidate_id,
+          title: s.title,
+          author: s.author,
+          topicality: s.topicality,
+          body_available: s.body_available,
+          verifier_usable: s.verifier_usable,
+          model_emitted: false,
+          cited: false,
+        })),
+    )
+    : [];
   const facetSupportById = new Map<string, string>();
   for (const v of verifier.verdicts) {
     facetSupportById.set(
@@ -3280,6 +3331,12 @@ async function handle(req: Request): Promise<Response> {
 
       // ── academic_literature_gate_repair_and_thin_pack_recovery_v1 ───────
       academic_literature_gate_repair_version: LITERATURE_GATE_REPAIR_VERSION,
+      // ── natural_literature_mode_and_topic_guard_v1 ──────────────────────
+      natural_literature_mode_version: NATURAL_LITERATURE_MODE_VERSION,
+      natural_literature_mode_activation: naturalLiteratureMode,
+      literature_source_center_of_gravity: literatureCenterOfGravity,
+      unused_literature_pack_sources: unusedLiteraturePackSources,
+      facet_contamination_guard: facetExpansionRaw.contamination_guard ?? [],
       academic_literature_mode: literatureModeRun,
       academic_literature_gate_trace: literatureModeRun
         ? buildLiteratureGateTrace({
