@@ -114,7 +114,8 @@ const DOI_RE = /(doi\.org\/10\.|\/10\.\d{4,9}\/|[?&]doi=)/i;
  * bypasses the topical-fit, listing, SEO or body-acquisition gates.
  */
 const LAW_JOURNAL_NAME_RE =
-  /(עיוני\s+משפט|משפטים\s+(?:על\s+אתר|כרך|[א-ת]["״])|(?:^|[^א-ת])משפטים(?=\s*[,־–—]|\s+כרך)|מחקרי\s+משפט|הפרקליט|משפט\s+וממשל|מאזני\s+משפט|דין\s+ודברים|(?:^|[^א-ת])חוקים(?=\s|[,–—])|מעשי\s+משפט|משפט\s+ועסקים|עלי\s+משפט|השילוח|המכון\s+הישראלי\s+לדמוקרטיה|מחקר\s+מדיניות|נייר\s+מדיניות|המשפט(?=\s+כרך)|law\s+review|law\s+journal|journal\s+of\s+law|yale\s+l\.?j|harv\.?\s?l\.?\s?rev)/i;
+  /(פורום\s+עיוני\s+משפט|עיוני\s+משפט|משפטים\s+(?:על\s+אתר|כרך|[א-ת]["״])|(?:^|[^א-ת])משפטים(?=\s*[,־–—]|\s+כרך)|מחקרי\s+משפט|הפרקליט|משפט\s+וממשל|מאזני\s+משפט|דין\s+ודברים|(?:^|[^א-ת])חוקים(?=\s|[,–—])|מעשי\s+משפט|משפט\s+ועסקים|עלי\s+משפט|השילוח|המכון\s+הישראלי\s+לדמוקרטיה|Israel\s+Democracy\s+Institute|מחקר\s+מדיניות|נייר\s+מדיניות|נייר\s+עמדה|כתב[\s-]?עת|המשפט(?=\s+כרך)|law\s+review|law\s+journal|journal\s+of\s+law|yale\s+l\.?j|harv\.?\s?l\.?\s?rev)/i;
+
 
 /** Journal/faculty publication host families used by Israeli law reviews. */
 const LAW_JOURNAL_HOST_RE =
@@ -412,7 +413,35 @@ export function evaluateScholarshipAdmission(
   if (!topical_fit) rejections.push("off_topic_for_question_and_roles");
   if (signals.length < 2) rejections.push("insufficient_academic_signals");
 
-  const admitted = rejections.length === 0;
+  const score = topicalityScore(hay, input.topic_terms);
+
+  // academic_literature_gate_repair_and_thin_pack_recovery_v1 — combined-signal
+  // admission. Strong direct Israeli legal scholarship (validated article
+  // identity + strong topical fit) is not rejected merely for being
+  // `class_unknown`, sitting on a mirror, or living on an unrecognised host.
+  // HARD rejections (listing, marketing/SEO, off-topic, no domain) still stand,
+  // and admission still confers nothing downstream — body acquisition,
+  // integrity, verifier, CSM and alignment gates are untouched.
+  const SOFT_REJECTIONS = new Set([
+    "no_credible_academic_provenance",
+    "mirror_or_unknown_repository",
+    "source_too_generic",
+    "no_scholarly_title_or_abstract",
+    "insufficient_academic_signals",
+    "citation_aggregator_or_search_index",
+  ]);
+  const strongDirect = topical_fit && score >= 0.15 &&
+    (articleIdentity || publisher || university || institute || journalHost || doi);
+  let rejectionReasons = rejections;
+  if (strongDirect && rejections.some((r) => SOFT_REJECTIONS.has(r))) {
+    const hard = rejections.filter((r) => !SOFT_REJECTIONS.has(r));
+    if (hard.length === 0) {
+      signals.push("strong_direct_topical_scholarship");
+      rejectionReasons = [];
+    }
+  }
+
+  const admitted = rejectionReasons.length === 0;
   return {
     candidate_id: input.candidate_id ?? null,
     title,
@@ -421,9 +450,9 @@ export function evaluateScholarshipAdmission(
     original_class: input.original_class,
     admission_decision: admitted ? "admitted_as_scholarship" : "rejected",
     admission_signals: signals,
-    rejection_reasons: rejections,
+    rejection_reasons: rejectionReasons,
     topical_fit,
-    topicality_score: topicalityScore(hay, input.topic_terms),
+    topicality_score: score,
     detected_journal_or_institution: (title + " " + snippet).match(LAW_JOURNAL_NAME_RE)?.[0] ??
       (institute ? domain : null),
     // Bibliographic-only material stays `reference_only` downstream; the

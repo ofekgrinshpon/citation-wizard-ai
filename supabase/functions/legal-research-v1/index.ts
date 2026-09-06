@@ -108,6 +108,14 @@ import {
 import { detectStatuteSections } from "./stages/statuteSectionDetection.ts";
 import { planSourceUseIntent } from "./stages/sourceUseIntent.ts";
 import { isLiteratureOnlyRequest } from "./stages/academicLiteratureRichness.ts";
+import {
+  buildLiteratureGateTrace,
+  checkNamedSynthesis,
+  classifyBodyTopicality,
+  decideThinPackRecovery,
+  isStrongDirectLiteratureCandidate,
+  LITERATURE_GATE_REPAIR_VERSION,
+} from "./stages/academicLiteratureGateRepair.ts";
 import { makeAdminClient, writeTelemetry, beginTraceRow } from "./lib/telemetry.ts";
 import { getWebTierHealth, resetWebTierHealth } from "./lib/webTierHealth.ts";
 import { extractAttachments, buildAnalyzerContext, ATTACHMENT_LIMITS, type AttachmentInput } from "./lib/attachments.ts";
@@ -1516,6 +1524,49 @@ async function handle(req: Request): Promise<Response> {
     depth_mode: sourceDepth.depth_mode ?? null,
     budget_exceeded: budget.exceeded(),
   });
+  // academic_literature_gate_repair_and_thin_pack_recovery_v1 — assess which
+  // already-found candidates are strong DIRECT legal scholarship for this
+  // question, so body budget goes to them first and `discovery_only` stops
+  // being a terminal state for real scholarship.
+  const literatureModeRun = sourceUseIntent.plan?.user_task_intent === "academic_writing" &&
+    isLiteratureOnlyRequest(question);
+  const literatureCandidateViews = pool.candidates.map((c) => ({
+    candidate_id: c.candidate_id,
+    title: String(c.title ?? ""),
+    url: c.source_url ?? null,
+    snippet: c.snippet ?? null,
+    source_type: c.source_type ? String(c.source_type) : null,
+    role: c.role ? String(c.role) : null,
+    origin: c.origin ? String(c.origin) : null,
+  }));
+  const literatureStrongDirect = literatureModeRun
+    ? literatureCandidateViews.map((v) => isStrongDirectLiteratureCandidate(question, v))
+    : [];
+  const literatureStrongDirectIds = new Set(
+    literatureStrongDirect.filter((s) => s.strong_direct).map((s) => s.candidate_id),
+  );
+  const literatureDirectIds = literatureStrongDirect
+    .filter((s) => s.strong_direct)
+    .sort((a, b) => b.topicality_score - a.topicality_score)
+    .slice(0, 8)
+    .map((s) => s.candidate_id);
+  if (literatureModeRun) {
+    await budget.markDurable("academic_literature_strong_direct_candidates", {
+      total_candidates: pool.candidates.length,
+      strong_direct: literatureDirectIds.length,
+      top: literatureStrongDirect
+        .filter((s) => s.strong_direct)
+        .slice(0, 10)
+        .map((s) => ({
+          source_id: s.candidate_id,
+          title: s.title,
+          host: s.host,
+          topicality_score: s.topicality_score,
+          journal: s.detected_journal_or_institution,
+          mirror_status: s.mirror_status,
+        })),
+    });
+  }
   const secondaryBodyAcquisition = await runSecondaryBodyAcquisition({
     admin,
     candidates: pool.candidates,
@@ -1524,8 +1575,8 @@ async function handle(req: Request): Promise<Response> {
     // academic_literature_richness_without_fixed_source_count_v1 — spend body
     // budget on topically direct scholarship, not on whatever fetches easily.
     question,
-    literature_mode: sourceUseIntent.plan?.user_task_intent === "academic_writing" &&
-      isLiteratureOnlyRequest(question),
+    literature_mode: literatureModeRun,
+    literature_direct_ids: literatureDirectIds,
     // doctrinal_candidate_pool_stabilization_v1 — drop clear index/listing
     // pages before they consume acquisition budget.
     suppress_listings: true,
@@ -2337,6 +2388,188 @@ async function handle(req: Request): Promise<Response> {
     }
   }
 
+  // ─── academic_literature_gate_repair_and_thin_pack_recovery_v1 ──────────
+  // Bounded safety net, NOT a retrieval stage: when a literature-only review
+  // still has a thin usable pack and strong direct scholarship that was
+  // already found never got a body, retry at most 3 of those candidates once
+  // each, with a short time box and no new search of any kind.
+  const literatureBodyOutcome = new Map<
+    string,
+    { attempted: boolean; acquired: boolean; chars: number; failure_reason?: string | null }
+  >();
+  for (
+    const rep of [secondaryBodyAcquisition, recoveryReport].filter((r): r is NonNullable<typeof r> =>
+      !!r
+    )
+  ) {
+    for (const r of rep.per_candidate ?? []) {
+      literatureBodyOutcome.set(r.candidate_id, {
+        attempted: r.web_attempted || r.local_lookup_attempted,
+        acquired: r.ok,
+        chars: r.body_chars ?? 0,
+        failure_reason: r.failure_reason ?? null,
+      });
+    }
+  }
+  const bodyAcquiredIds = new Set(
+    pool.candidates
+      .filter((c) => ((c.metadata ?? {}) as Record<string, unknown>).body_acquired === true)
+      .map((c) => c.candidate_id),
+  );
+  const definitivelyRejectedIds = new Set(
+    pool.integrity.filter((r) =>
+      (r as { reject?: boolean }).reject === true
+    ).map((r) => r.candidate_id),
+  );
+  const usableLiteratureCount = verifier.usable.filter((u) => {
+    const c = pool.candidates.find((x) => x.candidate_id === u.candidate_id);
+    if (!c) return false;
+    const meta = (c.metadata ?? {}) as Record<string, unknown>;
+    const citable = String(
+      (meta.source_integrity as { citable_as?: string } | undefined)?.citable_as ?? "",
+    );
+    return meta.body_acquired === true && citable !== "judgment" && citable !== "statute";
+  }).length;
+  const thinPackRecoveryDecision = decideThinPackRecovery({
+    literature_mode: literatureModeRun,
+    usable_literature_count: usableLiteratureCount,
+    strong_direct: literatureStrongDirect,
+    body_acquired: bodyAcquiredIds,
+    definitively_rejected: definitivelyRejectedIds,
+    budget_allows: !budget.exceeded(),
+  });
+  let thinPackRecoveryReport: {
+    triggered: boolean;
+    trigger_reason: string;
+    added_latency_ms: number;
+    attempts: Array<Record<string, unknown>>;
+  } = {
+    triggered: false,
+    trigger_reason: thinPackRecoveryDecision.trigger_reason,
+    added_latency_ms: 0,
+    attempts: [],
+  };
+  if (thinPackRecoveryDecision.triggered) {
+    const tRec = Date.now();
+    await budget.markDurable("thin_pack_recovery_start", {
+      trigger_reason: thinPackRecoveryDecision.trigger_reason,
+      candidates: thinPackRecoveryDecision.candidate_ids.length,
+    });
+    try {
+      const rec = await runSecondaryBodyAcquisition({
+        admin,
+        candidates: pool.candidates,
+        depth_mode: sourceDepth.depth_mode ?? null,
+        enabled: true,
+        recovery_pass: true,
+        suppress_listings: true,
+        question,
+        literature_mode: true,
+        literature_direct_ids: thinPackRecoveryDecision.candidate_ids,
+        restrict_to_candidate_ids: thinPackRecoveryDecision.candidate_ids,
+        limits: {
+          max_local_lookups: thinPackRecoveryDecision.bounds.max_candidates,
+          max_web_attempts: thinPackRecoveryDecision.bounds.max_web_attempts,
+          total_ms: thinPackRecoveryDecision.bounds.total_ms,
+        },
+        retrieval_budget: {
+          exceeded: () => budget.exceeded(),
+          allowExtraction: (bytes: number) => budget.allowExtraction?.(bytes) ?? true,
+        },
+        markDurable: (name, detail) => budget.markDurable(name, detail),
+      });
+      const acquired = new Set(rec.acquired_candidate_ids);
+      for (const r of rec.per_candidate ?? []) {
+        const c = pool.candidates.find((x) => x.candidate_id === r.candidate_id);
+        const meta = (c?.metadata ?? {}) as Record<string, unknown>;
+        const body = typeof meta.extended_text === "string" ? meta.extended_text : null;
+        const topical = c
+          ? classifyBodyTopicality(question, {
+            candidate_id: c.candidate_id,
+            title: String(c.title ?? ""),
+            snippet: c.snippet,
+            url: c.source_url,
+            body,
+          }, run_id)
+          : null;
+        thinPackRecoveryReport.attempts.push({
+          run_id,
+          candidate_id: r.candidate_id,
+          title: r.title,
+          url: r.url,
+          original_loss_stage: literatureBodyOutcome.get(r.candidate_id)?.attempted
+            ? "body_acquisition_failed"
+            : "body_not_attempted",
+          recovery_action: "retry_body_acquisition_for_found_candidate",
+          body_attempted: r.web_attempted || r.local_lookup_attempted,
+          body_acquired: acquired.has(r.candidate_id),
+          extracted_chars: r.body_chars ?? 0,
+          post_body_topicality: topical?.post_body_topicality ?? null,
+          admitted_after_recovery: acquired.has(r.candidate_id) &&
+            topical?.eligible_for_pack === true,
+          final_reason: acquired.has(r.candidate_id)
+            ? (topical?.eligible_for_pack === false
+              ? "recovered_body_off_topic_rejected"
+              : "recovered_usable_body")
+            : (r.failure_reason ?? "recovery_fetch_failed"),
+        });
+        // A recovered body that turns out to be off-topic is refused, not used.
+        if (acquired.has(r.candidate_id) && topical?.eligible_for_pack === false && c) {
+          c.metadata = { ...(c.metadata ?? {}), literature_off_topic_body: true };
+        }
+      }
+      // Refresh integrity rows for bodies the recovery pass acquired.
+      if (rec.acquired_candidate_ids.length > 0) {
+        const byId = new Map(pool.candidates.map((c) => [c.candidate_id, c]));
+        for (const row of pool.integrity) {
+          const c = byId.get(row.candidate_id);
+          const integ = ((c?.metadata ?? {}) as Record<string, unknown>).source_integrity as
+            | { text_usability?: string; integrity_flags?: string[] }
+            | undefined;
+          if (!integ) continue;
+          row.text_usability = String(integ.text_usability ?? row.text_usability);
+          row.integrity_flags = integ.integrity_flags ?? row.integrity_flags;
+        }
+      }
+      thinPackRecoveryReport = {
+        ...thinPackRecoveryReport,
+        triggered: true,
+        added_latency_ms: Date.now() - tRec,
+      };
+    } catch (err) {
+      thinPackRecoveryReport = {
+        ...thinPackRecoveryReport,
+        triggered: true,
+        trigger_reason: `${thinPackRecoveryDecision.trigger_reason}|exception:${
+          err instanceof Error ? err.message : String(err)
+        }`,
+        added_latency_ms: Date.now() - tRec,
+      };
+    }
+    await budget.markDurable("thin_pack_recovery_done", {
+      added_latency_ms: thinPackRecoveryReport.added_latency_ms,
+      attempts: thinPackRecoveryReport.attempts.length,
+      acquired: thinPackRecoveryReport.attempts.filter((a) => a.body_acquired === true).length,
+    });
+  }
+
+  // Post-body topicality for every acquired scholarship body (report only —
+  // pack eligibility for off-topic bodies is enforced by the pack gates).
+  const literatureBodyTopicality = literatureModeRun
+    ? pool.candidates
+      .filter((c) => ((c.metadata ?? {}) as Record<string, unknown>).body_acquired === true)
+      .map((c) =>
+        classifyBodyTopicality(question, {
+          candidate_id: c.candidate_id,
+          title: String(c.title ?? ""),
+          snippet: c.snippet,
+          url: c.source_url,
+          body: typeof ((c.metadata ?? {}) as Record<string, unknown>).extended_text === "string"
+            ? String(((c.metadata ?? {}) as Record<string, unknown>).extended_text)
+            : null,
+        }, run_id)
+      )
+    : [];
 
 
   // V2.1c is the default drafter (structured blocks + deterministic
@@ -3019,6 +3252,49 @@ async function handle(req: Request): Promise<Response> {
       secondary_web_failure_reasons: (secondaryBodyAcquisition.per_candidate ?? [])
         .filter((r) => r.web_attempted && !r.ok)
         .map((r) => r.failure_reason ?? "unknown"),
+
+      // ── academic_literature_gate_repair_and_thin_pack_recovery_v1 ───────
+      academic_literature_gate_repair_version: LITERATURE_GATE_REPAIR_VERSION,
+      academic_literature_mode: literatureModeRun,
+      academic_literature_gate_trace: literatureModeRun
+        ? buildLiteratureGateTrace({
+          run_id,
+          question,
+          candidates: literatureCandidateViews.filter((v) =>
+            literatureStrongDirectIds.has(v.candidate_id)
+          ),
+          admission: new Map(
+            literatureCandidateViews.map((v) => [v.candidate_id, {
+              admitted: !definitivelyRejectedIds.has(v.candidate_id),
+              reason: definitivelyRejectedIds.has(v.candidate_id)
+                ? "rejected_by_integrity_or_admission_gate"
+                : "admitted_to_pool",
+              initial_class: v.source_type ?? undefined,
+            }])
+          ),
+          body: literatureBodyOutcome,
+          verifier_usable_ids: new Set(verifier.usable.map((u) => u.candidate_id)),
+          pack_ids: new Set(
+            (drafter.input_sources ?? []).map((s) =>
+              String((s as { candidate_id?: string }).candidate_id ?? s.ref)
+            ),
+          ),
+          post_body_topicality: new Map(
+            literatureBodyTopicality.map((r) => [r.source_id, r.post_body_topicality]),
+          ),
+        })
+        : null,
+      academic_literature_body_topicality: literatureBodyTopicality,
+      academic_literature_thin_pack_recovery: thinPackRecoveryReport,
+      academic_literature_named_synthesis: literatureModeRun
+        ? checkNamedSynthesis(drafter.answer_markdown ?? "", {
+          run_id,
+          named_sources: (drafter.input_sources ?? []).map((s) => String(s.title ?? "")),
+          footnote_count: drafter.footnotes?.length ?? 0,
+          limitation_required: (drafter.footnotes?.length ?? 0) <= 2,
+        })
+        : null,
+
 
       claim_match_ran: drafter.claim_source_match
         ? drafter.claim_source_match.stage_not_run !== true

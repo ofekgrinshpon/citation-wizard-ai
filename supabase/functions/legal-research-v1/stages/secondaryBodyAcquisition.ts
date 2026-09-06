@@ -613,7 +613,17 @@ export interface SecondaryBodyAcquisitionInput {
    * outright (a trusted host is not a reason to fetch an unrelated paper).
    */
   literature_mode?: boolean;
+  /**
+   * academic_literature_gate_repair_and_thin_pack_recovery_v1 — candidate ids
+   * assessed as strong DIRECT legal scholarship for this question. They get a
+   * bounded acquisition attempt even when their declared type carries no
+   * doctrinal signal, so `discovery_only` is not a terminal state for real
+   * scholarship. Ordering still runs through the topicality priority; nothing
+   * downstream (integrity, verifier, CSM) is relaxed.
+   */
+  literature_direct_ids?: string[];
 }
+
 
 
 export async function runSecondaryBodyAcquisition(
@@ -672,6 +682,7 @@ export async function runSecondaryBodyAcquisition(
   const listingSuppressedIds: string[] = [];
   const reconsideredIds: string[] = [];
 
+  const literatureDirect = new Set(input.literature_direct_ids ?? []);
   const selected: Array<{ c: Candidate; evidence: string[] }> = [];
   for (const c of input.candidates) {
     if (restrict && !restrict.has(c.candidate_id)) continue;
@@ -706,6 +717,18 @@ export async function runSecondaryBodyAcquisition(
         evidence = [...evidence, ...rec.evidence.map((e) => `reconsidered:${e}`)];
         reconsideredIds.push(c.candidate_id);
       }
+    }
+    // academic_literature_gate_repair_and_thin_pack_recovery_v1 — a strong
+    // direct scholarship candidate is not left as `discovery_only` just
+    // because its declared type carries no doctrinal keyword. One bounded
+    // attempt only; every downstream gate is unchanged.
+    if (
+      !eligible && literatureDirect.has(c.candidate_id) &&
+      sel.reason !== "primary_law_or_judgment" && sel.reason !== "primary_citable_as" &&
+      sel.reason !== "body_already_acquired"
+    ) {
+      eligible = true;
+      evidence = [...evidence, "literature_direct_candidate"];
     }
     if (!eligible) continue;
 
