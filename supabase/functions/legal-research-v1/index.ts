@@ -1516,6 +1516,46 @@ async function handle(req: Request): Promise<Response> {
     depth_mode: sourceDepth.depth_mode ?? null,
     budget_exceeded: budget.exceeded(),
   });
+  // academic_literature_gate_repair_and_thin_pack_recovery_v1 — assess which
+  // already-found candidates are strong DIRECT legal scholarship for this
+  // question, so body budget goes to them first and `discovery_only` stops
+  // being a terminal state for real scholarship.
+  const literatureModeRun = sourceUseIntent.plan?.user_task_intent === "academic_writing" &&
+    isLiteratureOnlyRequest(question);
+  const literatureCandidateViews = pool.candidates.map((c) => ({
+    candidate_id: c.candidate_id,
+    title: String(c.title ?? ""),
+    url: c.source_url ?? null,
+    snippet: c.snippet ?? null,
+    source_type: c.source_type ? String(c.source_type) : null,
+    role: c.role ? String(c.role) : null,
+    origin: c.origin ? String(c.origin) : null,
+  }));
+  const literatureStrongDirect = literatureModeRun
+    ? literatureCandidateViews.map((v) => isStrongDirectLiteratureCandidate(question, v))
+    : [];
+  const literatureDirectIds = literatureStrongDirect
+    .filter((s) => s.strong_direct)
+    .sort((a, b) => b.topicality_score - a.topicality_score)
+    .slice(0, 8)
+    .map((s) => s.candidate_id);
+  if (literatureModeRun) {
+    await budget.markDurable("academic_literature_strong_direct_candidates", {
+      total_candidates: pool.candidates.length,
+      strong_direct: literatureDirectIds.length,
+      top: literatureStrongDirect
+        .filter((s) => s.strong_direct)
+        .slice(0, 10)
+        .map((s) => ({
+          source_id: s.candidate_id,
+          title: s.title,
+          host: s.host,
+          topicality_score: s.topicality_score,
+          journal: s.detected_journal_or_institution,
+          mirror_status: s.mirror_status,
+        })),
+    });
+  }
   const secondaryBodyAcquisition = await runSecondaryBodyAcquisition({
     admin,
     candidates: pool.candidates,
@@ -1524,8 +1564,8 @@ async function handle(req: Request): Promise<Response> {
     // academic_literature_richness_without_fixed_source_count_v1 — spend body
     // budget on topically direct scholarship, not on whatever fetches easily.
     question,
-    literature_mode: sourceUseIntent.plan?.user_task_intent === "academic_writing" &&
-      isLiteratureOnlyRequest(question),
+    literature_mode: literatureModeRun,
+    literature_direct_ids: literatureDirectIds,
     // doctrinal_candidate_pool_stabilization_v1 — drop clear index/listing
     // pages before they consume acquisition budget.
     suppress_listings: true,
