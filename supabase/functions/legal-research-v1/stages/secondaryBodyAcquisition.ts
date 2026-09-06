@@ -705,6 +705,8 @@ async function localBodyLookup(
 
 export interface SecondaryBodyAcquisitionInput {
   admin: AdminLike;
+  /** Correlates PDF-guard telemetry with the run. */
+  run_id?: string;
   candidates: Candidate[];
   depth_mode: string | null;
   /** Kill switch for the control arm of the before/after comparison. */
@@ -1054,7 +1056,11 @@ export async function runSecondaryBodyAcquisition(
       webAttempts++;
       row.web_attempted = true;
       try {
-        let fetched = await fetchSecondaryBody(url, budgetExceeded, onStage, allowExtraction);
+        let fetched = await fetchSecondaryBody(url, budgetExceeded, onStage, allowExtraction, {
+          stage: "secondary_body_acquisition",
+          run_id: input.run_id,
+          source_id: c.candidate_id,
+        });
         row.final_url = fetched.final_url;
         row.http_status = fetched.status;
         row.content_type = fetched.content_type;
@@ -1078,6 +1084,11 @@ export async function runSecondaryBodyAcquisition(
                 budgetExceeded,
                 onStage,
                 allowExtraction,
+                {
+                  stage: "secondary_body_acquisition_follow",
+                  run_id: input.run_id,
+                  source_id: c.candidate_id,
+                },
               );
               if (follow.text.length > fetched.text.length) {
                 fetched = follow;
