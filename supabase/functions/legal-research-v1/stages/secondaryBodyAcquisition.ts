@@ -682,6 +682,7 @@ export async function runSecondaryBodyAcquisition(
   const listingSuppressedIds: string[] = [];
   const reconsideredIds: string[] = [];
 
+  const literatureDirect = new Set(input.literature_direct_ids ?? []);
   const selected: Array<{ c: Candidate; evidence: string[] }> = [];
   for (const c of input.candidates) {
     if (restrict && !restrict.has(c.candidate_id)) continue;
