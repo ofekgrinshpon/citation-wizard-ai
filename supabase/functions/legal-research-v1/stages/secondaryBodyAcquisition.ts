@@ -717,6 +717,18 @@ export async function runSecondaryBodyAcquisition(
         reconsideredIds.push(c.candidate_id);
       }
     }
+    // academic_literature_gate_repair_and_thin_pack_recovery_v1 — a strong
+    // direct scholarship candidate is not left as `discovery_only` just
+    // because its declared type carries no doctrinal keyword. One bounded
+    // attempt only; every downstream gate is unchanged.
+    if (
+      !eligible && literatureDirect.has(c.candidate_id) &&
+      sel.reason !== "primary_law_or_judgment" && sel.reason !== "primary_citable_as" &&
+      sel.reason !== "body_already_acquired"
+    ) {
+      eligible = true;
+      evidence = [...evidence, "literature_direct_candidate"];
+    }
     if (!eligible) continue;
 
     if (input.suppress_listings !== false) {
