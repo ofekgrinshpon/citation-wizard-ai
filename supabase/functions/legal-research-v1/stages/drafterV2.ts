@@ -1518,7 +1518,11 @@ export async function runDrafterV2(
   // primary authority, never below a 3-source floor).
   let academic_pack_fit_dropped: Array<{ ref: string; title: string; score: number }> = [];
   const academicWritingRun = opts?.sourceUsePlan?.user_task_intent === "academic_writing";
-  const literatureOnlyRun = academicWritingRun && isLiteratureOnlyRequest(question);
+  // natural_literature_mode_and_topic_guard_v1 — natural Hebrew literature
+  // prompts activate the same machinery as the narrow lab phrasing.
+  const literatureOnlyRun = opts?.literatureMode === true ||
+    (academicWritingRun && isLiteratureOnlyRequest(question));
+
   // academic_literature_richness_without_fixed_source_count_v1 — dynamic pack
   // selection: relevance and role coverage decide membership, never a count.
   let academic_pack_selection: PackSelectionDecision[] = [];
