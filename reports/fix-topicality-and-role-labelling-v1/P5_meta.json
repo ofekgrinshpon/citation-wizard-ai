@@ -1,0 +1,316 @@
+{
+  "footnotes": [
+    {
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2022/05/%D7%A0%D7%93%D7%91-%D7%93%D7%92%D7%9F-461.pdf",
+      "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2022/05/%D7%A0%D7%93%D7%91-%D7%93%D7%92%D7%9F-461.pdf",
+          "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "journal_article"
+    }
+  ],
+  "relabel": [
+    {
+      "title": "בג\"ץ 389/80 דפי זהב נ' רשות השידור",
+      "reason": "slot_role_consistent_with_body",
+      "run_id": "89c4b948-4f69-40c5-8293-93ff752bb072",
+      "source_id": "canonical-authority:hcj_389_80_dapei_zahav",
+      "role_changed": false,
+      "original_role": "binding_case_law",
+      "retrieval_slot": "binding_case_law",
+      "body_derived_role": "binding_case_law",
+      "can_satisfy_role_after": true,
+      "can_satisfy_role_before": true
+    },
+    {
+      "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+      "reason": "slot_role_consistent_with_body",
+      "run_id": "89c4b948-4f69-40c5-8293-93ff752bb072",
+      "source_id": "canonical-registry-local:hcj_5658_23_reasonableness_amendment",
+      "role_changed": false,
+      "original_role": "binding_case_law",
+      "retrieval_slot": "binding_case_law",
+      "body_derived_role": "binding_case_law",
+      "can_satisfy_role_after": true,
+      "can_satisfy_role_before": true
+    },
+    {
+      "title": "חוק-יסוד: כבוד האדם וחירותו",
+      "reason": "body_evidence_too_weak_to_override_slot",
+      "run_id": "89c4b948-4f69-40c5-8293-93ff752bb072",
+      "source_id": "nominated-source:N3",
+      "role_changed": false,
+      "original_role": "primary_statute",
+      "retrieval_slot": "primary_statute",
+      "body_derived_role": "regulation_or_guideline",
+      "can_satisfy_role_after": true,
+      "can_satisfy_role_before": true
+    },
+    {
+      "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
+      "reason": "journal_or_research_document_found_via_primary_statute_slot",
+      "run_id": "89c4b948-4f69-40c5-8293-93ff752bb072",
+      "source_id": "962165d0-e92c-4452-bdae-57885c228efb",
+      "role_changed": true,
+      "original_role": "primary_statute",
+      "retrieval_slot": "primary_statute",
+      "body_derived_role": "journal_article",
+      "can_satisfy_role_after": true,
+      "can_satisfy_role_before": false
+    },
+    {
+      "title": "שיקול דעת שיפוטי לאהרן ברק",
+      "reason": "body_evidence_too_weak_to_override_slot",
+      "run_id": "89c4b948-4f69-40c5-8293-93ff752bb072",
+      "source_id": "90aac05e-f296-4b1e-97ac-3c8e56c87ab3",
+      "role_changed": false,
+      "original_role": "primary_statute",
+      "retrieval_slot": "primary_statute",
+      "body_derived_role": "unknown",
+      "can_satisfy_role_after": false,
+      "can_satisfy_role_before": false
+    },
+    {
+      "title": "שיקול דעת שיפוטי: העידן השלישי",
+      "reason": "body_evidence_too_weak_to_override_slot",
+      "run_id": "89c4b948-4f69-40c5-8293-93ff752bb072",
+      "source_id": "b9cd70c6-ca34-440a-bd4f-07f11647bd85",
+      "role_changed": false,
+      "original_role": "primary_statute",
+      "retrieval_slot": "primary_statute",
+      "body_derived_role": "binding_case_law",
+      "can_satisfy_role_after": false,
+      "can_satisfy_role_before": false
+    },
+    {
+      "title": "שיקול דעת שיפוטי : העידן השלישי",
+      "reason": "body_evidence_too_weak_to_override_slot",
+      "run_id": "89c4b948-4f69-40c5-8293-93ff752bb072",
+      "source_id": "1cc69314-80a5-42f8-a50b-7458f056fb2c",
+      "role_changed": false,
+      "original_role": "primary_statute",
+      "retrieval_slot": "primary_statute",
+      "body_derived_role": "binding_case_law",
+      "can_satisfy_role_after": false,
+      "can_satisfy_role_before": false
+    },
+    {
+      "title": "הערות על ביקורת הסבירות במשפט המינהלי",
+      "reason": "judgment_document_found_via_statute_slot",
+      "run_id": "89c4b948-4f69-40c5-8293-93ff752bb072",
+      "source_id": "c23915a9-2725-441a-86d6-0688193e601a",
+      "role_changed": true,
+      "original_role": "primary_statute",
+      "retrieval_slot": "primary_statute",
+      "body_derived_role": "binding_case_law",
+      "can_satisfy_role_after": false,
+      "can_satisfy_role_before": false
+    },
+    {
+      "title": "גלגולי מושג \"שלטון החוק\" בישראל: בין פורמליזם למהות, בין ריסון לפְּעִילָנוּת",
+      "reason": "body_evidence_too_weak_to_override_slot",
+      "run_id": "89c4b948-4f69-40c5-8293-93ff752bb072",
+      "source_id": "3275f89a-f903-447e-af7a-7d3963d45e4a",
+      "role_changed": false,
+      "original_role": "primary_statute",
+      "retrieval_slot": "primary_statute",
+      "body_derived_role": "unknown",
+      "can_satisfy_role_after": false,
+      "can_satisfy_role_before": false
+    },
+    {
+      "title": "המעמד ה(על)-חוקתי של המשפט המינהלי בישראל (כרך נה)",
+      "reason": "body_evidence_too_weak_to_override_slot",
+      "run_id": "89c4b948-4f69-40c5-8293-93ff752bb072",
+      "source_id": "a8429229-cf27-4c62-b968-5bac9f88c462",
+      "role_changed": false,
+      "original_role": "primary_statute",
+      "retrieval_slot": "primary_statute",
+      "body_derived_role": "journal_article",
+      "can_satisfy_role_after": false,
+      "can_satisfy_role_before": false
+    },
+    {
+      "title": "שני מושגים של ריסון - וסבירות",
+      "reason": "body_evidence_too_weak_to_override_slot",
+      "run_id": "89c4b948-4f69-40c5-8293-93ff752bb072",
+      "source_id": "df5fa9df-0856-4ffd-9e8c-91c3ab1bc804",
+      "role_changed": false,
+      "original_role": "primary_statute",
+      "retrieval_slot": "primary_statute",
+      "body_derived_role": "unknown",
+      "can_satisfy_role_after": false,
+      "can_satisfy_role_before": false
+    },
+    {
+      "title": "להיות כמו דלוור",
+      "reason": "body_evidence_too_weak_to_override_slot",
+      "run_id": "89c4b948-4f69-40c5-8293-93ff752bb072",
+      "source_id": "6ca1ae85-6b56-448d-ae3f-5a4af68adad9",
+      "role_changed": false,
+      "original_role": "scholarship",
+      "retrieval_slot": "scholarship",
+      "body_derived_role": "binding_case_law",
+      "can_satisfy_role_after": true,
+      "can_satisfy_role_before": true
+    },
+    {
+      "title": "חובתם של נושאי משרה ציבורית לומר אמת לציבור",
+      "reason": "journal_or_research_document_found_via_primary_statute_slot",
+      "run_id": "89c4b948-4f69-40c5-8293-93ff752bb072",
+      "source_id": "c8ab3209-240c-41c7-bc41-e309b1dd67cc",
+      "role_changed": true,
+      "original_role": "primary_statute",
+      "retrieval_slot": "primary_statute",
+      "body_derived_role": "journal_article",
+      "can_satisfy_role_after": true,
+      "can_satisfy_role_before": false
+    }
+  ],
+  "thresholds": [
+    {
+      "run_id": "89c4b948-4f69-40c5-8293-93ff752bb072",
+      "source_id": "canonical-authority:hcj_389_80_dapei_zahav",
+      "match_ratio": 0.75,
+      "matched_stems": [
+        "מול",
+        "רשו",
+        "מנהל"
+      ],
+      "question_stems": [
+        "הסתמכ",
+        "מול",
+        "רשו",
+        "מנהל"
+      ],
+      "core_topic_match": true,
+      "final_topicality": "direct",
+      "negative_signals": [],
+      "new_required_matches": 3,
+      "old_required_matches": 4
+    },
+    {
+      "run_id": "89c4b948-4f69-40c5-8293-93ff752bb072",
+      "source_id": "canonical-registry-local:hcj_5658_23_reasonableness_amendment",
+      "match_ratio": 0.5,
+      "matched_stems": [
+        "רשו",
+        "מנהל"
+      ],
+      "question_stems": [
+        "הסתמכ",
+        "מול",
+        "רשו",
+        "מנהל"
+      ],
+      "core_topic_match": true,
+      "final_topicality": "adjacent",
+      "negative_signals": [],
+      "new_required_matches": 3,
+      "old_required_matches": 4
+    },
+    {
+      "run_id": "89c4b948-4f69-40c5-8293-93ff752bb072",
+      "source_id": "nominated-source:N3",
+      "match_ratio": 0.25,
+      "matched_stems": [
+        "רשו"
+      ],
+      "question_stems": [
+        "הסתמכ",
+        "מול",
+        "רשו",
+        "מנהל"
+      ],
+      "core_topic_match": true,
+      "final_topicality": "adjacent",
+      "negative_signals": [],
+      "new_required_matches": 3,
+      "old_required_matches": 4
+    },
+    {
+      "run_id": "89c4b948-4f69-40c5-8293-93ff752bb072",
+      "source_id": "962165d0-e92c-4452-bdae-57885c228efb",
+      "match_ratio": 0.5,
+      "matched_stems": [
+        "רשו",
+        "מנהל"
+      ],
+      "question_stems": [
+        "הסתמכ",
+        "מול",
+        "רשו",
+        "מנהל"
+      ],
+      "core_topic_match": true,
+      "final_topicality": "adjacent",
+      "negative_signals": [],
+      "new_required_matches": 3,
+      "old_required_matches": 4
+    },
+    {
+      "run_id": "89c4b948-4f69-40c5-8293-93ff752bb072",
+      "source_id": "c23915a9-2725-441a-86d6-0688193e601a",
+      "match_ratio": 0.5,
+      "matched_stems": [
+        "רשו",
+        "מנהל"
+      ],
+      "question_stems": [
+        "הסתמכ",
+        "מול",
+        "רשו",
+        "מנהל"
+      ],
+      "core_topic_match": true,
+      "final_topicality": "adjacent",
+      "negative_signals": [],
+      "new_required_matches": 3,
+      "old_required_matches": 4
+    },
+    {
+      "run_id": "89c4b948-4f69-40c5-8293-93ff752bb072",
+      "source_id": "a8429229-cf27-4c62-b968-5bac9f88c462",
+      "match_ratio": 0.25,
+      "matched_stems": [
+        "מנהל"
+      ],
+      "question_stems": [
+        "הסתמכ",
+        "מול",
+        "רשו",
+        "מנהל"
+      ],
+      "core_topic_match": true,
+      "final_topicality": "adjacent",
+      "negative_signals": [],
+      "new_required_matches": 3,
+      "old_required_matches": 4
+    },
+    {
+      "run_id": "89c4b948-4f69-40c5-8293-93ff752bb072",
+      "source_id": "c8ab3209-240c-41c7-bc41-e309b1dd67cc",
+      "match_ratio": 0.25,
+      "matched_stems": [
+        "מנהל"
+      ],
+      "question_stems": [
+        "הסתמכ",
+        "מול",
+        "רשו",
+        "מנהל"
+      ],
+      "core_topic_match": true,
+      "final_topicality": "adjacent",
+      "negative_signals": [],
+      "new_required_matches": 3,
+      "old_required_matches": 4
+    }
+  ],
+  "pack": []
+}

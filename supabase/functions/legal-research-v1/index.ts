@@ -126,6 +126,11 @@ import {
   isStrongDirectLiteratureCandidate,
   LITERATURE_GATE_REPAIR_VERSION,
 } from "./stages/academicLiteratureGateRepair.ts";
+import {
+  BODY_DERIVED_ROLE_VERSION,
+  relabelRoleAfterBody,
+  type RoleRelabelRow,
+} from "./stages/bodyDerivedRole.ts";
 import { makeAdminClient, writeTelemetry, beginTraceRow } from "./lib/telemetry.ts";
 import { getWebTierHealth, resetWebTierHealth } from "./lib/webTierHealth.ts";
 import { extractAttachments, buildAnalyzerContext, ATTACHMENT_LIMITS, type AttachmentInput } from "./lib/attachments.ts";
@@ -1622,6 +1627,45 @@ async function handle(req: Request): Promise<Response> {
       row.integrity_flags = integ.integrity_flags ?? row.integrity_flags;
     }
   }
+
+  // ─── fix_topicality_and_role_labelling_v1: body-derived role relabelling ──
+  // The candidate role is inherited from the retrieval slot that found the
+  // document. Once a real body exists, recompute the role from the document
+  // itself so a journal article discovered through a statute/case-law slot is
+  // no longer reported as unable to satisfy any role. Verifier role matching
+  // reads `candidate.role`, so this must run *before* runVerifier.
+  const roleRelabelRows: RoleRelabelRow[] = [];
+  {
+    const integrityByRow = new Map(pool.integrity.map((r) => [r.candidate_id, r]));
+    for (const c of pool.candidates) {
+      const meta = (c.metadata ?? {}) as Record<string, unknown>;
+      const body = typeof meta.extended_text === "string" ? meta.extended_text : "";
+      if (body.length < 800) continue;
+      const integRow = integrityByRow.get(c.candidate_id);
+      const outcome = relabelRoleAfterBody({
+        candidate_id: c.candidate_id,
+        title: String(c.title ?? ""),
+        url: c.url ?? null,
+        source_type: String(c.source_type ?? ""),
+        role: String(c.role ?? ""),
+        citable_as: integRow?.citable_as ?? null,
+        body,
+        body_chars: body.length,
+        body_topicality: null,
+        can_satisfy_role_before: integRow?.can_satisfy_role ?? false,
+      }, run_id);
+      roleRelabelRows.push(outcome.row);
+      (c.metadata as Record<string, unknown>).body_derived_role = outcome.row.body_derived_role;
+      if (outcome.new_role && outcome.new_role !== c.role) {
+        (c.metadata as Record<string, unknown>).retrieval_slot_role = c.role;
+        // deno-lint-ignore no-explicit-any
+        (c as any).role = outcome.new_role;
+        if (integRow) integRow.role = outcome.new_role;
+      }
+      if (integRow) integRow.can_satisfy_role = outcome.can_satisfy_role_after;
+    }
+  }
+
 
   // ─── Specific-case authority resolution (specific_case mode only) ───────
   // Exact-docket guard + bounded judgment-text acquisition. Fail-closed: when
@@ -3367,6 +3411,12 @@ async function handle(req: Request): Promise<Response> {
         })
         : null,
       academic_literature_body_topicality: literatureBodyTopicality,
+      // fix_topicality_and_role_labelling_v1
+      body_derived_role_version: BODY_DERIVED_ROLE_VERSION,
+      source_role_relabelling: roleRelabelRows,
+      topicality_threshold_decisions: literatureBodyTopicality.map((r) =>
+        r.topicality_threshold_decision
+      ),
       academic_literature_thin_pack_recovery: thinPackRecoveryReport,
       academic_literature_named_synthesis: literatureModeRun
         ? checkNamedSynthesis(drafter.answer_markdown ?? "", {
