@@ -108,6 +108,14 @@ import {
 import { detectStatuteSections } from "./stages/statuteSectionDetection.ts";
 import { planSourceUseIntent } from "./stages/sourceUseIntent.ts";
 import { isLiteratureOnlyRequest } from "./stages/academicLiteratureRichness.ts";
+import {
+  buildLiteratureGateTrace,
+  checkNamedSynthesis,
+  classifyBodyTopicality,
+  decideThinPackRecovery,
+  isStrongDirectLiteratureCandidate,
+  LITERATURE_GATE_REPAIR_VERSION,
+} from "./stages/academicLiteratureGateRepair.ts";
 import { makeAdminClient, writeTelemetry, beginTraceRow } from "./lib/telemetry.ts";
 import { getWebTierHealth, resetWebTierHealth } from "./lib/webTierHealth.ts";
 import { extractAttachments, buildAnalyzerContext, ATTACHMENT_LIMITS, type AttachmentInput } from "./lib/attachments.ts";
