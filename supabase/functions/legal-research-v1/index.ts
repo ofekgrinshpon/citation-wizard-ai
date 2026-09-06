@@ -3250,6 +3250,37 @@ async function handle(req: Request): Promise<Response> {
         .filter((r) => r.web_attempted && !r.ok)
         .map((r) => r.failure_reason ?? "unknown"),
 
+      // ── academic_literature_gate_repair_and_thin_pack_recovery_v1 ───────
+      academic_literature_gate_repair_version: LITERATURE_GATE_REPAIR_VERSION,
+      academic_literature_mode: literatureModeRun,
+      academic_literature_gate_trace: literatureModeRun
+        ? buildLiteratureGateTrace({
+          run_id,
+          question,
+          assessments: literatureStrongDirect,
+          body_outcome: literatureBodyOutcome,
+          body_topicality: literatureBodyTopicality,
+          pack_refs: (drafter.input_sources ?? []).map((s) => String(s.ref ?? "")),
+          cited_refs: (footnotes ?? []).map((f) =>
+            String((f as { source_id?: string }).source_id ?? "")
+          ),
+          candidate_ref_by_id: new Map(
+            (drafter.input_sources ?? []).map((
+              s,
+            ) => [String((s as { candidate_id?: string }).candidate_id ?? s.ref), String(s.ref)]),
+          ),
+        })
+        : null,
+      academic_literature_body_topicality: literatureBodyTopicality,
+      academic_literature_thin_pack_recovery: thinPackRecoveryReport,
+      academic_literature_named_synthesis: literatureModeRun
+        ? checkNamedSynthesis(
+          answerText,
+          (drafter.input_sources ?? []).map((s) => String(s.title ?? "")),
+        )
+        : null,
+
+
       claim_match_ran: drafter.claim_source_match
         ? drafter.claim_source_match.stage_not_run !== true
         : false,
