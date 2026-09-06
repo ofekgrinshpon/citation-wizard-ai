@@ -33,6 +33,7 @@ import {
   assessListingSuppression,
 } from "./doctrinalCandidateStabilization.ts";
 import { extractDocumentText } from "../lib/attachments.ts";
+import { extractPdfPagesBounded } from "../lib/largePdfChunkedExtract.ts";
 import { processExtractedBody } from "./postExtract.ts";
 import { decodeHebrew } from "./judgmentTextAcquisition.ts";
 import { officialFetch, looksLikeBlockPage } from "../lib/officialFetch.ts";
@@ -427,6 +428,30 @@ export interface SecondaryFetchResult {
 }
 
 /**
+ * secondary_body_acquisition_timeout_guard_v1 — bounds for the PDF guard.
+ *
+ * Every PDF reaching secondary / literature-completeness acquisition is read
+ * page-by-page through `extractPdfPagesBounded`, which yields to the event loop
+ * between pages, so a timer / abort / budget check can actually fire. The old
+ * whole-document `extractDocumentText` path is synchronous and uninterruptible:
+ * a single ~819KB HUJI journal PDF froze the isolate until the stale-worker
+ * reaper killed the job ~14 minutes later.
+ */
+export const SECONDARY_PDF_GUARD = {
+  MAX_PAGES: 20,
+  MAX_CHARS: 25_000,
+  ENOUGH_CHARS: 8_000,
+  DEADLINE_MS: 12_000,
+} as const;
+
+export interface SecondaryFetchOptions {
+  /** Which caller is extracting; recorded in the guard telemetry. */
+  stage?: string;
+  run_id?: string;
+  source_id?: string;
+}
+
+/**
  * One bounded fetch + extraction of a public secondary source. No link
  * following, no retries: the caller owns the (small) follow budget.
  */
@@ -435,6 +460,7 @@ export async function fetchSecondaryBody(
   budgetExceeded: () => boolean,
   onStage: SecondaryStageSink,
   allowExtraction?: (bytes: number) => boolean,
+  opts?: SecondaryFetchOptions,
 ): Promise<SecondaryFetchResult> {
   const signal = AbortSignal.timeout(SECONDARY_BODY_LIMITS.PER_ATTEMPT_MS);
   const gate = (where: string) => {
@@ -452,7 +478,89 @@ export async function fetchSecondaryBody(
   const isDocx = /wordprocessingml|officedocument/.test(contentType) ||
     /\.docx(\?|#|$)/i.test(finalUrl) || head.startsWith("PK");
 
-  if (isPdf || isDocx) {
+  if (isPdf) {
+    // ── PDF guard: bounded page-by-page extraction, never the blocking path ──
+    const guardBase = {
+      run_id: opts?.run_id ?? null,
+      source_id: opts?.source_id ?? null,
+      stage: opts?.stage ?? "secondary_body_acquisition",
+      url,
+      final_url: finalUrl,
+      host: hostOf(finalUrl),
+      bytes: bytes.byteLength,
+      old_path_would_have_been_inline:
+        bytes.byteLength <= SECONDARY_BODY_LIMITS.MAX_INLINE_EXTRACTION_BYTES,
+      extractor_used: "bounded_page_by_page",
+    };
+    if (allowExtraction && !allowExtraction(bytes.byteLength)) {
+      onStage("secondary_pdf_extraction_guard", {
+        ...guardBase,
+        phase: "refused",
+        accepted: false,
+        rejection_reason: "secondary_extraction_budget_spent",
+      });
+      throw new Error("secondary_extraction_budget_spent");
+    }
+    gate("before_binary_extract");
+    onStage("secondary_pdf_extraction_guard", { ...guardBase, phase: "start" });
+    const t0 = Date.now();
+    let chunk;
+    try {
+      chunk = await extractPdfPagesBounded(bytes, {
+        maxPages: SECONDARY_PDF_GUARD.MAX_PAGES,
+        maxChars: SECONDARY_PDF_GUARD.MAX_CHARS,
+        enoughChars: SECONDARY_PDF_GUARD.ENOUGH_CHARS,
+        deadlineMs: SECONDARY_PDF_GUARD.DEADLINE_MS,
+      });
+    } catch (e) {
+      onStage("secondary_pdf_extraction_guard", {
+        ...guardBase,
+        phase: "failed",
+        accepted: false,
+        latency_ms: Date.now() - t0,
+        rejection_reason: `pdf_bounded_extract_failed:${String((e as Error)?.message ?? e).slice(0, 120)}`,
+      });
+      throw new Error("secondary_pdf_bounded_extraction_failed");
+    }
+    const latency_ms = Date.now() - t0;
+    if (!chunk.text || chunk.text.length === 0) {
+      onStage("secondary_pdf_extraction_guard", {
+        ...guardBase,
+        phase: "finish",
+        accepted: false,
+        pages_attempted: chunk.pages_attempted,
+        chars_extracted: 0,
+        stop_reason: chunk.stopped_reason,
+        latency_ms,
+        rejection_reason: "pdf_no_extractable_text",
+      });
+      throw new Error("secondary_pdf_no_extractable_text");
+    }
+    gate("after_binary_extract");
+    const processed = await processExtractedBody(chunk.text, { onStage, budgetExceeded });
+    onStage("secondary_pdf_extraction_guard", {
+      ...guardBase,
+      phase: "finish",
+      accepted: true,
+      pages_attempted: chunk.pages_attempted,
+      pages_extracted: chunk.pages_extracted,
+      chars_extracted: processed.text.length,
+      stop_reason: chunk.stopped_reason,
+      latency_ms,
+      rejection_reason: null,
+    });
+    return {
+      text: processed.text,
+      html: null,
+      final_url: finalUrl,
+      status,
+      content_type: contentType,
+      bytes: bytes.byteLength,
+      extraction_method: "pdf",
+    };
+  }
+
+  if (isDocx) {
     if (bytes.byteLength > SECONDARY_BODY_LIMITS.MAX_INLINE_EXTRACTION_BYTES) {
       throw new Error("secondary_binary_too_large_for_inline_extraction");
     }
@@ -460,7 +568,7 @@ export async function fetchSecondaryBody(
       throw new Error("secondary_extraction_budget_spent");
     }
     gate("before_binary_extract");
-    const extracted = await extractDocumentText(bytes, isPdf ? "pdf" : "docx");
+    const extracted = await extractDocumentText(bytes, "docx");
     gate("after_binary_extract");
     const processed = await processExtractedBody(extracted, { onStage, budgetExceeded });
     return {
@@ -470,7 +578,7 @@ export async function fetchSecondaryBody(
       status,
       content_type: contentType,
       bytes: bytes.byteLength,
-      extraction_method: isPdf ? "pdf" : "docx",
+      extraction_method: "docx",
     };
   }
 
@@ -504,6 +612,7 @@ export async function acquireSecondaryBodyFromUrl(
   const r = await fetchSecondaryBody(url, budgetExceeded, onStage, allowExtraction);
   return r.text;
 }
+
 
 
 interface AdminLike {
@@ -596,6 +705,8 @@ async function localBodyLookup(
 
 export interface SecondaryBodyAcquisitionInput {
   admin: AdminLike;
+  /** Correlates PDF-guard telemetry with the run. */
+  run_id?: string;
   candidates: Candidate[];
   depth_mode: string | null;
   /** Kill switch for the control arm of the before/after comparison. */
@@ -945,7 +1056,11 @@ export async function runSecondaryBodyAcquisition(
       webAttempts++;
       row.web_attempted = true;
       try {
-        let fetched = await fetchSecondaryBody(url, budgetExceeded, onStage, allowExtraction);
+        let fetched = await fetchSecondaryBody(url, budgetExceeded, onStage, allowExtraction, {
+          stage: "secondary_body_acquisition",
+          run_id: input.run_id,
+          source_id: c.candidate_id,
+        });
         row.final_url = fetched.final_url;
         row.http_status = fetched.status;
         row.content_type = fetched.content_type;
@@ -969,6 +1084,11 @@ export async function runSecondaryBodyAcquisition(
                 budgetExceeded,
                 onStage,
                 allowExtraction,
+                {
+                  stage: "secondary_body_acquisition_follow",
+                  run_id: input.run_id,
+                  source_id: c.candidate_id,
+                },
               );
               if (follow.text.length > fetched.text.length) {
                 fetched = follow;
