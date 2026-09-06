@@ -1731,6 +1731,7 @@ async function handle(req: Request): Promise<Response> {
           () => budget.exceeded(),
           (name, detail) => budget.markDurable(name, detail ?? {}),
           (bytes: number) => budget.allowExtraction?.(bytes) ?? true,
+          { stage: "literature_body_completeness", run_id },
         );
         return {
           text: r.text,
