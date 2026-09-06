@@ -31,6 +31,19 @@ export interface ClaimFacet {
   expected_support_type: FacetSupportType;
 }
 
+export interface FacetGuardRecord {
+  run_id: string | null;
+  original_query: string;
+  normalized_query: string;
+  proposed_facet: string;
+  proposed_query: string;
+  topical_overlap_score: number;
+  shared_key_terms: string[];
+  unrelated_entities: string[];
+  accepted: boolean;
+  rejection_reason: string | null;
+}
+
 export interface FacetExpansionResult {
   enabled: boolean;
   gate_reason: string;
@@ -38,7 +51,10 @@ export interface FacetExpansionResult {
   lock_terms: string[];
   facets: ClaimFacet[];
   queries: Query[];
+  /** natural_literature_mode_and_topic_guard_v1 — per-facet topical guard. */
+  contamination_guard: FacetGuardRecord[];
 }
+
 
 // ─── Caps (CPU / retrieval budget protection) ───────────────────────────────
 const MAX_FACETS_PER_CLAIM = 6;
