@@ -304,10 +304,97 @@ export function facetExpansionGate(
   return { enabled: false, reason: `shape_not_eligible:${outputShape ?? "unknown"}` };
 }
 
+// ─── natural_literature_mode_and_topic_guard_v1 — facet contamination guard ──
+// A facet template may only survive when it shares real subject vocabulary
+// with the *current* question, and when its distinctive central entities are
+// present in the current prompt. This blocks template/prior-question leakage
+// (e.g. rabbinical-court facets on a proportionality/reasonableness prompt).
+
+const FACET_STOPWORDS = new Set([
+  "משפט", "המשפט", "משפטי", "משפטית", "הישראלי", "הישראלית", "ישראל", "בית",
+  "בתי", "דין", "הדין", "חוק", "החוק", "חוקי", "פסק", "פסיקה", "הפסיקה", "סעיף",
+  "כללי", "מאמר", "אקדמי", "אקדמית", "ספרות", "הספרות", "סקירה", "סקירת", "מחקר",
+  "סמינריון", "עבודה", "פרק", "רקע", "תיאורטי", "כתוב", "תכתוב", "תעשה", "לפי",
+  "נוסח", "הלכה", "מנחה", "יישום", "חריגים", "וסייגים", "שאלה", "בסוגיה",
+]);
+
+/** Distinctive entity families: if a facet invokes one, the prompt must too. */
+const ENTITY_FAMILIES: Array<{ id: string; re: RegExp }> = [
+  { id: "rabbinical_court", re: /(בית\s+הדין\s+הרבני|בתי\s+דין\s+רבניים|בתי\s+דין\s+דתיים|בית\s+דין\s+דתי|רבני|דתי)/ },
+  { id: "family_property", re: /(גירוש|כתובה|איזון\s+משאבים|יחסי\s+ממון|חלוקת\s+רכוש|הלכת\s+השיתוף)/ },
+  { id: "torts", re: /(נזיקין|רשלנות|פיצויי\s+נזק)/ },
+  { id: "tax", re: /(מס\s+הכנסה|מע"?מ|מיסוי)/ },
+  { id: "companies", re: /(דיני\s+חברות|הרמת\s+מסך|נושא\s+משרה)/ },
+  { id: "criminal", re: /(פלילי|כתב\s+אישום|עונשין)/ },
+  { id: "labor", re: /(דיני\s+עבודה|בית\s+הדין\s+לעבודה|פיטורי)/ },
+  { id: "contracts", re: /(דיני\s+חוזים|חוק\s+החוזים|הפרת\s+חוזה)/ },
+  { id: "interim_relief", re: /(סעד\s+זמני|צו\s+ביניים|מאזן\s+נוחות)/ },
+  { id: "burden_of_proof", re: /(נטל\s+השכנוע|נטל\s+הבאת\s+הראיות|נטל\s+ההוכחה)/ },
+];
+
+export function normalizeFacetQuery(text: string): string {
+  return String(text ?? "").replace(/["׳״']/g, "").replace(/\s+/g, " ").trim();
+}
+
+function contentTokens(text: string): Set<string> {
+  const out = new Set<string>();
+  for (const t of tokens(text)) {
+    if (t.length < 4) continue;
+    if (FACET_STOPWORDS.has(t)) continue;
+    out.add(t);
+  }
+  return out;
+}
+
+export function guardFacetAgainstQuestion(input: {
+  run_id?: string | null;
+  question: string;
+  claim_texts?: string[];
+  facet_label: string;
+  facet_query: string;
+}): FacetGuardRecord {
+  const normalized = normalizeFacetQuery(
+    `${input.question} ${(input.claim_texts ?? []).join(" ")}`,
+  );
+  const qTokens = contentTokens(normalized);
+  const facetText = `${input.facet_label} ${input.facet_query}`;
+  const fTokens = contentTokens(facetText);
+  const shared = [...fTokens].filter((t) => qTokens.has(t));
+  const denom = Math.max(3, Math.min(fTokens.size, 12));
+  const score = Number(Math.min(1, shared.length / denom).toFixed(2));
+
+  const unrelated = ENTITY_FAMILIES
+    .filter((e) => e.re.test(facetText) && !e.re.test(normalized))
+    .map((e) => e.id);
+
+  let accepted = true;
+  let reason: string | null = null;
+  if (unrelated.length > 0) {
+    accepted = false;
+    reason = `unrelated_central_entities:${unrelated.join(",")}`;
+  } else if (shared.length === 0) {
+    accepted = false;
+    reason = "no_shared_subject_vocabulary_with_current_question";
+  }
+
+  return {
+    run_id: input.run_id ?? null,
+    original_query: String(input.question ?? "").slice(0, 400),
+    normalized_query: normalized.slice(0, 400),
+    proposed_facet: input.facet_label,
+    proposed_query: input.facet_query,
+    topical_overlap_score: score,
+    shared_key_terms: shared.slice(0, 10),
+    unrelated_entities: unrelated,
+    accepted,
+    rejection_reason: reason,
+  };
+}
+
 export function expandClaimFacets(
   question: string,
   analyzer: AnalyzerOutput,
-  opts: { mode: string | null; outputShape: string | null },
+  opts: { mode: string | null; outputShape: string | null; run_id?: string | null },
 ): FacetExpansionResult {
   const gate = facetExpansionGate(opts.mode, opts.outputShape);
   const area = resolveAreaLock(question, analyzer);
@@ -318,6 +405,7 @@ export function expandClaimFacets(
     lock_terms: area?.lock_terms ?? [],
     facets: [],
     queries: [],
+    contamination_guard: [],
   };
   if (!gate.enabled) return empty;
 
@@ -329,6 +417,8 @@ export function expandClaimFacets(
     ? FACET_FAMILIES.find((f) => f.area_id === area.id && f.trigger.test(hay)) ?? null
     : null;
 
+  const claimTexts = claims.map((c) => c.text_he);
+  const contamination_guard: FacetGuardRecord[] = [];
   const facets: ClaimFacet[] = [];
   let seq = 0;
   for (const claim of claims) {
@@ -341,6 +431,15 @@ export function expandClaimFacets(
       MAX_FACETS_TOTAL - facets.length,
     );
     for (const t of templates.slice(0, take)) {
+      const guard = guardFacetAgainstQuestion({
+        run_id: opts.run_id ?? null,
+        question,
+        claim_texts: claimTexts,
+        facet_label: t.label,
+        facet_query: t.terms.join(" "),
+      });
+      contamination_guard.push(guard);
+      if (!guard.accepted) continue;
       seq += 1;
       facets.push({
         facet_id: `F${seq}`,
@@ -354,7 +453,7 @@ export function expandClaimFacets(
       });
     }
     // Family templates already cover the question; do not fan out per claim.
-    if (family) break;
+    if (family && facets.length > 0) break;
   }
 
   const queries: Query[] = [];
@@ -387,7 +486,9 @@ export function expandClaimFacets(
     lock_terms: area?.lock_terms ?? [],
     facets,
     queries,
+    contamination_guard,
   };
+
 }
 
 /** Drafter directive lines: keep facets separated, footnotes facet-scoped. */
