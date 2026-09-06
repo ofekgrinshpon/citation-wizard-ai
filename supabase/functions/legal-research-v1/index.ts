@@ -49,7 +49,10 @@ import { enrichLocalCaselawListingGate } from "./stages/localCaselawListingGate.
 import { summarizeSynthesisPack, type SynthesisRole } from "./stages/synthesisRole.ts";
 import { runJudgmentTextAcquisition } from "./stages/judgmentTextAcquisition.ts";
 import { runStatuteTextAcquisition } from "./stages/statuteTextAcquisition.ts";
-import { runSecondaryBodyAcquisition } from "./stages/secondaryBodyAcquisition.ts";
+import {
+  fetchSecondaryBody,
+  runSecondaryBodyAcquisition,
+} from "./stages/secondaryBodyAcquisition.ts";
 import {
   bestSupportByCandidate,
   buildDoctrinalPoolSnapshot,
@@ -131,6 +134,13 @@ import {
   relabelRoleAfterBody,
   type RoleRelabelRow,
 } from "./stages/bodyDerivedRole.ts";
+import {
+  explainRemainingWeakBody,
+  LITERATURE_BODY_COMPLETENESS_VERSION,
+  runLiteratureBodyCompleteness,
+  type CompletenessStageReport,
+  type ReextractionCandidateView,
+} from "./stages/literatureBodyCompleteness.ts";
 import { makeAdminClient, writeTelemetry, beginTraceRow } from "./lib/telemetry.ts";
 import { getWebTierHealth, resetWebTierHealth } from "./lib/webTierHealth.ts";
 import { extractAttachments, buildAnalyzerContext, ATTACHMENT_LIMITS, type AttachmentInput } from "./lib/attachments.ts";
@@ -1635,9 +1645,10 @@ async function handle(req: Request): Promise<Response> {
   // no longer reported as unable to satisfy any role. Verifier role matching
   // reads `candidate.role`, so this must run *before* runVerifier.
   const roleRelabelRows: RoleRelabelRow[] = [];
-  {
+  const runRoleRelabelling = (only?: Set<string>) => {
     const integrityByRow = new Map(pool.integrity.map((r) => [r.candidate_id, r]));
     for (const c of pool.candidates) {
+      if (only && !only.has(c.candidate_id)) continue;
       const meta = (c.metadata ?? {}) as Record<string, unknown>;
       const body = typeof meta.extended_text === "string" ? meta.extended_text : "";
       if (body.length < 800) continue;
@@ -1664,7 +1675,132 @@ async function handle(req: Request): Promise<Response> {
       }
       if (integRow) integRow.can_satisfy_role = outcome.can_satisfy_role_after;
     }
+  };
+  runRoleRelabelling();
+
+  // ─── literature_body_completeness_v1 ──────────────────────────────────────
+  // Several strong articles die at `body_evidence_too_weak_to_override_slot`
+  // because the stored body is a listing page, an abstract or a truncated
+  // extraction. Make ONE bounded attempt to obtain a fuller body from the same
+  // already-fetched source, then re-run the existing gates for improved bodies
+  // only. No discovery, no search, no model call, no forced citation.
+  let literatureBodyCompleteness: CompletenessStageReport | null = null;
+  const bodyCompletenessRoleBefore = new Map<string, string>();
+  if (literatureModeRun && !fastLaneHit) {
+    const relabelReasonById = new Map(
+      roleRelabelRows.map((r) => [r.source_id, r.reason] as const),
+    );
+    const views: ReextractionCandidateView[] = pool.candidates.map((c) => {
+      const meta = (c.metadata ?? {}) as Record<string, unknown>;
+      const integ = meta.source_integrity as { reject?: boolean } | undefined;
+      const body = typeof meta.extended_text === "string" ? meta.extended_text : "";
+      bodyCompletenessRoleBefore.set(c.candidate_id, String(c.role ?? ""));
+      return {
+        source_id: c.candidate_id,
+        title: String(c.title ?? ""),
+        url: c.url ?? c.source_url ?? null,
+        source_type: c.source_type ? String(c.source_type) : null,
+        role_before: c.role ? String(c.role) : null,
+        body,
+        strong_direct: literatureStrongDirectIds.has(c.candidate_id),
+        strong_adjacent: false,
+        blocker: relabelReasonById.get(c.candidate_id) ?? null,
+        topicality: null,
+        hard_integrity_failure: integ?.reject === true,
+      };
+    }).filter((v) => String(v.body ?? "").length > 0 || v.strong_direct);
+
+    literatureBodyCompleteness = await runLiteratureBodyCompleteness({
+      run_id,
+      enabled: !budget.exceeded(),
+      views,
+      fetchBody: async (url) => {
+        const r = await fetchSecondaryBody(
+          url,
+          () => budget.exceeded(),
+          (name, detail) => budget.markDurable(name, detail ?? {}),
+          (bytes: number) => budget.allowExtraction?.(bytes) ?? true,
+        );
+        return {
+          text: r.text,
+          html: r.html,
+          final_url: r.final_url,
+          status: r.status,
+          bytes: r.bytes,
+          extraction_method: r.extraction_method,
+        };
+      },
+      topicality: (source_id, body) => {
+        const c = pool.candidates.find((x) => x.candidate_id === source_id);
+        return classifyBodyTopicality(question, {
+          candidate_id: source_id,
+          title: String(c?.title ?? ""),
+          snippet: c?.snippet ?? null,
+          url: c?.url ?? null,
+          body,
+        }, run_id).role_after_body;
+      },
+      applyBody: (source_id, text, final_url) => {
+        const c = pool.candidates.find((x) => x.candidate_id === source_id);
+        if (!c) return 0;
+        const meta = (c.metadata ?? {}) as Record<string, unknown>;
+        const integ = meta.source_integrity as
+          | { text_usability?: string; integrity_flags?: string[] }
+          | undefined;
+        if (integ) {
+          integ.text_usability = text.length >= 1200 ? "full_text" : "substantive_excerpt";
+          integ.integrity_flags = [
+            ...(integ.integrity_flags ?? []),
+            "literature_body_reextracted",
+            "body_acquired",
+          ];
+        }
+        c.metadata = {
+          ...meta,
+          ...(integ ? { source_integrity: integ } : {}),
+          extended_text: text,
+          body_acquired: true,
+          secondary_body_acquired: true,
+          literature_body_reextracted: true,
+          literature_body_reextracted_url: final_url,
+          final_text_usability: text.length >= 1200 ? "full_text" : "substantive_excerpt",
+        };
+        if ((c.snippet || "").length < 400) c.snippet = text.slice(0, 1200);
+        return text.length;
+      },
+      markDurable: (name, detail) => budget.markDurable(name, detail),
+    });
+
+    if (literatureBodyCompleteness.improved_source_ids.length > 0) {
+      // Re-run the existing (unweakened) role gate for improved bodies only.
+      runRoleRelabelling(new Set(literatureBodyCompleteness.improved_source_ids));
+      const latest = new Map(roleRelabelRows.map((r) => [r.source_id, r] as const));
+      for (const res of literatureBodyCompleteness.results) {
+        res.role_after = latest.get(res.source_id)?.body_derived_role ?? res.role_after;
+      }
+    }
+    for (const res of literatureBodyCompleteness.results) {
+      if (res.body_replaced) continue;
+      const a = literatureBodyCompleteness.assessments.find((x) => x.source_id === res.source_id);
+      if (!a) continue;
+      res.final_reason = explainRemainingWeakBody(
+        a,
+        literatureBodyCompleteness.attempts.filter((x) => x.source_id === res.source_id),
+        res,
+      );
+    }
+    await budget.markDurable("literature_body_completeness", {
+      version: LITERATURE_BODY_COMPLETENESS_VERSION,
+      assessed: literatureBodyCompleteness.assessments.length,
+      selected: literatureBodyCompleteness.candidates.filter((c) => c.selected_for_reextraction)
+        .length,
+      attempts: literatureBodyCompleteness.attempts.length,
+      improved: literatureBodyCompleteness.improved_source_ids.length,
+      added_latency_ms: literatureBodyCompleteness.added_latency_ms,
+    });
   }
+
+
 
 
   // ─── Specific-case authority resolution (specific_case mode only) ───────
@@ -3417,6 +3553,48 @@ async function handle(req: Request): Promise<Response> {
       topicality_threshold_decisions: literatureBodyTopicality.map((r) =>
         r.topicality_threshold_decision
       ),
+      // literature_body_completeness_v1
+      literature_body_completeness_version: LITERATURE_BODY_COMPLETENESS_VERSION,
+      literature_body_completeness_assessment:
+        literatureBodyCompleteness?.assessments ?? [],
+      literature_body_reextraction_candidate: literatureBodyCompleteness?.candidates ?? [],
+      literature_body_reextraction_attempt: literatureBodyCompleteness?.attempts ?? [],
+      literature_body_reextraction_result: literatureBodyCompleteness?.results ?? [],
+      literature_body_reextraction_added_latency_ms:
+        literatureBodyCompleteness?.added_latency_ms ?? 0,
+      literature_body_downstream_effect: (literatureBodyCompleteness?.results ?? []).map((res) => {
+        const packIds = new Set(
+          (drafter.input_sources ?? []).map((s) =>
+            String((s as { candidate_id?: string }).candidate_id ?? s.ref)
+          ),
+        );
+        const relabel = roleRelabelRows.filter((r) => r.source_id === res.source_id).slice(-1)[0];
+        const topRow = literatureBodyTopicality.find((r) => r.source_id === res.source_id);
+        const cited = (drafter.footnotes ?? []).some((f) =>
+          String((f as { candidate_id?: string }).candidate_id ?? "") === res.source_id
+        );
+        const inPack = packIds.has(res.source_id);
+        return {
+          run_id,
+          source_id: res.source_id,
+          title: res.title,
+          body_improved: res.body_replaced,
+          topicality_before: res.topicality_after_reextraction,
+          topicality_after: topRow?.role_after_body ?? "unknown",
+          role_before: res.role_before,
+          role_after: relabel?.body_derived_role ?? res.role_after,
+          can_satisfy_role_before: relabel?.can_satisfy_role_before ?? null,
+          can_satisfy_role_after: relabel?.can_satisfy_role_after ?? null,
+          verifier_before: null,
+          verifier_after: verifier.usable.some((u) => u.candidate_id === res.source_id),
+          in_pack_before: null,
+          in_pack_after: inPack,
+          cited_in_final_answer: cited,
+          final_loss_stage: cited ? null : inPack ? "drafter_utilisation" : "pack_selection",
+          final_loss_reason: res.body_replaced ? null : res.final_reason,
+        };
+      }),
+
       academic_literature_thin_pack_recovery: thinPackRecoveryReport,
       academic_literature_named_synthesis: literatureModeRun
         ? checkNamedSynthesis(drafter.answer_markdown ?? "", {
