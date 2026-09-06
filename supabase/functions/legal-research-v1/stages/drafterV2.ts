@@ -81,6 +81,7 @@ import {
   scoreLiteratureTopicality,
   selectLiteraturePack,
 } from "./academicLiteratureRichness.ts";
+import { buildCenterOfGravityDirectives } from "./naturalLiteratureMode.ts";
 
 import { applyBlockCeiling, type BlockTrimReport } from "./routerProfiles.ts";
 import {
@@ -1449,6 +1450,8 @@ export async function runDrafterV2(
      */
     blockCeiling?: number | null;
     dropUnsupportedBlocks?: boolean;
+    /** natural_literature_mode_and_topic_guard_v1 — literature-review run. */
+    literatureMode?: boolean;
     /** five_mode_source_depth_policy_v1 depth mode (doctrinal sufficiency fallback). */
     depthMode?: string | null;
     /** source_use_intent_planning_v1 — planned task / source-use contract. */
@@ -2221,6 +2224,7 @@ export async function runDrafterV2(
           inputSources.slice(0, 8).map((s) => `${s.ref}: ${String(s.title ?? "")}`),
         )
         : []),
+      ...literature_center_of_gravity_directives,
       ...(academic_richness_sufficiency?.limitation_directive
         ? [academic_richness_sufficiency.limitation_directive]
         : []),
