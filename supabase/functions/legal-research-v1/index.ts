@@ -1542,6 +1542,9 @@ async function handle(req: Request): Promise<Response> {
   const literatureStrongDirect = literatureModeRun
     ? literatureCandidateViews.map((v) => isStrongDirectLiteratureCandidate(question, v))
     : [];
+  const literatureStrongDirectIds = new Set(
+    literatureStrongDirect.filter((s) => s.strong_direct).map((s) => s.candidate_id),
+  );
   const literatureDirectIds = literatureStrongDirect
     .filter((s) => s.strong_direct)
     .sort((a, b) => b.topicality_score - a.topicality_score)
