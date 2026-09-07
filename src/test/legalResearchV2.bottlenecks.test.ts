@@ -209,3 +209,15 @@ describe("fetch output clamping", () => {
     expect(out.text_head!.length).toBeLessThanOrEqual(FETCH_LIMITS.HEAD_CHARS);
   });
 });
+
+describe("citation hygiene", () => {
+  it("never leaks an internal evidence id into a footnote", async () => {
+    const { formatCitation } = await import(
+      "../../supabase/functions/legal-research-v2/drafting/render"
+    );
+    expect(formatCitation({ display_title: "בג\"ץ דפי זהב", locator: "S1" }))
+      .not.toMatch(/S1/);
+    expect(formatCitation({ display_title: "פסק דין", locator: "פסקה 11, S3" }))
+      .toBe("פסק דין, פסקה 11");
+  });
+});

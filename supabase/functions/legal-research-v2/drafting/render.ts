@@ -29,6 +29,9 @@ export function formatCitation(info: CitationInfo): string {
   }
   title = title.replace(/\s*[|–—-]\s*(?:נבו|תקדין|דין|פסקדין)\s*$/u, "").trim();
   let locator = info.locator?.trim() ?? "";
+  // An internal evidence id ("S1", "מקור S3") is never part of a citation.
+  if (/^(?:מקור\s*)?S\d{1,3}$/u.test(locator)) locator = "";
+  locator = locator.replace(/\s*[,(]?\s*(?:מקור\s*)?S\d{1,3}\s*\)?\s*$/u, "").trim();
   // Don't repeat the docket when the title already carries it.
   const docket = locator.match(/\d{1,6}\/\d{2}/)?.[0];
   if (docket && title.includes(docket)) {
