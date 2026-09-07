@@ -509,7 +509,11 @@ function buildCandidatePoolInner(
     "official_primary",
   ]);
   const AUTHORITY_MARGIN = 0.05;
-  const authorityExemptBudget = Math.max(3, Math.ceil(POOL_CAP * 0.2));
+  // Bounded: at most 40% of the pool may be admitted through the exemption, and
+  // it stops once 70% of the pool is filled, so ordinary diversity shaping keeps
+  // the remaining slots.
+  const authorityExemptBudget = Math.max(3, Math.ceil(POOL_CAP * 0.4));
+  const authorityExemptFillLimit = Math.ceil(POOL_CAP * 0.7);
   let authorityExemptionsUsed = 0;
   const authorityExemptions: Array<{
     candidate_id: string;
@@ -584,7 +588,9 @@ function buildCandidatePoolInner(
         const stronger = !Number.isFinite(weakest) ||
           effScore(c) >= weakest + AUTHORITY_MARGIN;
         if (
-          authorityReason && stronger && authorityExemptionsUsed < authorityExemptBudget
+          authorityReason && stronger &&
+          authorityExemptionsUsed < authorityExemptBudget &&
+          out.length < authorityExemptFillLimit
         ) {
           authorityExemptionsUsed++;
           authorityExemptions.push({
