@@ -128,6 +128,8 @@ export interface FetchInput {
   expected_identity?: { docket?: string; statute?: string; section?: string };
   /** Optional in-document search terms; returns verbatim windows around them. */
   find?: string[];
+  /** Explicit justification for re-fetching an already-read URL. */
+  refetch_reason?: string;
 }
 
 export interface FetchOutput {
@@ -141,6 +143,8 @@ export interface FetchOutput {
   identity_hint?: string;
   text_head?: string;
   windows?: string[];
+  /** True when the body was already in the evidence store (no new HTTP call). */
+  deduped?: boolean;
   error?: string;
 }
 
@@ -154,6 +158,28 @@ export async function runFetch(
   if (!url || !/^https?:\/\//i.test(url)) {
     return { ok: false, error: "no_usable_url" };
   }
+  // Per-run fetch dedupe: an already-read URL is served from the evidence
+  // store and does not consume fetch budget, unless a refetch reason is given.
+  if (!input.refetch_reason?.trim()) {
+    const cached = store.findByUrl(url);
+    if (cached) {
+      return {
+        ok: cached.fetch_status === "ok",
+        source_id: cached.source_id,
+        title: cached.title,
+        text_length: cached.text_length,
+        is_actual_document: cached.is_actual_document,
+        not_document_reason: cached.not_document_reason,
+        identity_found: cached.identity_fields,
+        identity_hint: "מסמך זה כבר הובא בריצה זו; מוחזר מהמאגר ללא הבאה חוזרת.",
+        text_head: cached.extracted_text.slice(0, FETCH_LIMITS.HEAD_CHARS),
+        windows: input.find?.length ? readingWindows(cached.extracted_text, input.find) : undefined,
+        deduped: true,
+        error: cached.fetch_status === "ok" ? undefined : cached.fetch_error,
+      };
+    }
+  }
+
   const title = discovery?.title || url;
   const origin = discovery?.origin ?? "direct_url";
 

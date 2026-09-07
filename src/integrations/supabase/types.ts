@@ -775,6 +775,42 @@ export type Database = {
         }
         Relationships: []
       }
+      v2_eval_runs: {
+        Row: {
+          created_at: string
+          error: string | null
+          finished_at: string | null
+          id: string
+          label: string | null
+          question: string
+          result: Json | null
+          run_id: string
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          error?: string | null
+          finished_at?: string | null
+          id?: string
+          label?: string | null
+          question: string
+          result?: Json | null
+          run_id: string
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          error?: string | null
+          finished_at?: string | null
+          id?: string
+          label?: string | null
+          question?: string
+          result?: Json | null
+          run_id?: string
+          status?: string
+        }
+        Relationships: []
+      }
       verified_legal_source_texts: {
         Row: {
           chunk_index: number
