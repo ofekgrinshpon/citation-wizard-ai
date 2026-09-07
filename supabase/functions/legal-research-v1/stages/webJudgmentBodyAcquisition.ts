@@ -100,16 +100,32 @@ function hasBody(c: Candidate): boolean {
   return ext >= WEB_JUDGMENT_BODY_LIMITS.MIN_BODY_CHARS;
 }
 
+const FINALS: Record<string, string> = { "כ": "ך", "מ": "ם", "נ": "ן", "פ": "ף", "צ": "ץ" };
+
+/**
+ * Court prefixes are often typed with a non-final letter (`בג"צ` instead of
+ * `בג"ץ`). Restore the final form only in the letter that immediately precedes
+ * a docket number, so shared docket detection can recognise it. Text is never
+ * altered anywhere else.
+ */
+export function repairDocketPrefixFinals(s: string): string {
+  return String(s ?? "").replace(
+    /([א-ת]["'׳״]?)([כמנפצ])(?=\s*\d{1,6}[\/-]\d{2,4})/g,
+    (_m, pre: string, letter: string) => pre + (FINALS[letter] ?? letter),
+  );
+}
+
 function candidateDocket(c: Candidate): DocketRef | null {
-  const fromTitle = detectDockets(String(c.title ?? ""));
+  const title = repairDocketPrefixFinals(String(c.title ?? ""));
+  const fromTitle = detectDockets(title);
   if (fromTitle.length > 0) return fromTitle[0];
   let url = String(c.source_url ?? "");
   try {
     url = decodeURIComponent(url);
   } catch { /* keep raw */ }
-  const fromUrl = detectDockets(url.replace(/[-_]/g, " ").replace(/\//g, "/"));
+  const fromUrl = detectDockets(repairDocketPrefixFinals(url).replace(/[-_]/g, " ").replace(/\//g, "/"));
   if (fromUrl.length > 0) return fromUrl[0];
-  const fromSnippet = detectDockets(String(c.snippet ?? "").slice(0, 600));
+  const fromSnippet = detectDockets(repairDocketPrefixFinals(String(c.snippet ?? "").slice(0, 600)));
   return fromSnippet.length > 0 ? fromSnippet[0] : null;
 }
 
