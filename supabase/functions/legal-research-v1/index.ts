@@ -1553,9 +1553,26 @@ async function handle(req: Request): Promise<Response> {
   const webJudgmentBodyAcquisition = await runWebJudgmentBodyAcquisition({
     candidates: pool.candidates,
     run_id,
-    retrieval_budget: budget,
+    enabled: !fastLaneHit && !budget.exceeded(),
+    retrieval_budget: {
+      exceeded: () => budget.exceeded(),
+      allowExtraction: (bytes: number) => budget.allowExtraction?.(bytes) ?? true,
+    },
     markDurable: (name, detail) => budget.markDurable(name, detail),
   });
+  if (webJudgmentBodyAcquisition.acquired > 0) {
+    const byId = new Map(pool.candidates.map((c) => [c.candidate_id, c]));
+    for (const row of pool.integrity) {
+      const c = byId.get(row.candidate_id);
+      const integ = ((c?.metadata ?? {}) as Record<string, unknown>).source_integrity as
+        | { text_usability?: string; integrity_flags?: string[]; citable_as?: string }
+        | undefined;
+      if (!integ) continue;
+      row.text_usability = String(integ.text_usability ?? row.text_usability);
+      row.integrity_flags = integ.integrity_flags ?? row.integrity_flags;
+      if (integ.citable_as) (row as Record<string, unknown>).citable_as = integ.citable_as;
+    }
+  }
 
   const canonicalAcquisitionTrigger = {
     depth_mode: sourceDepth.depth_mode,
