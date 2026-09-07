@@ -34,6 +34,11 @@ import {
   type PrimaryShapeRescue,
 } from "./primaryShapeRescue.ts";
 import {
+  detectJudgmentEvidence,
+  detectScholarshipEvidence,
+  RECLASSIFIABLE_CLASSES,
+} from "./documentEvidenceClassification.ts";
+import {
   evaluateScholarshipAdmission,
   hasTopicalFit,
   resolveAcademicRoleSlot,
@@ -410,6 +415,11 @@ interface PplxResultRow {
   /** academic_literature_richness_without_fixed_source_count_v1 */
   academic_topicality_score?: number;
   academic_detected_journal?: string | null;
+  /** web_judgment_source_classification_and_role_admission_v1 */
+  doc_class_from?: string;
+  doc_class_to?: string;
+  doc_class_signals?: string[];
+  doc_class_docket?: string;
 }
 
 function processRaw(
@@ -447,6 +457,37 @@ function processRaw(
         admitted_to_candidate_pool: false, drop_reason: "bad_source" });
       continue;
     }
+
+    // web_judgment_source_classification_and_role_admission_v1 — the document
+    // itself decides. A page carrying a docket plus a second judgment signal
+    // is typed as case law even off an official court host; a page carrying
+    // two independent academic signals is typed as scholarship. The host table
+    // remains one signal among others. Admission only — identity, integrity,
+    // body-quality, verifier, CSM and alignment gates are unchanged.
+    let docClassFrom: string | undefined;
+    let docClassTo: string | undefined;
+    let docClassSignals: string[] | undefined;
+    let docClassDocket: string | undefined;
+    if (RECLASSIFIABLE_CLASSES.has(cls)) {
+      const jEv = detectJudgmentEvidence({ url, title, snippet: s.snippet, host_class: cls });
+      if (jEv) {
+        docClassFrom = cls;
+        docClassTo = "court_case";
+        docClassSignals = jEv.signals;
+        docClassDocket = jEv.docket;
+        cls = "court_case";
+      } else if (cls !== "academic" && cls !== "publisher") {
+        const sEv = detectScholarshipEvidence({ url, title, snippet: s.snippet, host_class: cls });
+        if (sEv) {
+          docClassFrom = cls;
+          docClassTo = "academic";
+          docClassSignals = sEv.signals;
+          cls = "academic";
+        }
+      }
+    }
+
+
 
     // class_unknown_primary_shape_rescue_v1 — an `unknown` source whose title
     // or URL carries an unambiguous Israeli judgment shape is routed to the
@@ -555,6 +596,10 @@ function processRaw(
         academic_role_slot_final: slotting?.final_slot ?? undefined,
         academic_topicality_score: admission?.topicality_score,
         academic_detected_journal: admission?.detected_journal_or_institution ?? undefined,
+        doc_class_from: docClassFrom,
+        doc_class_to: docClassTo,
+        doc_class_signals: docClassSignals,
+        doc_class_docket: docClassDocket,
       });
       continue;
     }
@@ -634,6 +679,12 @@ function processRaw(
         academic_admission_signals: admission.admission_signals,
       } : {}),
       ...(slotting?.final_slot ? { academic_role_slot_final: slotting.final_slot } : {}),
+      ...(docClassTo ? {
+        doc_class_from: docClassFrom,
+        doc_class_to: docClassTo,
+        doc_class_signals: docClassSignals,
+        doc_class_docket: docClassDocket,
+      } : {}),
     });
     admitted.push({
       candidate_id: crypto.randomUUID(),
