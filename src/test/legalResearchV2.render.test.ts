@@ -4,6 +4,7 @@ import {
   formatCitation,
   renderAnswer,
 } from "../../supabase/functions/legal-research-v2/drafting/render";
+import { displayTitleFor } from "../../supabase/functions/legal-research-v2/evidence/evidenceStore";
 import { sanitizeBlocks } from "../../supabase/functions/legal-research-v2/drafting/draft";
 import type {
   DraftBlock,
@@ -95,5 +96,26 @@ describe("drafter output sanitation", () => {
     expect(blocks[0].text).not.toContain("http");
     expect(blocks[0].source_ids).toEqual(["S1"]);
     expect(dropped_source_ids).toEqual(["S404"]);
+  });
+});
+
+describe("title hygiene for fetched sources", () => {
+  it("never uses a URL as a citation title and never repeats the URL", () => {
+    const out = formatCitation({
+      display_title: "https://example.gov.il/doc.pdf",
+      url: "https://example.gov.il/doc.pdf",
+      locator: 'בג"ץ 8928/06',
+    });
+    expect(out).toBe('בג"ץ 8928/06 https://example.gov.il/doc.pdf');
+  });
+
+  it("recovers a Hebrew title from the fetched body when discovery gave a URL", () => {
+    const title = displayTitleFor(
+      "https://example.gov.il/doc.pdf",
+      'בבית המשפט העליון בשבתו כבית משפט גבוה לצדק\nבג"ץ 8928/06 פלונית נגד בית הדין הרבני הגדול\nפסק דין',
+      { dockets: ["8928/06"], statutes: [], sections: [] },
+    );
+    expect(title).toContain("בית המשפט העליון");
+    expect(title).not.toContain("http");
   });
 });
