@@ -448,6 +448,37 @@ function processRaw(
       continue;
     }
 
+    // web_judgment_source_classification_and_role_admission_v1 — the document
+    // itself decides. A page carrying a docket plus a second judgment signal
+    // is typed as case law even off an official court host; a page carrying
+    // two independent academic signals is typed as scholarship. The host table
+    // remains one signal among others. Admission only — identity, integrity,
+    // body-quality, verifier, CSM and alignment gates are unchanged.
+    let docClassFrom: string | undefined;
+    let docClassTo: string | undefined;
+    let docClassSignals: string[] | undefined;
+    let docClassDocket: string | undefined;
+    if (RECLASSIFIABLE_CLASSES.has(cls)) {
+      const jEv = detectJudgmentEvidence({ url, title, snippet: s.snippet, host_class: cls });
+      if (jEv) {
+        docClassFrom = cls;
+        docClassTo = "court_case";
+        docClassSignals = jEv.signals;
+        docClassDocket = jEv.docket;
+        cls = "court_case";
+      } else if (cls !== "academic" && cls !== "publisher") {
+        const sEv = detectScholarshipEvidence({ url, title, snippet: s.snippet, host_class: cls });
+        if (sEv) {
+          docClassFrom = cls;
+          docClassTo = "academic";
+          docClassSignals = sEv.signals;
+          cls = "academic";
+        }
+      }
+    }
+
+
+
     // class_unknown_primary_shape_rescue_v1 — an `unknown` source whose title
     // or URL carries an unambiguous Israeli judgment shape is routed to the
     // case-law lane instead of being dropped. Admission only: verifier,
