@@ -478,6 +478,61 @@ function buildCandidatePoolInner(
   const backfillsByOrigin = new Map<string, number>();
   const isBackfill = (c: Candidate) =>
     freedSlots > 0 && (baselineRank.get(c.candidate_id) ?? 0) >= CAPS.MAX_CANDIDATES;
+
+  // ── direct_authority_pool_survival_v1 ─────────────────────────────────────
+  // Origin diversity is a *soft* pool-shaping constraint. It must not discard a
+  // materially stronger direct authority (identified judgment / official
+  // primary / statute page) while weaker, lower-scored candidates from another
+  // origin still occupy the pool. Deterministic, bounded, no new signals.
+  const AUTHORITY_PROTECTIONS = new Set([
+    "exact_docket_identity",
+    "judgment_document",
+    "official_primary_page",
+    "official_statute_page",
+    "exact_authority_candidate",
+  ]);
+  const AUTHORITY_CLASSES = new Set([
+    "court_case",
+    "judgment",
+    "legislation",
+    "official_primary",
+  ]);
+  const AUTHORITY_MARGIN = 0.05;
+  const authorityExemptBudget = Math.max(3, Math.ceil(POOL_CAP * 0.2));
+  let authorityExemptionsUsed = 0;
+  const authorityExemptions: Array<{
+    candidate_id: string;
+    title: string;
+    origin: string;
+    score: number;
+    reason: string;
+    weakest_other_origin_score: number;
+  }> = [];
+  const isDirectAuthority = (c: Candidate): string | null => {
+    const p = precisionById.get(c.candidate_id);
+    if (p && listingLike(c)) return null;
+    if (p?.protected && p.protection_reason && AUTHORITY_PROTECTIONS.has(p.protection_reason)) {
+      return `protected:${p.protection_reason}`;
+    }
+    const integ = integrityById.get(c.candidate_id);
+    if (integ?.is_judgment_document === true) return "integrity:judgment_document";
+    const cls = String(
+      ((c.metadata ?? {}) as Record<string, unknown>).classified_source_class ?? "",
+    );
+    if (AUTHORITY_CLASSES.has(cls)) return `classified:${cls}`;
+    return null;
+  };
+  /** Lowest effective score among already-admitted candidates of other origins. */
+  const weakestOtherOriginScore = (origin: string): number => {
+    let min = Number.POSITIVE_INFINITY;
+    for (const c of out) {
+      if (c.origin === origin) continue;
+      const s = effScore(c);
+      if (s < min) min = s;
+    }
+    return min;
+  };
+
   // local_retrieval_precision_tuning_v1 — global share of the pool the
   // promoted local-vector lane may occupy.
   const promotionBudget = Math.max(4, Math.floor(POOL_CAP * 0.4));
