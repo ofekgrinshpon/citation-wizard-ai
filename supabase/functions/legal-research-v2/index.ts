@@ -58,6 +58,8 @@ export function buildIntake(input: {
   question: string;
   attachment_text?: string | null;
   budgets?: Partial<ToolBudgets>;
+  /** Evaluation-only Research Agent override. */
+  agent_model?: string | null;
 }): Intake {
   const question = (input.question ?? "").trim();
   const dockets = detectDockets(question).map((d) => ({
@@ -78,6 +80,7 @@ export function buildIntake(input: {
     statute_obligations: statutes,
     attachment_text: input.attachment_text?.trim() || null,
     budgets: { ...DEFAULT_BUDGETS, ...(input.budgets ?? {}) },
+    agent_model: input.agent_model?.trim() || null,
   };
 }
 
@@ -112,6 +115,9 @@ async function runPipeline(
   const started = resume?.started_at ?? Date.now();
   const usage = resume?.usage ?? newUsageLedger();
   const models = modelConfig();
+  // Evaluation-only: the Research Agent model may be overridden per run.
+  // Verifier and drafter are always the configured defaults.
+  const agentModel = intake.agent_model || models.agent;
   const prior = resume ? deserializeAgentState(intake, resume.agent_state) : null;
   const store = prior?.store ?? new EvidenceStore();
   const chunk_index = (resume?.chunk_index ?? 0) + 1;
@@ -121,7 +127,7 @@ async function runPipeline(
     admin,
     intake,
     store,
-    model: models.agent,
+    model: agentModel,
     usage,
     priorMessages: prior?.messages,
     policy: prior?.policy,
@@ -185,7 +191,7 @@ async function runPipeline(
       admin,
       intake,
       store,
-      model: models.agent,
+      model: agentModel,
       usage,
       priorMessages: agent.messages,
       extraUserMessage: buildRepairMessage({
@@ -411,6 +417,7 @@ serve(async (req) => {
     question,
     attachment_text: typeof body.attachment_text === "string" ? body.attachment_text : null,
     budgets: (body.budgets ?? undefined) as Partial<ToolBudgets> | undefined,
+    agent_model: typeof body.agent_model === "string" ? body.agent_model : null,
   });
 
   // Background execution: evaluation runs routinely exceed the synchronous
