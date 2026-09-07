@@ -48,6 +48,7 @@ import { buildCandidatePool } from "./stages/candidatePool.ts";
 import { enrichLocalCaselawListingGate } from "./stages/localCaselawListingGate.ts";
 import { summarizeSynthesisPack, type SynthesisRole } from "./stages/synthesisRole.ts";
 import { runJudgmentTextAcquisition } from "./stages/judgmentTextAcquisition.ts";
+import { runWebJudgmentBodyAcquisition } from "./stages/webJudgmentBodyAcquisition.ts";
 import { runStatuteTextAcquisition } from "./stages/statuteTextAcquisition.ts";
 import {
   fetchSecondaryBody,
@@ -1542,6 +1543,20 @@ async function handle(req: Request): Promise<Response> {
     max_dockets: canonicalMaxDockets,
     markDurable: (name, detail) => budget.markDurable(name, detail),
   });
+  // ─── web_judgment_body_wiring_v1 ────────────────────────────────────────
+  // Admitted web judgment candidates (court_case on a non-court host) whose
+  // discovered URL is directly fetchable were previously snippet-only: the
+  // secondary lane refuses primary law and the canonical lane only fetches
+  // court-host URLs. This bounded pass hands them to the existing web body
+  // fetcher and marks them only when the body is substantive AND strict
+  // docket identity confirms in-body. Fail-closed otherwise.
+  const webJudgmentBodyAcquisition = await runWebJudgmentBodyAcquisition({
+    candidates: pool.candidates,
+    run_id,
+    retrieval_budget: budget,
+    markDurable: (name, detail) => budget.markDurable(name, detail),
+  });
+
   const canonicalAcquisitionTrigger = {
     depth_mode: sourceDepth.depth_mode,
     depth_eligible: canonicalDepthEligible,
@@ -2138,6 +2153,7 @@ async function handle(req: Request): Promise<Response> {
     },
     judgment_text_acquisition: judgmentAcquisition,
     canonical_authority_acquisition: canonicalAcquisition,
+    web_judgment_body_acquisition: webJudgmentBodyAcquisition,
     canonical_authority_acquisition_trigger: canonicalAcquisitionTrigger,
     // canonical_registry_discovery_and_representative_source_use_v1 (fix 1).
     canonical_registry_discovery: {

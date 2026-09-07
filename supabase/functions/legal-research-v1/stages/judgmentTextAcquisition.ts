@@ -191,7 +191,10 @@ export type AcquisitionMethod =
   | "direct_file_fetch"
   | "local_db_docket_lookup"
   | "wrapper_file_resolve"
-  | "summary_page_docket_resolve";
+  | "summary_page_docket_resolve"
+  // web_judgment_body_wiring_v1 — admitted non-court-host judgment page fetched
+  // through the existing bounded web body lane (identity confirmed in body).
+  | "web_document_fetch";
 
 export interface AcquisitionAttemptLog {
   candidate_id: string;
