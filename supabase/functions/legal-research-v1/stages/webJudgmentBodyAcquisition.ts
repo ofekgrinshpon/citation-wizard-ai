@@ -30,6 +30,7 @@
 import type { Candidate } from "../lib/types.ts";
 import type { SourceIntegrity } from "./sourceIntegrity.ts";
 import { detectDockets, type DocketRef, textContainsExactDocket } from "./docketDetection.ts";
+import { detectJudgmentEvidence } from "./documentEvidenceClassification.ts";
 import { validateJudgmentIdentityStrict } from "./judgmentIdentity.ts";
 import { applyAcquiredJudgmentBody } from "./judgmentTextAcquisition.ts";
 import { fetchSecondaryBody } from "./secondaryBodyAcquisition.ts";
@@ -56,6 +57,11 @@ export interface WebJudgmentCandidateReport {
   docket: string | null;
   selected: boolean;
   skip_reason: string | null;
+  /** integrity_downgraded_judgment_body_probe_v1 */
+  identity_backed_probe: boolean;
+  original_integrity_class: string | null;
+  eligibility_signals: string[];
+  final_classification: string | null;
   body_attempted: boolean;
   body_acquired: boolean;
   chars: number;
@@ -73,6 +79,14 @@ export interface WebJudgmentBodyReport {
   attempted: number;
   acquired: number;
   identity_confirmed: number;
+  /** integrity_downgraded_judgment_body_probe_v1 */
+  identity_backed_probe: {
+    eligible: number;
+    attempted: number;
+    acquired: number;
+    identity_validated: number;
+    per_candidate: WebJudgmentCandidateReport[];
+  };
   per_candidate: WebJudgmentCandidateReport[];
   stop_reason: "completed" | "stage_not_run" | "no_eligible_candidates" | "budget_exceeded" |
     "stage_timeout";
@@ -91,6 +105,15 @@ function isJudgmentClass(c: Candidate, integ: SourceIntegrity | undefined): bool
   const type = String(c.source_type ?? "").toLowerCase();
   if (type === "court_case" || type === "judgment" || type === "official_primary") return true;
   return String(integ?.citable_as ?? "") === "judgment";
+}
+
+/** Integrity class label, for telemetry only. */
+function integrityClassOf(c: Candidate): string | null {
+  const integ = ((c.metadata ?? {}) as Record<string, unknown>).source_integrity as
+    | SourceIntegrity
+    | undefined;
+  if (!integ) return null;
+  return `${integ.authority_tier}/${integ.text_usability}/${integ.classification_after ?? integ.citable_as}`;
 }
 
 function hasBody(c: Candidate): boolean {
@@ -143,15 +166,94 @@ export function partyTokensFromTitle(title: string): string[] {
   return [...new Set(toks)].slice(0, 6);
 }
 
+/**
+ * integrity_downgraded_judgment_body_probe_v1
+ *
+ * A page that *hosts* the judgment but *reads* like commentary is downgraded
+ * by source integrity (`secondary_commentary` / `metadata_only`). That verdict
+ * stays exactly as it is — but it must not stop us from LOOKING at the page.
+ *
+ * This helper decides only whether a fetch attempt is allowed. It never
+ * upgrades a source type, never makes anything citable, never touches
+ * integrity: the acquired text still has to clear
+ * `validateJudgmentIdentityStrict` before anything is marked, and the verifier,
+ * CSM and alignment gates are untouched. No host whitelist, no docket, court
+ * or case special-casing — only document evidence.
+ */
+export function identityBackedProbeSignals(
+  c: Candidate,
+  integ: SourceIntegrity | undefined,
+): { eligible: boolean; reason: string; docket: DocketRef | null; signals: string[] } {
+  const signals: string[] = [];
+  const url = String(c.source_url ?? "");
+  const title = String(c.title ?? "");
+  const meta = (c.metadata ?? {}) as Record<string, unknown>;
+  const prec = meta.discovery_precision as
+    | { discovery_class?: string; protection_reason?: string }
+    | undefined;
+
+  // Identity must come from the document's own title or URL — a docket merely
+  // name-dropped in a snippet is not evidence that the page IS the judgment.
+  const fromTitle = detectDockets(repairDocketPrefixFinals(title));
+  let decoded = url;
+  try { decoded = decodeURIComponent(url); } catch { /* keep raw */ }
+  const fromUrl = detectDockets(
+    repairDocketPrefixFinals(decoded).replace(/[-_]/g, " "),
+  );
+  const docket = fromTitle[0] ?? fromUrl[0] ?? null;
+  if (!docket) return { eligible: false, reason: "no_docket_in_title_or_url", docket, signals };
+  signals.push(fromTitle.length ? "docket_in_title" : "docket_in_url");
+
+  // Listing / index / search pages can never be the judgment itself.
+  const listing = integ?.text_usability === "listing_page" ||
+    integ?.authority_tier === "index_or_listing" ||
+    prec?.discovery_class === "listing_page" ||
+    prec?.discovery_class === "search_page";
+  if (listing) return { eligible: false, reason: "listing_like", docket, signals };
+
+  if (integ?.reject === true) {
+    return { eligible: false, reason: "bad_source", docket, signals };
+  }
+
+  // Document-evidence classification (the same deterministic upstream
+  // classifier used at admission) or exact-authority evidence.
+  const ev = detectJudgmentEvidence({ url, title, snippet: String(c.snippet ?? "") });
+  if (ev) signals.push(`document_evidence:${ev.signals.join("|")}`);
+  if (integ?.is_judgment_document === true) signals.push("integrity_judgment_document");
+  if (Array.isArray(integ?.judgment_identity_signals) && integ.judgment_identity_signals.length) {
+    signals.push(`integrity_identity:${integ.judgment_identity_signals.join("|")}`);
+  }
+  if ((c.retrieval_method as string) === "exact_authority") signals.push("exact_authority");
+  if (prec?.protection_reason === "exact_docket_identity") signals.push("exact_docket_identity");
+  if (meta.docket_match === true) signals.push("docket_match");
+
+  const hasDocumentEvidence = !!ev || integ?.is_judgment_document === true ||
+    (c.retrieval_method as string) === "exact_authority";
+  if (!hasDocumentEvidence) {
+    return { eligible: false, reason: "no_document_judgment_evidence", docket, signals };
+  }
+  // Strong identity: at least one corroborating signal beyond the bare docket.
+  if (signals.length < 2) {
+    return { eligible: false, reason: "identity_evidence_too_weak", docket, signals };
+  }
+  return { eligible: true, reason: "identity_backed_probe", docket, signals };
+}
+
 /** Deterministic eligibility: admitted web judgment with a fetchable URL. */
 export function selectWebJudgmentCandidate(
   c: Candidate,
-): { eligible: boolean; reason: string; docket: DocketRef | null } {
+): {
+  eligible: boolean;
+  reason: string;
+  docket: DocketRef | null;
+  identity_backed_probe?: boolean;
+  probe_signals?: string[];
+} {
   const integ = ((c.metadata ?? {}) as Record<string, unknown>).source_integrity as
     | SourceIntegrity
     | undefined;
   const docket = candidateDocket(c);
-  if (!isJudgmentClass(c, integ)) return { eligible: false, reason: "not_judgment_class", docket };
+  const judgmentClass = isJudgmentClass(c, integ);
   if (integ?.reject === true && !/metadata_only|no_text|snippet_only/i.test(String(integ.reject_reason ?? ""))) {
     return { eligible: false, reason: "integrity_rejected", docket };
   }
@@ -163,9 +265,31 @@ export function selectWebJudgmentCandidate(
     return { eligible: false, reason: "paywalled_or_access_controlled", docket };
   }
   if (hasBody(c)) return { eligible: false, reason: "body_already_acquired", docket };
+
+  if (!judgmentClass) {
+    // integrity_downgraded_judgment_body_probe_v1 — fetch-only probe.
+    const probe = identityBackedProbeSignals(c, integ);
+    if (!probe.eligible) {
+      return {
+        eligible: false,
+        reason: probe.reason === "no_docket_in_title_or_url" ? "not_judgment_class" : probe.reason,
+        docket: probe.docket ?? docket,
+        probe_signals: probe.signals,
+      };
+    }
+    return {
+      eligible: true,
+      reason: "identity_backed_probe",
+      docket: probe.docket,
+      identity_backed_probe: true,
+      probe_signals: probe.signals,
+    };
+  }
+
   if (!docket) return { eligible: false, reason: "no_docket_identity", docket };
   return { eligible: true, reason: "web_judgment_with_fetchable_url", docket };
 }
+
 
 export interface WebJudgmentBodyInput {
   candidates: Candidate[];
@@ -196,6 +320,13 @@ export async function runWebJudgmentBodyAcquisition(
     attempted: per.filter((p) => p.body_attempted).length,
     acquired: per.filter((p) => p.body_acquired).length,
     identity_confirmed: per.filter((p) => p.identity_confirmed).length,
+    identity_backed_probe: {
+      eligible: per.filter((p) => p.identity_backed_probe && p.selected).length,
+      attempted: per.filter((p) => p.identity_backed_probe && p.body_attempted).length,
+      acquired: per.filter((p) => p.identity_backed_probe && p.body_acquired).length,
+      identity_validated: per.filter((p) => p.identity_backed_probe && p.identity_confirmed).length,
+      per_candidate: per.filter((p) => p.identity_backed_probe),
+    },
     per_candidate: per,
     stop_reason: stop,
     ms: Date.now() - t0,
@@ -204,11 +335,17 @@ export async function runWebJudgmentBodyAcquisition(
   if (input.enabled === false) return done("disabled", "stage_not_run", false);
   if (input.retrieval_budget?.exceeded()) return done("budget_exceeded", "budget_exceeded", false);
 
-  const selected: { c: Candidate; docket: DocketRef }[] = [];
+  const selected: { c: Candidate; docket: DocketRef; probe: boolean; signals: string[] }[] = [];
   for (const c of input.candidates) {
     const s = selectWebJudgmentCandidate(c);
+    const integClass = integrityClassOf(c);
     if (s.eligible && s.docket) {
-      selected.push({ c, docket: s.docket });
+      selected.push({
+        c,
+        docket: s.docket,
+        probe: s.identity_backed_probe === true,
+        signals: s.probe_signals ?? [],
+      });
     } else if (s.docket || isJudgmentClass(c, undefined)) {
       per.push({
         candidate_id: c.candidate_id,
@@ -218,6 +355,10 @@ export async function runWebJudgmentBodyAcquisition(
         docket: s.docket?.docket_id ?? null,
         selected: false,
         skip_reason: s.reason,
+        identity_backed_probe: false,
+        original_integrity_class: integClass,
+        eligibility_signals: s.probe_signals ?? [],
+        final_classification: integClass,
         body_attempted: false,
         body_acquired: false,
         chars: 0,
@@ -245,7 +386,7 @@ export async function runWebJudgmentBodyAcquisition(
   });
 
   let stop: WebJudgmentBodyReport["stop_reason"] = "completed";
-  for (const { c, docket } of queue) {
+  for (const { c, docket, probe, signals } of queue) {
     const c0 = Date.now();
     const url = String(c.source_url);
     const row: WebJudgmentCandidateReport = {
@@ -256,6 +397,10 @@ export async function runWebJudgmentBodyAcquisition(
       docket: docket.docket_id,
       selected: true,
       skip_reason: null,
+      identity_backed_probe: probe,
+      original_integrity_class: integrityClassOf(c),
+      eligibility_signals: signals,
+      final_classification: integrityClassOf(c),
       body_attempted: false,
       body_acquired: false,
       chars: 0,
@@ -330,6 +475,7 @@ export async function runWebJudgmentBodyAcquisition(
       );
       row.body_acquired = true;
       row.chars = applied.stored.length;
+      row.final_classification = "judgment/primary_mirror";
       (c.metadata as Record<string, unknown>).web_judgment_body_acquired = true;
       (c.metadata as Record<string, unknown>).web_judgment_body_source_url = res.final_url ?? url;
       (c.metadata as Record<string, unknown>).web_judgment_identity = {

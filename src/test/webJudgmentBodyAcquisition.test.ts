@@ -58,12 +58,75 @@ describe("web_judgment_body_wiring_v1 — candidate selection", () => {
     expect(s.reason).toBe("no_docket_identity");
   });
 
-  it("skips non-judgment classes", () => {
+  it("does not upgrade a generic article that only name-drops a judgment", () => {
     const s = selectWebJudgmentCandidate(
-      cand({ source_type: "academic", metadata: { source_integrity: { citable_as: "commentary" } } }),
+      cand({
+        title: "רשימה על חלוקת רכוש בין בני זוג",
+        source_url: "https://example.ac.il/papers/property.html",
+        snippet: `ראו בג"צ 1000/92`,
+        source_type: "academic",
+        metadata: { source_integrity: { citable_as: "commentary" } },
+      }),
     );
     expect(s.eligible).toBe(false);
     expect(s.reason).toBe("not_judgment_class");
+  });
+
+  it("integrity-downgraded commentary page with docket identity may be probed", () => {
+    const s = selectWebJudgmentCandidate(
+      cand({
+        source_type: "academic",
+        source_url: "https://www.daat.ac.il/daat/maamar.asp?id=151",
+        snippet: `פסק דין בבית המשפט העליון בשבתו כבית דין גבוה לצדק`,
+        metadata: {
+          source_integrity: {
+            citable_as: "commentary",
+            authority_tier: "secondary_commentary",
+            text_usability: "metadata_only",
+          },
+        },
+      }),
+    );
+    expect(s.eligible).toBe(true);
+    expect(s.identity_backed_probe).toBe(true);
+    expect(s.probe_signals?.length).toBeGreaterThanOrEqual(2);
+  });
+
+  it("probe refuses listing pages", () => {
+    const s = selectWebJudgmentCandidate(
+      cand({
+        source_type: "academic",
+        metadata: {
+          source_integrity: { citable_as: "commentary", text_usability: "listing_page" },
+        },
+      }),
+    );
+    expect(s.eligible).toBe(false);
+    expect(s.reason).toBe("listing_like");
+  });
+
+  it("probe refuses a rejected bad source", () => {
+    const s = selectWebJudgmentCandidate(
+      cand({
+        source_type: "academic",
+        metadata: {
+          source_integrity: { citable_as: "commentary", reject: true, reject_reason: "metadata_only" },
+        },
+      }),
+    );
+    expect(s.eligible).toBe(false);
+    expect(s.reason).toBe("bad_source");
+  });
+
+  it("probe never applies on a court host", () => {
+    const s = selectWebJudgmentCandidate(
+      cand({
+        source_type: "academic",
+        source_url: "https://supremedecisions.court.gov.il/Home/Download?path=x.pdf",
+        metadata: { source_integrity: { citable_as: "commentary" } },
+      }),
+    );
+    expect(s.reason).toBe("court_host_out_of_scope");
   });
 
   it("skips candidates that already carry a judgment body", () => {
