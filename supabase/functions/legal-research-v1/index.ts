@@ -2119,6 +2119,14 @@ async function handle(req: Request): Promise<Response> {
         return acc;
       }, {} as Record<string, number>),
       counts: pool.counts,
+      // direct_authority_pool_survival_v1
+      authority_exemption: {
+        budget: pool.pool_collapse?.authority_exemption_budget ?? 0,
+        used: pool.pool_collapse?.authority_exemptions_used ?? 0,
+        origin_cap_used: pool.pool_collapse?.origin_cap_used ?? 0,
+        rows: pool.pool_collapse?.authority_exemptions ?? [],
+      },
+
       url_dedupe: {
         identity_source_counts: pool.url_dedupe_identity_source_counts,
         rescued_from_legacy_collapse: pool.url_dedupe_rescued_from_legacy_collapse,
