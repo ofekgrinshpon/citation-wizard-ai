@@ -237,7 +237,7 @@ serve(async (req) => {
 
   // Internal / smoke invocation only — V2 carries no production traffic yet.
   const authHeader = req.headers.get("Authorization") ?? "";
-  const smokeToken = Deno.env.get("V2_SMOKE_TOKEN") ?? "";
+  const smokeToken = Deno.env.get("V2_SMOKE_TOKEN_B") ?? Deno.env.get("V2_SMOKE_TOKEN") ?? "";
   const isSmoke = req.headers.get("x-smoke-mode") === "1" &&
     (authHeader === `Bearer ${serviceKey}` ||
       (!!smokeToken && req.headers.get("x-smoke-token") === smokeToken));
