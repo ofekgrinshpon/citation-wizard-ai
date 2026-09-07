@@ -16,7 +16,7 @@ export function identityFieldsOf(text: string, title: string): IdentityFields {
   const sections = detectStatuteSections(head);
   return {
     dockets: [...new Set(dockets)],
-    statutes: [...new Set(sections.map((s) => s.statute))],
+    statutes: [...new Set(sections.map((s) => s.statute_title_he))],
     sections: [...new Set(sections.map((s) => s.section).filter(Boolean) as string[])],
   };
 }

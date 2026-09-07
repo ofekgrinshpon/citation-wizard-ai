@@ -98,7 +98,7 @@ export async function runLookupAuthority(
   candidates.push(...await localRecords(admin, kind, docket || statute || hint));
 
   for (const url of officialSearchUrls(kind, term || hint || docket || statute || "")) {
-    const cls = classifyJudgmentUrl(url, "official_search");
+    const cls = classifyJudgmentUrl(url, "unknown");
     candidates.push({
       label: registryRow?.label ?? term ?? hint ?? "(לא ידוע)",
       kind,

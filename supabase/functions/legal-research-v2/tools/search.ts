@@ -146,7 +146,7 @@ async function corpusSearch(
   limit: number,
 ): Promise<{ results: SearchResult[]; error?: string }> {
   const fts = buildHebrewFtsQuery(query);
-  const searchQuery = fts.tsquery || query;
+  const searchQuery = fts.tsq_primary || fts.tsq_fallback || query;
   try {
     const { data, error } = await admin.rpc("search_legal_chunks_text", {
       search_query: searchQuery,
