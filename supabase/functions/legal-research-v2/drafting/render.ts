@@ -27,7 +27,13 @@ export function formatCitation(info: CitationInfo): string {
     title = title || "";
   }
   title = title.replace(/\s*[|–—-]\s*(?:נבו|תקדין|דין|פסקדין)\s*$/u, "").trim();
-  const locator = info.locator?.trim() ?? "";
+  let locator = info.locator?.trim() ?? "";
+  // Don't repeat the docket when the title already carries it.
+  const docket = locator.match(/\d{1,6}\/\d{2}/)?.[0];
+  if (docket && title.includes(docket)) {
+    locator = locator.replace(/^[^\d]*\d{1,6}\/\d{2}[^\u05D0-\u05EA\w]*/u, "").trim();
+    locator = locator.replace(/^[,\-–—\s]+/, "").trim();
+  }
   const parts = [title, locator && locator !== title ? locator : ""];
   let out = parts.filter(Boolean).join(", ") || "מקור ללא כותרת";
   if (info.url && !out.includes(info.url)) out += ` ${info.url}`;

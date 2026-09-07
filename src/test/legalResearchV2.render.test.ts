@@ -119,3 +119,16 @@ describe("title hygiene for fetched sources", () => {
     expect(title).not.toContain("http");
   });
 });
+
+describe("locator deduplication", () => {
+  it("drops a docket from the locator when the title already carries it", () => {
+    const out = formatCitation({
+      display_title: 'בג"צ 1000/92 – חוה בבלי נ\' בית הדין הרבני הגדול',
+      locator: 'בג"ץ 1000/92, פסק דינו של המשנה לנשיא ברק',
+      url: "https://example.org/x",
+    });
+    expect(out).toBe(
+      'בג"צ 1000/92 – חוה בבלי נ\' בית הדין הרבני הגדול, פסק דינו של המשנה לנשיא ברק https://example.org/x',
+    );
+  });
+});
