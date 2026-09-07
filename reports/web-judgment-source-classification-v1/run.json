@@ -1,0 +1,21 @@
+{
+  "run_id": "3d2e11a8-9e9a-47b3-8e30-7159b09cd6a7",
+  "row": {
+    "id": "bbdb8fee-38f4-4087-a606-8760c271cb21",
+    "created_at": "2026-09-07T01:41:39.495375+00:00",
+    "metadata": {
+      "run_id": "3d2e11a8-9e9a-47b3-8e30-7159b09cd6a7",
+      "isolate": "391f09a7",
+      "pipeline": "legal-research-v1",
+      "trace_stage": "retrieval_entering",
+      "trace_status": "in_progress",
+      "research_mode": "doctrine_explanation",
+      "concurrency_hint": null,
+      "trace_started_at": "2026-09-07T01:41:39.440Z",
+      "fast_lane_eligible": false,
+      "in_flight_at_retrieval": 1
+    },
+    "answer": "",
+    "footnotes": []
+  }
+}
