@@ -83,6 +83,8 @@ export interface EvidenceSource {
   source_id: string;
   url?: string;
   title: string;
+  /** Short deterministic description handed to the agent instead of the body. */
+  summary?: string;
   sha256: string;
   fetch_status: "ok" | "error";
   fetch_error?: string;
@@ -202,6 +204,8 @@ export interface RenderedAnswer {
   invariant_errors: string[];
 }
 
+import type { AuthorityLedgerRow } from "./tools/acquisitionLedger.ts";
+
 // ─── Telemetry ──────────────────────────────────────────────────────────────
 
 export interface SourceFunnelRow {
@@ -239,5 +243,14 @@ export interface V2Telemetry {
   prompt_tokens: number;
   completion_tokens: number;
   estimated_cost_usd: number | null;
+  /** Context / token discipline (legal_research_v2_core_bottlenecks_v1). */
+  prompt_tokens_per_call: number[];
+  max_prompt_tokens_single_call: number;
+  largest_tool_response_chars: number;
+  evidence_context_chars_last_turn: number;
+  repeated_tool_calls_prevented: number;
+  commit_directives: string[];
+  chunks_executed: number;
+  acquisition_ledger: AuthorityLedgerRow[];
   source_funnel: SourceFunnelRow[];
 }

@@ -11,6 +11,7 @@ import {
   looksLikeFilename,
   normalizeHebrewNumberRanges,
 } from "../shared/primitives.ts";
+import { stripInternalIds } from "../shared/titleHygiene.ts";
 
 export interface CitationInfo {
   display_title: string;
@@ -20,7 +21,7 @@ export interface CitationInfo {
 
 /** Deterministic Hebrew footnote text for one verified source. */
 export function formatCitation(info: CitationInfo): string {
-  let title = (info.display_title ?? "").trim().replace(/\s+/g, " ");
+  let title = stripInternalIds((info.display_title ?? "").trim()).replace(/\s+/g, " ");
   // A URL is never a title: it belongs at the end of the citation, once.
   if (/^https?:\/\//i.test(title)) title = "";
   if (!title || looksLikeFilename(title) || isBareInstitutionTitle(title)) {

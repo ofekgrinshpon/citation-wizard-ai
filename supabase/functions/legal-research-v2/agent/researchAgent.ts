@@ -4,6 +4,14 @@
  * A plain tool-calling loop: the model decides what to research, calls
  * search / lookup_authority / fetch, reads real bodies, and finishes with a
  * structured research memo. The loop itself contains no legal logic.
+ *
+ * Three disciplines wrap the loop (and only these):
+ *   • commit policy   — reserved memo capacity + deterministic commit signals
+ *   • repetition      — repeating a call is cheap, useless and discouraged
+ *   • context budget  — bodies live in the evidence store, not in the messages
+ *
+ * The loop is chunkable: it can stop after a bounded number of steps or at a
+ * wall-clock deadline, serialize its state and resume in a later invocation.
  */
 
 import type {
@@ -13,14 +21,16 @@ import type {
   SearchResult,
   SearchScope,
 } from "../types.ts";
-import type { EvidenceStore } from "../evidence/evidenceStore.ts";
+import { EvidenceStore, type EvidenceStoreJson } from "../evidence/evidenceStore.ts";
 import type { SupabaseClient } from "../shared/primitives.ts";
 import { chat, type ChatMessage, parseJsonLoose, type ToolSpec, type UsageLedger } from "../shared/model.ts";
 import { runSearch } from "../tools/search.ts";
 import { runFetch } from "../tools/fetch.ts";
 import { runLookupAuthority } from "../tools/lookupAuthority.ts";
+import { AcquisitionLedger, type AcquisitionLedgerJson } from "../tools/acquisitionLedger.ts";
 import { AGENT_SYSTEM_PROMPT, buildAgentUserMessage, MEMO_TOOL } from "./prompt.ts";
-import { StopPolicy } from "./stopPolicy.ts";
+import { StopPolicy, type StopPolicyJson } from "./stopPolicy.ts";
+import { CommitTracker, obligationsSatisfied } from "./commitPolicy.ts";
 
 const TOOL_SPECS: ToolSpec[] = [
   {
@@ -57,13 +67,17 @@ const TOOL_SPECS: ToolSpec[] = [
   {
     name: "fetch",
     description:
-      "הבאת גוף מסמך אמיתי וקריאתו. רק כאן נוצרת ראיה. אפשר להעביר find לקבלת חלונות טקסט מדויקים.",
+      "הבאת גוף מסמך אמיתי וקריאתו — כאן בלבד נוצרת ראיה. הגוף המלא נשמר בצד השרת ואינו מוחזר לשיחה: מוחזרים תקציר וחלונות טקסט. לקריאה ממוקדת בתוך מסמך שכבר נקרא העבר source_id יחד עם query.",
     parameters: {
       type: "object",
       additionalProperties: false,
       properties: {
         result_id: { type: "string" },
         url: { type: "string" },
+        source_id: { type: "string" },
+        query: { type: "string" },
+        locator: { type: "string" },
+        want: { type: "string", enum: ["relevant_section"] },
         expected_identity: {
           type: "object",
           additionalProperties: false,
@@ -88,13 +102,37 @@ export interface AgentTraceEntry {
   summary: string;
 }
 
+export interface AgentContextStats {
+  largest_tool_response_chars: number;
+  evidence_context_chars_last_turn: number;
+  repeated_tool_calls_prevented: number;
+  commit_directives: string[];
+}
+
+export interface AgentStateJson {
+  messages: ChatMessage[];
+  policy: StopPolicyJson;
+  discovered: Array<[string, SearchResult]>;
+  store: EvidenceStoreJson;
+  commit: ReturnType<CommitTracker["toJSON"]>;
+  ledger: AcquisitionLedgerJson;
+  trace: AgentTraceEntry[];
+  stats: AgentContextStats;
+  memo: ResearchMemo | null;
+}
+
 export interface AgentRunResult {
   memo: ResearchMemo | null;
   error?: string;
+  /** True when the chunk ended on its step/time budget, not on a decision. */
+  paused: boolean;
   trace: AgentTraceEntry[];
   policy: StopPolicy;
   discovered: Map<string, SearchResult>;
   messages: ChatMessage[];
+  commit: CommitTracker;
+  ledger: AcquisitionLedger;
+  stats: AgentContextStats;
 }
 
 function normalizeMemo(raw: unknown): ResearchMemo | null {
@@ -129,21 +167,88 @@ function normalizeMemo(raw: unknown): ResearchMemo | null {
   };
 }
 
+/** Deterministic key used for repeated-call detection. */
+export function toolCallKey(name: string, args: Record<string, unknown>): string {
+  if (name === "search") {
+    const q = String(args.query ?? "").toLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim();
+    return `search:${args.scope ?? "web"}:${q}`;
+  }
+  if (name === "fetch") {
+    const u = String(args.url ?? args.result_id ?? args.source_id ?? "").trim().toLowerCase();
+    return `fetch:${u}:${String(args.query ?? "")}`;
+  }
+  if (name === "lookup_authority") {
+    return `lookup:${JSON.stringify(args)}`.toLowerCase();
+  }
+  return `${name}:${JSON.stringify(args)}`.slice(0, 300);
+}
+
+/** Compact discovery output: snippets are hints, never evidence. */
+function compactSearchOutput(out: { results: SearchResult[]; scope: SearchScope; error?: string }) {
+  return {
+    scope: out.scope,
+    error: out.error,
+    results: out.results.map((r) => ({
+      result_id: r.result_id,
+      title: r.title.slice(0, 160),
+      url: r.url,
+      snippet: r.snippet?.slice(0, 220),
+      possible_docket: r.possible_docket,
+    })),
+  };
+}
+
+/** One line per source already read — the agent's persistent memory of evidence. */
+export function evidenceLedgerMessage(store: EvidenceStore): string {
+  const rows = store.all().map((s) =>
+    `${s.source_id} | ${s.fetch_status === "ok" && s.is_actual_document ? "נקרא" : `לא שמיש (${s.not_document_reason ?? s.fetch_error ?? "?"})`} | ${
+      s.title.slice(0, 90)
+    } | ${s.text_length} תווים | ${s.url ?? ""}`
+  );
+  return `מצב הראיות בריצה זו (הגוף המלא שמור בצד השרת; לקריאה ממוקדת: fetch({source_id, query})):\n${
+    rows.join("\n") || "(טרם נקראו מסמכים)"
+  }`;
+}
+
 export async function runResearchAgent(opts: {
   admin: SupabaseClient;
   intake: Intake;
   store: EvidenceStore;
   model: string;
   usage: UsageLedger;
-  /** Continue an existing conversation (targeted repair turn). */
+  /** Continue an existing conversation (targeted repair turn / resumed chunk). */
   priorMessages?: ChatMessage[];
   extraUserMessage?: string;
   policy?: StopPolicy;
   discovered?: Map<string, SearchResult>;
+  commit?: CommitTracker;
+  ledger?: AcquisitionLedger;
+  stats?: AgentContextStats;
+  trace?: AgentTraceEntry[];
+  /** Chunked execution: stop after this many steps in the current invocation. */
+  maxStepsThisChunk?: number;
+  /** Chunked execution: stop when this wall-clock timestamp is reached. */
+  deadlineAt?: number;
+  /**
+   * Called after every completed step in chunked mode. Persisting each step
+   * is what makes a run survive an abrupt worker death (CPU-time kill),
+   * which no chunk boundary can anticipate.
+   */
+  checkpoint?: (state: AgentStateJson) => Promise<void>;
 }): Promise<AgentRunResult> {
   const policy = opts.policy ?? new StopPolicy(opts.intake.budgets);
   const discovered = opts.discovered ?? new Map<string, SearchResult>();
-  const trace: AgentTraceEntry[] = [];
+  const commit = opts.commit ?? new CommitTracker();
+  const ledger = opts.ledger ?? new AcquisitionLedger();
+  const trace: AgentTraceEntry[] = opts.trace ?? [];
+  const stats: AgentContextStats = opts.stats ?? {
+    largest_tool_response_chars: 0,
+    evidence_context_chars_last_turn: 0,
+    repeated_tool_calls_prevented: 0,
+    commit_directives: [],
+  };
+  const chunkCap = opts.maxStepsThisChunk ?? Number.POSITIVE_INFINITY;
+  const deadlineAt = opts.deadlineAt ?? Number.POSITIVE_INFINITY;
 
   const messages: ChatMessage[] = opts.priorMessages
     ? [...opts.priorMessages]
@@ -155,10 +260,20 @@ export async function runResearchAgent(opts: {
 
   let memo: ResearchMemo | null = null;
   let error: string | undefined;
+  let paused = false;
+  let stepsThisChunk = 0;
 
   while (!policy.stepExhausted()) {
+    if (stepsThisChunk >= chunkCap || Date.now() >= deadlineAt) {
+      paused = true;
+      break;
+    }
     policy.steps += 1;
-    const forceMemo = policy.allExhausted();
+    stepsThisChunk += 1;
+
+    // Research capacity is reserved: once the research phase closes, the memo
+    // tool is the ONLY tool the agent can still call.
+    const forceMemo = policy.researchExhausted();
     const res = await chat({
       model: opts.model,
       messages,
@@ -195,6 +310,8 @@ export async function runResearchAgent(opts: {
       })),
     });
 
+    const readableBefore = opts.store.readable().length;
+
     for (const call of res.tool_calls) {
       const args = parseJsonLoose<Record<string, unknown>>(call.arguments) ?? {};
       if (call.name === MEMO_TOOL.name) {
@@ -221,7 +338,10 @@ export async function runResearchAgent(opts: {
         continue;
       }
 
-      let payload: unknown;
+      const repeatWarning = commit.noteToolKey(toolCallKey(call.name, args));
+      if (repeatWarning) stats.repeated_tool_calls_prevented += 1;
+
+      let payload: Record<string, unknown>;
       let summary = "";
       if (call.name === "search") {
         policy.note("search", scope ?? "web");
@@ -231,7 +351,7 @@ export async function runResearchAgent(opts: {
           limit: typeof args.limit === "number" ? args.limit : undefined,
         });
         for (const r of out.results) discovered.set(r.result_id, r);
-        payload = out;
+        payload = compactSearchOutput(out) as unknown as Record<string, unknown>;
         summary = `scope=${out.scope} results=${out.results.length}${out.error ? ` error=${out.error}` : ""}`;
       } else if (call.name === "lookup_authority") {
         policy.note("lookup_authority");
@@ -242,22 +362,32 @@ export async function runResearchAgent(opts: {
           statute: typeof args.statute === "string" ? args.statute : undefined,
           section: typeof args.section === "string" ? args.section : undefined,
         });
-        payload = out;
+        payload = out as unknown as Record<string, unknown>;
         summary = `candidates=${out.candidates.length} registry=${out.registry_hint ?? "none"}`;
       } else if (call.name === "fetch") {
-        const out = await runFetch(opts.store, discovered, {
-          result_id: typeof args.result_id === "string" ? args.result_id : undefined,
-          url: typeof args.url === "string" ? args.url : undefined,
-          expected_identity: (args.expected_identity ?? undefined) as
-            | { docket?: string; statute?: string; section?: string }
-            | undefined,
-          find: Array.isArray(args.find) ? args.find.map((f) => String(f)) : undefined,
-          refetch_reason: typeof args.refetch_reason === "string" ? args.refetch_reason : undefined,
-        });
-        if (!out.deduped) policy.note("fetch");
-        payload = out;
-        summary = out.deduped
-          ? `deduped ${out.source_id}`
+        const out = await runFetch(
+          opts.store,
+          discovered,
+          {
+            result_id: typeof args.result_id === "string" ? args.result_id : undefined,
+            url: typeof args.url === "string" ? args.url : undefined,
+            source_id: typeof args.source_id === "string" ? args.source_id : undefined,
+            query: typeof args.query === "string" ? args.query : undefined,
+            locator: typeof args.locator === "string" ? args.locator : undefined,
+            want: typeof args.want === "string" ? args.want : undefined,
+            expected_identity: (args.expected_identity ?? undefined) as
+              | { docket?: string; statute?: string; section?: string }
+              | undefined,
+            find: Array.isArray(args.find) ? args.find.map((f) => String(f)) : undefined,
+            refetch_reason: typeof args.refetch_reason === "string" ? args.refetch_reason : undefined,
+          },
+          ledger,
+        );
+        // A cached / targeted read costs no fetch budget.
+        if (!out.already_read) policy.note("fetch");
+        payload = out as unknown as Record<string, unknown>;
+        summary = out.already_read
+          ? `already_read ${out.source_id}`
           : out.ok
           ? `${out.source_id} chars=${out.text_length} document=${out.is_actual_document}`
           : `failed: ${out.error}`;
@@ -266,17 +396,80 @@ export async function runResearchAgent(opts: {
         summary = `unknown_tool:${call.name}`;
       }
 
+      if (repeatWarning) payload.repetition_warning = repeatWarning;
       trace.push({ step: policy.steps, tool: call.name, input: args, summary });
-      messages.push({
-        role: "tool",
-        tool_call_id: call.id,
-        content: JSON.stringify(payload).slice(0, 60_000),
-      });
+      const content = JSON.stringify(payload).slice(0, 12_000);
+      stats.largest_tool_response_chars = Math.max(stats.largest_tool_response_chars, content.length);
+      messages.push({ role: "tool", tool_call_id: call.id, content });
     }
 
     if (memo) break;
+
+    if (opts.checkpoint) {
+      const snapshot: AgentRunResult = {
+        memo: null,
+        paused: true,
+        trace,
+        policy,
+        discovered,
+        messages,
+        commit,
+        ledger,
+        stats,
+      };
+      await opts.checkpoint(serializeAgentState({ result: snapshot, store: opts.store }));
+    }
+
+    // ── Deterministic commit discipline ──────────────────────────────────
+    const readable = opts.store.readable();
+    commit.noteRound(readable.length > readableBefore);
+    const directive = commit.directive({
+      readable_count: readable.length,
+      obligations_total: opts.intake.docket_obligations.length + opts.intake.statute_obligations.length,
+      obligations_satisfied: obligationsSatisfied(opts.intake, readable),
+      stale_streak: commit.stale_streak,
+      research_steps_left: policy.researchStepsLeft,
+    });
+    if (directive) {
+      stats.commit_directives.push(`step${policy.steps}:${directive.kind}`);
+      const ledgerMsg = evidenceLedgerMessage(opts.store);
+      stats.evidence_context_chars_last_turn = ledgerMsg.length;
+      messages.push({ role: "user", content: `${ledgerMsg}\n\n${directive.text}` });
+    }
   }
 
-  if (!memo && !error) error = "agent_step_budget_exhausted_without_memo";
-  return { memo, error, trace, policy, discovered, messages };
+  if (!memo && !error && !paused) error = "agent_step_budget_exhausted_without_memo";
+  return { memo, error, paused, trace, policy, discovered, messages, commit, ledger, stats };
+}
+
+/** Serialize everything a later invocation needs to resume this run. */
+export function serializeAgentState(input: {
+  result: AgentRunResult;
+  store: EvidenceStore;
+}): AgentStateJson {
+  return {
+    messages: input.result.messages,
+    policy: input.result.policy.toJSON(),
+    discovered: [...input.result.discovered.entries()],
+    store: input.store.toJSON(),
+    commit: input.result.commit.toJSON(),
+    ledger: input.result.ledger.toJSON(),
+    trace: input.result.trace,
+    stats: input.result.stats,
+    memo: input.result.memo,
+  };
+}
+
+export function deserializeAgentState(intake: Intake, json: AgentStateJson) {
+  return {
+    messages: json.messages,
+    policy: StopPolicy.fromJSON(intake.budgets, json.policy),
+    discovered: new Map(json.discovered),
+    store: EvidenceStore.fromJSON(json.store),
+    commit: CommitTracker.fromJSON(json.commit),
+    ledger: AcquisitionLedger.fromJSON(json.ledger),
+    trace: json.trace ?? [],
+    stats: json.stats,
+    memo: json.memo,
+  };
 }

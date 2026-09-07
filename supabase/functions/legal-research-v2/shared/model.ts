@@ -60,10 +60,19 @@ export interface UsageLedger {
   model_calls: number;
   prompt_tokens: number;
   completion_tokens: number;
+  /** Per-call prompt sizes — the context-growth signal for long runs. */
+  prompt_tokens_per_call: number[];
+  max_prompt_tokens_single_call: number;
 }
 
 export function newUsageLedger(): UsageLedger {
-  return { model_calls: 0, prompt_tokens: 0, completion_tokens: 0 };
+  return {
+    model_calls: 0,
+    prompt_tokens: 0,
+    completion_tokens: 0,
+    prompt_tokens_per_call: [],
+    max_prompt_tokens_single_call: 0,
+  };
 }
 
 export async function chat(opts: {
@@ -132,6 +141,11 @@ export async function chat(opts: {
     opts.usage.model_calls += 1;
     opts.usage.prompt_tokens += prompt_tokens;
     opts.usage.completion_tokens += completion_tokens;
+    opts.usage.prompt_tokens_per_call.push(prompt_tokens);
+    opts.usage.max_prompt_tokens_single_call = Math.max(
+      opts.usage.max_prompt_tokens_single_call,
+      prompt_tokens,
+    );
   }
 
   const rawCalls = (message.tool_calls ?? []) as Array<
