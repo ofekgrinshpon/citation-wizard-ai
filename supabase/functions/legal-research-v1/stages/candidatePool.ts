@@ -140,6 +140,17 @@ export interface PoolResult {
     origin_cap_base: number;
     backfill_origin_cap_drops: number;
     drops_by_reason: Record<string, number>;
+    /** direct_authority_pool_survival_v1 */
+    authority_exemption_budget?: number;
+    authority_exemptions_used?: number;
+    authority_exemptions?: Array<{
+      candidate_id: string;
+      title: string;
+      origin: string;
+      score: number;
+      reason: string;
+      weakest_other_origin_score: number;
+    }>;
   };
 }
 
@@ -478,6 +489,65 @@ function buildCandidatePoolInner(
   const backfillsByOrigin = new Map<string, number>();
   const isBackfill = (c: Candidate) =>
     freedSlots > 0 && (baselineRank.get(c.candidate_id) ?? 0) >= CAPS.MAX_CANDIDATES;
+
+  // ── direct_authority_pool_survival_v1 ─────────────────────────────────────
+  // Origin diversity is a *soft* pool-shaping constraint. It must not discard a
+  // materially stronger direct authority (identified judgment / official
+  // primary / statute page) while weaker, lower-scored candidates from another
+  // origin still occupy the pool. Deterministic, bounded, no new signals.
+  const AUTHORITY_PROTECTIONS = new Set([
+    "exact_docket_identity",
+    "judgment_document",
+    "official_primary_page",
+    "official_statute_page",
+    "exact_authority_candidate",
+  ]);
+  const AUTHORITY_CLASSES = new Set([
+    "court_case",
+    "judgment",
+    "legislation",
+    "official_primary",
+  ]);
+  const AUTHORITY_MARGIN = 0.05;
+  // Bounded: at most 40% of the pool may be admitted through the exemption, and
+  // it stops once 70% of the pool is filled, so ordinary diversity shaping keeps
+  // the remaining slots.
+  const authorityExemptBudget = Math.max(3, Math.ceil(POOL_CAP * 0.4));
+  const authorityExemptFillLimit = Math.ceil(POOL_CAP * 0.7);
+  let authorityExemptionsUsed = 0;
+  const authorityExemptions: Array<{
+    candidate_id: string;
+    title: string;
+    origin: string;
+    score: number;
+    reason: string;
+    weakest_other_origin_score: number;
+  }> = [];
+  const isDirectAuthority = (c: Candidate): string | null => {
+    const p = precisionById.get(c.candidate_id);
+    if (p && listingLike(c)) return null;
+    if (p?.protected && p.protection_reason && AUTHORITY_PROTECTIONS.has(p.protection_reason)) {
+      return `protected:${p.protection_reason}`;
+    }
+    const integ = integrityById.get(c.candidate_id);
+    if (integ?.is_judgment_document === true) return "integrity:judgment_document";
+    const cls = String(
+      ((c.metadata ?? {}) as Record<string, unknown>).classified_source_class ?? "",
+    );
+    if (AUTHORITY_CLASSES.has(cls)) return `classified:${cls}`;
+    return null;
+  };
+  /** Lowest effective score among already-admitted candidates of other origins. */
+  const weakestOtherOriginScore = (origin: string): number => {
+    let min = Number.POSITIVE_INFINITY;
+    for (const c of out) {
+      if (c.origin === origin) continue;
+      const s = effScore(c);
+      if (s < min) min = s;
+    }
+    return min;
+  };
+
   // local_retrieval_precision_tuning_v1 — global share of the pool the
   // promoted local-vector lane may occupy.
   const promotionBudget = Math.max(4, Math.floor(POOL_CAP * 0.4));
@@ -511,11 +581,36 @@ function buildCandidatePoolInner(
     if (isBackfill(c)) {
       const n = backfillsByOrigin.get(c.origin) ?? 0;
       if (n >= originCap) {
-        backfill_origin_cap_drops++;
-        logDrop(c, "backfill_origin_diversity_cap", `${c.origin}:${originCap}`);
-        return false;
+        // direct_authority_pool_survival_v1 — bounded exemption: a materially
+        // stronger direct authority is not discarded on origin grounds alone.
+        const authorityReason = isDirectAuthority(c);
+        const weakest = weakestOtherOriginScore(c.origin);
+        const stronger = !Number.isFinite(weakest) ||
+          effScore(c) >= weakest + AUTHORITY_MARGIN;
+        if (
+          authorityReason && stronger &&
+          authorityExemptionsUsed < authorityExemptBudget &&
+          out.length < authorityExemptFillLimit
+        ) {
+          authorityExemptionsUsed++;
+          authorityExemptions.push({
+            candidate_id: c.candidate_id,
+            title: c.title,
+            origin: c.origin,
+            score: Number(effScore(c).toFixed(4)),
+            reason: authorityReason,
+            weakest_other_origin_score: Number.isFinite(weakest)
+              ? Number(weakest.toFixed(4))
+              : -1,
+          });
+        } else {
+          backfill_origin_cap_drops++;
+          logDrop(c, "backfill_origin_diversity_cap", `${c.origin}:${originCap}`);
+          return false;
+        }
       }
     }
+
     if (c.retrieval_method === "vector") {
       // The wider quota is reserved for local candidates that cleared the
       // topical-fit/credibility bar, and only up to a global share of the
@@ -804,6 +899,9 @@ function buildCandidatePoolInner(
       origin_cap_used: originCap,
       origin_cap_base: baseOriginCap,
       backfill_origin_cap_drops,
+      authority_exemption_budget: authorityExemptBudget,
+      authority_exemptions_used: authorityExemptionsUsed,
+      authority_exemptions: authorityExemptions,
       drops_by_reason: dropLog.reduce((acc: Record<string, number>, d) => {
         acc[d.drop_reason] = (acc[d.drop_reason] ?? 0) + 1;
         return acc;
