@@ -35,7 +35,7 @@ import { renderAnswer } from "./drafting/render.ts";
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type, x-smoke-mode",
+    "authorization, x-client-info, apikey, content-type, x-smoke-mode, x-smoke-token",
 };
 
 function json(body: unknown, status = 200): Response {
@@ -237,9 +237,12 @@ serve(async (req) => {
 
   // Internal / smoke invocation only — V2 carries no production traffic yet.
   const authHeader = req.headers.get("Authorization") ?? "";
+  const smokeToken = Deno.env.get("V2_SMOKE_TOKEN") ?? "";
   const isSmoke = req.headers.get("x-smoke-mode") === "1" &&
-    authHeader === `Bearer ${serviceKey}`;
+    (authHeader === `Bearer ${serviceKey}` ||
+      (!!smokeToken && req.headers.get("x-smoke-token") === smokeToken));
   if (!isSmoke) return json({ error: "v2_internal_only" }, 403);
+
 
   const admin = createClient(supabaseUrl, serviceKey) as unknown as SupabaseClient;
   const intake = buildIntake({

@@ -21,6 +21,30 @@ export function identityFieldsOf(text: string, title: string): IdentityFields {
   };
 }
 
+/**
+ * A citable display title. Discovery often hands us a URL or a filename; the
+ * fetched body itself is the better source of a human title, so prefer a
+ * detected docket plus the first prose line over the raw URL.
+ */
+export function displayTitleFor(
+  rawTitle: string,
+  text: string,
+  identity: IdentityFields,
+): string {
+  const raw = (rawTitle ?? "").trim();
+  const isUrlish = !raw || /^https?:\/\//i.test(raw) || /\.(pdf|docx?|html?)$/i.test(raw);
+  if (!isUrlish) return raw.replace(/\s+/g, " ");
+
+  const firstLine = (text ?? "")
+    .split("\n")
+    .map((l) => l.trim())
+    .find((l) => l.length >= 12 && l.length <= 160 && /[\u05D0-\u05EA]/.test(l));
+  const fallback = firstLine ?? identity.statutes[0] ?? identity.dockets[0] ?? "";
+  return fallback ? fallback.replace(/\s+/g, " ") : (raw || "מקור ללא כותרת");
+}
+
+
+
 export class EvidenceStore {
   private sources = new Map<string, EvidenceSource>();
   private byUrl = new Map<string, string>();
@@ -44,16 +68,17 @@ export class EvidenceStore {
     this.seq += 1;
     const source_id = `S${this.seq}`;
     const text = input.extracted_text ?? "";
+    const identity_fields = identityFieldsOf(text, input.title);
     const entry: EvidenceSource = {
       source_id,
       url: input.url,
-      title: input.title,
+      title: displayTitleFor(input.title, text, identity_fields),
       sha256: await sha256Hex(text),
       fetch_status: input.fetch_status,
       fetch_error: input.fetch_error,
       extracted_text: text,
       text_length: text.length,
-      identity_fields: identityFieldsOf(text, input.title),
+      identity_fields,
       is_actual_document: input.is_actual_document,
       not_document_reason: input.not_document_reason,
       origin: input.origin,

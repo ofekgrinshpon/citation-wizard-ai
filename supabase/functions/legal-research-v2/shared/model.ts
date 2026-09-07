@@ -6,6 +6,8 @@
  * falls back to a documented default.
  */
 
+declare const Deno: { env: { get(key: string): string | undefined } };
+
 const GATEWAY_URL = "https://ai.gateway.lovable.dev/v1/chat/completions";
 
 export interface ModelConfig {

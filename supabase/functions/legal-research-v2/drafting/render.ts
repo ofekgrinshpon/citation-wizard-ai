@@ -21,14 +21,22 @@ export interface CitationInfo {
 /** Deterministic Hebrew footnote text for one verified source. */
 export function formatCitation(info: CitationInfo): string {
   let title = (info.display_title ?? "").trim().replace(/\s+/g, " ");
+  // A URL is never a title: it belongs at the end of the citation, once.
+  if (/^https?:\/\//i.test(title)) title = "";
   if (!title || looksLikeFilename(title) || isBareInstitutionTitle(title)) {
-    title = title || "מקור ללא כותרת";
+    title = title || "";
   }
   title = title.replace(/\s*[|–—-]\s*(?:נבו|תקדין|דין|פסקדין)\s*$/u, "").trim();
-  const parts = [title];
-  if (info.locator) parts.push(info.locator.trim());
-  let out = parts.filter(Boolean).join(", ");
-  if (info.url) out += ` ${info.url}`;
+  let locator = info.locator?.trim() ?? "";
+  // Don't repeat the docket when the title already carries it.
+  const docket = locator.match(/\d{1,6}\/\d{2}/)?.[0];
+  if (docket && title.includes(docket)) {
+    locator = locator.replace(/^[^\d]*\d{1,6}\/\d{2}[^\u05D0-\u05EA\w]*/u, "").trim();
+    locator = locator.replace(/^[,\-–—\s]+/, "").trim();
+  }
+  const parts = [title, locator && locator !== title ? locator : ""];
+  let out = parts.filter(Boolean).join(", ") || "מקור ללא כותרת";
+  if (info.url && !out.includes(info.url)) out += ` ${info.url}`;
   return normalizeHebrewNumberRanges(out.replace(/\s+/g, " ").trim());
 }
 

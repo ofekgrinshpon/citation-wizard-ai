@@ -14,13 +14,13 @@ export {
   isOfficialHost,
   looksLikeBlockPage,
   officialFetch,
-} from "../../legal-research-v1/lib/officialFetch.ts";
+} from "../vendor/officialFetch.ts";
 
-export { classifyJudgmentUrl } from "../../legal-research-v1/lib/judgmentUrlEligibility.ts";
+export { classifyJudgmentUrl } from "../vendor/judgmentUrlEligibility.ts";
 
 // ── Document extraction ────────────────────────────────────────────────────
-export { extractPdfPagesBounded } from "../../legal-research-v1/lib/largePdfChunkedExtract.ts";
-export { extractDocumentText } from "../../legal-research-v1/lib/attachments.ts";
+export { extractPdfPagesBounded } from "../vendor/largePdfChunkedExtract.ts";
+export { extractDocumentText } from "../vendor/attachments.ts";
 
 // ── Israeli legal identity normalization ───────────────────────────────────
 export {
@@ -28,24 +28,24 @@ export {
   detectDockets,
   normalizeDocketText,
   type DocketRef,
-} from "../../legal-research-v1/stages/docketDetection.ts";
+} from "../vendor/docketDetection.ts";
 
 export {
   buildSectionVariants,
   detectStatuteSections,
   normalizeSectionMarker,
   type StatuteSectionRef,
-} from "../../legal-research-v1/stages/statuteSectionDetection.ts";
+} from "../vendor/statuteSectionDetection.ts";
 
 // ── Hebrew lexical normalization for corpus retrieval ──────────────────────
-export { buildHebrewFtsQuery, stripHebrewPrefix } from "../../legal-research-v1/stages/hebrewFts.ts";
+export { buildHebrewFtsQuery, stripHebrewPrefix } from "../vendor/hebrewFts.ts";
 
 // ── Structured drafter output validation (pure, citation-markup guard) ─────
 export {
   validateStructuredDraft,
   type StructuredBlock,
   type StructuredDraft,
-} from "../../legal-research-v1/stages/structuredValidation.ts";
+} from "../vendor/structuredValidation.ts";
 
 // ── Minimal title hygiene ──────────────────────────────────────────────────
 export {
@@ -53,13 +53,13 @@ export {
   looksLikeFilename,
   recoverDocket,
   recoverStatuteName,
-} from "../../legal-research-v1/stages/displayTitleHygiene.ts";
+} from "../vendor/displayTitleHygiene.ts";
 
 // ── Hebrew citation formatting rule 1.10 ───────────────────────────────────
 export { normalizeHebrewNumberRanges } from "../../_shared/hebrewNumberRange.ts";
 
 // ── Structural client type (no runtime dependency) ─────────────────────────
-export type { SupabaseClient } from "../../legal-research-v1/lib/supabaseClientType.ts";
+export type { SupabaseClient } from "../vendor/supabaseClientType.ts";
 
 /** sha256 hex of a string — used for evidence-store content identity. */
 export async function sha256Hex(input: string): Promise<string> {
