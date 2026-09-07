@@ -140,6 +140,17 @@ export interface PoolResult {
     origin_cap_base: number;
     backfill_origin_cap_drops: number;
     drops_by_reason: Record<string, number>;
+    /** direct_authority_pool_survival_v1 */
+    authority_exemption_budget?: number;
+    authority_exemptions_used?: number;
+    authority_exemptions?: Array<{
+      candidate_id: string;
+      title: string;
+      origin: string;
+      score: number;
+      reason: string;
+      weakest_other_origin_score: number;
+    }>;
   };
 }
 
@@ -882,6 +893,9 @@ function buildCandidatePoolInner(
       origin_cap_used: originCap,
       origin_cap_base: baseOriginCap,
       backfill_origin_cap_drops,
+      authority_exemption_budget: authorityExemptBudget,
+      authority_exemptions_used: authorityExemptionsUsed,
+      authority_exemptions: authorityExemptions,
       drops_by_reason: dropLog.reduce((acc: Record<string, number>, d) => {
         acc[d.drop_reason] = (acc[d.drop_reason] ?? 0) + 1;
         return acc;
