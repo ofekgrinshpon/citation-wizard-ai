@@ -74,6 +74,7 @@ const TOOL_SPECS: ToolSpec[] = [
           },
         },
         find: { type: "array", items: { type: "string" } },
+        refetch_reason: { type: "string" },
       },
     },
   },
@@ -244,7 +245,6 @@ export async function runResearchAgent(opts: {
         payload = out;
         summary = `candidates=${out.candidates.length} registry=${out.registry_hint ?? "none"}`;
       } else if (call.name === "fetch") {
-        policy.note("fetch");
         const out = await runFetch(opts.store, discovered, {
           result_id: typeof args.result_id === "string" ? args.result_id : undefined,
           url: typeof args.url === "string" ? args.url : undefined,
@@ -252,9 +252,13 @@ export async function runResearchAgent(opts: {
             | { docket?: string; statute?: string; section?: string }
             | undefined,
           find: Array.isArray(args.find) ? args.find.map((f) => String(f)) : undefined,
+          refetch_reason: typeof args.refetch_reason === "string" ? args.refetch_reason : undefined,
         });
+        if (!out.deduped) policy.note("fetch");
         payload = out;
-        summary = out.ok
+        summary = out.deduped
+          ? `deduped ${out.source_id}`
+          : out.ok
           ? `${out.source_id} chars=${out.text_length} document=${out.is_actual_document}`
           : `failed: ${out.error}`;
       } else {

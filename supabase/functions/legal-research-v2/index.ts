@@ -32,6 +32,9 @@ import { verifyMemo, type ExpectedIdentity } from "./verification/verify.ts";
 import { runDrafter } from "./drafting/draft.ts";
 import { renderAnswer } from "./drafting/render.ts";
 
+// deno-lint-ignore no-explicit-any
+declare const EdgeRuntime: any;
+
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
@@ -237,7 +240,8 @@ serve(async (req) => {
 
   // Internal / smoke invocation only — V2 carries no production traffic yet.
   const authHeader = req.headers.get("Authorization") ?? "";
-  const smokeToken = Deno.env.get("V2_SMOKE_TOKEN_B") ?? Deno.env.get("V2_SMOKE_TOKEN") ?? "";
+  const smokeToken = Deno.env.get("V2_EVAL_TOKEN") ?? Deno.env.get("V2_SMOKE_TOKEN_B") ??
+    Deno.env.get("V2_SMOKE_TOKEN") ?? "";
   const isSmoke = req.headers.get("x-smoke-mode") === "1" &&
     (authHeader === `Bearer ${serviceKey}` ||
       (!!smokeToken && req.headers.get("x-smoke-token") === smokeToken));
@@ -252,6 +256,37 @@ serve(async (req) => {
     budgets: (body.budgets ?? undefined) as Partial<ToolBudgets> | undefined,
   });
 
+  // Background execution: evaluation runs routinely exceed the synchronous
+  // request limit, so the result is persisted and polled instead.
+  if (body.background === true) {
+    await admin.from("v2_eval_runs").insert({
+      run_id: intake.run_id,
+      label: typeof body.label === "string" ? body.label : null,
+      question: intake.question,
+      status: "running",
+    });
+    const task = (async () => {
+      try {
+        const result = await runPipeline(admin, intake);
+        await admin.from("v2_eval_runs").update({
+          status: "done",
+          result,
+          finished_at: new Date().toISOString(),
+        }).eq("run_id", intake.run_id);
+      } catch (e) {
+        await admin.from("v2_eval_runs").update({
+          status: "error",
+          error: e instanceof Error ? e.message : String(e),
+          finished_at: new Date().toISOString(),
+        }).eq("run_id", intake.run_id);
+      }
+    })();
+    if (typeof EdgeRuntime !== "undefined" && EdgeRuntime?.waitUntil) {
+      EdgeRuntime.waitUntil(task);
+    }
+    return json({ ok: true, background: true, run_id: intake.run_id }, 202);
+  }
+
   try {
     return json(await runPipeline(admin, intake));
   } catch (e) {
@@ -261,3 +296,4 @@ serve(async (req) => {
     );
   }
 });
+

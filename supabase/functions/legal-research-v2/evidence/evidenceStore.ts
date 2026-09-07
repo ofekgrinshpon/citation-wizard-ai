@@ -8,7 +8,30 @@
  */
 
 import type { EvidenceSource, IdentityFields } from "../types.ts";
-import { detectDockets, detectStatuteSections, sha256Hex } from "../shared/primitives.ts";
+import {
+  decodeHtmlEntities,
+  detectDockets,
+  detectStatuteSections,
+  sha256Hex,
+} from "../shared/primitives.ts";
+
+/** Query-preserving URL key: strips only tracking noise and fragments. */
+export function normalizeUrlKey(raw: string): string {
+  try {
+    const u = new URL(raw);
+    u.hash = "";
+    const drop: string[] = [];
+    u.searchParams.forEach((_v, k) => {
+      if (/^(utm_|fbclid|gclid|_ga)/i.test(k)) drop.push(k);
+    });
+    for (const k of drop) u.searchParams.delete(k);
+    u.hostname = u.hostname.toLowerCase().replace(/^www\./, "");
+    u.pathname = u.pathname.replace(/\/+$/, "");
+    return `${u.protocol}//${u.hostname}${u.pathname}${u.search}`;
+  } catch {
+    return (raw ?? "").trim();
+  }
+}
 
 export function identityFieldsOf(text: string, title: string): IdentityFields {
   const head = `${title}\n${text.slice(0, 20_000)}`;
@@ -31,7 +54,7 @@ export function displayTitleFor(
   text: string,
   identity: IdentityFields,
 ): string {
-  const raw = (rawTitle ?? "").trim();
+  const raw = decodeHtmlEntities(rawTitle ?? "").trim();
   const isUrlish = !raw || /^https?:\/\//i.test(raw) || /\.(pdf|docx?|html?)$/i.test(raw);
   if (!isUrlish) return raw.replace(/\s+/g, " ");
 
@@ -62,7 +85,7 @@ export class EvidenceStore {
     not_document_reason?: string;
   }): Promise<EvidenceSource> {
     if (input.url) {
-      const existing = this.byUrl.get(input.url);
+      const existing = this.byUrl.get(normalizeUrlKey(input.url));
       if (existing) return this.sources.get(existing)!;
     }
     this.seq += 1;
@@ -85,8 +108,14 @@ export class EvidenceStore {
       fetched_at: new Date().toISOString(),
     };
     this.sources.set(source_id, entry);
-    if (input.url) this.byUrl.set(input.url, source_id);
+    if (input.url) this.byUrl.set(normalizeUrlKey(input.url), source_id);
     return entry;
+  }
+
+  /** Existing entry for the same normalized URL, if any. */
+  findByUrl(url: string): EvidenceSource | null {
+    const id = this.byUrl.get(normalizeUrlKey(url));
+    return id ? this.sources.get(id) ?? null : null;
   }
 
   get(source_id: string): EvidenceSource | null {

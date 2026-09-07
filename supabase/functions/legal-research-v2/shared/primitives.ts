@@ -70,22 +70,37 @@ export async function sha256Hex(input: string): Promise<string> {
     .join("");
 }
 
+/** Decode the common named/numeric HTML entities. */
+export function decodeHtmlEntities(input: string): string {
+  return (input ?? "")
+    .replace(/&#(\d+);/g, (_m, d) => {
+      const code = Number(d);
+      return Number.isFinite(code) && code > 0 && code < 0x10ffff ? String.fromCodePoint(code) : _m;
+    })
+    .replace(/&#x([0-9a-f]+);/gi, (_m, h) => {
+      const code = parseInt(h, 16);
+      return Number.isFinite(code) && code > 0 && code < 0x10ffff ? String.fromCodePoint(code) : _m;
+    })
+    .replace(/&nbsp;/g, " ")
+    .replace(/&quot;/g, '"')
+    .replace(/&apos;/g, "'")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&amp;/g, "&");
+}
+
 /** Strip HTML to readable text. Deliberately dumb and dependency-free. */
 export function htmlToText(html: string): string {
-  return html
+  const out = html
     .replace(/<script[\s\S]*?<\/script>/gi, " ")
     .replace(/<style[\s\S]*?<\/style>/gi, " ")
     .replace(/<!--[\s\S]*?-->/g, " ")
     .replace(/<\/(p|div|li|tr|h[1-6])>/gi, "\n")
     .replace(/<br\s*\/?>/gi, "\n")
     .replace(/<[^>]+>/g, " ")
-    .replace(/&nbsp;/g, " ")
-    .replace(/&amp;/g, "&")
-    .replace(/&quot;/g, '"')
     .replace(/&#39;/g, "'")
-    .replace(/&lt;/g, "<")
-    .replace(/&gt;/g, ">")
     .replace(/[ \t\u00a0]+/g, " ")
     .replace(/\s*\n\s*/g, "\n")
     .trim();
+  return decodeHtmlEntities(out);
 }
