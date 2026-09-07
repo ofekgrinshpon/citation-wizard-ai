@@ -215,7 +215,7 @@ export async function runWebJudgmentBodyAcquisition(
         title: String(c.title ?? ""),
         url: c.source_url ?? null,
         host: hostOf(c.source_url),
-        docket: s.docket?.raw ?? null,
+        docket: s.docket?.docket_id ?? null,
         selected: false,
         skip_reason: s.reason,
         body_attempted: false,
@@ -241,7 +241,7 @@ export async function runWebJudgmentBodyAcquisition(
     run_id: input.run_id ?? null,
     considered,
     attempting: queue.length,
-    targets: queue.map((q) => ({ id: q.c.candidate_id, url: q.c.source_url, docket: q.docket.raw })),
+    targets: queue.map((q) => ({ id: q.c.candidate_id, url: q.c.source_url, docket: q.docket.docket_id })),
   });
 
   let stop: WebJudgmentBodyReport["stop_reason"] = "completed";
@@ -253,7 +253,7 @@ export async function runWebJudgmentBodyAcquisition(
       title: String(c.title ?? ""),
       url,
       host: hostOf(url),
-      docket: docket.raw,
+      docket: docket.docket_id,
       selected: true,
       skip_reason: null,
       body_attempted: false,

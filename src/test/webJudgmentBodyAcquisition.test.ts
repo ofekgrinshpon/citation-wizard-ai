@@ -24,7 +24,7 @@ describe("web_judgment_body_wiring_v1 — candidate selection", () => {
   it("admits a docket-bearing judgment on a non-official host", () => {
     const s = selectWebJudgmentCandidate(cand({}));
     expect(s.eligible).toBe(true);
-    expect(s.docket?.raw).toContain("1000/92");
+    expect(s.docket?.number).toContain("1000/92");
   });
 
   it("admits the daat.ac.il page for the same judgment", () => {
