@@ -2126,6 +2126,8 @@ async function handle(req: Request): Promise<Response> {
         origin_cap_used: pool.pool_collapse?.origin_cap_used ?? 0,
         rows: pool.pool_collapse?.authority_exemptions ?? [],
       },
+      // authority_duplicate_resolution_v1
+      duplicate_resolution: pool.duplicate_resolution ?? null,
 
       url_dedupe: {
         identity_source_counts: pool.url_dedupe_identity_source_counts,
