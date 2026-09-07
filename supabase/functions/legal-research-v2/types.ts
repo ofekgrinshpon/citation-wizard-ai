@@ -29,6 +29,12 @@ export interface Intake {
   statute_obligations: StatuteObligation[];
   attachment_text: string | null;
   budgets: ToolBudgets;
+  /**
+   * Evaluation-only Research Agent model override (model bake-off).
+   * Null / absent keeps the configured default. Verifier and drafter are
+   * never overridable.
+   */
+  agent_model?: string | null;
 }
 
 export interface ToolBudgets {
