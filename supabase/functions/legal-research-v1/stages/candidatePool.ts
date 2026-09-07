@@ -9,6 +9,11 @@ import {
 import { assignSynthesisRole } from "./synthesisRole.ts";
 import { buildUrlDedupeKey } from "./docketAwareUrlKey.ts";
 import {
+  collisionIdentity,
+  resolveUrlCollision,
+  type UrlCollisionRow,
+} from "./urlCollisionGuard.ts";
+import {
   backfillOriginCap,
   classifyDiscoveryPrecision,
   type DiscoveryDiagnostics,
@@ -129,6 +134,8 @@ export interface PoolResult {
   };
   url_dedupe_identity_source_counts: Record<string, number>;
   url_dedupe_rescued_from_legacy_collapse: number;
+  /** query_sensitive_document_dedupe_v1 */
+  url_collision_resolution: UrlCollisionRow[];
   /** discovery_precision_and_listing_suppression_v1 */
   discovery_precision: DiscoveryDiagnostics;
   counts: {
@@ -425,6 +432,9 @@ function buildCandidatePoolInner(
 
   const seenDoc = new Set<string>();
   const seenUrl = new Set<string>();
+  /** query_sensitive_document_dedupe_v1 — admitted candidates per URL key. */
+  const keptByUrlKey = new Map<string, Candidate[]>();
+  const url_collisions: UrlCollisionRow[] = [];
   const seenStatute = new Set<string>();
   const seenDocket = new Set<string>();
   const seenTitle = new Map<string, Candidate>(); // role+normTitle → kept
@@ -690,13 +700,51 @@ function buildCandidatePoolInner(
     const ttKey = `tt:${c.role}:${normTitle(c.title)}`;
 
     if (docId && seenDoc.has(docId)) { dedup_drops++; logDrop(c, "dup_document_id", docId); return false; }
-    if (urlKey && seenUrl.has(urlKey)) { dedup_drops++; logDrop(c, "dup_url", urlKey); return false; }
+    if (urlKey) {
+      // query_sensitive_document_dedupe_v1 — a canonical URL-key collision is
+      // only a duplicate when document/authority identity agrees (or when
+      // there is no positive evidence of distinctness).
+      const keptHere = keptByUrlKey.get(urlKey) ?? [];
+      if (keptHere.length > 0) {
+        let collapseWith: { kept: Candidate; reason: string } | null = null;
+        const decisions: ReturnType<typeof resolveUrlCollision>[] = [];
+        for (const kept of keptHere) {
+          const d = resolveUrlCollision(kept, c);
+          decisions.push(d);
+          if (d.decision === "collapse") { collapseWith = { kept, reason: d.reason }; break; }
+        }
+        const last = decisions[decisions.length - 1];
+        url_collisions.push({
+          normalized_url_key: urlKey,
+          original_urls: [...keptHere.map((k) => k.source_url ?? ""), c.source_url ?? ""],
+          query_differences: last?.query_differences ?? [],
+          candidate_titles: [...keptHere.map((k) => k.title), c.title],
+          normalized_dockets: [
+            ...keptHere.map((k) => collisionIdentity(k).docket),
+            collisionIdentity(c).docket,
+          ],
+          authority_ids: [
+            ...keptHere.map((k) => collisionIdentity(k).authority_id),
+            collisionIdentity(c).authority_id,
+          ],
+          identity_signals: last?.identity_signals ?? [],
+          decision: collapseWith ? "collapse" : "preserve_distinct",
+          reason: collapseWith ? collapseWith.reason : (last?.reason ?? "preserved"),
+          candidate_ids: [...keptHere.map((k) => k.candidate_id), c.candidate_id],
+        });
+        if (collapseWith) { dedup_drops++; logDrop(c, "dup_url", urlKey); return false; }
+      }
+    }
     if (stK && seenStatute.has(stK)) { dedup_drops++; logDrop(c, "dup_statute_section", stK); return false; }
     if (dk && seenDocket.has(dk)) { dedup_drops++; logDrop(c, "dup_docket", dk); return false; }
     if (seenTitle.has(ttKey)) { dedup_drops++; logDrop(c, "dup_role_title", ttKey); return false; }
 
     if (docId) seenDoc.add(docId);
-    if (urlKey) seenUrl.add(urlKey);
+    if (urlKey) {
+      seenUrl.add(urlKey);
+      keptByUrlKey.set(urlKey, [...(keptByUrlKey.get(urlKey) ?? []), c]);
+    }
+
     if (stK) seenStatute.add(stK);
     if (dk) seenDocket.add(dk);
     seenTitle.set(ttKey, c);
@@ -921,6 +969,7 @@ function buildCandidatePoolInner(
     },
     url_dedupe_identity_source_counts: identityCounts,
     url_dedupe_rescued_from_legacy_collapse: rescued,
+    url_collision_resolution: url_collisions,
     discovery_precision: dp,
     counts,
     vector_tuning: tuningOn

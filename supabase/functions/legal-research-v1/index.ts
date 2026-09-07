@@ -2219,6 +2219,9 @@ async function handle(req: Request): Promise<Response> {
         rescued_from_legacy_collapse: pool.url_dedupe_rescued_from_legacy_collapse,
         rows: pool.url_dedupe.filter((r) => r.dedupe_identity_source !== "normal_url"),
       },
+      // query_sensitive_document_dedupe_v1
+      url_collision_resolution: pool.url_collision_resolution ?? [],
+
     },
     // local_retrieval_precision_tuning_v1
     local_vector_quota_tuning: pool.vector_tuning
