@@ -1321,7 +1321,9 @@ async function handle(req: Request): Promise<Response> {
   const pool = buildCandidatePool([...local.candidates, ...pplx.candidates], {
     task_intent: sourceUseIntent.plan?.user_task_intent ?? null,
     academic_mode: sourceUseIntent.plan?.user_task_intent === "academic_writing",
+    question,
   });
+  await budget.markDurable("retrieval.pool.direct_authority_survival", pool.direct_authority_survival);
   if (pool.pool_collapse) {
     await budget.markDurable("pool_collapse_v1", pool.pool_collapse);
   }
