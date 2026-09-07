@@ -472,7 +472,47 @@ function buildCandidatePoolInner(
   const baselineRank = new Map<string, number>();
   orderBy(all).forEach((c, i) => baselineRank.set(c.candidate_id, i));
 
-  const sorted = orderBy(survivors);
+  // ── authority_duplicate_resolution_v1 ─────────────────────────────────────
+  // Within a duplicate group (same authority/document) keep the strongest
+  // usable representation. Positions of the group are preserved, so ranking
+  // between *different* authorities is untouched.
+  const groupKeysOf = (c: Candidate): string[] => {
+    const keys: string[] = [];
+    if (c.document_id) keys.push(`doc:${c.document_id}`);
+    const d = dedupeKeyById.get(c.candidate_id);
+    if (d?.key) keys.push(`url:${d.key}`);
+    const st = statuteKey(c);
+    if (st) keys.push(`st:${st}`);
+    const dk = docketKey(c);
+    if (dk) keys.push(`dk:${dk}`);
+    keys.push(`tt:${c.role}:${normTitle(c.title)}`);
+    return keys;
+  };
+  const dupSignalsOf = (c: Candidate): DuplicateSignals => {
+    const integ = integrityById.get(c.candidate_id);
+    const prec = precisionById.get(c.candidate_id);
+    const meta = (c.metadata ?? {}) as Record<string, unknown>;
+    const url = (c.source_url ?? "").trim();
+    const bodyChars = Number(
+      meta.body_chars ?? (typeof meta.body === "string" ? (meta.body as string).length : 0) ?? 0,
+    ) || 0;
+    return {
+      keys: groupKeysOf(c),
+      has_url: !!url,
+      fetchable_url: /^https?:\/\//i.test(url) && !listingLike(c),
+      exact_identity: prec?.protection_reason === "exact_docket_identity" ||
+        meta.identity_confirmed === true ||
+        integ?.is_judgment_document === true,
+      integrity_usable: integ ? integ.text_usability !== "metadata_only" && !integ.reject : false,
+      has_body: bodyChars > 0 || meta.body_acquired === true,
+      body_chars: bodyChars,
+      snippet_chars: (c.snippet ?? "").length,
+      listing_like: listingLike(c),
+    };
+  };
+  const dupResolution = resolveDuplicateRepresentatives(orderBy(survivors), dupSignalsOf);
+  const sorted = dupResolution.order;
+
   const out: Candidate[] = [];
   let dedup_drops = 0;
   const rankOf = new Map<string, number>();
