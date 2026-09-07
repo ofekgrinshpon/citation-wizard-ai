@@ -49,6 +49,12 @@ import { enrichLocalCaselawListingGate } from "./stages/localCaselawListingGate.
 import { summarizeSynthesisPack, type SynthesisRole } from "./stages/synthesisRole.ts";
 import { runJudgmentTextAcquisition } from "./stages/judgmentTextAcquisition.ts";
 import { runWebJudgmentBodyAcquisition } from "./stages/webJudgmentBodyAcquisition.ts";
+import {
+  normalizeDocketString,
+  runSameAuthorityBodyFallback,
+  SAME_AUTHORITY_FALLBACK_LIMITS,
+} from "./stages/sameAuthorityBodyFallback.ts";
+import { searchOfficialJudgmentUrls } from "./stages/officialSourceDiscovery.ts";
 import { runStatuteTextAcquisition } from "./stages/statuteTextAcquisition.ts";
 import {
   fetchSecondaryBody,
@@ -1574,12 +1580,91 @@ async function handle(req: Request): Promise<Response> {
     }
   }
 
+  // ─── same_authority_body_fallback_v1 ────────────────────────────────────
+  // A strongly identified authority must not be lost merely because ONE of its
+  // representations is unreadable (court-egress failure, dead official PDF).
+  // Existing run data is searched first for another representation of the SAME
+  // docket; only if the run holds none is a single bounded exact-authority
+  // recovery lookup allowed. Strict body + identity validation is unchanged.
+  const failedBodyDockets: Array<{ normalized_docket: string; status: string }> = [];
+  const pushFailedDocket = (raw: string | null | undefined, status: string) => {
+    const nd = normalizeDocketString(raw ?? "");
+    if (!nd) return;
+    if (failedBodyDockets.some((f) => f.normalized_docket === nd)) return;
+    failedBodyDockets.push({ normalized_docket: nd, status });
+  };
+  for (const att of canonicalAcquisition.attempts ?? []) {
+    if (att.body_chars >= 2000 && att.body_identity_validated) continue;
+    pushFailedDocket(
+      att.docket ?? att.authority_name,
+      `canonical_${att.acquisition_result ?? "failed"}`,
+    );
+  }
+  for (const gap of canonicalAcquisition.canonical_authority_gaps ?? []) {
+    pushFailedDocket(gap.docket ?? gap.authority_name, `canonical_gap:${gap.reason}`);
+  }
+  for (const row of webJudgmentBodyAcquisition.per_candidate ?? []) {
+    if (row.body_acquired) continue;
+    pushFailedDocket(
+      row.docket ?? row.title,
+      `web_lane_${row.skip_reason ?? row.failure_reason ?? "failed"}`,
+    );
+  }
+  const sameAuthorityBodyFallback = await runSameAuthorityBodyFallback({
+    candidates: pool.candidates,
+    dropped: (pool.drops ?? []).map((d) => ({
+      candidate_id: d.candidate_id,
+      title: d.title,
+      url: d.url,
+      source_type: d.source_type,
+    })),
+    discovery_urls: [
+      ...canonicalRegistryDiscovery.discovered_urls,
+      ...discoveredJudgmentUrls,
+    ].map((u) => ({ url: u.url, title: u.title ?? null })),
+    failed_body_dockets: failedBodyDockets,
+    enabled: !fastLaneHit && !budget.exceeded(),
+    run_id,
+    retrieval_budget: {
+      exceeded: () => budget.exceeded(),
+      allowExtraction: (bytes: number) => budget.allowExtraction?.(bytes) ?? true,
+    },
+    markDurable: (name, detail) => budget.markDurable(name, detail),
+    recoveryLookup: async ({ label, docket_display, party_names }) => {
+      const res = await searchOfficialJudgmentUrls({
+        label: label || docket_display,
+        docket_display,
+        party_names,
+        timeout_ms: SAME_AUTHORITY_FALLBACK_LIMITS.LOOKUP_MS,
+      });
+      return {
+        query: res.queries?.[0] ?? docket_display,
+        urls: [...(res.mirror_urls ?? []), ...(res.official_urls ?? [])]
+          .map((u) => ({ url: u.url, title: u.title })),
+      };
+    },
+  });
+  if (sameAuthorityBodyFallback.recovered_authorities > 0) {
+    const byId = new Map(pool.candidates.map((c) => [c.candidate_id, c]));
+    for (const row of pool.integrity) {
+      const c = byId.get(row.candidate_id);
+      const integ = ((c?.metadata ?? {}) as Record<string, unknown>).source_integrity as
+        | { text_usability?: string; integrity_flags?: string[]; citable_as?: string }
+        | undefined;
+      if (!integ) continue;
+      row.text_usability = String(integ.text_usability ?? row.text_usability);
+      row.integrity_flags = integ.integrity_flags ?? row.integrity_flags;
+      if (integ.citable_as) (row as Record<string, unknown>).citable_as = integ.citable_as;
+    }
+  }
+
   const canonicalAcquisitionTrigger = {
     depth_mode: sourceDepth.depth_mode,
     depth_eligible: canonicalDepthEligible,
     max_dockets: canonicalMaxDockets,
     reason: canonicalDepthEligible ? "depth_mode_eligible" : "depth_mode_not_eligible",
   };
+
 
 
 
@@ -2181,6 +2266,9 @@ async function handle(req: Request): Promise<Response> {
     judgment_text_acquisition: judgmentAcquisition,
     canonical_authority_acquisition: canonicalAcquisition,
     web_judgment_body_acquisition: webJudgmentBodyAcquisition,
+    // same_authority_body_fallback_v1
+    same_authority_body_fallback: sameAuthorityBodyFallback,
+    authority_body_fallback: sameAuthorityBodyFallback.authority_body_fallback,
     canonical_authority_acquisition_trigger: canonicalAcquisitionTrigger,
     // canonical_registry_discovery_and_representative_source_use_v1 (fix 1).
     canonical_registry_discovery: {
