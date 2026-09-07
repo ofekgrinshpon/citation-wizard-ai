@@ -116,8 +116,14 @@ export interface MemoClaim {
   claim_id: string;
   proposition: string;
   importance: "core" | "supporting";
+  /**
+   * Agent-declared: the proposition asserts what the law IS now (safeguard A).
+   * A deterministic Hebrew cue check is applied as a backstop.
+   */
+  current_state_claim?: boolean;
   evidence: MemoEvidence[];
 }
+
 
 export interface ResearchMemo {
   issue_summary: string;
@@ -148,6 +154,16 @@ export interface RejectedPair {
 
 export type SupportVerdict = "supports" | "supports_partially" | "does_not_support";
 
+/** Safeguard A — current-law validity of a claim (never of a source). */
+export type TemporalStatus =
+  | "not_applicable"
+  | "current_verified"
+  | "unresolved"
+  | "contradicted";
+
+/** Safeguard B — where the verified support actually came from. */
+export type SupportProvenance = "primary_direct" | "authoritative_derivative";
+
 export interface VerifiedSourceRef {
   source_id: string;
   display_title: string;
@@ -155,6 +171,7 @@ export interface VerifiedSourceRef {
   verified_span: string;
   locator?: string;
   support: SupportVerdict;
+  support_provenance?: SupportProvenance;
 }
 
 export interface VerifiedClaim {
@@ -162,8 +179,11 @@ export interface VerifiedClaim {
   proposition: string;
   importance: "core" | "supporting";
   support_status: "supported" | "partially_supported";
+  current_state_claim?: boolean;
+  temporal_status?: TemporalStatus;
   sources: VerifiedSourceRef[];
 }
+
 
 export interface UnsupportedClaim {
   claim_id: string;
@@ -257,6 +277,20 @@ export interface V2Telemetry {
   repeated_tool_calls_prevented: number;
   commit_directives: string[];
   chunks_executed: number;
+  /** Safeguard A — current-law / temporal validity. */
+  temporal_sensitive_claims: number;
+  temporal_checks_attempted: number;
+  temporal_current_verified: number;
+  temporal_unresolved: number;
+  temporal_contradicted: number;
+  temporal_repairs: number;
+  /** Safeguard B — unreadable primary authority fallback. */
+  primary_authority_obligations: string[];
+  primary_unreadable: string[];
+  derivative_fallback_attempted: boolean;
+  derivative_supported_authorities: string[];
+  derivative_disclosure_shown: boolean;
+
   acquisition_ledger: AuthorityLedgerRow[];
   source_funnel: SourceFunnelRow[];
 }
