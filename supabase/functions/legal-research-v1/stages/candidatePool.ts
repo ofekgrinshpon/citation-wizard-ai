@@ -22,6 +22,13 @@ import {
 } from "./discoveryPrecision.ts";
 import { GATE_META_KEY } from "./localCaselawListingGate.ts";
 import {
+  type DirectAuthorityCandidateLike,
+  DIRECT_AUTHORITY_EXEMPTION_BUDGET,
+  type DirectAuthoritySurvivalRow,
+  selectDirectAuthorities,
+} from "./directAuthoritySurvival.ts";
+import { extractTopicTerms } from "./academicCandidateAdmission.ts";
+import {
   type DuplicateGroupRow,
   type DuplicateSignals,
   resolveDuplicateRepresentatives,
@@ -136,6 +143,12 @@ export interface PoolResult {
   url_dedupe_rescued_from_legacy_collapse: number;
   /** query_sensitive_document_dedupe_v1 */
   url_collision_resolution: UrlCollisionRow[];
+  /** direct_authority_variety_cap_survival_v1 */
+  direct_authority_survival: {
+    budget: number;
+    used: number;
+    rows: DirectAuthoritySurvivalRow[];
+  };
   /** discovery_precision_and_listing_suppression_v1 */
   discovery_precision: DiscoveryDiagnostics;
   counts: {
@@ -287,6 +300,8 @@ export interface BuildPoolOptions {
    * safety, dedup, listing and integrity gates stay exactly as-is.
    */
   academic_mode?: boolean;
+  /** direct_authority_variety_cap_survival_v1 — current user question. */
+  question?: string | null;
 }
 
 function buildCandidatePoolInner(
@@ -551,6 +566,37 @@ function buildCandidatePoolInner(
   const isBackfill = (c: Candidate) =>
     freedSlots > 0 && (baselineRank.get(c.candidate_id) ?? 0) >= CAPS.MAX_CANDIDATES;
 
+  // ── direct_authority_variety_cap_survival_v1 ──────────────────────────────
+  // A strongly identified, directly relevant authority is not lost *solely*
+  // because of the per-origin variety cap or late rank trimming. Bounded to a
+  // handful of authorities, one representation each; every later gate applies.
+  const directAuthorityTopicTerms = extractTopicTerms(String(options?.question ?? ""));
+  const directAuthority = selectDirectAuthorities(
+    sorted as unknown as DirectAuthorityCandidateLike[],
+    (c) => {
+      const p = precisionById.get(c.candidate_id);
+      const integ = integrityById.get(c.candidate_id);
+      return {
+        protection_reason: p?.protection_reason ?? null,
+        protected: p?.protected === true,
+        listing_like: listingLike(c as unknown as Candidate),
+        integrity_reject: integ?.reject === true,
+        is_judgment_document: integ?.is_judgment_document === true,
+      };
+    },
+    directAuthorityTopicTerms,
+  );
+  const isProtectedAuthority = (c: Candidate) =>
+    directAuthority.protectedById.has(c.candidate_id);
+  let protectedOverflowAdmitted = 0;
+  const markProtected = (c: Candidate, cap: string) => {
+    const row = directAuthority.protectedById.get(c.candidate_id);
+    if (!row) return;
+    row.cap_that_would_drop = cap;
+    row.exemption_applied = true;
+  };
+
+
   // ── direct_authority_pool_survival_v1 ─────────────────────────────────────
   // Origin diversity is a *soft* pool-shaping constraint. It must not discard a
   // materially stronger direct authority (identified judgment / official
@@ -635,8 +681,18 @@ function buildCandidatePoolInner(
   // Returns true if admitted.
   const tryAdmit = (c: Candidate): boolean => {
     if (out.length >= POOL_CAP) {
-      logDrop(c, "max_candidates_cap", `cap:${POOL_CAP}`);
-      return false;
+      // direct_authority_variety_cap_survival_v1 — a protected direct authority
+      // survives late rank trimming, bounded by the exemption budget.
+      if (
+        isProtectedAuthority(c) &&
+        protectedOverflowAdmitted < DIRECT_AUTHORITY_EXEMPTION_BUDGET
+      ) {
+        protectedOverflowAdmitted++;
+        markProtected(c, `max_candidates_cap:${POOL_CAP}`);
+      } else {
+        logDrop(c, "max_candidates_cap", `cap:${POOL_CAP}`);
+        return false;
+      }
     }
     // Backfill diversity guard — one origin may not take every freed slot.
     if (isBackfill(c)) {
@@ -644,6 +700,12 @@ function buildCandidatePoolInner(
       if (n >= originCap) {
         // direct_authority_pool_survival_v1 — bounded exemption: a materially
         // stronger direct authority is not discarded on origin grounds alone.
+        if (isProtectedAuthority(c)) {
+          markProtected(c, `backfill_origin_diversity_cap:${c.origin}:${originCap}`);
+          backfillsByOrigin.set(c.origin, n + 1);
+          out.push(c);
+          return true;
+        }
         const authorityReason = isDirectAuthority(c);
         const weakest = weakestOtherOriginScore(c.origin);
         const stronger = !Number.isFinite(weakest) ||
@@ -788,6 +850,31 @@ function buildCandidatePoolInner(
     if (out.length >= POOL_CAP) break;
   }
 
+
+  // Pass C: protected direct authorities that pass B never reached because the
+  // pool filled up. Bounded by the exemption budget; ordinary candidates are
+  // unaffected and ranking between authorities is untouched.
+  {
+    const inPool = new Set(out.map((c) => c.candidate_id));
+    for (const c of sorted) {
+      if (protectedOverflowAdmitted >= DIRECT_AUTHORITY_EXEMPTION_BUDGET) break;
+      if (inPool.has(c.candidate_id)) continue;
+      if (!isProtectedAuthority(c)) continue;
+      tryAdmit(c);
+    }
+  }
+  for (const c of out) {
+    const row = directAuthority.protectedById.get(c.candidate_id);
+    if (row) row.next_stage_reached = "pool_admitted";
+  }
+  {
+    const inPool = new Set(out.map((c) => c.candidate_id));
+    for (const [id, row] of directAuthority.protectedById) {
+      if (inPool.has(id)) continue;
+      const d = dropLog.find((x) => x.candidate_id === id);
+      row.next_stage_reached = d ? `dropped:${d.drop_reason}` : "not_admitted";
+    }
+  }
 
   const counts = {
     by_origin: {} as Record<string, number>,
@@ -970,6 +1057,11 @@ function buildCandidatePoolInner(
     url_dedupe_identity_source_counts: identityCounts,
     url_dedupe_rescued_from_legacy_collapse: rescued,
     url_collision_resolution: url_collisions,
+    direct_authority_survival: {
+      budget: directAuthority.budget,
+      used: directAuthority.used,
+      rows: directAuthority.rows.slice(0, 40),
+    },
     discovery_precision: dp,
     counts,
     vector_tuning: tuningOn
