@@ -145,6 +145,7 @@ function normalizeMemo(raw: unknown): ResearchMemo | null {
         claim_id: String(c.claim_id ?? `C${i + 1}`),
         proposition: String(c.proposition).trim(),
         importance: c.importance === "supporting" ? "supporting" : "core",
+        current_state_claim: c.current_state_claim === true,
         evidence: Array.isArray(c.evidence)
           ? c.evidence
             .filter((e) => e && typeof e.source_id === "string")

@@ -34,8 +34,23 @@ import {
 } from "./agent/researchAgent.ts";
 import { buildRepairMessage } from "./agent/prompt.ts";
 import { verifyMemo, type ExpectedIdentity } from "./verification/verify.ts";
+import {
+  applyTemporalGate,
+  assessTemporalValidity,
+  buildTemporalRepairMessage,
+  newTemporalCounters,
+  type TemporalAssessment,
+} from "./verification/temporalValidity.ts";
+import {
+  annotateProvenance,
+  assessPrimaryGap,
+  buildDerivativeDisclosure,
+  buildDerivativeFallbackMessage,
+  shouldAttemptDerivativeFallback,
+} from "./verification/primaryProvenance.ts";
 import { runDrafter } from "./drafting/draft.ts";
 import { renderAnswer } from "./drafting/render.ts";
+
 
 // deno-lint-ignore no-explicit-any
 declare const EdgeRuntime: any;
@@ -216,6 +231,124 @@ async function runPipeline(
     }
   }
 
+  // ═════ SAFEGUARD A — current-law / temporal validity ════════════════════
+  // A claim about what the law IS now needs a current authoritative check.
+  // Old sources are never downgraded for being old; only current-state claims
+  // are gated. Missing is better than wrong.
+  const advisories: string[] = [];
+  let temporalCounters = newTemporalCounters();
+  let temporalAssessments: TemporalAssessment[] = [];
+  if (verification && verification.pack.claims.length) {
+    const t = await assessTemporalValidity({
+      pack: verification.pack,
+      store,
+      model: models.verifier,
+      usage,
+    });
+    temporalCounters = t.counters;
+    temporalAssessments = t.assessments;
+
+    // One targeted temporal repair when a current-state claim is stale or unverifiable.
+    const needsTemporalRepair = agent.memo &&
+      t.assessments.some((a) => a.temporal_status !== "current_verified") &&
+      !agent.policy.allExhausted();
+    if (needsTemporalRepair) {
+      temporalCounters.temporal_repairs = 1;
+      const repaired = await runResearchAgent({
+        admin,
+        intake,
+        store,
+        model: agentModel,
+        usage,
+        priorMessages: agent.messages,
+        extraUserMessage: buildTemporalRepairMessage(t.assessments),
+        policy: agent.policy,
+        discovered: agent.discovered,
+      });
+      if (repaired.memo) {
+        const reVerified = await verifyMemo({
+          memo: repaired.memo,
+          store,
+          expected,
+          model: models.verifier,
+          usage,
+        });
+        const reTemporal = await assessTemporalValidity({
+          pack: reVerified.pack,
+          store,
+          model: models.verifier,
+          usage,
+        });
+        agent = { ...repaired, trace: [...agent.trace, ...repaired.trace] };
+        verification = reVerified;
+        temporalAssessments = reTemporal.assessments;
+        temporalCounters = { ...reTemporal.counters, temporal_repairs: 1 };
+      }
+    }
+  }
+  if (verification && temporalAssessments.length) {
+    const gated = applyTemporalGate(verification.pack, temporalAssessments);
+    verification = { ...verification, pack: gated.pack };
+    advisories.push(...gated.advisories);
+  }
+
+  // ═════ SAFEGUARD B — unreadable primary authority fallback ══════════════
+  const obligations = intake.docket_obligations.map((d) => d.display);
+  let gapReport = verification
+    ? assessPrimaryGap(verification.pack, store, obligations)
+    : { obligations, unreadable: obligations, derivative: [] };
+  let derivative_fallback_attempted = false;
+  if (
+    verification && agent.memo && obligations.length &&
+    shouldAttemptDerivativeFallback(gapReport) && !agent.policy.allExhausted()
+  ) {
+    derivative_fallback_attempted = true;
+    const missing = gapReport.unreadable.filter((d) => !gapReport.derivative.includes(d));
+    const fallback = await runResearchAgent({
+      admin,
+      intake,
+      store,
+      model: agentModel,
+      usage,
+      priorMessages: agent.messages,
+      extraUserMessage: buildDerivativeFallbackMessage(missing),
+      policy: agent.policy,
+      discovered: agent.discovered,
+    });
+    if (fallback.memo) {
+      // Same body / identity / span / support checks — nothing is loosened.
+      const reVerified = await verifyMemo({
+        memo: fallback.memo,
+        store,
+        expected,
+        model: models.verifier,
+        usage,
+      });
+      const reGap = assessPrimaryGap(reVerified.pack, store, obligations);
+      if (reVerified.pack.claims.length >= verification.pack.claims.length) {
+        agent = { ...fallback, trace: [...agent.trace, ...fallback.trace] };
+        verification = reVerified;
+        gapReport = reGap;
+      }
+    }
+  }
+
+  let derivative_disclosure_shown = false;
+  if (verification) {
+    verification = {
+      ...verification,
+      pack: annotateProvenance(verification.pack, store, obligations),
+    };
+    if (gapReport.derivative.length) {
+      derivative_disclosure_shown = true;
+      advisories.push(
+        `${
+          buildDerivativeDisclosure(gapReport.derivative)
+        } פתח את התשובה במשפט גילוי זה, ואל תייחס ציטוט לפסק הדין המקורי.`,
+      );
+    }
+  }
+
   // ── Draft + deterministic render ────────────────────────────────────────
   const pack = verification?.pack ?? { claims: [], unsupported_claims: [] };
   const draft = await runDrafter({
@@ -223,8 +356,20 @@ async function runPipeline(
     pack,
     model: models.drafter,
     usage,
+    advisories,
   });
-  const rendered = renderAnswer(draft.blocks, pack);
+  const blocks = derivative_disclosure_shown
+    ? [
+      {
+        type: "paragraph" as const,
+        text: buildDerivativeDisclosure(gapReport.derivative),
+        source_ids: [],
+      },
+      ...draft.blocks,
+    ]
+    : draft.blocks;
+  const rendered = renderAnswer(blocks, pack);
+
 
   // ── Telemetry ───────────────────────────────────────────────────────────
   const citedSet = new Set(rendered.cited_source_ids);
@@ -281,6 +426,12 @@ async function runPipeline(
     repeated_tool_calls_prevented: agent.stats.repeated_tool_calls_prevented,
     commit_directives: agent.stats.commit_directives,
     chunks_executed: chunk_index,
+    ...temporalCounters,
+    primary_authority_obligations: gapReport.obligations,
+    primary_unreadable: gapReport.unreadable,
+    derivative_fallback_attempted,
+    derivative_supported_authorities: gapReport.derivative,
+    derivative_disclosure_shown,
     acquisition_ledger: agent.ledger.all(),
     source_funnel,
   };
@@ -374,6 +525,7 @@ serve(async (req) => {
   // Internal / smoke invocation only — V2 carries no production traffic yet.
   const authHeader = req.headers.get("Authorization") ?? "";
   const smokeTokens = [
+    Deno.env.get("V2_EVAL_TOKEN_D"),
     Deno.env.get("V2_EVAL_TOKEN_C"),
     Deno.env.get("V2_EVAL_TOKEN"),
     Deno.env.get("V2_SMOKE_TOKEN_B"),

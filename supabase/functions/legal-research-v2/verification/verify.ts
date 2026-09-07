@@ -234,6 +234,7 @@ export async function verifyMemo(opts: {
         claim_id: c.claim_id,
         proposition: c.proposition,
         importance: c.importance,
+        current_state_claim: c.current_state_claim === true,
         support_status: sources.some((s) => s.support === "supports")
           ? "supported"
           : "partially_supported",

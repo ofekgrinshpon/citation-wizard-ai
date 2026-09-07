@@ -46,12 +46,20 @@ const TOOL = {
   },
 };
 
-export function buildDrafterInput(question: string, pack: VerifiedEvidencePack): string {
+export function buildDrafterInput(
+  question: string,
+  pack: VerifiedEvidencePack,
+  advisories: string[] = [],
+): string {
   const claims = pack.claims
     .map((c) => {
       const srcs = c.sources
         .map((s) =>
-          `    - ${s.source_id} | ${s.display_title}${s.locator ? ` | ${s.locator}` : ""} | תמיכה: ${s.support}\n      ציטוט מאומת: "${s.verified_span}"`
+          `    - ${s.source_id} | ${s.display_title}${s.locator ? ` | ${s.locator}` : ""} | תמיכה: ${s.support}${
+            s.support_provenance === "authoritative_derivative"
+              ? " | מקור נגזר סמכותי (ההלכה כפי שהוצגה בפסיקה מאוחרת)"
+              : ""
+          }\n      ציטוט מאומת: "${s.verified_span}"`
         )
         .join("\n");
       return `${c.claim_id} [${c.importance}, ${c.support_status}]: ${c.proposition}\n${srcs}`;
@@ -60,8 +68,12 @@ export function buildDrafterInput(question: string, pack: VerifiedEvidencePack):
   const gaps = pack.unsupported_claims.length
     ? pack.unsupported_claims.map((u) => `- ${u.proposition}`).join("\n")
     : "(אין)";
-  return `השאלה:\n${question}\n\nטענות מאומתות ומקורותיהן:\n${claims || "(אין טענות מאומתות)"}\n\nנושאים שלא ניתן היה לבסס בראיות (יש להצהיר עליהם בגלוי, בלי לנחש):\n${gaps}`;
+  const notes = advisories.length
+    ? `\n\nהנחיות מחייבות לניסוח:\n${advisories.map((a) => `- ${a}`).join("\n")}`
+    : "";
+  return `השאלה:\n${question}\n\nטענות מאומתות ומקורותיהן:\n${claims || "(אין טענות מאומתות)"}\n\nנושאים שלא ניתן היה לבסס בראיות (יש להצהיר עליהם בגלוי, בלי לנחש):\n${gaps}${notes}`;
 }
+
 
 /** `s1`, " S1 ", "[S1]" and "S1." all denote the same source. */
 function normalizeSourceId(id: string): string {
@@ -108,12 +120,14 @@ export async function runDrafter(opts: {
   pack: VerifiedEvidencePack;
   model: string;
   usage: UsageLedger;
+  /** Deterministic drafting obligations (temporal gaps, derivative provenance). */
+  advisories?: string[];
 }): Promise<{ blocks: DraftBlock[]; error?: string; dropped_source_ids: string[] }> {
   const res = await chat({
     model: opts.model,
     messages: [
       { role: "system", content: SYSTEM },
-      { role: "user", content: buildDrafterInput(opts.question, opts.pack) },
+      { role: "user", content: buildDrafterInput(opts.question, opts.pack, opts.advisories ?? []) },
     ],
     tools: [TOOL],
     toolChoice: { name: TOOL.name },
@@ -134,7 +148,7 @@ export async function runDrafter(opts: {
     model: opts.model,
     messages: [
       { role: "system", content: SYSTEM },
-      { role: "user", content: buildDrafterInput(opts.question, opts.pack) },
+      { role: "user", content: buildDrafterInput(opts.question, opts.pack, opts.advisories ?? []) },
       { role: "assistant", content: JSON.stringify({ blocks: parsed.blocks }) },
       {
         role: "user",
