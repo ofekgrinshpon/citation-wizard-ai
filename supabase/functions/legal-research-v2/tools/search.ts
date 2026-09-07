@@ -145,8 +145,14 @@ async function corpusSearch(
   query: string,
   limit: number,
 ): Promise<{ results: SearchResult[]; error?: string }> {
+  // `search_legal_chunks_text` builds its OWN tsquery from plain, whitespace
+  // separated words. Handing it a tsquery *expression* (parentheses, `|`,
+  // `&`) makes it tokenize the operators themselves, which is why the corpus
+  // lane matched on prefix noise. Send normalized plain terms instead.
   const fts = buildHebrewFtsQuery(query);
-  const searchQuery = fts.tsq_primary || fts.tsq_fallback || query;
+  const plainTerms = fts.normalization.normalized_terms.filter((t) => /^[\u0590-\u05FFA-Za-z0-9"'\-]{2,}$/.test(t));
+  const dockets = detectDockets(query).map((d) => d.number);
+  const searchQuery = [...new Set([...dockets, ...plainTerms])].join(" ").trim() || query;
   try {
     const { data, error } = await admin.rpc("search_legal_chunks_text", {
       search_query: searchQuery,

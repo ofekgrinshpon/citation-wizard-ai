@@ -777,6 +777,8 @@ export type Database = {
       }
       v2_eval_runs: {
         Row: {
+          agent_state: Json | null
+          chunk_index: number
           created_at: string
           error: string | null
           finished_at: string | null
@@ -788,6 +790,8 @@ export type Database = {
           status: string
         }
         Insert: {
+          agent_state?: Json | null
+          chunk_index?: number
           created_at?: string
           error?: string | null
           finished_at?: string | null
@@ -799,6 +803,8 @@ export type Database = {
           status?: string
         }
         Update: {
+          agent_state?: Json | null
+          chunk_index?: number
           created_at?: string
           error?: string | null
           finished_at?: string | null

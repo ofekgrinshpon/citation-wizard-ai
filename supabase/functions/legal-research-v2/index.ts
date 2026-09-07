@@ -24,9 +24,14 @@ import {
   detectStatuteSections,
   type SupabaseClient,
 } from "./shared/primitives.ts";
-import { modelConfig, newUsageLedger } from "./shared/model.ts";
+import { modelConfig, newUsageLedger, type UsageLedger } from "./shared/model.ts";
 import { EvidenceStore } from "./evidence/evidenceStore.ts";
-import { runResearchAgent } from "./agent/researchAgent.ts";
+import {
+  type AgentStateJson,
+  deserializeAgentState,
+  runResearchAgent,
+  serializeAgentState,
+} from "./agent/researchAgent.ts";
 import { buildRepairMessage } from "./agent/prompt.ts";
 import { verifyMemo, type ExpectedIdentity } from "./verification/verify.ts";
 import { runDrafter } from "./drafting/draft.ts";
@@ -76,20 +81,83 @@ export function buildIntake(input: {
   };
 }
 
-async function runPipeline(admin: SupabaseClient, intake: Intake) {
-  const started = Date.now();
-  const usage = newUsageLedger();
-  const store = new EvidenceStore();
-  const models = modelConfig();
+/**
+ * Chunked execution: a single worker only ever runs a bounded slice of the
+ * research loop. When the slice ends without a memo, the agent state is
+ * serialized and a fresh invocation resumes it — long literature-scale runs
+ * therefore survive the lifetime of one edge worker.
+ */
+export const CHUNK = {
+  MAX_STEPS: 8,
+  MAX_MS: 90_000,
+  MAX_CHUNKS: 8,
+};
 
-  // ── Research ────────────────────────────────────────────────────────────
+export interface ResumeState {
+  agent_state: AgentStateJson;
+  chunk_index: number;
+  usage: UsageLedger;
+  started_at: number;
+}
+
+async function runPipeline(
+  admin: SupabaseClient,
+  intake: Intake,
+  opts: { resume?: ResumeState | null; chunked?: boolean } = {},
+): Promise<
+  | ({ ok: true; paused?: false } & Record<string, unknown>)
+  | { ok: true; paused: true; run_id: string; resume: ResumeState }
+> {
+  const resume = opts.resume ?? null;
+  const started = resume?.started_at ?? Date.now();
+  const usage = resume?.usage ?? newUsageLedger();
+  const models = modelConfig();
+  const prior = resume ? deserializeAgentState(intake, resume.agent_state) : null;
+  const store = prior?.store ?? new EvidenceStore();
+  const chunk_index = (resume?.chunk_index ?? 0) + 1;
+
+  // ── Research (one bounded chunk when chunked execution is requested) ─────
   let agent = await runResearchAgent({
     admin,
     intake,
     store,
     model: models.agent,
     usage,
+    priorMessages: prior?.messages,
+    policy: prior?.policy,
+    discovered: prior?.discovered,
+    commit: prior?.commit,
+    ledger: prior?.ledger,
+    trace: prior?.trace,
+    stats: prior?.stats,
+    maxStepsThisChunk: opts.chunked ? CHUNK.MAX_STEPS : undefined,
+    deadlineAt: opts.chunked ? Date.now() + CHUNK.MAX_MS : undefined,
+    checkpoint: opts.chunked
+      ? async (state) => {
+        await admin.from("v2_eval_runs").update({
+          agent_state: {
+            resume: { agent_state: state, chunk_index: chunk_index - 1, usage, started_at: started },
+            intake,
+          },
+          chunk_index,
+        }).eq("run_id", intake.run_id);
+      }
+      : undefined,
   });
+
+  if (agent.paused && !agent.memo && chunk_index < CHUNK.MAX_CHUNKS) {
+    return {
+      ok: true,
+      paused: true,
+      run_id: intake.run_id,
+      resume: {
+        agent_state: serializeAgentState({ result: agent, store }),
+        chunk_index,
+        usage,
+        started_at: started,
+      },
+    };
+  }
 
   const expected: ExpectedIdentity = {
     dockets: intake.docket_obligations.map((d) => d.display),
@@ -200,6 +268,14 @@ async function runPipeline(admin: SupabaseClient, intake: Intake) {
     prompt_tokens: usage.prompt_tokens,
     completion_tokens: usage.completion_tokens,
     estimated_cost_usd: null,
+    prompt_tokens_per_call: usage.prompt_tokens_per_call,
+    max_prompt_tokens_single_call: usage.max_prompt_tokens_single_call,
+    largest_tool_response_chars: agent.stats.largest_tool_response_chars,
+    evidence_context_chars_last_turn: agent.stats.evidence_context_chars_last_turn,
+    repeated_tool_calls_prevented: agent.stats.repeated_tool_calls_prevented,
+    commit_directives: agent.stats.commit_directives,
+    chunks_executed: chunk_index,
+    acquisition_ledger: agent.ledger.all(),
     source_funnel,
   };
 
@@ -220,6 +296,56 @@ async function runPipeline(admin: SupabaseClient, intake: Intake) {
   };
 }
 
+/** Kick a fresh worker to continue a paused run. */
+async function selfInvokeResume(run_id: string, supabaseUrl: string, serviceKey: string) {
+  await fetch(`${supabaseUrl}/functions/v1/legal-research-v2`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${serviceKey}`,
+      "Content-Type": "application/json",
+      "x-smoke-mode": "1",
+    },
+    body: JSON.stringify({ resume_run_id: run_id }),
+  });
+}
+
+/**
+ * Run one chunk of a persisted run and either finish it or hand it to a new
+ * worker. The chunk budget and MAX_CHUNKS bound the total work; the next hop
+ * fires only when research actually remains.
+ */
+async function driveRun(
+  admin: SupabaseClient,
+  intake: Intake,
+  resume: ResumeState | null,
+  supabaseUrl: string,
+  serviceKey: string,
+): Promise<void> {
+  try {
+    const out = await runPipeline(admin, intake, { resume, chunked: true });
+    if ("paused" in out && out.paused) {
+      await admin.from("v2_eval_runs").update({
+        status: "paused",
+        agent_state: { resume: out.resume, intake },
+      }).eq("run_id", intake.run_id);
+      await selfInvokeResume(intake.run_id, supabaseUrl, serviceKey);
+      return;
+    }
+    await admin.from("v2_eval_runs").update({
+      status: "done",
+      result: out,
+      agent_state: null,
+      finished_at: new Date().toISOString(),
+    }).eq("run_id", intake.run_id);
+  } catch (e) {
+    await admin.from("v2_eval_runs").update({
+      status: "error",
+      error: e instanceof Error ? e.message : String(e),
+      finished_at: new Date().toISOString(),
+    }).eq("run_id", intake.run_id);
+  }
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
   if (req.method !== "POST") return json({ error: "method_not_allowed" }, 405);
@@ -231,8 +357,9 @@ serve(async (req) => {
     return json({ error: "invalid_json" }, 400);
   }
 
+  const resumeRunId = typeof body.resume_run_id === "string" ? body.resume_run_id : null;
   const question = String(body.question ?? "").trim();
-  if (!question) return json({ error: "question_required" }, 400);
+  if (!question && !resumeRunId) return json({ error: "question_required" }, 400);
 
   const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
   const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
@@ -240,15 +367,45 @@ serve(async (req) => {
 
   // Internal / smoke invocation only — V2 carries no production traffic yet.
   const authHeader = req.headers.get("Authorization") ?? "";
-  const smokeToken = Deno.env.get("V2_EVAL_TOKEN") ?? Deno.env.get("V2_SMOKE_TOKEN_B") ??
-    Deno.env.get("V2_SMOKE_TOKEN") ?? "";
+  const smokeTokens = [
+    Deno.env.get("V2_EVAL_TOKEN_C"),
+    Deno.env.get("V2_EVAL_TOKEN"),
+    Deno.env.get("V2_SMOKE_TOKEN_B"),
+    Deno.env.get("V2_SMOKE_TOKEN"),
+  ].filter((t): t is string => !!t);
+  const presented = req.headers.get("x-smoke-token") ?? "";
+
   const isSmoke = req.headers.get("x-smoke-mode") === "1" &&
     (authHeader === `Bearer ${serviceKey}` ||
-      (!!smokeToken && req.headers.get("x-smoke-token") === smokeToken));
+      (!!presented && smokeTokens.includes(presented)));
+
   if (!isSmoke) return json({ error: "v2_internal_only" }, 403);
 
 
   const admin = createClient(supabaseUrl, serviceKey) as unknown as SupabaseClient;
+
+  // ── Resume a paused chunked run in a fresh worker ───────────────────────
+  if (resumeRunId) {
+    const { data: row } = await admin
+      .from("v2_eval_runs")
+      .select("run_id, status, agent_state")
+      .eq("run_id", resumeRunId)
+      .maybeSingle();
+    const saved = (row?.agent_state ?? null) as
+      | { resume: ResumeState; intake: Intake }
+      | null;
+    if (!row || !saved) return json({ error: "resume_state_not_found" }, 404);
+    // A run killed mid-chunk (CPU-time) stays "running" but has a checkpoint;
+    // it is resumable from the last completed step.
+    if (row.status !== "paused" && row.status !== "running") {
+      return json({ error: `not_resumable:${row.status}` }, 409);
+    }
+    await admin.from("v2_eval_runs").update({ status: "running" }).eq("run_id", resumeRunId);
+    const task = driveRun(admin, saved.intake, saved.resume, supabaseUrl, serviceKey);
+    if (typeof EdgeRuntime !== "undefined" && EdgeRuntime?.waitUntil) EdgeRuntime.waitUntil(task);
+    return json({ ok: true, resumed: true, run_id: resumeRunId }, 202);
+  }
+
   const intake = buildIntake({
     run_id: String(body.run_id ?? crypto.randomUUID()),
     question,
@@ -265,22 +422,7 @@ serve(async (req) => {
       question: intake.question,
       status: "running",
     });
-    const task = (async () => {
-      try {
-        const result = await runPipeline(admin, intake);
-        await admin.from("v2_eval_runs").update({
-          status: "done",
-          result,
-          finished_at: new Date().toISOString(),
-        }).eq("run_id", intake.run_id);
-      } catch (e) {
-        await admin.from("v2_eval_runs").update({
-          status: "error",
-          error: e instanceof Error ? e.message : String(e),
-          finished_at: new Date().toISOString(),
-        }).eq("run_id", intake.run_id);
-      }
-    })();
+    const task = driveRun(admin, intake, null, supabaseUrl, serviceKey);
     if (typeof EdgeRuntime !== "undefined" && EdgeRuntime?.waitUntil) {
       EdgeRuntime.waitUntil(task);
     }

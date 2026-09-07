@@ -5,6 +5,10 @@
  *   "What did ReLex actually retrieve and read during this run?"
  *
  * Search snippets never enter this store. Only a completed fetch does.
+ *
+ * The store keeps the FULL extracted body server-side (verification needs it),
+ * but exposes compact views — summary, excerpt windows — so the agent's
+ * conversation context never carries whole judgments.
  */
 
 import type { EvidenceSource, IdentityFields } from "../types.ts";
@@ -14,6 +18,7 @@ import {
   detectStatuteSections,
   sha256Hex,
 } from "../shared/primitives.ts";
+import { cleanDisplayTitle, isMetadataLine, stripInternalIds } from "../shared/titleHygiene.ts";
 
 /** Query-preserving URL key: strips only tracking noise and fragments. */
 export function normalizeUrlKey(raw: string): string {
@@ -46,27 +51,72 @@ export function identityFieldsOf(text: string, title: string): IdentityFields {
 
 /**
  * A citable display title. Discovery often hands us a URL or a filename; the
- * fetched body itself is the better source of a human title, so prefer a
- * detected docket plus the first prose line over the raw URL.
+ * fetched body itself is the better source of a human title, so prefer a real
+ * parsed title over the raw URL, and never lead with internal metadata ids.
  */
 export function displayTitleFor(
   rawTitle: string,
   text: string,
   identity: IdentityFields,
+  url?: string,
 ): string {
   const raw = decodeHtmlEntities(rawTitle ?? "").trim();
-  const isUrlish = !raw || /^https?:\/\//i.test(raw) || /\.(pdf|docx?|html?)$/i.test(raw);
-  if (!isUrlish) return raw.replace(/\s+/g, " ");
-
-  const firstLine = (text ?? "")
-    .split("\n")
-    .map((l) => l.trim())
-    .find((l) => l.length >= 12 && l.length <= 160 && /[\u05D0-\u05EA]/.test(l));
-  const fallback = firstLine ?? identity.statutes[0] ?? identity.dockets[0] ?? "";
-  return fallback ? fallback.replace(/\s+/g, " ") : (raw || "מקור ללא כותרת");
+  return cleanDisplayTitle({
+    raw_title: raw,
+    body_text: text,
+    url,
+    identity: { dockets: identity.dockets, statutes: identity.statutes },
+  }).replace(/\s+/g, " ");
 }
 
+/** A short, deterministic description of what a fetched document is. */
+export function summarizeSource(text: string, identity: IdentityFields, maxChars = 700): string {
+  const lines = (text ?? "")
+    .split("\n")
+    .map((l) => stripInternalIds(l.trim()))
+    .filter((l) => !isMetadataLine(l) && l.length >= 20);
+  const head = lines.slice(0, 6).join(" ").slice(0, maxChars);
+  const idBits = [
+    identity.dockets.length ? `תיקים: ${identity.dockets.slice(0, 3).join(", ")}` : "",
+    identity.statutes.length ? `חקיקה: ${identity.statutes.slice(0, 3).join(", ")}` : "",
+    identity.sections.length ? `סעיפים: ${identity.sections.slice(0, 4).join(", ")}` : "",
+  ].filter(Boolean).join(" | ");
+  return [idBits, head].filter(Boolean).join(" — ").slice(0, maxChars + 120);
+}
 
+/** Verbatim windows around search terms inside a body. */
+export function excerptWindows(
+  text: string,
+  terms: string[],
+  opts: { window?: number; max?: number } = {},
+): string[] {
+  const windowChars = opts.window ?? 1_200;
+  const max = opts.max ?? 3;
+  const out: string[] = [];
+  const used: number[] = [];
+  for (const term of terms.slice(0, 6)) {
+    const needle = String(term ?? "").trim();
+    if (needle.length < 2) continue;
+    let idx = text.indexOf(needle);
+    if (idx < 0) {
+      // second chance: whitespace-insensitive scan on the longest word
+      const word = needle.split(/\s+/).sort((a, b) => b.length - a.length)[0] ?? "";
+      if (word.length >= 3) idx = text.indexOf(word);
+    }
+    if (idx < 0) continue;
+    if (used.some((u) => Math.abs(u - idx) < windowChars / 2)) continue;
+    used.push(idx);
+    const start = Math.max(0, idx - Math.floor(windowChars / 3));
+    out.push(text.slice(start, start + windowChars));
+    if (out.length >= max) break;
+  }
+  return out;
+}
+
+export interface EvidenceStoreJson {
+  seq: number;
+  sources: EvidenceSource[];
+}
 
 export class EvidenceStore {
   private sources = new Map<string, EvidenceSource>();
@@ -95,7 +145,8 @@ export class EvidenceStore {
     const entry: EvidenceSource = {
       source_id,
       url: input.url,
-      title: displayTitleFor(input.title, text, identity_fields),
+      title: displayTitleFor(input.title, text, identity_fields, input.url),
+      summary: summarizeSource(text, identity_fields),
       sha256: await sha256Hex(text),
       fetch_status: input.fetch_status,
       fetch_error: input.fetch_error,
@@ -132,5 +183,44 @@ export class EvidenceStore {
 
   readable(): EvidenceSource[] {
     return this.all().filter((s) => s.fetch_status === "ok" && s.is_actual_document);
+  }
+
+  /**
+   * Targeted re-read of an already-stored body. Full text stays server-side;
+   * the caller receives only the requested windows.
+   */
+  excerpt(
+    source_id: string,
+    opts: { query?: string; locator?: string; find?: string[]; maxChars?: number } = {},
+  ): { source_id: string; windows: string[]; from: "query" | "locator" | "head" } | null {
+    const src = this.sources.get(source_id);
+    if (!src) return null;
+    const maxChars = opts.maxChars ?? 1_200;
+    const terms = [
+      ...(opts.find ?? []),
+      ...(opts.query ? [opts.query, ...opts.query.split(/\s+/).filter((w) => w.length >= 4)] : []),
+      ...(opts.locator ? [opts.locator] : []),
+    ];
+    if (terms.length) {
+      const windows = excerptWindows(src.extracted_text, terms, { window: maxChars, max: 3 });
+      if (windows.length) {
+        return { source_id, windows, from: opts.query ? "query" : "locator" };
+      }
+    }
+    return { source_id, windows: [src.extracted_text.slice(0, maxChars)], from: "head" };
+  }
+
+  toJSON(): EvidenceStoreJson {
+    return { seq: this.seq, sources: this.all() };
+  }
+
+  static fromJSON(json: EvidenceStoreJson | null | undefined): EvidenceStore {
+    const store = new EvidenceStore();
+    store.seq = json?.seq ?? 0;
+    for (const s of json?.sources ?? []) {
+      store.sources.set(s.source_id, s);
+      if (s.url) store.byUrl.set(normalizeUrlKey(s.url), s.source_id);
+    }
+    return store;
   }
 }
