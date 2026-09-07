@@ -30,6 +30,7 @@
 import type { Candidate } from "../lib/types.ts";
 import type { SourceIntegrity } from "./sourceIntegrity.ts";
 import { detectDockets, type DocketRef, textContainsExactDocket } from "./docketDetection.ts";
+import { detectJudgmentEvidence } from "./documentEvidenceClassification.ts";
 import { validateJudgmentIdentityStrict } from "./judgmentIdentity.ts";
 import { applyAcquiredJudgmentBody } from "./judgmentTextAcquisition.ts";
 import { fetchSecondaryBody } from "./secondaryBodyAcquisition.ts";
@@ -56,6 +57,11 @@ export interface WebJudgmentCandidateReport {
   docket: string | null;
   selected: boolean;
   skip_reason: string | null;
+  /** integrity_downgraded_judgment_body_probe_v1 */
+  identity_backed_probe: boolean;
+  original_integrity_class: string | null;
+  eligibility_signals: string[];
+  final_classification: string | null;
   body_attempted: boolean;
   body_acquired: boolean;
   chars: number;
@@ -73,6 +79,14 @@ export interface WebJudgmentBodyReport {
   attempted: number;
   acquired: number;
   identity_confirmed: number;
+  /** integrity_downgraded_judgment_body_probe_v1 */
+  identity_backed_probe: {
+    eligible: number;
+    attempted: number;
+    acquired: number;
+    identity_validated: number;
+    per_candidate: WebJudgmentCandidateReport[];
+  };
   per_candidate: WebJudgmentCandidateReport[];
   stop_reason: "completed" | "stage_not_run" | "no_eligible_candidates" | "budget_exceeded" |
     "stage_timeout";
@@ -91,6 +105,15 @@ function isJudgmentClass(c: Candidate, integ: SourceIntegrity | undefined): bool
   const type = String(c.source_type ?? "").toLowerCase();
   if (type === "court_case" || type === "judgment" || type === "official_primary") return true;
   return String(integ?.citable_as ?? "") === "judgment";
+}
+
+/** Integrity class label, for telemetry only. */
+function integrityClassOf(c: Candidate): string | null {
+  const integ = ((c.metadata ?? {}) as Record<string, unknown>).source_integrity as
+    | SourceIntegrity
+    | undefined;
+  if (!integ) return null;
+  return `${integ.authority_tier}/${integ.text_usability}/${integ.classification_after ?? integ.citable_as}`;
 }
 
 function hasBody(c: Candidate): boolean {
@@ -297,6 +320,13 @@ export async function runWebJudgmentBodyAcquisition(
     attempted: per.filter((p) => p.body_attempted).length,
     acquired: per.filter((p) => p.body_acquired).length,
     identity_confirmed: per.filter((p) => p.identity_confirmed).length,
+    identity_backed_probe: {
+      eligible: per.filter((p) => p.identity_backed_probe && p.selected).length,
+      attempted: per.filter((p) => p.identity_backed_probe && p.body_attempted).length,
+      acquired: per.filter((p) => p.identity_backed_probe && p.body_acquired).length,
+      identity_validated: per.filter((p) => p.identity_backed_probe && p.identity_confirmed).length,
+      per_candidate: per.filter((p) => p.identity_backed_probe),
+    },
     per_candidate: per,
     stop_reason: stop,
     ms: Date.now() - t0,
@@ -305,11 +335,17 @@ export async function runWebJudgmentBodyAcquisition(
   if (input.enabled === false) return done("disabled", "stage_not_run", false);
   if (input.retrieval_budget?.exceeded()) return done("budget_exceeded", "budget_exceeded", false);
 
-  const selected: { c: Candidate; docket: DocketRef }[] = [];
+  const selected: { c: Candidate; docket: DocketRef; probe: boolean; signals: string[] }[] = [];
   for (const c of input.candidates) {
     const s = selectWebJudgmentCandidate(c);
+    const integClass = integrityClassOf(c);
     if (s.eligible && s.docket) {
-      selected.push({ c, docket: s.docket });
+      selected.push({
+        c,
+        docket: s.docket,
+        probe: s.identity_backed_probe === true,
+        signals: s.probe_signals ?? [],
+      });
     } else if (s.docket || isJudgmentClass(c, undefined)) {
       per.push({
         candidate_id: c.candidate_id,
@@ -319,6 +355,10 @@ export async function runWebJudgmentBodyAcquisition(
         docket: s.docket?.docket_id ?? null,
         selected: false,
         skip_reason: s.reason,
+        identity_backed_probe: false,
+        original_integrity_class: integClass,
+        eligibility_signals: s.probe_signals ?? [],
+        final_classification: integClass,
         body_attempted: false,
         body_acquired: false,
         chars: 0,
@@ -346,7 +386,7 @@ export async function runWebJudgmentBodyAcquisition(
   });
 
   let stop: WebJudgmentBodyReport["stop_reason"] = "completed";
-  for (const { c, docket } of queue) {
+  for (const { c, docket, probe, signals } of queue) {
     const c0 = Date.now();
     const url = String(c.source_url);
     const row: WebJudgmentCandidateReport = {
@@ -357,6 +397,10 @@ export async function runWebJudgmentBodyAcquisition(
       docket: docket.docket_id,
       selected: true,
       skip_reason: null,
+      identity_backed_probe: probe,
+      original_integrity_class: integrityClassOf(c),
+      eligibility_signals: signals,
+      final_classification: integrityClassOf(c),
       body_attempted: false,
       body_acquired: false,
       chars: 0,
@@ -431,6 +475,7 @@ export async function runWebJudgmentBodyAcquisition(
       );
       row.body_acquired = true;
       row.chars = applied.stored.length;
+      row.final_classification = "judgment/primary_mirror";
       (c.metadata as Record<string, unknown>).web_judgment_body_acquired = true;
       (c.metadata as Record<string, unknown>).web_judgment_body_source_url = res.final_url ?? url;
       (c.metadata as Record<string, unknown>).web_judgment_identity = {
