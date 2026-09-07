@@ -9,6 +9,11 @@ import {
 import { assignSynthesisRole } from "./synthesisRole.ts";
 import { buildUrlDedupeKey } from "./docketAwareUrlKey.ts";
 import {
+  collisionIdentity,
+  resolveUrlCollision,
+  type UrlCollisionRow,
+} from "./urlCollisionGuard.ts";
+import {
   backfillOriginCap,
   classifyDiscoveryPrecision,
   type DiscoveryDiagnostics,
@@ -129,6 +134,8 @@ export interface PoolResult {
   };
   url_dedupe_identity_source_counts: Record<string, number>;
   url_dedupe_rescued_from_legacy_collapse: number;
+  /** query_sensitive_document_dedupe_v1 */
+  url_collision_resolution: UrlCollisionRow[];
   /** discovery_precision_and_listing_suppression_v1 */
   discovery_precision: DiscoveryDiagnostics;
   counts: {
@@ -425,6 +432,9 @@ function buildCandidatePoolInner(
 
   const seenDoc = new Set<string>();
   const seenUrl = new Set<string>();
+  /** query_sensitive_document_dedupe_v1 — admitted candidates per URL key. */
+  const keptByUrlKey = new Map<string, Candidate[]>();
+  const url_collisions: UrlCollisionRow[] = [];
   const seenStatute = new Set<string>();
   const seenDocket = new Set<string>();
   const seenTitle = new Map<string, Candidate>(); // role+normTitle → kept
@@ -959,6 +969,7 @@ function buildCandidatePoolInner(
     },
     url_dedupe_identity_source_counts: identityCounts,
     url_dedupe_rescued_from_legacy_collapse: rescued,
+    url_collision_resolution: url_collisions,
     discovery_precision: dp,
     counts,
     vector_tuning: tuningOn
