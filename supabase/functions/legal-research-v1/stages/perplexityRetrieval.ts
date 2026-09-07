@@ -34,6 +34,11 @@ import {
   type PrimaryShapeRescue,
 } from "./primaryShapeRescue.ts";
 import {
+  detectJudgmentEvidence,
+  detectScholarshipEvidence,
+  RECLASSIFIABLE_CLASSES,
+} from "./documentEvidenceClassification.ts";
+import {
   evaluateScholarshipAdmission,
   hasTopicalFit,
   resolveAcademicRoleSlot,
@@ -410,6 +415,11 @@ interface PplxResultRow {
   /** academic_literature_richness_without_fixed_source_count_v1 */
   academic_topicality_score?: number;
   academic_detected_journal?: string | null;
+  /** web_judgment_source_classification_and_role_admission_v1 */
+  doc_class_from?: string;
+  doc_class_to?: string;
+  doc_class_signals?: string[];
+  doc_class_docket?: string;
 }
 
 function processRaw(
@@ -586,6 +596,10 @@ function processRaw(
         academic_role_slot_final: slotting?.final_slot ?? undefined,
         academic_topicality_score: admission?.topicality_score,
         academic_detected_journal: admission?.detected_journal_or_institution ?? undefined,
+        doc_class_from: docClassFrom,
+        doc_class_to: docClassTo,
+        doc_class_signals: docClassSignals,
+        doc_class_docket: docClassDocket,
       });
       continue;
     }
@@ -665,6 +679,12 @@ function processRaw(
         academic_admission_signals: admission.admission_signals,
       } : {}),
       ...(slotting?.final_slot ? { academic_role_slot_final: slotting.final_slot } : {}),
+      ...(docClassTo ? {
+        doc_class_from: docClassFrom,
+        doc_class_to: docClassTo,
+        doc_class_signals: docClassSignals,
+        doc_class_docket: docClassDocket,
+      } : {}),
     });
     admitted.push({
       candidate_id: crypto.randomUUID(),
