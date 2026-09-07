@@ -566,11 +566,34 @@ function buildCandidatePoolInner(
     if (isBackfill(c)) {
       const n = backfillsByOrigin.get(c.origin) ?? 0;
       if (n >= originCap) {
-        backfill_origin_cap_drops++;
-        logDrop(c, "backfill_origin_diversity_cap", `${c.origin}:${originCap}`);
-        return false;
+        // direct_authority_pool_survival_v1 — bounded exemption: a materially
+        // stronger direct authority is not discarded on origin grounds alone.
+        const authorityReason = isDirectAuthority(c);
+        const weakest = weakestOtherOriginScore(c.origin);
+        const stronger = !Number.isFinite(weakest) ||
+          effScore(c) >= weakest + AUTHORITY_MARGIN;
+        if (
+          authorityReason && stronger && authorityExemptionsUsed < authorityExemptBudget
+        ) {
+          authorityExemptionsUsed++;
+          authorityExemptions.push({
+            candidate_id: c.candidate_id,
+            title: c.title,
+            origin: c.origin,
+            score: Number(effScore(c).toFixed(4)),
+            reason: authorityReason,
+            weakest_other_origin_score: Number.isFinite(weakest)
+              ? Number(weakest.toFixed(4))
+              : -1,
+          });
+        } else {
+          backfill_origin_cap_drops++;
+          logDrop(c, "backfill_origin_diversity_cap", `${c.origin}:${originCap}`);
+          return false;
+        }
       }
     }
+
     if (c.retrieval_method === "vector") {
       // The wider quota is reserved for local candidates that cleared the
       // topical-fit/credibility bar, and only up to a global share of the
