@@ -16,6 +16,11 @@ import {
   emptyDiscoveryDiagnostics,
 } from "./discoveryPrecision.ts";
 import { GATE_META_KEY } from "./localCaselawListingGate.ts";
+import {
+  type DuplicateGroupRow,
+  type DuplicateSignals,
+  resolveDuplicateRepresentatives,
+} from "./duplicateRepresentative.ts";
 
 
 function normTitle(t: string): string {
@@ -116,6 +121,12 @@ export interface PoolResult {
   integrity: IntegrityLogRow[];
   integrity_rejects: number;
   url_dedupe: UrlDedupeLogRow[];
+  /** authority_duplicate_resolution_v1 */
+  duplicate_resolution?: {
+    groups_with_duplicates: number;
+    groups_reordered: number;
+    groups: DuplicateGroupRow[];
+  };
   url_dedupe_identity_source_counts: Record<string, number>;
   url_dedupe_rescued_from_legacy_collapse: number;
   /** discovery_precision_and_listing_suppression_v1 */
@@ -903,6 +914,11 @@ function buildCandidatePoolInner(
     integrity,
     integrity_rejects: rejected.length,
     url_dedupe,
+    duplicate_resolution: {
+      groups_with_duplicates: dupResolution.groups.length,
+      groups_reordered: dupResolution.reordered,
+      groups: dupResolution.groups.slice(0, 40),
+    },
     url_dedupe_identity_source_counts: identityCounts,
     url_dedupe_rescued_from_legacy_collapse: rescued,
     discovery_precision: dp,
