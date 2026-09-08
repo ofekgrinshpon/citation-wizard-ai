@@ -160,6 +160,12 @@ export async function verifyMemo(opts: {
     >,
   };
 
+  // True per-stage funnel: how far each source actually got, independent of
+  // whether it ended up in the final pack.
+  const per_source: NonNullable<VerificationOutcome["per_source"]> = {};
+  const stageOf = (id: string) =>
+    per_source[id] ??= { identity: false, span: false, support: false };
+
   interface Survivor {
     pair_id: string;
     claim_id: string;
@@ -168,6 +174,7 @@ export async function verifyMemo(opts: {
     locator?: string;
   }
   const survivors: Survivor[] = [];
+
 
   for (const claim of opts.memo.claims) {
     for (const ev of claim.evidence) {
