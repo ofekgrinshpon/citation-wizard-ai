@@ -111,18 +111,11 @@ export interface EvidenceSource {
   extracted_text: string;
   text_length: number;
   identity_fields: IdentityFields;
-  /**
-   * Literal identity-bearing window derived from the acquired body (caption /
-   * docket / parties / court, or academic front matter). Identity proof only —
-   * never automatically claim evidence.
-   */
-  identity_evidence?: { kind: string; window: string; signals: string[] };
   is_actual_document: boolean;
   not_document_reason?: string;
   origin: string;
   fetched_at: string;
 }
-
 
 // ─── Research memo (agent output) ───────────────────────────────────────────
 
@@ -145,7 +138,6 @@ export interface MemoClaim {
   evidence: MemoEvidence[];
 }
 
-
 export interface ResearchMemo {
   issue_summary: string;
   claims: MemoClaim[];
@@ -166,11 +158,16 @@ export type RejectionReason =
   | "support_does_not_support"
   | "verifier_unavailable";
 
+/** Verification stage a pair reached before it was rejected. Telemetry only. */
+export type VerificationStage = "readable" | "identity" | "span" | "support" | "temporal";
+
 export interface RejectedPair {
   claim_id: string;
   source_id: string;
   reason: RejectionReason;
   detail: string;
+  /** Terminal stage of this rejection — never inferred from final-pack membership. */
+  stage?: VerificationStage;
 }
 
 export type SupportVerdict = "supports" | "supports_partially" | "does_not_support";
@@ -205,7 +202,6 @@ export interface VerifiedClaim {
   sources: VerifiedSourceRef[];
 }
 
-
 export interface UnsupportedClaim {
   claim_id: string;
   proposition: string;
@@ -223,10 +219,14 @@ export interface VerificationOutcome {
   rejected: RejectedPair[];
   /** Furthest verification stage each source reached (true per-stage funnel). */
   per_source?: Record<string, {
+    readable: boolean;
     identity: boolean;
     span: boolean;
     support: boolean;
     identity_basis?: string;
+    terminal_stage?: VerificationStage;
+    rejection_code?: string;
+    rejection_detail?: string;
   }>;
   counters: {
     total_evidence_pairs: number;
@@ -235,7 +235,6 @@ export interface VerificationOutcome {
     support_verdicts: Record<SupportVerdict, number>;
   };
 }
-
 
 // ─── Drafting / rendering ───────────────────────────────────────────────────
 
@@ -273,13 +272,17 @@ export interface SourceFunnelRow {
   /** Body read and usable as a document. */
   readable?: boolean;
   identity_verified: boolean;
-  /** Why identity passed / failed, from the acquired body itself. */
+  /** Detail returned by the identity check itself. */
   identity_basis?: string;
   span_verified: boolean;
   support_verified: boolean;
+  /** Temporal validity of the claims this source ended up supporting. */
+  temporal_ok?: boolean;
+  /** Stage where this source's last rejection occurred, from verification. */
+  terminal_stage?: VerificationStage;
+  rejection_code?: string;
   cited: boolean;
 }
-
 
 export interface V2Telemetry {
   run_id: string;

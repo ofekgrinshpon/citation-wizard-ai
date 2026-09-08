@@ -170,12 +170,6 @@ export interface FetchOutput {
   is_actual_document?: boolean;
   not_document_reason?: string;
   identity_found?: { dockets: string[]; statutes: string[]; sections: string[] };
-  /**
-   * Literal identity-bearing text from the acquired body (caption / docket /
-   * parties / court, or academic front matter). Identity proof only — it is
-   * NOT claim evidence and must not be used as a quoted_span.
-   */
-  identity_evidence?: { kind: string; window: string; signals: string[] };
   identity_hint?: string;
   text_head?: string;
   windows?: string[];
@@ -233,7 +227,6 @@ function alreadyReadPayload(
     is_actual_document: cached.is_actual_document,
     not_document_reason: cached.not_document_reason,
     identity_found: cached.identity_fields,
-    identity_evidence: cached.identity_evidence,
     windows: windows?.length ? windows : undefined,
     exact_source_text: served.exact_source_text,
     text_head: windows?.length ? undefined : cached.extracted_text.slice(0, FETCH_LIMITS.HEAD_CHARS),
@@ -346,8 +339,6 @@ export async function runFetch(
         text_length: src.text_length,
         is_actual_document: src.is_actual_document,
         identity_found: src.identity_fields,
-        identity_evidence: src.identity_evidence,
-
         section_requested: sectionToken,
         section_found: found.found,
         section_coverage: found.coverage,
@@ -389,7 +380,6 @@ export async function runFetch(
       text_length: src.text_length,
       is_actual_document: src.is_actual_document,
       identity_found: src.identity_fields,
-      identity_evidence: src.identity_evidence,
       windows: servedRead.windows,
       exact_source_text: servedRead.exact_source_text,
       no_new_evidence: yielded ? undefined : true,
@@ -582,7 +572,6 @@ export async function runFetch(
     is_actual_document: entry.is_actual_document,
     not_document_reason: entry.not_document_reason,
     identity_found: entry.identity_fields,
-    identity_evidence: entry.identity_evidence,
     identity_hint,
     text_head: freshServed.windows?.length
       ? undefined

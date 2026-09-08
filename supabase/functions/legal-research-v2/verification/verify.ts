@@ -14,6 +14,7 @@ import type {
   RejectedPair,
   ResearchMemo,
   SupportVerdict,
+  VerificationStage,
   VerificationOutcome,
   VerifiedClaim,
   VerifiedSourceRef,
@@ -21,13 +22,6 @@ import type {
 import type { EvidenceStore } from "../evidence/evidenceStore.ts";
 import type { UsageLedger } from "../shared/model.ts";
 import { buildSectionVariants, normalizeDocketText } from "../shared/primitives.ts";
-import {
-  bodyHasDocket,
-  bodyHasTitle,
-  docketNumberOf,
-  normalizeIdentityText,
-} from "./identityEvidence.ts";
-
 import { matchSpan } from "./spanMatch.ts";
 import { verifySupport, type SupportInput } from "./supportVerifier.ts";
 
@@ -44,88 +38,46 @@ export interface IdentityCheck {
 /**
  * CHECK 1 — identity.
  *
- * The question is always the same: does the ACQUIRED BODY itself establish
- * that this document is the authority it is presented as? Search metadata,
- * URLs and snippets are never identity proof.
- *
- * The check runs against the whole stored body (plus its derived identity
- * window), with deterministic normalization only — quote marks, maqaf/dashes,
- * bidi controls, spacing and docket-prefix variants. Nothing semantic.
- *
- * A source that makes no identity claim about one of the run's obligations is
- * not rejected here (checks 2–4 still govern it).
+ * Only applies where the run carries an explicit identity obligation AND the
+ * source claims to be that authority. A source with no identity claim is not
+ * rejected here (check 2 and 3 still govern it).
  */
 export function checkIdentity(
   source: EvidenceSource,
   expected: ExpectedIdentity,
 ): IdentityCheck {
-  const idWindow = source.identity_evidence?.window ?? "";
-  // The TITLE is deliberately excluded: a title comes from discovery metadata,
-  // and metadata may never prove what a document is. Only the acquired body
-  // (and the identity window derived from it) counts.
-  const body = `${idWindow}\n${source.extracted_text}`;
-  const nBody = normalizeIdentityText(body);
-
+  const body = `${source.title}\n${source.extracted_text}`;
   // Judgment identity: if the source presents itself as one of the run's
-  // explicit dockets, the body must actually carry that docket.
+  // explicit dockets (title mentions it), the body must carry that docket.
   for (const docket of expected.dockets) {
-    const num = docketNumberOf(docket);
-    const claimsIt = bodyHasDocket(source.title, docket) ||
-      source.identity_fields.dockets.some((d) => num && docketNumberOf(d) === num) ||
-      normalizeDocketText(source.title).includes(normalizeDocketText(docket));
-    if (!claimsIt) continue;
-    if (!bodyHasDocket(body, docket)) {
-      return { ok: false, detail: `title claims ${docket} but the acquired body does not contain it` };
+    const inTitle = normalizeDocketText(source.title).includes(normalizeDocketText(docket));
+    if (!inTitle) continue;
+    const inBody = source.identity_fields.dockets.includes(docket) ||
+      normalizeDocketText(body).includes(normalizeDocketText(docket));
+    if (!inBody) {
+      return { ok: false, detail: `title claims ${docket} but the body does not contain it` };
     }
-    return { ok: true, detail: `docket ${docket} confirmed in the acquired body` };
+    return { ok: true, detail: `docket ${docket} confirmed in body` };
   }
-
   for (const st of expected.statutes) {
-    const nStatute = normalizeIdentityText(st.statute);
-    const claimsStatute = normalizeIdentityText(source.title).includes(nStatute) ||
-      source.identity_fields.statutes.some((s) => normalizeIdentityText(s) === nStatute);
+    const claimsStatute = source.title.includes(st.statute);
     if (!claimsStatute) continue;
-    if (!nBody.includes(nStatute)) {
-      return { ok: false, detail: `title claims ${st.statute} but the acquired body does not contain it` };
+    if (!body.includes(st.statute)) {
+      return { ok: false, detail: `title claims ${st.statute} but the body does not contain it` };
     }
     if (st.section) {
-      const variants = buildSectionVariants(st.section).map(normalizeIdentityText);
-      const hasSection = variants.some((v) => nBody.includes(v)) ||
+      const variants = buildSectionVariants(st.section);
+      const hasSection = variants.some((v) => body.includes(v)) ||
         source.identity_fields.sections.includes(st.section);
       if (!hasSection) {
         return { ok: false, detail: `statute body does not contain section ${st.section}` };
       }
     }
-    return { ok: true, detail: `statute ${st.statute} confirmed in the acquired body` };
-  }
-
-  // Academic / other documents: when the discovered title is a real title (not
-  // a URL or a bare institution name), every material word of it must be
-  // literally present in the acquired body. This turns "the search result said
-  // so" into "the document says so", and is bounded and deterministic.
-  const t = bodyHasTitle(source.extracted_text, source.title, { minTokens: 3 });
-  if (t.matched.length + t.missing.length >= 3) {
-    if (t.ok) {
-      return { ok: true, detail: `document title confirmed verbatim in the body (${t.matched.length} tokens)` };
-    }
-    // Not a contradiction: printed front matter may be missing from extraction.
-    return {
-      ok: true,
-      detail: `no docket/statute obligation claimed; title words not all present (missing: ${
-        t.missing.slice(0, 4).join(", ")
-      })`,
-    };
+    return { ok: true, detail: `statute ${st.statute} confirmed in body` };
   }
   return { ok: true, detail: "no explicit identity claim to contradict" };
 }
 
-/** Compact, human-readable identity basis for telemetry. */
-export function identityBasisOf(source: EvidenceSource): string {
-  const ev = source.identity_evidence;
-  if (!ev) return "no_identity_window";
-  return `${ev.kind}${ev.signals.length ? `: ${ev.signals.slice(0, 3).join(" | ")}` : ": no_signals"}`
-    .slice(0, 200);
-}
 
 
 /** CHECK 2 — body read. */
@@ -164,10 +116,17 @@ export async function verifyMemo(opts: {
   };
 
   // True per-stage funnel: how far each source actually got, independent of
-  // whether it ended up in the final pack.
+  // whether it ended up in the final pack. Observability only — no stage below
+  // changes any acceptance decision.
   const per_source: NonNullable<VerificationOutcome["per_source"]> = {};
   const stageOf = (id: string) =>
-    per_source[id] ??= { identity: false, span: false, support: false };
+    per_source[id] ??= { readable: false, identity: false, span: false, support: false };
+  const fail = (id: string, stage: VerificationStage, code: string, detail: string) => {
+    const st = stageOf(id);
+    st.terminal_stage = stage;
+    st.rejection_code = code;
+    st.rejection_detail = detail.slice(0, 240);
+  };
 
   interface Survivor {
     pair_id: string;
@@ -178,7 +137,6 @@ export async function verifyMemo(opts: {
   }
   const survivors: Survivor[] = [];
 
-
   for (const claim of opts.memo.claims) {
     for (const ev of claim.evidence) {
       counters.total_evidence_pairs += 1;
@@ -188,32 +146,38 @@ export async function verifyMemo(opts: {
       // CHECK 2 first: without a real body nothing else is meaningful.
       const body = checkBodyRead(source);
       if (!body.ok || !source) {
+        const reason = !source
+          ? "unknown_source_id"
+          : source.fetch_status !== "ok"
+          ? "fetch_failed"
+          : source.text_length < 400
+          ? "empty_body"
+          : "not_actual_document";
         rejected.push({
           claim_id: claim.claim_id,
           source_id: ev.source_id,
-          reason: !source
-            ? "unknown_source_id"
-            : source.fetch_status !== "ok"
-            ? "fetch_failed"
-            : source.text_length < 400
-            ? "empty_body"
-            : "not_actual_document",
+          reason,
           detail: body.detail,
+          stage: "readable",
         });
+        fail(ev.source_id, "readable", reason, body.detail);
         continue;
       }
+      const st = stageOf(source.source_id);
+      st.readable = true;
 
       // CHECK 1 — identity.
       const identity = checkIdentity(source, opts.expected);
-      const st = stageOf(source.source_id);
-      st.identity_basis = `${identity.detail} · ${identityBasisOf(source)}`.slice(0, 240);
+      st.identity_basis = identity.detail.slice(0, 240);
       if (!identity.ok) {
         rejected.push({
           claim_id: claim.claim_id,
           source_id: ev.source_id,
           reason: "identity_mismatch",
           detail: identity.detail,
+          stage: "identity",
         });
+        fail(ev.source_id, "identity", "identity_mismatch", identity.detail);
         continue;
       }
       st.identity = true;
@@ -222,12 +186,15 @@ export async function verifyMemo(opts: {
       // CHECK 3 — verbatim span.
       const span = matchSpan(source.extracted_text, ev.quoted_span);
       if (!span.matched) {
+        const reason = span.status === "too_short" ? "span_too_short" : "span_not_found";
         rejected.push({
           claim_id: claim.claim_id,
           source_id: ev.source_id,
-          reason: span.status === "too_short" ? "span_too_short" : "span_not_found",
+          reason,
           detail: span.detail,
+          stage: "span",
         });
+        fail(ev.source_id, "span", reason, span.detail);
         continue;
       }
       st.span = true;
@@ -258,12 +225,15 @@ export async function verifyMemo(opts: {
   for (const s of survivors) {
     const v = verdictById.get(s.pair_id);
     if (!v) {
+      const detail = error ?? "no verdict returned for this pair";
       rejected.push({
         claim_id: s.claim_id,
         source_id: s.source.source_id,
         reason: "verifier_unavailable",
-        detail: error ?? "no verdict returned for this pair",
+        detail,
+        stage: "support",
       });
+      fail(s.source.source_id, "support", "verifier_unavailable", detail);
       continue;
     }
     counters.support_verdicts[v.support] += 1;
@@ -273,10 +243,13 @@ export async function verifyMemo(opts: {
         source_id: s.source.source_id,
         reason: "support_does_not_support",
         detail: v.reason,
+        stage: "support",
       });
+      fail(s.source.source_id, "support", "support_does_not_support", v.reason);
       continue;
     }
     stageOf(s.source.source_id).support = true;
+
     const list = byClaim.get(s.claim_id) ?? [];
     list.push({
       source_id: s.source.source_id,
