@@ -24,6 +24,12 @@ interface Props {
   onRegenerate: (id: number) => void;
   onRemove: (id: number) => void;
   disabled?: boolean;
+  /** Optional per-card copy action (used by the V2 אזכור אחיד review layer). */
+  onCopy?: (id: number) => void;
+  /** Optional label shown next to the footnote number (original V2 source). */
+  originLabel?: string;
+  /** Replaces the ✕ remove button label/behavior hint when provided. */
+  hideRemove?: boolean;
 }
 
 const TYPE_OPTIONS: SourceType[] = [
