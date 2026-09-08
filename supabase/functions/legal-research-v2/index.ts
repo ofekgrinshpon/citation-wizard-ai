@@ -54,6 +54,7 @@ import {
   finishJobError,
   gatewayFailure,
   finishJobSuccess,
+  ACADEMIC_CHAPTER_CREDIT_COST,
   RESEARCH_CREDIT_COST,
   toBetaResult,
 } from "./beta/job.ts";
@@ -80,6 +81,13 @@ function json(body: unknown, status = 200): Response {
 }
 
 import { classifyDeliverable } from "./agent/deliverable.ts";
+import {
+  type AcademicProjectContext,
+  buildProjectContextBlock,
+  parseProjectContext,
+} from "./academic/projectContext.ts";
+import { ACADEMIC_BODY_CHAPTER_GUIDE, ACADEMIC_BODY_GUIDE_VERSION } from "./academic/writingGuide.ts";
+import { buildChapterMemory } from "./academic/chapterMemory.ts";
 
 export function buildIntake(input: {
   run_id: string;
@@ -88,6 +96,9 @@ export function buildIntake(input: {
   budgets?: Partial<ToolBudgets>;
   /** Evaluation-only Research Agent override. */
   agent_model?: string | null;
+  /** Academic Writing body chapter only — framing context, never evidence. */
+  academic_context?: AcademicProjectContext | null;
+  footnote_offset?: number;
 }): Intake {
   const question = (input.question ?? "").trim();
   const dockets = detectDockets(question).map((d) => ({
@@ -107,9 +118,12 @@ export function buildIntake(input: {
     docket_obligations: dockets,
     statute_obligations: statutes,
     attachment_text: input.attachment_text?.trim() || null,
-    deliverable: classifyDeliverable(question),
+    // An academic body chapter is a developed product by construction.
+    deliverable: input.academic_context ? "developed" : classifyDeliverable(question),
     budgets: { ...DEFAULT_BUDGETS, ...(input.budgets ?? {}) },
     agent_model: input.agent_model?.trim() || null,
+    academic_context: input.academic_context ?? null,
+    footnote_offset: Math.max(0, Math.floor(input.footnote_offset ?? 0)),
   };
 }
 
@@ -442,6 +456,12 @@ async function runPipeline(
       usage,
       advisories,
       gapNotices,
+      academic: intake.academic_context
+        ? {
+          guide: ACADEMIC_BODY_CHAPTER_GUIDE,
+          contextBlock: buildProjectContextBlock(intake.academic_context),
+        }
+        : null,
     }));
   const blocks = derivative_disclosure_shown
     ? [
@@ -454,7 +474,9 @@ async function runPipeline(
     ]
     : draft.blocks;
   const renderStarted = Date.now();
-  const rendered = renderAnswer(blocks, pack);
+  const rendered = renderAnswer(blocks, pack, {
+    footnote_offset: intake.footnote_offset ?? 0,
+  });
   timer.add("rendering", Date.now() - renderStarted);
 
 
@@ -550,6 +572,22 @@ async function runPipeline(
     drafter_error: draft.error ?? null,
     agent_trace: agent.trace,
     telemetry,
+    ...(intake.academic_context
+      ? {
+        academic: {
+          guide_version: ACADEMIC_BODY_GUIDE_VERSION,
+          chapter_index: intake.academic_context.chapter.index,
+          chapter_title: intake.academic_context.chapter.title,
+          footnote_offset: intake.footnote_offset ?? 0,
+          chapter_memory: buildChapterMemory({
+            chapterTitle: intake.academic_context.chapter.title,
+            pack,
+            footnotes: rendered.footnotes,
+            citedSourceIds: rendered.cited_source_ids,
+          }),
+        },
+      }
+      : {}),
   };
 }
 
@@ -673,6 +711,19 @@ serve(async (req) => {
     if (!user) return json({ error: "unauthorized" }, 401);
     if (question.length < 5) return json({ error: "question_required" }, 400);
 
+    // Academic Writing body chapter: same job table, same refund rules, same
+    // unchanged research pipeline — only the intake carries paper framing.
+    const academicContext = body.mode === "academic_chapter"
+      ? parseProjectContext(body.project_context)
+      : null;
+    if (body.mode === "academic_chapter" && !academicContext) {
+      return json({ error: "invalid_project_context" }, 400);
+    }
+    const creditCost = academicContext ? ACADEMIC_CHAPTER_CREDIT_COST : RESEARCH_CREDIT_COST;
+    const footnoteOffset = Number.isFinite(body.footnote_offset)
+      ? Math.max(0, Math.floor(Number(body.footnote_offset)))
+      : 0;
+
     const projectId = typeof body.project_id === "string" ? body.project_id : null;
     const clientRequestId = typeof body.client_request_id === "string" && body.client_request_id
       ? body.client_request_id
@@ -693,8 +744,8 @@ serve(async (req) => {
     const { data: consumeData, error: consumeErr } = await (userClient as any).rpc(
       "consume_credits",
       {
-        _amount: RESEARCH_CREDIT_COST,
-        _reason: "legal-research-v2",
+        _amount: creditCost,
+        _reason: academicContext ? "legal-research-v2:academic_chapter" : "legal-research-v2",
         _request_id: clientRequestId,
       },
     );
@@ -704,7 +755,7 @@ serve(async (req) => {
       if (cr.error === "INSUFFICIENT_CREDITS") {
         return json({
           error: "INSUFFICIENT_CREDITS",
-          required: (cr.required as number) ?? RESEARCH_CREDIT_COST,
+          required: (cr.required as number) ?? creditCost,
           remaining_included: (cr.remaining_included as number) ?? 0,
           remaining_topup: (cr.remaining_topup as number) ?? 0,
         }, 402);
@@ -718,6 +769,8 @@ serve(async (req) => {
       run_id: crypto.randomUUID(),
       question,
       attachment_text: null,
+      academic_context: academicContext,
+      footnote_offset: footnoteOffset,
     });
 
     const { data: jobRow, error: jobErr } = await admin
@@ -751,7 +804,7 @@ serve(async (req) => {
     const job: BetaJob = { id: jobRow.id, user_id: user.id, credit_request_id: creditRequestId };
     await admin.from("v2_eval_runs").insert({
       run_id: betaIntake.run_id,
-      label: "beta",
+      label: academicContext ? "beta_academic_chapter" : "beta",
       question: betaIntake.question,
       status: "running",
     });

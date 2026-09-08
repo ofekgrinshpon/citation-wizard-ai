@@ -11,6 +11,12 @@ import type { Footnote } from "../types.ts";
 
 export const RESEARCH_CREDIT_COST = 5;
 
+/**
+ * Academic Writing body chapter. Matches the existing client-side
+ * CREDIT_COSTS.academicChapter constant — no new pricing is invented here.
+ */
+export const ACADEMIC_CHAPTER_CREDIT_COST = 8;
+
 export interface BetaJob {
   id: string;
   user_id: string;
@@ -28,6 +34,8 @@ export interface BetaResultShape {
   used_sources: Array<{ number: number; title: string; url?: string | null }>;
   pipeline_version: "v2";
   run_id: string;
+  /** Present only for Academic Writing chapter runs. */
+  academic?: Record<string, unknown> | null;
   debug: Record<string, unknown>;
 }
 
@@ -49,6 +57,7 @@ export function toBetaResult(out: Record<string, unknown>): BetaResultShape {
     })),
     pipeline_version: "v2",
     run_id: String(out.run_id ?? ""),
+    academic: (out.academic as Record<string, unknown> | undefined) ?? null,
     debug: {
       pipeline_version: "v2",
       run_id: out.run_id ?? null,

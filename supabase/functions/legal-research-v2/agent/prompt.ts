@@ -5,6 +5,7 @@
  */
 
 import type { Intake } from "../types.ts";
+import { buildProjectContextBlock } from "../academic/projectContext.ts";
 
 export const AGENT_SYSTEM_PROMPT = `אתה חוקר משפטי ישראלי בכיר. תפקידך: לקבוע מה צריך לחקור, לחקור בפועל באמצעות הכלים, ולהחזיר תזכיר מחקר מבוסס מקורות שנקראו בפועל.
 
@@ -35,6 +36,13 @@ export const AGENT_SYSTEM_PROMPT = `אתה חוקר משפטי ישראלי בכ
 
 export function buildAgentUserMessage(intake: Intake): string {
   const parts: string[] = [`שאלת המשתמש:\n${intake.question}`];
+
+  // Academic Writing only: bounded framing of the paper this chapter belongs
+  // to. Explicitly not evidence — the verifier is unchanged by it.
+  if (intake.academic_context) {
+    parts.push(buildProjectContextBlock(intake.academic_context));
+  }
+
 
   parts.push(
     intake.deliverable === "developed"

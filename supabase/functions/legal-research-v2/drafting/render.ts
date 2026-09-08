@@ -51,7 +51,16 @@ function blockToMarkdown(block: DraftBlock, markers: string): string {
   return `${text}${markers}`;
 }
 
-export function renderAnswer(blocks: DraftBlock[], pack: VerifiedEvidencePack): RenderedAnswer {
+export function renderAnswer(
+  blocks: DraftBlock[],
+  pack: VerifiedEvidencePack,
+  /**
+   * Academic Writing only: continuous footnote numbering across chapters.
+   * 0 (the default) reproduces the previous behaviour exactly.
+   */
+  opts: { footnote_offset?: number } = {},
+): RenderedAnswer {
+  const offset = Math.max(0, Math.floor(opts.footnote_offset ?? 0));
   const infoBySource = new Map<string, CitationInfo>();
   for (const c of pack.claims) {
     for (const s of c.sources) {
@@ -82,7 +91,7 @@ export function renderAnswer(blocks: DraftBlock[], pack: VerifiedEvidencePack): 
       // Repeated sources reuse their first footnote number.
       let idx = indexBySource.get(id);
       if (idx === undefined) {
-        idx = footnotes.length + 1;
+        idx = offset + footnotes.length + 1;
         indexBySource.set(id, idx);
         footnotes.push({ index: idx, source_id: id, citation: formatCitation(info), url: info.url });
       }
@@ -107,7 +116,9 @@ export function renderAnswer(blocks: DraftBlock[], pack: VerifiedEvidencePack): 
     if (!f.citation.trim()) invariant_errors.push(`footnote ${f.index} has empty citation text`);
   }
   const seq = footnotes.map((f) => f.index);
-  if (seq.some((n, i) => n !== i + 1)) invariant_errors.push("footnote numbering is not sequential");
+  if (seq.some((n, i) => n !== offset + i + 1)) {
+    invariant_errors.push("footnote numbering is not sequential");
+  }
 
   return {
     answer_markdown,

@@ -7,6 +7,8 @@
  *            → Drafter → Deterministic Citation Renderer → Answer
  */
 
+import type { AcademicProjectContext } from "./academic/projectContext.ts";
+
 // ─── Intake ─────────────────────────────────────────────────────────────────
 
 export interface DocketObligation {
@@ -39,6 +41,14 @@ export interface Intake {
    * never overridable.
    */
   agent_model?: string | null;
+  /**
+   * Academic Writing body chapter only. Framing context for the paper the
+   * chapter belongs to — never evidence, never citable. Absent for every
+   * normal legal-research run.
+   */
+  academic_context?: AcademicProjectContext | null;
+  /** Continuous footnote numbering across chapters (0 for normal research). */
+  footnote_offset?: number;
 }
 
 export interface ToolBudgets {

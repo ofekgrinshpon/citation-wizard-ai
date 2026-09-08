@@ -6,6 +6,17 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { useProjects } from "@/hooks/useProjects";
+import {
+  buildChapterQuestion,
+  buildProjectContext,
+  CHAPTER_ACTIVE_STATUSES,
+  CHAPTER_JOB_SELECT,
+  mergeRegistry,
+  startChapterJob,
+  type ChapterMemory,
+  type SourceRegistryEntry,
+} from "@/lib/academic/chapterJob";
+import { CREDIT_COSTS } from "@/lib/creditCosts";
 import { safeStorage } from "@/lib/safeStorage";
 
 import { toast } from "sonner";
@@ -180,6 +191,8 @@ interface ChapterData {
    *  combined "הערות שוליים" section. Backend already uses continuous
    *  global numbering across chapters. */
   footnotes?: Footnote[];
+  /** Compact, deterministic memory of this chapter (V2 body-chapter writes). */
+  chapterMemory?: ChapterMemory | null;
 }
 
 interface AcademicSession {
@@ -191,6 +204,8 @@ interface AcademicSession {
   outline: string;
   proposedQuestions?: string[];
   lastAcademicAction?: string | null;
+  /** Minimal project-level registry of sources already used in the paper. */
+  sourceRegistry?: SourceRegistryEntry[];
 }
 
 /** Parse 3 proposed research questions from AI text.
@@ -317,6 +332,7 @@ async function loadAcademicSessionFromDB(projectId?: string): Promise<AcademicSe
       outline: data.outline || "",
       proposedQuestions: (data.proposed_questions as unknown as string[]) || [],
       lastAcademicAction: data.last_academic_action || null,
+      sourceRegistry: ((data as Record<string, unknown>).source_registry as SourceRegistryEntry[]) || [],
     };
   } catch { return null; }
 }
@@ -336,6 +352,7 @@ async function saveAcademicSessionToDB(session: AcademicSession, projectId?: str
       outline: session.outline,
       proposed_questions: (session.proposedQuestions || []) as unknown as any,
       last_academic_action: session.lastAcademicAction ?? null,
+      source_registry: (session.sourceRegistry || []) as unknown as any,
     };
     // Upsert by (user_id, project_id) — matches the unique index that treats NULL project as a single slot.
     let q = supabase.from("academic_sessions").select("id").eq("user_id", user.id);
@@ -958,6 +975,10 @@ export function LegalQAChat({ onResultSaved, externalResult, onConsumeExternalRe
   const [suggestionRounds, setSuggestionRounds] = useState<Array<{ questions: string[]; coverage: QAResult["topicCoverage"]; exhausted?: boolean }>>([]);
   const [regenerating, setRegenerating] = useState(false);
   const [lastAcademicAction, setLastAcademicAction] = useState<string | null>(null);
+  const [sourceRegistry, setSourceRegistry] = useState<SourceRegistryEntry[]>([]);
+  /** Live V2 stage label while a body chapter is being researched and written. */
+  const [chapterProgressLabel, setChapterProgressLabel] = useState<string | null>(null);
+  const chapterPollRef = useRef<number | null>(null);
 
   // Restore academic session on mount / project change (DB first, localStorage fallback)
   useEffect(() => {
@@ -977,6 +998,7 @@ export function LegalQAChat({ onResultSaved, externalResult, onConsumeExternalRe
           setOutline(saved.outline);
           setProposedQuestions(saved.proposedQuestions || []);
           setLastAcademicAction(saved.lastAcademicAction || null);
+          setSourceRegistry(saved.sourceRegistry || []);
         }
       })();
     }
@@ -995,6 +1017,12 @@ export function LegalQAChat({ onResultSaved, externalResult, onConsumeExternalRe
     (async () => {
       const marker = await loadAcademicRunMarker(projectId);
       if (cancelled || !marker) return;
+      if (marker.step === "v2_chapter" && marker.runId) {
+        // A body chapter kept running in the background; pick it back up.
+        setLastAcademicAction("write_chapter");
+        pollChapterJob(marker.runId, marker.chapterIdx ?? 0);
+        return;
+      }
       await setAcademicRunMarker(projectId, null);
     })();
     return () => { cancelled = true; };
@@ -1057,11 +1085,11 @@ export function LegalQAChat({ onResultSaved, externalResult, onConsumeExternalRe
   // Save academic session after chapter writes (localStorage immediate + DB sync)
   const persistAcademicSession = useCallback(() => {
     if (taskMode !== "academic_writing" || wizardStep === "init") return;
-    const session: AcademicSession = { wizardStep, maxReachedStep, currentChapter, chapters, researchQuestion, outline, proposedQuestions, lastAcademicAction };
+    const session: AcademicSession = { wizardStep, maxReachedStep, currentChapter, chapters, researchQuestion, outline, proposedQuestions, lastAcademicAction, sourceRegistry };
     saveAcademicSession(session, projectId);
     // Fire-and-forget DB sync; localStorage already has the source of truth for instant reads.
     void saveAcademicSessionToDB(session, projectId);
-  }, [taskMode, wizardStep, maxReachedStep, currentChapter, chapters, researchQuestion, outline, proposedQuestions, lastAcademicAction, projectId]);
+  }, [taskMode, wizardStep, maxReachedStep, currentChapter, chapters, researchQuestion, outline, proposedQuestions, lastAcademicAction, sourceRegistry, projectId]);
 
 
 
@@ -1122,6 +1150,7 @@ export function LegalQAChat({ onResultSaved, externalResult, onConsumeExternalRe
         setOutline(saved.outline);
         setProposedQuestions(saved.proposedQuestions || []);
         setLastAcademicAction(saved.lastAcademicAction || null);
+        setSourceRegistry(saved.sourceRegistry || []);
 
         // Land on the last chapter with content (or first without — whichever is further)
         const chs = saved.chapters || [];
@@ -1899,6 +1928,160 @@ export function LegalQAChat({ onResultSaved, externalResult, onConsumeExternalRe
     return false;
   }
 
+
+  // ─── V2 body-chapter generation ───────────────────────────────────
+  // The chapter runs on the unchanged legal-research-v2 pipeline: same job
+  // table, same background/resume behaviour, same refunds. Only the intake
+  // carries the paper's framing context, and only the drafter receives the
+  // academic body-chapter guide.
+  const stopChapterPolling = () => {
+    if (chapterPollRef.current) {
+      window.clearInterval(chapterPollRef.current);
+      chapterPollRef.current = null;
+    }
+  };
+
+  const finishChapterJob = (chapterIdx: number, row: { result: Record<string, unknown> | null }) => {
+    const res = (row.result ?? {}) as Record<string, unknown>;
+    const answer = String(res.answer ?? "");
+    const rawFootnotes = (res.footnotes ?? []) as Array<{ number: number; title: string; url?: string | null }>;
+    const academic = (res.academic ?? null) as { chapter_memory?: ChapterMemory } | null;
+    const title = chapters[chapterIdx]?.title || "";
+    const footnotes: Footnote[] = rawFootnotes.map((f) => ({
+      number: f.number,
+      citation: f.title,
+      source_type: "",
+      url: f.url ?? undefined,
+    }));
+
+    const updated = [...chapters];
+    updated[chapterIdx] = {
+      ...updated[chapterIdx],
+      title,
+      content: answer,
+      footnotes,
+      footnotesCount: footnotes.length,
+      chapterMemory: academic?.chapter_memory ?? null,
+    };
+    setChapters(updated);
+    setSourceRegistry((prev) => mergeRegistry(prev, title, rawFootnotes.map((f) => ({
+      citation: f.title,
+      url: f.url ?? null,
+    }))));
+    setResult({ answer, footnotes, source_urls: [] });
+    setRunComplete(true);
+    setWizardStep("checkpoint");
+    setMaxReachedStep((prev) => (prev === "done" ? prev : "checkpoint"));
+  };
+
+  const pollChapterJob = (jobId: string, chapterIdx: number) => {
+    stopChapterPolling();
+    setLoading(true);
+    chapterPollRef.current = window.setInterval(async () => {
+      const { data } = await supabase
+        .from("legal_research_jobs")
+        .select(CHAPTER_JOB_SELECT)
+        .eq("id", jobId)
+        .maybeSingle();
+      if (!data) return;
+      const row = data as unknown as {
+        status: string;
+        result: Record<string, unknown> | null;
+        error: string | null;
+        progress_label_he: string | null;
+      };
+      if (CHAPTER_ACTIVE_STATUSES.includes(row.status)) {
+        setChapterProgressLabel(row.progress_label_he || "מחפש מקורות");
+        return;
+      }
+      stopChapterPolling();
+      setLoading(false);
+      setChapterProgressLabel(null);
+      void setAcademicRunMarker(projectId, null);
+      if (row.status === "done" && row.result) {
+        finishChapterJob(chapterIdx, row);
+      } else {
+        setError(row.error || "כתיבת הפרק נכשלה. הקרדיטים הוחזרו.");
+      }
+    }, 4000);
+  };
+
+  const runBodyChapter = async (opts?: { instructions?: string }) => {
+    const chapterIdx = currentChapter;
+    const title = chapters[chapterIdx]?.title || "";
+    const rq = researchQuestion || question.trim();
+    if (!title || !rq) {
+      toast.error("חסרים שאלת מחקר או שם פרק.");
+      return;
+    }
+    if (chapters[chapterIdx]?.content) {
+      const ok = window.confirm(
+        `הפרק "${title}" כבר נכתב. כתיבה מחדש תחליף את הנוסח הקיים. להמשיך?`,
+      );
+      if (!ok) return;
+    }
+
+    setLoading(true);
+    setError(null);
+    setResult(null);
+    setRunComplete(false);
+    setChapterProgressLabel("מחפש מקורות");
+    setLastAcademicAction("write_chapter");
+
+    let footnoteOffset = 0;
+    for (let i = 0; i < chapterIdx; i++) {
+      const ch = chapters[i];
+      if (ch?.footnotesCount && ch.footnotesCount > 0) footnoteOffset += ch.footnotesCount;
+    }
+
+    const outlineTitles = chapters.map((c) => c.title);
+    const projectContext = buildProjectContext({
+      projectId: projectId ?? null,
+      researchQuestion: rq,
+      outlineTitles,
+      chapterIndex: chapterIdx,
+      chapterTitle: title,
+      instructions: opts?.instructions ?? null,
+      existingText: chapters[chapterIdx]?.content ?? null,
+      completedChapters: chapters
+        .filter((c, i) => i !== chapterIdx && !!c.content && chapterRole(c.title) === "body")
+        .map((c) => ({ title: c.title, memory: c.chapterMemory ?? null, content: c.content })),
+      sourceRegistry,
+    });
+
+    const started = await startChapterJob({
+      question: buildChapterQuestion({ researchQuestion: rq, chapterTitle: title, instructions: opts?.instructions ?? null }),
+      projectId: projectId ?? null,
+      projectContext,
+      footnoteOffset,
+      clientRequestId: crypto.randomUUID(),
+    });
+
+    if (started.insufficientCredits) {
+      setLoading(false);
+      setChapterProgressLabel(null);
+      setError(`אין מספיק קרדיטים. כתיבת פרק עולה ${started.required ?? CREDIT_COSTS.academicChapter} קרדיטים.`);
+      return;
+    }
+    if (!started.jobId) {
+      setLoading(false);
+      setChapterProgressLabel(null);
+      setError(started.error === "unauthenticated"
+        ? "יש להתחבר כדי לכתוב פרק."
+        : "לא הצלחנו לפתוח את כתיבת הפרק. נסו שוב.");
+      return;
+    }
+
+    runPersistedRef.current = true;
+    activeRunIdRef.current = started.jobId;
+    void setAcademicRunMarker(projectId, { runId: started.jobId, step: "v2_chapter", chapterIdx });
+
+    pollChapterJob(started.jobId, chapterIdx);
+  };
+
+
+  useEffect(() => () => stopChapterPolling(), []);
+
   const writeCurrentChapter = () => {
     const title = chapters[currentChapter]?.title || "";
     const role = chapterRole(title);
@@ -1911,8 +2094,11 @@ export function LegalQAChat({ onResultSaved, externalResult, onConsumeExternalRe
       handleAcademicSubmit("write_chapter", { isAbstract: true });
       return;
     }
-    // D1: body / introduction / conclusion all route through the offline
-    // chapter engine. Block at the UI so we never even hit the 503.
+    if (role === "body") {
+      void runBodyChapter();
+      return;
+    }
+    // Introduction and conclusion still route through the offline engine.
     toast.info(CHAPTER_OFFLINE_TITLE);
   };
 
@@ -1936,7 +2122,14 @@ export function LegalQAChat({ onResultSaved, externalResult, onConsumeExternalRe
   const [viewingChapterIdx, setViewingChapterIdx] = useState<number | null>(null);
 
   const rewriteWithFeedback = () => {
-    // D1: chapter rewrite also routes through the offline body-chapter engine.
+    const role = chapterRole(chapters[currentChapter]?.title || "");
+    if (role === "body") {
+      const instructions = chapterFeedback.trim();
+      setChapterFeedback("");
+      setViewingChapterIdx(null);
+      void runBodyChapter({ instructions });
+      return;
+    }
     toast.info(CHAPTER_OFFLINE_TITLE);
     setChapterFeedback("");
     setViewingChapterIdx(null);
@@ -2769,7 +2962,7 @@ export function LegalQAChat({ onResultSaved, externalResult, onConsumeExternalRe
               const hasContent = !!chapters[currentChapter]?.content;
               // D1: body / introduction / conclusion route to the offline
               // chapter engine — show maintenance card instead of the write CTA.
-              const isOfflineChapter = role === "body" || role === "introduction" || role === "conclusion";
+              const isOfflineChapter = role === "introduction" || role === "conclusion";
 
               const writeButtonLabel = isAbstract
                 ? (hasContent ? "ייצר תקציר מחדש" : "ייצר תקציר")
@@ -3026,7 +3219,7 @@ export function LegalQAChat({ onResultSaved, externalResult, onConsumeExternalRe
           <Card className="mt-4 border-border/40">
             <CardContent className="flex items-center gap-3 py-4">
               <div className="h-4 w-4 animate-spin rounded-full border-2 border-muted-foreground border-t-transparent" />
-              <p className="text-sm text-muted-foreground">מעבד…</p>
+              <p className="text-sm text-muted-foreground">{chapterProgressLabel ?? "מעבד…"}</p>
             </CardContent>
           </Card>
         )}

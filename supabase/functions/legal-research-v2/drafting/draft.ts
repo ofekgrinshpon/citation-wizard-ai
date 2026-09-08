@@ -133,12 +133,25 @@ export async function runDrafter(opts: {
   advisories?: string[];
   /** High-level, source-level description of what could not be acquired/verified. */
   gapNotices?: string[];
+  /**
+   * Academic Writing body chapter only: the genre guide and the paper's
+   * framing block. Normal legal research never sets this, and its drafting
+   * behaviour is byte-identical to before.
+   */
+  academic?: { guide: string; contextBlock?: string } | null;
 }): Promise<{ blocks: DraftBlock[]; error?: string; dropped_source_ids: string[] }> {
+  const system = opts.academic
+    ? `${SYSTEM}\n\n${opts.academic.guide}`
+    : SYSTEM;
+  const userInput = [
+    buildDrafterInput(opts.question, opts.pack, opts.advisories ?? [], opts.gapNotices ?? []),
+    opts.academic?.contextBlock ?? "",
+  ].filter(Boolean).join("\n\n");
   const res = await chat({
     model: opts.model,
     messages: [
-      { role: "system", content: SYSTEM },
-      { role: "user", content: buildDrafterInput(opts.question, opts.pack, opts.advisories ?? [], opts.gapNotices ?? []) },
+      { role: "system", content: system },
+      { role: "user", content: userInput },
     ],
     tools: [TOOL],
     toolChoice: { name: TOOL.name },
@@ -158,8 +171,8 @@ export async function runDrafter(opts: {
   const repair = await chat({
     model: opts.model,
     messages: [
-      { role: "system", content: SYSTEM },
-      { role: "user", content: buildDrafterInput(opts.question, opts.pack, opts.advisories ?? [], opts.gapNotices ?? []) },
+      { role: "system", content: system },
+      { role: "user", content: userInput },
       { role: "assistant", content: JSON.stringify({ blocks: parsed.blocks }) },
       {
         role: "user",
