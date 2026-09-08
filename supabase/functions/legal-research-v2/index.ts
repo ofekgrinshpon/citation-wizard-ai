@@ -59,6 +59,8 @@ import {
 } from "./beta/job.ts";
 import { runDrafter } from "./drafting/draft.ts";
 import { renderAnswer } from "./drafting/render.ts";
+import { RunTimer, type RunTimingJson } from "./shared/timing.ts";
+import { decideResearchRepair } from "./verification/repairPolicy.ts";
 
 
 // deno-lint-ignore no-explicit-any
@@ -128,6 +130,10 @@ export interface ResumeState {
   chunk_index: number;
   usage: UsageLedger;
   started_at: number;
+  /** Timing ledger carried across chunks (measurement only). */
+  timing?: RunTimingJson;
+  /** When the previous chunk stopped — the next chunk measures the gap. */
+  paused_at?: number;
 }
 
 async function runPipeline(
@@ -148,6 +154,11 @@ async function runPipeline(
   const prior = resume ? deserializeAgentState(intake, resume.agent_state) : null;
   const store = prior?.store ?? new EvidenceStore();
   const chunk_index = (resume?.chunk_index ?? 0) + 1;
+  const timer = RunTimer.fromJSON(resume?.timing);
+  // Time spent between a paused chunk and the worker that picks it up is
+  // orchestration cost, not research cost — measure it explicitly.
+  if (resume?.paused_at) timer.add("resume_gap", Date.now() - resume.paused_at);
+  const heartbeat = () => opts.progress?.heartbeat();
 
   // ── Research (one bounded chunk when chunked execution is requested) ─────
   let agent = await runResearchAgent({
@@ -163,6 +174,9 @@ async function runPipeline(
     ledger: prior?.ledger,
     trace: prior?.trace,
     stats: prior?.stats,
+    timer,
+    chunkIndex: chunk_index,
+    heartbeat,
     onActivity: (kind) => { void opts.progress?.advance(kind); },
     maxStepsThisChunk: opts.chunked ? CHUNK.MAX_STEPS : undefined,
     deadlineAt: opts.chunked ? Date.now() + CHUNK.MAX_MS : undefined,
@@ -170,7 +184,14 @@ async function runPipeline(
       ? async (state) => {
         await admin.from("v2_eval_runs").update({
           agent_state: {
-            resume: { agent_state: state, chunk_index: chunk_index - 1, usage, started_at: started },
+            resume: {
+              agent_state: state,
+              chunk_index: chunk_index - 1,
+              usage,
+              started_at: started,
+              timing: timer.toJSON(),
+              paused_at: Date.now(),
+            },
             intake,
           },
           chunk_index,
@@ -189,6 +210,8 @@ async function runPipeline(
         chunk_index,
         usage,
         started_at: started,
+        timing: timer.toJSON(),
+        paused_at: Date.now(),
       },
     };
   }
@@ -202,19 +225,27 @@ async function runPipeline(
 
   let repair_cycles = 0;
   let verification = agent.memo
-    ? await verifyMemo({
-      memo: agent.memo,
-      store,
-      expected,
-      model: models.verifier,
-      usage,
-    })
+    ? await timer.time("verification_model", () =>
+      verifyMemo({
+        memo: agent.memo!,
+        store,
+        expected,
+        model: models.verifier,
+        usage,
+      }))
     : null;
+  await heartbeat();
 
   // ── One bounded repair cycle, driven by verification rejections ─────────
-  const needsRepair = !!verification &&
-    verification.pack.unsupported_claims.some((c) => c.importance === "core") &&
-    !agent.policy.allExhausted();
+  // Verification strictness is unchanged. The only new judgement is whether
+  // reopening research could plausibly fix the rejection at all: a missing or
+  // unreadable body can be fixed by more research; a span/support failure on a
+  // body that WAS read cannot, and the memo is simply narrowed instead.
+  const repairDecision = verification
+    ? decideResearchRepair(verification)
+    : { repair: false, reason: "no_unsupported_core_claims" as const };
+  const repair_skip_reason = repairDecision.repair ? null : repairDecision.reason;
+  const needsRepair = repairDecision.repair && !agent.policy.allExhausted();
   if (agent.memo && verification && needsRepair) {
     repair_cycles = 1;
     const repaired = await runResearchAgent({
@@ -223,6 +254,9 @@ async function runPipeline(
       store,
       model: agentModel,
       usage,
+      timer,
+      chunkIndex: chunk_index,
+      heartbeat,
       priorMessages: agent.messages,
       extraUserMessage: buildRepairMessage({
         unsupported: verification.pack.unsupported_claims,
@@ -232,13 +266,14 @@ async function runPipeline(
       discovered: agent.discovered,
     });
     if (repaired.memo) {
-      const reVerified = await verifyMemo({
-        memo: repaired.memo,
-        store,
-        expected,
-        model: models.verifier,
-        usage,
-      });
+      const reVerified = await timer.time("verification_model", () =>
+        verifyMemo({
+          memo: repaired.memo!,
+          store,
+          expected,
+          model: models.verifier,
+          usage,
+        }));
       if (reVerified.pack.claims.length >= verification.pack.claims.length) {
         agent = { ...repaired, trace: [...agent.trace, ...repaired.trace] };
         verification = reVerified;
@@ -254,14 +289,16 @@ async function runPipeline(
   let temporalCounters = newTemporalCounters();
   let temporalAssessments: TemporalAssessment[] = [];
   if (verification && verification.pack.claims.length) {
-    const t = await assessTemporalValidity({
-      pack: verification.pack,
-      store,
-      model: models.verifier,
-      usage,
-    });
+    const t = await timer.time("temporal_model", () =>
+      assessTemporalValidity({
+        pack: verification!.pack,
+        store,
+        model: models.verifier,
+        usage,
+      }));
     temporalCounters = t.counters;
     temporalAssessments = t.assessments;
+    await heartbeat();
 
     // One targeted temporal repair when a current-state claim is stale or unverifiable.
     const needsTemporalRepair = agent.memo &&
@@ -275,25 +312,30 @@ async function runPipeline(
         store,
         model: agentModel,
         usage,
+        timer,
+        chunkIndex: chunk_index,
+        heartbeat,
         priorMessages: agent.messages,
         extraUserMessage: buildTemporalRepairMessage(t.assessments),
         policy: agent.policy,
         discovered: agent.discovered,
       });
       if (repaired.memo) {
-        const reVerified = await verifyMemo({
-          memo: repaired.memo,
-          store,
-          expected,
-          model: models.verifier,
-          usage,
-        });
-        const reTemporal = await assessTemporalValidity({
-          pack: reVerified.pack,
-          store,
-          model: models.verifier,
-          usage,
-        });
+        const reVerified = await timer.time("verification_model", () =>
+          verifyMemo({
+            memo: repaired.memo!,
+            store,
+            expected,
+            model: models.verifier,
+            usage,
+          }));
+        const reTemporal = await timer.time("temporal_model", () =>
+          assessTemporalValidity({
+            pack: reVerified.pack,
+            store,
+            model: models.verifier,
+            usage,
+          }));
         agent = { ...repaired, trace: [...agent.trace, ...repaired.trace] };
         verification = reVerified;
         temporalAssessments = reTemporal.assessments;
@@ -325,6 +367,9 @@ async function runPipeline(
       store,
       model: agentModel,
       usage,
+      timer,
+      chunkIndex: chunk_index,
+      heartbeat,
       priorMessages: agent.messages,
       extraUserMessage: buildDerivativeFallbackMessage(missing),
       policy: agent.policy,
@@ -332,13 +377,14 @@ async function runPipeline(
     });
     if (fallback.memo) {
       // Same body / identity / span / support checks — nothing is loosened.
-      const reVerified = await verifyMemo({
-        memo: fallback.memo,
-        store,
-        expected,
-        model: models.verifier,
-        usage,
-      });
+      const reVerified = await timer.time("verification_model", () =>
+        verifyMemo({
+          memo: fallback.memo!,
+          store,
+          expected,
+          model: models.verifier,
+          usage,
+        }));
       const reGap = assessPrimaryGap(reVerified.pack, store, obligations);
       if (reVerified.pack.claims.length >= verification.pack.claims.length) {
         agent = { ...fallback, trace: [...agent.trace, ...fallback.trace] };
@@ -368,13 +414,14 @@ async function runPipeline(
 
   // ── Draft + deterministic render ────────────────────────────────────────
   const pack = verification?.pack ?? { claims: [], unsupported_claims: [] };
-  const draft = await runDrafter({
-    question: intake.question,
-    pack,
-    model: models.drafter,
-    usage,
-    advisories,
-  });
+  const draft = await timer.time("drafting_model", () =>
+    runDrafter({
+      question: intake.question,
+      pack,
+      model: models.drafter,
+      usage,
+      advisories,
+    }));
   const blocks = derivative_disclosure_shown
     ? [
       {
@@ -385,7 +432,9 @@ async function runPipeline(
       ...draft.blocks,
     ]
     : draft.blocks;
+  const renderStarted = Date.now();
   const rendered = renderAnswer(blocks, pack);
+  timer.add("rendering", Date.now() - renderStarted);
 
 
   // ── Telemetry ───────────────────────────────────────────────────────────
@@ -443,6 +492,15 @@ async function runPipeline(
     repeated_tool_calls_prevented: agent.stats.repeated_tool_calls_prevented,
     commit_directives: agent.stats.commit_directives,
     chunks_executed: chunk_index,
+    /** Latency efficiency (legal_research_v2_latency_efficiency_v1). */
+    phase_ms: timer.totalsMs(),
+    agent_turns: timer.toJSON().turns,
+    already_read_actions: agent.stats.already_read_actions,
+    noop_already_read_suppressed: agent.stats.noop_already_read_suppressed,
+    authority_reacquisitions_prevented: agent.stats.authority_reacquisitions_prevented,
+    context_compactions: agent.stats.context_compactions,
+    context_chars_saved: agent.stats.context_chars_saved,
+    repair_skip_reason,
     ...temporalCounters,
     primary_authority_obligations: gapReport.obligations,
     primary_unreadable: gapReport.unreadable,

@@ -26,6 +26,22 @@ export interface AcquisitionLedgerJson {
   rows: AuthorityLedgerRow[];
 }
 
+/** Compact, agent-facing state of one authority. Derived only, decides nothing. */
+export interface AuthorityState {
+  authority_key: string;
+  usable_body_source_id?: string;
+  attempted_hosts: Array<{ host: string; outcome: string; reason: string }>;
+  unresolved: boolean;
+}
+
+function hostOf(url: string): string {
+  try {
+    return new URL(url).hostname.replace(/^www\./, "");
+  } catch {
+    return url.slice(0, 40);
+  }
+}
+
 /** Normalize "בג\"ץ 1000/92" / "1000/92" to a stable key. */
 export function authorityKeyOf(input: { docket?: string; statute?: string; section?: string }): string | null {
   const docket = input.docket?.match(/\d{1,6}\s*\/\s*\d{2,4}/)?.[0]?.replace(/\s+/g, "");
@@ -63,6 +79,28 @@ export class AcquisitionLedger {
 
   all(): AuthorityLedgerRow[] {
     return [...this.rows.values()];
+  }
+
+  /** A previous attempt on the very same URL, if any. */
+  attemptOn(key: string, url: string): AcquisitionAttempt | null {
+    const norm = (u: string) => u.trim().replace(/#.*$/, "").replace(/\/+$/, "").toLowerCase();
+    return (this.rows.get(key)?.attempts ?? []).find((a) => norm(a.url) === norm(url)) ?? null;
+  }
+
+  /** Compact state handed to the agent instead of another acquisition round. */
+  state(key: string): AuthorityState | null {
+    const row = this.rows.get(key);
+    if (!row) return null;
+    return {
+      authority_key: key,
+      usable_body_source_id: row.acquired_source_id,
+      attempted_hosts: row.attempts.slice(-6).map((a) => ({
+        host: hostOf(a.url),
+        outcome: a.outcome,
+        reason: a.reason.slice(0, 90),
+      })),
+      unresolved: !row.acquired_source_id,
+    };
   }
 
   toJSON(): AcquisitionLedgerJson {

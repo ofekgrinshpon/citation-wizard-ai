@@ -22,10 +22,18 @@ export const PROGRESS_LABELS_HE: Record<ProgressStage, string> = {
 export interface ProgressSink {
   /** Advance to `stage` if it is ahead of the current one. Never regresses. */
   advance(stage: ProgressStage): Promise<void>;
+  /**
+   * Liveness ping. Stamps `last_progress_at` so an actively working long run
+   * is never mistaken for an abandoned worker. Throttled; never fails a run.
+   */
+  heartbeat(): Promise<void>;
   /** Mark every stage complete (terminal success/refusal/failure). */
   finish(): Promise<void>;
   current(): ProgressStage | null;
 }
+
+/** Minimum spacing between heartbeat writes. */
+export const HEARTBEAT_MIN_INTERVAL_MS = 10_000;
 
 interface JobWriter {
   from(table: string): {
@@ -46,13 +54,17 @@ export function createProgressSink(
   const trace: Array<{ at: number; stage: ProgressStage }> = [];
   const started = Date.now();
 
+  let lastBeatAt = 0;
+
   const persist = async (stage: ProgressStage | null, done: ProgressStage[]) => {
     if (!admin || !jobId) return;
     try {
+      lastBeatAt = Date.now();
       await admin.from("legal_research_jobs").update({
         current_stage: stage,
         progress_label_he: stage ? PROGRESS_LABELS_HE[stage] : null,
         completed_stages: done,
+        last_progress_at: new Date().toISOString(),
       }).eq("id", jobId);
     } catch {/* progress is best-effort, never fails a run */}
   };
@@ -67,6 +79,16 @@ export function createProgressSink(
       current = stage;
       trace.push({ at: Date.now() - started, stage });
       await persist(stage, PROGRESS_ORDER.slice(0, next));
+    },
+    async heartbeat() {
+      if (!admin || !jobId) return;
+      if (Date.now() - lastBeatAt < HEARTBEAT_MIN_INTERVAL_MS) return;
+      lastBeatAt = Date.now();
+      try {
+        await admin.from("legal_research_jobs").update({
+          last_progress_at: new Date().toISOString(),
+        }).eq("id", jobId);
+      } catch {/* liveness is best-effort */}
     },
     async finish() {
       current = null;

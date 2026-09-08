@@ -491,6 +491,7 @@ export type Database = {
           current_stage: string | null
           error: string | null
           id: string
+          last_progress_at: string | null
           progress_label_he: string | null
           project_id: string | null
           question: string
@@ -509,6 +510,7 @@ export type Database = {
           current_stage?: string | null
           error?: string | null
           id?: string
+          last_progress_at?: string | null
           progress_label_he?: string | null
           project_id?: string | null
           question: string
@@ -527,6 +529,7 @@ export type Database = {
           current_stage?: string | null
           error?: string | null
           id?: string
+          last_progress_at?: string | null
           progress_label_he?: string | null
           project_id?: string | null
           question?: string
@@ -1253,7 +1256,7 @@ export type Database = {
         }[]
       }
       reap_stale_research_jobs: {
-        Args: { _max_age?: string }
+        Args: { _absolute_max_age?: string; _max_age?: string }
         Returns: {
           prior_stage: string
           reaped_id: string
