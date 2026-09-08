@@ -52,6 +52,7 @@ import { createProgressSink, type ProgressSink, type ProgressStage } from "./bet
 import {
   type BetaJob,
   finishJobError,
+  gatewayFailure,
   finishJobSuccess,
   RESEARCH_CREDIT_COST,
   toBetaResult,
@@ -512,7 +513,9 @@ async function driveRun(
     // The user-facing job row is finalized FIRST: an edge worker can be shut
     // down at any moment, and the answer must never be the thing that is lost.
     if (job) {
-      await finishJobSuccess(admin, job, toBetaResult(out as Record<string, unknown>));
+      const blocked = gatewayFailure(out as Record<string, unknown>);
+      if (blocked) await finishJobError(admin, job, blocked);
+      else await finishJobSuccess(admin, job, toBetaResult(out as Record<string, unknown>));
       await progress.finish();
     }
     await admin.from("v2_eval_runs").update({

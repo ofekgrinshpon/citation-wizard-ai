@@ -87,6 +87,17 @@ export async function refundJob(
   }
 }
 
+/**
+ * A blocked / failed model gateway call is an infrastructure failure, not a
+ * legal answer: it must fail the job (and refund) rather than deliver silence.
+ */
+export function gatewayFailure(out: Record<string, unknown>): string | null {
+  const agent = typeof out.agent_error === "string" ? out.agent_error : "";
+  const drafter = typeof out.drafter_error === "string" ? out.drafter_error : "";
+  const hit = [agent, drafter].find((e) => /model_error_\d{3}|_error_\d{3}/.test(e));
+  return hit ? hit.slice(0, 300) : null;
+}
+
 export async function finishJobSuccess(
   admin: SupabaseClient,
   job: BetaJob,
