@@ -3,7 +3,7 @@ import { toast } from "sonner";
 import { FootnoteReviewCard, type ReviewCardCell } from "@/components/FootnoteReviewCard";
 import { runCitation, CitationRunError, type RunCitationResult } from "@/lib/runCitation";
 import { runPool, isTransientError } from "@/lib/concurrency";
-import { applyRepeatCitationRules, extractCitationOnly } from "@/lib/footnoteRepeatRules";
+import { applyRepeatCitationRules, extractCitationOnly, stripPresentationWarnings } from "@/lib/footnoteRepeatRules";
 import { CREDIT_COSTS } from "@/lib/creditCosts";
 import { copyPlainText } from "@/lib/clipboard";
 import { insertCitationAsFootnote } from "@/lib/wordInsertion";
@@ -180,7 +180,7 @@ export function UniformCitationPanel({ footnotes }: Props) {
 
   /** The final text for a footnote: the reviewed citation, or the original V2 line. */
   const finalTextOf = (c: Cell) =>
-    c.output ? extractCitationOnly(c.output) : c.originalCitation;
+    stripPresentationWarnings(c.output ? extractCitationOnly(c.output) : c.originalCitation);
 
   const copySingle = async (id: number) => {
     const cell = cells.find((c) => c.id === id);
