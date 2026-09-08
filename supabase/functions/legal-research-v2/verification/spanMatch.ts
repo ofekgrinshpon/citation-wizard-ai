@@ -11,7 +11,7 @@ export const MIN_SPAN_CHARS = 15;
 const NIQQUD_RE = /[\u0591-\u05C7]/g;
 const QUOTE_RE = /["'`״׳“”„‟’‘‚‛«»]/g;
 const DASH_RE = /[\u2010-\u2015\u2212\u05be–—−]/g;
-const BIDI_RE = /[\u200e\u200f\u202a-\u202e\u2066-\u2069\u00ad\ufeff]/g;
+const BIDI_RE = /[\u200b-\u200f\u202a-\u202e\u2066-\u2069\u00ad\ufeff]/g;
 
 /** Normalize for comparison: keep letters/digits, drop presentation noise. */
 export function normalizeForMatch(input: string): string {

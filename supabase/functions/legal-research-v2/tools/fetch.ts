@@ -26,6 +26,7 @@ import {
 import { AcquisitionLedger, type AuthorityState, authorityKeyOf } from "./acquisitionLedger.ts";
 import { locateSection, normalizeSectionToken, sectionMissingInstruction } from "../evidence/sectionLocator.ts";
 import { normalizeUrlKey } from "../evidence/evidenceStore.ts";
+import type { ServedQuote } from "../evidence/quotable.ts";
 
 export const FETCH_LIMITS = {
   TIMEOUT_MS: 25_000,
@@ -126,6 +127,25 @@ export function readingWindows(text: string, find: string[]): string[] {
   });
 }
 
+/** Register windows as literal quotable text and shape them for the response. */
+export function serveExactText(
+  store: EvidenceStore,
+  source_id: string,
+  windows: string[] | undefined,
+  issue?: string,
+): { windows?: string[]; exact_source_text?: Array<{ quote_id: string; text: string }> } {
+  if (!windows?.length) return {};
+  const served: ServedQuote[] = store.serveQuotes(source_id, windows, issue);
+  if (!served.length) return { windows };
+  return {
+    windows: served.map((q) => q.text),
+    exact_source_text: served.map((q) => ({ quote_id: q.quote_id, text: q.text })),
+  };
+}
+
+const QUOTE_RULE =
+  " צטט מילה במילה מתוך exact_source_text בלבד — כל quoted_span חייב להיות העתקה מדויקת של רצף תווים מתוך הקטעים שהוחזרו, ללא ניסוח מחדש, קיצור פנימי או תרגום.";
+
 export interface FetchInput {
   result_id?: string;
   url?: string;
@@ -153,6 +173,11 @@ export interface FetchOutput {
   identity_hint?: string;
   text_head?: string;
   windows?: string[];
+  /**
+   * The literal, quotable form of the returned windows. `quoted_span` in the
+   * research memo must be copied from here, character for character.
+   */
+  exact_source_text?: Array<{ quote_id: string; text: string }>;
   /** True when the body was already in the evidence store (no new HTTP call). */
   deduped?: boolean;
   already_read?: boolean;
@@ -168,8 +193,12 @@ export interface FetchOutput {
   section_requested?: string;
   section_found?: boolean;
   section_coverage?: { first: string | null; last: string | null; count: number };
-  /** Further equivalent queries on this source are unlikely to add evidence. */
+  /**
+   * Advisory only: equivalent queries on this source have not been yielding.
+   * The agent keeps full discretion over what to do next.
+   */
   search_path_exhausted?: boolean;
+  same_issue_no_yield?: number;
   no_new_evidence?: boolean;
   error?: string;
 }
@@ -211,10 +240,18 @@ export function clampFetchOutput(out: FetchOutput): FetchOutput {
       .slice(0, FETCH_LIMITS.MAX_WINDOWS)
       .map((w) => w.slice(0, FETCH_LIMITS.WINDOW_CHARS));
   }
+  if (clamped.exact_source_text) {
+    clamped.exact_source_text = clamped.exact_source_text
+      .slice(0, FETCH_LIMITS.MAX_WINDOWS)
+      .map((q) => ({ quote_id: q.quote_id, text: q.text.slice(0, FETCH_LIMITS.WINDOW_CHARS) }));
+  }
   // Last-resort ceiling on the serialized payload.
   let json = JSON.stringify(clamped);
   while (json.length > FETCH_LIMITS.MAX_RESPONSE_CHARS && clamped.windows?.length) {
     clamped.windows = clamped.windows.slice(0, clamped.windows.length - 1);
+    if (clamped.exact_source_text?.length) {
+      clamped.exact_source_text = clamped.exact_source_text.slice(0, clamped.windows.length);
+    }
     json = JSON.stringify(clamped);
   }
   if (json.length > FETCH_LIMITS.MAX_RESPONSE_CHARS && clamped.text_head) {
