@@ -45,11 +45,18 @@ import { RunTimer } from "../shared/timing.ts";
 export function minimalAlreadyReadPayload(
   source_id: string | undefined,
   repeatCount: number,
+  store?: EvidenceStore,
 ): Record<string, unknown> {
+  // A repeat adds no new evidence, but the literal text already served for
+  // this source is re-attached: it is the only text the agent may quote.
+  const quotes = source_id && store
+    ? store.servedQuotes(source_id).slice(-2).map((q) => ({ quote_id: q.quote_id, text: q.text }))
+    : undefined;
   return {
     already_read: true,
     no_new_evidence: true,
     source_id,
+    exact_source_text: quotes?.length ? quotes : undefined,
     instruction: repeatCount >= 3
       ? `הפעולה הזו חוזרת בפעם ה-${repeatCount} ואינה מייצרת ראיה חדשה. עבור לפעולה שונה מהותית (שאילתה אחרת, מסמך אחר, או קטע אחר בתוך ${source_id}) או הגש עכשיו את תזכיר המחקר.`
       : `אין ראיה חדשה: ${source_id} כבר נקרא בריצה זו והתוכן שמור בצד השרת. השתמש במה שכבר יש, או בקש קטע אחר: fetch({source_id:"${source_id}", query:"..."}).`,
@@ -506,7 +513,7 @@ export async function runResearchAgent(opts: {
         if (out.already_read && repeatCount >= 2) {
           stats.noop_already_read_suppressed += 1;
           turnNoOp = true;
-          payload = minimalAlreadyReadPayload(out.source_id, repeatCount);
+          payload = minimalAlreadyReadPayload(out.source_id, repeatCount, opts.store);
           summary = `already_read_noop ${out.source_id} x${repeatCount}`;
         }
       } else {
