@@ -85,3 +85,18 @@ describe("served quote memory", () => {
     expect(msg).toContain(store.servedQuotes(src.source_id)[0].quote_id);
   });
 });
+
+describe("citation hygiene", () => {
+  it("never prints an internal served-excerpt id in a footnote", async () => {
+    const { formatCitation } = await import(
+      "../../supabase/functions/legal-research-v2/drafting/render"
+    );
+    const out = formatCitation({
+      display_title: "חוק יחסי ממון בין בני זוג, תשל\"ג-1973",
+      locator: "S2-q25; סעיפים 4(א)–5",
+      url: "https://www.nevo.co.il/law_html/law00/72138.htm",
+    } as never);
+    expect(out).not.toContain("S2-q25");
+    expect(out).toContain("סעיפים");
+  });
+});
