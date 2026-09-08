@@ -107,7 +107,7 @@ export function excerptWindows(
     if (used.some((u) => Math.abs(u - idx) < windowChars / 2)) continue;
     used.push(idx);
     const start = Math.max(0, idx - Math.floor(windowChars / 3));
-    out.push(text.slice(start, start + windowChars));
+    out.push(snapWindow(text, start, windowChars));
     if (out.length >= max) break;
   }
   return out;
@@ -116,6 +116,7 @@ export function excerptWindows(
 export interface EvidenceStoreJson {
   seq: number;
   sources: EvidenceSource[];
+  quotes?: ServedQuote[];
 }
 
 export class EvidenceStore {
