@@ -60,7 +60,10 @@ export function checkIdentity(
   expected: ExpectedIdentity,
 ): IdentityCheck {
   const idWindow = source.identity_evidence?.window ?? "";
-  const body = `${source.title}\n${idWindow}\n${source.extracted_text}`;
+  // The TITLE is deliberately excluded: a title comes from discovery metadata,
+  // and metadata may never prove what a document is. Only the acquired body
+  // (and the identity window derived from it) counts.
+  const body = `${idWindow}\n${source.extracted_text}`;
   const nBody = normalizeIdentityText(body);
 
   // Judgment identity: if the source presents itself as one of the run's
