@@ -316,5 +316,5 @@ export async function verifyMemo(opts: {
     }
   }
 
-  return { pack: { claims, unsupported_claims: unsupported }, rejected, counters };
+  return { pack: { claims, unsupported_claims: unsupported }, rejected, per_source, counters };
 }
