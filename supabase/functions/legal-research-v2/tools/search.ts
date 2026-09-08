@@ -46,6 +46,8 @@ export function resetSearchResultIds(): void {
   counter = 0;
 }
 
+declare const Deno: { env: { get(key: string): string | undefined } };
+
 async function perplexitySearch(
   query: string,
   scope: Exclude<SearchScope, "corpus">,

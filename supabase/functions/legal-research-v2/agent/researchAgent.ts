@@ -236,6 +236,11 @@ export async function runResearchAgent(opts: {
    * which no chunk boundary can anticipate.
    */
   checkpoint?: (state: AgentStateJson) => Promise<void>;
+  /**
+   * Presentation-only hook: reports what the agent is doing right now so the
+   * UI can show a stage. It never influences the loop.
+   */
+  onActivity?: (kind: "searching" | "reading") => void;
 }): Promise<AgentRunResult> {
   const policy = opts.policy ?? new StopPolicy(opts.intake.budgets);
   const discovered = opts.discovered ?? new Map<string, SearchResult>();
@@ -345,6 +350,7 @@ export async function runResearchAgent(opts: {
       let payload: Record<string, unknown>;
       let summary = "";
       if (call.name === "search") {
+        opts.onActivity?.("searching");
         policy.note("search", scope ?? "web");
         const out = await runSearch(opts.admin, {
           query: String(args.query ?? ""),
@@ -355,6 +361,7 @@ export async function runResearchAgent(opts: {
         payload = compactSearchOutput(out) as unknown as Record<string, unknown>;
         summary = `scope=${out.scope} results=${out.results.length}${out.error ? ` error=${out.error}` : ""}`;
       } else if (call.name === "lookup_authority") {
+        opts.onActivity?.("searching");
         policy.note("lookup_authority");
         const out = await runLookupAuthority(opts.admin, {
           kind: args.kind === "statute" ? "statute" : "case",
@@ -366,6 +373,7 @@ export async function runResearchAgent(opts: {
         payload = out as unknown as Record<string, unknown>;
         summary = `candidates=${out.candidates.length} registry=${out.registry_hint ?? "none"}`;
       } else if (call.name === "fetch") {
+        opts.onActivity?.("reading");
         const out = await runFetch(
           opts.store,
           discovered,

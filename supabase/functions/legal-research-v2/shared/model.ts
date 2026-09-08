@@ -18,7 +18,7 @@ export interface ModelConfig {
 
 export function modelConfig(): ModelConfig {
   return {
-    agent: Deno.env.get("V2_AGENT_MODEL") || "google/gemini-3.1-pro-preview",
+    agent: Deno.env.get("V2_AGENT_MODEL") || "openai/gpt-5.6-terra",
     verifier: Deno.env.get("V2_VERIFIER_MODEL") || "google/gemini-3.7-flash",
     drafter: Deno.env.get("V2_DRAFTER_MODEL") || "google/gemini-3.1-pro-preview",
   };

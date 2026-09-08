@@ -48,6 +48,15 @@ import {
   buildDerivativeFallbackMessage,
   shouldAttemptDerivativeFallback,
 } from "./verification/primaryProvenance.ts";
+import { createProgressSink, type ProgressSink, type ProgressStage } from "./beta/progress.ts";
+import {
+  type BetaJob,
+  finishJobError,
+  gatewayFailure,
+  finishJobSuccess,
+  RESEARCH_CREDIT_COST,
+  toBetaResult,
+} from "./beta/job.ts";
 import { runDrafter } from "./drafting/draft.ts";
 import { renderAnswer } from "./drafting/render.ts";
 
@@ -121,7 +130,7 @@ export interface ResumeState {
 async function runPipeline(
   admin: SupabaseClient,
   intake: Intake,
-  opts: { resume?: ResumeState | null; chunked?: boolean } = {},
+  opts: { resume?: ResumeState | null; chunked?: boolean; progress?: ProgressSink } = {},
 ): Promise<
   | ({ ok: true; paused?: false } & Record<string, unknown>)
   | { ok: true; paused: true; run_id: string; resume: ResumeState }
@@ -151,6 +160,7 @@ async function runPipeline(
     ledger: prior?.ledger,
     trace: prior?.trace,
     stats: prior?.stats,
+    onActivity: (kind) => { void opts.progress?.advance(kind); },
     maxStepsThisChunk: opts.chunked ? CHUNK.MAX_STEPS : undefined,
     deadlineAt: opts.chunked ? Date.now() + CHUNK.MAX_MS : undefined,
     checkpoint: opts.chunked
@@ -179,6 +189,8 @@ async function runPipeline(
       },
     };
   }
+
+  await opts.progress?.advance("verifying");
 
   const expected: ExpectedIdentity = {
     dockets: intake.docket_obligations.map((d) => d.display),
@@ -349,6 +361,8 @@ async function runPipeline(
     }
   }
 
+  await opts.progress?.advance("writing");
+
   // ── Draft + deterministic render ────────────────────────────────────────
   const pack = verification?.pack ?? { claims: [], unsupported_claims: [] };
   const draft = await runDrafter({
@@ -477,16 +491,32 @@ async function driveRun(
   resume: ResumeState | null,
   supabaseUrl: string,
   serviceKey: string,
+  job: BetaJob | null = null,
+  initialStage: ProgressStage | null = null,
 ): Promise<void> {
+  // Progress is persisted on the beta job row; internal runs get a no-op sink.
+  const progress = createProgressSink(
+    job ? (admin as unknown as Parameters<typeof createProgressSink>[0]) : null,
+    job?.id ?? null,
+    initialStage,
+  );
   try {
-    const out = await runPipeline(admin, intake, { resume, chunked: true });
+    const out = await runPipeline(admin, intake, { resume, chunked: true, progress });
     if ("paused" in out && out.paused) {
       await admin.from("v2_eval_runs").update({
         status: "paused",
-        agent_state: { resume: out.resume, intake },
+        agent_state: { resume: out.resume, intake, job, stage: progress.current() },
       }).eq("run_id", intake.run_id);
       await selfInvokeResume(intake.run_id, supabaseUrl, serviceKey);
       return;
+    }
+    // The user-facing job row is finalized FIRST: an edge worker can be shut
+    // down at any moment, and the answer must never be the thing that is lost.
+    if (job) {
+      const blocked = gatewayFailure(out as Record<string, unknown>);
+      if (blocked) await finishJobError(admin, job, blocked);
+      else await finishJobSuccess(admin, job, toBetaResult(out as Record<string, unknown>));
+      await progress.finish();
     }
     await admin.from("v2_eval_runs").update({
       status: "done",
@@ -495,9 +525,11 @@ async function driveRun(
       finished_at: new Date().toISOString(),
     }).eq("run_id", intake.run_id);
   } catch (e) {
+    const message = e instanceof Error ? e.message : String(e);
+    if (job) await finishJobError(admin, job, message);
     await admin.from("v2_eval_runs").update({
       status: "error",
-      error: e instanceof Error ? e.message : String(e),
+      error: message,
       finished_at: new Date().toISOString(),
     }).eq("run_id", intake.run_id);
   }
@@ -537,10 +569,120 @@ serve(async (req) => {
     (authHeader === `Bearer ${serviceKey}` ||
       (!!presented && smokeTokens.includes(presented)));
 
-  if (!isSmoke) return json({ error: "v2_internal_only" }, 403);
-
-
   const admin = createClient(supabaseUrl, serviceKey) as unknown as SupabaseClient;
+
+  // ══ Beta production entry ═══════════════════════════════════════════════
+  // An authenticated beta user request. Routing/config only: the same job
+  // table, the same 5-credit charge, the same refund rules as before — the
+  // research itself is the unchanged V2 pipeline below.
+  if (!isSmoke) {
+    if (!authHeader.startsWith("Bearer ")) return json({ error: "unauthorized" }, 401);
+    const anonKey = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
+    const userClient = createClient(supabaseUrl, anonKey, {
+      global: { headers: { Authorization: authHeader } },
+    }) as unknown as SupabaseClient;
+    // deno-lint-ignore no-explicit-any
+    const { data: userData } = await (userClient as any).auth.getUser();
+    const user = userData?.user as { id: string } | undefined;
+    if (!user) return json({ error: "unauthorized" }, 401);
+    if (question.length < 5) return json({ error: "question_required" }, 400);
+
+    const projectId = typeof body.project_id === "string" ? body.project_id : null;
+    const clientRequestId = typeof body.client_request_id === "string" && body.client_request_id
+      ? body.client_request_id
+      : crypto.randomUUID();
+
+    // Idempotency: a retried submit reattaches to the same job, never charges twice.
+    const { data: existing } = await admin
+      .from("legal_research_jobs")
+      .select("id, status")
+      .eq("user_id", user.id)
+      .eq("client_request_id", clientRequestId)
+      .maybeSingle();
+    if (existing?.id) {
+      return json({ ok: true, job_id: existing.id, status: existing.status, reused: true }, 202);
+    }
+
+    // deno-lint-ignore no-explicit-any
+    const { data: consumeData, error: consumeErr } = await (userClient as any).rpc(
+      "consume_credits",
+      {
+        _amount: RESEARCH_CREDIT_COST,
+        _reason: "legal-research-v2",
+        _request_id: clientRequestId,
+      },
+    );
+    if (consumeErr) return json({ error: "credit_charge_failed", detail: consumeErr.message }, 500);
+    const cr = (consumeData ?? {}) as Record<string, unknown>;
+    if (!cr.ok) {
+      if (cr.error === "INSUFFICIENT_CREDITS") {
+        return json({
+          error: "INSUFFICIENT_CREDITS",
+          required: (cr.required as number) ?? RESEARCH_CREDIT_COST,
+          remaining_included: (cr.remaining_included as number) ?? 0,
+          remaining_topup: (cr.remaining_topup as number) ?? 0,
+        }, 402);
+      }
+      return json({ error: (cr.error as string) || "CREDIT_ERROR" }, 500);
+    }
+    // Admin accounts record a zero-delta consume; those are never refunded.
+    const creditRequestId = cr.admin ? null : clientRequestId;
+
+    const betaIntake = buildIntake({
+      run_id: crypto.randomUUID(),
+      question,
+      attachment_text: null,
+    });
+
+    const { data: jobRow, error: jobErr } = await admin
+      .from("legal_research_jobs")
+      .insert({
+        user_id: user.id,
+        project_id: projectId,
+        question,
+        status: "running",
+        client_request_id: clientRequestId,
+        credit_request_id: creditRequestId,
+        current_stage: "searching",
+        progress_label_he: "מחפש מקורות",
+        completed_stages: [],
+        started_at: new Date().toISOString(),
+      })
+      .select("id")
+      .maybeSingle();
+    if (jobErr || !jobRow?.id) {
+      if (creditRequestId) {
+        // deno-lint-ignore no-explicit-any
+        await (admin as any).rpc("refund_credits_for_user", {
+          _user_id: user.id,
+          _request_id: creditRequestId,
+          _reason: "auto-refund: job_create_failed",
+        });
+      }
+      return json({ error: "job_create_failed", detail: jobErr?.message ?? null }, 500);
+    }
+
+    const job: BetaJob = { id: jobRow.id, user_id: user.id, credit_request_id: creditRequestId };
+    await admin.from("v2_eval_runs").insert({
+      run_id: betaIntake.run_id,
+      label: "beta",
+      question: betaIntake.question,
+      status: "running",
+    });
+    const betaTask = driveRun(
+      admin,
+      betaIntake,
+      null,
+      supabaseUrl,
+      serviceKey,
+      job,
+      "searching",
+    );
+    if (typeof EdgeRuntime !== "undefined" && EdgeRuntime?.waitUntil) {
+      EdgeRuntime.waitUntil(betaTask);
+    }
+    return json({ ok: true, job_id: job.id, run_id: betaIntake.run_id, status: "running" }, 202);
+  }
 
   // ── Resume a paused chunked run in a fresh worker ───────────────────────
   if (resumeRunId) {
@@ -550,7 +692,7 @@ serve(async (req) => {
       .eq("run_id", resumeRunId)
       .maybeSingle();
     const saved = (row?.agent_state ?? null) as
-      | { resume: ResumeState; intake: Intake }
+      | { resume: ResumeState; intake: Intake; job?: BetaJob | null; stage?: ProgressStage | null }
       | null;
     if (!row || !saved) return json({ error: "resume_state_not_found" }, 404);
     // A run killed mid-chunk (CPU-time) stays "running" but has a checkpoint;
@@ -559,7 +701,15 @@ serve(async (req) => {
       return json({ error: `not_resumable:${row.status}` }, 409);
     }
     await admin.from("v2_eval_runs").update({ status: "running" }).eq("run_id", resumeRunId);
-    const task = driveRun(admin, saved.intake, saved.resume, supabaseUrl, serviceKey);
+    const task = driveRun(
+      admin,
+      saved.intake,
+      saved.resume,
+      supabaseUrl,
+      serviceKey,
+      saved.job ?? null,
+      saved.stage ?? null,
+    );
     if (typeof EdgeRuntime !== "undefined" && EdgeRuntime?.waitUntil) EdgeRuntime.waitUntil(task);
     return json({ ok: true, resumed: true, run_id: resumeRunId }, 202);
   }

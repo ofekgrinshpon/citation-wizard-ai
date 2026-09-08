@@ -25,6 +25,8 @@ project_id = "ioktiqcffungtlsmlkcv"
     verify_jwt = false
   [functions.legal-research-v1]
     verify_jwt = false
+  [functions.legal-research-v2]
+    verify_jwt = false
   [functions.recover-knesset-titles]
     verify_jwt = false
   [functions.retry-failed-ingestion]
