@@ -203,13 +203,19 @@ export interface FetchOutput {
   error?: string;
 }
 
-function alreadyReadPayload(cached: EvidenceSource, input: FetchInput): FetchOutput {
+function alreadyReadPayload(
+  store: EvidenceStore,
+  cached: EvidenceSource,
+  input: FetchInput,
+): FetchOutput {
   const terms = [
     ...(input.find ?? []),
     ...(input.query ? [input.query] : []),
     ...(input.locator ? [input.locator] : []),
   ];
-  const windows = terms.length ? readingWindows(cached.extracted_text, terms) : undefined;
+  const raw = terms.length ? readingWindows(cached.extracted_text, terms) : undefined;
+  const served = serveExactText(store, cached.source_id, raw, input.query ?? input.locator);
+  const windows = served.windows;
   return {
     ok: cached.fetch_status === "ok",
     already_read: true,
@@ -222,9 +228,12 @@ function alreadyReadPayload(cached: EvidenceSource, input: FetchInput): FetchOut
     not_document_reason: cached.not_document_reason,
     identity_found: cached.identity_fields,
     windows: windows?.length ? windows : undefined,
+    exact_source_text: served.exact_source_text,
     text_head: windows?.length ? undefined : cached.extracted_text.slice(0, FETCH_LIMITS.HEAD_CHARS),
     instruction: cached.fetch_status === "ok" && cached.is_actual_document
-      ? "מקור זה כבר נקרא בריצה זו. אל תביא אותו שוב אלא אם נדרשת הבאה שונה מהותית. לקריאה ממוקדת בתוכו: fetch({source_id, query})."
+      ? `מקור זה כבר נקרא בריצה זו. אל תביא אותו שוב אלא אם נדרשת הבאה שונה מהותית. לקריאה ממוקדת בתוכו: fetch({source_id, query}).${
+        windows?.length ? QUOTE_RULE : ""
+      }`
       : `נתיב זה כבר נוסה בריצה זו ולא הניב מסמך קריא (${cached.not_document_reason ?? cached.fetch_error ?? "unusable"}). אל תחזור עליו — פנה למקור רשמי אחר או לנוסח משולב אמין.`,
     error: cached.fetch_status === "ok" ? undefined : cached.fetch_error,
   };
@@ -283,15 +292,20 @@ export async function runFetch(
         const known = locateSection(src.extracted_text, sectionToken, {
           truncated: src.text_length >= FETCH_LIMITS.MAX_TEXT_CHARS,
         });
+        const prior = store.servedQuotes(src.source_id).slice(-2);
         return clampFetchOutput({
           ok: false,
           already_read: true,
           no_new_evidence: true,
           search_path_exhausted: true,
+          same_issue_no_yield: ledger?.readState(src.source_id)?.no_yield,
           source_id: src.source_id,
           section_requested: sectionToken,
           section_found: false,
           section_coverage: known.coverage,
+          exact_source_text: prior.length
+            ? prior.map((q) => ({ quote_id: q.quote_id, text: q.text }))
+            : undefined,
           instruction: sectionMissingInstruction(known, src.source_id),
         });
       }
@@ -311,6 +325,12 @@ export async function runFetch(
         maxChars: FETCH_LIMITS.WINDOW_CHARS,
       });
       const fallbackWindows = fallback && fallback.from !== "head" ? fallback.windows : undefined;
+      const servedSection = serveExactText(
+        store,
+        src.source_id,
+        found.found ? found.windows : fallbackWindows,
+        found.found ? `סעיף ${sectionToken}` : input.query,
+      );
       return clampFetchOutput({
         ok: found.found && src.fetch_status === "ok",
         already_read: true,
@@ -322,11 +342,13 @@ export async function runFetch(
         section_requested: sectionToken,
         section_found: found.found,
         section_coverage: found.coverage,
-        windows: found.found ? found.windows : fallbackWindows,
+        windows: servedSection.windows,
+        exact_source_text: servedSection.exact_source_text,
         no_new_evidence: found.found || fallbackWindows ? undefined : true,
         search_path_exhausted: found.found ? undefined : read?.exhausted || undefined,
+        same_issue_no_yield: found.found ? undefined : read?.no_yield,
         instruction: found.found
-          ? `סעיף ${sectionToken} אותר בתוך ${src.source_id}. הגוף המלא נשאר בצד השרת; צטט מילה במילה מתוך החלון שהוחזר.`
+          ? `סעיף ${sectionToken} אותר בתוך ${src.source_id}.${QUOTE_RULE}`
           : `${sectionMissingInstruction(found, src.source_id)}${
             fallbackWindows ? " (הוחזרו חלונות טקסט לפי מונחי החיפוש בלבד — אינם הסעיף המבוקש.)" : ""
           }`,
@@ -345,18 +367,10 @@ export async function runFetch(
       yielded,
       locator: yielded ? null : (input.query ?? input.locator ?? null),
     });
-    if (!yielded && read?.exhausted) {
-      return clampFetchOutput({
-        ok: false,
-        already_read: true,
-        no_new_evidence: true,
-        search_path_exhausted: true,
-        source_id: src.source_id,
-        text_length: src.text_length,
-        instruction:
-          `מיצית את ${src.source_id}: ${read.no_yield} קריאות ממוקדות רצופות בגוף שלא השתנה לא החזירו ראיה חדשה. שאילתות נוספות בניסוח שונה על אותו מקור לא יוסיפו דבר — עבור למקור אחר או לנתיב השגה אחר, או הגש את התזכיר עם מה שאומת.`,
-      });
-    }
+    const servedRead = serveExactText(store, src.source_id, ex.windows, input.query ?? input.locator);
+    const advisory = !yielded && read?.exhausted
+      ? ` שים לב: ${read.no_yield} קריאות ממוקדות רצופות על מקור זה לא הניבו ראיה חדשה. ההמלצה היא לפנות למקור אחר או לנתיב השגה אחר, אך ההחלטה שלך.`
+      : "";
     return clampFetchOutput({
       ok: src.fetch_status === "ok",
       already_read: true,
@@ -366,11 +380,14 @@ export async function runFetch(
       text_length: src.text_length,
       is_actual_document: src.is_actual_document,
       identity_found: src.identity_fields,
-      windows: ex.windows,
+      windows: servedRead.windows,
+      exact_source_text: servedRead.exact_source_text,
       no_new_evidence: yielded ? undefined : true,
+      search_path_exhausted: !yielded && read?.exhausted ? true : undefined,
+      same_issue_no_yield: yielded ? undefined : read?.no_yield,
       instruction: yielded
-        ? `קריאה ממוקדת בתוך ${src.source_id} (${ex.from}). הגוף המלא שמור בצד השרת ואינו נשלח לשיחה.`
-        : `לא נמצאה התאמה לשאילתה בתוך ${src.source_id}; הוחזרה פתיחת המסמך בלבד. אל תנסח מחדש את אותה שאלה על מקור זה — בקש סעיף/מונח שונה מהותית או עבור למקור אחר.`,
+        ? `קריאה ממוקדת בתוך ${src.source_id} (${ex.from}).${QUOTE_RULE}`
+        : `לא נמצאה התאמה לשאילתה בתוך ${src.source_id}; הוחזרה פתיחת המסמך בלבד (טקסט מילולי).${advisory}${QUOTE_RULE}`,
     });
   }
 
@@ -386,7 +403,7 @@ export async function runFetch(
   // store and does not consume fetch budget, unless a refetch reason is given.
   if (!input.refetch_reason?.trim()) {
     const cached = store.findByUrl(url);
-    if (cached) return clampFetchOutput(alreadyReadPayload(cached, input));
+    if (cached) return clampFetchOutput(alreadyReadPayload(store, cached, input));
   }
 
   // ── Same-authority acquisition efficiency ────────────────────────────────
@@ -398,7 +415,7 @@ export async function runFetch(
     const acquired = acquiredId ? store.get(acquiredId) : null;
     if (acquired && normalizeUrlKey(acquired.url ?? "") !== normalizeUrlKey(url)) {
       return clampFetchOutput({
-        ...alreadyReadPayload(acquired, input),
+        ...alreadyReadPayload(store, acquired, input),
         authority_reuse: true,
         authority_state: ledger.state(authorityKey) ?? undefined,
         instruction:
@@ -539,6 +556,13 @@ export async function runFetch(
     );
   }
 
+  const freshWindows = entry.is_actual_document
+    ? (input.find?.length
+      ? readingWindows(entry.extracted_text, input.find)
+      : [entry.extracted_text.slice(0, FETCH_LIMITS.HEAD_CHARS)])
+    : undefined;
+  const freshServed = serveExactText(store, entry.source_id, freshWindows, input.query ?? input.find?.[0]);
+
   return clampFetchOutput({
     ok: true,
     source_id: entry.source_id,
@@ -549,10 +573,15 @@ export async function runFetch(
     not_document_reason: entry.not_document_reason,
     identity_found: entry.identity_fields,
     identity_hint,
-    text_head: entry.extracted_text.slice(0, FETCH_LIMITS.HEAD_CHARS),
-    windows: input.find?.length ? readingWindows(entry.extracted_text, input.find) : undefined,
+    text_head: freshServed.windows?.length
+      ? undefined
+      : entry.extracted_text.slice(0, FETCH_LIMITS.HEAD_CHARS),
+    windows: freshServed.windows,
+    exact_source_text: freshServed.exact_source_text,
     instruction:
-      "הגוף המלא שמור בצד השרת. לקריאת קטע נוסף מתוכו: fetch({source_id, query}) — אל תביא את אותו URL שוב.",
+      `הגוף המלא שמור בצד השרת. לקריאת קטע נוסף מתוכו: fetch({source_id, query}) — אל תביא את אותו URL שוב.${
+        freshServed.windows?.length ? QUOTE_RULE : ""
+      }`,
     acquisition_note: authorityKey ? ledger?.advice(authorityKey) : undefined,
   });
 }
