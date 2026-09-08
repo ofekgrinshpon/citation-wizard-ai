@@ -438,6 +438,7 @@ export async function runResearchAgent(opts: {
       obligations_satisfied: obligationsSatisfied(opts.intake, readable),
       stale_streak: commit.stale_streak,
       research_steps_left: policy.researchStepsLeft,
+      deliverable: opts.intake.deliverable,
     });
     if (directive) {
       stats.commit_directives.push(`step${policy.steps}:${directive.kind}`);

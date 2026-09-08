@@ -77,6 +77,8 @@ function json(body: unknown, status = 200): Response {
   });
 }
 
+import { classifyDeliverable } from "./agent/deliverable.ts";
+
 export function buildIntake(input: {
   run_id: string;
   question: string;
@@ -103,6 +105,7 @@ export function buildIntake(input: {
     docket_obligations: dockets,
     statute_obligations: statutes,
     attachment_text: input.attachment_text?.trim() || null,
+    deliverable: classifyDeliverable(question),
     budgets: { ...DEFAULT_BUDGETS, ...(input.budgets ?? {}) },
     agent_model: input.agent_model?.trim() || null,
   };
