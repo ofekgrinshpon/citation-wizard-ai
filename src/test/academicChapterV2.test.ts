@@ -104,10 +104,10 @@ describe("chapter memory and source registry", () => {
 
   it("merges registry entries without duplicating the same source", () => {
     const first = mergeSourceRegistry([], "פרק א", [
-      { citation: "חוק יחסי ממון", url: "https://example.gov.il/a" },
+      { index: 1, source_id: "S1", citation: "חוק יחסי ממון", url: "https://example.gov.il/a" },
     ]);
     const second = mergeSourceRegistry(first, "פרק ב", [
-      { citation: "חוק יחסי ממון", url: "https://example.gov.il/a/" },
+      { index: 2, source_id: "S1", citation: "חוק יחסי ממון", url: "https://example.gov.il/a/" },
     ]);
     expect(second).toHaveLength(1);
     expect(second[0].chapters_used_in).toEqual(["פרק א", "פרק ב"]);
