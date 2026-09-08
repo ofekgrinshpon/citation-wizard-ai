@@ -202,6 +202,8 @@ export async function verifyMemo(opts: {
 
       // CHECK 1 — identity.
       const identity = checkIdentity(source, opts.expected);
+      const st = stageOf(source.source_id);
+      st.identity_basis = `${identity.detail} · ${identityBasisOf(source)}`.slice(0, 240);
       if (!identity.ok) {
         rejected.push({
           claim_id: claim.claim_id,
@@ -211,6 +213,7 @@ export async function verifyMemo(opts: {
         });
         continue;
       }
+      st.identity = true;
       counters.identity_verified_pairs += 1;
 
       // CHECK 3 — verbatim span.
@@ -224,7 +227,9 @@ export async function verifyMemo(opts: {
         });
         continue;
       }
+      st.span = true;
       counters.span_verified_pairs += 1;
+
       survivors.push({
         pair_id,
         claim_id: claim.claim_id,
