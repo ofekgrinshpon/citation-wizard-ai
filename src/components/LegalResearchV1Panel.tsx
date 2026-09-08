@@ -23,6 +23,7 @@ import {
   V1_STAGES,
   V2_STAGES,
 } from "@/config/researchPipeline";
+import { UniformCitationPanel } from "@/components/legal-research/UniformCitationPanel";
 
 const MAX_FILES = 5;
 const MAX_FILE_BYTES = 8 * 1024 * 1024;
