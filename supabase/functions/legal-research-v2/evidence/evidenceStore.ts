@@ -19,6 +19,7 @@ import {
   sha256Hex,
 } from "../shared/primitives.ts";
 import { cleanDisplayTitle, isMetadataLine, stripInternalIds } from "../shared/titleHygiene.ts";
+import { cleanQuotableText, QUOTE_LIMITS, type ServedQuote, snapWindow } from "./quotable.ts";
 
 /** Query-preserving URL key: strips only tracking noise and fragments. */
 export function normalizeUrlKey(raw: string): string {
@@ -107,7 +108,7 @@ export function excerptWindows(
     if (used.some((u) => Math.abs(u - idx) < windowChars / 2)) continue;
     used.push(idx);
     const start = Math.max(0, idx - Math.floor(windowChars / 3));
-    out.push(text.slice(start, start + windowChars));
+    out.push(snapWindow(text, start, windowChars));
     if (out.length >= max) break;
   }
   return out;
@@ -116,10 +117,13 @@ export function excerptWindows(
 export interface EvidenceStoreJson {
   seq: number;
   sources: EvidenceSource[];
+  quotes?: ServedQuote[];
 }
 
 export class EvidenceStore {
   private sources = new Map<string, EvidenceSource>();
+  private quotes: ServedQuote[] = [];
+  private quoteSeq = 0;
   private byUrl = new Map<string, string>();
   private seq = 0;
 
@@ -210,13 +214,47 @@ export class EvidenceStore {
     return { source_id, windows: [src.extracted_text.slice(0, maxChars)], from: "head" };
   }
 
+  /**
+   * Record the literal excerpts handed to the agent, so they can be
+   * re-surfaced later in the run. Context compaction removes old tool
+   * payloads; without this the agent would lose the only text it is allowed
+   * to quote verbatim, and would reconstruct spans from memory.
+   */
+  serveQuotes(source_id: string, windows: string[], issue?: string): ServedQuote[] {
+    const served: ServedQuote[] = [];
+    for (const w of windows) {
+      const text = cleanQuotableText(w).slice(0, QUOTE_LIMITS.MAX_CHARS);
+      if (text.length < 40) continue;
+      const existing = this.quotes.find((q) => q.source_id === source_id && q.text === text);
+      if (existing) {
+        served.push(existing);
+        continue;
+      }
+      this.quoteSeq += 1;
+      const q: ServedQuote = { quote_id: `${source_id}-q${this.quoteSeq}`, source_id, issue, text };
+      this.quotes.push(q);
+      served.push(q);
+    }
+    if (this.quotes.length > QUOTE_LIMITS.MAX_KEPT) {
+      this.quotes = this.quotes.slice(this.quotes.length - QUOTE_LIMITS.MAX_KEPT);
+    }
+    return served;
+  }
+
+  /** Literal excerpts already served in this run (most recent last). */
+  servedQuotes(source_id?: string): ServedQuote[] {
+    return source_id ? this.quotes.filter((q) => q.source_id === source_id) : [...this.quotes];
+  }
+
   toJSON(): EvidenceStoreJson {
-    return { seq: this.seq, sources: this.all() };
+    return { seq: this.seq, sources: this.all(), quotes: this.quotes };
   }
 
   static fromJSON(json: EvidenceStoreJson | null | undefined): EvidenceStore {
     const store = new EvidenceStore();
     store.seq = json?.seq ?? 0;
+    store.quotes = json?.quotes ?? [];
+    store.quoteSeq = store.quotes.length;
     for (const s of json?.sources ?? []) {
       store.sources.set(s.source_id, s);
       if (s.url) store.byUrl.set(normalizeUrlKey(s.url), s.source_id);

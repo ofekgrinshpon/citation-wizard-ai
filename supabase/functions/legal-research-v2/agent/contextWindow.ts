@@ -16,6 +16,7 @@ import type { ChatMessage } from "../shared/model.ts";
 import type { EvidenceStore } from "../evidence/evidenceStore.ts";
 import type { AcquisitionLedger } from "../tools/acquisitionLedger.ts";
 import type { Intake } from "../types.ts";
+import { QUOTE_LIMITS } from "../evidence/quotable.ts";
 import type { StopPolicy } from "./stopPolicy.ts";
 
 export const CONTEXT = {
@@ -115,6 +116,20 @@ export function buildResearchStateMessage(input: {
       sources.join("\n") || "(טרם נקראו מסמכים)"
     }`,
   ];
+  // Literal excerpts already served this run. Old tool payloads are compacted
+  // away, so without this block the agent would have no verbatim text left to
+  // quote from and would reconstruct spans from memory — which the verifier
+  // rejects. Full bodies still never enter the conversation.
+  const quotes = store.servedQuotes().slice(-QUOTE_LIMITS.STATE_QUOTES);
+  if (quotes.length) {
+    parts.push(
+      `קטעים מילוליים שכבר הוגשו לך (העתק מהם מילה במילה ב-quoted_span; אין לנסח מחדש):\n${
+        quotes
+          .map((q) => `[${q.quote_id}] ${q.source_id}${q.issue ? ` — ${q.issue}` : ""}:\n${q.text.slice(0, QUOTE_LIMITS.STATE_CHARS)}`)
+          .join("\n\n")
+      }`,
+    );
+  }
   if (authorities.length) parts.push(`מצב הבאת אסמכתאות:\n${authorities.join("\n")}`);
   parts.push(budgets);
   if (input.directive) parts.push(input.directive);
