@@ -29,6 +29,7 @@ export type Database = {
           project_id: string | null
           proposed_questions: Json
           research_question: string
+          source_registry: Json
           updated_at: string
           user_id: string
           wizard_step: string
@@ -47,6 +48,7 @@ export type Database = {
           project_id?: string | null
           proposed_questions?: Json
           research_question?: string
+          source_registry?: Json
           updated_at?: string
           user_id: string
           wizard_step: string
@@ -65,6 +67,7 @@ export type Database = {
           project_id?: string | null
           proposed_questions?: Json
           research_question?: string
+          source_registry?: Json
           updated_at?: string
           user_id?: string
           wizard_step?: string
