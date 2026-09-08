@@ -149,6 +149,20 @@ export function replaceCitationOnly(fullText: string, nextCitation: string): str
   return [nextCitation, ...ruleLines, ...warningLines].filter(Boolean).join("\n");
 }
 
+/**
+ * Removes presentation-only warning lines (e.g. "⚠️ חסרים פרטים …") from text
+ * destined for copy/export. Legitimate citation content, including [חסר:...]
+ * placeholders that are part of the citation itself, is preserved.
+ */
+export function stripPresentationWarnings(text: string): string {
+  return text
+    .split("\n")
+    .filter((line) => !/^⚠️/.test(line.trim()))
+    .join("\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
 export function extractCitationOnly(text: string): string {
   return text
     .split("\n")
