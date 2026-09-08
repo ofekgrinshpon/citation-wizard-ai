@@ -486,6 +486,8 @@ async function runPipeline(
   // membership: a source that passed identity but lost its span must not be
   // reported as an identity failure.
   const stages = verification?.per_source ?? {};
+  const temporalOkSet = new Set<string>();
+  for (const c of pack.claims) for (const s of c.sources) temporalOkSet.add(s.source_id);
   const source_funnel: SourceFunnelRow[] = store.all().map((s) => {
     const st = stages[s.source_id];
     return {
@@ -494,19 +496,18 @@ async function runPipeline(
       url: s.url,
       discovered: true,
       fetched: s.fetch_status === "ok",
-      readable: s.fetch_status === "ok" && s.is_actual_document,
+      readable: st?.readable ?? (s.fetch_status === "ok" && s.is_actual_document),
       identity_verified: st?.identity ?? false,
-      identity_basis: st?.identity_basis ??
-        (s.identity_evidence
-          ? `not_submitted_as_evidence · ${s.identity_evidence.kind}: ${
-            s.identity_evidence.signals.slice(0, 3).join(" | ") || "no_signals"
-          }`
-          : "not_submitted_as_evidence"),
+      identity_basis: st?.identity_basis ?? "not_submitted_as_evidence",
       span_verified: st?.span ?? false,
       support_verified: st?.support ?? false,
+      temporal_ok: st?.support ? temporalOkSet.has(s.source_id) : undefined,
+      terminal_stage: st?.terminal_stage,
+      rejection_code: st?.rejection_code,
       cited: citedSet.has(s.source_id),
     };
   });
+
 
 
   const telemetry: V2Telemetry = {

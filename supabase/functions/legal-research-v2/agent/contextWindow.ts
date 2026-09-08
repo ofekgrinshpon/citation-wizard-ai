@@ -131,21 +131,6 @@ export function buildResearchStateMessage(input: {
     );
   }
   if (authorities.length) parts.push(`מצב הבאת אסמכתאות:\n${authorities.join("\n")}`);
-  // Advisory only: same-source questions that keep coming back empty. The
-  // agent decides whether to change source, issue or acquisition path.
-  const stale = ledger.allReads().filter((r) => r.no_yield >= 2);
-  if (stale.length) {
-    parts.push(
-      `המלצה (אינה איסור): קריאות חוזרות שלא הניבו ראיה חדשה — ${
-        stale.map((r) =>
-          `${r.source_id} (${r.no_yield} ברצף${
-            r.missing_locators.length ? `, לא נמצאו: ${r.missing_locators.slice(0, 3).join(", ")}` : ""
-          })`
-        ).join("; ")
-      }. שקול ממד מחקר חדש: סוגיה אחרת, ערכאה אחרת, ספרות אקדמית או נתיב השגה אחר.`,
-    );
-  }
-
   parts.push(budgets);
   if (input.directive) parts.push(input.directive);
   return parts.join("\n\n");

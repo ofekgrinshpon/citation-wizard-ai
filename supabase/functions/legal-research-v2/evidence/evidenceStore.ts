@@ -20,8 +20,6 @@ import {
 } from "../shared/primitives.ts";
 import { cleanDisplayTitle, isMetadataLine, stripInternalIds } from "../shared/titleHygiene.ts";
 import { cleanQuotableText, QUOTE_LIMITS, type ServedQuote, snapWindow } from "./quotable.ts";
-import { extractIdentityEvidence } from "../verification/identityEvidence.ts";
-
 
 /** Query-preserving URL key: strips only tracking noise and fragments. */
 export function normalizeUrlKey(raw: string): string {
@@ -159,13 +157,11 @@ export class EvidenceStore {
       extracted_text: text,
       text_length: text.length,
       identity_fields,
-      identity_evidence: text.length >= 200 ? extractIdentityEvidence(text, input.title) : undefined,
       is_actual_document: input.is_actual_document,
       not_document_reason: input.not_document_reason,
       origin: input.origin,
       fetched_at: new Date().toISOString(),
     };
-
     this.sources.set(source_id, entry);
     if (input.url) this.byUrl.set(normalizeUrlKey(input.url), source_id);
     return entry;
