@@ -270,11 +270,16 @@ export interface SourceFunnelRow {
   url?: string;
   discovered: boolean;
   fetched: boolean;
+  /** Body read and usable as a document. */
+  readable?: boolean;
   identity_verified: boolean;
+  /** Why identity passed / failed, from the acquired body itself. */
+  identity_basis?: string;
   span_verified: boolean;
   support_verified: boolean;
   cited: boolean;
 }
+
 
 export interface V2Telemetry {
   run_id: string;
