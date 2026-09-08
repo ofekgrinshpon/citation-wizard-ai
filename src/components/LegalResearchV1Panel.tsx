@@ -17,6 +17,12 @@ import { toast } from "sonner";
 import { renderAnswerMarkdown } from "@/lib/legalQa/renderAnswerMarkdown";
 import { copyPlainText } from "@/lib/clipboard";
 import { normalizeHebrewNumberRanges } from "@/lib/hebrewNumberRange";
+import {
+  RESEARCH_PIPELINE,
+  researchFunctionFor,
+  V1_STAGES,
+  V2_STAGES,
+} from "@/config/researchPipeline";
 
 const MAX_FILES = 5;
 const MAX_FILE_BYTES = 8 * 1024 * 1024;
@@ -38,15 +44,17 @@ function fmtSize(b: number) {
 }
 
 // Stage keys must match what the edge function writes into
-// legal_research_jobs.current_stage / completed_stages.
-const STAGES: Array<{ key: string; label: string }> = [
-  { key: "analyzer",  label: "מנתח את השאלה" },
-  { key: "planner",   label: "מתכנן חיפושים משפטיים" },
-  { key: "retrieval", label: "מחפש מקורות" },
-  { key: "verifier",  label: "מאמת את המקורות" },
-  { key: "drafter",   label: "כותב תשובה" },
-  { key: "finalize",  label: "מסדר הערות שוליים" },
-];
+// legal_research_jobs.current_stage / completed_stages. Both pipelines are
+// supported so an in-flight V1 job still renders correctly after the switch.
+const V1_STAGE_KEYS = new Set(V1_STAGES.map((s) => s.key));
+const V2_STAGE_KEYS = new Set(V2_STAGES.map((s) => s.key));
+
+function stageListFor(current: string | null, completed: string[]) {
+  const keys = [current ?? "", ...completed];
+  if (keys.some((k) => V1_STAGE_KEYS.has(k))) return V1_STAGES;
+  if (keys.some((k) => V2_STAGE_KEYS.has(k))) return V2_STAGES;
+  return RESEARCH_PIPELINE === "v2" ? V2_STAGES : V1_STAGES;
+}
 
 const POLL_INTERVAL_MS = 2_000;
 const SOFT_NOTICE_1_MS = 180_000; // 3 min
@@ -251,7 +259,7 @@ export function LegalResearchV1Panel({
     if (row.status === "done") {
       setCurrentStage(null);
       setProgressLabel(null);
-      setCompletedStages(STAGES.map((s) => s.key));
+      setCompletedStages(row.completed_stages ?? []);
       setResult(row.result as ResearchResponse);
       setFiles([]);
       setJustCompleted(true);
@@ -508,7 +516,7 @@ export function LegalResearchV1Panel({
         run_id: string;
         status: string;
       }>(
-        "legal-research-v1",
+        researchFunctionFor({ hasAttachments: attachmentsPayload.length > 0 }),
         {
           question: q,
           project_id: currentProject?.id ?? null,
@@ -642,7 +650,7 @@ export function LegalResearchV1Panel({
               <p className="text-xs text-muted-foreground leading-relaxed">{RUNNING_NOTICE_HE}</p>
 
               <ol className="space-y-2">
-                {STAGES.map((stage) => {
+                {stageListFor(currentStage, completedStages).map((stage) => {
                   const isDone = completedStages.includes(stage.key);
                   const isActive = !isDone && currentStage === stage.key;
                   return (
