@@ -346,8 +346,8 @@ export async function runFetch(
         text_length: src.text_length,
         is_actual_document: src.is_actual_document,
         identity_found: src.identity_fields,
-      identity_evidence: src.identity_evidence,
         identity_evidence: src.identity_evidence,
+
         section_requested: sectionToken,
         section_found: found.found,
         section_coverage: found.coverage,
