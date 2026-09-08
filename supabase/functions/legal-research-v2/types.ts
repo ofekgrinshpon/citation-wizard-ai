@@ -111,11 +111,18 @@ export interface EvidenceSource {
   extracted_text: string;
   text_length: number;
   identity_fields: IdentityFields;
+  /**
+   * Literal identity-bearing window derived from the acquired body (caption /
+   * docket / parties / court, or academic front matter). Identity proof only —
+   * never automatically claim evidence.
+   */
+  identity_evidence?: { kind: string; window: string; signals: string[] };
   is_actual_document: boolean;
   not_document_reason?: string;
   origin: string;
   fetched_at: string;
 }
+
 
 // ─── Research memo (agent output) ───────────────────────────────────────────
 
@@ -214,6 +221,13 @@ export interface VerifiedEvidencePack {
 export interface VerificationOutcome {
   pack: VerifiedEvidencePack;
   rejected: RejectedPair[];
+  /** Furthest verification stage each source reached (true per-stage funnel). */
+  per_source?: Record<string, {
+    identity: boolean;
+    span: boolean;
+    support: boolean;
+    identity_basis?: string;
+  }>;
   counters: {
     total_evidence_pairs: number;
     identity_verified_pairs: number;
@@ -221,6 +235,7 @@ export interface VerificationOutcome {
     support_verdicts: Record<SupportVerdict, number>;
   };
 }
+
 
 // ─── Drafting / rendering ───────────────────────────────────────────────────
 
@@ -255,11 +270,16 @@ export interface SourceFunnelRow {
   url?: string;
   discovered: boolean;
   fetched: boolean;
+  /** Body read and usable as a document. */
+  readable?: boolean;
   identity_verified: boolean;
+  /** Why identity passed / failed, from the acquired body itself. */
+  identity_basis?: string;
   span_verified: boolean;
   support_verified: boolean;
   cited: boolean;
 }
+
 
 export interface V2Telemetry {
   run_id: string;

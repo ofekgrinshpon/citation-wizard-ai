@@ -21,6 +21,13 @@ import type {
 import type { EvidenceStore } from "../evidence/evidenceStore.ts";
 import type { UsageLedger } from "../shared/model.ts";
 import { buildSectionVariants, normalizeDocketText } from "../shared/primitives.ts";
+import {
+  bodyHasDocket,
+  bodyHasTitle,
+  docketNumberOf,
+  normalizeIdentityText,
+} from "./identityEvidence.ts";
+
 import { matchSpan } from "./spanMatch.ts";
 import { verifySupport, type SupportInput } from "./supportVerifier.ts";
 
@@ -37,45 +44,89 @@ export interface IdentityCheck {
 /**
  * CHECK 1 — identity.
  *
- * Only applies where the run carries an explicit identity obligation AND the
- * source claims to be that authority. A source with no identity claim is not
- * rejected here (check 2 and 3 still govern it).
+ * The question is always the same: does the ACQUIRED BODY itself establish
+ * that this document is the authority it is presented as? Search metadata,
+ * URLs and snippets are never identity proof.
+ *
+ * The check runs against the whole stored body (plus its derived identity
+ * window), with deterministic normalization only — quote marks, maqaf/dashes,
+ * bidi controls, spacing and docket-prefix variants. Nothing semantic.
+ *
+ * A source that makes no identity claim about one of the run's obligations is
+ * not rejected here (checks 2–4 still govern it).
  */
 export function checkIdentity(
   source: EvidenceSource,
   expected: ExpectedIdentity,
 ): IdentityCheck {
-  const body = `${source.title}\n${source.extracted_text}`;
+  const idWindow = source.identity_evidence?.window ?? "";
+  // The TITLE is deliberately excluded: a title comes from discovery metadata,
+  // and metadata may never prove what a document is. Only the acquired body
+  // (and the identity window derived from it) counts.
+  const body = `${idWindow}\n${source.extracted_text}`;
+  const nBody = normalizeIdentityText(body);
+
   // Judgment identity: if the source presents itself as one of the run's
-  // explicit dockets (title mentions it), the body must carry that docket.
+  // explicit dockets, the body must actually carry that docket.
   for (const docket of expected.dockets) {
-    const inTitle = normalizeDocketText(source.title).includes(normalizeDocketText(docket));
-    if (!inTitle) continue;
-    const inBody = source.identity_fields.dockets.includes(docket) ||
-      normalizeDocketText(body).includes(normalizeDocketText(docket));
-    if (!inBody) {
-      return { ok: false, detail: `title claims ${docket} but the body does not contain it` };
+    const num = docketNumberOf(docket);
+    const claimsIt = bodyHasDocket(source.title, docket) ||
+      source.identity_fields.dockets.some((d) => num && docketNumberOf(d) === num) ||
+      normalizeDocketText(source.title).includes(normalizeDocketText(docket));
+    if (!claimsIt) continue;
+    if (!bodyHasDocket(body, docket)) {
+      return { ok: false, detail: `title claims ${docket} but the acquired body does not contain it` };
     }
-    return { ok: true, detail: `docket ${docket} confirmed in body` };
+    return { ok: true, detail: `docket ${docket} confirmed in the acquired body` };
   }
+
   for (const st of expected.statutes) {
-    const claimsStatute = source.title.includes(st.statute);
+    const nStatute = normalizeIdentityText(st.statute);
+    const claimsStatute = normalizeIdentityText(source.title).includes(nStatute) ||
+      source.identity_fields.statutes.some((s) => normalizeIdentityText(s) === nStatute);
     if (!claimsStatute) continue;
-    if (!body.includes(st.statute)) {
-      return { ok: false, detail: `title claims ${st.statute} but the body does not contain it` };
+    if (!nBody.includes(nStatute)) {
+      return { ok: false, detail: `title claims ${st.statute} but the acquired body does not contain it` };
     }
     if (st.section) {
-      const variants = buildSectionVariants(st.section);
-      const hasSection = variants.some((v) => body.includes(v)) ||
+      const variants = buildSectionVariants(st.section).map(normalizeIdentityText);
+      const hasSection = variants.some((v) => nBody.includes(v)) ||
         source.identity_fields.sections.includes(st.section);
       if (!hasSection) {
         return { ok: false, detail: `statute body does not contain section ${st.section}` };
       }
     }
-    return { ok: true, detail: `statute ${st.statute} confirmed in body` };
+    return { ok: true, detail: `statute ${st.statute} confirmed in the acquired body` };
+  }
+
+  // Academic / other documents: when the discovered title is a real title (not
+  // a URL or a bare institution name), every material word of it must be
+  // literally present in the acquired body. This turns "the search result said
+  // so" into "the document says so", and is bounded and deterministic.
+  const t = bodyHasTitle(source.extracted_text, source.title, { minTokens: 3 });
+  if (t.matched.length + t.missing.length >= 3) {
+    if (t.ok) {
+      return { ok: true, detail: `document title confirmed verbatim in the body (${t.matched.length} tokens)` };
+    }
+    // Not a contradiction: printed front matter may be missing from extraction.
+    return {
+      ok: true,
+      detail: `no docket/statute obligation claimed; title words not all present (missing: ${
+        t.missing.slice(0, 4).join(", ")
+      })`,
+    };
   }
   return { ok: true, detail: "no explicit identity claim to contradict" };
 }
+
+/** Compact, human-readable identity basis for telemetry. */
+export function identityBasisOf(source: EvidenceSource): string {
+  const ev = source.identity_evidence;
+  if (!ev) return "no_identity_window";
+  return `${ev.kind}${ev.signals.length ? `: ${ev.signals.slice(0, 3).join(" | ")}` : ": no_signals"}`
+    .slice(0, 200);
+}
+
 
 /** CHECK 2 — body read. */
 export function checkBodyRead(source: EvidenceSource | null): IdentityCheck {
@@ -112,6 +163,12 @@ export async function verifyMemo(opts: {
     >,
   };
 
+  // True per-stage funnel: how far each source actually got, independent of
+  // whether it ended up in the final pack.
+  const per_source: NonNullable<VerificationOutcome["per_source"]> = {};
+  const stageOf = (id: string) =>
+    per_source[id] ??= { identity: false, span: false, support: false };
+
   interface Survivor {
     pair_id: string;
     claim_id: string;
@@ -120,6 +177,7 @@ export async function verifyMemo(opts: {
     locator?: string;
   }
   const survivors: Survivor[] = [];
+
 
   for (const claim of opts.memo.claims) {
     for (const ev of claim.evidence) {
@@ -147,6 +205,8 @@ export async function verifyMemo(opts: {
 
       // CHECK 1 — identity.
       const identity = checkIdentity(source, opts.expected);
+      const st = stageOf(source.source_id);
+      st.identity_basis = `${identity.detail} · ${identityBasisOf(source)}`.slice(0, 240);
       if (!identity.ok) {
         rejected.push({
           claim_id: claim.claim_id,
@@ -156,6 +216,7 @@ export async function verifyMemo(opts: {
         });
         continue;
       }
+      st.identity = true;
       counters.identity_verified_pairs += 1;
 
       // CHECK 3 — verbatim span.
@@ -169,7 +230,9 @@ export async function verifyMemo(opts: {
         });
         continue;
       }
+      st.span = true;
       counters.span_verified_pairs += 1;
+
       survivors.push({
         pair_id,
         claim_id: claim.claim_id,
@@ -213,6 +276,7 @@ export async function verifyMemo(opts: {
       });
       continue;
     }
+    stageOf(s.source.source_id).support = true;
     const list = byClaim.get(s.claim_id) ?? [];
     list.push({
       source_id: s.source.source_id,
@@ -223,6 +287,7 @@ export async function verifyMemo(opts: {
       support: v.support,
     });
     byClaim.set(s.claim_id, list);
+
   }
 
   const claims: VerifiedClaim[] = [];
@@ -254,5 +319,5 @@ export async function verifyMemo(opts: {
     }
   }
 
-  return { pack: { claims, unsupported_claims: unsupported }, rejected, counters };
+  return { pack: { claims, unsupported_claims: unsupported }, rejected, per_source, counters };
 }

@@ -482,27 +482,32 @@ async function runPipeline(
 
   // ── Telemetry ───────────────────────────────────────────────────────────
   const citedSet = new Set(rendered.cited_source_ids);
-  const identityOk = new Set<string>();
-  const spanOk = new Set<string>();
-  const supportOk = new Set<string>();
-  for (const c of pack.claims) {
-    for (const s of c.sources) {
-      identityOk.add(s.source_id);
-      spanOk.add(s.source_id);
-      supportOk.add(s.source_id);
-    }
-  }
-  const source_funnel: SourceFunnelRow[] = store.all().map((s) => ({
-    source_id: s.source_id,
-    title: s.title,
-    url: s.url,
-    discovered: true,
-    fetched: s.fetch_status === "ok" && s.is_actual_document,
-    identity_verified: identityOk.has(s.source_id),
-    span_verified: spanOk.has(s.source_id),
-    support_verified: supportOk.has(s.source_id),
-    cited: citedSet.has(s.source_id),
-  }));
+  // Per-stage funnel comes from verification itself, not from final-pack
+  // membership: a source that passed identity but lost its span must not be
+  // reported as an identity failure.
+  const stages = verification?.per_source ?? {};
+  const source_funnel: SourceFunnelRow[] = store.all().map((s) => {
+    const st = stages[s.source_id];
+    return {
+      source_id: s.source_id,
+      title: s.title,
+      url: s.url,
+      discovered: true,
+      fetched: s.fetch_status === "ok",
+      readable: s.fetch_status === "ok" && s.is_actual_document,
+      identity_verified: st?.identity ?? false,
+      identity_basis: st?.identity_basis ??
+        (s.identity_evidence
+          ? `not_submitted_as_evidence · ${s.identity_evidence.kind}: ${
+            s.identity_evidence.signals.slice(0, 3).join(" | ") || "no_signals"
+          }`
+          : "not_submitted_as_evidence"),
+      span_verified: st?.span ?? false,
+      support_verified: st?.support ?? false,
+      cited: citedSet.has(s.source_id),
+    };
+  });
+
 
   const telemetry: V2Telemetry = {
     run_id: intake.run_id,
