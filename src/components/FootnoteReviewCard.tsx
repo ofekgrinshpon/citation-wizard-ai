@@ -60,6 +60,9 @@ export function FootnoteReviewCard({
   onRegenerate,
   onRemove,
   disabled,
+  onCopy,
+  originLabel,
+  hideRemove,
 }: Props) {
   const [editInput, setEditInput] = useState(false);
   const [draftOutput, setDraftOutput] = useState(cell.output ?? "");
