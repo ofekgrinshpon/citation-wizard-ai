@@ -41,6 +41,21 @@ export interface ChatMessage {
   content: string;
   tool_calls?: Array<{ id: string; type: "function"; function: { name: string; arguments: string } }>;
   tool_call_id?: string;
+  /**
+   * Local-only one-line replacement used when this message is compacted out of
+   * the active context. Never sent to a model provider.
+   */
+  digest?: string;
+}
+
+/** Strip local-only fields before a message reaches a provider. */
+export function wireMessages(messages: ChatMessage[]): Array<Record<string, unknown>> {
+  return messages.map((m) => {
+    const wire: Record<string, unknown> = { role: m.role, content: m.content ?? "" };
+    if (m.tool_calls) wire.tool_calls = m.tool_calls;
+    if (m.tool_call_id) wire.tool_call_id = m.tool_call_id;
+    return wire;
+  });
 }
 
 export interface ChatResult {
@@ -275,7 +290,7 @@ export async function chat(opts: {
 
   const body: Record<string, unknown> = {
     model: opts.model,
-    messages: opts.messages,
+    messages: wireMessages(opts.messages),
   };
   if (opts.tools?.length) {
     body.tools = opts.tools.map((t) => ({

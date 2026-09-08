@@ -88,6 +88,11 @@ export class CommitTracker {
     return null;
   }
 
+  /** How many times this exact call has been made in the run. */
+  repeatCount(key: string): number {
+    return this.repeats.get(key) ?? 0;
+  }
+
   noteRound(producedNewEvidence: boolean): void {
     this.stale_streak = producedNewEvidence ? 0 : this.stale_streak + 1;
   }

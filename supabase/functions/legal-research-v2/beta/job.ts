@@ -98,11 +98,31 @@ export function gatewayFailure(out: Record<string, unknown>): string | null {
   return hit ? hit.slice(0, 300) : null;
 }
 
+/**
+ * A job that already reached a terminal state (done / error / timed_out, e.g.
+ * written by the stale-job reaper) must never be rewritten by a late worker,
+ * and must never trigger a second refund.
+ */
+export async function isTerminal(admin: SupabaseClient, jobId: string): Promise<boolean> {
+  try {
+    const { data } = await admin
+      .from("legal_research_jobs")
+      .select("status")
+      .eq("id", jobId)
+      .maybeSingle();
+    const status = (data as { status?: string } | null)?.status ?? "";
+    return status === "done" || status === "error" || status === "timed_out";
+  } catch {
+    return false;
+  }
+}
+
 export async function finishJobSuccess(
   admin: SupabaseClient,
   job: BetaJob,
   result: BetaResultShape,
-): Promise<{ refunded: boolean }> {
+): Promise<{ refunded: boolean; skipped?: boolean }> {
+  if (await isTerminal(admin, job.id)) return { refunded: false, skipped: true };
   const delivered = isDelivered(result);
   const refunded = delivered ? false : await refundJob(admin, job, "no_answer_delivered");
   await admin.from("legal_research_jobs").update({
@@ -111,7 +131,7 @@ export async function finishJobSuccess(
     current_stage: null,
     progress_label_he: null,
     completed_at: new Date().toISOString(),
-  }).eq("id", job.id);
+  }).eq("id", job.id).in("status", ["running", "queued"]);
   return { refunded };
 }
 
@@ -120,6 +140,7 @@ export async function finishJobError(
   job: BetaJob,
   message: string,
 ): Promise<void> {
+  if (await isTerminal(admin, job.id)) return;
   const refunded = await refundJob(admin, job, "pipeline_error");
   await admin.from("legal_research_jobs").update({
     status: "error",
@@ -128,5 +149,5 @@ export async function finishJobError(
     current_stage: null,
     progress_label_he: null,
     completed_at: new Date().toISOString(),
-  }).eq("id", job.id);
+  }).eq("id", job.id).in("status", ["running", "queued"]);
 }

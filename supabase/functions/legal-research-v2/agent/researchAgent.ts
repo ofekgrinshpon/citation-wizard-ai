@@ -31,6 +31,30 @@ import { AcquisitionLedger, type AcquisitionLedgerJson } from "../tools/acquisit
 import { AGENT_SYSTEM_PROMPT, buildAgentUserMessage, MEMO_TOOL } from "./prompt.ts";
 import { StopPolicy, type StopPolicyJson } from "./stopPolicy.ts";
 import { CommitTracker, obligationsSatisfied } from "./commitPolicy.ts";
+import {
+  buildResearchStateMessage,
+  compactAgentMessages,
+  dropPriorStateMessages,
+} from "./contextWindow.ts";
+import { RunTimer } from "../shared/timing.ts";
+
+/**
+ * The smallest useful answer to a re-read that would add no new evidence.
+ * It never re-sends a body: it points back at the evidence already held.
+ */
+export function minimalAlreadyReadPayload(
+  source_id: string | undefined,
+  repeatCount: number,
+): Record<string, unknown> {
+  return {
+    already_read: true,
+    no_new_evidence: true,
+    source_id,
+    instruction: repeatCount >= 3
+      ? `הפעולה הזו חוזרת בפעם ה-${repeatCount} ואינה מייצרת ראיה חדשה. עבור לפעולה שונה מהותית (שאילתה אחרת, מסמך אחר, או קטע אחר בתוך ${source_id}) או הגש עכשיו את תזכיר המחקר.`
+      : `אין ראיה חדשה: ${source_id} כבר נקרא בריצה זו והתוכן שמור בצד השרת. השתמש במה שכבר יש, או בקש קטע אחר: fetch({source_id:"${source_id}", query:"..."}).`,
+  };
+}
 
 const TOOL_SPECS: ToolSpec[] = [
   {
@@ -107,6 +131,26 @@ export interface AgentContextStats {
   evidence_context_chars_last_turn: number;
   repeated_tool_calls_prevented: number;
   commit_directives: string[];
+  /** Latency-efficiency counters (legal_research_v2_latency_efficiency_v1). */
+  already_read_actions: number;
+  noop_already_read_suppressed: number;
+  authority_reacquisitions_prevented: number;
+  context_compactions: number;
+  context_chars_saved: number;
+}
+
+export function newAgentStats(): AgentContextStats {
+  return {
+    largest_tool_response_chars: 0,
+    evidence_context_chars_last_turn: 0,
+    repeated_tool_calls_prevented: 0,
+    commit_directives: [],
+    already_read_actions: 0,
+    noop_already_read_suppressed: 0,
+    authority_reacquisitions_prevented: 0,
+    context_compactions: 0,
+    context_chars_saved: 0,
+  };
 }
 
 export interface AgentStateJson {
@@ -241,18 +285,20 @@ export async function runResearchAgent(opts: {
    * UI can show a stage. It never influences the loop.
    */
   onActivity?: (kind: "searching" | "reading") => void;
+  /** Timing ledger — measurement only. */
+  timer?: RunTimer;
+  /** Chunk number, recorded on each turn for latency attribution. */
+  chunkIndex?: number;
+  /** Liveness ping so a long, healthy run is never mistaken for an abandoned one. */
+  heartbeat?: () => Promise<void> | void;
 }): Promise<AgentRunResult> {
   const policy = opts.policy ?? new StopPolicy(opts.intake.budgets);
   const discovered = opts.discovered ?? new Map<string, SearchResult>();
   const commit = opts.commit ?? new CommitTracker();
   const ledger = opts.ledger ?? new AcquisitionLedger();
   const trace: AgentTraceEntry[] = opts.trace ?? [];
-  const stats: AgentContextStats = opts.stats ?? {
-    largest_tool_response_chars: 0,
-    evidence_context_chars_last_turn: 0,
-    repeated_tool_calls_prevented: 0,
-    commit_directives: [],
-  };
+  const stats: AgentContextStats = { ...newAgentStats(), ...(opts.stats ?? {}) };
+  const timer = opts.timer ?? new RunTimer();
   const chunkCap = opts.maxStepsThisChunk ?? Number.POSITIVE_INFINITY;
   const deadlineAt = opts.deadlineAt ?? Number.POSITIVE_INFINITY;
 
@@ -269,6 +315,8 @@ export async function runResearchAgent(opts: {
   let paused = false;
   let stepsThisChunk = 0;
 
+  let pendingDirective: string | undefined;
+
   while (!policy.stepExhausted()) {
     if (stepsThisChunk >= chunkCap || Date.now() >= deadlineAt) {
       paused = true;
@@ -277,9 +325,32 @@ export async function runResearchAgent(opts: {
     policy.steps += 1;
     stepsThisChunk += 1;
 
+    // ── Context discipline ────────────────────────────────────────────────
+    // Stale tool payloads are replaced by their digests and a single rolling
+    // research-state message carries what the next decision needs. The full
+    // bodies never left the evidence store in the first place.
+    const compaction = compactAgentMessages(dropPriorStateMessages(messages));
+    if (compaction.compacted) {
+      stats.context_compactions += compaction.compacted;
+      stats.context_chars_saved += compaction.chars_saved;
+    }
+    const stateMessage = buildResearchStateMessage({
+      intake: opts.intake,
+      store: opts.store,
+      ledger,
+      policy,
+      directive: pendingDirective,
+    });
+    pendingDirective = undefined;
+    stats.evidence_context_chars_last_turn = stateMessage.length;
+    messages.length = 0;
+    messages.push(...compaction.messages, { role: "user", content: stateMessage });
+
     // Research capacity is reserved: once the research phase closes, the memo
     // tool is the ONLY tool the agent can still call.
     const forceMemo = policy.researchExhausted();
+    const contextChars = messages.reduce((n, m) => n + (m.content?.length ?? 0), 0);
+    const modelStarted = Date.now();
     const res = await chat({
       model: opts.model,
       messages,
@@ -287,6 +358,9 @@ export async function runResearchAgent(opts: {
       toolChoice: forceMemo ? { name: MEMO_TOOL.name } : "auto",
       usage: opts.usage,
     });
+    const modelMs = Date.now() - modelStarted;
+    timer.add("agent_model", modelMs);
+    await opts.heartbeat?.();
     if (!res.ok) {
       error = `agent_model_error_${res.http_status}: ${res.error ?? ""}`.slice(0, 300);
       break;
@@ -297,6 +371,19 @@ export async function runResearchAgent(opts: {
       messages.push({
         role: "user",
         content: "סיים כעת: קרא ל-submit_research_memo עם התזכיר המובנה.",
+      });
+      timer.noteTurn({
+        turn: policy.steps,
+        chunk: opts.chunkIndex ?? 1,
+        model_ms: modelMs,
+        tool_ms: 0,
+        prompt_tokens: res.prompt_tokens,
+        completion_tokens: res.completion_tokens,
+        cumulative_prompt_tokens: opts.usage.prompt_tokens,
+        context_chars: contextChars,
+        action: "no_tool_nudge",
+        added_evidence: false,
+        no_op: true,
       });
       if (trace.some((t) => t.tool === "no_tool_nudge")) {
         error = "agent_did_not_submit_memo";
@@ -317,9 +404,13 @@ export async function runResearchAgent(opts: {
     });
 
     const readableBefore = opts.store.readable().length;
+    let toolMs = 0;
+    let turnAction = "";
+    let turnNoOp = false;
 
     for (const call of res.tool_calls) {
       const args = parseJsonLoose<Record<string, unknown>>(call.arguments) ?? {};
+      turnAction = turnAction || call.name;
       if (call.name === MEMO_TOOL.name) {
         memo = normalizeMemo(args);
         trace.push({
@@ -340,15 +431,19 @@ export async function runResearchAgent(opts: {
           role: "tool",
           tool_call_id: call.id,
           content: JSON.stringify({ error: blocked, advice: "סיים והגש תזכיר עם מה שכבר אומת." }),
+          digest: JSON.stringify({ error: blocked }),
         });
         continue;
       }
 
-      const repeatWarning = commit.noteToolKey(toolCallKey(call.name, args));
+      const callKey = toolCallKey(call.name, args);
+      const repeatWarning = commit.noteToolKey(callKey);
       if (repeatWarning) stats.repeated_tool_calls_prevented += 1;
+      const repeatCount = commit.repeatCount(callKey);
 
       let payload: Record<string, unknown>;
       let summary = "";
+      const toolStarted = Date.now();
       if (call.name === "search") {
         opts.onActivity?.("searching");
         policy.note("search", scope ?? "web");
@@ -360,6 +455,7 @@ export async function runResearchAgent(opts: {
         for (const r of out.results) discovered.set(r.result_id, r);
         payload = compactSearchOutput(out) as unknown as Record<string, unknown>;
         summary = `scope=${out.scope} results=${out.results.length}${out.error ? ` error=${out.error}` : ""}`;
+        timer.add("search", Date.now() - toolStarted);
       } else if (call.name === "lookup_authority") {
         opts.onActivity?.("searching");
         policy.note("lookup_authority");
@@ -372,6 +468,7 @@ export async function runResearchAgent(opts: {
         });
         payload = out as unknown as Record<string, unknown>;
         summary = `candidates=${out.candidates.length} registry=${out.registry_hint ?? "none"}`;
+        timer.add("lookup", Date.now() - toolStarted);
       } else if (call.name === "fetch") {
         opts.onActivity?.("reading");
         const out = await runFetch(
@@ -392,25 +489,59 @@ export async function runResearchAgent(opts: {
           },
           ledger,
         );
+        timer.add("fetch", Date.now() - toolStarted);
         // A cached / targeted read costs no fetch budget.
         if (!out.already_read) policy.note("fetch");
+        if (out.already_read) stats.already_read_actions += 1;
+        if (out.authority_reuse) stats.authority_reacquisitions_prevented += 1;
         payload = out as unknown as Record<string, unknown>;
         summary = out.already_read
           ? `already_read ${out.source_id}`
           : out.ok
           ? `${out.source_id} chars=${out.text_length} document=${out.is_actual_document}`
           : `failed: ${out.error}`;
+
+        // A repeated already_read action adds nothing: answer with the smallest
+        // deterministic response and escalate instead of re-sending evidence.
+        if (out.already_read && repeatCount >= 2) {
+          stats.noop_already_read_suppressed += 1;
+          turnNoOp = true;
+          payload = minimalAlreadyReadPayload(out.source_id, repeatCount);
+          summary = `already_read_noop ${out.source_id} x${repeatCount}`;
+        }
       } else {
         payload = { error: `unknown_tool:${call.name}` };
         summary = `unknown_tool:${call.name}`;
       }
+      toolMs += Date.now() - toolStarted;
 
       if (repeatWarning) payload.repetition_warning = repeatWarning;
       trace.push({ step: policy.steps, tool: call.name, input: args, summary });
       const content = JSON.stringify(payload).slice(0, 12_000);
       stats.largest_tool_response_chars = Math.max(stats.largest_tool_response_chars, content.length);
-      messages.push({ role: "tool", tool_call_id: call.id, content });
+      messages.push({
+        role: "tool",
+        tool_call_id: call.id,
+        content,
+        digest: JSON.stringify({ tool: call.name, summary }).slice(0, 240),
+      });
+      await opts.heartbeat?.();
     }
+
+    const addedEvidence = opts.store.readable().length > readableBefore;
+    timer.noteTurn({
+      turn: policy.steps,
+      chunk: opts.chunkIndex ?? 1,
+      model_ms: modelMs,
+      tool_ms: toolMs,
+      prompt_tokens: res.prompt_tokens,
+      completion_tokens: res.completion_tokens,
+      cumulative_prompt_tokens: opts.usage.prompt_tokens,
+      context_chars: contextChars,
+      action: turnAction || "unknown",
+      added_evidence: addedEvidence,
+      no_op: turnNoOp || (!addedEvidence && turnAction === "fetch"),
+    });
 
     if (memo) break;
 
@@ -431,7 +562,7 @@ export async function runResearchAgent(opts: {
 
     // ── Deterministic commit discipline ──────────────────────────────────
     const readable = opts.store.readable();
-    commit.noteRound(readable.length > readableBefore);
+    commit.noteRound(addedEvidence);
     const directive = commit.directive({
       readable_count: readable.length,
       obligations_total: opts.intake.docket_obligations.length + opts.intake.statute_obligations.length,
@@ -442,9 +573,9 @@ export async function runResearchAgent(opts: {
     });
     if (directive) {
       stats.commit_directives.push(`step${policy.steps}:${directive.kind}`);
-      const ledgerMsg = evidenceLedgerMessage(opts.store);
-      stats.evidence_context_chars_last_turn = ledgerMsg.length;
-      messages.push({ role: "user", content: `${ledgerMsg}\n\n${directive.text}` });
+      // Carried into the next turn's single rolling-state message rather than
+      // appended as yet another permanent user message.
+      pendingDirective = directive.text;
     }
   }
 

@@ -23,7 +23,8 @@ import {
   looksLikeBlockPage,
   officialFetch,
 } from "../shared/primitives.ts";
-import { AcquisitionLedger, authorityKeyOf } from "./acquisitionLedger.ts";
+import { AcquisitionLedger, type AuthorityState, authorityKeyOf } from "./acquisitionLedger.ts";
+import { normalizeUrlKey } from "../evidence/evidenceStore.ts";
 
 export const FETCH_LIMITS = {
   TIMEOUT_MS: 25_000,
@@ -156,6 +157,12 @@ export interface FetchOutput {
   already_read?: boolean;
   instruction?: string;
   acquisition_note?: string;
+  /** Compact per-authority acquisition state (attempted hosts, usable body). */
+  authority_state?: AuthorityState;
+  /** True when a usable body for this authority already exists elsewhere. */
+  authority_reuse?: boolean;
+  /** True when this exact URL already failed for this authority. */
+  dead_path?: boolean;
   error?: string;
 }
 
@@ -250,6 +257,35 @@ export async function runFetch(
   if (!input.refetch_reason?.trim()) {
     const cached = store.findByUrl(url);
     if (cached) return clampFetchOutput(alreadyReadPayload(cached, input));
+  }
+
+  // ── Same-authority acquisition efficiency ────────────────────────────────
+  // Identity verification is unchanged: this only avoids repeating network
+  // work for an authority whose body was ALREADY acquired with a matching
+  // identity, and avoids re-walking a path that already failed.
+  if (ledger && authorityKey && !input.refetch_reason?.trim()) {
+    const acquiredId = ledger.get(authorityKey)?.acquired_source_id;
+    const acquired = acquiredId ? store.get(acquiredId) : null;
+    if (acquired && normalizeUrlKey(acquired.url ?? "") !== normalizeUrlKey(url)) {
+      return clampFetchOutput({
+        ...alreadyReadPayload(acquired, input),
+        authority_reuse: true,
+        authority_state: ledger.state(authorityKey) ?? undefined,
+        instruction:
+          `גוף האסמכתה ${authorityKey} כבר הובא ואומת זהותית (${acquired.source_id}). עבוד מתוכו: fetch({source_id:"${acquired.source_id}", query}). אל תחפש עותקים נוספים אלא אם חסר בו רכיב ספציפי — ואז ציין refetch_reason.`,
+      });
+    }
+    const prior = ledger.attemptOn(authorityKey, url);
+    if (prior && prior.outcome !== "acquired") {
+      return clampFetchOutput({
+        ok: false,
+        dead_path: true,
+        error: `dead_acquisition_path:${prior.reason}`.slice(0, 160),
+        authority_state: ledger.state(authorityKey) ?? undefined,
+        instruction:
+          "כתובת זו כבר נוסתה בריצה זו ונכשלה. אל תחזור עליה. נסה מקור שונה מהותית או המשך עם מה שכבר נקרא.",
+      });
+    }
   }
 
   const title = discovery?.title || url;

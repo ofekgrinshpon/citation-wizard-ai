@@ -235,6 +235,7 @@ export interface RenderedAnswer {
 }
 
 import type { AuthorityLedgerRow } from "./tools/acquisitionLedger.ts";
+import type { AgentTurnRecord } from "./shared/timing.ts";
 
 // ─── Telemetry ──────────────────────────────────────────────────────────────
 
@@ -281,6 +282,16 @@ export interface V2Telemetry {
   repeated_tool_calls_prevented: number;
   commit_directives: string[];
   chunks_executed: number;
+  /** Latency efficiency (legal_research_v2_latency_efficiency_v1). */
+  phase_ms?: Record<string, number>;
+  agent_turns?: AgentTurnRecord[];
+  already_read_actions?: number;
+  noop_already_read_suppressed?: number;
+  authority_reacquisitions_prevented?: number;
+  context_compactions?: number;
+  context_chars_saved?: number;
+  /** Why a research reopen was NOT performed after verification, when it wasn't. */
+  repair_skip_reason?: string | null;
   /** Safeguard A — current-law / temporal validity. */
   temporal_sensitive_claims: number;
   temporal_checks_attempted: number;
