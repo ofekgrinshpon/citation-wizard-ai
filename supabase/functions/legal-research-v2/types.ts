@@ -290,6 +290,11 @@ export interface V2Telemetry {
   authority_reacquisitions_prevented?: number;
   context_compactions?: number;
   context_chars_saved?: number;
+  /** Statute section acquisition + same-source exhaustion (statute_section_acquisition_v1). */
+  section_reads_yielded?: number;
+  section_reads_missing?: number;
+  sources_marked_exhausted?: number;
+  unresolved_authorities?: string[];
   /** Why a research reopen was NOT performed after verification, when it wasn't. */
   repair_skip_reason?: string | null;
   /** Safeguard A — current-law / temporal validity. */

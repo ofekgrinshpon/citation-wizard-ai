@@ -414,6 +414,26 @@ async function runPipeline(
 
   // ── Draft + deterministic render ────────────────────────────────────────
   const pack = verification?.pack ?? { claims: [], unsupported_claims: [] };
+
+  // High-level, source-level gap notices. Rejected propositions themselves are
+  // NEVER handed to the drafter — they stay in telemetry.
+  const unresolvedAuthorities = agent.ledger.all()
+    .filter((r) => !r.acquired_source_id)
+    .map((r) => r.authority_key);
+  const unusableSources = store.all()
+    .filter((s) => !(s.fetch_status === "ok" && s.is_actual_document))
+    .map((s) => s.title || s.url || s.source_id);
+  const gapNotices: string[] = [];
+  if (unresolvedAuthorities.length) {
+    gapNotices.push(
+      `לא הושג נוסח קריא עבור: ${unresolvedAuthorities.slice(0, 4).join(", ")}.`,
+    );
+  }
+  if (unusableSources.length) {
+    gapNotices.push(
+      `מקורות שנוסו ולא סיפקו טקסט שמיש: ${unusableSources.slice(0, 3).map((t) => String(t).slice(0, 70)).join("; ")}.`,
+    );
+  }
   const draft = await timer.time("drafting_model", () =>
     runDrafter({
       question: intake.question,
@@ -421,6 +441,7 @@ async function runPipeline(
       model: models.drafter,
       usage,
       advisories,
+      gapNotices,
     }));
   const blocks = derivative_disclosure_shown
     ? [
@@ -500,6 +521,10 @@ async function runPipeline(
     authority_reacquisitions_prevented: agent.stats.authority_reacquisitions_prevented,
     context_compactions: agent.stats.context_compactions,
     context_chars_saved: agent.stats.context_chars_saved,
+    section_reads_yielded: agent.ledger.allReads().reduce((n, r) => n + r.yielded, 0),
+    section_reads_missing: agent.ledger.allReads().reduce((n, r) => n + r.missing_locators.length, 0),
+    sources_marked_exhausted: agent.ledger.allReads().filter((r) => r.exhausted).length,
+    unresolved_authorities: unresolvedAuthorities,
     repair_skip_reason,
     ...temporalCounters,
     primary_authority_obligations: gapReport.obligations,

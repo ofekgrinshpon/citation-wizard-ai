@@ -22,8 +22,18 @@ export interface AuthorityLedgerRow {
   acquired_source_id?: string;
 }
 
+export interface SourceReadRow {
+  source_id: string;
+  no_yield: number;
+  yielded: number;
+  /** Section tokens already asked for on this source that were not present. */
+  missing_locators: string[];
+  exhausted: boolean;
+}
+
 export interface AcquisitionLedgerJson {
   rows: AuthorityLedgerRow[];
+  reads?: SourceReadRow[];
 }
 
 /** Compact, agent-facing state of one authority. Derived only, decides nothing. */
@@ -51,8 +61,12 @@ export function authorityKeyOf(input: { docket?: string; statute?: string; secti
   return null;
 }
 
+/** Consecutive no-evidence targeted reads on one source before we call it exhausted. */
+export const NO_YIELD_EXHAUSTION_THRESHOLD = 3;
+
 export class AcquisitionLedger {
   private rows = new Map<string, AuthorityLedgerRow>();
+  private reads = new Map<string, SourceReadRow>();
 
   note(key: string, attempt: AcquisitionAttempt, acquired_source_id?: string): AuthorityLedgerRow {
     const row = this.rows.get(key) ?? { authority_key: key, attempts: [] };
@@ -103,13 +117,48 @@ export class AcquisitionLedger {
     };
   }
 
+  // ── Per-source targeted-read yield (same-source no-yield exhaustion) ────
+  /** Record one targeted read against an already stored body. */
+  noteRead(source_id: string, opts: { yielded: boolean; locator?: string | null }): SourceReadRow {
+    const row = this.reads.get(source_id) ??
+      { source_id, no_yield: 0, yielded: 0, missing_locators: [], exhausted: false };
+    if (opts.yielded) {
+      row.yielded += 1;
+      row.no_yield = 0;
+      row.exhausted = false;
+    } else {
+      row.no_yield += 1;
+      const loc = opts.locator?.trim();
+      if (loc && !row.missing_locators.includes(loc)) row.missing_locators.push(loc);
+      if (row.no_yield >= NO_YIELD_EXHAUSTION_THRESHOLD) row.exhausted = true;
+    }
+    this.reads.set(source_id, row);
+    return row;
+  }
+
+  readState(source_id: string): SourceReadRow | null {
+    return this.reads.get(source_id) ?? null;
+  }
+
+  /** True when the same locator was already established as missing here. */
+  knownMissingLocator(source_id: string, locator?: string | null): boolean {
+    const loc = locator?.trim();
+    if (!loc) return false;
+    return !!this.reads.get(source_id)?.missing_locators.includes(loc);
+  }
+
+  allReads(): SourceReadRow[] {
+    return [...this.reads.values()];
+  }
+
   toJSON(): AcquisitionLedgerJson {
-    return { rows: this.all() };
+    return { rows: this.all(), reads: this.allReads() };
   }
 
   static fromJSON(json: AcquisitionLedgerJson | null | undefined): AcquisitionLedger {
     const l = new AcquisitionLedger();
     for (const r of json?.rows ?? []) l.rows.set(r.authority_key, r);
+    for (const r of json?.reads ?? []) l.reads.set(r.source_id, r);
     return l;
   }
 
