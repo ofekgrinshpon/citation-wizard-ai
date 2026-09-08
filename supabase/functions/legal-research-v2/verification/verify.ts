@@ -21,6 +21,13 @@ import type {
 import type { EvidenceStore } from "../evidence/evidenceStore.ts";
 import type { UsageLedger } from "../shared/model.ts";
 import { buildSectionVariants, normalizeDocketText } from "../shared/primitives.ts";
+import {
+  bodyHasDocket,
+  bodyHasTitle,
+  docketNumberOf,
+  normalizeIdentityText,
+} from "./identityEvidence.ts";
+
 import { matchSpan } from "./spanMatch.ts";
 import { verifySupport, type SupportInput } from "./supportVerifier.ts";
 
