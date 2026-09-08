@@ -21,6 +21,8 @@ export interface StatuteObligation {
   variants: string[];
 }
 
+export type DeliverableKind = "focused" | "developed";
+
 export interface Intake {
   run_id: string;
   question: string;
@@ -28,6 +30,8 @@ export interface Intake {
   docket_obligations: DocketObligation[];
   statute_obligations: StatuteObligation[];
   attachment_text: string | null;
+  /** What the user asked to receive: a focused answer or a developed product. */
+  deliverable: DeliverableKind;
   budgets: ToolBudgets;
   /**
    * Evaluation-only Research Agent model override (model bake-off).

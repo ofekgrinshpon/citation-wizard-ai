@@ -12,7 +12,7 @@
  * No sufficiency framework, no ranking, no rescue stage.
  */
 
-import type { EvidenceSource, Intake } from "../types.ts";
+import type { DeliverableKind, EvidenceSource, Intake } from "../types.ts";
 
 export interface CommitSignals {
   readable_count: number;
@@ -20,6 +20,8 @@ export interface CommitSignals {
   obligations_satisfied: number;
   stale_streak: number;
   research_steps_left: number;
+  /** What the user asked to receive; only wording of the early signal depends on it. */
+  deliverable?: DeliverableKind;
 }
 
 export type CommitDirectiveKind =
@@ -54,8 +56,11 @@ export function obligationsSatisfied(intake: Intake, readable: EvidenceSource[])
 const MANDATORY_TEXT =
   "עצור את המחקר. שלב איסוף הראיות הסתיים. בהתבסס אך ורק על המסמכים שכבר נקראו בריצה זו, קרא עכשיו ל-submit_research_memo והגש את התזכיר הטוב ביותר האפשרי. סמן במפורש ב-unresolved_questions כל טענה שלא ניתן לבסס. אל תקרא ליותר אף כלי מחקר.";
 
-const EARLY_TEXT =
+const EARLY_TEXT_FOCUSED =
   "כבר קראת חומר שעשוי להספיק. או שתגיש עכשיו את תזכיר המחקר (submit_research_memo), או שתנסח לעצמך צורך מחקרי אחד ספציפי שטרם נענה — ורק אז תשתמש בכלי נוסף.";
+
+const EARLY_TEXT_DEVELOPED =
+  "קראת מספר מסמכים, אך המשתמש ביקש תוצר מחקרי מפותח. מספר המסמכים כשלעצמו אינו מעיד על מספיקות. בדוק עכשיו אם בסיס הראיות מתאים לעומק שהתבקש: האם הממדים המרכזיים של הסוגיה מיוצגים, האם יש ספרות או עמדות מתחרות משמעותיות, והאם הדין הראשוני הרלוונטי נקרא. אם התשובה שלילית — המשך לחקור בכיוון שחסר. רק אם בסיס הראיות כבר תומך בתוצר המפותח שהתבקש, הגש את תזכיר המחקר.";
 
 function namedText(readyList: string): string {
   return `גוף האסמכתה שנדרשה במפורש (${readyList}) הובא ונקרא בפועל. אם הוא כולל חומר המשיב לשאלת המשתמש — הגש עכשיו את תזכיר המחקר. אל תמשיך בגילוי מקורות נוספים אלא אם חסר לך רכיב ספציפי שאינו נמצא בגוף שנקרא.`;
@@ -103,7 +108,10 @@ export class CommitTracker {
     }
     if (s.readable_count >= 3 && !this.issued.has("early_commit")) {
       this.issued.add("early_commit");
-      return { kind: "early_commit", text: EARLY_TEXT };
+      return {
+        kind: "early_commit",
+        text: s.deliverable === "developed" ? EARLY_TEXT_DEVELOPED : EARLY_TEXT_FOCUSED,
+      };
     }
     if (s.stale_streak >= 2 && !this.issued.has("stale_research")) {
       this.issued.add("stale_research");
