@@ -24,6 +24,12 @@ interface Props {
   onRegenerate: (id: number) => void;
   onRemove: (id: number) => void;
   disabled?: boolean;
+  /** Optional per-card copy action (used by the V2 אזכור אחיד review layer). */
+  onCopy?: (id: number) => void;
+  /** Optional label shown next to the footnote number (original V2 source). */
+  originLabel?: string;
+  /** Replaces the ✕ remove button label/behavior hint when provided. */
+  hideRemove?: boolean;
 }
 
 const TYPE_OPTIONS: SourceType[] = [
@@ -54,6 +60,9 @@ export function FootnoteReviewCard({
   onRegenerate,
   onRemove,
   disabled,
+  onCopy,
+  originLabel,
+  hideRemove,
 }: Props) {
   const [editInput, setEditInput] = useState(false);
   const [draftOutput, setDraftOutput] = useState(cell.output ?? "");
@@ -89,14 +98,33 @@ export function FootnoteReviewCard({
           <span className={`text-[11px] px-2 py-0.5 rounded-full font-medium ${statusPill.cls}`}>
             {statusPill.text}
           </span>
+          {originLabel && (
+            <span className="text-[11px] text-muted-foreground truncate max-w-[220px]" title={originLabel}>
+              {originLabel}
+            </span>
+          )}
         </div>
-        <button
-          onClick={() => onRemove(cell.id)}
-          className="text-[11px] text-muted-foreground hover:text-destructive px-1.5 py-1 rounded transition-colors"
-          title="הסר"
-        >
-          ✕
-        </button>
+        <div className="flex items-center gap-1">
+          {onCopy && (
+            <button
+              onClick={() => onCopy(cell.id)}
+              disabled={!cell.output}
+              className="text-[11px] text-primary hover:bg-primary/10 px-1.5 py-1 rounded transition-colors disabled:opacity-40"
+              title="העתק הערה"
+            >
+              📋
+            </button>
+          )}
+          {!hideRemove && (
+            <button
+              onClick={() => onRemove(cell.id)}
+              className="text-[11px] text-muted-foreground hover:text-destructive px-1.5 py-1 rounded transition-colors"
+              title="הסר"
+            >
+              ✕
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Input row */}
