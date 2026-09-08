@@ -273,6 +273,7 @@ export async function verifyMemo(opts: {
       });
       continue;
     }
+    stageOf(s.source.source_id).support = true;
     const list = byClaim.get(s.claim_id) ?? [];
     list.push({
       source_id: s.source.source_id,
@@ -283,6 +284,7 @@ export async function verifyMemo(opts: {
       support: v.support,
     });
     byClaim.set(s.claim_id, list);
+
   }
 
   const claims: VerifiedClaim[] = [];
