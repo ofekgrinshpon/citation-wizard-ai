@@ -797,6 +797,10 @@ export function LegalResearchV1Panel({
               </div>
             )}
 
+            {RESEARCH_PIPELINE === "v2" && result.footnotes?.length > 0 && (
+              <UniformCitationPanel key={debug.run_id ?? "v2"} footnotes={result.footnotes} />
+            )}
+
             {import.meta.env.DEV && (
               <Collapsible defaultOpen={dbgOpenDefault}>
                 <CollapsibleTrigger className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors">
