@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { invokeFunction } from "@/lib/functionError";
 import { useCredits } from "@/hooks/useCredits";
+import { useAuth } from "@/hooks/useAuth";
 import { InsufficientCreditsDialog } from "@/components/InsufficientCreditsDialog";
 import { CREDIT_COSTS } from "@/lib/creditCosts";
 import { ReLexLogo } from "@/components/ReLexLogo";
@@ -133,6 +134,7 @@ export function LegalResearchV1Panel({
 }: LegalResearchV1PanelProps = {}) {
   const { currentProject, loading: projectsLoading } = useProjects();
   const credits = useCredits();
+  const { isAdmin } = useAuth();
   const [question, setQuestion] = useState("");
   const [loading, setLoading] = useState(false);
   const [currentStage, setCurrentStage] = useState<string | null>(null);
@@ -561,7 +563,12 @@ export function LegalResearchV1Panel({
 
 
   const debug = (result?.debug ?? {}) as Record<string, any>;
-  const dbgOpenDefault = import.meta.env.DEV;
+  // Diagnostics are never shown to normal users: they require an explicit
+  // ?debug=1 opt-in AND an admin session (or a local dev build).
+  const debugOptIn = typeof window !== "undefined" &&
+    new URLSearchParams(window.location.search).get("debug") === "1";
+  const showDebug = debugOptIn && (isAdmin || import.meta.env.DEV);
+  const dbgOpenDefault = false;
 
   const hasContentToClear =
     question.trim().length > 0 || files.length > 0 || !!result || !!error;
@@ -802,7 +809,7 @@ export function LegalResearchV1Panel({
               <UniformCitationPanel key={debug.run_id ?? "v2"} footnotes={result.footnotes} />
             )}
 
-            {import.meta.env.DEV && (
+            {showDebug && (
               <Collapsible defaultOpen={dbgOpenDefault}>
                 <CollapsibleTrigger className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors">
                   <ChevronDown className="w-3.5 h-3.5" />

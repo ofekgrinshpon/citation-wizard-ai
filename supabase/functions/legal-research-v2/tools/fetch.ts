@@ -24,6 +24,7 @@ import {
   officialFetch,
 } from "../shared/primitives.ts";
 import { AcquisitionLedger, type AuthorityState, authorityKeyOf } from "./acquisitionLedger.ts";
+import { locateSection, normalizeSectionToken, sectionMissingInstruction } from "../evidence/sectionLocator.ts";
 import { normalizeUrlKey } from "../evidence/evidenceStore.ts";
 
 export const FETCH_LIMITS = {
@@ -163,6 +164,13 @@ export interface FetchOutput {
   authority_reuse?: boolean;
   /** True when this exact URL already failed for this authority. */
   dead_path?: boolean;
+  /** Targeted section retrieval outcome. */
+  section_requested?: string;
+  section_found?: boolean;
+  section_coverage?: { first: string | null; last: string | null; count: number };
+  /** Further equivalent queries on this source are unlikely to add evidence. */
+  search_path_exhausted?: boolean;
+  no_new_evidence?: boolean;
   error?: string;
 }
 
@@ -186,8 +194,9 @@ function alreadyReadPayload(cached: EvidenceSource, input: FetchInput): FetchOut
     identity_found: cached.identity_fields,
     windows: windows?.length ? windows : undefined,
     text_head: windows?.length ? undefined : cached.extracted_text.slice(0, FETCH_LIMITS.HEAD_CHARS),
-    instruction:
-      "מקור זה כבר נקרא בריצה זו. אל תביא אותו שוב אלא אם נדרשת הבאה שונה מהותית. לקריאה ממוקדת בתוכו: fetch({source_id, query}).",
+    instruction: cached.fetch_status === "ok" && cached.is_actual_document
+      ? "מקור זה כבר נקרא בריצה זו. אל תביא אותו שוב אלא אם נדרשת הבאה שונה מהותית. לקריאה ממוקדת בתוכו: fetch({source_id, query})."
+      : `נתיב זה כבר נוסה בריצה זו ולא הניב מסמך קריא (${cached.not_document_reason ?? cached.fetch_error ?? "unusable"}). אל תחזור עליו — פנה למקור רשמי אחר או לנוסח משולב אמין.`,
     error: cached.fetch_status === "ok" ? undefined : cached.fetch_error,
   };
 }
@@ -224,12 +233,93 @@ export async function runFetch(
   if (input.source_id && !input.url && !input.result_id) {
     const src = store.get(input.source_id);
     if (!src) return { ok: false, error: `unknown_source_id:${input.source_id}` };
+
+    // ── Targeted section retrieval ────────────────────────────────────────
+    // A long consolidated statute is not limited to its first text window:
+    // the requested provision is located inside the stored body, and if the
+    // body cannot serve it that is said plainly so the agent pivots.
+    const sectionRequest = input.expected_identity?.section ?? input.locator ??
+      (input.want === "relevant_section" ? input.query : undefined);
+    const sectionToken = sectionRequest ? normalizeSectionToken(sectionRequest) : null;
+    if (sectionToken) {
+      if (ledger?.knownMissingLocator(src.source_id, sectionToken)) {
+        const known = locateSection(src.extracted_text, sectionToken, {
+          truncated: src.text_length >= FETCH_LIMITS.MAX_TEXT_CHARS,
+        });
+        return clampFetchOutput({
+          ok: false,
+          already_read: true,
+          no_new_evidence: true,
+          search_path_exhausted: true,
+          source_id: src.source_id,
+          section_requested: sectionToken,
+          section_found: false,
+          section_coverage: known.coverage,
+          instruction: sectionMissingInstruction(known, src.source_id),
+        });
+      }
+      const found = locateSection(src.extracted_text, sectionToken, {
+        window: FETCH_LIMITS.WINDOW_CHARS + 600,
+        truncated: src.text_length >= FETCH_LIMITS.MAX_TEXT_CHARS,
+      });
+      const read = ledger?.noteRead(src.source_id, {
+        yielded: found.found,
+        locator: found.found ? null : sectionToken,
+      });
+      // Not the requested section, but do not withhold what the body does say:
+      // return bounded term windows as clearly-labelled context.
+      const fallback = found.found ? null : store.excerpt(src.source_id, {
+        query: input.query,
+        find: input.find,
+        maxChars: FETCH_LIMITS.WINDOW_CHARS,
+      });
+      const fallbackWindows = fallback && fallback.from !== "head" ? fallback.windows : undefined;
+      return clampFetchOutput({
+        ok: found.found && src.fetch_status === "ok",
+        already_read: true,
+        source_id: src.source_id,
+        title: src.title,
+        text_length: src.text_length,
+        is_actual_document: src.is_actual_document,
+        identity_found: src.identity_fields,
+        section_requested: sectionToken,
+        section_found: found.found,
+        section_coverage: found.coverage,
+        windows: found.found ? found.windows : fallbackWindows,
+        no_new_evidence: found.found || fallbackWindows ? undefined : true,
+        search_path_exhausted: found.found ? undefined : read?.exhausted || undefined,
+        instruction: found.found
+          ? `סעיף ${sectionToken} אותר בתוך ${src.source_id}. הגוף המלא נשאר בצד השרת; צטט מילה במילה מתוך החלון שהוחזר.`
+          : `${sectionMissingInstruction(found, src.source_id)}${
+            fallbackWindows ? " (הוחזרו חלונות טקסט לפי מונחי החיפוש בלבד — אינם הסעיף המבוקש.)" : ""
+          }`,
+      });
+    }
+
     const ex = store.excerpt(input.source_id, {
       query: input.query,
       locator: input.locator,
       find: input.find,
       maxChars: FETCH_LIMITS.WINDOW_CHARS,
     })!;
+    // "head" means no query term matched: this read produced no new evidence.
+    const yielded = ex.from !== "head";
+    const read = ledger?.noteRead(src.source_id, {
+      yielded,
+      locator: yielded ? null : (input.query ?? input.locator ?? null),
+    });
+    if (!yielded && read?.exhausted) {
+      return clampFetchOutput({
+        ok: false,
+        already_read: true,
+        no_new_evidence: true,
+        search_path_exhausted: true,
+        source_id: src.source_id,
+        text_length: src.text_length,
+        instruction:
+          `מיצית את ${src.source_id}: ${read.no_yield} קריאות ממוקדות רצופות בגוף שלא השתנה לא החזירו ראיה חדשה. שאילתות נוספות בניסוח שונה על אותו מקור לא יוסיפו דבר — עבור למקור אחר או לנתיב השגה אחר, או הגש את התזכיר עם מה שאומת.`,
+      });
+    }
     return clampFetchOutput({
       ok: src.fetch_status === "ok",
       already_read: true,
@@ -240,7 +330,10 @@ export async function runFetch(
       is_actual_document: src.is_actual_document,
       identity_found: src.identity_fields,
       windows: ex.windows,
-      instruction: `קריאה ממוקדת בתוך ${src.source_id} (${ex.from}). הגוף המלא שמור בצד השרת ואינו נשלח לשיחה.`,
+      no_new_evidence: yielded ? undefined : true,
+      instruction: yielded
+        ? `קריאה ממוקדת בתוך ${src.source_id} (${ex.from}). הגוף המלא שמור בצד השרת ואינו נשלח לשיחה.`
+        : `לא נמצאה התאמה לשאילתה בתוך ${src.source_id}; הוחזרה פתיחת המסמך בלבד. אל תנסח מחדש את אותה שאלה על מקור זה — בקש סעיף/מונח שונה מהותית או עבור למקור אחר.`,
     });
   }
 
