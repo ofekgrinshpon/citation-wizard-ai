@@ -49,6 +49,12 @@ export interface Intake {
   academic_context?: AcademicProjectContext | null;
   /** Continuous footnote numbering across chapters (0 for normal research). */
   footnote_offset?: number;
+  /**
+   * Evaluation-only deliverable-level research contract (bake-off harness).
+   * Reachable only from the internal smoke/eval entry point; production
+   * requests never set it.
+   */
+  research_contract?: string | null;
 }
 
 export interface ToolBudgets {

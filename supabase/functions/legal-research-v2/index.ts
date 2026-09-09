@@ -99,6 +99,8 @@ export function buildIntake(input: {
   /** Academic Writing body chapter only — framing context, never evidence. */
   academic_context?: AcademicProjectContext | null;
   footnote_offset?: number;
+  /** Evaluation-only deliverable-level research contract. */
+  research_contract?: string | null;
 }): Intake {
   const question = (input.question ?? "").trim();
   const dockets = detectDockets(question).map((d) => ({
@@ -124,6 +126,7 @@ export function buildIntake(input: {
     agent_model: input.agent_model?.trim() || null,
     academic_context: input.academic_context ?? null,
     footnote_offset: Math.max(0, Math.floor(input.footnote_offset ?? 0)),
+    research_contract: input.research_contract?.trim() || null,
   };
 }
 
@@ -867,6 +870,11 @@ serve(async (req) => {
     attachment_text: typeof body.attachment_text === "string" ? body.attachment_text : null,
     budgets: (body.budgets ?? undefined) as Partial<ToolBudgets> | undefined,
     agent_model: typeof body.agent_model === "string" ? body.agent_model : null,
+    // Evaluation-only: the internal entry point may run an Academic Writing
+    // body chapter with a deliverable-level research contract.
+    academic_context: body.academic_context ? parseProjectContext(body.academic_context) : null,
+    footnote_offset: typeof body.footnote_offset === "number" ? body.footnote_offset : 0,
+    research_contract: typeof body.research_contract === "string" ? body.research_contract : null,
   });
 
   // Background execution: evaluation runs routinely exceed the synchronous

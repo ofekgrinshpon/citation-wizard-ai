@@ -45,6 +45,8 @@ export function buildAgentUserMessage(intake: Intake): string {
   }
 
 
+  if (intake.research_contract) parts.push(intake.research_contract);
+
   parts.push(
     intake.deliverable === "developed"
       ? "אופי התוצר שהתבקש: תוצר מחקרי מפותח (פרק/מבוא/סקירת ספרות/ניתוח השוואתי/סינתזה). בסיס הראיות צריך להתאים לעומק הזה: ממדים מרכזיים של הסוגיה, ספרות רלוונטית ועמדות מתחרות. אל תסתפק בסבב גילוי וקריאה יחיד כאשר ברור שהחומר שנקרא יספיק רק לתשובה קצרה."
