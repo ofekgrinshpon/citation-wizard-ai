@@ -11,15 +11,25 @@
 
 export interface AcquisitionAttempt {
   url: string;
-  outcome: "acquired" | "failed" | "not_the_document";
+  /**
+   * `acquired` means: readable body whose OWN identity corroborated the
+   * requested authority. `readable_unconfirmed_identity` means the body is
+   * usable but may not stand in for this authority key.
+   */
+  outcome: "acquired" | "failed" | "not_the_document" | "readable_unconfirmed_identity";
   reason: string;
   at: string;
+  /** Whether the fetched body positively corroborated the requested authority. */
+  identity_corroborated?: boolean;
 }
 
 export interface AuthorityLedgerRow {
   authority_key: string;
   attempts: AcquisitionAttempt[];
+  /** Set ONLY for a positively corroborated body. */
   acquired_source_id?: string;
+  /** Why the binding above was accepted (deterministic basis string). */
+  binding_basis?: string;
 }
 
 export interface SourceReadRow {
@@ -68,10 +78,18 @@ export class AcquisitionLedger {
   private rows = new Map<string, AuthorityLedgerRow>();
   private reads = new Map<string, SourceReadRow>();
 
+  /**
+   * Record an attempt. A binding (`acquired_source_id`) is created only when
+   * the caller passes a source whose body positively corroborated this
+   * authority; unconfirmed bodies are remembered as attempts only.
+   */
   note(key: string, attempt: AcquisitionAttempt, acquired_source_id?: string): AuthorityLedgerRow {
     const row = this.rows.get(key) ?? { authority_key: key, attempts: [] };
     row.attempts.push(attempt);
-    if (acquired_source_id) row.acquired_source_id = acquired_source_id;
+    if (acquired_source_id && attempt.identity_corroborated !== false) {
+      row.acquired_source_id = acquired_source_id;
+      row.binding_basis = attempt.reason;
+    }
     this.rows.set(key, row);
     return row;
   }

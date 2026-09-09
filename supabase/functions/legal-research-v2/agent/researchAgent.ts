@@ -142,6 +142,9 @@ export interface AgentContextStats {
   already_read_actions: number;
   noop_already_read_suppressed: number;
   authority_reacquisitions_prevented: number;
+  /** Authority-binding safety (v2_acquisition_ledger_verified_authority_binding_v1). */
+  authority_bindings_created: number;
+  authority_bindings_withheld: number;
   context_compactions: number;
   context_chars_saved: number;
 }
@@ -155,6 +158,8 @@ export function newAgentStats(): AgentContextStats {
     already_read_actions: 0,
     noop_already_read_suppressed: 0,
     authority_reacquisitions_prevented: 0,
+    authority_bindings_created: 0,
+    authority_bindings_withheld: 0,
     context_compactions: 0,
     context_chars_saved: 0,
   };
@@ -501,6 +506,8 @@ export async function runResearchAgent(opts: {
         if (!out.already_read) policy.note("fetch");
         if (out.already_read) stats.already_read_actions += 1;
         if (out.authority_reuse) stats.authority_reacquisitions_prevented += 1;
+        if (out.authority_binding_created) stats.authority_bindings_created += 1;
+        if (out.authority_binding_withheld) stats.authority_bindings_withheld += 1;
         payload = out as unknown as Record<string, unknown>;
         summary = out.already_read
           ? `already_read ${out.source_id}`

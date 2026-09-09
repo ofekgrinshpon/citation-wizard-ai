@@ -24,6 +24,7 @@ import {
   officialFetch,
 } from "../shared/primitives.ts";
 import { AcquisitionLedger, type AuthorityState, authorityKeyOf } from "./acquisitionLedger.ts";
+import { corroborateAuthority } from "./authorityCorroboration.ts";
 import { locateSection, normalizeSectionToken, sectionMissingInstruction } from "../evidence/sectionLocator.ts";
 import { normalizeUrlKey } from "../evidence/evidenceStore.ts";
 import type { ServedQuote } from "../evidence/quotable.ts";
@@ -187,6 +188,14 @@ export interface FetchOutput {
   authority_state?: AuthorityState;
   /** True when a usable body for this authority already exists elsewhere. */
   authority_reuse?: boolean;
+  /** Internal telemetry: the body corroborated the requested authority. */
+  authority_identity_corroborated?: boolean;
+  /** Internal telemetry: a binding authority_key → source was created. */
+  authority_binding_created?: boolean;
+  /** Internal telemetry: readable body, but identity unconfirmed → no binding. */
+  authority_binding_withheld?: boolean;
+  /** Deterministic reason string for the binding decision. */
+  authority_binding_basis?: string;
   /** True when this exact URL already failed for this authority. */
   dead_path?: boolean;
   /** Targeted section retrieval outcome. */
@@ -423,7 +432,7 @@ export async function runFetch(
       });
     }
     const prior = ledger.attemptOn(authorityKey, url);
-    if (prior && prior.outcome !== "acquired") {
+    if (prior && prior.outcome !== "acquired" && prior.outcome !== "readable_unconfirmed_identity") {
       return clampFetchOutput({
         ok: false,
         dead_path: true,
@@ -533,26 +542,52 @@ export async function runFetch(
 
   const expectedDocket = input.expected_identity?.docket?.trim();
   let identity_hint: string | undefined;
-  let identityMatched = true;
+
+  // Positive corroboration: the fetched BODY must present itself as the
+  // requested authority before it may occupy that authority key. A requested
+  // label or a merely readable body is never proof.
+  const corroboration = corroborateAuthority({
+    expected: input.expected_identity,
+    title: entry.title,
+    text: entry.extracted_text,
+    identity_fields: entry.identity_fields,
+    is_actual_document: entry.is_actual_document,
+  });
+
   if (expectedDocket) {
-    const num = expectedDocket.match(/\d{1,6}\/\d{2,4}/)?.[0] ?? expectedDocket;
-    identityMatched = entry.identity_fields.dockets.includes(num) || entry.extracted_text.includes(num);
-    identity_hint = identityMatched
+    identity_hint = corroboration.corroborated
       ? `התיק ${expectedDocket} מופיע בגוף המסמך שהובא.`
       : `אזהרה: התיק ${expectedDocket} לא נמצא בגוף המסמך שהובא — ככל הנראה זה אינו המסמך המבוקש.`;
+  } else if (input.expected_identity?.statute?.trim() && !corroboration.corroborated && entry.is_actual_document) {
+    identity_hint =
+      `אזהרה: גוף המסמך שהובא אינו מזדהה כ"${input.expected_identity.statute.trim()}" (${corroboration.basis}). ניתן להשתמש בו ככל שהוא רלוונטי, אך הוא אינו נחשב לגוף האסמכתה המבוקשת — אפשר וכדאי להביא מועמד אחר עבורה.`;
   }
 
+  let authority_binding_created = false;
+  let authority_binding_withheld = false;
   if (ledger && authorityKey) {
-    const acquired = entry.is_actual_document && identityMatched;
+    const bind = corroboration.corroborated;
+    const outcome: "acquired" | "failed" | "not_the_document" | "readable_unconfirmed_identity" = bind
+      ? "acquired"
+      : !entry.is_actual_document
+      ? "failed"
+      : corroboration.basis === "docket_absent_from_body"
+      ? "not_the_document"
+      : "readable_unconfirmed_identity";
+    authority_binding_created = bind;
+    authority_binding_withheld = !bind && entry.is_actual_document;
     ledger.note(
       authorityKey,
       {
         url,
-        outcome: acquired ? "acquired" : identityMatched ? "failed" : "not_the_document",
-        reason: acquired ? "body_read_with_matching_identity" : (entry.not_document_reason ?? "identity_mismatch"),
+        outcome,
+        reason: bind
+          ? `body_identity_corroborated:${corroboration.basis}`
+          : (entry.not_document_reason ?? corroboration.basis),
         at: new Date().toISOString(),
+        identity_corroborated: bind,
       },
-      acquired ? entry.source_id : undefined,
+      bind ? entry.source_id : undefined,
     );
   }
 
@@ -573,6 +608,10 @@ export async function runFetch(
     not_document_reason: entry.not_document_reason,
     identity_found: entry.identity_fields,
     identity_hint,
+    authority_identity_corroborated: authorityKey ? corroboration.corroborated : undefined,
+    authority_binding_created: authorityKey ? authority_binding_created : undefined,
+    authority_binding_withheld: authorityKey ? authority_binding_withheld : undefined,
+    authority_binding_basis: authorityKey ? corroboration.basis : undefined,
     text_head: freshServed.windows?.length
       ? undefined
       : entry.extracted_text.slice(0, FETCH_LIMITS.HEAD_CHARS),
