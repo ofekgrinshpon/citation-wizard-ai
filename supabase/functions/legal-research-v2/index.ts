@@ -692,6 +692,7 @@ serve(async (req) => {
   // Internal / smoke invocation only — V2 carries no production traffic yet.
   const authHeader = req.headers.get("Authorization") ?? "";
   const smokeTokens = [
+    Deno.env.get("V2_EVAL_TOKEN_E"),
     Deno.env.get("V2_EVAL_TOKEN_D"),
     Deno.env.get("V2_EVAL_TOKEN_C"),
     Deno.env.get("V2_EVAL_TOKEN"),
