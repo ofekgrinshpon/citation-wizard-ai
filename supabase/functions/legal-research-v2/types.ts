@@ -321,6 +321,9 @@ export interface V2Telemetry {
   already_read_actions?: number;
   noop_already_read_suppressed?: number;
   authority_reacquisitions_prevented?: number;
+  /** Authority-binding safety (v2_acquisition_ledger_verified_authority_binding_v1). */
+  authority_bindings_created?: number;
+  authority_bindings_withheld?: number;
   context_compactions?: number;
   context_chars_saved?: number;
   /** Statute section acquisition + same-source exhaustion (statute_section_acquisition_v1). */

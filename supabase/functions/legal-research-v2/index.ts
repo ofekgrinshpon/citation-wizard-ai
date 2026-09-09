@@ -547,6 +547,8 @@ async function runPipeline(
     already_read_actions: agent.stats.already_read_actions,
     noop_already_read_suppressed: agent.stats.noop_already_read_suppressed,
     authority_reacquisitions_prevented: agent.stats.authority_reacquisitions_prevented,
+    authority_bindings_created: agent.stats.authority_bindings_created,
+    authority_bindings_withheld: agent.stats.authority_bindings_withheld,
     context_compactions: agent.stats.context_compactions,
     context_chars_saved: agent.stats.context_chars_saved,
     section_reads_yielded: agent.ledger.allReads().reduce((n, r) => n + r.yielded, 0),
