@@ -82,6 +82,42 @@ export type Database = {
           },
         ]
       }
+      active_operations: {
+        Row: {
+          last_heartbeat_at: string
+          operation_id: string
+          operation_type: string
+          project_id: string | null
+          release_reason: string | null
+          released_at: string | null
+          started_at: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          last_heartbeat_at?: string
+          operation_id: string
+          operation_type: string
+          project_id?: string | null
+          release_reason?: string | null
+          released_at?: string | null
+          started_at?: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          last_heartbeat_at?: string
+          operation_id?: string
+          operation_type?: string
+          project_id?: string | null
+          release_reason?: string | null
+          released_at?: string | null
+          started_at?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       activity_logs: {
         Row: {
           action: string
@@ -540,6 +576,39 @@ export type Database = {
           started_at?: string | null
           status?: string
           updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      operation_lock_events: {
+        Row: {
+          blocked_by_type: string | null
+          created_at: string
+          duration_ms: number | null
+          event: string
+          id: string
+          operation_id: string | null
+          operation_type: string | null
+          user_id: string
+        }
+        Insert: {
+          blocked_by_type?: string | null
+          created_at?: string
+          duration_ms?: number | null
+          event: string
+          id?: string
+          operation_id?: string | null
+          operation_type?: string | null
+          user_id: string
+        }
+        Update: {
+          blocked_by_type?: string | null
+          created_at?: string
+          duration_ms?: number | null
+          event?: string
+          id?: string
+          operation_id?: string | null
+          operation_type?: string | null
           user_id?: string
         }
         Relationships: []
@@ -1124,6 +1193,15 @@ export type Database = {
       _plan_credits: { Args: { _plan: string }; Returns: number }
       _plan_period_length: { Args: { _plan: string }; Returns: string }
       _plan_reset_mode: { Args: { _plan: string }; Returns: string }
+      acquire_operation_lock: {
+        Args: {
+          _operation_id: string
+          _operation_type: string
+          _project_id?: string
+          _stale_after?: string
+        }
+        Returns: Json
+      }
       add_topup_credits: {
         Args: { _amount: number; _reason?: string; _user_id: string }
         Returns: Json
@@ -1192,6 +1270,10 @@ export type Database = {
       grant_referral_bonus_if_eligible: {
         Args: { _user_id: string }
         Returns: Json
+      }
+      heartbeat_operation_lock_for_user: {
+        Args: { _operation_id: string; _user_id: string }
+        Returns: boolean
       }
       increment_citation_count: { Args: never; Returns: undefined }
       increment_usage_count: { Args: { source_id: string }; Returns: undefined }
@@ -1274,6 +1356,14 @@ export type Database = {
       }
       refund_credits_for_user: {
         Args: { _reason: string; _request_id: string; _user_id: string }
+        Returns: Json
+      }
+      release_operation_lock: {
+        Args: { _operation_id: string; _reason?: string }
+        Returns: Json
+      }
+      release_operation_lock_for_user: {
+        Args: { _operation_id: string; _reason?: string; _user_id: string }
         Returns: Json
       }
       reset_or_renew_credits: { Args: never; Returns: number }

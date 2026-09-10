@@ -9,6 +9,7 @@
 // =========================================================================
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { acquireOperationLock, heartbeatOperationLock, lockUnavailablePayload, operationInProgressPayload, releaseOperationLock } from "../_shared/operationLock.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
 
 import { runClaimAnalyzer } from "./stages/claimAnalyzer.ts";
@@ -203,6 +204,10 @@ async function handle(req: Request): Promise<Response> {
   // Observability: id of the in-progress qa_logs trace row for this run. When
   // set, terminal telemetry UPDATEs that row instead of inserting a new one.
   let traceRowId: string | null = null;
+  // Account-level concurrency ownership (null when bypassed / smoke).
+  let lockOperationId: string | null = null;
+  let lockUserId: string | null = null;
+  let lockBeatAt = 0;
   const concurrencyHint = req.headers.get("x-conc-hint");
   const adminEarly = makeAdminClient();
   const setJobStatus = async (patch: Record<string, unknown>) => {
@@ -211,6 +216,18 @@ async function handle(req: Request): Promise<Response> {
       await adminEarly.from("legal_research_jobs").update({ ...patch }).eq("id", jobId);
     } catch (e) {
       console.error("[lrv1 job update failed]", e);
+    }
+    // Account lock lifecycle rides the existing job lifecycle: liveness on
+    // progress writes, terminal release on a terminal status.
+    if (!lockOperationId || !lockUserId) return;
+    const st = patch.status;
+    if (st === "done" || st === "error" || st === "timed_out") {
+      const opId = lockOperationId;
+      lockOperationId = null;
+      await releaseOperationLock(adminEarly, lockUserId, opId, `lrv1_${String(st)}`);
+    } else if (Date.now() - lockBeatAt > 10_000) {
+      lockBeatAt = Date.now();
+      await heartbeatOperationLock(adminEarly, lockUserId, lockOperationId);
     }
   };
 
@@ -432,6 +449,28 @@ async function handle(req: Request): Promise<Response> {
 
 
 
+  // ─── Account-level concurrency protection ────────────────────────────────
+  // Acquired BEFORE the credit charge; a refused second attempt is never
+  // charged and never reaches a provider.
+  if (!smokeMode && userClient) {
+    const opId = clientRequestId ?? crypto.randomUUID();
+    const lockRes = await acquireOperationLock(
+      userClient as unknown as { rpc(fn: string, params?: Record<string, unknown>): unknown },
+      body.mode === "sources_only" ? "source_search" : "research_answer",
+      opId,
+      typeof project_id === "string" ? project_id : null,
+    );
+    if (!lockRes.ok) {
+      return lockRes.error === "lock_unavailable"
+        ? jsonResponse(503, lockUnavailablePayload())
+        : jsonResponse(409, operationInProgressPayload(lockRes.active_operation_type));
+    }
+    if (!lockRes.bypass) {
+      lockOperationId = opId;
+      lockUserId = user.id;
+    }
+  }
+
   // ─── Credit charge (skipped in smoke mode) ───────────────────────────────
   // Charge the per-query cost up front. The pipeline runs in the background
   // after we return 202; if it does not deliver a real answer (refusal, stub,
@@ -471,11 +510,19 @@ async function handle(req: Request): Promise<Response> {
       );
       if (consumeErr) {
         creditRequestId = null;
+        if (lockOperationId && lockUserId) {
+          await releaseOperationLock(adminEarly, lockUserId, lockOperationId, "credit_charge_failed");
+          lockOperationId = null;
+        }
         return jsonResponse(500, { error: "credit_charge_failed", detail: consumeErr.message });
       }
       const cr = (consumeData ?? {}) as Record<string, unknown>;
       if (!cr.ok) {
         creditRequestId = null;
+        if (lockOperationId && lockUserId) {
+          await releaseOperationLock(adminEarly, lockUserId, lockOperationId, "insufficient_credits");
+          lockOperationId = null;
+        }
         if (cr.error === "INSUFFICIENT_CREDITS") {
           return jsonResponse(402, {
             error: "INSUFFICIENT_CREDITS",
@@ -550,6 +597,10 @@ async function handle(req: Request): Promise<Response> {
           .maybeSingle();
         const dupRow = dup as { id: string; status: string } | null;
         if (dupRow) {
+          if (lockOperationId && lockUserId) {
+            await releaseOperationLock(adminEarly, lockUserId, lockOperationId, "duplicate_submit");
+            lockOperationId = null;
+          }
           return jsonResponse(202, {
             ok: true,
             job_id: dupRow.id,
@@ -560,11 +611,19 @@ async function handle(req: Request): Promise<Response> {
       }
       console.error("[lrv1] job insert failed:", jobErr);
       await refundCredits("job_insert_failed");
+      if (lockOperationId && lockUserId) {
+        await releaseOperationLock(adminEarly, lockUserId, lockOperationId, "job_insert_failed");
+        lockOperationId = null;
+      }
       return jsonResponse(500, { error: "job_insert_failed", detail: jobErr?.message });
     }
     jobId = (jobRow as { id: string }).id;
   } catch (e) {
     await refundCredits("job_insert_threw");
+    if (lockOperationId && lockUserId) {
+      await releaseOperationLock(adminEarly, lockUserId, lockOperationId, "job_insert_threw");
+      lockOperationId = null;
+    }
     return jsonResponse(500, { error: "job_insert_threw", detail: e instanceof Error ? e.message : String(e) });
   }
 

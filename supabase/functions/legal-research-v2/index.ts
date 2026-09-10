@@ -60,6 +60,13 @@ import {
   SOURCE_SEARCH_CREDIT_COST,
   toBetaResult,
 } from "./beta/job.ts";
+import {
+  acquireOperationLock,
+  heartbeatOperationLock,
+  lockUnavailablePayload,
+  operationInProgressPayload,
+  releaseOperationLock,
+} from "../_shared/operationLock.ts";
 import { runDrafter } from "./drafting/draft.ts";
 import { renderAnswer } from "./drafting/render.ts";
 import { RunTimer, type RunTimingJson } from "./shared/timing.ts";
@@ -698,6 +705,13 @@ async function driveRun(
     job?.id ?? null,
     initialStage,
     outputMode,
+    job?.operation_id
+      ? {
+        userId: job.user_id,
+        operationId: job.operation_id,
+        beat: () => heartbeatOperationLock(admin, job.user_id, job.operation_id!),
+      }
+      : null,
   );
   try {
     const out = await runPipeline(admin, intake, { resume, chunked: true, progress });
@@ -832,6 +846,28 @@ serve(async (req) => {
       return json({ ok: true, job_id: existing.id, status: existing.status, reused: true }, 202);
     }
 
+    // ── Account-level concurrency protection ────────────────────────────
+    // Acquired BEFORE any credit charge: a refused second attempt costs the
+    // user nothing and never reaches a model provider. Answer mode and source
+    // search share one lock — both are protected research operations.
+    const operationType = academicContext
+      ? "academic_chapter"
+      : sourceSearch
+      ? "source_search"
+      : "research_answer";
+    const lock = await acquireOperationLock(
+      userClient as unknown as { rpc(fn: string, params?: Record<string, unknown>): unknown },
+      operationType,
+      clientRequestId,
+      projectId,
+    );
+    if (!lock.ok) {
+      return lock.error === "lock_unavailable"
+        ? json(lockUnavailablePayload(), 503)
+        : json(operationInProgressPayload(lock.active_operation_type), 409);
+    }
+    const lockOperationId = lock.bypass ? null : clientRequestId;
+
     // deno-lint-ignore no-explicit-any
     const { data: consumeData, error: consumeErr } = await (userClient as any).rpc(
       "consume_credits",
@@ -845,9 +881,16 @@ serve(async (req) => {
         _request_id: clientRequestId,
       },
     );
-    if (consumeErr) return json({ error: "credit_charge_failed", detail: consumeErr.message }, 500);
+    const releaseLockNow = async (reason: string) => {
+      if (lockOperationId) await releaseOperationLock(admin, user.id, lockOperationId, reason);
+    };
+    if (consumeErr) {
+      await releaseLockNow("credit_charge_failed");
+      return json({ error: "credit_charge_failed", detail: consumeErr.message }, 500);
+    }
     const cr = (consumeData ?? {}) as Record<string, unknown>;
     if (!cr.ok) {
+      await releaseLockNow("insufficient_credits");
       if (cr.error === "INSUFFICIENT_CREDITS") {
         return json({
           error: "INSUFFICIENT_CREDITS",
@@ -895,10 +938,16 @@ serve(async (req) => {
           _reason: "auto-refund: job_create_failed",
         });
       }
+      await releaseLockNow("job_create_failed");
       return json({ error: "job_create_failed", detail: jobErr?.message ?? null }, 500);
     }
 
-    const job: BetaJob = { id: jobRow.id, user_id: user.id, credit_request_id: creditRequestId };
+    const job: BetaJob = {
+      id: jobRow.id,
+      user_id: user.id,
+      credit_request_id: creditRequestId,
+      operation_id: lockOperationId,
+    };
     await admin.from("v2_eval_runs").insert({
       run_id: betaIntake.run_id,
       label: academicContext

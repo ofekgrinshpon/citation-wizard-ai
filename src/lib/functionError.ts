@@ -10,6 +10,8 @@ export interface EdgeErrorInfo {
   requestId: string | null;
   required?: number;
   isInsufficientCredits: boolean;
+  /** Another protected operation is already running on this account. */
+  isOperationInProgress: boolean;
   isAuthExpired: boolean;
   isInvalidInput: boolean;
   body: Record<string, unknown> | null;
@@ -46,6 +48,9 @@ function messageFor(status: number | null, code: string | null, body: Record<str
   const serverHe = (body?.messageHe ?? body?.message) as string | undefined;
   if (code === "AI_UNAVAILABLE") {
     return serverHe || "שירות ה-AI אינו זמין כרגע עקב מגבלת ספק. לא חויבתם — נסו שוב מאוחר יותר.";
+  }
+  if (code === "OPERATION_IN_PROGRESS") {
+    return serverHe || "יש כרגע פעולה פעילה ב-ReLex. ניתן להתחיל פעולה חדשה לאחר שהיא תסתיים.";
   }
   if (code === "INSUFFICIENT_CREDITS") {
     const required = body?.required;
@@ -92,6 +97,7 @@ export async function parseFunctionError(
     requestId,
     required: typeof body?.required === "number" ? (body.required as number) : undefined,
     isInsufficientCredits: code === "INSUFFICIENT_CREDITS",
+    isOperationInProgress: code === "OPERATION_IN_PROGRESS" || status === 409,
     isAuthExpired: status === 401 || status === 403,
     isInvalidInput: code === "INVALID_INPUT" || status === 400,
     body,
