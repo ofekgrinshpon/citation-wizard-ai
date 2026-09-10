@@ -2458,9 +2458,11 @@ export function LegalQAChat({ onResultSaved, externalResult, onConsumeExternalRe
       {/* Top section: Mode Cards */}
       <div className="px-2 sm:px-4 pt-4 pb-2 space-y-3">
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-          {TASK_MODES.map((m) => {
-            const isSelected = taskMode === m.id;
+        <div className="grid grid-cols-2 gap-2">
+          {TASK_MODES.filter((m) => TOP_LEVEL_MODE_IDS.includes(m.id)).map((m) => {
+            const isSelected = m.id === "research"
+              ? RESEARCH_INTENT_IDS.includes(taskMode)
+              : taskMode === m.id;
             const Icon = m.icon;
             const isComingSoon = m.id === "academic_writing" && !ACADEMIC_WRITING_ENABLED;
             return (
