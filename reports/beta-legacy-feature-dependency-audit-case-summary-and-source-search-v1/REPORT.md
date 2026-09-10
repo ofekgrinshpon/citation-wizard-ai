@@ -64,7 +64,6 @@ structure comes from the LLM prompt, not code.
   (`pdfjs-dist` + `mammoth` in `LegalQAChat.tsx:107-110, 865-878`); the server receives
   plain text only and never touches `unpdf`/`lib/attachments.ts`. V2 attachment
   handling is an independent **vendored copy** at
-
   `supabase/functions/legal-research-v2/vendor/attachments.ts` — independent of V1.
 - `verify-case-fulltext` is invoked **only** from `legal-qa` case_summary
   (single call site, `legal-qa/index.ts:869`).
