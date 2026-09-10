@@ -11,6 +11,8 @@ export const CREDIT_COSTS = {
   bibliographyPerSource: 1,
   /** Single Legal Research v1 query (full research pipeline). */
   research: 5,
+  /** Source search: same research agent, no answer drafting. */
+  sourceSearch: 3,
   /** Single Legal QA question (research / memo / case summary / pleading audit). */
   legalQa: 5,
   /** Academic writing wizard chapter generation. */

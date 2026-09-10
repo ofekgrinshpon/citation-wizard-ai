@@ -165,7 +165,7 @@ const FILE_RELEVANT_MODES: TaskMode[] = ["case_summary", "academic_writing"];
 
 const TASK_MODES: { id: TaskMode; label: string; description: string; placeholder: string; icon: LucideIcon }[] = [
   { id: "research", label: "מחקר משפטי", description: "סריקה מקיפה עם מסגרת נורמטיבית מלאה", placeholder: "תארו שאלה משפטית לסקירה מקיפה...", icon: Search },
-  { id: "legal_source_search", label: "חיפוש מקורות", description: "חיפוש מקורות אקדמיים למחקר משפטי", placeholder: "הזן שאלה משפטית או נושא למחקר…", icon: BookMarked },
+  { id: "legal_source_search", label: "חיפוש מקורות", description: "רשימת מקורות מאומתים לנושא, ללא ניסוח תשובה", placeholder: "הזן שאלה משפטית או נושא למחקר…", icon: BookMarked },
   { id: "case_summary", label: "סיכום פסיקה", description: "תמצית: עובדות, שאלה משפטית, הכרעה ורציו", placeholder: "הזינו שם פסק דין או הדביקו טקסט לסיכום...", icon: BookOpen },
   { id: "academic_writing", label: "כתיבה אקדמית", description: "ליווי בכתיבת סמינריונים ומאמרים אקדמיים בשלבים", placeholder: "תארו נושא מחקר או שאלת מחקר...", icon: GraduationCap },
 ];
@@ -3196,12 +3196,19 @@ export function LegalQAChat({ onResultSaved, externalResult, onConsumeExternalRe
           </div>
         )}
 
+        {/* Source search runs on the V2 research agent and terminates in the
+            deterministic Source Renderer. The legacy V1 panel stays mounted
+            only to replay old source-search history payloads. */}
         {!isAcademic && taskMode === "legal_source_search" && (
           <div className="h-full flex flex-col py-4">
-            <LegalSourceSearchPanel
-              externalResult={sourceSearchExternal}
-              onConsumeExternalResult={onConsumeExternalResult}
-            />
+            {sourceSearchExternal ? (
+              <LegalSourceSearchPanel
+                externalResult={sourceSearchExternal}
+                onConsumeExternalResult={onConsumeExternalResult}
+              />
+            ) : (
+              <LegalResearchV1Panel mode="sources" />
+            )}
           </div>
         )}
 

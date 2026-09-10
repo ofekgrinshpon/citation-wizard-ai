@@ -57,6 +57,7 @@ import {
   ACADEMIC_CHAPTER_CREDIT_COST,
   academicWritingEnabled,
   RESEARCH_CREDIT_COST,
+  SOURCE_SEARCH_CREDIT_COST,
   toBetaResult,
 } from "./beta/job.ts";
 import { runDrafter } from "./drafting/draft.ts";
@@ -89,6 +90,8 @@ import {
 } from "./academic/projectContext.ts";
 import { ACADEMIC_BODY_CHAPTER_GUIDE, ACADEMIC_BODY_GUIDE_VERSION } from "./academic/writingGuide.ts";
 import { buildChapterMemory } from "./academic/chapterMemory.ts";
+import { SOURCE_SCOUTING_CONTRACT, SOURCE_SEARCH_BUDGETS } from "./sources/contract.ts";
+import { buildSourcePack } from "./sources/sourcePack.ts";
 
 export function buildIntake(input: {
   run_id: string;
@@ -102,6 +105,8 @@ export function buildIntake(input: {
   footnote_offset?: number;
   /** Evaluation-only deliverable-level research contract. */
   research_contract?: string | null;
+  /** "sources" terminates in the Source Renderer instead of the drafter. */
+  output_mode?: "answer" | "sources";
 }): Intake {
   const question = (input.question ?? "").trim();
   const dockets = detectDockets(question).map((d) => ({
@@ -123,11 +128,17 @@ export function buildIntake(input: {
     attachment_text: input.attachment_text?.trim() || null,
     // An academic body chapter is a developed product by construction.
     deliverable: input.academic_context ? "developed" : classifyDeliverable(question),
-    budgets: { ...DEFAULT_BUDGETS, ...(input.budgets ?? {}) },
+    budgets: {
+      ...(input.output_mode === "sources" ? SOURCE_SEARCH_BUDGETS : DEFAULT_BUDGETS),
+      ...(input.budgets ?? {}),
+    },
     agent_model: input.agent_model?.trim() || null,
     academic_context: input.academic_context ?? null,
     footnote_offset: Math.max(0, Math.floor(input.footnote_offset ?? 0)),
-    research_contract: input.research_contract?.trim() || null,
+    research_contract: input.output_mode === "sources"
+      ? (input.research_contract?.trim() || SOURCE_SCOUTING_CONTRACT)
+      : (input.research_contract?.trim() || null),
+    output_mode: input.output_mode === "sources" ? "sources" : "answer",
   };
 }
 
@@ -297,6 +308,56 @@ async function runPipeline(
         verification = reVerified;
       }
     }
+  }
+
+  // ═════ SOURCE SEARCH — terminate in the Source Renderer ═════════════════
+  // Same agent, same tools, same evidence store, same verification. The run
+  // simply ends in a deterministic source pack: no drafter, no answer
+  // citation synthesis, no temporal/derivative answer safeguards.
+  if (intake.output_mode === "sources") {
+    const source_pack = buildSourcePack({
+      run_id: intake.run_id,
+      question: intake.question,
+      sources: store.all(),
+      verification,
+      memo: agent.memo ?? null,
+      discovered: [...agent.discovered.values()],
+    });
+    const sourcesTelemetry = {
+      run_id: intake.run_id,
+      output_mode: "sources",
+      agent_steps: agent.policy.steps,
+      search_calls: agent.policy.search_calls,
+      fetch_calls: agent.policy.fetch_calls,
+      lookup_calls: agent.policy.lookup_calls,
+      documents_fetched: store.all().length,
+      successful_body_reads: store.readable().length,
+      recommended_source_count: source_pack.recommended.length,
+      lead_count: source_pack.leads.length,
+      identity_verified_pairs: verification?.counters.identity_verified_pairs ?? 0,
+      span_verified_pairs: verification?.counters.span_verified_pairs ?? 0,
+      drafter_invoked: false,
+      latency_ms: Date.now() - started,
+      model_calls: usage.model_calls,
+      prompt_tokens: usage.prompt_tokens,
+      completion_tokens: usage.completion_tokens,
+      chunks_executed: chunk_index,
+      phase_ms: timer.totalsMs(),
+    };
+    return {
+      ok: true,
+      run_id: intake.run_id,
+      output_mode: "sources",
+      source_pack,
+      answer_markdown: "",
+      footnotes: [],
+      invariant_errors: [],
+      unresolved_questions: agent.memo?.unresolved_questions ?? [],
+      agent_error: agent.error ?? null,
+      drafter_error: null,
+      agent_trace: agent.trace,
+      telemetry: sourcesTelemetry,
+    };
   }
 
   // ═════ SAFEGUARD A — current-law / temporal validity ════════════════════
@@ -630,11 +691,13 @@ async function driveRun(
   job: BetaJob | null = null,
   initialStage: ProgressStage | null = null,
 ): Promise<void> {
+  const outputMode = intake.output_mode === "sources" ? "sources" : "answer";
   // Progress is persisted on the beta job row; internal runs get a no-op sink.
   const progress = createProgressSink(
     job ? (admin as unknown as Parameters<typeof createProgressSink>[0]) : null,
     job?.id ?? null,
     initialStage,
+    outputMode,
   );
   try {
     const out = await runPipeline(admin, intake, { resume, chunked: true, progress });
@@ -741,7 +804,14 @@ serve(async (req) => {
         message: "כתיבה אקדמית עדיין בפיתוח ותיפתח בהמשך.",
       }, 503);
     }
-    const creditCost = academicContext ? ACADEMIC_CHAPTER_CREDIT_COST : RESEARCH_CREDIT_COST;
+    // Source search: same V2 agent + evidence + verification, terminating in
+    // the Source Renderer. Priced below full research (no drafter phase).
+    const sourceSearch = body.mode === "source_search";
+    const creditCost = academicContext
+      ? ACADEMIC_CHAPTER_CREDIT_COST
+      : sourceSearch
+      ? SOURCE_SEARCH_CREDIT_COST
+      : RESEARCH_CREDIT_COST;
     const footnoteOffset = Number.isFinite(body.footnote_offset)
       ? Math.max(0, Math.floor(Number(body.footnote_offset)))
       : 0;
@@ -767,7 +837,11 @@ serve(async (req) => {
       "consume_credits",
       {
         _amount: creditCost,
-        _reason: academicContext ? "legal-research-v2:academic_chapter" : "legal-research-v2",
+        _reason: academicContext
+          ? "legal-research-v2:academic_chapter"
+          : sourceSearch
+          ? "legal-research-v2:source_search"
+          : "legal-research-v2",
         _request_id: clientRequestId,
       },
     );
@@ -793,6 +867,7 @@ serve(async (req) => {
       attachment_text: null,
       academic_context: academicContext,
       footnote_offset: footnoteOffset,
+      output_mode: sourceSearch ? "sources" : "answer",
     });
 
     const { data: jobRow, error: jobErr } = await admin
@@ -805,7 +880,7 @@ serve(async (req) => {
         client_request_id: clientRequestId,
         credit_request_id: creditRequestId,
         current_stage: "searching",
-        progress_label_he: "מחפש מקורות",
+        progress_label_he: sourceSearch ? "חושב על כיווני חיפוש" : "מחפש מקורות",
         completed_stages: [],
         started_at: new Date().toISOString(),
       })
@@ -826,7 +901,11 @@ serve(async (req) => {
     const job: BetaJob = { id: jobRow.id, user_id: user.id, credit_request_id: creditRequestId };
     await admin.from("v2_eval_runs").insert({
       run_id: betaIntake.run_id,
-      label: academicContext ? "beta_academic_chapter" : "beta",
+      label: academicContext
+        ? "beta_academic_chapter"
+        : sourceSearch
+        ? "beta_source_search"
+        : "beta",
       question: betaIntake.question,
       status: "running",
     });
@@ -886,6 +965,9 @@ serve(async (req) => {
     academic_context: body.academic_context ? parseProjectContext(body.academic_context) : null,
     footnote_offset: typeof body.footnote_offset === "number" ? body.footnote_offset : 0,
     research_contract: typeof body.research_contract === "string" ? body.research_contract : null,
+    output_mode: body.output_mode === "sources" || body.mode === "source_search"
+      ? "sources"
+      : "answer",
   });
 
   // Background execution: evaluation runs routinely exceed the synchronous

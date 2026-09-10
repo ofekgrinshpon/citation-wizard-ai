@@ -55,6 +55,12 @@ export interface Intake {
    * requests never set it.
    */
   research_contract?: string | null;
+  /**
+   * What the run terminates in. "answer" (default) = drafter + citation
+   * renderer, unchanged. "sources" = deterministic Source Renderer, no
+   * answer drafter. Nothing else in the pipeline branches on this.
+   */
+  output_mode?: "answer" | "sources";
 }
 
 export interface ToolBudgets {

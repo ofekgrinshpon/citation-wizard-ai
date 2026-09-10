@@ -36,3 +36,10 @@ export const V2_STAGES: Array<{ key: string; label: string }> = [
   { key: "verifying", label: "מאמת מקורות" },
   { key: "writing", label: "כותב תשובה" },
 ];
+
+/** Source search never drafts an answer — same keys, honest labels. */
+export const V2_SOURCE_STAGES: Array<{ key: string; label: string }> = [
+  { key: "searching", label: "חושב על כיווני חיפוש" },
+  { key: "reading", label: "קורא מקורות" },
+  { key: "verifying", label: "מאמת ומדרג מקורות" },
+];

@@ -19,6 +19,21 @@ export const PROGRESS_LABELS_HE: Record<ProgressStage, string> = {
   writing: "כותב תשובה",
 };
 
+/**
+ * Source search never drafts an answer, so its last stage is ranking, not
+ * writing. Same stage keys — presentation only.
+ */
+export const PROGRESS_LABELS_SOURCES_HE: Record<ProgressStage, string> = {
+  searching: "חושב על כיווני חיפוש",
+  reading: "קורא מקורות",
+  verifying: "מאמת ומדרג מקורות",
+  writing: "מאמת ומדרג מקורות",
+};
+
+export function progressLabels(mode: "answer" | "sources" | null | undefined) {
+  return mode === "sources" ? PROGRESS_LABELS_SOURCES_HE : PROGRESS_LABELS_HE;
+}
+
 export interface ProgressSink {
   /** Advance to `stage` if it is ahead of the current one. Never regresses. */
   advance(stage: ProgressStage): Promise<void>;
@@ -49,6 +64,7 @@ export function createProgressSink(
   admin: JobWriter | null,
   jobId: string | null,
   initial: ProgressStage | null,
+  mode: "answer" | "sources" = "answer",
 ): ProgressSink & { trace: Array<{ at: number; stage: ProgressStage }> } {
   let current: ProgressStage | null = initial;
   const trace: Array<{ at: number; stage: ProgressStage }> = [];
@@ -62,7 +78,7 @@ export function createProgressSink(
       lastBeatAt = Date.now();
       await admin.from("legal_research_jobs").update({
         current_stage: stage,
-        progress_label_he: stage ? PROGRESS_LABELS_HE[stage] : null,
+        progress_label_he: stage ? progressLabels(mode)[stage] : null,
         completed_stages: done,
         last_progress_at: new Date().toISOString(),
       }).eq("id", jobId);
