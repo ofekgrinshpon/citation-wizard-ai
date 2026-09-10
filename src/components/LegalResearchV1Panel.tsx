@@ -23,8 +23,11 @@ import {
   researchFunctionFor,
   V1_STAGES,
   V2_STAGES,
+  V2_SOURCE_STAGES,
+  RESEARCH_FUNCTIONS,
 } from "@/config/researchPipeline";
 import { UniformCitationPanel } from "@/components/legal-research/UniformCitationPanel";
+import { SourcePackView, type SourcePack } from "@/components/legal-research/SourcePackView";
 
 const MAX_FILES = 5;
 const MAX_FILE_BYTES = 8 * 1024 * 1024;
@@ -51,7 +54,8 @@ function fmtSize(b: number) {
 const V1_STAGE_KEYS = new Set(V1_STAGES.map((s) => s.key));
 const V2_STAGE_KEYS = new Set(V2_STAGES.map((s) => s.key));
 
-function stageListFor(current: string | null, completed: string[]) {
+function stageListFor(current: string | null, completed: string[], sources = false) {
+  if (sources) return V2_SOURCE_STAGES;
   const keys = [current ?? "", ...completed];
   if (keys.some((k) => V1_STAGE_KEYS.has(k))) return V1_STAGES;
   if (keys.some((k) => V2_STAGE_KEYS.has(k))) return V2_STAGES;
@@ -62,6 +66,7 @@ const POLL_INTERVAL_MS = 2_000;
 const SOFT_NOTICE_1_MS = 180_000; // 3 min
 const SOFT_NOTICE_2_MS = 300_000; // 5 min
 const RESUME_STORAGE_KEY = "lrv1:active_job";
+const SOURCES_RESUME_STORAGE_KEY = "lrv2src:active_job";
 
 // persistent_background_research_jobs_v1 — the job lives server-side; the UI
 // must never imply the tab has to stay open.
@@ -111,6 +116,8 @@ type ResearchResponse = {
   answer: string;
   footnotes: Footnote[];
   used_sources?: UsedSource[];
+  output_mode?: "answer" | "sources";
+  source_pack?: SourcePack | null;
   debug?: Record<string, unknown>;
 };
 
@@ -122,6 +129,12 @@ function fmtElapsed(ms: number) {
 }
 
 interface LegalResearchV1PanelProps {
+  /**
+   * "sources" runs the same V2 research agent but terminates in the Source
+   * Renderer instead of the answer drafter. Default keeps answer behaviour
+   * exactly as-is.
+   */
+  mode?: "answer" | "sources";
   externalResult?:
     | { question: string; payload: { answer: string; footnotes: Footnote[] } }
     | null;
@@ -129,9 +142,13 @@ interface LegalResearchV1PanelProps {
 }
 
 export function LegalResearchV1Panel({
+  mode = "answer",
   externalResult,
   onConsumeExternalResult,
 }: LegalResearchV1PanelProps = {}) {
+  const sourcesMode = mode === "sources";
+  const RESUME_KEY = sourcesMode ? SOURCES_RESUME_STORAGE_KEY : RESUME_STORAGE_KEY;
+  const creditCost = sourcesMode ? CREDIT_COSTS.sourceSearch : CREDIT_COSTS.research;
   const { currentProject, loading: projectsLoading } = useProjects();
   const credits = useCredits();
   const { isAdmin } = useAuth();
@@ -185,15 +202,15 @@ export function LegalResearchV1Panel({
   };
 
   const clearResume = () => {
-    try { localStorage.removeItem(RESUME_STORAGE_KEY); } catch { /* ignore */ }
-    try { sessionStorage.removeItem(RESUME_STORAGE_KEY); } catch { /* ignore */ }
+    try { localStorage.removeItem(RESUME_KEY); } catch { /* ignore */ }
+    try { sessionStorage.removeItem(RESUME_KEY); } catch { /* ignore */ }
   };
 
   const persistResume = (jid: string, startedAt: number) => {
     const value = JSON.stringify({ jobId: jid, startedAt });
-    try { localStorage.setItem(RESUME_STORAGE_KEY, value); } catch { /* ignore */ }
+    try { localStorage.setItem(RESUME_KEY, value); } catch { /* ignore */ }
     // Keep the old tab-scoped copy during rollout so an already-open tab remains compatible.
-    try { sessionStorage.setItem(RESUME_STORAGE_KEY, value); } catch { /* ignore */ }
+    try { sessionStorage.setItem(RESUME_KEY, value); } catch { /* ignore */ }
   };
 
   const handleCancel = () => {
@@ -351,7 +368,7 @@ export function LegalResearchV1Panel({
       }
       let storedJob: string | null = null;
       try {
-        const raw = localStorage.getItem(RESUME_STORAGE_KEY) ?? sessionStorage.getItem(RESUME_STORAGE_KEY);
+        const raw = localStorage.getItem(RESUME_KEY) ?? sessionStorage.getItem(RESUME_KEY);
         if (raw) storedJob = (JSON.parse(raw) as { jobId?: string })?.jobId ?? null;
       } catch { /* ignore */ }
       if (storedJob && !cancelled) {
@@ -359,6 +376,9 @@ export function LegalResearchV1Panel({
         if (attached) return;
         clearResume();
       }
+      // Source search has no cross-session fallback lookup: the shared job
+      // table also holds answer jobs, which must never surface here.
+      if (sourcesMode) return;
       // No durable hint (including jobs launched before this fix): recover the
       // newest recent job, including one that completed while the browser was closed.
       let query = supabase
@@ -478,10 +498,10 @@ export function LegalResearchV1Panel({
       return;
     }
     // Credit pre-flight: the server charges 5 credits per research query.
-    if (!credits.hasEnough(CREDIT_COSTS.research)) {
+    if (!credits.hasEnough(creditCost)) {
       setInsufficient({
         open: true,
-        required: CREDIT_COSTS.research,
+        required: creditCost,
         remaining: Number.isFinite(credits.totalCreditsAvailable) ? credits.totalCreditsAvailable : 0,
       });
       return;
@@ -519,9 +539,12 @@ export function LegalResearchV1Panel({
         run_id: string;
         status: string;
       }>(
-        researchFunctionFor({ hasAttachments: attachmentsPayload.length > 0 }),
+        sourcesMode
+          ? RESEARCH_FUNCTIONS.v2
+          : researchFunctionFor({ hasAttachments: attachmentsPayload.length > 0 }),
         {
           question: q,
+          ...(sourcesMode ? { mode: "source_search" } : {}),
           project_id: currentProject?.id ?? null,
           attachments: attachmentsPayload,
           use_as_source: useAsSource,
@@ -539,7 +562,7 @@ export function LegalResearchV1Panel({
           await credits.refresh();
           setInsufficient({
             open: true,
-            required: errorInfo.required ?? CREDIT_COSTS.research,
+            required: errorInfo.required ?? creditCost,
             remaining: Number.isFinite(credits.totalCreditsAvailable) ? credits.totalCreditsAvailable : 0,
           });
           return;
@@ -658,7 +681,7 @@ export function LegalResearchV1Panel({
               <p className="text-xs text-muted-foreground leading-relaxed">{RUNNING_NOTICE_HE}</p>
 
               <ol className="space-y-2">
-                {stageListFor(currentStage, completedStages).map((stage) => {
+                {stageListFor(currentStage, completedStages, sourcesMode).map((stage) => {
                   const isDone = completedStages.includes(stage.key);
                   const isActive = !isDone && currentStage === stage.key;
                   return (
@@ -727,26 +750,34 @@ export function LegalResearchV1Panel({
               </div>
             )}
 
-            <div className="flex justify-end">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleCopyResult}
-                className="gap-1.5 text-xs"
-              >
-                <Copy className="w-3.5 h-3.5" />
-                העתק
-              </Button>
-            </div>
-
-            <div className="rounded-lg border border-border bg-card p-4">
-              <h3 className="text-sm font-bold text-foreground mb-2">תשובה</h3>
-              <div className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">
-                {renderAnswerMarkdown(result.answer)}
+            {result.output_mode !== "sources" && (
+              <div className="flex justify-end">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleCopyResult}
+                  className="gap-1.5 text-xs"
+                >
+                  <Copy className="w-3.5 h-3.5" />
+                  העתק
+                </Button>
               </div>
-            </div>
+            )}
 
-            {result.footnotes?.length > 0 && (
+            {result.output_mode === "sources" && result.source_pack && (
+              <SourcePackView pack={result.source_pack} />
+            )}
+
+            {result.output_mode !== "sources" && (
+              <div className="rounded-lg border border-border bg-card p-4">
+                <h3 className="text-sm font-bold text-foreground mb-2">תשובה</h3>
+                <div className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">
+                  {renderAnswerMarkdown(result.answer)}
+                </div>
+              </div>
+            )}
+
+            {result.output_mode !== "sources" && result.footnotes?.length > 0 && (
               <div className="rounded-lg border border-border bg-card p-4">
                 <h3 className="text-sm font-bold text-foreground mb-2">הערות שוליים</h3>
                 <ol className="space-y-1.5 text-sm text-foreground">
@@ -805,7 +836,7 @@ export function LegalResearchV1Panel({
               </div>
             )}
 
-            {RESEARCH_PIPELINE === "v2" && result.footnotes?.length > 0 && (
+            {RESEARCH_PIPELINE === "v2" && result.output_mode !== "sources" && result.footnotes?.length > 0 && (
               <UniformCitationPanel key={debug.run_id ?? "v2"} footnotes={result.footnotes} />
             )}
 

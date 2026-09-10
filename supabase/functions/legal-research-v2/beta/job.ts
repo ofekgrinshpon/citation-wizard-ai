@@ -18,14 +18,23 @@ export const RESEARCH_CREDIT_COST = 5;
 export const ACADEMIC_CHAPTER_CREDIT_COST = 8;
 
 /**
+ * Source search runs the same discovery/reading agent but terminates in the
+ * Source Renderer: no drafter, no answer citation synthesis, no post-draft
+ * repair, and a lighter tool budget. Priced below full legal research.
+ */
+export const SOURCE_SEARCH_CREDIT_COST = 3;
+
+/**
  * Product availability flag for Academic Writing (public beta = OFF).
  * Availability only — not an authorization mechanism. Internal/dev deployments
  * set ACADEMIC_WRITING_ENABLED="true".
  */
 export function academicWritingEnabled(
-  env: { get(key: string): string | undefined } = Deno.env,
+  env?: { get(key: string): string | undefined },
 ): boolean {
-  return env.get("ACADEMIC_WRITING_ENABLED") === "true";
+  const runtimeEnv = env ??
+    (globalThis as { Deno?: { env: { get(key: string): string | undefined } } }).Deno?.env;
+  return runtimeEnv?.get("ACADEMIC_WRITING_ENABLED") === "true";
 }
 
 export interface BetaJob {
@@ -47,6 +56,10 @@ export interface BetaResultShape {
   run_id: string;
   /** Present only for Academic Writing chapter runs. */
   academic?: Record<string, unknown> | null;
+  /** "sources" for source-search runs; absent/"answer" otherwise. */
+  output_mode?: "answer" | "sources";
+  /** Present only for source-search runs. */
+  source_pack?: Record<string, unknown> | null;
   debug: Record<string, unknown>;
 }
 
@@ -69,6 +82,8 @@ export function toBetaResult(out: Record<string, unknown>): BetaResultShape {
     pipeline_version: "v2",
     run_id: String(out.run_id ?? ""),
     academic: (out.academic as Record<string, unknown> | undefined) ?? null,
+    output_mode: out.output_mode === "sources" ? "sources" : "answer",
+    source_pack: (out.source_pack as Record<string, unknown> | undefined) ?? null,
     debug: {
       pipeline_version: "v2",
       run_id: out.run_id ?? null,
@@ -86,6 +101,12 @@ export function toBetaResult(out: Record<string, unknown>): BetaResultShape {
  * Refusals and empty answers are refunded, exactly as in the current beta.
  */
 export function isDelivered(result: BetaResultShape): boolean {
+  // Source search delivers a source pack, not an answer: it counts as
+  // delivered when at least one verified/read source reached the user.
+  if (result.output_mode === "sources") {
+    const pack = result.source_pack as { recommended?: unknown[] } | null;
+    return Array.isArray(pack?.recommended) && pack!.recommended!.length > 0;
+  }
   return result.answer.trim().length > 0 && result.footnotes.length > 0;
 }
 
