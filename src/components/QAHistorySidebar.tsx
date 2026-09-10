@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Search, BookOpen, GraduationCap, BookMarked, Clock } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { he } from "date-fns/locale";
+import { resolveResearchJobMode, type ResearchJobMode } from "@/lib/researchJobMode";
 
 interface QALogRecord {
   id: string;
@@ -30,6 +31,8 @@ interface QAResult {
 interface Props {
   projectId: string | null;
   onLoadResult?: (question: string, result: QAResult, taskMode: string) => void;
+  /** Open a background research / source-search job in its own intent. */
+  onOpenJob?: (jobId: string, mode: ResearchJobMode) => void;
   refreshKey?: number;
 }
 
@@ -230,54 +233,73 @@ export function QAHistorySidebar({ projectId, onLoadResult, onOpenJob, refreshKe
             <p className="text-xs text-muted-foreground text-center py-4">טוען...</p>
           )}
 
-          {/* In-flight / failed research jobs — always resumable from the server */}
-          {visibleJobs.map((job) => {
-            const isActive = ACTIVE_JOB_STATUSES.includes(job.status);
-            const isTimedOut = job.status === "timed_out";
-            return (
-              <button
-                key={job.id}
-                onClick={() => { window.location.href = `/app?job=${job.id}`; }}
-                className={`w-full text-right rounded-lg px-3 py-2.5 transition-colors group border ${
-                  isTimedOut
-                    ? "border-amber-500/40 bg-amber-500/5 hover:bg-amber-500/10"
-                    : isActive
-                    ? "border-primary/30 bg-primary/5 hover:bg-primary/10"
-                    : "border-destructive/30 bg-destructive/5 hover:bg-destructive/10"
-                }`}
-              >
-                <p className="text-xs text-foreground leading-relaxed line-clamp-2">{job.question}</p>
-                <div className="flex items-center gap-1.5 mt-1 flex-wrap">
-                  <Badge variant="outline" className="text-[9px] px-1.5 py-0">
-                    {isActive
-                      ? `רץ ברקע${job.progress_label_he ? ` — ${job.progress_label_he}` : ""}`
-                      : isTimedOut
-                      ? "הופסק — תקלה תשתיתית"
-                      : "נכשל"}
-                  </Badge>
-                  <span className="text-[9px] text-muted-foreground flex items-center gap-0.5">
-                    <Clock className="w-2.5 h-2.5" />
-                    {formatDistanceToNow(new Date(job.created_at), { addSuffix: true, locale: he })}
-                  </span>
-                </div>
-              </button>
-            );
-          })}
-
-          {!loading && filtered.length === 0 && visibleJobs.length === 0 && (
+          {!loading && entries.length === 0 && (
             <p className="text-xs text-muted-foreground text-center py-4">
               {search ? "לא נמצאו תוצאות" : "אין היסטוריה עדיין"}
             </p>
           )}
 
-
-          {filtered.map((log) => {
-            const mode = MODE_LABELS[log.task_mode || "research"] || MODE_LABELS.research;
-            const Icon = mode.icon;
-            const timeAgo = formatDistanceToNow(new Date(log.created_at), {
+          {entries.map((entry) => {
+            const timeAgo = formatDistanceToNow(new Date(entry.at), {
               addSuffix: true,
               locale: he,
             });
+
+            // ── Background research / source-search job ──
+            if (entry.kind === "job") {
+              const job = entry.job;
+              const isActive = ACTIVE_JOB_STATUSES.includes(job.status);
+              const isTimedOut = job.status === "timed_out";
+              const isDone = job.status === "done";
+              const jobMode = resolveResearchJobMode(job.id, job.result) ?? "answer";
+              const Icon = jobMode === "sources" ? BookMarked : Search;
+              return (
+                <button
+                  key={`job-${job.id}`}
+                  onClick={() => onOpenJob?.(job.id, jobMode)}
+                  className={`w-full text-right rounded-lg px-3 py-2.5 transition-colors group ${
+                    isDone
+                      ? "hover:bg-muted/60"
+                      : isTimedOut
+                      ? "border border-amber-500/40 bg-amber-500/5 hover:bg-amber-500/10"
+                      : isActive
+                      ? "border border-primary/30 bg-primary/5 hover:bg-primary/10"
+                      : "border border-destructive/30 bg-destructive/5 hover:bg-destructive/10"
+                  }`}
+                >
+                  <div className="flex items-start gap-2">
+                    <Icon className="w-3.5 h-3.5 text-muted-foreground mt-0.5 shrink-0" />
+                    <div className="min-w-0 flex-1">
+                      <p className="text-xs text-foreground leading-relaxed line-clamp-2 group-hover:text-primary transition-colors">
+                        {job.question}
+                      </p>
+                      <div className="flex items-center gap-1.5 mt-1 flex-wrap">
+                        <Badge variant="secondary" className="text-[9px] px-1.5 py-0">
+                          {jobMode === "sources" ? "מקורות" : "תשובה"}
+                        </Badge>
+                        {!isDone && (
+                          <Badge variant="outline" className="text-[9px] px-1.5 py-0">
+                            {isActive
+                              ? `רץ ברקע${job.progress_label_he ? ` — ${job.progress_label_he}` : ""}`
+                              : isTimedOut
+                              ? "הופסק — תקלה תשתיתית"
+                              : "נכשל"}
+                          </Badge>
+                        )}
+                        <span className="text-[9px] text-muted-foreground flex items-center gap-0.5">
+                          <Clock className="w-2.5 h-2.5" />
+                          {timeAgo}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              );
+            }
+
+            const log = entry.log;
+            const mode = MODE_LABELS[log.task_mode || "research"] || MODE_LABELS.research;
+            const Icon = mode.icon;
 
             const academicStep =
               log.task_mode === "academic_writing" && log.metadata && typeof log.metadata === "object"
@@ -293,7 +315,7 @@ export function QAHistorySidebar({ projectId, onLoadResult, onOpenJob, refreshKe
 
             return (
               <button
-                key={log.id}
+                key={`log-${log.id}`}
                 onClick={() => handleClick(log)}
                 className="w-full text-right rounded-lg px-3 py-2.5 hover:bg-muted/60 transition-colors group"
               >
@@ -324,6 +346,7 @@ export function QAHistorySidebar({ projectId, onLoadResult, onOpenJob, refreshKe
           })}
         </div>
       </ScrollArea>
+
     </div>
   );
 }
