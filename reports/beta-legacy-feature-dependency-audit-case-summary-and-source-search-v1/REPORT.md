@@ -28,7 +28,10 @@ LegalQAChat.handleSubmit (LegalQAChat.tsx:2236)
     → legal-qa/index.ts credit gate (:346-367)  consume_credits 5|7
     → legal-qa/index.ts LIVE PATH 2 (:857-965)
         → POST /functions/v1/verify-case-fulltext  { question, userText }   (20s timeout)
-              user text → local legal_documents lookup → external fetch (PDF/DOCX/HTML)
+              user text → local legal_documents lookup by docket variants →
+              external tier: Perplexity discovery over an Israeli caselaw domain
+              whitelist (nevo / supreme.court.gov.il / takdin / din.org.il …),
+              PDF/DOCX/HTML sniffing, ConvertAPI pdf→txt, LLM metadata extraction
         → refuse + refund if source==="none"   (refundAndPayload "case_summary:no-fulltext")
         → Hebrew-ratio gate ≥5% else refuse + refund
         → getCaseSummaryInstructions() (:115-146) — fixed 7-section Hebrew report prompt
