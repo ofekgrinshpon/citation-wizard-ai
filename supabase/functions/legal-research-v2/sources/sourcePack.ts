@@ -74,7 +74,10 @@ function originHe(origin: string): "מאגר מקומי" | "רשת" {
   return /corpus|local/i.test(origin) ? "מאגר מקומי" : "רשת";
 }
 
-function identifierOf(src: EvidenceSource): string | null {
+function identifierOf(src: EvidenceSource, group?: string): string | null {
+  // A scholarly article quotes dockets and statutes it discusses; those are not
+  // its own identifier, so it is shown without one.
+  if (group === "scholarship") return null;
   const d = src.identity_fields?.dockets?.[0];
   if (d) return d;
   const s = src.identity_fields?.statutes?.[0];
