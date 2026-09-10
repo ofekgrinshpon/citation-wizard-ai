@@ -21,7 +21,7 @@ import { safeStorage } from "@/lib/safeStorage";
 
 import { toast } from "sonner";
 import { copyRichText } from "@/lib/clipboard";
-import { Send, Copy, AlertTriangle, ExternalLink, Upload, X, FileText, Search, BookOpen, GraduationCap, BookMarked, StopCircle, Plus, Trash2, ChevronRight, ChevronLeft, Check, Lock, Wand2, Zap, Brain, type LucideIcon } from "lucide-react";
+import { Send, Copy, AlertTriangle, ExternalLink, Upload, X, FileText, Search, BookOpen, GraduationCap, BookMarked, StopCircle, Plus, Trash2, ChevronRight, ChevronLeft, Check, Lock, Wand2, Zap, Brain, Paperclip, type LucideIcon } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { CaseSummaryReport } from "@/components/CaseSummaryReport";
 
@@ -2456,7 +2456,7 @@ export function LegalQAChat({ onResultSaved, externalResult, onConsumeExternalRe
   return (
     <div className="flex flex-col h-full" style={{ direction: "rtl" }}>
       {/* Top section: Mode Cards */}
-      <div className="px-2 sm:px-4 pt-4 pb-2 space-y-3">
+      <div className="px-2 sm:px-4 pt-3 pb-1.5 space-y-2.5">
 
         <div className="grid grid-cols-2 gap-2">
           {TASK_MODES.filter((m) => TOP_LEVEL_MODE_IDS.includes(m.id)).map((m) => {
@@ -2503,10 +2503,10 @@ export function LegalQAChat({ onResultSaved, externalResult, onConsumeExternalRe
                 <button
                   key={intent.id}
                   onClick={() => handleModeChange(intent.id)}
-                  className={`flex-1 rounded-lg px-2 py-1.5 text-[11px] sm:text-xs font-medium transition-colors ${
+                  className={`flex-1 rounded-lg px-2 py-1.5 text-[11px] sm:text-xs transition-all ${
                     active
-                      ? "bg-background text-foreground shadow-sm border border-border"
-                      : "text-muted-foreground hover:text-foreground"
+                      ? "bg-background text-foreground font-semibold shadow-md border border-primary/30 ring-1 ring-primary/15"
+                      : "text-muted-foreground font-medium hover:text-foreground hover:bg-muted/60"
                   }`}
                 >
                   {intent.label}
@@ -3253,7 +3253,7 @@ export function LegalQAChat({ onResultSaved, externalResult, onConsumeExternalRe
 
         {!isAcademic && !result && !loading && !error && taskMode !== "research" && taskMode !== "legal_source_search" && (
 
-          <div className="flex flex-col items-center justify-center h-full py-12 text-center">
+          <div className="flex flex-col items-center justify-center h-full py-8 text-center">
             <div className="mb-4"><ReLexLogo size={56} /></div>
             <h2 className="text-foreground text-lg font-bold mb-2">{"\n"}</h2>
 
@@ -3425,9 +3425,16 @@ export function LegalQAChat({ onResultSaved, externalResult, onConsumeExternalRe
       </div>
 
       {/* Bottom: Input bar pinned */}
-      <div className="mt-auto px-2 sm:px-4 pb-2 pt-2 space-y-1.5 border-t border-border bg-background">
+      <div className="mt-auto px-2 sm:px-4 pb-2 pt-1.5 space-y-1 border-t border-border bg-background">
         {/* Hide input bar for academic mode (it has its own UI) unless in non-wizard steps */}
         {!isAcademic && taskMode !== "research" && taskMode !== "legal_source_search" && (
+          <>
+          {taskMode === "case_summary" && (
+            <p className="text-[11px] text-muted-foreground/80 pr-1 -mb-0.5">
+              <Paperclip className="inline w-3 h-3 align-text-bottom ml-1 opacity-70" />
+              אפשר גם להעלות פסק דין (PDF/DOCX)
+            </p>
+          )}
           <div className="flex gap-2 items-end">
             {/* File upload zone */}
             <div
@@ -3503,6 +3510,7 @@ export function LegalQAChat({ onResultSaved, externalResult, onConsumeExternalRe
               {/* D1: Fast/Deep depth toggle hidden — Research engine is offline. */}
             </div>
           </div>
+          </>
         )}
 
         {/* Academic mode: file upload bar */}
