@@ -34,11 +34,11 @@ interface Props {
 }
 
 const MODE_LABELS: Record<string, { label: string; icon: typeof Search }> = {
-  research: { label: "מחקר", icon: Search },
+  research: { label: "תשובה", icon: Search },
   // legal-research-v1 telemetry writes this distinct task_mode but the UI mode
-  // shown to the user is still "מחקר". Map it so the badge renders correctly.
-  legal_research_v1: { label: "מחקר", icon: Search },
-  legal_source_search: { label: "חיפוש מקורות", icon: BookMarked },
+  // shown to the user is still an answer. Map it so the badge renders correctly.
+  legal_research_v1: { label: "תשובה", icon: Search },
+  legal_source_search: { label: "מקורות", icon: BookMarked },
   case_summary: { label: "סיכום", icon: BookOpen },
   academic_writing: { label: "כתיבה אקדמית", icon: GraduationCap },
 };
