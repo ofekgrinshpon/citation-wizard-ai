@@ -19,6 +19,7 @@
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
+import { acquireOperationLock, lockUnavailablePayload, operationInProgressPayload } from "../_shared/operationLock.ts";
 
 const RESEARCH_MODE = "research";
 
@@ -247,6 +248,8 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
   let __creditsCharged = false;
   let __creditRequestId: string | null = null;
   let __userClientForRefund: ReturnType<typeof createClient> | null = null;
+  // Account-level concurrency ownership (case_summary only).
+  let __lockOperationId: string | null = null;
 
   try {
     // ─── Auth gate ────────────────────────────────────────────────
@@ -378,6 +381,29 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
       { global: { headers: { Authorization: authHeader } } },
     );
     __userClientForRefund = userClient;
+
+    // ── Account-level concurrency protection (protected operation) ──────
+    // Case Summary keeps its own targeted pipeline; only the account-level
+    // ownership is shared with V2 research. Acquired BEFORE the credit charge.
+    if (taskMode === "case_summary") {
+      const lock = await acquireOperationLock(
+        userClient as unknown as { rpc(fn: string, params?: Record<string, unknown>): unknown },
+        "case_summary",
+        creditRequestId,
+        typeof bodyProjectId === "string" ? bodyProjectId : null,
+      );
+      if (!lock.ok) {
+        const unavailable = lock.error === "lock_unavailable";
+        return new Response(
+          JSON.stringify(unavailable ? lockUnavailablePayload() : operationInProgressPayload(lock.active_operation_type)),
+          {
+            status: unavailable ? 503 : 409,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          },
+        );
+      }
+      __lockOperationId = lock.bypass ? null : creditRequestId;
+    }
 
     let creditsCharged = false;
     if (creditCost > 0) {
@@ -994,6 +1020,18 @@ ${(verify.fullText as string).slice(0, 50000)}
       JSON.stringify({ error: "שגיאה בעיבוד השאלה. נסו שוב.", refunded, refundReason: refunded ? "runtime-error" : undefined }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
+  } finally {
+    // Terminal release on every exit path — success, refusal, error.
+    if (__lockOperationId && __userClientForRefund) {
+      try {
+        await __userClientForRefund.rpc("release_operation_lock", {
+          _operation_id: __lockOperationId,
+          _reason: "terminal",
+        });
+      } catch (e) {
+        console.error("[lock] release failed (non-fatal):", e);
+      }
+    }
   }
 }
 

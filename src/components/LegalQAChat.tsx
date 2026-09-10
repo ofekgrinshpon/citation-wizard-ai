@@ -1744,6 +1744,16 @@ export function LegalQAChat({ onResultSaved, externalResult, onConsumeExternalRe
       });
 
       if (!res.ok) {
+        // Account-level concurrency: informational, not a technical error.
+        if (res.status === 409) {
+          const info = await res.json().catch(() => null);
+          toast.info("כבר מתבצעת פעולה בחשבון", {
+            description: info?.message ||
+              "יש כרגע פעולה פעילה ב-ReLex. ניתן להתחיל פעולה חדשה לאחר שהיא תסתיים.",
+            duration: 6000,
+          });
+          return;
+        }
         if (res.status === 401) { setError("פג תוקף ההתחברות. רעננו את הדף והתחברו מחדש."); return; }
         if (res.status === 429) { setError("יותר מדי בקשות. נסו שוב בעוד דקה."); return; }
         if (res.status === 402) { setError("נגמרו הקרדיטים."); return; }

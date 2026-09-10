@@ -65,6 +65,12 @@ export function createProgressSink(
   jobId: string | null,
   initial: ProgressStage | null,
   mode: "answer" | "sources" = "answer",
+  /**
+   * Optional account-lock liveness. The same beat that proves the job is alive
+   * also proves the account-level operation lock is alive, so no parallel
+   * heartbeat loop is needed.
+   */
+  lock: { userId: string; operationId: string; beat: () => Promise<void> } | null = null,
 ): ProgressSink & { trace: Array<{ at: number; stage: ProgressStage }> } {
   let current: ProgressStage | null = initial;
   const trace: Array<{ at: number; stage: ProgressStage }> = [];
@@ -82,6 +88,7 @@ export function createProgressSink(
         completed_stages: done,
         last_progress_at: new Date().toISOString(),
       }).eq("id", jobId);
+      if (lock) await lock.beat();
     } catch {/* progress is best-effort, never fails a run */}
   };
 
@@ -104,6 +111,7 @@ export function createProgressSink(
         await admin.from("legal_research_jobs").update({
           last_progress_at: new Date().toISOString(),
         }).eq("id", jobId);
+        if (lock) await lock.beat();
       } catch {/* liveness is best-effort */}
     },
     async finish() {

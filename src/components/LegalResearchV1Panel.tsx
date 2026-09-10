@@ -599,6 +599,14 @@ export function LegalResearchV1Panel({
         stopAll();
         setLoading(false);
         // Server-side insufficient-credits safety net (race with balance change).
+        // Account-level concurrency: informational, never a technical error.
+        if (errorInfo?.isOperationInProgress) {
+          toast.info("כבר מתבצעת פעולה בחשבון", {
+            description: errorInfo.message,
+            duration: 6000,
+          });
+          return;
+        }
         if (errorInfo?.isInsufficientCredits) {
           await credits.refresh();
           setInsufficient({

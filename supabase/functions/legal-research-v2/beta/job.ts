@@ -8,6 +8,7 @@
 
 import type { SupabaseClient } from "../shared/primitives.ts";
 import type { Footnote } from "../types.ts";
+import { releaseOperationLock } from "../../_shared/operationLock.ts";
 
 export const RESEARCH_CREDIT_COST = 5;
 
@@ -41,6 +42,23 @@ export interface BetaJob {
   id: string;
   user_id: string;
   credit_request_id: string | null;
+  /** Account-level concurrent-operation lock id (client_request_id). */
+  operation_id?: string | null;
+}
+
+/** Terminal release of the account-level operation lock. Idempotent. */
+async function releaseJobLock(
+  admin: SupabaseClient,
+  job: BetaJob,
+  reason: string,
+): Promise<void> {
+  if (!job.operation_id) return;
+  await releaseOperationLock(
+    admin as unknown as { rpc(fn: string, params?: Record<string, unknown>): unknown },
+    job.user_id,
+    job.operation_id,
+    reason,
+  );
 }
 
 export interface BetaResultShape {
@@ -163,7 +181,10 @@ export async function finishJobSuccess(
   job: BetaJob,
   result: BetaResultShape,
 ): Promise<{ refunded: boolean; skipped?: boolean }> {
-  if (await isTerminal(admin, job.id)) return { refunded: false, skipped: true };
+  if (await isTerminal(admin, job.id)) {
+    await releaseJobLock(admin, job, "already_terminal");
+    return { refunded: false, skipped: true };
+  }
   const delivered = isDelivered(result);
   const refunded = delivered ? false : await refundJob(admin, job, "no_answer_delivered");
   await admin.from("legal_research_jobs").update({
@@ -173,6 +194,7 @@ export async function finishJobSuccess(
     progress_label_he: null,
     completed_at: new Date().toISOString(),
   }).eq("id", job.id).in("status", ["running", "queued"]);
+  await releaseJobLock(admin, job, refunded ? "refunded" : "done");
   return { refunded };
 }
 
@@ -181,7 +203,10 @@ export async function finishJobError(
   job: BetaJob,
   message: string,
 ): Promise<void> {
-  if (await isTerminal(admin, job.id)) return;
+  if (await isTerminal(admin, job.id)) {
+    await releaseJobLock(admin, job, "already_terminal");
+    return;
+  }
   const refunded = await refundJob(admin, job, "pipeline_error");
   await admin.from("legal_research_jobs").update({
     status: "error",
@@ -191,4 +216,5 @@ export async function finishJobError(
     progress_label_he: null,
     completed_at: new Date().toISOString(),
   }).eq("id", job.id).in("status", ["running", "queued"]);
+  await releaseJobLock(admin, job, "error");
 }
