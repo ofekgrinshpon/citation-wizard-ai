@@ -224,8 +224,8 @@ export function UniformCitationPanel({ footnotes }: Props) {
         ) : (
           <div className="space-y-2">
             <p className="text-sm text-foreground leading-relaxed">
-              נמצאו {footnotes.length} הערות שוליים. יצירת אזכור אחיד עשויה לעלות עד {maxCost} קרדיטים
-              ולהימשך מספר שניות. להמשיך?
+              נמצאו {footnotes.length} הערות שוליים. יצירת אזכור אחיד צורכת ממכסת השימוש שלך
+              ועשויה להימשך מספר שניות. להמשיך?
             </p>
             <p className="text-xs text-muted-foreground">
               מקורות שכבר קיימים במאגר המקורות המאומתים אינם מחויבים.

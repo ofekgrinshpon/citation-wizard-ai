@@ -1756,7 +1756,7 @@ export function LegalQAChat({ onResultSaved, externalResult, onConsumeExternalRe
         }
         if (res.status === 401) { setError("פג תוקף ההתחברות. רעננו את הדף והתחברו מחדש."); return; }
         if (res.status === 429) { setError("יותר מדי בקשות. נסו שוב בעוד דקה."); return; }
-        if (res.status === 402) { setError("נגמרו הקרדיטים."); return; }
+        if (res.status === 402) { setError("הגעת למכסת השימוש."); return; }
         throw new Error(`HTTP ${res.status}`);
       }
 
@@ -1787,7 +1787,7 @@ export function LegalQAChat({ onResultSaved, externalResult, onConsumeExternalRe
         effectiveStatus = result.status;
         if (effectiveStatus === 401) { setError("פג תוקף ההתחברות. רעננו את הדף והתחברו מחדש."); return; }
         if (effectiveStatus === 429) { setError("יותר מדי בקשות. נסו שוב בעוד דקה."); return; }
-        if (effectiveStatus === 402) { setError("נגמרו הקרדיטים."); return; }
+        if (effectiveStatus === 402) { setError("הגעת למכסת השימוש."); return; }
       } else {
         data = await res.json();
       }
@@ -2050,7 +2050,7 @@ export function LegalQAChat({ onResultSaved, externalResult, onConsumeExternalRe
       if (row.status === "done" && row.result) {
         finishChapterJob(chapterIdx, row);
       } else {
-        setError(row.error || "כתיבת הפרק נכשלה. הקרדיטים הוחזרו.");
+        setError(row.error || "כתיבת הפרק נכשלה. השימוש הוחזר למכסה.");
       }
     }, 4000);
   };
@@ -2109,7 +2109,7 @@ export function LegalQAChat({ onResultSaved, externalResult, onConsumeExternalRe
     if (started.insufficientCredits) {
       setLoading(false);
       setChapterProgressLabel(null);
-      setError(`אין מספיק קרדיטים. כתיבת פרק עולה ${started.required ?? CREDIT_COSTS.academicChapter} קרדיטים.`);
+      setError("אין מספיק מכסת שימוש לכתיבת פרק.");
       return;
     }
     if (!started.jobId) {
@@ -2283,7 +2283,7 @@ export function LegalQAChat({ onResultSaved, externalResult, onConsumeExternalRe
       if (!res.ok && res.status !== 202) {
         if (res.status === 401) { setError("פג תוקף ההתחברות. רעננו את הדף והתחברו מחדש."); return; }
         if (res.status === 429) { setError("יותר מדי בקשות. נסו שוב בעוד דקה."); return; }
-        if (res.status === 402) { setError("נגמרו הקרדיטים. יש להוסיף קרדיטים בהגדרות."); return; }
+        if (res.status === 402) { setError("הגעת למכסת השימוש. אפשר להוסיף שימוש בהגדרות החשבון."); return; }
         if (res.status === 503) {
           let msg = "השירות בשדרוג. חוזר בקרוב.";
           try {
@@ -2319,7 +2319,7 @@ export function LegalQAChat({ onResultSaved, externalResult, onConsumeExternalRe
         effectiveStatus = result.status;
         if (effectiveStatus === 401) { setError("פג תוקף ההתחברות. רעננו את הדף והתחברו מחדש."); return; }
         if (effectiveStatus === 429) { setError("יותר מדי בקשות. נסו שוב בעוד דקה."); return; }
-        if (effectiveStatus === 402) { setError("נגמרו הקרדיטים. יש להוסיף קרדיטים בהגדרות."); return; }
+        if (effectiveStatus === 402) { setError("הגעת למכסת השימוש. אפשר להוסיף שימוש בהגדרות החשבון."); return; }
       } else {
         data = await res.json();
       }

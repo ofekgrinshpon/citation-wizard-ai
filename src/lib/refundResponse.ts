@@ -15,7 +15,7 @@ export interface MaybeRefundedResponse {
 export function handleRefundResponse(payload: unknown): boolean {
   const r = (payload ?? {}) as MaybeRefundedResponse;
   if (r?.refunded) {
-    toast.info("הפעולה נכשלה והקרדיטים הוחזרו אוטומטית", {
+    toast.info("הפעולה נכשלה והשימוש הוחזר למכסה אוטומטית", {
       description: r.refundReason || undefined,
     });
     return true;

@@ -56,10 +56,10 @@ export function useCredits() {
     refresh();
   }, [refresh]);
 
-  const plan: PlanId = isAdmin ? "admin" : (profile?.plan ?? "basic");
-  const planMeta = PLANS[plan];
+  const plan: PlanId = isAdmin ? "admin" : ((profile?.plan as PlanId) ?? "trial");
+  const planMeta = PLANS[plan] ?? PLANS.trial;
   const includedCreditsRemaining = profile?.included_credits_remaining ?? 0;
-  const includedCreditsTotal = profile?.included_credits_total ?? planMeta.includedCredits;
+  const includedCreditsTotal = profile?.included_credits_total ?? planMeta.includedUnits;
   const topupCreditsRemaining = profile?.topup_credits_remaining ?? 0;
   const totalCreditsAvailable = isAdmin
     ? Number.POSITIVE_INFINITY

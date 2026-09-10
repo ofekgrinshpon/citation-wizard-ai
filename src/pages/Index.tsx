@@ -235,7 +235,7 @@ const Index = () => {
 
     if (errorInfo) {
       toast.error(errorInfo.message, {
-        description: errorInfo.isInvalidInput ? "לא בוצע חיוב בקרדיטים." : undefined,
+        description: errorInfo.isInvalidInput ? "לא נוצל שימוש מהמכסה." : undefined,
       });
       const err = new Error(errorInfo.code || `HTTP_${errorInfo.status ?? "ERR"}`) as Error & {
         isInvalidInput?: boolean;
@@ -527,7 +527,7 @@ const Index = () => {
     const validation = validateCitationInput(rawText);
     if (!validation.valid) {
       toast.error(validation.messageHe || "לא ניתן לעבד את הבקשה כי לא זוהה טקסט משפטי ברור לאזכור.", {
-        description: "לא בוצע חיוב בקרדיטים.",
+        description: "לא נוצל שימוש מהמכסה.",
       });
       return;
     }
@@ -800,11 +800,11 @@ const Index = () => {
           <div className="absolute inset-0 bg-foreground/40 backdrop-blur-sm" />
           <div className="relative bg-card border border-border rounded-2xl p-6 max-w-sm mx-4 shadow-lg text-center animate-fade-in">
             <div className="text-4xl mb-3">🔒</div>
-            <h3 className="text-foreground text-lg font-bold mb-2">נגמרו הקרדיטים החודשיים</h3>
+            <h3 className="text-foreground text-lg font-bold mb-2">הגעת למכסת השימוש</h3>
             <p className="text-muted-foreground text-sm mb-5 leading-relaxed">
-              ניצלת את כל {subscription.limit} הקרדיטים החודשיים בתכנית {planMeta.label}.
-              {billingPeriodEndsAt ? <> הקרדיטים יתחדשו ב־{new Date(billingPeriodEndsAt).toLocaleDateString("he-IL")}.</> : null}
-              {" "}ניתן לשדרג ל־Pro או להוסיף Top-up כדי להמשיך לעבוד עכשיו.
+              ניצלת את מכסת השימוש בתוכנית {planMeta.label}.
+              {billingPeriodEndsAt ? <> המכסה תתחדש ב־{new Date(billingPeriodEndsAt).toLocaleDateString("he-IL")}.</> : null}
+              {" "}ניתן לשדרג תוכנית או להוסיף שימוש כדי להמשיך לעבוד עכשיו.
             </p>
             <button
               onClick={() => navigate("/profile?tab=account")}

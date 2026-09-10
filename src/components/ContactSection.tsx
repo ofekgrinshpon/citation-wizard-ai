@@ -19,7 +19,7 @@ const CONTACT_EMAILS = [
   {
     label: "חיובים ותשלומים",
     email: "billing@relexlm.com",
-    description: "תכניות, קרדיטים וחשבוניות",
+    description: "תכניות, שימוש וחשבוניות",
     Icon: CreditCard,
   },
 ];

@@ -126,7 +126,7 @@ const Auth = () => {
 
         {refCode && !isLogin && (
           <div className="rounded-lg border border-primary/30 bg-primary/5 px-3 py-2 text-xs text-foreground text-center">
-            🎁 הצטרפת דרך הזמנה (<span className="font-mono">{refCode}</span>) — לאחר הפעולה הראשונה שלך תקבלו שניכם 10 קרדיטים.
+            🎁 הצטרפת דרך הזמנה (<span className="font-mono">{refCode}</span>) — לאחר הפעולה הראשונה שלך תקבלו שניכם תוספת שימוש.
           </div>
         )}
 
