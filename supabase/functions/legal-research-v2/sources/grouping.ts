@@ -101,13 +101,6 @@ export function classifySourceGroup(args: {
   }
   if (isBill) return "legislative_process";
 
-  if (
-    SCHOLARSHIP_HOSTS.some((s) => h === s || h.endsWith(`.${s}`)) ||
-    ACADEMIC_SUFFIX.some((s) => h.endsWith(s)) ||
-    /law[-_]?review|mishpatim|hapraklit|iyunei|mehkarei|lawreview/.test(`${h}${p}`)
-  ) {
-    return "scholarship";
-  }
 
   if (h === "gov.il" || h.endsWith(".gov.il") || h === "mevaker.gov.il") return "institutional";
 
