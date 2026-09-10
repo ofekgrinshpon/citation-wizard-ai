@@ -2493,6 +2493,28 @@ export function LegalQAChat({ onResultSaved, externalResult, onConsumeExternalRe
             );
           })}
         </div>
+
+        {/* Intent selector inside the Legal Research workspace */}
+        {!isAcademic && (
+          <div className="flex items-center gap-1 rounded-xl border border-border bg-muted/40 p-1">
+            {RESEARCH_INTENTS.map((intent) => {
+              const active = taskMode === intent.id;
+              return (
+                <button
+                  key={intent.id}
+                  onClick={() => handleModeChange(intent.id)}
+                  className={`flex-1 rounded-lg px-2 py-1.5 text-[11px] sm:text-xs font-medium transition-colors ${
+                    active
+                      ? "bg-background text-foreground shadow-sm border border-border"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  {intent.label}
+                </button>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       <AcademicWritingComingSoon
