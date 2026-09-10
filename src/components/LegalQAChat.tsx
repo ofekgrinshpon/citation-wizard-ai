@@ -1238,9 +1238,18 @@ export function LegalQAChat({ onResultSaved, externalResult, onConsumeExternalRe
 
   const isFileRelevantMode = FILE_RELEVANT_MODES.includes(taskMode);
 
+  const [showAcademicComingSoon, setShowAcademicComingSoon] = useState(false);
+
   const handleModeChange = useCallback((value: string) => {
     if (!value) return;
     const newMode = value as TaskMode;
+
+    // Availability freeze: Academic Writing stays visible but never opens.
+    if (newMode === "academic_writing" && !ACADEMIC_WRITING_ENABLED) {
+      setShowAcademicComingSoon(true);
+      return;
+    }
+
 
     // Warn if switching away from academic_writing with progress
     if (taskMode === "academic_writing" && newMode !== "academic_writing" && wizardStep !== "init" && chapters.some(ch => ch.content)) {
