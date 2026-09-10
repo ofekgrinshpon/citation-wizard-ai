@@ -217,106 +217,127 @@ const Profile = () => {
               <div className="bg-card border border-border rounded-xl p-6 space-y-4">
                 <div className="flex items-center justify-between flex-wrap gap-2">
                   <div className="flex items-center gap-3">
-                    <h3 className="text-foreground font-bold text-base">המסלול שלי</h3>
-                    <Badge variant={plan === "basic" ? "secondary" : "default"}>{planMeta.label}</Badge>
+                    <h3 className="text-foreground font-bold text-base">התוכנית שלי</h3>
+                    <Badge variant={usage?.isPaid ? "default" : "secondary"}>{usagePlanMeta.label}</Badge>
                   </div>
-                  <span className="text-xs text-muted-foreground">{planMeta.priceLabel}</span>
+                  <button
+                    type="button"
+                    onClick={() => setUsageInfoOpen(true)}
+                    className="text-xs font-semibold text-primary hover:underline"
+                  >
+                    איך מגבלות השימוש עובדות?
+                  </button>
                 </div>
 
                 {isAdmin ? (
                   <div className="flex items-center gap-2 text-sm text-foreground">
                     <InfinityIcon className="w-4 h-4 text-primary" />
-                    קרדיטים ללא הגבלה
+                    שימוש ללא הגבלה
                   </div>
                 ) : (
-                  <>
+                  <div className="space-y-5">
+                    {/* Current 5-hour window */}
                     <div className="space-y-2">
                       <div className="flex items-center justify-between text-sm">
-                        <span className="text-muted-foreground">קרדיטים מהמסלול</span>
-                        <span className="font-bold text-foreground tabular-nums">{includedCreditsRemaining} / {includedCreditsTotal}</span>
+                        <span className="text-muted-foreground">מכסת שימוש נוכחית</span>
+                        <span className="font-semibold text-foreground">
+                          {WINDOW_LEVEL_LABEL[usage?.windowLevel ?? "low"]}
+                        </span>
                       </div>
                       <div className="w-full bg-muted rounded-full h-2">
                         <div
                           className="h-2 rounded-full transition-all"
                           style={{
-                            width: `${Math.min(100, includedRatio * 100)}%`,
-                            background: includedRatio < 0.2 ? "hsl(var(--destructive))" : "var(--gradient-primary)",
+                            width: `${Math.min(100, (usage?.windowRatio ?? 0) * 100)}%`,
+                            background:
+                              (usage?.windowRatio ?? 0) >= 0.85
+                                ? "hsl(var(--destructive))"
+                                : "var(--gradient-primary)",
                           }}
                         />
                       </div>
+                      {windowCountdown && (
+                        <p className="text-xs text-muted-foreground">מתחדשת בעוד {windowCountdown}</p>
+                      )}
                     </div>
-                    <div className="flex items-center justify-between text-sm pt-1">
-                      <span className="text-muted-foreground">קרדיטים מטעינות (Top-up)</span>
-                      <span className="font-bold text-foreground tabular-nums">{topupCreditsRemaining}</span>
-                    </div>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">סה"כ זמין</span>
-                      <span className="font-bold text-primary tabular-nums">{totalCreditsAvailable} קרדיטים</span>
-                    </div>
-                    {billingPeriodEndsAt && (
-                      <p className="text-xs text-muted-foreground pt-1">
-                        תאריך חידוש: {format(new Date(billingPeriodEndsAt), "dd/MM/yyyy")}
-                      </p>
-                    )}
-                  </>
-                )}
 
-                {!isPaidPlan && !isAdmin && (
-                  <button
-                    onClick={() => toast.info("תשלום יתחבר בקרוב")}
-                    className="w-full py-3 rounded-xl font-semibold text-sm text-primary-foreground transition-all"
-                    style={{ background: "var(--gradient-primary)" }}
-                  >
-                    ⭐ שדרג ל-Pro
-                  </button>
+                    {/* Plan period allowance */}
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-muted-foreground">מכסת התוכנית</span>
+                        <span className="font-semibold text-foreground">
+                          {PERIOD_LEVEL_LABEL[usage?.periodLevel ?? "low"]}
+                        </span>
+                      </div>
+                      <div className="w-full bg-muted rounded-full h-2">
+                        <div
+                          className="h-2 rounded-full transition-all"
+                          style={{
+                            width: `${Math.min(100, (usage?.periodRatio ?? 0) * 100)}%`,
+                            background:
+                              (usage?.periodRatio ?? 0) >= 0.85
+                                ? "hsl(var(--destructive))"
+                                : "var(--gradient-primary)",
+                          }}
+                        />
+                      </div>
+                      {usage?.planEndsAt ? (
+                        <p className="text-xs text-muted-foreground">
+                          התוכנית מסתיימת בעוד {planDaysLeft} ימים ({format(new Date(usage.planEndsAt), "dd/MM/yyyy")})
+                        </p>
+                      ) : (
+                        <p className="text-xs text-muted-foreground">
+                          מכסת ההתנסות היא חד־פעמית ואינה מתחדשת.
+                        </p>
+                      )}
+                    </div>
+
+                    {usage?.hasExtraUsage && (
+                      <p className="text-xs text-primary">יש בחשבונך תוספת שימוש זמינה.</p>
+                    )}
+                  </div>
                 )}
               </div>
 
-              {/* Plan comparison (only for basic) */}
-              {!isPaidPlan && !isAdmin && (
+              {/* Plan options */}
+              {!isAdmin && (
                 <div className="bg-card border border-border rounded-xl p-6">
-                  <h4 className="text-sm font-bold text-foreground mb-3">מסלולים זמינים</h4>
+                  <h4 className="text-sm font-bold text-foreground mb-3">תוכניות זמינות</h4>
                   <div className="grid sm:grid-cols-3 gap-3">
-                    {(["pro_monthly", "pro_semester", "pro_annual"] as const).map((id) => {
+                    {(["week", "month", "semester"] as const).map((id) => {
                       const p = PLANS[id];
                       return (
-                        <div key={id} className="border border-border rounded-lg p-3">
+                        <button
+                          key={id}
+                          onClick={() => toast.info("רכישת תוכנית תיפתח בקרוב")}
+                          className="border border-border rounded-lg p-3 text-right hover:border-primary/50 transition-colors"
+                        >
                           <div className="font-semibold text-foreground text-sm">{p.label}</div>
                           <div className="text-xs text-primary mt-0.5">{p.priceLabel}</div>
-                          <div className="text-xs text-muted-foreground mt-1">{p.includedCredits} קרדיטים</div>
+                          <div className="text-xs text-muted-foreground mt-1">{p.durationLabel}</div>
                           <p className="text-[11px] text-muted-foreground mt-2">{p.tagline}</p>
-                        </div>
+                        </button>
                       );
                     })}
                   </div>
                   <p className="text-[11px] text-muted-foreground mt-3">
-                    כל מסלול כולל מכסת קרדיטים לשימוש בפעולות שונות. פעולות מתקדמות כמו Legal QA צורכות יותר קרדיטים מפעולות בסיסיות.
+                    התוכניות הן לתקופה קצובה וללא חידוש אוטומטי. השימוש כפוף למכסה קצרת טווח
+                    המתחדשת כל 5 שעות ולמכסה כוללת לתקופה.
                   </p>
                 </div>
               )}
 
-              {/* Top-up packs */}
-              {canTopup && (
-                <div className="bg-card border border-border rounded-xl p-6">
-                  <h4 className="text-sm font-bold text-foreground mb-3">טעינת קרדיטים</h4>
-                  <div className="grid sm:grid-cols-3 gap-3">
-                    {TOPUP_PACKS.map((pack) => (
-                      <button
-                        key={pack.credits}
-                        onClick={() => toast.info("טעינת חבילה תהיה זמינה בקרוב")}
-                        className="border border-border rounded-lg p-3 hover:border-primary hover:bg-primary/5 transition-colors text-right"
-                      >
-                        <div className="font-bold text-foreground">{pack.credits} קרדיטים</div>
-                        <div className="text-xs text-primary mt-1">{pack.priceLabel}</div>
-                      </button>
-                    ))}
-                  </div>
+              {/* Usage add-ons */}
+              {!isAdmin && (usage?.canPurchaseTopup ?? false) && (
+                <div className="bg-card border border-border rounded-xl p-6 space-y-3">
+                  <h4 className="text-sm font-bold text-foreground">תוספת שימוש</h4>
+                  <TopupOptions />
                 </div>
               )}
 
-              {/* Usage history */}
+              {/* Activity history — no raw balances */}
               <div className="bg-card border border-border rounded-xl p-6">
-                <h4 className="text-sm font-bold text-foreground mb-3">היסטוריית קרדיטים</h4>
+                <h4 className="text-sm font-bold text-foreground mb-3">היסטוריית שימוש</h4>
                 {ledgerLoading ? (
                   <p className="text-xs text-muted-foreground">טוען...</p>
                 ) : ledger.length === 0 ? (
@@ -325,7 +346,6 @@ const Profile = () => {
                   <div className="space-y-1.5 max-h-80 overflow-y-auto">
                     {ledger.map((row: LedgerRow) => {
                       const isRefund = row.event_type === "refund";
-                      const isPositive = row.amount > 0;
                       return (
                         <div key={row.id} className="flex items-center justify-between gap-3 py-2 border-b border-border/50 text-xs">
                           <div className="flex-1 min-w-0">
@@ -340,9 +360,6 @@ const Profile = () => {
                             )}
                             <div className="text-muted-foreground">{format(new Date(row.created_at), "dd/MM/yyyy HH:mm")}</div>
                           </div>
-                          <div className={`font-bold tabular-nums ${isPositive ? "text-emerald-600" : "text-destructive"}`}>
-                            {isPositive ? "+" : ""}{row.amount}
-                          </div>
                         </div>
                       );
                     })}
@@ -350,6 +367,7 @@ const Profile = () => {
                 )}
               </div>
             </div>
+            <UsageLimitsInfoDialog open={usageInfoOpen} onOpenChange={setUsageInfoOpen} />
           </TabsContent>
 
           <TabsContent value="referral">
