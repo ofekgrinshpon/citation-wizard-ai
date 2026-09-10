@@ -1152,6 +1152,14 @@ export function LegalQAChat({ onResultSaved, externalResult, onConsumeExternalRe
     setTaskMode(externalResult.taskMode);
   }, [externalResult]);
 
+  // Opening a background job from history switches to the matching intent, so a
+  // source-search job never renders inside "מענה לשאלה" and vice versa.
+  useEffect(() => {
+    if (!externalJob) return;
+    setResult(null);
+    setTaskMode(externalJob.mode === "sources" ? "legal_source_search" : "research");
+  }, [externalJob]);
+
   // Availability freeze: Academic Writing stays visible but never opens.
   const [showAcademicComingSoon, setShowAcademicComingSoon] = useState(false);
 
