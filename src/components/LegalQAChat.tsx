@@ -2478,6 +2478,11 @@ export function LegalQAChat({ onResultSaved, externalResult, onConsumeExternalRe
         </div>
       </div>
 
+      <AcademicWritingComingSoon
+        open={showAcademicComingSoon}
+        onOpenChange={setShowAcademicComingSoon}
+      />
+
       {/* Middle: scrollable results area */}
       <div ref={scrollRef} className="flex-1 overflow-y-auto px-2 sm:px-4">
 
