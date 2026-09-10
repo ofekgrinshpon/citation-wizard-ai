@@ -1632,7 +1632,11 @@ serve(async (req) => {
   };
 
   try {
-    const { messages, requestId: clientReqId } = await req.json();
+    const { messages, requestId: clientReqId, batchId: clientBatchId } = await req.json();
+    // Batch-priced usage: one internal unit per up to 5 processed citations.
+    const usageBatchId = typeof clientBatchId === "string" && clientBatchId.length >= 8
+      ? clientBatchId
+      : null;
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
