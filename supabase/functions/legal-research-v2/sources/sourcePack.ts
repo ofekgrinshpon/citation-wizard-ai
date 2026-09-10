@@ -173,7 +173,7 @@ export function buildSourcePack(input: {
         group,
         source_type_he: sourceTypeLabelHe(group),
         jurisdiction_he: jurisdictionOf(s),
-        identifier: identifierOf(s),
+        identifier: identifierOf(s, group),
         origin_he: originHe(s.origin),
         reason_he: trimReason(agentReason.get(s.source_id) ?? ""),
         excerpt: span ? trimReason(span, 320) : null,
