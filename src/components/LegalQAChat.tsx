@@ -1138,6 +1138,7 @@ export function LegalQAChat({ onResultSaved, externalResult, onConsumeExternalRe
   // Resume academic session from history sidebar click (DB first, localStorage fallback)
   useEffect(() => {
     if (!academicResumeSignal) return;
+    if (!ACADEMIC_WRITING_ENABLED) { setShowAcademicComingSoon(true); return; }
     setTaskMode("academic_writing");
     (async () => {
       const dbSaved = await loadAcademicSessionFromDB(projectId);
