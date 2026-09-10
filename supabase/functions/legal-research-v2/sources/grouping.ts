@@ -80,7 +80,15 @@ export function classifySourceGroup(args: {
   const p = pathOf(args.url);
   const hasDocket = DOCKET_RE.test(title) || (args.identity?.dockets?.length ?? 0) > 0;
 
-  if (h.endsWith(COURT_SUFFIX) || h === "versa.cardozo.yu.edu" || hasDocket) return "case_law";
+  // Scholarship is decided before the docket heuristic: an academic article
+  // cites judgments, so its extracted identity routinely carries dockets.
+  const isScholarshipHost = SCHOLARSHIP_HOSTS.some((s) => h === s || h.endsWith(`.${s}`)) ||
+    ACADEMIC_SUFFIX.some((s) => h.endsWith(s)) ||
+    /law[-_]?review|mishpatim|hapraklit|iyunei|mehkarei|lawreview/.test(`${h}${p}`);
+
+  if (h.endsWith(COURT_SUFFIX) || h === "versa.cardozo.yu.edu") return "case_law";
+  if (isScholarshipHost) return "scholarship";
+  if (hasDocket) return "case_law";
 
   const looksLikeLaw = STATUTE_TITLE_RE.test(title) ||
     /\/law(_html|_word)?\//.test(p) ||
