@@ -1151,6 +1151,21 @@ export type Database = {
       }
     }
     Views: {
+      admin_usage_economics: {
+        Row: {
+          active_users: number | null
+          bucket: string | null
+          cost_is_estimate: boolean | null
+          day: string | null
+          estimated_cost_usd: number | null
+          operation_type: string | null
+          operations: number | null
+          plan: string | null
+          units_consumed: number | null
+          units_refunded: number | null
+        }
+        Relationships: []
+      }
       public_verified_sources: {
         Row: {
           auto_verified: boolean | null
