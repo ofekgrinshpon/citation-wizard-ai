@@ -904,11 +904,13 @@ interface LegalQAChatProps {
     | { question: string; v1Payload: { answer: string; footnotes: any[] }; taskMode: "research" }
     | null;
   onConsumeExternalResult?: () => void;
+  /** History replay of a background research/source job picked in the sidebar. */
+  externalJob?: { id: string; mode: "answer" | "sources"; at: number } | null;
   academicResumeSignal?: number;
   academicResumeFallback?: { question: string; result: QAResult } | null;
 }
 
-export function LegalQAChat({ onResultSaved, externalResult, onConsumeExternalResult, academicResumeSignal, academicResumeFallback }: LegalQAChatProps = {}) {
+export function LegalQAChat({ onResultSaved, externalResult, onConsumeExternalResult, externalJob, academicResumeSignal, academicResumeFallback }: LegalQAChatProps = {}) {
   const { currentProject } = useProjects();
   const projectId = currentProject?.id;
 
@@ -1149,6 +1151,14 @@ export function LegalQAChat({ onResultSaved, externalResult, onConsumeExternalRe
     setResult(externalResult.result);
     setTaskMode(externalResult.taskMode);
   }, [externalResult]);
+
+  // Opening a background job from history switches to the matching intent, so a
+  // source-search job never renders inside "מענה לשאלה" and vice versa.
+  useEffect(() => {
+    if (!externalJob) return;
+    setResult(null);
+    setTaskMode(externalJob.mode === "sources" ? "legal_source_search" : "research");
+  }, [externalJob]);
 
   // Availability freeze: Academic Writing stays visible but never opens.
   const [showAcademicComingSoon, setShowAcademicComingSoon] = useState(false);
@@ -3231,6 +3241,7 @@ export function LegalQAChat({ onResultSaved, externalResult, onConsumeExternalRe
             <LegalResearchV1Panel
               externalResult={legalResearchV1External}
               onConsumeExternalResult={onConsumeExternalResult}
+              openJob={externalJob && externalJob.mode === "answer" ? { id: externalJob.id, at: externalJob.at } : null}
             />
           </div>
         )}
@@ -3246,7 +3257,10 @@ export function LegalQAChat({ onResultSaved, externalResult, onConsumeExternalRe
                 onConsumeExternalResult={onConsumeExternalResult}
               />
             ) : (
-              <LegalResearchV1Panel mode="sources" />
+              <LegalResearchV1Panel
+                mode="sources"
+                openJob={externalJob && externalJob.mode === "sources" ? { id: externalJob.id, at: externalJob.at } : null}
+              />
             )}
           </div>
         )}

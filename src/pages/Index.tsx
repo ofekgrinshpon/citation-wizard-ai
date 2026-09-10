@@ -139,6 +139,9 @@ const Index = () => {
     | { question: string; v1Payload: { answer: string; footnotes: any[] }; taskMode: "research" }
     | null
   >(null);
+  const [qaExternalJob, setQaExternalJob] = useState<
+    { id: string; mode: "answer" | "sources"; at: number } | null
+  >(null);
   const [academicResumeSignal, setAcademicResumeSignal] = useState<number>(0);
   const [academicResumeFallback, setAcademicResumeFallback] = useState<{ question: string; result: any } | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -912,6 +915,7 @@ const Index = () => {
             onResultSaved={() => setQaRefreshKey(k => k + 1)}
             externalResult={qaExternalResult}
             onConsumeExternalResult={() => setQaExternalResult(null)}
+            externalJob={qaExternalJob}
             academicResumeSignal={academicResumeSignal}
             academicResumeFallback={academicResumeFallback}
           />
@@ -1230,7 +1234,12 @@ const Index = () => {
               <QAHistorySidebar
                 projectId={projectId ?? null}
                 refreshKey={qaRefreshKey}
+                onOpenJob={(jobId, jobMode) => {
+                  setQaExternalResult(null);
+                  setQaExternalJob({ id: jobId, mode: jobMode, at: Date.now() });
+                }}
                 onLoadResult={(question, result, taskMode) => {
+                  setQaExternalJob(null);
                   if (taskMode === "academic_writing") {
                     setAcademicResumeFallback({ question, result });
                     setAcademicResumeSignal(Date.now());

@@ -28,6 +28,11 @@ import {
 } from "@/config/researchPipeline";
 import { UniformCitationPanel } from "@/components/legal-research/UniformCitationPanel";
 import { SourcePackView, type SourcePack } from "@/components/legal-research/SourcePackView";
+import {
+  recordResearchJobMode,
+  resolveResearchJobMode,
+  type ResearchJobMode,
+} from "@/lib/researchJobMode";
 
 const MAX_FILES = 5;
 const MAX_FILE_BYTES = 8 * 1024 * 1024;
@@ -139,14 +144,21 @@ interface LegalResearchV1PanelProps {
     | { question: string; payload: { answer: string; footnotes: Footnote[] } }
     | null;
   onConsumeExternalResult?: () => void;
+  /**
+   * History replay of a server-side job (finished or still running). `at` makes
+   * repeated clicks on different history rows distinguishable.
+   */
+  openJob?: { id: string; at: number } | null;
 }
 
 export function LegalResearchV1Panel({
   mode = "answer",
   externalResult,
   onConsumeExternalResult,
+  openJob,
 }: LegalResearchV1PanelProps = {}) {
   const sourcesMode = mode === "sources";
+  const panelJobMode: ResearchJobMode = sourcesMode ? "sources" : "answer";
   const RESUME_KEY = sourcesMode ? SOURCES_RESUME_STORAGE_KEY : RESUME_STORAGE_KEY;
   const creditCost = sourcesMode ? CREDIT_COSTS.sourceSearch : CREDIT_COSTS.research;
   const { currentProject, loading: projectsLoading } = useProjects();
@@ -317,7 +329,10 @@ export function LegalResearchV1Panel({
   };
 
   /** Attach the UI to a server-side job (deep link, refresh, or auto-resume). */
-  const attachToJob = async (jid: string, opts?: { markResumed?: boolean }) => {
+  const attachToJob = async (
+    jid: string,
+    opts?: { markResumed?: boolean; ignoreModeGuard?: boolean },
+  ) => {
     const { data, error: qErr } = await supabase
       .from("legal_research_jobs")
       .select(JOB_SELECT)
@@ -325,6 +340,12 @@ export function LegalResearchV1Panel({
       .maybeSingle();
     if (qErr || !data) return false;
     const row = data as JobRow;
+    // Answer jobs and source-search jobs share one table. A job that belongs to
+    // the other intent must never be rendered here.
+    if (!opts?.ignoreModeGuard) {
+      const jobMode = resolveResearchJobMode(jid, row.result);
+      if (jobMode && jobMode !== panelJobMode) return false;
+    }
     if (row.question) setQuestion(row.question);
     setError(null);
     setInfraFailure(false);
@@ -346,13 +367,28 @@ export function LegalResearchV1Panel({
     return true;
   };
 
+  // History replay of a specific job picked in the sidebar. Runs on every new
+  // click (`at` changes), so selecting a different row always re-attaches.
+  useEffect(() => {
+    if (!openJob?.id) return;
+    let cancelled = false;
+    (async () => {
+      stopAll();
+      setLoading(false);
+      setJobId(null);
+      if (!cancelled) await attachToJob(openJob.id, { ignoreModeGuard: true });
+    })();
+    return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [openJob?.id, openJob?.at]);
+
   // Resume-on-mount. The job lives in the database, so a refresh, a new tab or
   // a returning session all reattach: ?job=<id> deep link first, then this
   // browser-persistent hint, then the user's most recent job in this project.
   // Skip when a history-replay payload is being injected — the cached result
   // must win over any leftover job state.
   useEffect(() => {
-    if (externalResult) return;
+    if (externalResult || openJob) return;
     let urlJob: string | null = null;
     try {
       urlJob = new URL(window.location.href).searchParams.get("job");
@@ -380,23 +416,28 @@ export function LegalResearchV1Panel({
       // table also holds answer jobs, which must never surface here.
       if (sourcesMode) return;
       // No durable hint (including jobs launched before this fix): recover the
-      // newest recent job, including one that completed while the browser was closed.
+      // newest recent answer job, skipping source-search jobs that live in the
+      // same table.
       let query = supabase
         .from("legal_research_jobs")
-        .select("id")
+        .select("id, result")
         .gte("created_at", new Date(Date.now() - 30 * 24 * 60 * 60_000).toISOString())
         .order("created_at", { ascending: false })
-        .limit(1);
+        .limit(5);
       query = currentProject?.id
         ? query.eq("project_id", currentProject.id)
         : query.is("project_id", null);
-      const { data } = await query.maybeSingle();
-      const row = data as { id: string } | null;
-      if (row?.id && !cancelled) await attachToJob(row.id, { markResumed: true });
+      const { data } = await query;
+      const rows = (data as Array<{ id: string; result: unknown }> | null) ?? [];
+      const candidate = rows.find(
+        (r) => (resolveResearchJobMode(r.id, r.result) ?? "answer") === "answer",
+      );
+      if (candidate?.id && !cancelled) await attachToJob(candidate.id, { markResumed: true });
     })();
     return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [externalResult, projectsLoading, currentProject?.id]);
+  }, [externalResult, openJob, projectsLoading, currentProject?.id]);
+
 
 
   // History replay: hydrate cached V1 answer/footnotes from the sidebar.
@@ -571,6 +612,7 @@ export function LegalResearchV1Panel({
         return;
       }
 
+      recordResearchJobMode(data.job_id, panelJobMode);
       setJobId(data.job_id);
       setJobUrlParam(data.job_id);
       persistResume(data.job_id, startRef.current);
