@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { USAGE_BATCH_GROUP } from "../_shared/usageWeights.ts";
 
 // ── Canonical database-name mapping (Rule 19.1 + extended sources) ──
 // Maps a source URL host → canonical Hebrew database name. Used to override

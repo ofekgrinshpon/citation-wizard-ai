@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { USAGE_BATCH_GROUP } from "../_shared/usageWeights.ts";
 import {
   HEBREW_JOURNALS,
   JOURNAL_HINT_RE,
