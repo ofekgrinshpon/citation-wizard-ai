@@ -168,7 +168,7 @@ const Profile = () => {
     toast.success("הקישור הועתק");
   };
 
-  const includedRatio = includedCreditsTotal > 0 ? includedCreditsRemaining / includedCreditsTotal : 0;
+  
 
   if (loading) {
     return (
