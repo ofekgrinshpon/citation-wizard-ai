@@ -20,6 +20,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
 import { acquireOperationLock, lockUnavailablePayload, operationInProgressPayload } from "../_shared/operationLock.ts";
+import { USAGE_WEIGHTS } from "../_shared/usageWeights.ts";
 
 const RESEARCH_MODE = "research";
 
@@ -344,9 +345,9 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
       );
     }
 
-    // ─── Credit gate ─────────────────────────────────────────────
+    // ─── Usage gate ──────────────────────────────────────────────
     // Short academic steps (suggest_topics / validate_question / propose_outline) → free.
-    // case_summary → 5 credits (+2 if grounding document attached).
+    // case_summary → 2 internal units when named, 1 when the judgment is uploaded.
     const isAcademicSubModeFree =
       taskMode === "academic_writing" &&
       typeof academicStep === "string" &&
@@ -359,7 +360,9 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
     if (isAcademicSubModeFree) {
       creditCost = 0;
     } else if (taskMode === "case_summary") {
-      creditCost = 5 + (hasGroundingDoc ? 2 : 0);
+      creditCost = hasGroundingDoc
+        ? USAGE_WEIGHTS.case_summary_upload
+        : USAGE_WEIGHTS.case_summary_named;
     } else {
       // Any other taskMode (general legal QA, unknown modes) is offline too.
       console.log(`[offline] unsupported taskMode="${taskMode ?? "(none)"}" — short-circuit 503`);

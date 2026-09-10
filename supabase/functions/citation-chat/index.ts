@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { USAGE_BATCH_GROUP } from "../_shared/usageWeights.ts";
 
 // ── Canonical database-name mapping (Rule 19.1 + extended sources) ──
 // Maps a source URL host → canonical Hebrew database name. Used to override
@@ -1632,7 +1633,11 @@ serve(async (req) => {
   };
 
   try {
-    const { messages, requestId: clientReqId } = await req.json();
+    const { messages, requestId: clientReqId, batchId: clientBatchId } = await req.json();
+    // Batch-priced usage: one internal unit per up to 5 processed citations.
+    const usageBatchId = typeof clientBatchId === "string" && clientBatchId.length >= 8
+      ? clientBatchId
+      : null;
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
@@ -1724,12 +1729,20 @@ serve(async (req) => {
       }
     }
 
-    // ── Consume 1 credit before invoking the AI (verified short-circuit above is free) ──
-    const consumeRes = await userClient.rpc("consume_credits", {
-      _amount: 1,
-      _reason: "citation-chat",
-      _request_id: creditRequestId,
-    });
+    // ── Reserve usage before invoking the AI (verified short-circuit above is free) ──
+    // Batched requests are priced at one internal unit per up to 5 citations.
+    const consumeRes = usageBatchId
+      ? await userClient.rpc("consume_usage_batch", {
+          _batch_id: usageBatchId,
+          _group_size: USAGE_BATCH_GROUP.citation,
+          _reason: "citation-chat",
+          _request_id: creditRequestId,
+        })
+      : await userClient.rpc("consume_credits", {
+          _amount: 1,
+          _reason: "citation-chat",
+          _request_id: creditRequestId,
+        });
     const consumeData = (consumeRes.data ?? {}) as Record<string, unknown>;
     console.log(
       `[credit] fn=citation-chat user=${userId ?? "unknown"} request_id=${creditRequestId} amount=1 ` +

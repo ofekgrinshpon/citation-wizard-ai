@@ -1,48 +1,30 @@
-import { useNavigate } from "react-router-dom";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { useCredits } from "@/hooks/useCredits";
+// Deprecated shim — kept so existing call sites keep working while the usage
+// UX migrates. Renders the new usage-limit modal; no raw balances are shown.
+import { UsageLimitDialog, type UsageBlockReason } from "@/components/usage/UsageLimitDialog";
 
 interface InsufficientCreditsDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  required: number;
+  /** Ignored — internal unit amounts are never shown to users. */
+  required?: number;
   remaining?: number;
+  blockReason?: UsageBlockReason | null;
+  windowResetAt?: string | null;
+  planEndsAt?: string | null;
 }
 
 export const InsufficientCreditsDialog = ({
   open,
   onOpenChange,
-  required,
-  remaining,
-}: InsufficientCreditsDialogProps) => {
-  const navigate = useNavigate();
-  const { isPaidPlan, totalCreditsAvailable } = useCredits();
-  const left = remaining ?? totalCreditsAvailable;
-
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent dir="rtl" className="max-w-md">
-        <DialogHeader>
-          <DialogTitle className="text-right">אין מספיק קרדיטים</DialogTitle>
-          <DialogDescription className="text-right">
-            נותרו לך <strong>{left}</strong> קרדיטים, אך הפעולה הזו דורשת <strong>{required}</strong>.
-          </DialogDescription>
-        </DialogHeader>
-        <DialogFooter className="sm:justify-start gap-2">
-          <Button
-            onClick={() => {
-              onOpenChange(false);
-              navigate("/profile?tab=account");
-            }}
-          >
-            {isPaidPlan ? "טען חבילה" : "שדרג ל-Pro"}
-          </Button>
-          <Button variant="ghost" onClick={() => onOpenChange(false)}>
-            ביטול
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  );
-};
+  blockReason,
+  windowResetAt,
+  planEndsAt,
+}: InsufficientCreditsDialogProps) => (
+  <UsageLimitDialog
+    open={open}
+    onOpenChange={onOpenChange}
+    blockReason={blockReason ?? null}
+    windowResetAt={windowResetAt ?? null}
+    planEndsAt={planEndsAt ?? null}
+  />
+);

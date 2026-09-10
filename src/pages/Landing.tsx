@@ -8,6 +8,7 @@ import { ContactSection } from "@/components/ContactSection";
 
 import { ChevronDown, Check, Sparkles } from "lucide-react";
 import { PLANS, type PlanId } from "@/lib/plans";
+import { UsageLimitsInfoDialog } from "@/components/usage/UsageLimitsInfoDialog";
 import howItWorksVideo from "@/assets/relex-how-it-works.mp4.asset.json";
 import howItWorksPoster from "@/assets/relex-how-it-works-poster.jpg.asset.json";
 
@@ -104,38 +105,43 @@ function CapabilityCard({ cap, index }: { cap: Capability; index: number }) {
   );
 }
 
-const PRICING_PLANS: { id: PlanId; highlight?: boolean; perks: string[] }[] = [
+const PRICING_PLANS: { id: PlanId; badge?: string; cta: string; perks: string[] }[] = [
   {
-    id: "basic",
+    id: "trial",
+    cta: "התחילו בחינם",
     perks: [
-      "10 קרדיטים בחודש",
-      "אזכורים אחידים, ביבליוגרפיה, העוזר המשפטי",
-      "ללא רכישת קרדיטים נוספת",
+      "גישה לכלי ReLex",
+      "מכסת שימוש להתנסות",
+      "ללא צורך בכרטיס אשראי",
     ],
   },
   {
-    id: "pro_monthly",
+    id: "week",
+    cta: "בחרו שבוע",
     perks: [
-      "250 קרדיטים בחודש",
-      "אפשרות להוספת Top-up בכל עת",
-      "תמיכה בכל מצבי העבודה",
+      "מחקר משפטי, חיפוש מקורות וסיכום פסק דין",
+      "אזכור אחיד, הערות שוליים וביבליוגרפיה",
+      "מכסת שימוש קצרת טווח שמתחדשת כל 5 שעות",
     ],
   },
   {
-    id: "pro_semester",
-    highlight: true,
+    id: "month",
+    badge: "הכי פופולרי",
+    cta: "בחרו חודש",
     perks: [
-      "900 קרדיטים ל-3 חודשים",
-      "החיסכון הגדול ביותר לסטודנטים",
-      "Top-up זמין לפי צורך",
+      "כל כלי המחקר והעבודה של ReLex",
+      "מכסה כוללת נדיבה יותר לתקופה",
+      "אפשרות להוספת שימוש בכל עת",
     ],
   },
   {
-    id: "pro_annual",
+    id: "semester",
+    badge: "הכי משתלם",
+    cta: "בחרו סמסטר",
     perks: [
-      "3,000 קרדיטים בשנה",
-      "המחיר הטוב ביותר לקרדיט",
-      "אידיאלי למשרדים ולעבודה שוטפת",
+      "כל כלי המחקר והעבודה של ReLex",
+      "המכסה הכוללת הגדולה ביותר",
+      "אפשרות להוספת שימוש בכל עת",
     ],
   },
 ];
@@ -147,6 +153,7 @@ const Landing = () => {
   const howRef = useRef<HTMLDivElement>(null);
   const pricingRef = useRef<HTMLDivElement>(null);
   const contactRef = useRef<HTMLDivElement>(null);
+  const [usageInfoOpen, setUsageInfoOpen] = useState(false);
 
 
   if (authLoading) {
@@ -344,16 +351,19 @@ const Landing = () => {
       {/* Pricing Section */}
       <section ref={pricingRef} className="py-16 px-4 max-w-6xl mx-auto relative z-10">
         <div className="text-center mb-12 space-y-3">
-          <h2 className="text-2xl md:text-3xl font-bold text-foreground">תכניות ReLex</h2>
+          <h2 className="text-2xl md:text-3xl font-bold text-foreground">
+            תוכנית שמתאימה לקצב המחקר שלך
+          </h2>
           <p className="text-muted-foreground text-sm md:text-base max-w-2xl mx-auto">
-            כל פעולה במערכת — אזכור, ביבליוגרפיה, או שאילתה לעוזר המשפטי — צורכת קרדיטים.
-            בחרו את התכנית שמתאימה לקצב העבודה שלכם.
+            בחרו את התקופה שמתאימה לכם. כל התוכניות כוללות את כלי המחקר והעבודה של ReLex,
+            בכפוף למכסת השימוש של התוכנית.
           </p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          {PRICING_PLANS.map(({ id, highlight, perks }) => {
+          {PRICING_PLANS.map(({ id, badge, cta, perks }) => {
             const plan = PLANS[id];
+            const highlight = id === "semester";
             return (
               <div
                 key={id}
@@ -363,28 +373,19 @@ const Landing = () => {
                     : "border-border hover:border-primary/40"
                 }`}
               >
-                {highlight && (
+                {badge && (
                   <div className="absolute -top-3 right-4 flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-primary text-primary-foreground text-[10px] font-bold">
                     <Sparkles className="w-3 h-3" />
-                    הכי משתלם
+                    {badge}
                   </div>
                 )}
                 <div className="space-y-1">
-                  <div className="flex items-center gap-2">
-                    <h3 className="text-lg font-bold text-foreground">{plan.label}</h3>
-                    {id !== "basic" && (
-                      <span className="px-1.5 py-0.5 rounded-full bg-primary/10 text-primary text-[9px] font-bold border border-primary/20">
-                        בטא
-                      </span>
-                    )}
-                  </div>
+                  <h3 className="text-lg font-bold text-foreground">{plan.label}</h3>
                   <p className="text-xs text-muted-foreground">{plan.tagline}</p>
                 </div>
                 <div className="space-y-1">
                   <div className="text-2xl font-bold text-foreground">{plan.priceLabel}</div>
-                  <div className="text-xs text-primary font-medium">
-                    {plan.includedCredits.toLocaleString("he-IL")} קרדיטים כלולים
-                  </div>
+                  <div className="text-xs text-primary font-medium">{plan.durationLabel}</div>
                 </div>
                 <ul className="space-y-2 flex-1">
                   {perks.map((perk, idx) => (
@@ -403,16 +404,27 @@ const Landing = () => {
                   }`}
                   style={highlight ? { background: "var(--gradient-primary)" } : undefined}
                 >
-                  {id === "basic" ? "התחילו בחינם" : "בחרו תכנית"}
+                  {cta}
                 </button>
               </div>
             );
           })}
         </div>
 
-        <p className="text-center text-xs text-muted-foreground mt-8">
-          תוכלו לשדרג, להוסיף קרדיטי Top-up, או לעבור תכנית בכל עת.
-        </p>
+        <div className="text-center mt-8 space-y-2">
+          <button
+            type="button"
+            onClick={() => setUsageInfoOpen(true)}
+            className="text-xs font-semibold text-primary hover:underline"
+          >
+            איך מגבלות השימוש עובדות?
+          </button>
+          <p className="text-xs text-muted-foreground">
+            כל התוכניות בבטא הן לתקופה קצובה, ללא חידוש אוטומטי בתשלום. ניתן להוסיף שימוש
+            בתוך תוכנית פעילה.
+          </p>
+        </div>
+        <UsageLimitsInfoDialog open={usageInfoOpen} onOpenChange={setUsageInfoOpen} />
       </section>
 
       {/* Contact Section */}

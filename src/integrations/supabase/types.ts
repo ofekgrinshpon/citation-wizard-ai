@@ -242,6 +242,7 @@ export type Database = {
           event_type: string
           id: string
           included_delta: number
+          legacy_delta: number
           metadata: Json
           reason: string | null
           request_id: string
@@ -256,6 +257,7 @@ export type Database = {
           event_type: string
           id?: string
           included_delta?: number
+          legacy_delta?: number
           metadata?: Json
           reason?: string | null
           request_id: string
@@ -270,6 +272,7 @@ export type Database = {
           event_type?: string
           id?: string
           included_delta?: number
+          legacy_delta?: number
           metadata?: Json
           reason?: string | null
           request_id?: string
@@ -626,6 +629,7 @@ export type Database = {
           included_credits_remaining: number
           included_credits_total: number
           is_subscribed: boolean
+          legacy_bonus_remaining: number
           plan: string
           privacy_accepted_at: string | null
           privacy_version: string | null
@@ -636,6 +640,9 @@ export type Database = {
           terms_accepted_at: string | null
           terms_version: string | null
           topup_credits_remaining: number
+          trial_granted: boolean
+          window_started_at: string | null
+          window_units_used: number
         }
         Insert: {
           billing_period_ends_at?: string | null
@@ -649,6 +656,7 @@ export type Database = {
           included_credits_remaining?: number
           included_credits_total?: number
           is_subscribed?: boolean
+          legacy_bonus_remaining?: number
           plan?: string
           privacy_accepted_at?: string | null
           privacy_version?: string | null
@@ -659,6 +667,9 @@ export type Database = {
           terms_accepted_at?: string | null
           terms_version?: string | null
           topup_credits_remaining?: number
+          trial_granted?: boolean
+          window_started_at?: string | null
+          window_units_used?: number
         }
         Update: {
           billing_period_ends_at?: string | null
@@ -672,6 +683,7 @@ export type Database = {
           included_credits_remaining?: number
           included_credits_total?: number
           is_subscribed?: boolean
+          legacy_bonus_remaining?: number
           plan?: string
           privacy_accepted_at?: string | null
           privacy_version?: string | null
@@ -682,6 +694,9 @@ export type Database = {
           terms_accepted_at?: string | null
           terms_version?: string | null
           topup_credits_remaining?: number
+          trial_granted?: boolean
+          window_started_at?: string | null
+          window_units_used?: number
         }
         Relationships: []
       }
@@ -1136,6 +1151,21 @@ export type Database = {
       }
     }
     Views: {
+      admin_usage_economics: {
+        Row: {
+          active_users: number | null
+          bucket: string | null
+          cost_is_estimate: boolean | null
+          day: string | null
+          estimated_cost_usd: number | null
+          operation_type: string | null
+          operations: number | null
+          plan: string | null
+          units_consumed: number | null
+          units_refunded: number | null
+        }
+        Relationships: []
+      }
       public_verified_sources: {
         Row: {
           auto_verified: boolean | null
@@ -1191,8 +1221,10 @@ export type Database = {
     Functions: {
       _generate_referral_code: { Args: never; Returns: string }
       _plan_credits: { Args: { _plan: string }; Returns: number }
+      _plan_is_paid: { Args: { _plan: string }; Returns: boolean }
       _plan_period_length: { Args: { _plan: string }; Returns: string }
       _plan_reset_mode: { Args: { _plan: string }; Returns: string }
+      _plan_window_limit: { Args: { _plan: string }; Returns: number }
       acquire_operation_lock: {
         Args: {
           _operation_id: string
@@ -1222,6 +1254,15 @@ export type Database = {
       }
       consume_credits: {
         Args: { _amount: number; _reason: string; _request_id: string }
+        Returns: Json
+      }
+      consume_usage_batch: {
+        Args: {
+          _batch_id: string
+          _group_size: number
+          _reason: string
+          _request_id: string
+        }
         Returns: Json
       }
       dblink: { Args: { "": string }; Returns: Record<string, unknown>[] }
@@ -1267,6 +1308,7 @@ export type Database = {
         Args: { payload: Json; queue_name: string }
         Returns: number
       }
+      get_usage_status: { Args: never; Returns: Json }
       grant_referral_bonus_if_eligible: {
         Args: { _user_id: string }
         Returns: Json

@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { USAGE_BATCH_GROUP } from "../_shared/usageWeights.ts";
 import {
   HEBREW_JOURNALS,
   JOURNAL_HINT_RE,
@@ -208,6 +209,9 @@ serve(async (req) => {
         ? body.sourceTypeHint
         : undefined;
     creditRequestId = requestId;
+    // Batch-priced usage: one internal unit per up to 20 bibliography entries.
+    const usageBatchId: string | null =
+      typeof body?.batchId === "string" && body.batchId.length >= 8 ? body.batchId : null;
 
     if (!rawSource || rawSource.length < 2) {
       return new Response(
@@ -254,12 +258,19 @@ serve(async (req) => {
       }
     }
 
-    // ── 2. Consume 1 credit before Perplexity ──
-    const consumeRes = await userClient.rpc("consume_credits", {
-      _amount: 1,
-      _reason: "bibliography-lookup",
-      _request_id: requestId,
-    });
+    // ── 2. Reserve usage before Perplexity (batched: 1 unit per 20 entries) ──
+    const consumeRes = usageBatchId
+      ? await userClient.rpc("consume_usage_batch", {
+          _batch_id: usageBatchId,
+          _group_size: USAGE_BATCH_GROUP.bibliography,
+          _reason: "bibliography-lookup",
+          _request_id: requestId,
+        })
+      : await userClient.rpc("consume_credits", {
+          _amount: 1,
+          _reason: "bibliography-lookup",
+          _request_id: requestId,
+        });
     const consumeData = (consumeRes.data ?? {}) as Record<string, unknown>;
     console.log(
       `[credit] fn=bibliography-lookup request_id=${requestId} amount=1 ok=${consumeData.ok === true} ` +
