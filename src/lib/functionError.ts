@@ -55,15 +55,15 @@ function messageFor(status: number | null, code: string | null, body: Record<str
   if (code === "INSUFFICIENT_CREDITS") {
     const required = body?.required;
     return required
-      ? `אין מספיק קרדיטים — הפעולה דורשת ${required} קרדיטים.`
-      : "אין מספיק קרדיטים — שדרגו תוכנית או הוסיפו טופ-אפ.";
+      ? "הגעת למכסת השימוש הזמינה כרגע."
+      : "הגעת למכסת השימוש — אפשר לשדרג תוכנית או להוסיף שימוש.";
   }
   if (status === 402) {
     // 402 without our own credit code = upstream AI provider billing block, not the user's credits.
     return serverHe || "שירות ה-AI אינו זמין כרגע עקב מגבלת ספק. נסו שוב מאוחר יותר.";
   }
   if (code === "CREDIT_CHARGE_FAILED" || status === 503) {
-    return serverHe || "לא ניתן היה לחייב קרדיטים כרגע. נסו שוב בעוד רגע.";
+    return serverHe || "לא ניתן היה לעדכן את מכסת השימוש כרגע. נסו שוב בעוד רגע.";
   }
   if (status === 401 || status === 403) {
     return "פג תוקף ההתחברות. התחברו מחדש ונסו שוב.";

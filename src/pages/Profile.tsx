@@ -25,7 +25,7 @@ interface ActivityLog {
 }
 
 const EVENT_LABEL: Record<string, string> = {
-  consume: "שימוש בקרדיטים",
+  consume: "שימוש",
   refund: "החזר אוטומטי",
   topup: "טעינת חבילה",
   renewal: "חידוש מסלול",
@@ -381,7 +381,7 @@ const Profile = () => {
               <div>
                 <h3 className="text-foreground font-bold text-base mb-1">הזמן חברים ל-ReLex</h3>
                 <p className="text-sm text-muted-foreground">
-                  הזמן חברים ל-ReLex, וכשחבר חדש נרשם דרך הקישור שלך ומבצע את הפעולה הראשונה — שניכם מקבלים 10 קרדיטים.
+                  הזמן חברים ל-ReLex, וכשחבר חדש נרשם דרך הקישור שלך ומבצע את הפעולה הראשונה — שניכם מקבלים תוספת שימוש.
                 </p>
               </div>
 
