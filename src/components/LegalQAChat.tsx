@@ -39,6 +39,8 @@ import { MaintenanceCard } from "@/components/MaintenanceCard";
 import { LegalResearchV1Panel } from "@/components/LegalResearchV1Panel";
 import { LegalSourceSearchPanel } from "@/components/LegalSourceSearchPanel";
 import { ReLexLogo } from "@/components/ReLexLogo";
+import { ACADEMIC_WRITING_ENABLED } from "@/config/features";
+import { AcademicWritingComingSoon } from "@/components/AcademicWritingComingSoon";
 
 
 // ─── Offline-engine guard (D1 reset) ──────────────────────────────
