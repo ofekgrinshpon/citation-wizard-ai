@@ -3241,6 +3241,7 @@ export function LegalQAChat({ onResultSaved, externalResult, onConsumeExternalRe
             <LegalResearchV1Panel
               externalResult={legalResearchV1External}
               onConsumeExternalResult={onConsumeExternalResult}
+              openJob={externalJob && externalJob.mode === "answer" ? { id: externalJob.id, at: externalJob.at } : null}
             />
           </div>
         )}
@@ -3256,7 +3257,10 @@ export function LegalQAChat({ onResultSaved, externalResult, onConsumeExternalRe
                 onConsumeExternalResult={onConsumeExternalResult}
               />
             ) : (
-              <LegalResearchV1Panel mode="sources" />
+              <LegalResearchV1Panel
+                mode="sources"
+                openJob={externalJob && externalJob.mode === "sources" ? { id: externalJob.id, at: externalJob.at } : null}
+              />
             )}
           </div>
         )}
