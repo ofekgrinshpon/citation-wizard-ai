@@ -39,6 +39,8 @@ import { MaintenanceCard } from "@/components/MaintenanceCard";
 import { LegalResearchV1Panel } from "@/components/LegalResearchV1Panel";
 import { LegalSourceSearchPanel } from "@/components/LegalSourceSearchPanel";
 import { ReLexLogo } from "@/components/ReLexLogo";
+import { ACADEMIC_WRITING_ENABLED } from "@/config/features";
+import { AcademicWritingComingSoon } from "@/components/AcademicWritingComingSoon";
 
 
 // ─── Offline-engine guard (D1 reset) ──────────────────────────────
@@ -1133,9 +1135,13 @@ export function LegalQAChat({ onResultSaved, externalResult, onConsumeExternalRe
     setTaskMode(externalResult.taskMode);
   }, [externalResult]);
 
+  // Availability freeze: Academic Writing stays visible but never opens.
+  const [showAcademicComingSoon, setShowAcademicComingSoon] = useState(false);
+
   // Resume academic session from history sidebar click (DB first, localStorage fallback)
   useEffect(() => {
     if (!academicResumeSignal) return;
+    if (!ACADEMIC_WRITING_ENABLED) { setShowAcademicComingSoon(true); return; }
     setTaskMode("academic_writing");
     (async () => {
       const dbSaved = await loadAcademicSessionFromDB(projectId);
@@ -1236,9 +1242,17 @@ export function LegalQAChat({ onResultSaved, externalResult, onConsumeExternalRe
 
   const isFileRelevantMode = FILE_RELEVANT_MODES.includes(taskMode);
 
+
   const handleModeChange = useCallback((value: string) => {
     if (!value) return;
     const newMode = value as TaskMode;
+
+    // Availability freeze: Academic Writing stays visible but never opens.
+    if (newMode === "academic_writing" && !ACADEMIC_WRITING_ENABLED) {
+      setShowAcademicComingSoon(true);
+      return;
+    }
+
 
     // Warn if switching away from academic_writing with progress
     if (taskMode === "academic_writing" && newMode !== "academic_writing" && wizardStep !== "init" && chapters.some(ch => ch.content)) {
@@ -2433,11 +2447,12 @@ export function LegalQAChat({ onResultSaved, externalResult, onConsumeExternalRe
           {TASK_MODES.map((m) => {
             const isSelected = taskMode === m.id;
             const Icon = m.icon;
+            const isComingSoon = m.id === "academic_writing" && !ACADEMIC_WRITING_ENABLED;
             return (
               <button
                 key={m.id}
                 onClick={() => handleModeChange(m.id)}
-                className={`flex flex-col items-center text-center gap-1.5 rounded-xl border transition-all ${
+                className={`relative flex flex-col items-center text-center gap-1.5 rounded-xl border transition-all ${
                   result || isAcademic ? "px-2 py-2.5" : "px-3 py-3.5"
                 } ${
                   isSelected
@@ -2445,6 +2460,11 @@ export function LegalQAChat({ onResultSaved, externalResult, onConsumeExternalRe
                     : "bg-card text-card-foreground border-border hover:border-primary/40 hover:bg-muted/50"
                 }`}
               >
+                {isComingSoon && (
+                  <span className="absolute top-1.5 left-1.5 rounded-full bg-muted px-1.5 py-0.5 text-[9px] font-medium text-muted-foreground border border-border">
+                    בקרוב
+                  </span>
+                )}
                 <Icon className={result || isAcademic ? "w-4 h-4" : "w-5 h-5"} />
                 <span className={`font-semibold leading-tight ${result || isAcademic ? "text-[11px]" : "text-xs sm:text-sm"}`}>
                   {m.label}
@@ -2457,6 +2477,11 @@ export function LegalQAChat({ onResultSaved, externalResult, onConsumeExternalRe
           })}
         </div>
       </div>
+
+      <AcademicWritingComingSoon
+        open={showAcademicComingSoon}
+        onOpenChange={setShowAcademicComingSoon}
+      />
 
       {/* Middle: scrollable results area */}
       <div ref={scrollRef} className="flex-1 overflow-y-auto px-2 sm:px-4">

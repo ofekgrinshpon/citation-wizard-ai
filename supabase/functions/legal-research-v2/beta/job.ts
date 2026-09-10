@@ -17,6 +17,17 @@ export const RESEARCH_CREDIT_COST = 5;
  */
 export const ACADEMIC_CHAPTER_CREDIT_COST = 8;
 
+/**
+ * Product availability flag for Academic Writing (public beta = OFF).
+ * Availability only — not an authorization mechanism. Internal/dev deployments
+ * set ACADEMIC_WRITING_ENABLED="true".
+ */
+export function academicWritingEnabled(
+  env: { get(key: string): string | undefined } = Deno.env,
+): boolean {
+  return env.get("ACADEMIC_WRITING_ENABLED") === "true";
+}
+
 export interface BetaJob {
   id: string;
   user_id: string;

@@ -321,6 +321,18 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
         { status: 503, headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
     }
+    // Product availability freeze — Academic Writing is not part of the public
+    // beta. Rejected before any credit gate; all other task modes untouched.
+    if (taskMode === "academic_writing" && Deno.env.get("ACADEMIC_WRITING_ENABLED") !== "true") {
+      console.log(`[availability] academic writing disabled — 503 (step=${academicStep})`);
+      return new Response(
+        JSON.stringify({
+          error: "academic_writing_unavailable",
+          message: "כתיבה אקדמית עדיין בפיתוח ותיפתח בהמשך.",
+        }),
+        { status: 503, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    }
     if (taskMode === "pleading_analysis") {
       console.log("[offline] pleading_analysis engine offline — short-circuit 503");
       return new Response(

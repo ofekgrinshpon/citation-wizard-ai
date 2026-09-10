@@ -55,6 +55,7 @@ import {
   gatewayFailure,
   finishJobSuccess,
   ACADEMIC_CHAPTER_CREDIT_COST,
+  academicWritingEnabled,
   RESEARCH_CREDIT_COST,
   toBetaResult,
 } from "./beta/job.ts";
@@ -730,6 +731,15 @@ serve(async (req) => {
       : null;
     if (body.mode === "academic_chapter" && !academicContext) {
       return json({ error: "invalid_project_context" }, 400);
+    }
+    // Product availability freeze — Academic Writing is not part of the public
+    // beta. Rejected before any credit charge or job row; V2 Legal Research is
+    // untouched. Internal/eval runs use the smoke path above.
+    if (body.mode === "academic_chapter" && !academicWritingEnabled()) {
+      return json({
+        error: "academic_writing_unavailable",
+        message: "כתיבה אקדמית עדיין בפיתוח ותיפתח בהמשך.",
+      }, 503);
     }
     const creditCost = academicContext ? ACADEMIC_CHAPTER_CREDIT_COST : RESEARCH_CREDIT_COST;
     const footnoteOffset = Number.isFinite(body.footnote_offset)
