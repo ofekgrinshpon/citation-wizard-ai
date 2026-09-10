@@ -57,19 +57,24 @@ interface JobRecord {
   status: string;
   progress_label_he: string | null;
   created_at: string;
+  result: unknown;
 }
 
 const ACTIVE_JOB_STATUSES = ["queued", "running", "pending"];
 
-export function QAHistorySidebar({ projectId, onLoadResult, refreshKey }: Props) {
+type HistoryEntry =
+  | { kind: "job"; at: string; job: JobRecord }
+  | { kind: "log"; at: string; log: QALogRecord };
+
+export function QAHistorySidebar({ projectId, onLoadResult, onOpenJob, refreshKey }: Props) {
   const { user } = useAuth();
   const [logs, setLogs] = useState<QALogRecord[]>([]);
   const [jobs, setJobs] = useState<JobRecord[]>([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Running / failed research jobs come from legal_research_jobs (the source of
-  // truth while a job is in flight); finished jobs are shown from qa_logs.
+  // Background research / source-search jobs of every status. Finished jobs
+  // belong in history too: they are the only record of a source-search run.
   useEffect(() => {
     if (!user) {
       setJobs([]);
@@ -79,11 +84,10 @@ export function QAHistorySidebar({ projectId, onLoadResult, refreshKey }: Props)
     const fetchJobs = async () => {
       let q = supabase
         .from("legal_research_jobs")
-        .select("id, question, status, progress_label_he, created_at")
+        .select("id, question, status, progress_label_he, created_at, result")
         .eq("user_id", user.id)
-        .neq("status", "done")
         .order("created_at", { ascending: false })
-        .limit(10);
+        .limit(30);
       q = projectId ? q.eq("project_id", projectId) : q.is("project_id", null);
       const { data, error } = await q;
       if (!cancelled && !error) setJobs((data as JobRecord[]) || []);
@@ -128,12 +132,21 @@ export function QAHistorySidebar({ projectId, onLoadResult, refreshKey }: Props)
     fetchLogs();
   }, [user, projectId, refreshKey]);
 
-  const filtered = search.trim()
-    ? logs.filter((l) => l.question.toLowerCase().includes(search.toLowerCase()))
-    : logs;
-  const visibleJobs = search.trim()
-    ? jobs.filter((j) => (j.question || "").toLowerCase().includes(search.toLowerCase()))
-    : jobs;
+  const term = search.trim().toLowerCase();
+  const matches = (q: string | null) => !term || (q || "").toLowerCase().includes(term);
+
+  // One chronological list. A job row wins over a qa_log written by the same
+  // run, so the same research never appears twice.
+  const jobQuestions = new Set(jobs.map((j) => (j.question || "").trim()));
+  const entries: HistoryEntry[] = [
+    ...jobs
+      .filter((j) => matches(j.question))
+      .map((job) => ({ kind: "job" as const, at: job.created_at, job })),
+    ...logs
+      .filter((l) => matches(l.question) && !jobQuestions.has((l.question || "").trim()))
+      .map((log) => ({ kind: "log" as const, at: log.created_at, log })),
+  ].sort((a, b) => b.at.localeCompare(a.at));
+
 
 
   const handleClick = (log: QALogRecord) => {
