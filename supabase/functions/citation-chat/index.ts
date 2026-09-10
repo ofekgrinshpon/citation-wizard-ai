@@ -1728,12 +1728,20 @@ serve(async (req) => {
       }
     }
 
-    // ── Consume 1 credit before invoking the AI (verified short-circuit above is free) ──
-    const consumeRes = await userClient.rpc("consume_credits", {
-      _amount: 1,
-      _reason: "citation-chat",
-      _request_id: creditRequestId,
-    });
+    // ── Reserve usage before invoking the AI (verified short-circuit above is free) ──
+    // Batched requests are priced at one internal unit per up to 5 citations.
+    const consumeRes = usageBatchId
+      ? await userClient.rpc("consume_usage_batch", {
+          _batch_id: usageBatchId,
+          _group_size: USAGE_BATCH_GROUP.citation,
+          _reason: "citation-chat",
+          _request_id: creditRequestId,
+        })
+      : await userClient.rpc("consume_credits", {
+          _amount: 1,
+          _reason: "citation-chat",
+          _request_id: creditRequestId,
+        });
     const consumeData = (consumeRes.data ?? {}) as Record<string, unknown>;
     console.log(
       `[credit] fn=citation-chat user=${userId ?? "unknown"} request_id=${creditRequestId} amount=1 ` +
