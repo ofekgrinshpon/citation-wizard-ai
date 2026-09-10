@@ -8,6 +8,7 @@ import { ContactSection } from "@/components/ContactSection";
 
 import { ChevronDown, Check, Sparkles } from "lucide-react";
 import { PLANS, type PlanId } from "@/lib/plans";
+import { UsageLimitsInfoDialog } from "@/components/usage/UsageLimitsInfoDialog";
 import howItWorksVideo from "@/assets/relex-how-it-works.mp4.asset.json";
 import howItWorksPoster from "@/assets/relex-how-it-works-poster.jpg.asset.json";
 
@@ -152,6 +153,7 @@ const Landing = () => {
   const howRef = useRef<HTMLDivElement>(null);
   const pricingRef = useRef<HTMLDivElement>(null);
   const contactRef = useRef<HTMLDivElement>(null);
+  const [usageInfoOpen, setUsageInfoOpen] = useState(false);
 
 
   if (authLoading) {
