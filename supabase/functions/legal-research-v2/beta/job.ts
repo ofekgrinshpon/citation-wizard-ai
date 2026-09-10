@@ -30,9 +30,11 @@ export const SOURCE_SEARCH_CREDIT_COST = 3;
  * set ACADEMIC_WRITING_ENABLED="true".
  */
 export function academicWritingEnabled(
-  env: { get(key: string): string | undefined } = Deno.env,
+  env?: { get(key: string): string | undefined },
 ): boolean {
-  return env.get("ACADEMIC_WRITING_ENABLED") === "true";
+  const runtimeEnv = env ??
+    (globalThis as { Deno?: { env: { get(key: string): string | undefined } } }).Deno?.env;
+  return runtimeEnv?.get("ACADEMIC_WRITING_ENABLED") === "true";
 }
 
 export interface BetaJob {
