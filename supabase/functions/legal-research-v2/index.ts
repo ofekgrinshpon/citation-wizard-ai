@@ -55,6 +55,7 @@ import {
   gatewayFailure,
   finishJobSuccess,
   ACADEMIC_CHAPTER_CREDIT_COST,
+  academicWritingEnabled,
   RESEARCH_CREDIT_COST,
   toBetaResult,
 } from "./beta/job.ts";
