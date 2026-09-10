@@ -20,6 +20,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
 import { acquireOperationLock, lockUnavailablePayload, operationInProgressPayload } from "../_shared/operationLock.ts";
+import { USAGE_WEIGHTS } from "../_shared/usageWeights.ts";
 
 const RESEARCH_MODE = "research";
 
