@@ -349,16 +349,19 @@ const Landing = () => {
       {/* Pricing Section */}
       <section ref={pricingRef} className="py-16 px-4 max-w-6xl mx-auto relative z-10">
         <div className="text-center mb-12 space-y-3">
-          <h2 className="text-2xl md:text-3xl font-bold text-foreground">תכניות ReLex</h2>
+          <h2 className="text-2xl md:text-3xl font-bold text-foreground">
+            תוכנית שמתאימה לקצב המחקר שלך
+          </h2>
           <p className="text-muted-foreground text-sm md:text-base max-w-2xl mx-auto">
-            כל פעולה במערכת — אזכור, ביבליוגרפיה, או שאילתה לעוזר המשפטי — צורכת קרדיטים.
-            בחרו את התכנית שמתאימה לקצב העבודה שלכם.
+            בחרו את התקופה שמתאימה לכם. כל התוכניות כוללות את כלי המחקר והעבודה של ReLex,
+            בכפוף למכסת השימוש של התוכנית.
           </p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          {PRICING_PLANS.map(({ id, highlight, perks }) => {
+          {PRICING_PLANS.map(({ id, badge, cta, perks }) => {
             const plan = PLANS[id];
+            const highlight = id === "semester";
             return (
               <div
                 key={id}
@@ -368,28 +371,19 @@ const Landing = () => {
                     : "border-border hover:border-primary/40"
                 }`}
               >
-                {highlight && (
+                {badge && (
                   <div className="absolute -top-3 right-4 flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-primary text-primary-foreground text-[10px] font-bold">
                     <Sparkles className="w-3 h-3" />
-                    הכי משתלם
+                    {badge}
                   </div>
                 )}
                 <div className="space-y-1">
-                  <div className="flex items-center gap-2">
-                    <h3 className="text-lg font-bold text-foreground">{plan.label}</h3>
-                    {id !== "basic" && (
-                      <span className="px-1.5 py-0.5 rounded-full bg-primary/10 text-primary text-[9px] font-bold border border-primary/20">
-                        בטא
-                      </span>
-                    )}
-                  </div>
+                  <h3 className="text-lg font-bold text-foreground">{plan.label}</h3>
                   <p className="text-xs text-muted-foreground">{plan.tagline}</p>
                 </div>
                 <div className="space-y-1">
                   <div className="text-2xl font-bold text-foreground">{plan.priceLabel}</div>
-                  <div className="text-xs text-primary font-medium">
-                    {plan.includedCredits.toLocaleString("he-IL")} קרדיטים כלולים
-                  </div>
+                  <div className="text-xs text-primary font-medium">{plan.durationLabel}</div>
                 </div>
                 <ul className="space-y-2 flex-1">
                   {perks.map((perk, idx) => (
@@ -408,16 +402,27 @@ const Landing = () => {
                   }`}
                   style={highlight ? { background: "var(--gradient-primary)" } : undefined}
                 >
-                  {id === "basic" ? "התחילו בחינם" : "בחרו תכנית"}
+                  {cta}
                 </button>
               </div>
             );
           })}
         </div>
 
-        <p className="text-center text-xs text-muted-foreground mt-8">
-          תוכלו לשדרג, להוסיף קרדיטי Top-up, או לעבור תכנית בכל עת.
-        </p>
+        <div className="text-center mt-8 space-y-2">
+          <button
+            type="button"
+            onClick={() => setUsageInfoOpen(true)}
+            className="text-xs font-semibold text-primary hover:underline"
+          >
+            איך מגבלות השימוש עובדות?
+          </button>
+          <p className="text-xs text-muted-foreground">
+            כל התוכניות בבטא הן לתקופה קצובה, ללא חידוש אוטומטי בתשלום. ניתן להוסיף שימוש
+            בתוך תוכנית פעילה.
+          </p>
+        </div>
+        <UsageLimitsInfoDialog open={usageInfoOpen} onOpenChange={setUsageInfoOpen} />
       </section>
 
       {/* Contact Section */}
