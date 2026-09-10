@@ -164,11 +164,26 @@ type TaskMode = "research" | "legal_source_search" | "case_summary" | "academic_
 const FILE_RELEVANT_MODES: TaskMode[] = ["case_summary", "academic_writing"];
 
 const TASK_MODES: { id: TaskMode; label: string; description: string; placeholder: string; icon: LucideIcon }[] = [
-  { id: "research", label: "מחקר משפטי", description: "סריקה מקיפה עם מסגרת נורמטיבית מלאה", placeholder: "תארו שאלה משפטית לסקירה מקיפה...", icon: Search },
-  { id: "legal_source_search", label: "חיפוש מקורות", description: "רשימת מקורות מאומתים לנושא, ללא ניסוח תשובה", placeholder: "הזן שאלה משפטית או נושא למחקר…", icon: BookMarked },
-  { id: "case_summary", label: "סיכום פסיקה", description: "תמצית: עובדות, שאלה משפטית, הכרעה ורציו", placeholder: "הזינו שם פסק דין או הדביקו טקסט לסיכום...", icon: BookOpen },
+  { id: "research", label: "מחקר משפטי", description: "מענה לשאלה, חיפוש מקורות וסיכום פסק דין", placeholder: "שאל שאלה משפטית...", icon: Search },
+  { id: "legal_source_search", label: "חיפוש מקורות", description: "רשימת מקורות מאומתים לנושא, ללא ניסוח תשובה", placeholder: "על איזה נושא או שאלה תרצה למצוא מקורות?", icon: BookMarked },
+  { id: "case_summary", label: "סיכום פסק דין", description: "תמצית: עובדות, שאלה משפטית, הכרעה ורציו", placeholder: "הקלד מספר תיק או שם פסק דין — או צרף את פסק הדין", icon: BookOpen },
   { id: "academic_writing", label: "כתיבה אקדמית", description: "ליווי בכתיבת סמינריונים ומאמרים אקדמיים בשלבים", placeholder: "תארו נושא מחקר או שאלת מחקר...", icon: GraduationCap },
 ];
+
+/**
+ * Top-level capabilities. Source search and case summary are no longer
+ * separate cards — they are intents inside the Legal Research workspace.
+ */
+const TOP_LEVEL_MODE_IDS: TaskMode[] = ["research", "academic_writing"];
+
+/** Intents inside "מחקר משפטי". Each keeps its own existing backend route. */
+const RESEARCH_INTENTS: { id: TaskMode; label: string }[] = [
+  { id: "research", label: "מענה לשאלה" },
+  { id: "legal_source_search", label: "חיפוש מקורות" },
+  { id: "case_summary", label: "סיכום פסק דין" },
+];
+
+const RESEARCH_INTENT_IDS: TaskMode[] = RESEARCH_INTENTS.map((i) => i.id);
 
 const DAVID_FONT = "David, 'David Libre', serif";
 const MAX_FILE_SIZE = 20 * 1024 * 1024; // 20MB
