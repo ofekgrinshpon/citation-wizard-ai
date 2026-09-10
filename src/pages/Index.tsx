@@ -1234,7 +1234,12 @@ const Index = () => {
               <QAHistorySidebar
                 projectId={projectId ?? null}
                 refreshKey={qaRefreshKey}
+                onOpenJob={(jobId, jobMode) => {
+                  setQaExternalResult(null);
+                  setQaExternalJob({ id: jobId, mode: jobMode, at: Date.now() });
+                }}
                 onLoadResult={(question, result, taskMode) => {
+                  setQaExternalJob(null);
                   if (taskMode === "academic_writing") {
                     setAcademicResumeFallback({ question, result });
                     setAcademicResumeSignal(Date.now());
