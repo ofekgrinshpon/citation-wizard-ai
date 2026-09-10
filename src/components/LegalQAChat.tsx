@@ -2447,11 +2447,12 @@ export function LegalQAChat({ onResultSaved, externalResult, onConsumeExternalRe
           {TASK_MODES.map((m) => {
             const isSelected = taskMode === m.id;
             const Icon = m.icon;
+            const isComingSoon = m.id === "academic_writing" && !ACADEMIC_WRITING_ENABLED;
             return (
               <button
                 key={m.id}
                 onClick={() => handleModeChange(m.id)}
-                className={`flex flex-col items-center text-center gap-1.5 rounded-xl border transition-all ${
+                className={`relative flex flex-col items-center text-center gap-1.5 rounded-xl border transition-all ${
                   result || isAcademic ? "px-2 py-2.5" : "px-3 py-3.5"
                 } ${
                   isSelected
@@ -2459,6 +2460,11 @@ export function LegalQAChat({ onResultSaved, externalResult, onConsumeExternalRe
                     : "bg-card text-card-foreground border-border hover:border-primary/40 hover:bg-muted/50"
                 }`}
               >
+                {isComingSoon && (
+                  <span className="absolute top-1.5 left-1.5 rounded-full bg-muted px-1.5 py-0.5 text-[9px] font-medium text-muted-foreground border border-border">
+                    בקרוב
+                  </span>
+                )}
                 <Icon className={result || isAcademic ? "w-4 h-4" : "w-5 h-5"} />
                 <span className={`font-semibold leading-tight ${result || isAcademic ? "text-[11px]" : "text-xs sm:text-sm"}`}>
                   {m.label}
