@@ -28,6 +28,11 @@ import {
 } from "@/config/researchPipeline";
 import { UniformCitationPanel } from "@/components/legal-research/UniformCitationPanel";
 import { SourcePackView, type SourcePack } from "@/components/legal-research/SourcePackView";
+import {
+  recordResearchJobMode,
+  resolveResearchJobMode,
+  type ResearchJobMode,
+} from "@/lib/researchJobMode";
 
 const MAX_FILES = 5;
 const MAX_FILE_BYTES = 8 * 1024 * 1024;
@@ -139,14 +144,21 @@ interface LegalResearchV1PanelProps {
     | { question: string; payload: { answer: string; footnotes: Footnote[] } }
     | null;
   onConsumeExternalResult?: () => void;
+  /**
+   * History replay of a server-side job (finished or still running). `at` makes
+   * repeated clicks on different history rows distinguishable.
+   */
+  openJob?: { id: string; at: number } | null;
 }
 
 export function LegalResearchV1Panel({
   mode = "answer",
   externalResult,
   onConsumeExternalResult,
+  openJob,
 }: LegalResearchV1PanelProps = {}) {
   const sourcesMode = mode === "sources";
+  const panelJobMode: ResearchJobMode = sourcesMode ? "sources" : "answer";
   const RESUME_KEY = sourcesMode ? SOURCES_RESUME_STORAGE_KEY : RESUME_STORAGE_KEY;
   const creditCost = sourcesMode ? CREDIT_COSTS.sourceSearch : CREDIT_COSTS.research;
   const { currentProject, loading: projectsLoading } = useProjects();
