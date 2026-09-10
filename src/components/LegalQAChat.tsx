@@ -1135,6 +1135,9 @@ export function LegalQAChat({ onResultSaved, externalResult, onConsumeExternalRe
     setTaskMode(externalResult.taskMode);
   }, [externalResult]);
 
+  // Availability freeze: Academic Writing stays visible but never opens.
+  const [showAcademicComingSoon, setShowAcademicComingSoon] = useState(false);
+
   // Resume academic session from history sidebar click (DB first, localStorage fallback)
   useEffect(() => {
     if (!academicResumeSignal) return;
@@ -1239,7 +1242,6 @@ export function LegalQAChat({ onResultSaved, externalResult, onConsumeExternalRe
 
   const isFileRelevantMode = FILE_RELEVANT_MODES.includes(taskMode);
 
-  const [showAcademicComingSoon, setShowAcademicComingSoon] = useState(false);
 
   const handleModeChange = useCallback((value: string) => {
     if (!value) return;
