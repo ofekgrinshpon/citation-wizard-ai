@@ -612,6 +612,7 @@ export function LegalResearchV1Panel({
         return;
       }
 
+      recordResearchJobMode(data.job_id, panelJobMode);
       setJobId(data.job_id);
       setJobUrlParam(data.job_id);
       persistResume(data.job_id, startRef.current);
