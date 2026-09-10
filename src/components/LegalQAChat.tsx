@@ -904,11 +904,13 @@ interface LegalQAChatProps {
     | { question: string; v1Payload: { answer: string; footnotes: any[] }; taskMode: "research" }
     | null;
   onConsumeExternalResult?: () => void;
+  /** History replay of a background research/source job picked in the sidebar. */
+  externalJob?: { id: string; mode: "answer" | "sources"; at: number } | null;
   academicResumeSignal?: number;
   academicResumeFallback?: { question: string; result: QAResult } | null;
 }
 
-export function LegalQAChat({ onResultSaved, externalResult, onConsumeExternalResult, academicResumeSignal, academicResumeFallback }: LegalQAChatProps = {}) {
+export function LegalQAChat({ onResultSaved, externalResult, onConsumeExternalResult, externalJob, academicResumeSignal, academicResumeFallback }: LegalQAChatProps = {}) {
   const { currentProject } = useProjects();
   const projectId = currentProject?.id;
 
