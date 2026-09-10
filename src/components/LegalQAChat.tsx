@@ -164,11 +164,26 @@ type TaskMode = "research" | "legal_source_search" | "case_summary" | "academic_
 const FILE_RELEVANT_MODES: TaskMode[] = ["case_summary", "academic_writing"];
 
 const TASK_MODES: { id: TaskMode; label: string; description: string; placeholder: string; icon: LucideIcon }[] = [
-  { id: "research", label: "מחקר משפטי", description: "סריקה מקיפה עם מסגרת נורמטיבית מלאה", placeholder: "תארו שאלה משפטית לסקירה מקיפה...", icon: Search },
-  { id: "legal_source_search", label: "חיפוש מקורות", description: "רשימת מקורות מאומתים לנושא, ללא ניסוח תשובה", placeholder: "הזן שאלה משפטית או נושא למחקר…", icon: BookMarked },
-  { id: "case_summary", label: "סיכום פסיקה", description: "תמצית: עובדות, שאלה משפטית, הכרעה ורציו", placeholder: "הזינו שם פסק דין או הדביקו טקסט לסיכום...", icon: BookOpen },
+  { id: "research", label: "מחקר משפטי", description: "מענה לשאלה, חיפוש מקורות וסיכום פסק דין", placeholder: "שאל שאלה משפטית...", icon: Search },
+  { id: "legal_source_search", label: "חיפוש מקורות", description: "רשימת מקורות מאומתים לנושא, ללא ניסוח תשובה", placeholder: "על איזה נושא או שאלה תרצה למצוא מקורות?", icon: BookMarked },
+  { id: "case_summary", label: "סיכום פסק דין", description: "תמצית: עובדות, שאלה משפטית, הכרעה ורציו", placeholder: "הקלד מספר תיק או שם פסק דין — או צרף את פסק הדין", icon: BookOpen },
   { id: "academic_writing", label: "כתיבה אקדמית", description: "ליווי בכתיבת סמינריונים ומאמרים אקדמיים בשלבים", placeholder: "תארו נושא מחקר או שאלת מחקר...", icon: GraduationCap },
 ];
+
+/**
+ * Top-level capabilities. Source search and case summary are no longer
+ * separate cards — they are intents inside the Legal Research workspace.
+ */
+const TOP_LEVEL_MODE_IDS: TaskMode[] = ["research", "academic_writing"];
+
+/** Intents inside "מחקר משפטי". Each keeps its own existing backend route. */
+const RESEARCH_INTENTS: { id: TaskMode; label: string }[] = [
+  { id: "research", label: "מענה לשאלה" },
+  { id: "legal_source_search", label: "חיפוש מקורות" },
+  { id: "case_summary", label: "סיכום פסק דין" },
+];
+
+const RESEARCH_INTENT_IDS: TaskMode[] = RESEARCH_INTENTS.map((i) => i.id);
 
 const DAVID_FONT = "David, 'David Libre', serif";
 const MAX_FILE_SIZE = 20 * 1024 * 1024; // 20MB
@@ -2443,9 +2458,11 @@ export function LegalQAChat({ onResultSaved, externalResult, onConsumeExternalRe
       {/* Top section: Mode Cards */}
       <div className="px-2 sm:px-4 pt-4 pb-2 space-y-3">
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-          {TASK_MODES.map((m) => {
-            const isSelected = taskMode === m.id;
+        <div className="grid grid-cols-2 gap-2">
+          {TASK_MODES.filter((m) => TOP_LEVEL_MODE_IDS.includes(m.id)).map((m) => {
+            const isSelected = m.id === "research"
+              ? RESEARCH_INTENT_IDS.includes(taskMode)
+              : taskMode === m.id;
             const Icon = m.icon;
             const isComingSoon = m.id === "academic_writing" && !ACADEMIC_WRITING_ENABLED;
             return (
@@ -2476,6 +2493,28 @@ export function LegalQAChat({ onResultSaved, externalResult, onConsumeExternalRe
             );
           })}
         </div>
+
+        {/* Intent selector inside the Legal Research workspace */}
+        {!isAcademic && (
+          <div className="flex items-center gap-1 rounded-xl border border-border bg-muted/40 p-1">
+            {RESEARCH_INTENTS.map((intent) => {
+              const active = taskMode === intent.id;
+              return (
+                <button
+                  key={intent.id}
+                  onClick={() => handleModeChange(intent.id)}
+                  className={`flex-1 rounded-lg px-2 py-1.5 text-[11px] sm:text-xs font-medium transition-colors ${
+                    active
+                      ? "bg-background text-foreground shadow-sm border border-border"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  {intent.label}
+                </button>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       <AcademicWritingComingSoon

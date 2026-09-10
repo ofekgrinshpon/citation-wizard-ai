@@ -951,7 +951,9 @@ export function LegalResearchV1Panel({
               disabled={loading}
               rows={2}
               dir="rtl"
-              placeholder="תארו שאלה משפטית לסקירה מקיפה..."
+              placeholder={sourcesMode
+                ? "על איזה נושא או שאלה תרצה למצוא מקורות?"
+                : "שאל שאלה משפטית..."}
               className="w-full flex-1 bg-transparent border-none outline-none focus:outline-none focus:ring-0 px-2 py-2.5 text-foreground text-sm leading-relaxed resize-none"
             />
 
