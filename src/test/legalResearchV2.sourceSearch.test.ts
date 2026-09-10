@@ -72,6 +72,14 @@ describe("source search — deterministic Source Renderer", () => {
       .toBe("case_law");
   });
 
+  it("keeps an academic article that cites judgments in scholarship", () => {
+    expect(classifySourceGroup({
+      title: "על עלייתו ונפילתו של כושר ההשתכרות בדיני המשפחה",
+      url: "https://www.runi.ac.il/media/x/article.pdf",
+      identity: { dockets: ["237/80"], statutes: [] },
+    })).toBe("scholarship");
+  });
+
   it("counts a source pack as delivered and prices below full research", () => {
     expect(SOURCE_SEARCH_CREDIT_COST).toBeLessThan(5);
     const base = { answer: "", footnotes: [], used_sources: [], pipeline_version: "v2" as const, run_id: "r", debug: {} };
