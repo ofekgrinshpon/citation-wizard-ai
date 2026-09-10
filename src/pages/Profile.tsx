@@ -9,7 +9,10 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { format } from "date-fns";
-import { PLANS, TOPUP_PACKS } from "@/lib/plans";
+import { PLANS } from "@/lib/plans";
+import { useUsage, WINDOW_LEVEL_LABEL, PERIOD_LEVEL_LABEL } from "@/hooks/useUsage";
+import { UsageLimitsInfoDialog } from "@/components/usage/UsageLimitsInfoDialog";
+import { TopupOptions } from "@/components/usage/TopupOptions";
 import { buildReferralLink } from "@/lib/publicUrl";
 import { Copy as CopyIcon, Infinity as InfinityIcon } from "lucide-react";
 
@@ -83,11 +86,14 @@ function formatLedgerReason(raw: string | null): string {
 
 const Profile = () => {
   const { user, signOut } = useAuth();
+  const { isAdmin, referralCode } = useCredits();
   const {
-    plan, planMeta, isAdmin, isPaidPlan, canTopup,
-    includedCreditsRemaining, includedCreditsTotal, topupCreditsRemaining,
-    totalCreditsAvailable, billingPeriodEndsAt, referralCode,
-  } = useCredits();
+    status: usage,
+    planMeta: usagePlanMeta,
+    windowCountdown,
+    planDaysLeft,
+  } = useUsage();
+  const [usageInfoOpen, setUsageInfoOpen] = useState(false);
   const { rows: ledger, loading: ledgerLoading } = useCreditLedger(50);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
