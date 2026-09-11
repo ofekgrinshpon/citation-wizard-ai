@@ -76,6 +76,11 @@ export interface AuthorityState {
   unresolved: boolean;
 }
 
+/** Stable comparison form for "was this exact path already tried?". */
+export function normalizeAttemptUrl(url: string): string {
+  return (url ?? "").trim().replace(/#.*$/, "").replace(/\/+$/, "").toLowerCase();
+}
+
 function hostOf(url: string): string {
   try {
     return new URL(url).hostname.replace(/^www\./, "");
@@ -99,6 +104,7 @@ export const NO_YIELD_EXHAUSTION_THRESHOLD = 3;
 export class AcquisitionLedger {
   private rows = new Map<string, AuthorityLedgerRow>();
   private reads = new Map<string, SourceReadRow>();
+  private targets = new Map<string, AcquisitionTargetRow>();
 
   /**
    * Record an attempt. A binding (`acquired_source_id`) is created only when
