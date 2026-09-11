@@ -85,7 +85,8 @@ const TOOL_SPECS: ToolSpec[] = [
   },
   {
     name: "lookup_authority",
-    description: "איתור אסמכתה ישראלית מזוהה בשמה. מחזיר מועמדים לא מאומתים.",
+    description:
+      "איתור אסמכתה ישראלית מזוהה בשמה. מחזיר מועמדים לא מאומתים, שכל אחד מהם ניתן להבאה ישירה ב-fetch({result_id}) ללא צורך לחזור על מספר ההליך. אין חובה להביא אף מועמד. אם החלטת שאינך זקוק עוד לאסמכתה זו — קרא שוב עם drop:true.",
     parameters: {
       type: "object",
       additionalProperties: false,
