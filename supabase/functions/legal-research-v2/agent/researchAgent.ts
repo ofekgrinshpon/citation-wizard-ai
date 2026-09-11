@@ -27,7 +27,11 @@ import { chat, type ChatMessage, parseJsonLoose, type ToolSpec, type UsageLedger
 import { runSearch } from "../tools/search.ts";
 import { runFetch } from "../tools/fetch.ts";
 import { runLookupAuthority } from "../tools/lookupAuthority.ts";
-import { AcquisitionLedger, type AcquisitionLedgerJson } from "../tools/acquisitionLedger.ts";
+import {
+  AcquisitionLedger,
+  type AcquisitionLedgerJson,
+  authorityKeyOf,
+} from "../tools/acquisitionLedger.ts";
 import { AGENT_SYSTEM_PROMPT, buildAgentUserMessage, MEMO_TOOL } from "./prompt.ts";
 import { StopPolicy, type StopPolicyJson } from "./stopPolicy.ts";
 import { CommitTracker, obligationsSatisfied } from "./commitPolicy.ts";
@@ -81,7 +85,8 @@ const TOOL_SPECS: ToolSpec[] = [
   },
   {
     name: "lookup_authority",
-    description: "איתור אסמכתה ישראלית מזוהה בשמה. מחזיר מועמדים לא מאומתים.",
+    description:
+      "איתור אסמכתה ישראלית מזוהה בשמה. מחזיר מועמדים לא מאומתים, שכל אחד מהם ניתן להבאה ישירה ב-fetch({result_id}) ללא צורך לחזור על מספר ההליך. אין חובה להביא אף מועמד. אם החלטת שאינך זקוק עוד לאסמכתה זו — קרא שוב עם drop:true.",
     parameters: {
       type: "object",
       additionalProperties: false,
@@ -91,6 +96,8 @@ const TOOL_SPECS: ToolSpec[] = [
         title_hint: { type: "string" },
         statute: { type: "string" },
         section: { type: "string" },
+        drop: { type: "boolean" },
+        drop_reason: { type: "string" },
       },
       required: ["kind"],
     },
@@ -147,6 +154,11 @@ export interface AgentContextStats {
   authority_bindings_withheld: number;
   context_compactions: number;
   context_chars_saved: number;
+  /** Named-authority acquisition (v2_named_authority_acquisition_v1). */
+  lookup_candidates_registered: number;
+  acquisition_targets_opened: number;
+  identity_autofilled_fetches: number;
+  identity_conflicts_rejected: number;
 }
 
 export function newAgentStats(): AgentContextStats {
@@ -162,6 +174,10 @@ export function newAgentStats(): AgentContextStats {
     authority_bindings_withheld: 0,
     context_compactions: 0,
     context_chars_saved: 0,
+    lookup_candidates_registered: 0,
+    acquisition_targets_opened: 0,
+    identity_autofilled_fetches: 0,
+    identity_conflicts_rejected: 0,
   };
 }
 
@@ -470,16 +486,74 @@ export async function runResearchAgent(opts: {
         timer.add("search", Date.now() - toolStarted);
       } else if (call.name === "lookup_authority") {
         opts.onActivity?.("searching");
-        policy.note("lookup_authority");
-        const out = await runLookupAuthority(opts.admin, {
-          kind: args.kind === "statute" ? "statute" : "case",
+        const lookupInput = {
+          kind: args.kind === "statute" ? "statute" as const : "case" as const,
           docket: typeof args.docket === "string" ? args.docket : undefined,
           title_hint: typeof args.title_hint === "string" ? args.title_hint : undefined,
           statute: typeof args.statute === "string" ? args.statute : undefined,
           section: typeof args.section === "string" ? args.section : undefined,
-        });
+        };
+        // The agent may explicitly drop a target it no longer wants. Nothing
+        // else in the system can force it back onto the target list.
+        if (args.drop === true) {
+          const key = authorityKeyOf(
+            lookupInput.kind === "case"
+              ? { docket: lookupInput.docket }
+              : { statute: lookupInput.statute, section: lookupInput.section },
+          );
+          if (key) ledger.abandonTarget(key, String(args.drop_reason ?? "agent_dropped_target"));
+          payload = { dropped: key ?? null, note: "היעד הוסר מרשימת יעדי ההשגה." };
+          summary = `dropped_target=${key ?? "none"}`;
+          timer.add("lookup", Date.now() - toolStarted);
+          if (repeatWarning) payload.repetition_warning = repeatWarning;
+          trace.push({ step: policy.steps, tool: call.name, input: args, summary });
+          messages.push({
+            role: "tool",
+            tool_call_id: call.id,
+            content: JSON.stringify(payload),
+            digest: JSON.stringify({ tool: call.name, summary }),
+          });
+          continue;
+        }
+        policy.note("lookup_authority");
+        const out = await runLookupAuthority(opts.admin, lookupInput);
+        // Lookup candidates become first-class discovered results: fetchable
+        // by result_id, carrying the authority they were found FOR.
+        for (const c of out.candidates) {
+          if (!c.result_id || !c.url) continue;
+          discovered.set(c.result_id, {
+            result_id: c.result_id,
+            title: c.label,
+            url: c.url,
+            snippet: c.note,
+            origin: c.origin,
+            possible_docket: c.docket,
+            authority_key: c.authority_key,
+            expected_identity: c.expected_identity,
+            candidate_kind: c.candidate_kind,
+          });
+          stats.lookup_candidates_registered += 1;
+        }
+        if (out.authority_key) {
+          const before = ledger.target(out.authority_key);
+          ledger.openTarget(out.authority_key, {
+            label: out.candidates[0]?.label,
+            reopen: true,
+            candidates: out.candidates
+              .filter((c) => c.url)
+              .map((c) => ({
+                result_id: c.result_id,
+                url: c.url,
+                label: c.label,
+                candidate_kind: c.candidate_kind,
+              })),
+          });
+          if (!before) stats.acquisition_targets_opened += 1;
+        }
         payload = out as unknown as Record<string, unknown>;
-        summary = `candidates=${out.candidates.length} registry=${out.registry_hint ?? "none"}`;
+        summary = `candidates=${out.candidates.length} registry=${out.registry_hint ?? "none"} target=${
+          out.authority_key ?? "none"
+        }`;
         timer.add("lookup", Date.now() - toolStarted);
       } else if (call.name === "fetch") {
         opts.onActivity?.("reading");
@@ -508,6 +582,10 @@ export async function runResearchAgent(opts: {
         if (out.authority_reuse) stats.authority_reacquisitions_prevented += 1;
         if (out.authority_binding_created) stats.authority_bindings_created += 1;
         if (out.authority_binding_withheld) stats.authority_bindings_withheld += 1;
+        if (out.expected_identity_source === "candidate" || out.expected_identity_source === "merged") {
+          stats.identity_autofilled_fetches += 1;
+        }
+        if (out.expected_identity_conflict) stats.identity_conflicts_rejected += 1;
         payload = out as unknown as Record<string, unknown>;
         summary = out.already_read
           ? `already_read ${out.source_id}`
@@ -584,6 +662,10 @@ export async function runResearchAgent(opts: {
       stale_streak: commit.stale_streak,
       research_steps_left: policy.researchStepsLeft,
       deliverable: opts.intake.deliverable,
+      unresolved_targets: ledger.unresolvedTargets().map((t) => ({
+        authority_key: t.authority_key,
+        untried: t.untried.length,
+      })),
     });
     if (directive) {
       stats.commit_directives.push(`step${policy.steps}:${directive.kind}`);

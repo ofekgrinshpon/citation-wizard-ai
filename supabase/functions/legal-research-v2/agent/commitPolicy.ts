@@ -22,6 +22,12 @@ export interface CommitSignals {
   research_steps_left: number;
   /** What the user asked to receive; only wording of the early signal depends on it. */
   deliverable?: DeliverableKind;
+  /**
+   * Authorities the agent itself chose to pursue that are still unacquired and
+   * still have untried candidates. Information for the stale signal only —
+   * never a completion condition and never a forced action.
+   */
+  unresolved_targets?: Array<{ authority_key: string; untried: number }>;
 }
 
 export type CommitDirectiveKind =
@@ -68,6 +74,18 @@ function namedText(readyList: string): string {
 
 const STALE_TEXT =
   "החיפושים והבאות האחרונים לא הוסיפו ראיות חדשות. הפסק לחזור על אותה דרך: או שתגיש את תזכיר המחקר עם מה שכבר נקרא, או שתנסח שאילתה שונה מהותית.";
+
+/**
+ * Same anti-loop signal, but it also reminds the agent of acquisition targets
+ * IT chose that were never obtained and still have untried candidates. The
+ * options are listed; the choice among them stays with the agent.
+ */
+export function staleText(targets?: Array<{ authority_key: string; untried: number }>): string {
+  const open = (targets ?? []).filter((t) => t.untried > 0);
+  if (!open.length) return STALE_TEXT;
+  const list = open.map((t) => `${t.authority_key} (${t.untried} מועמדים שטרם נוסו)`).join(", ");
+  return `${STALE_TEXT}\nלידיעתך, אסמכתאות שביקשת לאתר וטרם הושגו: ${list}. באפשרותך: להביא אחד מהמועמדים שטרם נוסו (fetch לפי result_id), לחפש נתיב השגה אחר, לוותר על היעד הזה במפורש אם אינו נחוץ עוד, או להגיש את התזכיר אם הראיות שכבר אומתו מספיקות לשאלה. ההחלטה שלך — אין חובה להשיג אסמכתה זו.`;
+}
 
 export class CommitTracker {
   private issued = new Set<CommitDirectiveKind>();
@@ -118,9 +136,14 @@ export class CommitTracker {
         text: s.deliverable === "developed" ? EARLY_TEXT_DEVELOPED : EARLY_TEXT_FOCUSED,
       };
     }
-    if (s.stale_streak >= 2 && !this.issued.has("stale_research")) {
+    // Re-issued while the run keeps producing nothing AND an acquisition
+    // target the agent chose is still open: the reminder must survive context
+    // compaction. It still only lists options.
+    const openTargets = (s.unresolved_targets ?? []).some((t) => t.untried > 0);
+    const repeatStale = openTargets && s.stale_streak >= 4 && s.stale_streak % 2 === 0;
+    if (s.stale_streak >= 2 && (!this.issued.has("stale_research") || repeatStale)) {
       this.issued.add("stale_research");
-      return { kind: "stale_research", text: STALE_TEXT };
+      return { kind: "stale_research", text: staleText(s.unresolved_targets) };
     }
     return null;
   }

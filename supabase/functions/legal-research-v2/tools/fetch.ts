@@ -196,6 +196,13 @@ export interface FetchOutput {
   authority_binding_withheld?: boolean;
   /** Deterministic reason string for the binding decision. */
   authority_binding_basis?: string;
+  /** Which authority this fetch was aimed at, and where that came from. */
+  expected_authority_key?: string;
+  expected_identity_source?: "candidate" | "model" | "merged" | "none";
+  /** Set when model-supplied identity contradicted the candidate's own. */
+  expected_identity_conflict?: string;
+  /** What the candidate was, as classified at discovery time. */
+  candidate_kind?: "document" | "local_document" | "discovery_entry";
   /** True when this exact URL already failed for this authority. */
   dead_path?: boolean;
   /** Targeted section retrieval outcome. */
@@ -276,6 +283,47 @@ export function clampFetchOutput(out: FetchOutput): FetchOutput {
     clamped.text_head = clamped.text_head.slice(0, 800);
   }
   return clamped;
+}
+
+/**
+ * Merge the identity the candidate was discovered FOR with any identity the
+ * model restated. Deterministic candidate metadata wins on conflict: the model
+ * may add detail (a section), never silently retarget a known candidate.
+ */
+export function resolveExpectedIdentity(
+  candidate: Pick<SearchResult, "expected_identity" | "authority_key"> | null | undefined,
+  fromModel: FetchInput["expected_identity"],
+): {
+  identity?: { docket?: string; statute?: string; section?: string };
+  source: "candidate" | "model" | "merged" | "none";
+  conflict?: string;
+} {
+  const c = candidate?.expected_identity;
+  const m = fromModel;
+  const clean = (v?: string) => (typeof v === "string" && v.trim() ? v.trim() : undefined);
+  const cd = clean(c?.docket), md = clean(m?.docket);
+  const cs = clean(c?.statute), ms = clean(m?.statute);
+  if (!cd && !cs) {
+    return m && (md || ms || clean(m.section))
+      ? { identity: { docket: md, statute: ms, section: clean(m.section) }, source: "model" }
+      : { source: "none" };
+  }
+  const num = (v?: string) => v?.match(/\d{1,6}\s*\/\s*\d{2,4}/)?.[0]?.replace(/\s+/g, "") ?? v;
+  const conflict = (cd && md && num(cd) !== num(md))
+    ? `model_expected_identity_ignored: candidate=${cd} model=${md}`
+    : (cs && ms && !cs.includes(ms) && !ms.includes(cs))
+    ? `model_expected_identity_ignored: candidate=${cs} model=${ms}`
+    : undefined;
+  return {
+    identity: {
+      docket: cd,
+      statute: cs,
+      // A section is extra precision, accepted only when it does not contradict.
+      section: clean(c?.section) ?? (conflict ? undefined : clean(m?.section)),
+    },
+    source: m && (md || ms) ? "merged" : "candidate",
+    conflict,
+  };
 }
 
 export async function runFetch(
@@ -406,7 +454,12 @@ export async function runFetch(
     return { ok: false, error: "no_usable_url" };
   }
 
-  const authorityKey = authorityKeyOf(input.expected_identity ?? {});
+  // Identity the deterministic layer already knows for this candidate travels
+  // with it; the model does not have to restate it. It remains an acquisition
+  // TARGET only — the body still has to corroborate it below.
+  const resolvedIdentity = resolveExpectedIdentity(discovery, input.expected_identity);
+  const expectedIdentity = resolvedIdentity.identity;
+  const authorityKey = authorityKeyOf(expectedIdentity ?? {});
 
   // Per-run fetch dedupe: an already-read URL is served from the evidence
   // store and does not consume fetch budget, unless a refetch reason is given.
@@ -540,14 +593,14 @@ export async function runFetch(
     clearTimeout(timer);
   }
 
-  const expectedDocket = input.expected_identity?.docket?.trim();
+  const expectedDocket = expectedIdentity?.docket?.trim();
   let identity_hint: string | undefined;
 
   // Positive corroboration: the fetched BODY must present itself as the
   // requested authority before it may occupy that authority key. A requested
   // label or a merely readable body is never proof.
   const corroboration = corroborateAuthority({
-    expected: input.expected_identity,
+    expected: expectedIdentity,
     title: entry.title,
     text: entry.extracted_text,
     identity_fields: entry.identity_fields,
@@ -558,9 +611,9 @@ export async function runFetch(
     identity_hint = corroboration.corroborated
       ? `התיק ${expectedDocket} מופיע בגוף המסמך שהובא.`
       : `אזהרה: התיק ${expectedDocket} לא נמצא בגוף המסמך שהובא — ככל הנראה זה אינו המסמך המבוקש.`;
-  } else if (input.expected_identity?.statute?.trim() && !corroboration.corroborated && entry.is_actual_document) {
+  } else if (expectedIdentity?.statute?.trim() && !corroboration.corroborated && entry.is_actual_document) {
     identity_hint =
-      `אזהרה: גוף המסמך שהובא אינו מזדהה כ"${input.expected_identity.statute.trim()}" (${corroboration.basis}). ניתן להשתמש בו ככל שהוא רלוונטי, אך הוא אינו נחשב לגוף האסמכתה המבוקשת — אפשר וכדאי להביא מועמד אחר עבורה.`;
+      `אזהרה: גוף המסמך שהובא אינו מזדהה כ"${expectedIdentity.statute.trim()}" (${corroboration.basis}). ניתן להשתמש בו ככל שהוא רלוונטי, אך הוא אינו נחשב לגוף האסמכתה המבוקשת — אפשר וכדאי להביא מועמד אחר עבורה.`;
   }
 
   let authority_binding_created = false;
@@ -612,6 +665,10 @@ export async function runFetch(
     authority_binding_created: authorityKey ? authority_binding_created : undefined,
     authority_binding_withheld: authorityKey ? authority_binding_withheld : undefined,
     authority_binding_basis: authorityKey ? corroboration.basis : undefined,
+    expected_authority_key: authorityKey ?? undefined,
+    expected_identity_source: resolvedIdentity.source,
+    expected_identity_conflict: resolvedIdentity.conflict,
+    candidate_kind: discovery?.candidate_kind,
     text_head: freshServed.windows?.length
       ? undefined
       : entry.extracted_text.slice(0, FETCH_LIMITS.HEAD_CHARS),

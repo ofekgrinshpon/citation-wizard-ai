@@ -81,6 +81,15 @@ export const DEFAULT_BUDGETS: ToolBudgets = {
 
 export type SearchScope = "web" | "corpus" | "official" | "academic";
 
+/** What a candidate URL is, as far as deterministic code can tell. */
+export type CandidateKind = "document" | "local_document" | "discovery_entry";
+
+export interface ExpectedAuthorityIdentity {
+  docket?: string;
+  statute?: string;
+  section?: string;
+}
+
 export interface SearchResult {
   result_id: string;
   title: string;
@@ -89,9 +98,20 @@ export interface SearchResult {
   origin: string;
   possible_docket?: string;
   possible_source_type?: string;
+  /**
+   * Set when this candidate was produced while resolving a NAMED authority.
+   * It travels with the candidate so a later `fetch({result_id})` does not
+   * depend on the model restating the docket / statute. It is an acquisition
+   * TARGET only — binding still requires body corroboration.
+   */
+  authority_key?: string;
+  expected_identity?: ExpectedAuthorityIdentity;
+  candidate_kind?: CandidateKind;
 }
 
 export interface LookupCandidate {
+  /** Durable id: this candidate is fetchable exactly like a search result. */
+  result_id?: string;
   label: string;
   kind: "case" | "statute";
   docket?: string;
@@ -101,6 +121,9 @@ export interface LookupCandidate {
   origin: string;
   local_document_id?: string;
   note?: string;
+  authority_key?: string;
+  expected_identity?: ExpectedAuthorityIdentity;
+  candidate_kind?: CandidateKind;
 }
 
 // ─── Evidence store ─────────────────────────────────────────────────────────

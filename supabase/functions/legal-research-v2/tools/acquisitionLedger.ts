@@ -41,9 +41,31 @@ export interface SourceReadRow {
   exhausted: boolean;
 }
 
+/**
+ * A candidate the deterministic layer knows about for an authority the agent
+ * AFFIRMATIVELY chose to pursue. Presence here obliges nothing.
+ */
+export interface TargetCandidate {
+  result_id?: string;
+  url?: string;
+  label?: string;
+  candidate_kind?: "document" | "local_document" | "discovery_entry";
+}
+
+export interface AcquisitionTargetRow {
+  authority_key: string;
+  label?: string;
+  opened_at: string;
+  candidates: TargetCandidate[];
+  /** The agent may deliberately drop a target; it then stops being surfaced. */
+  abandoned?: boolean;
+  abandon_reason?: string;
+}
+
 export interface AcquisitionLedgerJson {
   rows: AuthorityLedgerRow[];
   reads?: SourceReadRow[];
+  targets?: AcquisitionTargetRow[];
 }
 
 /** Compact, agent-facing state of one authority. Derived only, decides nothing. */
@@ -52,6 +74,11 @@ export interface AuthorityState {
   usable_body_source_id?: string;
   attempted_hosts: Array<{ host: string; outcome: string; reason: string }>;
   unresolved: boolean;
+}
+
+/** Stable comparison form for "was this exact path already tried?". */
+export function normalizeAttemptUrl(url: string): string {
+  return (url ?? "").trim().replace(/#.*$/, "").replace(/\/+$/, "").toLowerCase();
 }
 
 function hostOf(url: string): string {
@@ -77,6 +104,7 @@ export const NO_YIELD_EXHAUSTION_THRESHOLD = 3;
 export class AcquisitionLedger {
   private rows = new Map<string, AuthorityLedgerRow>();
   private reads = new Map<string, SourceReadRow>();
+  private targets = new Map<string, AcquisitionTargetRow>();
 
   /**
    * Record an attempt. A binding (`acquired_source_id`) is created only when
@@ -169,14 +197,81 @@ export class AcquisitionLedger {
     return [...this.reads.values()];
   }
 
+  // ── Acquisition targets (authorities the agent chose to pursue) ─────────
+  /**
+   * Remember that the agent asked for this authority by name, together with
+   * the candidates deterministic code found for it. Idempotent: re-opening an
+   * existing target merges candidates and never resurrects an abandoned one
+   * unless the agent asks for it again explicitly.
+   */
+  openTarget(
+    key: string,
+    opts: { label?: string; candidates?: TargetCandidate[]; reopen?: boolean } = {},
+  ): AcquisitionTargetRow {
+    const row = this.targets.get(key) ??
+      { authority_key: key, label: opts.label, opened_at: new Date().toISOString(), candidates: [] };
+    if (opts.label && !row.label) row.label = opts.label;
+    if (opts.reopen) {
+      row.abandoned = false;
+      row.abandon_reason = undefined;
+    }
+    for (const c of opts.candidates ?? []) {
+      if (!c.url && !c.result_id) continue;
+      const dup = row.candidates.some((x) =>
+        (c.result_id && x.result_id === c.result_id) ||
+        (c.url && x.url && normalizeAttemptUrl(x.url) === normalizeAttemptUrl(c.url))
+      );
+      if (!dup) row.candidates.push(c);
+    }
+    this.targets.set(key, row);
+    return row;
+  }
+
+  target(key: string): AcquisitionTargetRow | null {
+    return this.targets.get(key) ?? null;
+  }
+
+  /** The agent decided this target is no longer worth pursuing. */
+  abandonTarget(key: string, reason: string): void {
+    const row = this.targets.get(key);
+    if (!row) return;
+    row.abandoned = true;
+    row.abandon_reason = reason;
+  }
+
+  /** Candidates for this target whose URL has not been attempted yet. */
+  untriedCandidates(key: string): TargetCandidate[] {
+    const row = this.targets.get(key);
+    if (!row) return [];
+    const tried = new Set(
+      (this.rows.get(key)?.attempts ?? []).map((a) => normalizeAttemptUrl(a.url)),
+    );
+    return row.candidates.filter((c) => !c.url || !tried.has(normalizeAttemptUrl(c.url)));
+  }
+
+  /**
+   * Targets the agent opened that are still not backed by a corroborated body
+   * and were not abandoned. Pure information for the next decision.
+   */
+  unresolvedTargets(): Array<AcquisitionTargetRow & { untried: TargetCandidate[] }> {
+    return [...this.targets.values()]
+      .filter((t) => !t.abandoned && !this.acquired(t.authority_key))
+      .map((t) => ({ ...t, untried: this.untriedCandidates(t.authority_key) }));
+  }
+
+  allTargets(): AcquisitionTargetRow[] {
+    return [...this.targets.values()];
+  }
+
   toJSON(): AcquisitionLedgerJson {
-    return { rows: this.all(), reads: this.allReads() };
+    return { rows: this.all(), reads: this.allReads(), targets: this.allTargets() };
   }
 
   static fromJSON(json: AcquisitionLedgerJson | null | undefined): AcquisitionLedger {
     const l = new AcquisitionLedger();
     for (const r of json?.rows ?? []) l.rows.set(r.authority_key, r);
     for (const r of json?.reads ?? []) l.reads.set(r.source_id, r);
+    for (const t of json?.targets ?? []) l.targets.set(t.authority_key, t);
     return l;
   }
 

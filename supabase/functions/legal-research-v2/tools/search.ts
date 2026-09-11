@@ -16,6 +16,7 @@
 
 import type { SearchResult, SearchScope } from "../types.ts";
 import { buildHebrewFtsQuery, detectDockets, type SupabaseClient } from "../shared/primitives.ts";
+import { nextResultId, resetResultIds } from "./resultIds.ts";
 
 const PPLX_URL = "https://api.perplexity.ai/chat/completions";
 
@@ -35,15 +36,9 @@ interface PplxSource {
   source_type?: string;
 }
 
-let counter = 0;
-function nextResultId(): string {
-  counter += 1;
-  return `R${counter}`;
-}
-
 /** Test seam: reset the per-process result-id counter. */
 export function resetSearchResultIds(): void {
-  counter = 0;
+  resetResultIds();
 }
 
 declare const Deno: { env: { get(key: string): string | undefined } };
