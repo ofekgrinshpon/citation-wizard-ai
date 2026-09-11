@@ -665,6 +665,10 @@ export async function runFetch(
     authority_binding_created: authorityKey ? authority_binding_created : undefined,
     authority_binding_withheld: authorityKey ? authority_binding_withheld : undefined,
     authority_binding_basis: authorityKey ? corroboration.basis : undefined,
+    expected_authority_key: authorityKey ?? undefined,
+    expected_identity_source: resolvedIdentity.source,
+    expected_identity_conflict: resolvedIdentity.conflict,
+    candidate_kind: discovery?.candidate_kind,
     text_head: freshServed.windows?.length
       ? undefined
       : entry.extracted_text.slice(0, FETCH_LIMITS.HEAD_CHARS),

@@ -22,6 +22,12 @@ export interface CommitSignals {
   research_steps_left: number;
   /** What the user asked to receive; only wording of the early signal depends on it. */
   deliverable?: DeliverableKind;
+  /**
+   * Authorities the agent itself chose to pursue that are still unacquired and
+   * still have untried candidates. Information for the stale signal only —
+   * never a completion condition and never a forced action.
+   */
+  unresolved_targets?: Array<{ authority_key: string; untried: number }>;
 }
 
 export type CommitDirectiveKind =
