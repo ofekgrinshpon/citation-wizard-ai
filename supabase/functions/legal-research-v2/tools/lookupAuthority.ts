@@ -4,9 +4,17 @@
  * Resolve a *named* Israeli authority to concrete candidate URLs / local
  * records. Registry presence is a clue only: nothing here verifies anything,
  * and the returned candidates must still be fetched and verified.
+ *
+ * Two deterministic improvements over a plain hint list:
+ *   • every usable candidate gets a durable `result_id`, so the agent can
+ *     fetch it exactly like a search result instead of copying a raw URL;
+ *   • every candidate carries the authority it was produced FOR
+ *     (`authority_key` + `expected_identity`), so identity survives the hop
+ *     from lookup to fetch. That is an acquisition target, never proof:
+ *     binding still requires body corroboration at fetch time.
  */
 
-import type { LookupCandidate } from "../types.ts";
+import type { CandidateKind, LookupCandidate } from "../types.ts";
 import { CANONICAL_AUTHORITIES } from "../data/canonicalAuthorities.ts";
 import {
   buildSectionVariants,
@@ -15,6 +23,8 @@ import {
   normalizeDocketText,
   type SupabaseClient,
 } from "../shared/primitives.ts";
+import { authorityKeyOf } from "./acquisitionLedger.ts";
+import { nextResultId } from "./resultIds.ts";
 
 export interface LookupInput {
   kind: "case" | "statute";
@@ -26,6 +36,8 @@ export interface LookupInput {
 
 export interface LookupOutput {
   candidates: LookupCandidate[];
+  /** Stable key of the authority this lookup was performed for, if any. */
+  authority_key: string | null;
   registry_hint: string | null;
   note: string;
 }
@@ -44,30 +56,74 @@ function officialSearchUrls(kind: "case" | "statute", term: string): string[] {
   ];
 }
 
+/**
+ * Local corpus resolution. When an exact docket is known the structured
+ * `case_number` column is used first; title matching is only the fallback.
+ */
 async function localRecords(
   admin: SupabaseClient,
   kind: "case" | "statute",
-  term: string,
+  opts: { docket?: string; term: string },
 ): Promise<LookupCandidate[]> {
-  if (!term) return [];
-  try {
-    const { data, error } = await admin
-      .from("legal_documents")
-      .select("id,title,source_url,source_type")
-      .ilike("title", `%${term}%`)
-      .limit(5);
-    if (error || !Array.isArray(data)) return [];
-    return (data as Array<Record<string, unknown>>).map((row) => ({
-      label: String(row.title ?? term),
+  const rows: Array<Record<string, unknown>> = [];
+  const seen = new Set<string>();
+  const push = (data: unknown) => {
+    for (const row of (Array.isArray(data) ? data : []) as Array<Record<string, unknown>>) {
+      const id = String(row.id ?? "");
+      if (id && !seen.has(id)) {
+        seen.add(id);
+        rows.push(row);
+      }
+    }
+  };
+
+  const select = "id,title,source_url,docx_url,pdf_url,source_type,case_number,citation";
+  if (opts.docket) {
+    try {
+      const { data } = await admin
+        .from("legal_documents")
+        .select(select)
+        .eq("case_number", opts.docket)
+        .limit(5);
+      push(data);
+    } catch { /* structured lane unavailable — fall through */ }
+    if (!rows.length) {
+      try {
+        const { data } = await admin
+          .from("legal_documents")
+          .select(select)
+          .ilike("citation", `%${opts.docket}%`)
+          .limit(5);
+        push(data);
+      } catch { /* ignore */ }
+    }
+  }
+  if (!rows.length && opts.term) {
+    try {
+      const { data } = await admin
+        .from("legal_documents")
+        .select(select)
+        .ilike("title", `%${opts.term}%`)
+        .limit(5);
+      push(data);
+    } catch { /* ignore */ }
+  }
+
+  return rows.map((row) => {
+    const url = [row.source_url, row.docx_url, row.pdf_url]
+      .find((u) => typeof u === "string" && /^https?:\/\//i.test(u)) as string | undefined;
+    return {
+      label: String(row.title ?? opts.term),
       kind,
-      url: typeof row.source_url === "string" ? row.source_url : undefined,
+      url,
       origin: "local_corpus",
       local_document_id: String(row.id ?? ""),
-      note: `source_type=${String(row.source_type ?? "unknown")}`,
-    }));
-  } catch {
-    return [];
-  }
+      candidate_kind: "local_document" as CandidateKind,
+      note: `source_type=${String(row.source_type ?? "unknown")}${
+        row.case_number ? ` case_number=${String(row.case_number)}` : ""
+      }`,
+    };
+  });
 }
 
 export async function runLookupAuthority(
@@ -86,6 +142,9 @@ export async function runLookupAuthority(
     ? [docket, hint].filter(Boolean).join(" ").trim()
     : [statute, section ? `סעיף ${section}` : ""].filter(Boolean).join(" ").trim() || hint;
 
+  const expected_identity = kind === "case" ? { docket } : { statute, section };
+  const authority_key = authorityKeyOf(expected_identity);
+
   // Registry clue (data only — never a verification signal).
   const needle = `${docket ?? ""} ${hint} ${statute ?? ""}`.trim();
   const registryRow = CANONICAL_AUTHORITIES.find((a) =>
@@ -95,7 +154,7 @@ export async function runLookupAuthority(
   ) ?? null;
 
   const candidates: LookupCandidate[] = [];
-  candidates.push(...await localRecords(admin, kind, docket || statute || hint));
+  candidates.push(...await localRecords(admin, kind, { docket, term: docket || statute || hint }));
 
   for (const url of officialSearchUrls(kind, term || hint || docket || statute || "")) {
     const cls = classifyJudgmentUrl(url, "unknown");
@@ -107,16 +166,40 @@ export async function runLookupAuthority(
       section,
       url,
       origin: "official_search_entry",
-      note: cls.guessed_pattern ? `guessed_url_pattern:${cls.guessed_pattern_id}` : "official search entry point — not a document",
+      candidate_kind: "discovery_entry",
+      note: cls.guessed_pattern
+        ? `guessed_url_pattern:${cls.guessed_pattern_id}`
+        : "נקודת כניסה לחיפוש רשמי — אינה גוף מסמך",
     });
   }
 
+  // Durable identity + fetchable ids. Discovery entry points are labelled as
+  // such so a search page can never masquerade as an acquired authority.
+  for (const c of candidates) {
+    c.docket = c.docket ?? docket;
+    c.statute = c.statute ?? statute;
+    c.section = c.section ?? section;
+    c.candidate_kind = c.candidate_kind ?? "document";
+    if (authority_key) {
+      c.authority_key = authority_key;
+      c.expected_identity = { ...expected_identity };
+    }
+    if (c.url) c.result_id = nextResultId();
+  }
+
+  const documentCandidates = candidates.filter(
+    (c) => c.url && c.candidate_kind !== "discovery_entry",
+  ).length;
+
   return {
     candidates,
+    authority_key,
     registry_hint: registryRow ? `${registryRow.authority_id}: ${registryRow.label}` : null,
     note: [
       "רמז בלבד. אף מועמד כאן אינו מאומת.",
-      "יש להביא את גוף המסמך באמצעות fetch לפני שימוש כלשהו.",
+      "יש להביא את גוף המסמך באמצעות fetch לפני שימוש כלשהו — אפשר ישירות לפי result_id.",
+      `מועמדי מסמך: ${documentCandidates}; נקודות כניסה לחיפוש: ${candidates.length - documentCandidates}.`,
+      "candidate_kind=\"discovery_entry\" הוא דף חיפוש ולא גוף מסמך.",
       kind === "statute" && section
         ? `וריאנטים לסעיף: ${buildSectionVariants(section).slice(0, 6).join(", ")}`
         : "",
