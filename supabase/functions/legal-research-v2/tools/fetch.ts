@@ -545,14 +545,14 @@ export async function runFetch(
     clearTimeout(timer);
   }
 
-  const expectedDocket = input.expected_identity?.docket?.trim();
+  const expectedDocket = expectedIdentity?.docket?.trim();
   let identity_hint: string | undefined;
 
   // Positive corroboration: the fetched BODY must present itself as the
   // requested authority before it may occupy that authority key. A requested
   // label or a merely readable body is never proof.
   const corroboration = corroborateAuthority({
-    expected: input.expected_identity,
+    expected: expectedIdentity,
     title: entry.title,
     text: entry.extracted_text,
     identity_fields: entry.identity_fields,
@@ -563,9 +563,9 @@ export async function runFetch(
     identity_hint = corroboration.corroborated
       ? `התיק ${expectedDocket} מופיע בגוף המסמך שהובא.`
       : `אזהרה: התיק ${expectedDocket} לא נמצא בגוף המסמך שהובא — ככל הנראה זה אינו המסמך המבוקש.`;
-  } else if (input.expected_identity?.statute?.trim() && !corroboration.corroborated && entry.is_actual_document) {
+  } else if (expectedIdentity?.statute?.trim() && !corroboration.corroborated && entry.is_actual_document) {
     identity_hint =
-      `אזהרה: גוף המסמך שהובא אינו מזדהה כ"${input.expected_identity.statute.trim()}" (${corroboration.basis}). ניתן להשתמש בו ככל שהוא רלוונטי, אך הוא אינו נחשב לגוף האסמכתה המבוקשת — אפשר וכדאי להביא מועמד אחר עבורה.`;
+      `אזהרה: גוף המסמך שהובא אינו מזדהה כ"${expectedIdentity.statute.trim()}" (${corroboration.basis}). ניתן להשתמש בו ככל שהוא רלוונטי, אך הוא אינו נחשב לגוף האסמכתה המבוקשת — אפשר וכדאי להביא מועמד אחר עבורה.`;
   }
 
   let authority_binding_created = false;
