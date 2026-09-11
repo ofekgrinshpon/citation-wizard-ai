@@ -470,16 +470,74 @@ export async function runResearchAgent(opts: {
         timer.add("search", Date.now() - toolStarted);
       } else if (call.name === "lookup_authority") {
         opts.onActivity?.("searching");
-        policy.note("lookup_authority");
-        const out = await runLookupAuthority(opts.admin, {
-          kind: args.kind === "statute" ? "statute" : "case",
+        const lookupInput = {
+          kind: args.kind === "statute" ? "statute" as const : "case" as const,
           docket: typeof args.docket === "string" ? args.docket : undefined,
           title_hint: typeof args.title_hint === "string" ? args.title_hint : undefined,
           statute: typeof args.statute === "string" ? args.statute : undefined,
           section: typeof args.section === "string" ? args.section : undefined,
-        });
+        };
+        // The agent may explicitly drop a target it no longer wants. Nothing
+        // else in the system can force it back onto the target list.
+        if (args.drop === true) {
+          const key = authorityKeyOf(
+            lookupInput.kind === "case"
+              ? { docket: lookupInput.docket }
+              : { statute: lookupInput.statute, section: lookupInput.section },
+          );
+          if (key) ledger.abandonTarget(key, String(args.drop_reason ?? "agent_dropped_target"));
+          payload = { dropped: key ?? null, note: "היעד הוסר מרשימת יעדי ההשגה." };
+          summary = `dropped_target=${key ?? "none"}`;
+          timer.add("lookup", Date.now() - toolStarted);
+          if (repeatWarning) payload.repetition_warning = repeatWarning;
+          trace.push({ step: policy.steps, tool: call.name, input: args, summary });
+          messages.push({
+            role: "tool",
+            tool_call_id: call.id,
+            content: JSON.stringify(payload),
+            digest: JSON.stringify({ tool: call.name, summary }),
+          });
+          continue;
+        }
+        policy.note("lookup_authority");
+        const out = await runLookupAuthority(opts.admin, lookupInput);
+        // Lookup candidates become first-class discovered results: fetchable
+        // by result_id, carrying the authority they were found FOR.
+        for (const c of out.candidates) {
+          if (!c.result_id || !c.url) continue;
+          discovered.set(c.result_id, {
+            result_id: c.result_id,
+            title: c.label,
+            url: c.url,
+            snippet: c.note,
+            origin: c.origin,
+            possible_docket: c.docket,
+            authority_key: c.authority_key,
+            expected_identity: c.expected_identity,
+            candidate_kind: c.candidate_kind,
+          });
+          stats.lookup_candidates_registered += 1;
+        }
+        if (out.authority_key) {
+          const before = ledger.target(out.authority_key);
+          ledger.openTarget(out.authority_key, {
+            label: out.candidates[0]?.label,
+            reopen: true,
+            candidates: out.candidates
+              .filter((c) => c.url)
+              .map((c) => ({
+                result_id: c.result_id,
+                url: c.url,
+                label: c.label,
+                candidate_kind: c.candidate_kind,
+              })),
+          });
+          if (!before) stats.acquisition_targets_opened += 1;
+        }
         payload = out as unknown as Record<string, unknown>;
-        summary = `candidates=${out.candidates.length} registry=${out.registry_hint ?? "none"}`;
+        summary = `candidates=${out.candidates.length} registry=${out.registry_hint ?? "none"} target=${
+          out.authority_key ?? "none"
+        }`;
         timer.add("lookup", Date.now() - toolStarted);
       } else if (call.name === "fetch") {
         opts.onActivity?.("reading");
