@@ -1,4 +1,3 @@
-// @vitest-environment node
 /**
  * v2_named_authority_acquisition_v1
  *
