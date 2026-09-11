@@ -136,7 +136,12 @@ export class CommitTracker {
         text: s.deliverable === "developed" ? EARLY_TEXT_DEVELOPED : EARLY_TEXT_FOCUSED,
       };
     }
-    if (s.stale_streak >= 2 && !this.issued.has("stale_research")) {
+    // Re-issued while the run keeps producing nothing AND an acquisition
+    // target the agent chose is still open: the reminder must survive context
+    // compaction. It still only lists options.
+    const openTargets = (s.unresolved_targets ?? []).some((t) => t.untried > 0);
+    const repeatStale = openTargets && s.stale_streak >= 4 && s.stale_streak % 2 === 0;
+    if (s.stale_streak >= 2 && (!this.issued.has("stale_research") || repeatStale)) {
       this.issued.add("stale_research");
       return { kind: "stale_research", text: staleText(s.unresolved_targets) };
     }
