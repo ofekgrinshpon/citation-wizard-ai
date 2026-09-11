@@ -196,6 +196,13 @@ export interface FetchOutput {
   authority_binding_withheld?: boolean;
   /** Deterministic reason string for the binding decision. */
   authority_binding_basis?: string;
+  /** Which authority this fetch was aimed at, and where that came from. */
+  expected_authority_key?: string;
+  expected_identity_source?: "candidate" | "model" | "merged" | "none";
+  /** Set when model-supplied identity contradicted the candidate's own. */
+  expected_identity_conflict?: string;
+  /** What the candidate was, as classified at discovery time. */
+  candidate_kind?: "document" | "local_document" | "discovery_entry";
   /** True when this exact URL already failed for this authority. */
   dead_path?: boolean;
   /** Targeted section retrieval outcome. */
@@ -276,6 +283,47 @@ export function clampFetchOutput(out: FetchOutput): FetchOutput {
     clamped.text_head = clamped.text_head.slice(0, 800);
   }
   return clamped;
+}
+
+/**
+ * Merge the identity the candidate was discovered FOR with any identity the
+ * model restated. Deterministic candidate metadata wins on conflict: the model
+ * may add detail (a section), never silently retarget a known candidate.
+ */
+export function resolveExpectedIdentity(
+  candidate: Pick<SearchResult, "expected_identity" | "authority_key"> | null | undefined,
+  fromModel: FetchInput["expected_identity"],
+): {
+  identity?: { docket?: string; statute?: string; section?: string };
+  source: "candidate" | "model" | "merged" | "none";
+  conflict?: string;
+} {
+  const c = candidate?.expected_identity;
+  const m = fromModel;
+  const clean = (v?: string) => (typeof v === "string" && v.trim() ? v.trim() : undefined);
+  const cd = clean(c?.docket), md = clean(m?.docket);
+  const cs = clean(c?.statute), ms = clean(m?.statute);
+  if (!cd && !cs) {
+    return m && (md || ms || clean(m.section))
+      ? { identity: { docket: md, statute: ms, section: clean(m.section) }, source: "model" }
+      : { source: "none" };
+  }
+  const num = (v?: string) => v?.match(/\d{1,6}\s*\/\s*\d{2,4}/)?.[0]?.replace(/\s+/g, "") ?? v;
+  const conflict = (cd && md && num(cd) !== num(md))
+    ? `model_expected_identity_ignored: candidate=${cd} model=${md}`
+    : (cs && ms && !cs.includes(ms) && !ms.includes(cs))
+    ? `model_expected_identity_ignored: candidate=${cs} model=${ms}`
+    : undefined;
+  return {
+    identity: {
+      docket: cd,
+      statute: cs,
+      // A section is extra precision, accepted only when it does not contradict.
+      section: clean(c?.section) ?? (conflict ? undefined : clean(m?.section)),
+    },
+    source: m && (md || ms) ? "merged" : "candidate",
+    conflict,
+  };
 }
 
 export async function runFetch(
