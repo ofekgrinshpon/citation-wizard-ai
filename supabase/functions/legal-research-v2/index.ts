@@ -300,6 +300,11 @@ async function runPipeline(
       }),
       policy: agent.policy,
       discovered: agent.discovered,
+      // Repair continues the SAME run: acquisition memory, commit discipline and
+      // cumulative counters must not restart. Trace stays fresh and is merged below.
+      ledger: agent.ledger,
+      commit: agent.commit,
+      stats: agent.stats,
     });
     if (repaired.memo) {
       const reVerified = await timer.time("verification_model", () =>
@@ -405,6 +410,9 @@ async function runPipeline(
         extraUserMessage: buildTemporalRepairMessage(t.assessments),
         policy: agent.policy,
         discovered: agent.discovered,
+        ledger: agent.ledger,
+        commit: agent.commit,
+        stats: agent.stats,
       });
       if (repaired.memo) {
         const reVerified = await timer.time("verification_model", () =>
@@ -460,6 +468,9 @@ async function runPipeline(
       extraUserMessage: buildDerivativeFallbackMessage(missing),
       policy: agent.policy,
       discovered: agent.discovered,
+      ledger: agent.ledger,
+      commit: agent.commit,
+      stats: agent.stats,
     });
     if (fallback.memo) {
       // Same body / identity / span / support checks — nothing is loosened.
