@@ -95,7 +95,6 @@ const TOOL_SPECS: ToolSpec[] = [
         title_hint: { type: "string" },
         statute: { type: "string" },
         section: { type: "string" },
-      },
         drop: { type: "boolean" },
         drop_reason: { type: "string" },
       },
