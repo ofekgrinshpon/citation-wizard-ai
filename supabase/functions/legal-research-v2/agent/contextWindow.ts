@@ -147,6 +147,13 @@ export function buildResearchStateMessage(input: {
     );
   }
   if (authorities.length) parts.push(`מצב הבאת אסמכתאות:\n${authorities.join("\n")}`);
+  if (openTargets.length) {
+    parts.push(
+      `יעדי השגה פתוחים (מידע בלבד — אין חובה להשיגם; אפשר להביא ב-fetch({result_id}), לחפש נתיב אחר, או לוותר ב-lookup_authority עם drop:true):\n${
+        openTargets.join("\n")
+      }`,
+    );
+  }
   parts.push(budgets);
   if (input.directive) parts.push(input.directive);
   return parts.join("\n\n");
