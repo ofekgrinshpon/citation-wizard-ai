@@ -138,7 +138,7 @@ export class CommitTracker {
     }
     if (s.stale_streak >= 2 && !this.issued.has("stale_research")) {
       this.issued.add("stale_research");
-      return { kind: "stale_research", text: STALE_TEXT };
+      return { kind: "stale_research", text: staleText(s.unresolved_targets) };
     }
     return null;
   }
