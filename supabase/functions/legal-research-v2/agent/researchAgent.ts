@@ -27,7 +27,11 @@ import { chat, type ChatMessage, parseJsonLoose, type ToolSpec, type UsageLedger
 import { runSearch } from "../tools/search.ts";
 import { runFetch } from "../tools/fetch.ts";
 import { runLookupAuthority } from "../tools/lookupAuthority.ts";
-import { AcquisitionLedger, type AcquisitionLedgerJson } from "../tools/acquisitionLedger.ts";
+import {
+  AcquisitionLedger,
+  type AcquisitionLedgerJson,
+  authorityKeyOf,
+} from "../tools/acquisitionLedger.ts";
 import { AGENT_SYSTEM_PROMPT, buildAgentUserMessage, MEMO_TOOL } from "./prompt.ts";
 import { StopPolicy, type StopPolicyJson } from "./stopPolicy.ts";
 import { CommitTracker, obligationsSatisfied } from "./commitPolicy.ts";
@@ -147,6 +151,11 @@ export interface AgentContextStats {
   authority_bindings_withheld: number;
   context_compactions: number;
   context_chars_saved: number;
+  /** Named-authority acquisition (v2_named_authority_acquisition_v1). */
+  lookup_candidates_registered: number;
+  acquisition_targets_opened: number;
+  identity_autofilled_fetches: number;
+  identity_conflicts_rejected: number;
 }
 
 export function newAgentStats(): AgentContextStats {
@@ -162,6 +171,10 @@ export function newAgentStats(): AgentContextStats {
     authority_bindings_withheld: 0,
     context_compactions: 0,
     context_chars_saved: 0,
+    lookup_candidates_registered: 0,
+    acquisition_targets_opened: 0,
+    identity_autofilled_fetches: 0,
+    identity_conflicts_rejected: 0,
   };
 }
 
