@@ -96,6 +96,9 @@ const TOOL_SPECS: ToolSpec[] = [
         statute: { type: "string" },
         section: { type: "string" },
       },
+        drop: { type: "boolean" },
+        drop_reason: { type: "string" },
+      },
       required: ["kind"],
     },
   },
@@ -579,6 +582,10 @@ export async function runResearchAgent(opts: {
         if (out.authority_reuse) stats.authority_reacquisitions_prevented += 1;
         if (out.authority_binding_created) stats.authority_bindings_created += 1;
         if (out.authority_binding_withheld) stats.authority_bindings_withheld += 1;
+        if (out.expected_identity_source === "candidate" || out.expected_identity_source === "merged") {
+          stats.identity_autofilled_fetches += 1;
+        }
+        if (out.expected_identity_conflict) stats.identity_conflicts_rejected += 1;
         payload = out as unknown as Record<string, unknown>;
         summary = out.already_read
           ? `already_read ${out.source_id}`
@@ -655,6 +662,10 @@ export async function runResearchAgent(opts: {
       stale_streak: commit.stale_streak,
       research_steps_left: policy.researchStepsLeft,
       deliverable: opts.intake.deliverable,
+      unresolved_targets: ledger.unresolvedTargets().map((t) => ({
+        authority_key: t.authority_key,
+        untried: t.untried.length,
+      })),
     });
     if (directive) {
       stats.commit_directives.push(`step${policy.steps}:${directive.kind}`);
