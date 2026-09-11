@@ -406,7 +406,12 @@ export async function runFetch(
     return { ok: false, error: "no_usable_url" };
   }
 
-  const authorityKey = authorityKeyOf(input.expected_identity ?? {});
+  // Identity the deterministic layer already knows for this candidate travels
+  // with it; the model does not have to restate it. It remains an acquisition
+  // TARGET only — the body still has to corroborate it below.
+  const resolvedIdentity = resolveExpectedIdentity(discovery, input.expected_identity);
+  const expectedIdentity = resolvedIdentity.identity;
+  const authorityKey = authorityKeyOf(expectedIdentity ?? {});
 
   // Per-run fetch dedupe: an already-read URL is served from the evidence
   // store and does not consume fetch budget, unless a refetch reason is given.
