@@ -77,3 +77,46 @@ export function decideResearchRepair(
 
   return { repair: false, reason: "narrowable_to_verified_propositions", coverage };
 }
+
+/**
+ * Should a re-verified repaired memo replace the pre-repair one?
+ *
+ * For ordinary repairs the historic rule stands: the repair must not shrink the
+ * verified pack. For a repair triggered by `central_issue_not_covered_after_
+ * narrowing` that rule is actively wrong — the whole point was that the large
+ * pack answered the wrong thing. There, the same deterministic coverage
+ * mechanism is re-run on the repaired pack and acceptance follows coverage, not
+ * counts. No model call, no minimum source/claim/citation/length requirement.
+ */
+export interface RepairAcceptance {
+  accept: boolean;
+  reason:
+    | "coverage_restored"
+    | "coverage_still_missing"
+    | "verified_claims_not_reduced"
+    | "verified_claims_reduced";
+  coverage_after?: CoverageAssessment;
+}
+
+export function decideRepairAcceptance(input: {
+  triggerReason: RepairDecision["reason"];
+  before: VerificationOutcome;
+  after: VerificationOutcome;
+  question?: string;
+  issue_summary?: string;
+}): RepairAcceptance {
+  if (input.triggerReason === "central_issue_not_covered_after_narrowing") {
+    const coverage_after = assessCentralIssueCoverage({
+      question: input.question ?? "",
+      issue_summary: input.issue_summary,
+      pack: input.after.pack,
+      rejected: input.after.rejected,
+    });
+    return coverage_after.central_issue_covered
+      ? { accept: true, reason: "coverage_restored", coverage_after }
+      : { accept: false, reason: "coverage_still_missing", coverage_after };
+  }
+  return input.after.pack.claims.length >= input.before.pack.claims.length
+    ? { accept: true, reason: "verified_claims_not_reduced" }
+    : { accept: false, reason: "verified_claims_reduced" };
+}
