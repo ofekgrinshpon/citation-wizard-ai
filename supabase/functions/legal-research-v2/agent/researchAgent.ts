@@ -699,6 +699,9 @@ export function serializeAgentState(input: {
 }
 
 export function deserializeAgentState(intake: Intake, json: AgentStateJson) {
+  // Fresh isolate after a chunk pause: continue the id sequence instead of
+  // restarting it on top of already-issued candidate ids.
+  seedResultIds((json.discovered ?? []).map(([id]) => id));
   return {
     messages: json.messages,
     policy: StopPolicy.fromJSON(intake.budgets, json.policy),
