@@ -283,11 +283,15 @@ async function runPipeline(
       issue_summary: agent.memo?.issue_summary,
     })
     : { repair: false, reason: "no_unsupported_core_claims" as const, coverage: undefined };
-  const repair_skip_reason = repairDecision.repair ? null : repairDecision.reason;
   const coverage = repairDecision.coverage;
   const repair_due_to_central_insufficiency =
     repairDecision.reason === "central_issue_not_covered_after_narrowing";
-  const needsRepair = repairDecision.repair && !agent.policy.allExhausted();
+  const repairCapacityExhausted = repairDecision.repair && agent.policy.allExhausted();
+  const repair_skip_reason = repairDecision.repair
+    ? (repairCapacityExhausted ? "research_capacity_exhausted" : null)
+    : repairDecision.reason;
+  const needsRepair = repairDecision.repair && !repairCapacityExhausted;
+
   if (agent.memo && verification && needsRepair) {
     repair_cycles = 1;
     const repaired = await runResearchAgent({
