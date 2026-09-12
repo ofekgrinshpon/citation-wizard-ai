@@ -338,7 +338,10 @@ async function runPipeline(
         before: verification,
         after: reVerified,
         question: intake.question,
-        issue_summary: repaired.memo.issue_summary,
+        // Judge the repair against the SAME central-issue frame that triggered
+        // it. The repaired memo must not move the goalposts by redefining its
+        // own issue_summary.
+        issue_summary: agent.memo.issue_summary,
       });
       repair_acceptance_reason = acceptance.reason;
       if (acceptance.accept) {
