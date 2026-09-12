@@ -96,6 +96,8 @@ describe("repair acceptance", () => {
     // Acceptance judged against the ORIGINAL frame must reject.
     const after = outcome({
       claims: [claim("r1", "הדיון נדחה למועד נוסף והוגשו תצהירים משלימים")],
+      unsupported: [claim("c3", "חובת הגילוי של בן זוג בוגד משפיעה על חלוקת רכוש")],
+      rejected: [{ claim_id: "c3", reason: "span_not_found" }],
     });
     const d = decideRepairAcceptance({
       triggerReason: "central_issue_not_covered_after_narrowing",
