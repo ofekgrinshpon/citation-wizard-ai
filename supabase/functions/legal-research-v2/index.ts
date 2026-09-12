@@ -70,7 +70,7 @@ import {
 import { runDrafter } from "./drafting/draft.ts";
 import { renderAnswer } from "./drafting/render.ts";
 import { RunTimer, type RunTimingJson } from "./shared/timing.ts";
-import { decideResearchRepair } from "./verification/repairPolicy.ts";
+import { decideRepairAcceptance, decideResearchRepair } from "./verification/repairPolicy.ts";
 
 
 // deno-lint-ignore no-explicit-any
@@ -283,11 +283,16 @@ async function runPipeline(
       issue_summary: agent.memo?.issue_summary,
     })
     : { repair: false, reason: "no_unsupported_core_claims" as const, coverage: undefined };
-  const repair_skip_reason = repairDecision.repair ? null : repairDecision.reason;
   const coverage = repairDecision.coverage;
   const repair_due_to_central_insufficiency =
     repairDecision.reason === "central_issue_not_covered_after_narrowing";
-  const needsRepair = repairDecision.repair && !agent.policy.allExhausted();
+  let repair_acceptance_reason: string | null = null;
+  const repairCapacityExhausted = repairDecision.repair && agent.policy.allExhausted();
+  const repair_skip_reason = repairDecision.repair
+    ? (repairCapacityExhausted ? "research_capacity_exhausted" : null)
+    : repairDecision.reason;
+  const needsRepair = repairDecision.repair && !repairCapacityExhausted;
+
   if (agent.memo && verification && needsRepair) {
     repair_cycles = 1;
     const repaired = await runResearchAgent({
@@ -328,10 +333,19 @@ async function runPipeline(
           model: models.verifier,
           usage,
         }));
-      if (reVerified.pack.claims.length >= verification.pack.claims.length) {
+      const acceptance = decideRepairAcceptance({
+        triggerReason: repairDecision.reason,
+        before: verification,
+        after: reVerified,
+        question: intake.question,
+        issue_summary: repaired.memo.issue_summary,
+      });
+      repair_acceptance_reason = acceptance.reason;
+      if (acceptance.accept) {
         agent = { ...repaired, trace: [...agent.trace, ...repaired.trace] };
         verification = reVerified;
       }
+
     }
   }
 
@@ -652,6 +666,7 @@ async function runPipeline(
     sources_marked_exhausted: agent.ledger.allReads().filter((r) => r.exhausted).length,
     unresolved_authorities: unresolvedAuthorities,
     repair_skip_reason,
+    repair_acceptance_reason,
     sufficiency_assessed: !!coverage?.assessed,
     surviving_core_claims: coverage?.surviving_core_claim_ids ?? [],
     unsupported_core_claims: coverage?.unsupported_core_claim_ids ?? [],

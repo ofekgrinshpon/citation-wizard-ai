@@ -368,6 +368,8 @@ export interface V2Telemetry {
   unresolved_authorities?: string[];
   /** Why a research reopen was NOT performed after verification, when it wasn't. */
   repair_skip_reason?: string | null;
+  repair_acceptance_reason?: string | null;
+
   /** Central-issue coverage after narrowing (v2_central_issue_coverage_v1). */
   sufficiency_assessed?: boolean;
   surviving_core_claims?: string[];
