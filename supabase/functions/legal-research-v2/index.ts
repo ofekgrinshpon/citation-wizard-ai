@@ -60,6 +60,7 @@ import {
   SOURCE_SEARCH_CREDIT_COST,
   toBetaResult,
 } from "./beta/job.ts";
+import { resolveOwnedProjectId } from "./beta/projectOwnership.ts";
 import {
   acquireOperationLock,
   heartbeatOperationLock,
@@ -879,7 +880,9 @@ serve(async (req) => {
       ? Math.max(0, Math.floor(Number(body.footnote_offset)))
       : 0;
 
-    const projectId = typeof body.project_id === "string" ? body.project_id : null;
+    // Client-supplied project association is authorized under the caller's own
+    // RLS before it is stored; an unowned/unknown id is silently dropped.
+    const projectId = await resolveOwnedProjectId(userClient, body.project_id);
     const clientRequestId = typeof body.client_request_id === "string" && body.client_request_id
       ? body.client_request_id
       : crypto.randomUUID();
