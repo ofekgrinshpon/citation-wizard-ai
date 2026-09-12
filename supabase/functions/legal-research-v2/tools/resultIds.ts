@@ -17,3 +17,17 @@ export function nextResultId(): string {
 export function resetResultIds(): void {
   counter = 0;
 }
+
+/**
+ * Durability across worker restarts: a resumed chunk runs in a fresh isolate
+ * where the counter is 0 again, so new candidates would re-mint ids that the
+ * restored `discovered` map already uses — silently overwriting candidates
+ * (and their authority identity). Seeding past the highest known id keeps
+ * every id unique for the whole run. Monotonic: never lowers the counter.
+ */
+export function seedResultIds(existingIds: Iterable<string>): void {
+  for (const id of existingIds) {
+    const n = /^R(\d+)$/.exec(String(id ?? ""))?.[1];
+    if (n) counter = Math.max(counter, Number(n));
+  }
+}

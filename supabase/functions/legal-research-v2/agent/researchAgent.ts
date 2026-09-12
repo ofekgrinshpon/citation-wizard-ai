@@ -27,6 +27,7 @@ import { chat, type ChatMessage, parseJsonLoose, type ToolSpec, type UsageLedger
 import { runSearch } from "../tools/search.ts";
 import { runFetch } from "../tools/fetch.ts";
 import { runLookupAuthority } from "../tools/lookupAuthority.ts";
+import { seedResultIds } from "../tools/resultIds.ts";
 import {
   AcquisitionLedger,
   type AcquisitionLedgerJson,
@@ -698,6 +699,9 @@ export function serializeAgentState(input: {
 }
 
 export function deserializeAgentState(intake: Intake, json: AgentStateJson) {
+  // Fresh isolate after a chunk pause: continue the id sequence instead of
+  // restarting it on top of already-issued candidate ids.
+  seedResultIds((json.discovered ?? []).map(([id]) => id));
   return {
     messages: json.messages,
     policy: StopPolicy.fromJSON(intake.budgets, json.policy),
