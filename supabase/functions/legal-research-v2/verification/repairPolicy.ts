@@ -14,6 +14,7 @@
  */
 
 import type { VerificationOutcome } from "../types.ts";
+import { assessCentralIssueCoverage, type CoverageAssessment } from "./centralIssueCoverage.ts";
 
 /** Rejection reasons that describe an acquisition gap rather than a drafting gap. */
 const ACQUISITION_REASONS = new Set([
