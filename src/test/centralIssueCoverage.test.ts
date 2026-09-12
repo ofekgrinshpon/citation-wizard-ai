@@ -173,7 +173,10 @@ describe("F/G — boundedness and budgets", () => {
   });
 
   it("G. exhausted research capacity is never revived by insufficiency", () => {
-    expect(src).toMatch(/needsRepair = repairDecision\.repair && !agent\.policy\.allExhausted\(\)/);
+    expect(src).toMatch(/repairCapacityExhausted = repairDecision\.repair && agent\.policy\.allExhausted\(\)/);
+    expect(src).toMatch(/needsRepair = repairDecision\.repair && !repairCapacityExhausted/);
+    expect(src).toMatch(/research_capacity_exhausted/);
+
     const p = new StopPolicy({
       max_agent_steps: 10,
       max_search_calls: 1,
