@@ -70,7 +70,7 @@ import {
 import { runDrafter } from "./drafting/draft.ts";
 import { renderAnswer } from "./drafting/render.ts";
 import { RunTimer, type RunTimingJson } from "./shared/timing.ts";
-import { decideResearchRepair } from "./verification/repairPolicy.ts";
+import { decideRepairAcceptance, decideResearchRepair } from "./verification/repairPolicy.ts";
 
 
 // deno-lint-ignore no-explicit-any
@@ -286,6 +286,7 @@ async function runPipeline(
   const coverage = repairDecision.coverage;
   const repair_due_to_central_insufficiency =
     repairDecision.reason === "central_issue_not_covered_after_narrowing";
+  let repair_acceptance_reason: string | null = null;
   const repairCapacityExhausted = repairDecision.repair && agent.policy.allExhausted();
   const repair_skip_reason = repairDecision.repair
     ? (repairCapacityExhausted ? "research_capacity_exhausted" : null)
@@ -665,6 +666,7 @@ async function runPipeline(
     sources_marked_exhausted: agent.ledger.allReads().filter((r) => r.exhausted).length,
     unresolved_authorities: unresolvedAuthorities,
     repair_skip_reason,
+    repair_acceptance_reason,
     sufficiency_assessed: !!coverage?.assessed,
     surviving_core_claims: coverage?.surviving_core_claim_ids ?? [],
     unsupported_core_claims: coverage?.unsupported_core_claim_ids ?? [],
