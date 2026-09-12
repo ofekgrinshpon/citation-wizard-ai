@@ -89,6 +89,42 @@ describe("repair acceptance", () => {
     ).toMatchObject({ accept: true, reason: "verified_claims_not_reduced" });
   });
 
+  it("rejects a repair whose memo moved the goalposts to a peripheral issue", () => {
+    // Original frame (issue A): חובת הגילוי של בן זוג בוגד בחלוקת רכוש.
+    // Repaired memo redefines its own issue_summary toward peripheral issue B
+    // (procedural scheduling) and its verified claims cover B, not A.
+    // Acceptance judged against the ORIGINAL frame must reject.
+    const after = outcome({
+      claims: [claim("r1", "הדיון נדחה למועד נוסף והוגשו תצהירים משלימים")],
+    });
+    const d = decideRepairAcceptance({
+      triggerReason: "central_issue_not_covered_after_narrowing",
+      before,
+      after,
+      question: QUESTION,
+      issue_summary: "חובת הגילוי של בן זוג בוגד בחלוקת רכוש", // original frame
+    });
+    expect(d.accept).toBe(false);
+    expect(d.reason).toBe("coverage_still_missing");
+  });
+
+  it("accepts a repair covering the original issue even if the memo's own summary changed", () => {
+    const after = outcome({
+      claims: [claim("r1", "חובת הגילוי של בן זוג בוגד נבחנת בחלוקת רכוש לפי הכלל שנקבע")],
+    });
+    const d = decideRepairAcceptance({
+      triggerReason: "central_issue_not_covered_after_narrowing",
+      before,
+      after,
+      question: QUESTION,
+      // The call site passes the PRE-REPAIR issue_summary regardless of what
+      // the repaired memo says about itself.
+      issue_summary: "חובת הגילוי של בן זוג בוגד בחלוקת רכוש",
+    });
+    expect(d.accept).toBe(true);
+    expect(d.reason).toBe("coverage_restored");
+  });
+
   it("does not require any minimum number of claims, sources or citations", () => {
     const after = outcome({
       claims: [claim("r1", "חובת הגילוי של בן זוג בוגד בחלוקת רכוש")],
