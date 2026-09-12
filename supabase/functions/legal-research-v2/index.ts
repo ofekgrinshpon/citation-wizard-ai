@@ -60,6 +60,7 @@ import {
   SOURCE_SEARCH_CREDIT_COST,
   toBetaResult,
 } from "./beta/job.ts";
+import { resolveOwnedProjectId } from "./beta/projectOwnership.ts";
 import {
   acquireOperationLock,
   heartbeatOperationLock,
