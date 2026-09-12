@@ -99,6 +99,33 @@ ${rejects || "(אין)"}
 בצע קריאות כלים נוספות לפי הצורך והחזר תזכיר מחקר מעודכן. אם לא ניתן לבסס טענה, הסר אותה או העבר אותה ל-unresolved_questions — אל תמציא תמיכה.`;
 }
 
+/**
+ * Repair driven by central-issue insufficiency (v2_central_issue_coverage_v1).
+ * Names the substantive gap; never names a required authority, a source count
+ * or a citation count, and explicitly allows the agent to stop.
+ */
+export function buildCoverageRepairMessage(input: {
+  question: string;
+  issue_summary?: string;
+  verified: Array<{ claim_id: string; proposition: string }>;
+  unsupported: Array<{ claim_id: string; proposition: string }>;
+}): string {
+  const kept = input.verified.map((c) => `- ${c.claim_id}: ${c.proposition}`).join("\n");
+  const lost = input.unsupported.map((c) => `- ${c.claim_id}: ${c.proposition}`).join("\n");
+  return `לאחר האימות נותרו טענות מאומתות, אך הן אינן מכסות עוד את השאלה המרכזית שנשאלה. סבב מחקר נוסף אחד בלבד.
+
+השאלה המרכזית:
+${input.question}${input.issue_summary ? `\n\nתמצית הסוגיה כפי שניסחת: ${input.issue_summary}` : ""}
+
+טענות שנותרו מאומתות וניתן להמשיך להסתמך עליהן:
+${kept || "(אין)"}
+
+הטענות שנפלו באימות ושבלעדיהן התשובה אינה עונה על השאלה:
+${lost || "(אין)"}
+
+המטרה היא לסגור את הפער המהותי הזה בלבד — לא להוסיף מקורות ולא להרבות ציטוטים. אתה מחליט אילו מקורות לחפש, לקרוא או לזנוח. אם לאחר בדיקה סבירה לא ניתן לבסס את הטענה החסרה, אל תמציא תמיכה: הסר אותה או העבר אותה ל-unresolved_questions והגש את התזכיר.`;
+}
+
 export const MEMO_TOOL = {
   name: "submit_research_memo",
   description: "הגשת תזכיר המחקר הסופי. כל source_id חייב להגיע מ-fetch מוצלח.",

@@ -368,6 +368,14 @@ export interface V2Telemetry {
   unresolved_authorities?: string[];
   /** Why a research reopen was NOT performed after verification, when it wasn't. */
   repair_skip_reason?: string | null;
+  /** Central-issue coverage after narrowing (v2_central_issue_coverage_v1). */
+  sufficiency_assessed?: boolean;
+  surviving_core_claims?: string[];
+  unsupported_core_claims?: string[];
+  central_issue_covered?: boolean;
+  central_coverage_ratio?: number;
+  central_coverage_gap_terms?: string[];
+  repair_due_to_central_insufficiency?: boolean;
   /** Safeguard A — current-law / temporal validity. */
   temporal_sensitive_claims: number;
   temporal_checks_attempted: number;
