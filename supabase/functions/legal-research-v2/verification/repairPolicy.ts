@@ -32,10 +32,23 @@ export interface RepairDecision {
     | "no_unsupported_core_claims"
     | "no_verified_claims"
     | "unreadable_or_missing_body"
+    | "central_issue_not_covered_after_narrowing"
+    | "central_gap_not_research_fixable"
     | "narrowable_to_verified_propositions";
+  /** Present whenever the coverage assessment actually ran. */
+  coverage?: CoverageAssessment;
 }
 
-export function decideResearchRepair(verification: VerificationOutcome): RepairDecision {
+/**
+ * `context` is optional so existing call sites keep their exact semantics.
+ * When the user question is supplied, one extra conservative exception is
+ * available: narrowing away an unsupported core claim is NOT acceptable if the
+ * surviving verified propositions no longer cover the central issue.
+ */
+export function decideResearchRepair(
+  verification: VerificationOutcome,
+  context?: { question: string; issue_summary?: string },
+): RepairDecision {
   const coreUnsupported = verification.pack.unsupported_claims.filter((c) => c.importance === "core");
   if (!coreUnsupported.length) return { repair: false, reason: "no_unsupported_core_claims" };
   // Nothing verified at all: the answer would be empty, so research must reopen.
@@ -44,7 +57,23 @@ export function decideResearchRepair(verification: VerificationOutcome): RepairD
   const ids = new Set(coreUnsupported.map((c) => c.claim_id));
   const rejected = verification.rejected.filter((r) => ids.has(r.claim_id));
   const acquisitionGap = rejected.some((r) => ACQUISITION_REASONS.has(r.reason));
-  return acquisitionGap
-    ? { repair: true, reason: "unreadable_or_missing_body" }
-    : { repair: false, reason: "narrowable_to_verified_propositions" };
+
+  const coverage = context?.question
+    ? assessCentralIssueCoverage({
+      question: context.question,
+      issue_summary: context.issue_summary,
+      pack: verification.pack,
+      rejected: verification.rejected,
+    })
+    : undefined;
+
+  if (acquisitionGap) return { repair: true, reason: "unreadable_or_missing_body", coverage };
+
+  if (coverage && !coverage.central_issue_covered) {
+    return coverage.research_fixable
+      ? { repair: true, reason: "central_issue_not_covered_after_narrowing", coverage }
+      : { repair: false, reason: "central_gap_not_research_fixable", coverage };
+  }
+
+  return { repair: false, reason: "narrowable_to_verified_propositions", coverage };
 }
