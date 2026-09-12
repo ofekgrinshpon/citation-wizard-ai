@@ -332,10 +332,19 @@ async function runPipeline(
           model: models.verifier,
           usage,
         }));
-      if (reVerified.pack.claims.length >= verification.pack.claims.length) {
+      const acceptance = decideRepairAcceptance({
+        triggerReason: repairDecision.reason,
+        before: verification,
+        after: reVerified,
+        question: intake.question,
+        issue_summary: repaired.memo.issue_summary,
+      });
+      repair_acceptance_reason = acceptance.reason;
+      if (acceptance.accept) {
         agent = { ...repaired, trace: [...agent.trace, ...repaired.trace] };
         verification = reVerified;
       }
+
     }
   }
 
