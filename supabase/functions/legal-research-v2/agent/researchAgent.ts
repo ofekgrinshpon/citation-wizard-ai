@@ -27,6 +27,7 @@ import { chat, type ChatMessage, parseJsonLoose, type ToolSpec, type UsageLedger
 import { runSearch } from "../tools/search.ts";
 import { runFetch } from "../tools/fetch.ts";
 import { runLookupAuthority } from "../tools/lookupAuthority.ts";
+import { seedResultIds } from "../tools/resultIds.ts";
 import {
   AcquisitionLedger,
   type AcquisitionLedgerJson,
