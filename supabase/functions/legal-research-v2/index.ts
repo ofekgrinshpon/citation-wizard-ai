@@ -32,7 +32,7 @@ import {
   runResearchAgent,
   serializeAgentState,
 } from "./agent/researchAgent.ts";
-import { buildRepairMessage } from "./agent/prompt.ts";
+import { buildCoverageRepairMessage, buildRepairMessage } from "./agent/prompt.ts";
 import { verifyMemo, type ExpectedIdentity } from "./verification/verify.ts";
 import {
   applyTemporalGate,
@@ -278,9 +278,15 @@ async function runPipeline(
   // unreadable body can be fixed by more research; a span/support failure on a
   // body that WAS read cannot, and the memo is simply narrowed instead.
   const repairDecision = verification
-    ? decideResearchRepair(verification)
-    : { repair: false, reason: "no_unsupported_core_claims" as const };
+    ? decideResearchRepair(verification, {
+      question: intake.question,
+      issue_summary: agent.memo?.issue_summary,
+    })
+    : { repair: false, reason: "no_unsupported_core_claims" as const, coverage: undefined };
   const repair_skip_reason = repairDecision.repair ? null : repairDecision.reason;
+  const coverage = repairDecision.coverage;
+  const repair_due_to_central_insufficiency =
+    repairDecision.reason === "central_issue_not_covered_after_narrowing";
   const needsRepair = repairDecision.repair && !agent.policy.allExhausted();
   if (agent.memo && verification && needsRepair) {
     repair_cycles = 1;
@@ -294,10 +300,17 @@ async function runPipeline(
       chunkIndex: chunk_index,
       heartbeat,
       priorMessages: agent.messages,
-      extraUserMessage: buildRepairMessage({
-        unsupported: verification.pack.unsupported_claims,
-        rejected: verification.rejected,
-      }),
+      extraUserMessage: repair_due_to_central_insufficiency
+        ? buildCoverageRepairMessage({
+          question: intake.question,
+          issue_summary: agent.memo.issue_summary,
+          verified: verification.pack.claims,
+          unsupported: verification.pack.unsupported_claims,
+        })
+        : buildRepairMessage({
+          unsupported: verification.pack.unsupported_claims,
+          rejected: verification.rejected,
+        }),
       policy: agent.policy,
       discovered: agent.discovered,
       // Repair continues the SAME run: acquisition memory, commit discipline and
@@ -639,6 +652,13 @@ async function runPipeline(
     sources_marked_exhausted: agent.ledger.allReads().filter((r) => r.exhausted).length,
     unresolved_authorities: unresolvedAuthorities,
     repair_skip_reason,
+    sufficiency_assessed: !!coverage?.assessed,
+    surviving_core_claims: coverage?.surviving_core_claim_ids ?? [],
+    unsupported_core_claims: coverage?.unsupported_core_claim_ids ?? [],
+    central_issue_covered: coverage ? coverage.central_issue_covered : true,
+    central_coverage_ratio: coverage?.coverage_ratio,
+    central_coverage_gap_terms: coverage?.lost_central_terms ?? [],
+    repair_due_to_central_insufficiency,
     ...temporalCounters,
     primary_authority_obligations: gapReport.obligations,
     primary_unreadable: gapReport.unreadable,
