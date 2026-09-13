@@ -546,7 +546,7 @@ export async function runResearchAgent(opts: {
             label: out.candidates[0]?.label,
             reopen: true,
             candidates: out.candidates
-              .filter((c) => c.url)
+              .filter((c) => c.url || c.local_document_id)
               .map((c) => ({
                 result_id: c.result_id,
                 url: c.url,
