@@ -17,6 +17,7 @@ export type CorroborationBasis =
   | "docket_absent_from_body"
   | "docket_proceeding_type_mismatch"
   | "docket_court_level_mismatch"
+  | "docket_mention_not_self_identifying"
   | "statute_title_present_in_body"
   | "statute_title_absent_from_body"
   | "statute_section_absent_from_body"
@@ -135,6 +136,25 @@ export function corroborateAuthority(args: {
 // heading. This only NARROWS binding; nothing is bound that was not bound
 // before.
 
+/**
+ * Structural markers of a judgment/decision BODY, as opposed to a page that
+ * merely cites one. Broad web discovery surfaces many commentary pages that
+ * quote a docket correctly; those must not be bound to the authority key.
+ */
+const JUDGMENT_STRUCTURE_MARKERS = [
+  "בפני",
+  "לפני",
+  "השופט",
+  "השופטת",
+  "המערער",
+  "המשיב",
+  "העותר",
+  "פסק דין",
+  "פסק-דין",
+  "החלטה",
+  "בית המשפט העליון",
+];
+
 /** Court-level markers that contradict an unqualified (higher-court) request. */
 const LOWER_COURT_MARKERS = ["מחוזי", "השלום", "לעבודה", "לעניני משפחה", "לענייני משפחה"];
 
@@ -159,6 +179,19 @@ export function parseExpectedCase(docket: string): ExpectedCase {
   const court_qualified = qualifiers.length > 0 ||
     LOWER_COURT_MARKERS.some((m) => norm.includes(m));
   return { number, proceeding, court_qualified, qualifiers };
+}
+
+/**
+ * A judgment body carries its own docket in the caption and reads like a
+ * judgment. A page that cites the docket once, deep inside an article, is
+ * commentary about the authority, not the authority.
+ */
+function isSelfIdentifying(body: string, key: string, hits: number[]): boolean {
+  const inCaption = hits.some((i) => i < 4_000);
+  if (!inCaption && hits.length < 3) return false;
+  const markers = JUDGMENT_STRUCTURE_MARKERS.filter((m) => body.includes(normalizeAuthorityText(m)));
+  void key;
+  return markers.length >= 2;
 }
 
 function occurrences(haystack: string, needle: string): number[] {
@@ -215,6 +248,13 @@ export function corroborateCaseIdentity(args: {
       expectedCase.qualifiers.length &&
       !expectedCase.qualifiers.some((q) => pre.includes(q))
     ) continue;
+    if (!isSelfIdentifying(body, key, hits)) {
+      return {
+        corroborated: false,
+        basis: "docket_mention_not_self_identifying",
+        detail: `body cites ${num} but does not present itself as that judgment`,
+      };
+    }
     return {
       corroborated: true,
       basis: "docket_present_in_body",
