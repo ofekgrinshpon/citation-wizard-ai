@@ -24,6 +24,7 @@ import {
   officialFetch,
   type SupabaseClient,
 } from "../shared/primitives.ts";
+import { decodeResponseText, isUnreadableEncoding } from "../shared/textDecoding.ts";
 import { loadLocalDocument, localAttemptKey } from "./localCorpusBody.ts";
 import { AcquisitionLedger, type AuthorityState, authorityKeyOf } from "./acquisitionLedger.ts";
 import { corroborateAuthority } from "./authorityCorroboration.ts";
@@ -71,6 +72,11 @@ export function checkIsActualDocument(text: string): DocumentCheck {
   if (t.length < FETCH_LIMITS.MIN_DOCUMENT_CHARS) {
     return { is_actual_document: false, reason: "too_short_for_a_document" };
   }
+  // Decode corruption: a body dominated by U+FFFD is not readable, however
+  // long it is and however many ASCII docket digits survived inside it.
+  if (isUnreadableEncoding(t)) {
+    return { is_actual_document: false, reason: "unreadable_encoding" };
+  }
   if (looksLikeBlockPage(t)) {
     return { is_actual_document: false, reason: "block_page" };
   }
@@ -87,11 +93,19 @@ export function checkIsActualDocument(text: string): DocumentCheck {
   return { is_actual_document: true };
 }
 
-async function extractByContentType(
+export interface DecodeTelemetry {
+  charset_declared: string | null;
+  charset_used: string;
+  replacement_ratio_utf8: number;
+  replacement_ratio: number;
+  fallback_applied: boolean;
+}
+
+export async function extractByContentType(
   url: string,
   contentType: string,
   bytes: Uint8Array,
-): Promise<{ text: string; error?: string }> {
+): Promise<{ text: string; error?: string; decode?: DecodeTelemetry }> {
   const ct = contentType.toLowerCase();
   const isPdf = ct.includes("pdf") || /\.pdf(\?|$)/i.test(url) ||
     (bytes.length > 4 && bytes[0] === 0x25 && bytes[1] === 0x50);
@@ -115,11 +129,21 @@ async function extractByContentType(
       return { text: "", error: `docx_extract_failed: ${e instanceof Error ? e.message : String(e)}` };
     }
   }
-  const raw = new TextDecoder("utf-8", { fatal: false }).decode(bytes);
+  // Charset-aware decode BEFORE any HTML stripping, so a windows-1255 page is
+  // never stripped as mojibake.
+  const decoded = decodeResponseText(bytes, contentType);
+  const raw = decoded.text;
+  const decode = {
+    charset_declared: decoded.charset_declared,
+    charset_used: decoded.charset_used,
+    replacement_ratio_utf8: decoded.replacement_ratio_utf8,
+    replacement_ratio: decoded.replacement_ratio,
+    fallback_applied: decoded.fallback_applied,
+  };
   if (ct.includes("html") || /<html[\s>]/i.test(raw.slice(0, 2_000))) {
-    return { text: htmlToText(raw) };
+    return { text: htmlToText(raw), decode };
   }
-  return { text: raw.trim() };
+  return { text: raw.trim(), decode };
 }
 
 /** Return reading windows around the agent's search terms (verbatim slices). */
@@ -209,6 +233,8 @@ export interface FetchOutput {
   acquisition_transport?: "http" | "local_corpus";
   /** For a local corpus acquisition: how the row was matched to the authority. */
   local_match_basis?: "case_number_exact" | "citation_docket" | "title_ilike";
+  /** Charset decision and decode-quality signal for a text/HTML body. */
+  decode?: DecodeTelemetry;
   /** True when this exact URL already failed for this authority. */
   dead_path?: boolean;
   /** Targeted section retrieval outcome. */
@@ -518,6 +544,7 @@ export async function runFetch(
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), FETCH_LIMITS.TIMEOUT_MS);
   let entry: EvidenceSource;
+  let decodeMeta: DecodeTelemetry | undefined;
   const noteFailure = (reason: string) => {
     if (ledger && authorityKey) {
       ledger.note(authorityKey, { url, outcome: "failed", reason, at: new Date().toISOString() });
@@ -559,11 +586,12 @@ export async function runFetch(
       noteFailure("document_too_large");
       return clampFetchOutput({ ok: false, source_id: entry.source_id, error: "document_too_large" });
     }
-    const { text, error } = await extractByContentType(
+    const { text, error, decode } = await extractByContentType(
       url,
       res.headers.get("content-type") ?? "",
       buf,
     );
+    decodeMeta = decode;
     const clipped = text.slice(0, FETCH_LIMITS.MAX_TEXT_CHARS);
     const docCheck = checkIsActualDocument(clipped);
     entry = await store.append({
@@ -619,6 +647,7 @@ export async function runFetch(
     discovery,
     input,
     transport: "http",
+    decode: decodeMeta,
   });
 }
 
@@ -639,9 +668,10 @@ function finalizeAcquiredBody(args: {
   discovery: SearchResult | null;
   input: FetchInput;
   transport: "http" | "local_corpus";
+  decode?: DecodeTelemetry;
 }): FetchOutput {
   const { store, ledger, entry, attemptKey, expectedIdentity, authorityKey, resolvedIdentity } = args;
-  const { discovery, input, transport } = args;
+  const { discovery, input, transport, decode } = args;
 
   const expectedDocket = expectedIdentity?.docket?.trim();
   let identity_hint: string | undefined;
@@ -726,7 +756,10 @@ function finalizeAcquiredBody(args: {
       : entry.extracted_text.slice(0, FETCH_LIMITS.HEAD_CHARS),
     windows: freshServed.windows,
     exact_source_text: freshServed.exact_source_text,
-    instruction: transport === "local_corpus"
+    decode,
+    instruction: entry.not_document_reason === "unreadable_encoding"
+      ? "הטקסט שהתקבל אינו קריא (קידוד תווים פגום), ולכן אינו נחשב מסמך ואינו יכול לשמש כראיה או לאשש זהות אסמכתה. נדרש נתיב השגה אחר (קובץ/מקור אחר) עבור אסמכתה זו."
+      : transport === "local_corpus"
       ? `הגוף המלא (מהמאגר המקומי) שמור בצד השרת. לקריאת קטע נוסף מתוכו: fetch({source_id, query}).${
         freshServed.windows?.length ? QUOTE_RULE : ""
       }`
