@@ -68,6 +68,12 @@ export interface ToolBudgets {
   max_search_calls: number;
   max_fetch_calls: number;
   max_lookup_calls: number;
+  /**
+   * Broad-web (`raw_web_search`) discovery calls. Deliberately small: this is
+   * a recovery lane next to the existing research-oriented search, not a
+   * second general search budget.
+   */
+  max_raw_search_calls: number;
 }
 
 export const DEFAULT_BUDGETS: ToolBudgets = {
@@ -75,6 +81,7 @@ export const DEFAULT_BUDGETS: ToolBudgets = {
   max_search_calls: 8,
   max_fetch_calls: 12,
   max_lookup_calls: 6,
+  max_raw_search_calls: 3,
 };
 
 // ─── Tools ──────────────────────────────────────────────────────────────────
