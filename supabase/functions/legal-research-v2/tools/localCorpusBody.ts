@@ -38,10 +38,18 @@ function stripZeros(part: string): string {
 export function docketVariants(raw: string): { canonical: string | null; variants: string[] } {
   const m = DOCKET_RE.exec(normalizeDocketText(raw ?? ""));
   if (!m) return { canonical: null, variants: [] };
-  const parts = [m[1], m[2], m[3]].filter((p): p is string => !!p).map(stripZeros);
+  const raw_parts = [m[1], m[2], m[3]].filter((p): p is string => !!p);
+  // Only the case serial is zero-stripped. In a three-part docket the middle
+  // segment is a month, where `09` and `9` are both written in practice, so
+  // both forms are kept as variants rather than collapsed.
+  const parts = raw_parts.map((p, i) => (i === 0 ? stripZeros(p) : p));
   if (parts.length === 3) {
     const dash = parts.join("-");
-    return { canonical: dash, variants: [dash, parts.join("/")] };
+    const stripped = parts.map(stripZeros);
+    return {
+      canonical: dash,
+      variants: [...new Set([dash, parts.join("/"), stripped.join("-"), stripped.join("/")])],
+    };
   }
   const slash = parts.join("/");
   return { canonical: slash, variants: [slash, parts.join("-")] };
