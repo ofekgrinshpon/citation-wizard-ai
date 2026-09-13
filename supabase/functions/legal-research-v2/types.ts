@@ -127,6 +127,7 @@ export interface LookupCandidate {
   url?: string;
   origin: string;
   local_document_id?: string;
+  local_match_basis?: "case_number_exact" | "citation_docket" | "title_ilike";
   note?: string;
   authority_key?: string;
   expected_identity?: ExpectedAuthorityIdentity;
