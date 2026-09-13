@@ -621,3 +621,230 @@ export async function runFetch(
     transport: "http",
   });
 }
+
+/**
+ * Identity corroboration, authority binding and the bounded agent-facing
+ * response. Shared verbatim by every transport: a locally stored body is
+ * held to exactly the same standard as one fetched over HTTP.
+ */
+function finalizeAcquiredBody(args: {
+  store: EvidenceStore;
+  ledger?: AcquisitionLedger;
+  entry: EvidenceSource;
+  /** Ledger attempt key (an URL for HTTP, `local:…` for the corpus). */
+  attemptKey: string;
+  expectedIdentity?: { docket?: string; statute?: string; section?: string };
+  authorityKey: string | null;
+  resolvedIdentity: ReturnType<typeof resolveExpectedIdentity>;
+  discovery: SearchResult | null;
+  input: FetchInput;
+  transport: "http" | "local_corpus";
+}): FetchOutput {
+  const { store, ledger, entry, attemptKey, expectedIdentity, authorityKey, resolvedIdentity } = args;
+  const { discovery, input, transport } = args;
+
+  const expectedDocket = expectedIdentity?.docket?.trim();
+  let identity_hint: string | undefined;
+
+  // Positive corroboration: the acquired BODY must present itself as the
+  // requested authority before it may occupy that authority key. A requested
+  // label, a merely readable body, or a local database row is never proof.
+  const corroboration = corroborateAuthority({
+    expected: expectedIdentity,
+    title: entry.title,
+    text: entry.extracted_text,
+    identity_fields: entry.identity_fields,
+    is_actual_document: entry.is_actual_document,
+  });
+
+  if (expectedDocket) {
+    identity_hint = corroboration.corroborated
+      ? `התיק ${expectedDocket} מופיע בגוף המסמך שהובא.`
+      : `אזהרה: התיק ${expectedDocket} לא נמצא בגוף המסמך שהובא — ככל הנראה זה אינו המסמך המבוקש.`;
+  } else if (expectedIdentity?.statute?.trim() && !corroboration.corroborated && entry.is_actual_document) {
+    identity_hint =
+      `אזהרה: גוף המסמך שהובא אינו מזדהה כ"${expectedIdentity.statute.trim()}" (${corroboration.basis}). ניתן להשתמש בו ככל שהוא רלוונטי, אך הוא אינו נחשב לגוף האסמכתה המבוקשת — אפשר וכדאי להביא מועמד אחר עבורה.`;
+  }
+
+  let authority_binding_created = false;
+  let authority_binding_withheld = false;
+  if (ledger && authorityKey) {
+    const bind = corroboration.corroborated;
+    const outcome: "acquired" | "failed" | "not_the_document" | "readable_unconfirmed_identity" = bind
+      ? "acquired"
+      : !entry.is_actual_document
+      ? "failed"
+      : corroboration.basis === "docket_absent_from_body"
+      ? "not_the_document"
+      : "readable_unconfirmed_identity";
+    authority_binding_created = bind;
+    authority_binding_withheld = !bind && entry.is_actual_document;
+    ledger.note(
+      authorityKey,
+      {
+        url: attemptKey,
+        outcome,
+        reason: bind
+          ? `body_identity_corroborated:${corroboration.basis}`
+          : (entry.not_document_reason ?? corroboration.basis),
+        at: new Date().toISOString(),
+        identity_corroborated: bind,
+      },
+      bind ? entry.source_id : undefined,
+    );
+  }
+
+  const freshWindows = entry.is_actual_document
+    ? (input.find?.length
+      ? readingWindows(entry.extracted_text, input.find)
+      : [entry.extracted_text.slice(0, FETCH_LIMITS.HEAD_CHARS)])
+    : undefined;
+  const freshServed = serveExactText(store, entry.source_id, freshWindows, input.query ?? input.find?.[0]);
+
+  return clampFetchOutput({
+    ok: true,
+    source_id: entry.source_id,
+    title: entry.title,
+    summary: entry.summary,
+    text_length: entry.text_length,
+    is_actual_document: entry.is_actual_document,
+    not_document_reason: entry.not_document_reason,
+    identity_found: entry.identity_fields,
+    identity_hint,
+    authority_identity_corroborated: authorityKey ? corroboration.corroborated : undefined,
+    authority_binding_created: authorityKey ? authority_binding_created : undefined,
+    authority_binding_withheld: authorityKey ? authority_binding_withheld : undefined,
+    authority_binding_basis: authorityKey ? corroboration.basis : undefined,
+    expected_authority_key: authorityKey ?? undefined,
+    expected_identity_source: resolvedIdentity.source,
+    expected_identity_conflict: resolvedIdentity.conflict,
+    candidate_kind: discovery?.candidate_kind,
+    acquisition_transport: transport,
+    local_match_basis: transport === "local_corpus" ? discovery?.local_match_basis : undefined,
+    text_head: freshServed.windows?.length
+      ? undefined
+      : entry.extracted_text.slice(0, FETCH_LIMITS.HEAD_CHARS),
+    windows: freshServed.windows,
+    exact_source_text: freshServed.exact_source_text,
+    instruction: transport === "local_corpus"
+      ? `הגוף המלא (מהמאגר המקומי) שמור בצד השרת. לקריאת קטע נוסף מתוכו: fetch({source_id, query}).${
+        freshServed.windows?.length ? QUOTE_RULE : ""
+      }`
+      : `הגוף המלא שמור בצד השרת. לקריאת קטע נוסף מתוכו: fetch({source_id, query}) — אל תביא את אותו URL שוב.${
+        freshServed.windows?.length ? QUOTE_RULE : ""
+      }`,
+    acquisition_note: authorityKey ? ledger?.advice(authorityKey) : undefined,
+  });
+}
+
+/**
+ * Acquire a body the corpus already stores, with no network call at all.
+ *
+ * The candidate — and therefore the identity this acquisition is aimed at —
+ * comes from the durable lookup result, never from the model. Locality buys
+ * nothing: the body passes the same document check and the same authority
+ * corroboration, and a title-matched row that turns out to be a different
+ * case is rejected exactly like a wrong page from the web.
+ */
+async function acquireLocalBody(
+  store: EvidenceStore,
+  discovery: SearchResult,
+  input: FetchInput,
+  ledger?: AcquisitionLedger,
+  admin?: SupabaseClient | null,
+): Promise<FetchOutput> {
+  const documentId = discovery.local_document_id!;
+  const attemptKey = localAttemptKey(documentId);
+
+  // Identity is the candidate's own; the model may refine, never retarget.
+  const resolvedIdentity = resolveExpectedIdentity(discovery, input.expected_identity);
+  const expectedIdentity = resolvedIdentity.identity;
+  const authorityKey = authorityKeyOf(expectedIdentity ?? {});
+
+  if (ledger && authorityKey && !input.refetch_reason?.trim()) {
+    const prior = ledger.attemptOn(authorityKey, attemptKey);
+    if (prior && prior.outcome !== "acquired" && prior.outcome !== "readable_unconfirmed_identity") {
+      return clampFetchOutput({
+        ok: false,
+        dead_path: true,
+        acquisition_transport: "local_corpus",
+        error: `dead_acquisition_path:${prior.reason}`.slice(0, 160),
+        authority_state: ledger.state(authorityKey) ?? undefined,
+        instruction: "רשומה מקומית זו כבר נוסתה בריצה זו ולא הניבה גוף שמיש. נסה מועמד אחר.",
+      });
+    }
+  }
+
+  const noteFailure = (reason: string) => {
+    if (ledger && authorityKey) {
+      ledger.note(authorityKey, {
+        url: attemptKey,
+        outcome: "failed",
+        reason,
+        at: new Date().toISOString(),
+      });
+    }
+  };
+
+  const row = await loadLocalDocument(admin, documentId);
+  if (!row) {
+    noteFailure("local_document_unavailable");
+    return clampFetchOutput({
+      ok: false,
+      acquisition_transport: "local_corpus",
+      error: "local_document_unavailable",
+      authority_state: authorityKey ? ledger?.state(authorityKey) ?? undefined : undefined,
+      instruction: "הגוף השמור לא נטען. בחר מועמד אחר או נתיב השגה אחר.",
+    });
+  }
+
+  // A body already read in this run (via its public URL) is served from the
+  // store instead of being stored twice.
+  const realUrl = typeof row.source_url === "string" && /^https?:\/\//i.test(row.source_url)
+    ? row.source_url
+    : undefined;
+  const cached = realUrl && !input.refetch_reason?.trim() ? store.findByUrl(realUrl) : null;
+  if (cached && cached.fetch_status === "ok" && cached.is_actual_document) {
+    return clampFetchOutput(alreadyReadPayload(store, cached, input));
+  }
+
+  const text = (row.content ?? "").slice(0, FETCH_LIMITS.MAX_TEXT_CHARS);
+  const docCheck = checkIsActualDocument(text);
+  if (!text.trim() || !docCheck.is_actual_document) {
+    const reason = !text.trim() ? "local_body_empty" : `local_body_${docCheck.reason}`;
+    noteFailure(reason);
+    return clampFetchOutput({
+      ok: false,
+      acquisition_transport: "local_corpus",
+      local_match_basis: discovery.local_match_basis,
+      error: reason,
+      authority_state: authorityKey ? ledger?.state(authorityKey) ?? undefined : undefined,
+      instruction:
+        "הרשומה המקומית אינה מכילה גוף מסמך שמיש. ההחלטה מה לעשות הלאה שלך — אין ניסיון אוטומטי במועמד אחר.",
+    });
+  }
+
+  const entry = await store.append({
+    // Keep the public URL only when it is not already occupied by a failed
+    // attempt, so a stored body never inherits a dead URL's evidence entry.
+    url: cached ? undefined : realUrl,
+    title: row.title || discovery.title,
+    origin: "local_corpus",
+    fetch_status: "ok",
+    extracted_text: text,
+    is_actual_document: true,
+  });
+
+  return finalizeAcquiredBody({
+    store,
+    ledger,
+    entry,
+    attemptKey,
+    expectedIdentity,
+    authorityKey,
+    resolvedIdentity,
+    discovery,
+    input,
+    transport: "local_corpus",
+  });
+}
