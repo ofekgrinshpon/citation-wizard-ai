@@ -80,7 +80,15 @@ function isUtf8Label(label: string): boolean {
  *    only when it is measurably cleaner and yields Hebrew letters.
  */
 export function decodeResponseText(bytes: Uint8Array, contentType = ""): DecodedText {
-  const declaredRaw = /charset\s*=\s*"?([\w-]+)"?/i.exec(contentType ?? "")?.[1] ?? null;
+  const headerRaw = /charset\s*=\s*"?([\w-]+)"?/i.exec(contentType ?? "")?.[1] ?? null;
+  // An HTML body may carry its own declaration when the header carries none;
+  // the prologue is ASCII by construction, so a plain latin decode is safe.
+  const metaRaw = headerRaw
+    ? null
+    : /charset\s*=\s*"?([\w-]+)"?/i.exec(
+      decodeWith("iso-8859-1", bytes.subarray(0, 4_096)) ?? "",
+    )?.[1] ?? null;
+  const declaredRaw = headerRaw ?? metaRaw;
   const declared = declaredRaw ? declaredRaw.toLowerCase() : null;
 
   if (declared && !isUtf8Label(declared)) {
