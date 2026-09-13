@@ -209,8 +209,7 @@ export function corroborateCaseIdentity(args: {
       (expectedCase.court_qualified && words.includes(expectedCase.proceeding));
     if (!proceedingOk) continue;
     proceedingSeen = true;
-    const lowerCourt = LOWER_COURT_MARKERS.some((m) => pre.includes(m)) ||
-      (words.length >= 2 && words[words.length - 2] === expectedCase.proceeding);
+    const lowerCourt = LOWER_COURT_MARKERS.some((m) => pre.includes(m));
     if (lowerCourt && !expectedCase.court_qualified) continue;
     if (expectedCase.court_qualified &&
       expectedCase.qualifiers.length &&
