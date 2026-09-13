@@ -449,6 +449,14 @@ export async function runFetch(
   }
 
   const discovery = input.result_id ? discovered.get(input.result_id) ?? null : null;
+
+  // ── Local corpus body (no HTTP) ──────────────────────────────────────────
+  // Only reachable through a durable lookup candidate: the model cannot name
+  // a local_document_id, and identity comes from the candidate, not the call.
+  if (discovery?.local_document_id && !input.url) {
+    return await acquireLocalBody(store, discovery, input, ledger, opts?.admin);
+  }
+
   const url = input.url || discovery?.url;
   if (!url || !/^https?:\/\//i.test(url)) {
     return { ok: false, error: "no_usable_url" };
