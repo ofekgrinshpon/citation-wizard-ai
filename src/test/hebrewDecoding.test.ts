@@ -86,6 +86,23 @@ describe("decodeResponseText", () => {
     expect(d.text).toBe(HEB_JUDGMENT);
   });
 
+  it("honors a windows-1255 declaration inside the HTML prologue", () => {
+    const html =
+      `<html><head><meta http-equiv=Content-Type content="text/html; charset=windows-1255"></head>` +
+      `<body><p>${HEB_JUDGMENT}</p></body></html>`;
+    const d = decodeResponseText(cp1255(html), "html");
+    expect(d.charset_declared).toBe("windows-1255");
+    expect(d.text).toContain("חזקת השיתוף");
+  });
+
+  it("detects corruption that starts after a long ASCII prologue", () => {
+    const prologue = "<html><head>" + "/* styling */ ".repeat(6_000) + "</head><body>";
+    const bytes = cp1255(prologue + HEB_JUDGMENT + "</body></html>");
+    const d = decodeResponseText(bytes, "text/html");
+    expect(d.charset_used).toBe("windows-1255");
+    expect(d.text).toContain("כוונת השיתוף");
+  });
+
   it("falls back to windows-1255 when UTF-8 decoding is corrupted", () => {
     const bytes = cp1255(HEB_JUDGMENT);
     const naive = new TextDecoder("utf-8", { fatal: false }).decode(bytes);
