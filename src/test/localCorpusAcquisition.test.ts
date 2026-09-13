@@ -35,6 +35,11 @@ import {
   resetEgressStateForRun,
 } from "../../supabase/functions/legal-research-v2/shared/egressTelemetry";
 
+// The egress modules read configuration from the Edge runtime's env.
+(globalThis as unknown as { Deno?: unknown }).Deno ??= {
+  env: { get: (k: string) => process.env[k] },
+};
+
 const DOCKET = "4602/13";
 const OTHER_DOCKET = "1234/99";
 
