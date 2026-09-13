@@ -223,7 +223,7 @@ describe("case identity guard for broad-web candidates", () => {
 
   it("refuses a commentary page that merely cites the judgment", () => {
     const article = "מאמר משפטי. ".repeat(400) +
-      'כפי שנקבע ב-ע"א 423/75 בבית המשפט העליון, ' + "המשך הדיון. ".repeat(200);
+      'כפי שנקבע בפסק הדין ע"א 423/75 בבית המשפט העליון, ' + "המשך הדיון. ".repeat(200);
     const r = corroborateAuthority({ expected: { docket: 'ע"א 423/75' }, ...body(article) });
     expect(r.corroborated).toBe(false);
     expect(r.basis).toBe("docket_mention_not_self_identifying");
