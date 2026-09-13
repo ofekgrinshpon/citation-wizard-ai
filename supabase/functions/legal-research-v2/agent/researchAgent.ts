@@ -28,6 +28,7 @@ import { runSearch } from "../tools/search.ts";
 import { runFetch } from "../tools/fetch.ts";
 import { runLookupAuthority } from "../tools/lookupAuthority.ts";
 import { seedResultIds } from "../tools/resultIds.ts";
+import { registerCandidateProvenance } from "../shared/egressTelemetry.ts";
 import {
   AcquisitionLedger,
   type AcquisitionLedgerJson,
