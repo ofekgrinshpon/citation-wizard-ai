@@ -61,6 +61,7 @@ import {
   toBetaResult,
 } from "./beta/job.ts";
 import { resolveOwnedProjectId } from "./beta/projectOwnership.ts";
+import { egressTelemetry, resetEgressStateForRun } from "./shared/egressTelemetry.ts";
 import {
   acquireOperationLock,
   heartbeatOperationLock,
@@ -196,6 +197,11 @@ async function runPipeline(
   // orchestration cost, not research cost — measure it explicitly.
   if (resume?.paused_at) timer.add("resume_gap", Date.now() - resume.paused_at);
   const heartbeat = () => opts.progress?.heartbeat();
+
+  // Egress ledgers are module globals in a reused isolate: a cap or a stop
+  // reason from an earlier run must never suppress acquisition in this one.
+  // Caps, backoff and the relay host allowlist are untouched.
+  if (!resume) resetEgressStateForRun();
 
   // ── Research (one bounded chunk when chunked execution is requested) ─────
   let agent = await runResearchAgent({
@@ -686,6 +692,11 @@ async function runPipeline(
     derivative_disclosure_shown,
     acquisition_ledger: agent.ledger.all(),
     source_funnel,
+    /** Acquisition transport (v2_local_corpus_body_acquisition_v1). */
+    local_corpus_acquisitions: agent.stats.local_corpus_acquisitions,
+    local_corpus_bindings: agent.stats.local_corpus_bindings,
+    /** Per-run egress state (v2_per_run_egress_reset_v1). */
+    egress: { ...egressTelemetry() },
   };
 
   return {

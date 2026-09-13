@@ -22,7 +22,9 @@ import {
   htmlToText,
   looksLikeBlockPage,
   officialFetch,
+  type SupabaseClient,
 } from "../shared/primitives.ts";
+import { loadLocalDocument, localAttemptKey } from "./localCorpusBody.ts";
 import { AcquisitionLedger, type AuthorityState, authorityKeyOf } from "./acquisitionLedger.ts";
 import { corroborateAuthority } from "./authorityCorroboration.ts";
 import { locateSection, normalizeSectionToken, sectionMissingInstruction } from "../evidence/sectionLocator.ts";
@@ -203,6 +205,10 @@ export interface FetchOutput {
   expected_identity_conflict?: string;
   /** What the candidate was, as classified at discovery time. */
   candidate_kind?: "document" | "local_document" | "discovery_entry";
+  /** How the body was obtained: an HTTP fetch, or the stored local corpus. */
+  acquisition_transport?: "http" | "local_corpus";
+  /** For a local corpus acquisition: how the row was matched to the authority. */
+  local_match_basis?: "case_number_exact" | "citation_docket" | "title_ilike";
   /** True when this exact URL already failed for this authority. */
   dead_path?: boolean;
   /** Targeted section retrieval outcome. */
@@ -331,6 +337,7 @@ export async function runFetch(
   discovered: Map<string, SearchResult>,
   input: FetchInput,
   ledger?: AcquisitionLedger,
+  opts?: { admin?: SupabaseClient | null },
 ): Promise<FetchOutput> {
   // ── Targeted re-read of an already-stored body (no HTTP, no budget) ──────
   if (input.source_id && !input.url && !input.result_id) {
@@ -449,6 +456,14 @@ export async function runFetch(
   }
 
   const discovery = input.result_id ? discovered.get(input.result_id) ?? null : null;
+
+  // ── Local corpus body (no HTTP) ──────────────────────────────────────────
+  // Only reachable through a durable lookup candidate: the model cannot name
+  // a local_document_id, and identity comes from the candidate, not the call.
+  if (discovery?.local_document_id && !input.url) {
+    return await acquireLocalBody(store, discovery, input, ledger, opts?.admin);
+  }
+
   const url = input.url || discovery?.url;
   if (!url || !/^https?:\/\//i.test(url)) {
     return { ok: false, error: "no_usable_url" };
@@ -593,12 +608,47 @@ export async function runFetch(
     clearTimeout(timer);
   }
 
+  return finalizeAcquiredBody({
+    store,
+    ledger,
+    entry,
+    attemptKey: url,
+    expectedIdentity,
+    authorityKey,
+    resolvedIdentity,
+    discovery,
+    input,
+    transport: "http",
+  });
+}
+
+/**
+ * Identity corroboration, authority binding and the bounded agent-facing
+ * response. Shared verbatim by every transport: a locally stored body is
+ * held to exactly the same standard as one fetched over HTTP.
+ */
+function finalizeAcquiredBody(args: {
+  store: EvidenceStore;
+  ledger?: AcquisitionLedger;
+  entry: EvidenceSource;
+  /** Ledger attempt key (an URL for HTTP, `local:…` for the corpus). */
+  attemptKey: string;
+  expectedIdentity?: { docket?: string; statute?: string; section?: string };
+  authorityKey: string | null;
+  resolvedIdentity: ReturnType<typeof resolveExpectedIdentity>;
+  discovery: SearchResult | null;
+  input: FetchInput;
+  transport: "http" | "local_corpus";
+}): FetchOutput {
+  const { store, ledger, entry, attemptKey, expectedIdentity, authorityKey, resolvedIdentity } = args;
+  const { discovery, input, transport } = args;
+
   const expectedDocket = expectedIdentity?.docket?.trim();
   let identity_hint: string | undefined;
 
-  // Positive corroboration: the fetched BODY must present itself as the
+  // Positive corroboration: the acquired BODY must present itself as the
   // requested authority before it may occupy that authority key. A requested
-  // label or a merely readable body is never proof.
+  // label, a merely readable body, or a local database row is never proof.
   const corroboration = corroborateAuthority({
     expected: expectedIdentity,
     title: entry.title,
@@ -632,7 +682,7 @@ export async function runFetch(
     ledger.note(
       authorityKey,
       {
-        url,
+        url: attemptKey,
         outcome,
         reason: bind
           ? `body_identity_corroborated:${corroboration.basis}`
@@ -669,15 +719,132 @@ export async function runFetch(
     expected_identity_source: resolvedIdentity.source,
     expected_identity_conflict: resolvedIdentity.conflict,
     candidate_kind: discovery?.candidate_kind,
+    acquisition_transport: transport,
+    local_match_basis: transport === "local_corpus" ? discovery?.local_match_basis : undefined,
     text_head: freshServed.windows?.length
       ? undefined
       : entry.extracted_text.slice(0, FETCH_LIMITS.HEAD_CHARS),
     windows: freshServed.windows,
     exact_source_text: freshServed.exact_source_text,
-    instruction:
-      `הגוף המלא שמור בצד השרת. לקריאת קטע נוסף מתוכו: fetch({source_id, query}) — אל תביא את אותו URL שוב.${
+    instruction: transport === "local_corpus"
+      ? `הגוף המלא (מהמאגר המקומי) שמור בצד השרת. לקריאת קטע נוסף מתוכו: fetch({source_id, query}).${
+        freshServed.windows?.length ? QUOTE_RULE : ""
+      }`
+      : `הגוף המלא שמור בצד השרת. לקריאת קטע נוסף מתוכו: fetch({source_id, query}) — אל תביא את אותו URL שוב.${
         freshServed.windows?.length ? QUOTE_RULE : ""
       }`,
     acquisition_note: authorityKey ? ledger?.advice(authorityKey) : undefined,
+  });
+}
+
+/**
+ * Acquire a body the corpus already stores, with no network call at all.
+ *
+ * The candidate — and therefore the identity this acquisition is aimed at —
+ * comes from the durable lookup result, never from the model. Locality buys
+ * nothing: the body passes the same document check and the same authority
+ * corroboration, and a title-matched row that turns out to be a different
+ * case is rejected exactly like a wrong page from the web.
+ */
+async function acquireLocalBody(
+  store: EvidenceStore,
+  discovery: SearchResult,
+  input: FetchInput,
+  ledger?: AcquisitionLedger,
+  admin?: SupabaseClient | null,
+): Promise<FetchOutput> {
+  const documentId = discovery.local_document_id!;
+  const attemptKey = localAttemptKey(documentId);
+
+  // Identity is the candidate's own; the model may refine, never retarget.
+  const resolvedIdentity = resolveExpectedIdentity(discovery, input.expected_identity);
+  const expectedIdentity = resolvedIdentity.identity;
+  const authorityKey = authorityKeyOf(expectedIdentity ?? {});
+
+  if (ledger && authorityKey && !input.refetch_reason?.trim()) {
+    const prior = ledger.attemptOn(authorityKey, attemptKey);
+    if (prior && prior.outcome !== "acquired" && prior.outcome !== "readable_unconfirmed_identity") {
+      return clampFetchOutput({
+        ok: false,
+        dead_path: true,
+        acquisition_transport: "local_corpus",
+        error: `dead_acquisition_path:${prior.reason}`.slice(0, 160),
+        authority_state: ledger.state(authorityKey) ?? undefined,
+        instruction: "רשומה מקומית זו כבר נוסתה בריצה זו ולא הניבה גוף שמיש. נסה מועמד אחר.",
+      });
+    }
+  }
+
+  const noteFailure = (reason: string) => {
+    if (ledger && authorityKey) {
+      ledger.note(authorityKey, {
+        url: attemptKey,
+        outcome: "failed",
+        reason,
+        at: new Date().toISOString(),
+      });
+    }
+  };
+
+  const row = await loadLocalDocument(admin, documentId);
+  if (!row) {
+    noteFailure("local_document_unavailable");
+    return clampFetchOutput({
+      ok: false,
+      acquisition_transport: "local_corpus",
+      error: "local_document_unavailable",
+      authority_state: authorityKey ? ledger?.state(authorityKey) ?? undefined : undefined,
+      instruction: "הגוף השמור לא נטען. בחר מועמד אחר או נתיב השגה אחר.",
+    });
+  }
+
+  // A body already read in this run (via its public URL) is served from the
+  // store instead of being stored twice.
+  const realUrl = typeof row.source_url === "string" && /^https?:\/\//i.test(row.source_url)
+    ? row.source_url
+    : undefined;
+  const cached = realUrl && !input.refetch_reason?.trim() ? store.findByUrl(realUrl) : null;
+  if (cached && cached.fetch_status === "ok" && cached.is_actual_document) {
+    return clampFetchOutput(alreadyReadPayload(store, cached, input));
+  }
+
+  const text = (row.content ?? "").slice(0, FETCH_LIMITS.MAX_TEXT_CHARS);
+  const docCheck = checkIsActualDocument(text);
+  if (!text.trim() || !docCheck.is_actual_document) {
+    const reason = !text.trim() ? "local_body_empty" : `local_body_${docCheck.reason}`;
+    noteFailure(reason);
+    return clampFetchOutput({
+      ok: false,
+      acquisition_transport: "local_corpus",
+      local_match_basis: discovery.local_match_basis,
+      error: reason,
+      authority_state: authorityKey ? ledger?.state(authorityKey) ?? undefined : undefined,
+      instruction:
+        "הרשומה המקומית אינה מכילה גוף מסמך שמיש. ההחלטה מה לעשות הלאה שלך — אין ניסיון אוטומטי במועמד אחר.",
+    });
+  }
+
+  const entry = await store.append({
+    // Keep the public URL only when it is not already occupied by a failed
+    // attempt, so a stored body never inherits a dead URL's evidence entry.
+    url: cached ? undefined : realUrl,
+    title: row.title || discovery.title,
+    origin: "local_corpus",
+    fetch_status: "ok",
+    extracted_text: text,
+    is_actual_document: true,
+  });
+
+  return finalizeAcquiredBody({
+    store,
+    ledger,
+    entry,
+    attemptKey,
+    expectedIdentity,
+    authorityKey,
+    resolvedIdentity,
+    discovery,
+    input,
+    transport: "local_corpus",
   });
 }

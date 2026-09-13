@@ -28,6 +28,7 @@ import { runSearch } from "../tools/search.ts";
 import { runFetch } from "../tools/fetch.ts";
 import { runLookupAuthority } from "../tools/lookupAuthority.ts";
 import { seedResultIds } from "../tools/resultIds.ts";
+import { registerCandidateProvenance } from "../shared/egressTelemetry.ts";
 import {
   AcquisitionLedger,
   type AcquisitionLedgerJson,
@@ -160,6 +161,9 @@ export interface AgentContextStats {
   acquisition_targets_opened: number;
   identity_autofilled_fetches: number;
   identity_conflicts_rejected: number;
+  /** Local corpus body acquisition (v2_local_corpus_body_acquisition_v1). */
+  local_corpus_acquisitions: number;
+  local_corpus_bindings: number;
 }
 
 export function newAgentStats(): AgentContextStats {
@@ -179,6 +183,8 @@ export function newAgentStats(): AgentContextStats {
     acquisition_targets_opened: 0,
     identity_autofilled_fetches: 0,
     identity_conflicts_rejected: 0,
+    local_corpus_acquisitions: 0,
+    local_corpus_bindings: 0,
   };
 }
 
@@ -481,7 +487,11 @@ export async function runResearchAgent(opts: {
           scope,
           limit: typeof args.limit === "number" ? args.limit : undefined,
         });
-        for (const r of out.results) discovered.set(r.result_id, r);
+        for (const r of out.results) {
+          discovered.set(r.result_id, r);
+          // Provenance only — the relay gate still decides eligibility.
+          registerCandidateProvenance(r.url, scope === "official" ? "search_first" : "retrieved");
+        }
         payload = compactSearchOutput(out) as unknown as Record<string, unknown>;
         summary = `scope=${out.scope} results=${out.results.length}${out.error ? ` error=${out.error}` : ""}`;
         timer.add("search", Date.now() - toolStarted);
@@ -521,7 +531,7 @@ export async function runResearchAgent(opts: {
         // Lookup candidates become first-class discovered results: fetchable
         // by result_id, carrying the authority they were found FOR.
         for (const c of out.candidates) {
-          if (!c.result_id || !c.url) continue;
+          if (!c.result_id || (!c.url && !c.local_document_id)) continue;
           discovered.set(c.result_id, {
             result_id: c.result_id,
             title: c.label,
@@ -532,7 +542,12 @@ export async function runResearchAgent(opts: {
             authority_key: c.authority_key,
             expected_identity: c.expected_identity,
             candidate_kind: c.candidate_kind,
+            local_document_id: c.local_document_id,
+            local_match_basis: c.local_match_basis,
           });
+          // Provenance for the relay gate — registration never widens the
+          // allowlist and cannot make a guessed URL relay-eligible.
+          registerCandidateProvenance(c.url, "retrieved");
           stats.lookup_candidates_registered += 1;
         }
         if (out.authority_key) {
@@ -541,7 +556,7 @@ export async function runResearchAgent(opts: {
             label: out.candidates[0]?.label,
             reopen: true,
             candidates: out.candidates
-              .filter((c) => c.url)
+              .filter((c) => c.url || c.local_document_id)
               .map((c) => ({
                 result_id: c.result_id,
                 url: c.url,
@@ -575,8 +590,13 @@ export async function runResearchAgent(opts: {
             refetch_reason: typeof args.refetch_reason === "string" ? args.refetch_reason : undefined,
           },
           ledger,
+          { admin: opts.admin },
         );
         timer.add("fetch", Date.now() - toolStarted);
+        if (out.acquisition_transport === "local_corpus" && !out.already_read) {
+          stats.local_corpus_acquisitions += 1;
+          if (out.authority_binding_created) stats.local_corpus_bindings += 1;
+        }
         // A cached / targeted read costs no fetch budget.
         if (!out.already_read) policy.note("fetch");
         if (out.already_read) stats.already_read_actions += 1;

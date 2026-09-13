@@ -39,6 +39,12 @@ function adminStub(rows: Array<Record<string, unknown>>) {
           q._val = val;
           return q;
         },
+        // The exact-docket lane matches any equivalent written form.
+        in(col: string, vals: string[]) {
+          q._col = col;
+          q._val = vals.find((v) => rows.some((r) => r[col] === v)) ?? vals[0] ?? "";
+          return q;
+        },
         ilike(col: string, val: string) {
           q._col = col;
           q._val = val;

@@ -107,6 +107,13 @@ export interface SearchResult {
   authority_key?: string;
   expected_identity?: ExpectedAuthorityIdentity;
   candidate_kind?: CandidateKind;
+  /**
+   * Set when this candidate is a row in the local corpus. Its body can be
+   * acquired from `legal_documents.content` without any HTTP fetch. Durable
+   * candidate metadata only — the model can never supply or override it.
+   */
+  local_document_id?: string;
+  local_match_basis?: "case_number_exact" | "citation_docket" | "title_ilike";
 }
 
 export interface LookupCandidate {
@@ -120,6 +127,7 @@ export interface LookupCandidate {
   url?: string;
   origin: string;
   local_document_id?: string;
+  local_match_basis?: "case_number_exact" | "citation_docket" | "title_ilike";
   note?: string;
   authority_key?: string;
   expected_identity?: ExpectedAuthorityIdentity;
@@ -394,4 +402,9 @@ export interface V2Telemetry {
 
   acquisition_ledger: AuthorityLedgerRow[];
   source_funnel: SourceFunnelRow[];
+  /** Bodies acquired from the stored corpus, with no HTTP fetch. */
+  local_corpus_acquisitions?: number;
+  local_corpus_bindings?: number;
+  /** Compact per-run egress state (direct official + court relay). */
+  egress?: Record<string, unknown>;
 }
