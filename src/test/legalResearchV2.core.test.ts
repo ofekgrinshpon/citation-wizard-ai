@@ -13,6 +13,7 @@ const budgets: ToolBudgets = {
   max_search_calls: 2,
   max_fetch_calls: 1,
   max_lookup_calls: 1,
+  max_raw_search_calls: 3,
 };
 
 describe("spanMatch — CHECK 3 (verbatim span)", () => {

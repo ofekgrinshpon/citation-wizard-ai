@@ -30,6 +30,7 @@ const BUDGETS: ToolBudgets = {
   max_search_calls: 8,
   max_fetch_calls: 12,
   max_lookup_calls: 6,
+  max_raw_search_calls: 3,
 };
 
 describe("stop policy — reserved memo capacity", () => {
