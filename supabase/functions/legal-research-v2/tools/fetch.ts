@@ -668,9 +668,10 @@ function finalizeAcquiredBody(args: {
   discovery: SearchResult | null;
   input: FetchInput;
   transport: "http" | "local_corpus";
+  decode?: DecodeTelemetry;
 }): FetchOutput {
   const { store, ledger, entry, attemptKey, expectedIdentity, authorityKey, resolvedIdentity } = args;
-  const { discovery, input, transport } = args;
+  const { discovery, input, transport, decode } = args;
 
   const expectedDocket = expectedIdentity?.docket?.trim();
   let identity_hint: string | undefined;
@@ -755,7 +756,10 @@ function finalizeAcquiredBody(args: {
       : entry.extracted_text.slice(0, FETCH_LIMITS.HEAD_CHARS),
     windows: freshServed.windows,
     exact_source_text: freshServed.exact_source_text,
-    instruction: transport === "local_corpus"
+    decode,
+    instruction: entry.not_document_reason === "unreadable_encoding"
+      ? "הטקסט שהתקבל אינו קריא (קידוד תווים פגום), ולכן אינו נחשב מסמך ואינו יכול לשמש כראיה או לאשש זהות אסמכתה. נדרש נתיב השגה אחר (קובץ/מקור אחר) עבור אסמכתה זו."
+      : transport === "local_corpus"
       ? `הגוף המלא (מהמאגר המקומי) שמור בצד השרת. לקריאת קטע נוסף מתוכו: fetch({source_id, query}).${
         freshServed.windows?.length ? QUOTE_RULE : ""
       }`
