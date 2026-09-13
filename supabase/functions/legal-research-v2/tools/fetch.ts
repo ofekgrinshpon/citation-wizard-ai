@@ -608,91 +608,16 @@ export async function runFetch(
     clearTimeout(timer);
   }
 
-  const expectedDocket = expectedIdentity?.docket?.trim();
-  let identity_hint: string | undefined;
-
-  // Positive corroboration: the fetched BODY must present itself as the
-  // requested authority before it may occupy that authority key. A requested
-  // label or a merely readable body is never proof.
-  const corroboration = corroborateAuthority({
-    expected: expectedIdentity,
-    title: entry.title,
-    text: entry.extracted_text,
-    identity_fields: entry.identity_fields,
-    is_actual_document: entry.is_actual_document,
-  });
-
-  if (expectedDocket) {
-    identity_hint = corroboration.corroborated
-      ? `התיק ${expectedDocket} מופיע בגוף המסמך שהובא.`
-      : `אזהרה: התיק ${expectedDocket} לא נמצא בגוף המסמך שהובא — ככל הנראה זה אינו המסמך המבוקש.`;
-  } else if (expectedIdentity?.statute?.trim() && !corroboration.corroborated && entry.is_actual_document) {
-    identity_hint =
-      `אזהרה: גוף המסמך שהובא אינו מזדהה כ"${expectedIdentity.statute.trim()}" (${corroboration.basis}). ניתן להשתמש בו ככל שהוא רלוונטי, אך הוא אינו נחשב לגוף האסמכתה המבוקשת — אפשר וכדאי להביא מועמד אחר עבורה.`;
-  }
-
-  let authority_binding_created = false;
-  let authority_binding_withheld = false;
-  if (ledger && authorityKey) {
-    const bind = corroboration.corroborated;
-    const outcome: "acquired" | "failed" | "not_the_document" | "readable_unconfirmed_identity" = bind
-      ? "acquired"
-      : !entry.is_actual_document
-      ? "failed"
-      : corroboration.basis === "docket_absent_from_body"
-      ? "not_the_document"
-      : "readable_unconfirmed_identity";
-    authority_binding_created = bind;
-    authority_binding_withheld = !bind && entry.is_actual_document;
-    ledger.note(
-      authorityKey,
-      {
-        url,
-        outcome,
-        reason: bind
-          ? `body_identity_corroborated:${corroboration.basis}`
-          : (entry.not_document_reason ?? corroboration.basis),
-        at: new Date().toISOString(),
-        identity_corroborated: bind,
-      },
-      bind ? entry.source_id : undefined,
-    );
-  }
-
-  const freshWindows = entry.is_actual_document
-    ? (input.find?.length
-      ? readingWindows(entry.extracted_text, input.find)
-      : [entry.extracted_text.slice(0, FETCH_LIMITS.HEAD_CHARS)])
-    : undefined;
-  const freshServed = serveExactText(store, entry.source_id, freshWindows, input.query ?? input.find?.[0]);
-
-  return clampFetchOutput({
-    ok: true,
-    source_id: entry.source_id,
-    title: entry.title,
-    summary: entry.summary,
-    text_length: entry.text_length,
-    is_actual_document: entry.is_actual_document,
-    not_document_reason: entry.not_document_reason,
-    identity_found: entry.identity_fields,
-    identity_hint,
-    authority_identity_corroborated: authorityKey ? corroboration.corroborated : undefined,
-    authority_binding_created: authorityKey ? authority_binding_created : undefined,
-    authority_binding_withheld: authorityKey ? authority_binding_withheld : undefined,
-    authority_binding_basis: authorityKey ? corroboration.basis : undefined,
-    expected_authority_key: authorityKey ?? undefined,
-    expected_identity_source: resolvedIdentity.source,
-    expected_identity_conflict: resolvedIdentity.conflict,
-    candidate_kind: discovery?.candidate_kind,
-    text_head: freshServed.windows?.length
-      ? undefined
-      : entry.extracted_text.slice(0, FETCH_LIMITS.HEAD_CHARS),
-    windows: freshServed.windows,
-    exact_source_text: freshServed.exact_source_text,
-    instruction:
-      `הגוף המלא שמור בצד השרת. לקריאת קטע נוסף מתוכו: fetch({source_id, query}) — אל תביא את אותו URL שוב.${
-        freshServed.windows?.length ? QUOTE_RULE : ""
-      }`,
-    acquisition_note: authorityKey ? ledger?.advice(authorityKey) : undefined,
+  return finalizeAcquiredBody({
+    store,
+    ledger,
+    entry,
+    attemptKey: url,
+    expectedIdentity,
+    authorityKey,
+    resolvedIdentity,
+    discovery,
+    input,
+    transport: "http",
   });
 }
