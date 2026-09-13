@@ -21,6 +21,7 @@ export interface StopPolicyJson {
   search_calls: Record<SearchScope, number>;
   fetch_calls: number;
   lookup_calls: number;
+  raw_search_calls?: number;
 }
 
 export class StopPolicy {
@@ -28,6 +29,7 @@ export class StopPolicy {
   search_calls: Record<SearchScope, number> = { web: 0, corpus: 0, official: 0, academic: 0 };
   fetch_calls = 0;
   lookup_calls = 0;
+  raw_search_calls = 0;
 
   constructor(private readonly budgets: ToolBudgets) {}
 
