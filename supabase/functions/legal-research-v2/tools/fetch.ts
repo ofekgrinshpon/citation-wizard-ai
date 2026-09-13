@@ -93,11 +93,19 @@ export function checkIsActualDocument(text: string): DocumentCheck {
   return { is_actual_document: true };
 }
 
-async function extractByContentType(
+export interface DecodeTelemetry {
+  charset_declared: string | null;
+  charset_used: string;
+  replacement_ratio_utf8: number;
+  replacement_ratio: number;
+  fallback_applied: boolean;
+}
+
+export async function extractByContentType(
   url: string,
   contentType: string,
   bytes: Uint8Array,
-): Promise<{ text: string; error?: string }> {
+): Promise<{ text: string; error?: string; decode?: DecodeTelemetry }> {
   const ct = contentType.toLowerCase();
   const isPdf = ct.includes("pdf") || /\.pdf(\?|$)/i.test(url) ||
     (bytes.length > 4 && bytes[0] === 0x25 && bytes[1] === 0x50);
