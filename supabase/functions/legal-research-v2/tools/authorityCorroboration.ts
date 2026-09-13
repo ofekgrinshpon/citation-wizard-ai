@@ -83,12 +83,7 @@ export function corroborateAuthority(args: {
 
   const docket = expected?.docket?.trim();
   if (docket) {
-    const num = docket.match(/\d{1,6}\/\d{2,4}/)?.[0] ?? docket;
-    const hit = identity_fields.dockets.includes(num) ||
-      normalizeAuthorityText(text).includes(normalizeAuthorityText(num));
-    return hit
-      ? { corroborated: true, basis: "docket_present_in_body", detail: `docket ${num} found in body` }
-      : { corroborated: false, basis: "docket_absent_from_body", detail: `docket ${num} not in body` };
+    return corroborateCaseIdentity({ docket, title, text, identity_fields });
   }
 
   const statute = expected?.statute?.trim();
