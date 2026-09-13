@@ -10,6 +10,7 @@ import { runRawWebSearch } from "../supabase/functions/legal-research-v2/tools/r
 // primitives → attachments pulls Deno npm: specifiers; unused on this lane.
 import { corroborateAuthority } from "../supabase/functions/legal-research-v2/tools/authorityCorroboration.ts";
 import { resetResultIds } from "../supabase/functions/legal-research-v2/tools/resultIds.ts";
+import { it } from "vitest";
 
 const AUTHORITIES = [
   'ע"א 2553/01',
@@ -52,6 +53,7 @@ async function body(url: string): Promise<string | null> {
   }
 }
 
+it("raw_web_search live validation", async () => {
 const rows: Record<string, unknown>[] = [];
 
 for (const docket of AUTHORITIES) {
@@ -89,3 +91,4 @@ for (const docket of AUTHORITIES) {
 
 const boundCount = rows.filter((r) => r.bound).length;
 console.log(`\nBOUND ${boundCount}/${AUTHORITIES.length}`);
+}, 900_000);
