@@ -22,7 +22,9 @@ import {
   htmlToText,
   looksLikeBlockPage,
   officialFetch,
+  type SupabaseClient,
 } from "../shared/primitives.ts";
+import { loadLocalDocument, localAttemptKey } from "./localCorpusBody.ts";
 import { AcquisitionLedger, type AuthorityState, authorityKeyOf } from "./acquisitionLedger.ts";
 import { corroborateAuthority } from "./authorityCorroboration.ts";
 import { locateSection, normalizeSectionToken, sectionMissingInstruction } from "../evidence/sectionLocator.ts";
@@ -203,6 +205,10 @@ export interface FetchOutput {
   expected_identity_conflict?: string;
   /** What the candidate was, as classified at discovery time. */
   candidate_kind?: "document" | "local_document" | "discovery_entry";
+  /** How the body was obtained: an HTTP fetch, or the stored local corpus. */
+  acquisition_transport?: "http" | "local_corpus";
+  /** For a local corpus acquisition: how the row was matched to the authority. */
+  local_match_basis?: "case_number_exact" | "citation_docket" | "title_ilike";
   /** True when this exact URL already failed for this authority. */
   dead_path?: boolean;
   /** Targeted section retrieval outcome. */
@@ -331,6 +337,7 @@ export async function runFetch(
   discovered: Map<string, SearchResult>,
   input: FetchInput,
   ledger?: AcquisitionLedger,
+  opts?: { admin?: SupabaseClient | null },
 ): Promise<FetchOutput> {
   // ── Targeted re-read of an already-stored body (no HTTP, no budget) ──────
   if (input.source_id && !input.url && !input.result_id) {
