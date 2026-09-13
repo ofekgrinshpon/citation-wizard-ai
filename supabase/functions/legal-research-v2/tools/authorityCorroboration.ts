@@ -15,6 +15,8 @@ import type { IdentityFields } from "../types.ts";
 export type CorroborationBasis =
   | "docket_present_in_body"
   | "docket_absent_from_body"
+  | "docket_proceeding_type_mismatch"
+  | "docket_court_level_mismatch"
   | "statute_title_present_in_body"
   | "statute_title_absent_from_body"
   | "statute_section_absent_from_body"
