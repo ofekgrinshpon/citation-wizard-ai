@@ -160,6 +160,9 @@ export interface AgentContextStats {
   acquisition_targets_opened: number;
   identity_autofilled_fetches: number;
   identity_conflicts_rejected: number;
+  /** Local corpus body acquisition (v2_local_corpus_body_acquisition_v1). */
+  local_corpus_acquisitions: number;
+  local_corpus_bindings: number;
 }
 
 export function newAgentStats(): AgentContextStats {
@@ -179,6 +182,8 @@ export function newAgentStats(): AgentContextStats {
     acquisition_targets_opened: 0,
     identity_autofilled_fetches: 0,
     identity_conflicts_rejected: 0,
+    local_corpus_acquisitions: 0,
+    local_corpus_bindings: 0,
   };
 }
 
@@ -580,8 +585,13 @@ export async function runResearchAgent(opts: {
             refetch_reason: typeof args.refetch_reason === "string" ? args.refetch_reason : undefined,
           },
           ledger,
+          { admin: opts.admin },
         );
         timer.add("fetch", Date.now() - toolStarted);
+        if (out.acquisition_transport === "local_corpus" && !out.already_read) {
+          stats.local_corpus_acquisitions += 1;
+          if (out.authority_binding_created) stats.local_corpus_bindings += 1;
+        }
         // A cached / targeted read costs no fetch budget.
         if (!out.already_read) policy.note("fetch");
         if (out.already_read) stats.already_read_actions += 1;
