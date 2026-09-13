@@ -78,6 +78,14 @@ export function assessCentralIssueCoverage(input: {
   issue_summary?: string;
   pack: VerifiedEvidencePack;
   rejected: RejectedPair[];
+  /**
+   * Answer-mode only: when NO verified core proposition survived and none was
+   * rejected either, the memo never took a position on the question at all.
+   * That shape used to be reported as "covered" by default; with this flag the
+   * same deterministic term coverage is measured on the surviving pack.
+   * It never challenges an already-verified core proposition.
+   */
+  assess_empty_core_sufficiency?: boolean;
 }): CoverageAssessment {
   const unsupportedCore = input.pack.unsupported_claims.filter((c) => c.importance === "core");
   const survivingCore = input.pack.claims.filter((c) => c.importance === "core");
@@ -90,7 +98,10 @@ export function assessCentralIssueCoverage(input: {
     unsupported_core_claim_ids: unsupportedCore.map((c) => c.claim_id),
     research_fixable: false,
   };
-  if (!unsupportedCore.length) return base;
+
+  const emptyCore = !unsupportedCore.length && !survivingCore.length &&
+    !!input.assess_empty_core_sufficiency;
+  if (!unsupportedCore.length && !emptyCore) return base;
 
   const central = contentTerms(`${input.question ?? ""} ${input.issue_summary ?? ""}`);
   if (!central.size) return base;
@@ -101,6 +112,21 @@ export function assessCentralIssueCoverage(input: {
   const covered = intersect(central, survived);
   const ratio = covered.length / central.size;
   const lost = intersect(central, dropped).filter((t) => !survived.has(t));
+
+  if (emptyCore) {
+    // Nothing was rejected as a core proposition, so fixability is judged on the
+    // run's rejections as a whole: purely non-research-fixable failures stay
+    // non-fixable, everything else (including no rejections at all) is fixable.
+    const research_fixable = !input.rejected.length ||
+      input.rejected.some((r) => !NOT_RESEARCH_FIXABLE.has(r.reason));
+    return {
+      ...base,
+      central_issue_covered: ratio >= MIN_COVERAGE,
+      coverage_ratio: Number(ratio.toFixed(3)),
+      lost_central_terms: [],
+      research_fixable,
+    };
+  }
 
   const ids = new Set(unsupportedCore.map((c) => c.claim_id));
   const relevant = input.rejected.filter((r) => ids.has(r.claim_id));

@@ -288,6 +288,8 @@ async function runPipeline(
     ? decideResearchRepair(verification, {
       question: intake.question,
       issue_summary: agent.memo?.issue_summary,
+      // Answer mode only. Source mode keeps its existing repair semantics.
+      assess_empty_core_sufficiency: intake.output_mode !== "sources",
     })
     : { repair: false, reason: "no_unsupported_core_claims" as const, coverage: undefined };
   const coverage = repairDecision.coverage;
