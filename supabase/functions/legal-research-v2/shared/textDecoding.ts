@@ -108,18 +108,19 @@ export function decodeResponseText(bytes: Uint8Array, contentType = ""): Decoded
   }
 
   const utf8 = decodeWith("utf-8", bytes) ?? "";
-  const probe = utf8.slice(0, DECODE_QUALITY.PROBE_BYTES);
-  const utf8Ratio = replacementRatio(probe);
+  // Quality is measured over the WHOLE body: a long ASCII prologue (HTML head,
+  // stylesheets) would otherwise hide corruption that starts further down.
+  const utf8Ratio = replacementRatio(utf8);
 
   const suspect = declared === null || isUtf8Label(declared)
-    ? isUnreadableEncoding(probe) || utf8Ratio >= DECODE_QUALITY.MAX_REPLACEMENT_RATIO
+    ? isUnreadableEncoding(utf8) || utf8Ratio >= DECODE_QUALITY.MAX_REPLACEMENT_RATIO
     : false;
 
   if (suspect) {
     const retry = decodeWith("windows-1255", bytes);
     if (retry !== null) {
-      const retryRatio = replacementRatio(retry.slice(0, DECODE_QUALITY.PROBE_BYTES));
-      const hasHebrew = /[\u0590-\u05FF]/.test(retry.slice(0, DECODE_QUALITY.PROBE_BYTES));
+      const retryRatio = replacementRatio(retry);
+      const hasHebrew = /[\u0590-\u05FF]/.test(retry);
       if (hasHebrew && retryRatio < utf8Ratio) {
         return {
           text: retry,
