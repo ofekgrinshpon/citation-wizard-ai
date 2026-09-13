@@ -25,6 +25,7 @@ import {
 } from "../shared/primitives.ts";
 import { authorityKeyOf } from "./acquisitionLedger.ts";
 import { nextResultId } from "./resultIds.ts";
+import { docketVariants, type LocalMatchBasis } from "./localCorpusBody.ts";
 
 export interface LookupInput {
   kind: "case" | "statute";
@@ -57,44 +58,51 @@ function officialSearchUrls(kind: "case" | "statute", term: string): string[] {
 }
 
 /**
- * Local corpus resolution. When an exact docket is known the structured
- * `case_number` column is used first; title matching is only the fallback.
+ * Local corpus resolution for an authority the agent already chose.
+ *
+ * Match order (strongest first): normalized exact `case_number`, then a
+ * citation carrying the same normalized docket, then — last — a constrained
+ * title match. A title hit is NOT a trusted exact hit: every local candidate
+ * still has to corroborate the requested identity from its own body before it
+ * may bind, exactly like an HTTP-acquired body.
  */
 async function localRecords(
   admin: SupabaseClient,
   kind: "case" | "statute",
   opts: { docket?: string; term: string },
 ): Promise<LookupCandidate[]> {
-  const rows: Array<Record<string, unknown>> = [];
+  const rows: Array<{ row: Record<string, unknown>; basis: LocalMatchBasis }> = [];
   const seen = new Set<string>();
-  const push = (data: unknown) => {
+  const push = (data: unknown, basis: LocalMatchBasis) => {
     for (const row of (Array.isArray(data) ? data : []) as Array<Record<string, unknown>>) {
       const id = String(row.id ?? "");
       if (id && !seen.has(id)) {
         seen.add(id);
-        rows.push(row);
+        rows.push({ row, basis });
       }
     }
   };
 
   const select = "id,title,source_url,docx_url,pdf_url,source_type,case_number,citation";
-  if (opts.docket) {
+  const { variants } = opts.docket ? docketVariants(opts.docket) : { variants: [] as string[] };
+  if (variants.length) {
     try {
       const { data } = await admin
         .from("legal_documents")
         .select(select)
-        .eq("case_number", opts.docket)
+        .in("case_number", variants)
         .limit(5);
-      push(data);
+      push(data, "case_number_exact");
     } catch { /* structured lane unavailable — fall through */ }
-    if (!rows.length) {
+    for (const v of variants) {
+      if (rows.length) break;
       try {
         const { data } = await admin
           .from("legal_documents")
           .select(select)
-          .ilike("citation", `%${opts.docket}%`)
+          .ilike("citation", `%${v}%`)
           .limit(5);
-        push(data);
+        push(data, "citation_docket");
       } catch { /* ignore */ }
     }
   }
@@ -105,11 +113,11 @@ async function localRecords(
         .select(select)
         .ilike("title", `%${opts.term}%`)
         .limit(5);
-      push(data);
+      push(data, "title_ilike");
     } catch { /* ignore */ }
   }
 
-  return rows.map((row) => {
+  return rows.map(({ row, basis }) => {
     const url = [row.source_url, row.docx_url, row.pdf_url]
       .find((u) => typeof u === "string" && /^https?:\/\//i.test(u)) as string | undefined;
     return {
@@ -118,8 +126,9 @@ async function localRecords(
       url,
       origin: "local_corpus",
       local_document_id: String(row.id ?? ""),
+      local_match_basis: basis,
       candidate_kind: "local_document" as CandidateKind,
-      note: `source_type=${String(row.source_type ?? "unknown")}${
+      note: `local_match=${basis} source_type=${String(row.source_type ?? "unknown")}${
         row.case_number ? ` case_number=${String(row.case_number)}` : ""
       }`,
     };
