@@ -47,10 +47,35 @@ export interface RepairDecision {
  */
 export function decideResearchRepair(
   verification: VerificationOutcome,
-  context?: { question: string; issue_summary?: string },
+  context?: {
+    question: string;
+    issue_summary?: string;
+    /** Answer mode only: activate the empty-core sufficiency assessment. */
+    assess_empty_core_sufficiency?: boolean;
+  },
 ): RepairDecision {
   const coreUnsupported = verification.pack.unsupported_claims.filter((c) => c.importance === "core");
-  if (!coreUnsupported.length) return { repair: false, reason: "no_unsupported_core_claims" };
+  const survivingCore = verification.pack.claims.filter((c) => c.importance === "core");
+  if (!coreUnsupported.length) {
+    // The memo never put a core proposition on the table, verified or rejected.
+    // Only then is the surviving pack measured against the central issue.
+    const emptyCore = !survivingCore.length && !!context?.assess_empty_core_sufficiency &&
+      !!context?.question;
+    if (!emptyCore) return { repair: false, reason: "no_unsupported_core_claims" };
+    const coverage = assessCentralIssueCoverage({
+      question: context!.question,
+      issue_summary: context!.issue_summary,
+      pack: verification.pack,
+      rejected: verification.rejected,
+      assess_empty_core_sufficiency: true,
+    });
+    if (coverage.central_issue_covered) {
+      return { repair: false, reason: "no_unsupported_core_claims", coverage };
+    }
+    return coverage.research_fixable
+      ? { repair: true, reason: "central_issue_not_covered_after_narrowing", coverage }
+      : { repair: false, reason: "central_gap_not_research_fixable", coverage };
+  }
   // Nothing verified at all: the answer would be empty, so research must reopen.
   if (!verification.pack.claims.length) return { repair: true, reason: "no_verified_claims" };
 
@@ -111,6 +136,9 @@ export function decideRepairAcceptance(input: {
       issue_summary: input.issue_summary,
       pack: input.after.pack,
       rejected: input.after.rejected,
+      // A repaired pack that still contains no core proposition at all must not
+      // be treated as covered by default.
+      assess_empty_core_sufficiency: true,
     });
     return coverage_after.central_issue_covered
       ? { accept: true, reason: "coverage_restored", coverage_after }
