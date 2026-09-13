@@ -126,9 +126,12 @@ export function decodeResponseText(bytes: Uint8Array, contentType = ""): Decoded
   // Quality is measured over the WHOLE body: a long ASCII prologue (HTML head,
   // stylesheets) would otherwise hide corruption that starts further down.
   const utf8Ratio = replacementRatio(utf8);
+  const utf8WorstSegment = worstSegmentRatio(utf8);
 
   const suspect = declared === null || isUtf8Label(declared)
-    ? isUnreadableEncoding(utf8) || utf8Ratio >= DECODE_QUALITY.MAX_REPLACEMENT_RATIO
+    ? replacementCount(utf8) >= DECODE_QUALITY.MIN_REPLACEMENT_COUNT &&
+      (utf8Ratio >= DECODE_QUALITY.MAX_REPLACEMENT_RATIO ||
+        utf8WorstSegment >= DECODE_QUALITY.MAX_REPLACEMENT_RATIO)
     : false;
 
   if (suspect) {
