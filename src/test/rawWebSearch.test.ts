@@ -181,7 +181,7 @@ describe("case identity guard for broad-web candidates", () => {
   it("binds a supreme-court body carrying the requested proceeding type", () => {
     const r = corroborateAuthority({
       expected: { docket: 'ע"א 2553/01' },
-      ...body('בבית המשפט העליון\nע"א 2553/01 פלוני נ׳ אלמוני'),
+      ...body('בבית המשפט העליון\nע"א 2553/01 פלוני נ׳ אלמוני\nפסק דין. השופט א׳ ברק.'),
     });
     expect(r.corroborated).toBe(true);
     expect(r.basis).toBe("docket_present_in_body");
@@ -216,9 +216,17 @@ describe("case identity guard for broad-web candidates", () => {
   it("does not require party names", () => {
     const r = corroborateAuthority({
       expected: { docket: 'ע"א 423/75' },
-      ...body('בבית המשפט העליון בשבתו כבית משפט לערעורים אזרחיים\nע"א 423/75'),
+      ...body('בבית המשפט העליון בשבתו כבית משפט לערעורים אזרחיים\nע"א 423/75\nפסק דין. ניתן היום.'),
     });
     expect(r.corroborated).toBe(true);
+  });
+
+  it("refuses a commentary page that merely cites the judgment", () => {
+    const article = "מאמר משפטי. ".repeat(400) +
+      'כפי שנקבע ב-ע"א 423/75 בבית המשפט העליון, ' + "המשך הדיון. ".repeat(200);
+    const r = corroborateAuthority({ expected: { docket: 'ע"א 423/75' }, ...body(article) });
+    expect(r.corroborated).toBe(false);
+    expect(r.basis).toBe("docket_mention_not_self_identifying");
   });
 
   it("still reports an absent docket as absent", () => {

@@ -141,18 +141,11 @@ export function corroborateAuthority(args: {
  * merely cites one. Broad web discovery surfaces many commentary pages that
  * quote a docket correctly; those must not be bound to the authority key.
  */
-const JUDGMENT_STRUCTURE_MARKERS = [
-  "בפני",
-  "לפני",
-  "השופט",
-  "השופטת",
-  "המערער",
-  "המשיב",
-  "העותר",
-  "פסק דין",
-  "פסק-דין",
-  "החלטה",
-  "בית המשפט העליון",
+const JUDGMENT_STRUCTURE_GROUPS: string[][] = [
+  ["בית המשפט", "בית הדין"],
+  ["השופט", "השופטת", "בפני", "לפני כבוד", "כבוד הנשיא"],
+  ["פסק דין", "פסק-דין", "החלטה", "ניתן היום"],
+  ["המערער", "המשיב", "העותר", "התובע", "הנתבע", "ב\u05f4כ"],
 ];
 
 /** Court-level markers that contradict an unqualified (higher-court) request. */
@@ -189,9 +182,11 @@ export function parseExpectedCase(docket: string): ExpectedCase {
 function isSelfIdentifying(body: string, key: string, hits: number[]): boolean {
   const inCaption = hits.some((i) => i < 4_000);
   if (!inCaption && hits.length < 3) return false;
-  const markers = JUDGMENT_STRUCTURE_MARKERS.filter((m) => body.includes(normalizeAuthorityText(m)));
   void key;
-  return markers.length >= 2;
+  const groupsPresent = JUDGMENT_STRUCTURE_GROUPS.filter((g) =>
+    g.some((m) => body.includes(normalizeAuthorityText(m)))
+  );
+  return groupsPresent.length >= 2;
 }
 
 function occurrences(haystack: string, needle: string): number[] {
