@@ -521,7 +521,7 @@ export async function runResearchAgent(opts: {
         // Lookup candidates become first-class discovered results: fetchable
         // by result_id, carrying the authority they were found FOR.
         for (const c of out.candidates) {
-          if (!c.result_id || !c.url) continue;
+          if (!c.result_id || (!c.url && !c.local_document_id)) continue;
           discovered.set(c.result_id, {
             result_id: c.result_id,
             title: c.label,
@@ -532,7 +532,12 @@ export async function runResearchAgent(opts: {
             authority_key: c.authority_key,
             expected_identity: c.expected_identity,
             candidate_kind: c.candidate_kind,
+            local_document_id: c.local_document_id,
+            local_match_basis: c.local_match_basis,
           });
+          // Provenance for the relay gate — registration never widens the
+          // allowlist and cannot make a guessed URL relay-eligible.
+          registerCandidateProvenance(c.url, "retrieved");
           stats.lookup_candidates_registered += 1;
         }
         if (out.authority_key) {
