@@ -696,7 +696,7 @@ async function runPipeline(
     local_corpus_acquisitions: agent.stats.local_corpus_acquisitions,
     local_corpus_bindings: agent.stats.local_corpus_bindings,
     /** Per-run egress state (v2_per_run_egress_reset_v1). */
-    egress: egressTelemetry(),
+    egress: { ...egressTelemetry() },
   };
 
   return {
