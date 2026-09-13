@@ -193,11 +193,12 @@ export async function runLookupAuthority(
       c.authority_key = authority_key;
       c.expected_identity = { ...expected_identity };
     }
-    if (c.url) c.result_id = nextResultId();
+    // A stored local body is fetchable even when the row carries no URL.
+    if (c.url || c.local_document_id) c.result_id = nextResultId();
   }
 
   const documentCandidates = candidates.filter(
-    (c) => c.url && c.candidate_kind !== "discovery_entry",
+    (c) => (c.url || c.local_document_id) && c.candidate_kind !== "discovery_entry",
   ).length;
 
   return {

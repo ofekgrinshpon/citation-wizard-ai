@@ -107,6 +107,13 @@ export interface SearchResult {
   authority_key?: string;
   expected_identity?: ExpectedAuthorityIdentity;
   candidate_kind?: CandidateKind;
+  /**
+   * Set when this candidate is a row in the local corpus. Its body can be
+   * acquired from `legal_documents.content` without any HTTP fetch. Durable
+   * candidate metadata only — the model can never supply or override it.
+   */
+  local_document_id?: string;
+  local_match_basis?: "case_number_exact" | "citation_docket" | "title_ilike";
 }
 
 export interface LookupCandidate {
