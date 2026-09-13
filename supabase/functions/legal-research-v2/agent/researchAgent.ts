@@ -86,6 +86,21 @@ const TOOL_SPECS: ToolSpec[] = [
     },
   },
   {
+    name: "raw_web_search",
+    description:
+      "חיפוש אינטרנט רגיל ורחב (תוצאות מדורגות גולמיות, בלי תשובה מנוסחת). השתמש בו כשתוצאות חיפוש גולמיות עשויות לאתר מקורות או מסמכים. domain_filter הוא אופציונלי. תוצאות אינן ראיה ואינן ניתנות לציטוט לפני fetch.",
+    parameters: {
+      type: "object",
+      additionalProperties: false,
+      properties: {
+        query: { type: "string" },
+        limit: { type: "number" },
+        domain_filter: { type: "array", items: { type: "string" } },
+      },
+      required: ["query"],
+    },
+  },
+  {
     name: "lookup_authority",
     description:
       "איתור אסמכתה ישראלית מזוהה בשמה. מחזיר מועמדים לא מאומתים, שכל אחד מהם ניתן להבאה ישירה ב-fetch({result_id}) ללא צורך לחזור על מספר ההליך. אין חובה להביא אף מועמד. אם החלטת שאינך זקוק עוד לאסמכתה זו — קרא שוב עם drop:true.",
