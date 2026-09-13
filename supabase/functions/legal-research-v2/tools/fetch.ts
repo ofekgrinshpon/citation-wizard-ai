@@ -233,6 +233,8 @@ export interface FetchOutput {
   acquisition_transport?: "http" | "local_corpus";
   /** For a local corpus acquisition: how the row was matched to the authority. */
   local_match_basis?: "case_number_exact" | "citation_docket" | "title_ilike";
+  /** Charset decision and decode-quality signal for a text/HTML body. */
+  decode?: DecodeTelemetry;
   /** True when this exact URL already failed for this authority. */
   dead_path?: boolean;
   /** Targeted section retrieval outcome. */
