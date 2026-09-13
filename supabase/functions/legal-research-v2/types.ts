@@ -402,4 +402,9 @@ export interface V2Telemetry {
 
   acquisition_ledger: AuthorityLedgerRow[];
   source_funnel: SourceFunnelRow[];
+  /** Bodies acquired from the stored corpus, with no HTTP fetch. */
+  local_corpus_acquisitions?: number;
+  local_corpus_bindings?: number;
+  /** Compact per-run egress state (direct official + court relay). */
+  egress?: Record<string, unknown>;
 }

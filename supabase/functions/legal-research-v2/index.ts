@@ -61,6 +61,7 @@ import {
   toBetaResult,
 } from "./beta/job.ts";
 import { resolveOwnedProjectId } from "./beta/projectOwnership.ts";
+import { egressTelemetry, resetEgressStateForRun } from "./shared/egressTelemetry.ts";
 import {
   acquireOperationLock,
   heartbeatOperationLock,
