@@ -487,7 +487,11 @@ export async function runResearchAgent(opts: {
           scope,
           limit: typeof args.limit === "number" ? args.limit : undefined,
         });
-        for (const r of out.results) discovered.set(r.result_id, r);
+        for (const r of out.results) {
+          discovered.set(r.result_id, r);
+          // Provenance only — the relay gate still decides eligibility.
+          registerCandidateProvenance(r.url, scope === "official" ? "search_first" : "retrieved");
+        }
         payload = compactSearchOutput(out) as unknown as Record<string, unknown>;
         summary = `scope=${out.scope} results=${out.results.length}${out.error ? ` error=${out.error}` : ""}`;
         timer.add("search", Date.now() - toolStarted);
