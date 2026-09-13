@@ -544,6 +544,7 @@ export async function runFetch(
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), FETCH_LIMITS.TIMEOUT_MS);
   let entry: EvidenceSource;
+  let decodeMeta: DecodeTelemetry | undefined;
   const noteFailure = (reason: string) => {
     if (ledger && authorityKey) {
       ledger.note(authorityKey, { url, outcome: "failed", reason, at: new Date().toISOString() });
