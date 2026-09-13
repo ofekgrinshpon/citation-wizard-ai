@@ -586,11 +586,12 @@ export async function runFetch(
       noteFailure("document_too_large");
       return clampFetchOutput({ ok: false, source_id: entry.source_id, error: "document_too_large" });
     }
-    const { text, error } = await extractByContentType(
+    const { text, error, decode } = await extractByContentType(
       url,
       res.headers.get("content-type") ?? "",
       buf,
     );
+    decodeMeta = decode;
     const clipped = text.slice(0, FETCH_LIMITS.MAX_TEXT_CHARS);
     const docCheck = checkIsActualDocument(clipped);
     entry = await store.append({
@@ -646,6 +647,7 @@ export async function runFetch(
     discovery,
     input,
     transport: "http",
+    decode: decodeMeta,
   });
 }
 
