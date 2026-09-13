@@ -697,6 +697,14 @@ async function runPipeline(
     /** Acquisition transport (v2_local_corpus_body_acquisition_v1). */
     local_corpus_acquisitions: agent.stats.local_corpus_acquisitions,
     local_corpus_bindings: agent.stats.local_corpus_bindings,
+    /** Broad web search (v2_raw_web_search_v1). */
+    raw_web_search_calls: agent.stats.raw_web_search_calls,
+    raw_web_search_results: agent.stats.raw_web_search_results,
+    raw_web_search_unique_domains: agent.stats.raw_web_search_domains.length,
+    raw_web_search_deduped_queries: agent.stats.raw_web_search_deduped_queries,
+    raw_web_results_fetched: agent.stats.raw_web_results_fetched,
+    raw_web_identity_rejects: agent.stats.raw_web_identity_rejects,
+    unsafe_urls_blocked: agent.stats.unsafe_urls_blocked,
     /** Per-run egress state (v2_per_run_egress_reset_v1). */
     egress: { ...egressTelemetry() },
   };

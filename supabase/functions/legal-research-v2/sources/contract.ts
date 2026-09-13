@@ -31,4 +31,5 @@ export const SOURCE_SEARCH_BUDGETS: ToolBudgets = {
   max_search_calls: 8,
   max_fetch_calls: 8,
   max_lookup_calls: 4,
+  max_raw_search_calls: 2,
 };
