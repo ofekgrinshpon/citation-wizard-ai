@@ -13,8 +13,9 @@ export const AGENT_SYSTEM_PROMPT = `אתה חוקר משפטי ישראלי בכ
 
 הכלים:
 1. search({query, scope, limit}) — גילוי מקורות אפשריים. scope: "web" | "official" | "corpus" | "academic". תוצאת חיפוש אינה ראיה ולעולם אינה יכולה להפוך לאסמכתה.
-2. lookup_authority({kind, docket, title_hint, statute, section}) — איתור אסמכתה ישראלית מזוהה בשמה. מחזיר רמזים בלבד.
-3. fetch({result_id | url, expected_identity, find}) — הבאת גוף המסמך בפועל וקריאתו. רק fetch מייצר ראיה. אפשר להעביר find: מונחים לחיפוש בתוך המסמך, ותקבל חלונות טקסט מדויקים סביבם.
+2. raw_web_search({query, limit, domain_filter}) — חיפוש אינטרנט רגיל ורחב המחזיר תוצאות מדורגות גולמיות (בלי תשובה מנוסחת). השתמש בו כשתוצאות חיפוש גולמיות עשויות לאתר מקור או מסמך — למשל פסק דין ישן, קובץ PDF, מאמר או עותק מוסדי. domain_filter אופציונלי בלבד; כברירת מחדל חפש בכל הרשת. תוצאה אינה ראיה.
+3. lookup_authority({kind, docket, title_hint, statute, section}) — איתור אסמכתה ישראלית מזוהה בשמה. מחזיר רמזים בלבד.
+4. fetch({result_id | url, expected_identity, find}) — הבאת גוף המסמך בפועל וקריאתו. רק fetch מייצר ראיה. אפשר להעביר find: מונחים לחיפוש בתוך המסמך, ותקבל חלונות טקסט מדויקים סביבם.
    לקריאה ממוקדת בסעיף מסוים בתוך מסמך ארוך שכבר נקרא: fetch({source_id, want:"relevant_section", locator:"25"}). המערכת תאתר את הסעיף בכל אורך הגוף השמור, ולא רק בתחילתו. אם הסעיף אינו קיים באותו מקור תקבל על כך הודעה מפורשת ואת טווח הסעיפים שהמקור כן מכסה.
 
 כללי עבודה:
@@ -73,7 +74,7 @@ export function buildAgentUserMessage(intake: Intake): string {
     parts.push(`מסמך שצורף על ידי המשתמש (טקסט מלא/חלקי):\n${intake.attachment_text.slice(0, 40_000)}`);
   }
   parts.push(
-    `תקציבי כלים (תקרות קשיחות, לא יעדים): search ≤ ${intake.budgets.max_search_calls}, fetch ≤ ${intake.budgets.max_fetch_calls}, lookup ≤ ${intake.budgets.max_lookup_calls}, צעדים ≤ ${intake.budgets.max_agent_steps}.`,
+    `תקציבי כלים (תקרות קשיחות, לא יעדים): search ≤ ${intake.budgets.max_search_calls}, raw_web_search ≤ ${intake.budgets.max_raw_search_calls}, fetch ≤ ${intake.budgets.max_fetch_calls}, lookup ≤ ${intake.budgets.max_lookup_calls}, צעדים ≤ ${intake.budgets.max_agent_steps}.`,
   );
   return parts.join("\n\n");
 }

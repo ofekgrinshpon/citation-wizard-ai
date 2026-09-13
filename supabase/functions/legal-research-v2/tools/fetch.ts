@@ -25,6 +25,7 @@ import {
   type SupabaseClient,
 } from "../shared/primitives.ts";
 import { decodeResponseText, isUnreadableEncoding } from "../shared/textDecoding.ts";
+import { checkUrlSafety } from "../shared/urlSafety.ts";
 import { loadLocalDocument, localAttemptKey } from "./localCorpusBody.ts";
 import { AcquisitionLedger, type AuthorityState, authorityKeyOf } from "./acquisitionLedger.ts";
 import { corroborateAuthority } from "./authorityCorroboration.ts";
@@ -495,6 +496,18 @@ export async function runFetch(
     return { ok: false, error: "no_usable_url" };
   }
 
+  // Outbound safety gate — applies to every URL, whoever supplied it
+  // (model, lookup candidate, broad web search). Nothing downstream is
+  // relaxed by it: relay allowlists and official profiles still run.
+  const safety = checkUrlSafety(url);
+  if (!safety.safe) {
+    return {
+      ok: false,
+      error: "unsafe_url_blocked",
+      instruction: `כתובת זו נחסמה מטעמי אבטחה (${safety.reason}). בחר מקור ציבורי אחר.`,
+    };
+  }
+
   // Identity the deterministic layer already knows for this candidate travels
   // with it; the model does not have to restate it. It remains an acquisition
   // TARGET only — the body still has to corroborate it below.
@@ -552,6 +565,12 @@ export async function runFetch(
   };
   try {
     const res = await officialFetch(url, { signal: controller.signal });
+    // A redirect must not land anywhere the original URL could not go.
+    const finalUrl = typeof res.url === "string" && res.url ? res.url : url;
+    if (finalUrl !== url && !checkUrlSafety(finalUrl).safe) {
+      noteFailure("unsafe_redirect_blocked");
+      return clampFetchOutput({ ok: false, error: "unsafe_url_blocked" });
+    }
     if (!res.ok) {
       entry = await store.append({
         url,

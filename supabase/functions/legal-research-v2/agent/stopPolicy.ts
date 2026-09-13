@@ -21,6 +21,7 @@ export interface StopPolicyJson {
   search_calls: Record<SearchScope, number>;
   fetch_calls: number;
   lookup_calls: number;
+  raw_search_calls?: number;
 }
 
 export class StopPolicy {
@@ -28,6 +29,7 @@ export class StopPolicy {
   search_calls: Record<SearchScope, number> = { web: 0, corpus: 0, official: 0, academic: 0 };
   fetch_calls = 0;
   lookup_calls = 0;
+  raw_search_calls = 0;
 
   constructor(private readonly budgets: ToolBudgets) {}
 
@@ -67,14 +69,24 @@ export class StopPolicy {
     if (name === "lookup_authority" && this.lookup_calls >= this.budgets.max_lookup_calls) {
       return `budget_exhausted:lookup_authority (${this.budgets.max_lookup_calls})`;
     }
+    if (name === "raw_web_search" && this.raw_search_calls >= this.rawSearchBudget) {
+      return `budget_exhausted:raw_web_search (${this.rawSearchBudget})`;
+    }
     if (name === "search" && scope) void scope;
     return null;
+  }
+
+  /** Conservative default when an older serialized budget lacks the field. */
+  get rawSearchBudget(): number {
+    const v = this.budgets.max_raw_search_calls;
+    return typeof v === "number" && v >= 0 ? v : 3;
   }
 
   note(name: string, scope?: SearchScope): void {
     if (name === "search") this.search_calls[scope ?? "web"] += 1;
     else if (name === "fetch") this.fetch_calls += 1;
     else if (name === "lookup_authority") this.lookup_calls += 1;
+    else if (name === "raw_web_search") this.raw_search_calls += 1;
   }
 
   /** True when every tool budget is spent: the agent must finalize now. */
@@ -91,6 +103,7 @@ export class StopPolicy {
       search_calls: { ...this.search_calls },
       fetch_calls: this.fetch_calls,
       lookup_calls: this.lookup_calls,
+      raw_search_calls: this.raw_search_calls,
     };
   }
 
@@ -106,6 +119,7 @@ export class StopPolicy {
       };
       p.fetch_calls = json.fetch_calls ?? 0;
       p.lookup_calls = json.lookup_calls ?? 0;
+      p.raw_search_calls = json.raw_search_calls ?? 0;
     }
     return p;
   }

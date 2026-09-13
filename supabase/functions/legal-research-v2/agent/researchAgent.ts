@@ -25,6 +25,7 @@ import { EvidenceStore, type EvidenceStoreJson } from "../evidence/evidenceStore
 import type { SupabaseClient } from "../shared/primitives.ts";
 import { chat, type ChatMessage, parseJsonLoose, type ToolSpec, type UsageLedger } from "../shared/model.ts";
 import { runSearch } from "../tools/search.ts";
+import { rawQueryKey, runRawWebSearch } from "../tools/rawWebSearch.ts";
 import { runFetch } from "../tools/fetch.ts";
 import { runLookupAuthority } from "../tools/lookupAuthority.ts";
 import { seedResultIds } from "../tools/resultIds.ts";
@@ -81,6 +82,21 @@ const TOOL_SPECS: ToolSpec[] = [
         query: { type: "string" },
         scope: { type: "string", enum: ["web", "corpus", "official", "academic"] },
         limit: { type: "number" },
+      },
+      required: ["query"],
+    },
+  },
+  {
+    name: "raw_web_search",
+    description:
+      "חיפוש אינטרנט רגיל ורחב (תוצאות מדורגות גולמיות, בלי תשובה מנוסחת). השתמש בו כשתוצאות חיפוש גולמיות עשויות לאתר מקורות או מסמכים. domain_filter הוא אופציונלי. תוצאות אינן ראיה ואינן ניתנות לציטוט לפני fetch.",
+    parameters: {
+      type: "object",
+      additionalProperties: false,
+      properties: {
+        query: { type: "string" },
+        limit: { type: "number" },
+        domain_filter: { type: "array", items: { type: "string" } },
       },
       required: ["query"],
     },
@@ -164,6 +180,14 @@ export interface AgentContextStats {
   /** Local corpus body acquisition (v2_local_corpus_body_acquisition_v1). */
   local_corpus_acquisitions: number;
   local_corpus_bindings: number;
+  /** Broad web search (v2_raw_web_search_v1). */
+  raw_web_search_calls: number;
+  raw_web_search_results: number;
+  raw_web_search_domains: string[];
+  raw_web_search_deduped_queries: number;
+  raw_web_results_fetched: number;
+  raw_web_identity_rejects: number;
+  unsafe_urls_blocked: number;
 }
 
 export function newAgentStats(): AgentContextStats {
@@ -185,6 +209,13 @@ export function newAgentStats(): AgentContextStats {
     identity_conflicts_rejected: 0,
     local_corpus_acquisitions: 0,
     local_corpus_bindings: 0,
+    raw_web_search_calls: 0,
+    raw_web_search_results: 0,
+    raw_web_search_domains: [],
+    raw_web_search_deduped_queries: 0,
+    raw_web_results_fetched: 0,
+    raw_web_identity_rejects: 0,
+    unsafe_urls_blocked: 0,
   };
 }
 
@@ -252,6 +283,12 @@ export function toolCallKey(name: string, args: Record<string, unknown>): string
   if (name === "search") {
     const q = String(args.query ?? "").toLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim();
     return `search:${args.scope ?? "web"}:${q}`;
+  }
+  if (name === "raw_web_search") {
+    return rawQueryKey({
+      query: String(args.query ?? ""),
+      domain_filter: Array.isArray(args.domain_filter) ? args.domain_filter.map((d) => String(d)) : undefined,
+    });
   }
   if (name === "fetch") {
     const u = String(args.url ?? args.result_id ?? args.source_id ?? "").trim().toLowerCase();
@@ -495,6 +532,64 @@ export async function runResearchAgent(opts: {
         payload = compactSearchOutput(out) as unknown as Record<string, unknown>;
         summary = `scope=${out.scope} results=${out.results.length}${out.error ? ` error=${out.error}` : ""}`;
         timer.add("search", Date.now() - toolStarted);
+      } else if (call.name === "raw_web_search") {
+        opts.onActivity?.("searching");
+        const rawInput = {
+          query: String(args.query ?? ""),
+          limit: typeof args.limit === "number" ? args.limit : undefined,
+          domain_filter: Array.isArray(args.domain_filter)
+            ? args.domain_filter.map((d) => String(d))
+            : undefined,
+        };
+        const key = rawQueryKey(rawInput);
+        // Per-run dedupe: an identical raw query is answered from the
+        // candidates it already produced, and costs no budget.
+        const prior = [...discovered.values()].filter((r) => r.query_key === key);
+        if (prior.length) {
+          stats.raw_web_search_deduped_queries += 1;
+          payload = {
+            deduped_query: true,
+            results: prior.map((r) => ({
+              result_id: r.result_id,
+              title: r.title.slice(0, 160),
+              url: r.url,
+              snippet: r.snippet?.slice(0, 220),
+              domain: r.domain,
+            })),
+            instruction:
+              "שאילתה זהה כבר בוצעה בריצה זו. אלה אותן תוצאות — בחר מהן מועמד ל-fetch או נסח שאילתה שונה מהותית.",
+          };
+          summary = `raw_web_search_deduped results=${prior.length}`;
+          timer.add("search", Date.now() - toolStarted);
+        } else {
+          policy.note("raw_web_search");
+          const out = await runRawWebSearch(rawInput);
+          for (const r of out.results) {
+            discovered.set(r.result_id, r);
+            registerCandidateProvenance(r.url, "retrieved");
+            if (r.domain && !stats.raw_web_search_domains.includes(r.domain)) {
+              stats.raw_web_search_domains.push(r.domain);
+            }
+          }
+          stats.raw_web_search_calls += 1;
+          stats.raw_web_search_results += out.results.length;
+          payload = {
+            error: out.error,
+            results: out.results.map((r) => ({
+              result_id: r.result_id,
+              title: r.title.slice(0, 160),
+              url: r.url,
+              snippet: r.snippet?.slice(0, 220),
+              domain: r.domain,
+              date: r.published_date,
+              possible_docket: r.possible_docket,
+            })),
+            note:
+              "תוצאות חיפוש גולמיות בלבד. אינן ראיה: יש להביא את גוף המסמך ב-fetch לפני כל שימוש.",
+          };
+          summary = `raw_web results=${out.results.length}${out.error ? ` error=${out.error}` : ""}`;
+          timer.add("search", Date.now() - toolStarted);
+        }
       } else if (call.name === "lookup_authority") {
         opts.onActivity?.("searching");
         const lookupInput = {
@@ -607,6 +702,16 @@ export async function runResearchAgent(opts: {
           stats.identity_autofilled_fetches += 1;
         }
         if (out.expected_identity_conflict) stats.identity_conflicts_rejected += 1;
+        {
+          const cand = typeof args.result_id === "string" ? discovered.get(args.result_id) : undefined;
+          if (cand?.origin === "perplexity:raw_web") {
+            if (!out.already_read) stats.raw_web_results_fetched += 1;
+            if (out.authority_binding_withheld || out.error === "unsafe_url_blocked") {
+              stats.raw_web_identity_rejects += 1;
+            }
+          }
+          if (out.error === "unsafe_url_blocked") stats.unsafe_urls_blocked += 1;
+        }
         payload = out as unknown as Record<string, unknown>;
         summary = out.already_read
           ? `already_read ${out.source_id}`

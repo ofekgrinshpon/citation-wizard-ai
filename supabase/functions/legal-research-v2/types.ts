@@ -68,6 +68,12 @@ export interface ToolBudgets {
   max_search_calls: number;
   max_fetch_calls: number;
   max_lookup_calls: number;
+  /**
+   * Broad-web (`raw_web_search`) discovery calls. Deliberately small: this is
+   * a recovery lane next to the existing research-oriented search, not a
+   * second general search budget.
+   */
+  max_raw_search_calls: number;
 }
 
 export const DEFAULT_BUDGETS: ToolBudgets = {
@@ -75,6 +81,7 @@ export const DEFAULT_BUDGETS: ToolBudgets = {
   max_search_calls: 8,
   max_fetch_calls: 12,
   max_lookup_calls: 6,
+  max_raw_search_calls: 3,
 };
 
 // ─── Tools ──────────────────────────────────────────────────────────────────
@@ -114,6 +121,11 @@ export interface SearchResult {
    */
   local_document_id?: string;
   local_match_basis?: "case_number_exact" | "citation_docket" | "title_ilike";
+  /** Broad-web discovery metadata (raw_web_search only). Never evidence. */
+  domain?: string;
+  published_date?: string;
+  /** Durable dedupe key of the raw query that produced this candidate. */
+  query_key?: string;
 }
 
 export interface LookupCandidate {
@@ -405,6 +417,15 @@ export interface V2Telemetry {
   /** Bodies acquired from the stored corpus, with no HTTP fetch. */
   local_corpus_acquisitions?: number;
   local_corpus_bindings?: number;
+  /** Broad web search (v2_raw_web_search_v1). */
+  raw_web_search_calls?: number;
+  raw_web_search_results?: number;
+  raw_web_search_unique_domains?: number;
+  raw_web_search_deduped_queries?: number;
+  raw_web_results_fetched?: number;
+  raw_web_identity_rejects?: number;
+  /** Outbound URLs refused by the deterministic safety gate. */
+  unsafe_urls_blocked?: number;
   /** Compact per-run egress state (direct official + court relay). */
   egress?: Record<string, unknown>;
 }
