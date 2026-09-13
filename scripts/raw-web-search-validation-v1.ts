@@ -7,6 +7,7 @@
  * strengthened identity guard refuses same-digit look-alikes.
  */
 import { runRawWebSearch } from "../supabase/functions/legal-research-v2/tools/rawWebSearch.ts";
+// primitives → attachments pulls Deno npm: specifiers; unused on this lane.
 import { corroborateAuthority } from "../supabase/functions/legal-research-v2/tools/authorityCorroboration.ts";
 import { resetResultIds } from "../supabase/functions/legal-research-v2/tools/resultIds.ts";
 
