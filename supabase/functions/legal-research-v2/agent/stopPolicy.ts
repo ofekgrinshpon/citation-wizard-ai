@@ -94,8 +94,7 @@ export class StopPolicy {
     return this.researchExhausted() ||
       (this.totalSearchCalls >= this.budgets.max_search_calls &&
         this.fetch_calls >= this.budgets.max_fetch_calls &&
-        this.lookup_calls >= this.budgets.max_lookup_calls &&
-        this.raw_search_calls >= this.rawSearchBudget);
+        this.lookup_calls >= this.budgets.max_lookup_calls);
   }
 
   toJSON(): StopPolicyJson {
