@@ -38,6 +38,21 @@ export const DECODE_QUALITY = {
   PROBE_BYTES: 65_536,
 } as const;
 
+/**
+ * Worst replacement ratio across equal segments of the text. A long ASCII
+ * prologue (HTML head, stylesheets, PDF-ish preamble) otherwise dilutes a
+ * badly decoded Hebrew body below any global threshold.
+ */
+export function worstSegmentRatio(text: string, segments = 16, minSegmentChars = 2_000): number {
+  if (!text) return 0;
+  const size = Math.max(minSegmentChars, Math.ceil(text.length / segments));
+  let worst = 0;
+  for (let i = 0; i < text.length; i += size) {
+    worst = Math.max(worst, replacementRatio(text.slice(i, i + size)));
+  }
+  return worst;
+}
+
 /** True when the decoded text is dominated by decode corruption. */
 export function isUnreadableEncoding(text: string): boolean {
   const count = replacementCount(text);
