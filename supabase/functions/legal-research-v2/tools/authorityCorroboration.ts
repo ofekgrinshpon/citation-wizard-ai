@@ -141,18 +141,6 @@ export function corroborateAuthority(args: {
 // heading. This only NARROWS binding; nothing is bound that was not bound
 // before.
 
-/**
- * Structural markers of a judgment/decision BODY, as opposed to a page that
- * merely cites one. Broad web discovery surfaces many commentary pages that
- * quote a docket correctly; those must not be bound to the authority key.
- */
-const JUDGMENT_STRUCTURE_GROUPS: string[][] = [
-  ["בית המשפט", "בית הדין"],
-  ["השופט", "השופטת", "בפני", "לפני כבוד", "כבוד הנשיא"],
-  ["פסק דין", "פסק-דין", "החלטה", "ניתן היום"],
-  ["המערער", "המשיב", "העותר", "התובע", "הנתבע", "ב\u05f4כ"],
-];
-
 /** Court-level markers that contradict an unqualified (higher-court) request. */
 const LOWER_COURT_MARKERS = ["מחוזי", "השלום", "לעבודה", "לעניני משפחה", "לענייני משפחה"];
 
