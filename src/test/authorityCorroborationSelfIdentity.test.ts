@@ -234,4 +234,24 @@ describe("regression — unrelated corroboration paths unchanged", () => {
     });
     expect(r.basis).toBe("body_not_a_document");
   });
+}
+
+  it("rejects a portal page whose caption vocabulary lives only on the docket's own line", () => {
+    const text = [
+      `עא 3807/12 מרכז העיר אשדוד בע"מ נ' שמעון ואח' - פסקדין`,
+      "כניסה | הרשמה | רכישת מנוי למאגר הפסיקה",
+      "דיני חוזים | מקרקעין | דיני עבודה | מיסים | תעבורה",
+      "מחפש פסק דין? מנוע החיפוש מכיל אלפי פסקי דין במגוון תחומים.",
+      "תקציר ההליך והשלכותיו על רוכשי דירות בפרויקטים קבלניים. ".repeat(40),
+    ].join("\n");
+    const r = corroborateAuthority({
+      expected: { docket: 'ע"א 3807/12' },
+      title: "",
+      text,
+      identity_fields: idf,
+      is_actual_document: true,
+    });
+    expect(r.corroborated).toBe(false);
+    expect(r.basis).toBe("docket_mention_not_self_identifying");
+  });
 });
