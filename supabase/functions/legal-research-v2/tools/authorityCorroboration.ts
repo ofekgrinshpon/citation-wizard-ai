@@ -11,6 +11,10 @@
  */
 
 import type { IdentityFields } from "../types.ts";
+import {
+  assessCaptionStructure,
+  classifyLocalCaselawBody,
+} from "../vendor/judgmentBodyForm.ts";
 
 export type CorroborationBasis =
   | "docket_present_in_body"
@@ -18,6 +22,7 @@ export type CorroborationBasis =
   | "docket_proceeding_type_mismatch"
   | "docket_court_level_mismatch"
   | "docket_mention_not_self_identifying"
+  | "judgment_body_form_absent"
   | "statute_title_present_in_body"
   | "statute_title_absent_from_body"
   | "statute_section_absent_from_body"
