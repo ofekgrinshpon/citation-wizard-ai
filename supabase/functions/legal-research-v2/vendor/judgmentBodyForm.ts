@@ -185,28 +185,56 @@ const DISPOSITION_MARKERS = [
   "התביעה מתקבלת",
 ];
 
+/**
+ * Signals that only a party-bearing court document carries. Court identity and
+ * a decision header alone are also the standard vocabulary of an article ABOUT
+ * a judgment, so at least one of these must be present in caption shape.
+ */
+const STRONG_SIGNALS = new Set(["party_block_vs", "litigant_roles", "panel_opener"]);
+
+/** A caption line is short; running journalistic prose is not. */
+export const CAPTION_LINE_MAX = 80;
+
+/** Line-preserving twin of the caller's docket-key normalization. */
+export function normalizeKeepLines(input: string): string {
+  return (input ?? "")
+    .replace(/["'\u05f3\u05f4\u2018\u2019\u201c\u201d]/g, "")
+    .replace(/[\u2010-\u2015]/g, "-")
+    .replace(/[.,;:()\[\]{}]/g, " ")
+    .replace(/[^\S\n]+/g, " ")
+    .replace(/\n{2,}/g, "\n")
+    .toLowerCase();
+}
+
 export interface CaptionStructureVerdict {
-  /** An early docket hit exists with ≥2 distinct structural signals nearby. */
+  /** An early docket hit sits inside a caption-shaped judgment header. */
   self_identifying: boolean;
   /** Offset of the qualifying (or best) early hit, -1 when none. */
   hit_offset: number;
-  /** Distinct structural signal names found inside the window. */
+  /** Distinct caption-shaped structural signals found inside the window. */
   signals: string[];
   /** Supporting-only disposition/voice markers seen anywhere in the body. */
   supporting: string[];
 }
 
+function captionLines(window: string): string[] {
+  return window.split("\n").map((l) => l.trim()).filter((l) => l && l.length <= CAPTION_LINE_MAX);
+}
+
 /**
  * Decide whether the body identifies ITSELF as the cited judgment, using only
  * text local to an early docket occurrence. Repeated mentions elsewhere on the
- * page never substitute for this.
+ * page never substitute for this, and signals embedded in running prose lines
+ * do not count as caption structure.
  */
 export function assessCaptionStructure(
-  normalizedBody: string,
-  docketHits: number[],
+  title: string,
+  text: string,
+  docketKey: string,
 ): CaptionStructureVerdict {
-  const supporting = DISPOSITION_MARKERS.filter((m) => normalizedBody.includes(m));
-  const numbered = (normalizedBody.match(/\n\s*\d{1,3}\s*[.)]/g) || []).length;
+  const body = normalizeKeepLines(`${title ?? ""}\n${text ?? ""}`);
+  const supporting = DISPOSITION_MARKERS.filter((m) => body.includes(m));
+  const numbered = (body.match(/\n\s*\d{1,3}\s*[.)]/g) || []).length;
   if (numbered >= 8) supporting.push(`numbered_paragraphs_x${numbered}`);
 
   let best: CaptionStructureVerdict = {
@@ -215,20 +243,22 @@ export function assessCaptionStructure(
     signals: [],
     supporting,
   };
+  if (!docketKey) return best;
 
-  for (const hit of docketHits) {
-    if (hit > EARLY_HIT_LIMIT) continue;
-    const window = normalizedBody.slice(
-      Math.max(0, hit - CAPTION_WINDOW_BEFORE),
-      hit + CAPTION_WINDOW_AFTER,
+  let hit = body.indexOf(docketKey);
+  while (hit !== -1 && hit <= EARLY_HIT_LIMIT) {
+    const lines = captionLines(
+      body.slice(Math.max(0, hit - CAPTION_WINDOW_BEFORE), hit + CAPTION_WINDOW_AFTER),
     );
     const signals = STRUCTURE_SIGNALS
-      .filter((g) => g.markers.some((m) => window.includes(m)))
+      .filter((g) => lines.some((l) => g.markers.some((m) => l.includes(m))))
       .map((g) => g.name);
-    if (signals.length > best.signals.length) {
-      best = { self_identifying: signals.length >= 2, hit_offset: hit, signals, supporting };
+    const ok = signals.length >= 2 && signals.some((s) => STRONG_SIGNALS.has(s));
+    if (ok || signals.length > best.signals.length) {
+      best = { self_identifying: ok, hit_offset: hit, signals, supporting };
     }
-    if (best.self_identifying) break;
+    if (ok) break;
+    hit = body.indexOf(docketKey, hit + docketKey.length);
   }
 
   return best;
