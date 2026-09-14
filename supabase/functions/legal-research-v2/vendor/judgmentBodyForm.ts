@@ -247,9 +247,16 @@ export function assessCaptionStructure(
 
   let hit = body.indexOf(docketKey);
   while (hit !== -1 && hit <= EARLY_HIT_LIMIT) {
-    const lines = captionLines(
-      body.slice(Math.max(0, hit - CAPTION_WINDOW_BEFORE), hit + CAPTION_WINDOW_AFTER),
-    );
+    // The docket's own line is excluded: a page title or breadcrumb of the form
+    // "עא 3807/12 פלוני נ' אלמוני — <site>" reproduces caption vocabulary on a
+    // single line without reproducing the judgment. Caption structure must be
+    // present in the lines AROUND the docket, as it is in a real judgment head.
+    const lineStart = body.lastIndexOf("\n", hit) + 1;
+    let lineEnd = body.indexOf("\n", hit);
+    if (lineEnd === -1) lineEnd = body.length;
+    const before = body.slice(Math.max(0, hit - CAPTION_WINDOW_BEFORE), lineStart);
+    const after = body.slice(lineEnd, hit + CAPTION_WINDOW_AFTER);
+    const lines = captionLines(`${before}\n${after}`);
     const signals = STRUCTURE_SIGNALS
       .filter((g) => lines.some((l) => g.markers.some((m) => l.includes(m))))
       .map((g) => g.name);
