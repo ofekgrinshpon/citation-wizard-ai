@@ -282,17 +282,18 @@ export function corroborateCaseIdentity(args: {
       expectedCase.qualifiers.length &&
       !expectedCase.qualifiers.some((q) => pre.includes(q))
     ) continue;
-    if (!isSelfIdentifying(body, key, hits)) {
+    if (!selfIdentity.ok) {
       return {
         corroborated: false,
-        basis: "docket_mention_not_self_identifying",
-        detail: `body cites ${num} but does not present itself as that judgment`,
+        basis: selfIdentity.basis,
+        detail: `body cites ${num} but does not present itself as that judgment — ${selfIdentity.detail}`,
       };
     }
     return {
       corroborated: true,
       basis: "docket_present_in_body",
-      detail: `docket ${num} found in body with proceeding type "${expectedCase.proceeding}"`,
+      detail:
+        `docket ${num} found in body with proceeding type "${expectedCase.proceeding}" (${selfIdentity.detail})`,
     };
   }
 
