@@ -234,7 +234,6 @@ describe("regression — unrelated corroboration paths unchanged", () => {
     });
     expect(r.basis).toBe("body_not_a_document");
   });
-}
 
   it("rejects a portal page whose caption vocabulary lives only on the docket's own line", () => {
     const text = [
