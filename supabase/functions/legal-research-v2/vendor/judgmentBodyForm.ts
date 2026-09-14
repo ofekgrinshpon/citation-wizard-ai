@@ -131,9 +131,11 @@ export function classifyLocalCaselawBody(
 // the document. An article about the judgment uses the same vocabulary, but
 // scattered across the page — never co-located with the docket it cites.
 //
-// Markers below are matched against the SAME normalization the caller uses for
-// the docket key (punctuation/gershayim stripped, lowercased), so they must be
-// punctuation-free.
+// The probe works on a LINE-PRESERVING normalization (same punctuation /
+// gershayim stripping as the docket key, but newlines survive) because caption
+// structure is a line phenomenon: court, docket, litigants, panel and the
+// decision header each sit on their own short line. Reported speech in an
+// article puts the same words inside running prose lines.
 
 /** How far into the document a docket hit may sit and still count as caption. */
 export const EARLY_HIT_LIMIT = 4_000;
