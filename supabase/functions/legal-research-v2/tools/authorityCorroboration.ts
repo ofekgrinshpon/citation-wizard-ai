@@ -11,6 +11,10 @@
  */
 
 import type { IdentityFields } from "../types.ts";
+import {
+  assessCaptionStructure,
+  classifyLocalCaselawBody,
+} from "../vendor/judgmentBodyForm.ts";
 
 export type CorroborationBasis =
   | "docket_present_in_body"
@@ -18,6 +22,7 @@ export type CorroborationBasis =
   | "docket_proceeding_type_mismatch"
   | "docket_court_level_mismatch"
   | "docket_mention_not_self_identifying"
+  | "judgment_body_form_absent"
   | "statute_title_present_in_body"
   | "statute_title_absent_from_body"
   | "statute_section_absent_from_body"
@@ -136,18 +141,6 @@ export function corroborateAuthority(args: {
 // heading. This only NARROWS binding; nothing is bound that was not bound
 // before.
 
-/**
- * Structural markers of a judgment/decision BODY, as opposed to a page that
- * merely cites one. Broad web discovery surfaces many commentary pages that
- * quote a docket correctly; those must not be bound to the authority key.
- */
-const JUDGMENT_STRUCTURE_GROUPS: string[][] = [
-  ["בית המשפט", "בית הדין"],
-  ["השופט", "השופטת", "בפני", "לפני כבוד", "כבוד הנשיא"],
-  ["פסק דין", "פסק-דין", "החלטה", "ניתן היום"],
-  ["המערער", "המשיב", "העותר", "התובע", "הנתבע", "ב\u05f4כ"],
-];
-
 /** Court-level markers that contradict an unqualified (higher-court) request. */
 const LOWER_COURT_MARKERS = ["מחוזי", "השלום", "לעבודה", "לעניני משפחה", "לענייני משפחה"];
 
@@ -175,18 +168,54 @@ export function parseExpectedCase(docket: string): ExpectedCase {
 }
 
 /**
- * A judgment body carries its own docket in the caption and reads like a
- * judgment. A page that cites the docket once, deep inside an article, is
- * commentary about the authority, not the authority.
+ * Does the FETCHED BODY represent the judgment itself?
+ *
+ * Two independent, deterministic conditions — neither depends on the host:
+ *  (B) the text has the form of a substantive judgment body (V1 classifier,
+ *      audited on 534 real judgment bodies); summaries, metadata stubs and
+ *      listing pages are not the judgment;
+ *  (C) the body identifies ITSELF as this docket: an early docket occurrence
+ *      with at least two distinct structural judgment signals co-located in a
+ *      bounded window around it. Vocabulary scattered over the page, or the
+ *      docket repeated in an article, never satisfies this.
+ *
+ * Terminal disposition / numbered reasoning / judicial voice are recorded for
+ * diagnostics only and never gate acceptance.
  */
-function isSelfIdentifying(body: string, key: string, hits: number[]): boolean {
-  const inCaption = hits.some((i) => i < 4_000);
-  if (!inCaption && hits.length < 3) return false;
-  void key;
-  const groupsPresent = JUDGMENT_STRUCTURE_GROUPS.filter((g) =>
-    g.some((m) => body.includes(normalizeAuthorityText(m)))
-  );
-  return groupsPresent.length >= 2;
+function judgmentSelfIdentity(args: {
+  title: string;
+  text: string;
+  docketKey: string;
+}): { ok: true; detail: string } | { ok: false; basis: CorroborationBasis; detail: string } {
+  const form = classifyLocalCaselawBody({
+    title: args.title ?? "",
+    text: args.text ?? "",
+    case_number: null,
+    body_chars: (args.text ?? "").trim().length,
+  });
+  if (form.classification !== "substantive_judgment_body") {
+    return {
+      ok: false,
+      basis: "judgment_body_form_absent",
+      detail: `body form is ${form.classification} (${form.reason})`,
+    };
+  }
+  const structure = assessCaptionStructure(args.title, args.text, args.docketKey);
+  if (!structure.self_identifying) {
+    return {
+      ok: false,
+      basis: "docket_mention_not_self_identifying",
+      detail: `no caption-local judgment structure around the docket (signals: ${
+        structure.signals.join(",") || "none"
+      })`,
+    };
+  }
+  return {
+    ok: true,
+    detail: `caption signals: ${structure.signals.join(",")}${
+      structure.supporting.length ? `; supporting: ${structure.supporting.join(",")}` : ""
+    }`,
+  };
 }
 
 function occurrences(haystack: string, needle: string): number[] {
@@ -223,9 +252,18 @@ export function corroborateCaseIdentity(args: {
   if (!hits.length && !identity_fields.dockets.includes(num)) {
     return { corroborated: false, basis: "docket_absent_from_body", detail: `docket ${num} not in body` };
   }
-  // No proceeding type was requested: behaviour is unchanged.
+  const selfIdentity = judgmentSelfIdentity({ title, text, docketKey: key });
+
+  // No proceeding type was requested: docket + judgment self-identity only.
   if (!expectedCase.proceeding) {
-    return { corroborated: true, basis: "docket_present_in_body", detail: `docket ${num} found in body` };
+    if (!selfIdentity.ok) {
+      return { corroborated: false, basis: selfIdentity.basis, detail: selfIdentity.detail };
+    }
+    return {
+      corroborated: true,
+      basis: "docket_present_in_body",
+      detail: `docket ${num} found in body (${selfIdentity.detail})`,
+    };
   }
 
   let proceedingSeen = false;
@@ -243,17 +281,18 @@ export function corroborateCaseIdentity(args: {
       expectedCase.qualifiers.length &&
       !expectedCase.qualifiers.some((q) => pre.includes(q))
     ) continue;
-    if (!isSelfIdentifying(body, key, hits)) {
+    if (!selfIdentity.ok) {
       return {
         corroborated: false,
-        basis: "docket_mention_not_self_identifying",
-        detail: `body cites ${num} but does not present itself as that judgment`,
+        basis: selfIdentity.basis,
+        detail: `body cites ${num} but does not present itself as that judgment — ${selfIdentity.detail}`,
       };
     }
     return {
       corroborated: true,
       basis: "docket_present_in_body",
-      detail: `docket ${num} found in body with proceeding type "${expectedCase.proceeding}"`,
+      detail:
+        `docket ${num} found in body with proceeding type "${expectedCase.proceeding}" (${selfIdentity.detail})`,
     };
   }
 

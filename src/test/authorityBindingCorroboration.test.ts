@@ -147,7 +147,8 @@ describe("E. case docket behaviour does not regress", () => {
     const res = corroborateAuthority({
       expected: { docket: 'בג"ץ 1234/20' },
       title: 'בג"ץ 1234/20 פלוני נ\' פלונית',
-      text: 'בג"ץ 1234/20 — פסק דין. ' + "נימוקי בית המשפט. ".repeat(20),
+      text: 'בג"ץ 1234/20\nלפני כבוד השופט\nהעותר: פלוני נגד המשיבה\nפסק דין\n' +
+        "נימוקי בית המשפט בסוגיה שלפנינו ובחינת טענות הצדדים לגופן. ".repeat(40),
       identity_fields: idFieldsFor([], ["1234/20"]),
       is_actual_document: true,
     });
