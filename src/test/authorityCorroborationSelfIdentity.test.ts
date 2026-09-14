@@ -78,7 +78,7 @@ describe("must reject — commentary, summaries and wrong-identity pages", () =>
 
   it("Immunewill article discussing ע\"א 5185/93", () => {
     const text = "ייעוץ משפטי בענייני צוואות וירושות. ".repeat(200) +
-      "\nבבית המשפט העליון, בע\"א 5185/93, נדונה שאלת כשרות הצוואה של המנוח, ובפסק הדין נקבע כי המערער לא עמד בנטל ההוכחה הנדרש בנסיבות העניין.\n" +
+      "\nבבית המשפט העליון, ע\"א 5185/93, נדונה שאלת כשרות הצוואה של המנוח, ובפסק הדין נקבע כי המערער לא עמד בנטל ההוכחה הנדרש בנסיבות העניין.\n" +
       "צרו קשר לייעוץ. כתבות נוספות. ".repeat(200);
     const r = check('ע"א 5185/93', "כשרות צוואה - מאמר", text);
     expect(r.corroborated).toBe(false);
@@ -90,7 +90,7 @@ describe("must reject — commentary, summaries and wrong-identity pages", () =>
       'ע"א 2553/01',
       "בית המשפט המחוזי בחיפה",
       genuineJudgment({
-        docket: "ע\"א (מחוזי חיפה) 2553/01",
+        docket: "בית המשפט המחוזי בחיפה ע\"א 2553/01",
         court: "בית המשפט המחוזי בחיפה",
       }),
     );

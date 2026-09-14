@@ -181,7 +181,10 @@ describe("case identity guard for broad-web candidates", () => {
   it("binds a supreme-court body carrying the requested proceeding type", () => {
     const r = corroborateAuthority({
       expected: { docket: 'ע"א 2553/01' },
-      ...body('בבית המשפט העליון\nע"א 2553/01 פלוני נ׳ אלמוני\nפסק דין. השופט א׳ ברק.'),
+      ...body(
+        'בבית המשפט העליון\nע"א 2553/01 פלוני נ׳ אלמוני\nלפני כבוד השופט א׳ ברק\nפסק דין\n' +
+          "1. נימוקי פסק הדין בסוגיה שלפנינו, ובחינת טענות הצדדים לגופן. ".repeat(60),
+      ),
     });
     expect(r.corroborated).toBe(true);
     expect(r.basis).toBe("docket_present_in_body");
@@ -216,7 +219,11 @@ describe("case identity guard for broad-web candidates", () => {
   it("does not require party names", () => {
     const r = corroborateAuthority({
       expected: { docket: 'ע"א 423/75' },
-      ...body('בבית המשפט העליון בשבתו כבית משפט לערעורים אזרחיים\nע"א 423/75\nפסק דין. ניתן היום.'),
+      ...body(
+        'בבית המשפט העליון בשבתו כבית משפט לערעורים אזרחיים\nע"א 423/75\nלפני כבוד השופט זוסמן\nפסק דין\n' +
+          "1. נימוקי פסק הדין בסוגיה שלפנינו, ובחינת טענות הצדדים לגופן. ".repeat(60) +
+          "\nניתן היום.",
+      ),
     });
     expect(r.corroborated).toBe(true);
   });
