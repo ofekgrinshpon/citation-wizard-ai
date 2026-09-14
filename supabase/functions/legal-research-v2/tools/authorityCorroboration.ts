@@ -253,9 +253,18 @@ export function corroborateCaseIdentity(args: {
   if (!hits.length && !identity_fields.dockets.includes(num)) {
     return { corroborated: false, basis: "docket_absent_from_body", detail: `docket ${num} not in body` };
   }
-  // No proceeding type was requested: behaviour is unchanged.
+  const selfIdentity = judgmentSelfIdentity({ title, text, normalizedBody: body, hits });
+
+  // No proceeding type was requested: docket + judgment self-identity only.
   if (!expectedCase.proceeding) {
-    return { corroborated: true, basis: "docket_present_in_body", detail: `docket ${num} found in body` };
+    if (!selfIdentity.ok) {
+      return { corroborated: false, basis: selfIdentity.basis, detail: selfIdentity.detail };
+    }
+    return {
+      corroborated: true,
+      basis: "docket_present_in_body",
+      detail: `docket ${num} found in body (${selfIdentity.detail})`,
+    };
   }
 
   let proceedingSeen = false;
