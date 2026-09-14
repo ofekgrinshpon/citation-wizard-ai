@@ -2298,7 +2298,9 @@ No persisted verified evidence pairs map to a rendered footnote source.
 ## Validation
 
 - Questions exported: 15 (Q16–Q30, each exactly once)
-- With substantive final answer text: 15
-- With no substantive final answer: 0
-- With zero footnotes: 2
+- Non-empty final answer text: 15 (no question returned a literally empty answer field)
+- With substantive legal answer: 13
+- With no substantive answer (limitation-only text, no footnotes): 2 — Q18 and Q29. Both delivered a Hebrew limitation statement explaining that no verified sources were obtained; this is a limitation-only delivery, not an empty output and not a renderer loss.
+- With zero footnotes: 2 (Q18, Q29)
+- Q30 exported in its final state after the existing resume completed; it was not resumed again.
 - No answer was regenerated; no pipeline execution occurred; no code changed. All content read from stored `v2_eval_runs` rows.
