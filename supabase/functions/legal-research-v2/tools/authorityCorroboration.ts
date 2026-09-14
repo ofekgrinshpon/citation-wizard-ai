@@ -168,18 +168,55 @@ export function parseExpectedCase(docket: string): ExpectedCase {
 }
 
 /**
- * A judgment body carries its own docket in the caption and reads like a
- * judgment. A page that cites the docket once, deep inside an article, is
- * commentary about the authority, not the authority.
+ * Does the FETCHED BODY represent the judgment itself?
+ *
+ * Two independent, deterministic conditions — neither depends on the host:
+ *  (B) the text has the form of a substantive judgment body (V1 classifier,
+ *      audited on 534 real judgment bodies); summaries, metadata stubs and
+ *      listing pages are not the judgment;
+ *  (C) the body identifies ITSELF as this docket: an early docket occurrence
+ *      with at least two distinct structural judgment signals co-located in a
+ *      bounded window around it. Vocabulary scattered over the page, or the
+ *      docket repeated in an article, never satisfies this.
+ *
+ * Terminal disposition / numbered reasoning / judicial voice are recorded for
+ * diagnostics only and never gate acceptance.
  */
-function isSelfIdentifying(body: string, key: string, hits: number[]): boolean {
-  const inCaption = hits.some((i) => i < 4_000);
-  if (!inCaption && hits.length < 3) return false;
-  void key;
-  const groupsPresent = JUDGMENT_STRUCTURE_GROUPS.filter((g) =>
-    g.some((m) => body.includes(normalizeAuthorityText(m)))
-  );
-  return groupsPresent.length >= 2;
+function judgmentSelfIdentity(args: {
+  title: string;
+  text: string;
+  normalizedBody: string;
+  hits: number[];
+}): { ok: true; detail: string } | { ok: false; basis: CorroborationBasis; detail: string } {
+  const form = classifyLocalCaselawBody({
+    title: args.title ?? "",
+    text: args.text ?? "",
+    case_number: null,
+    body_chars: (args.text ?? "").trim().length,
+  });
+  if (form.classification !== "substantive_judgment_body") {
+    return {
+      ok: false,
+      basis: "judgment_body_form_absent",
+      detail: `body form is ${form.classification} (${form.reason})`,
+    };
+  }
+  const structure = assessCaptionStructure(args.normalizedBody, args.hits);
+  if (!structure.self_identifying) {
+    return {
+      ok: false,
+      basis: "docket_mention_not_self_identifying",
+      detail: `no caption-local judgment structure around the docket (signals: ${
+        structure.signals.join(",") || "none"
+      })`,
+    };
+  }
+  return {
+    ok: true,
+    detail: `caption signals: ${structure.signals.join(",")}${
+      structure.supporting.length ? `; supporting: ${structure.supporting.join(",")}` : ""
+    }`,
+  };
 }
 
 function occurrences(haystack: string, needle: string): number[] {
