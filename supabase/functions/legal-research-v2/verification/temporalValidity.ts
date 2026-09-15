@@ -23,6 +23,11 @@ import type {
 import type { EvidenceStore } from "../evidence/evidenceStore.ts";
 import { chat, parseJsonLoose, type UsageLedger } from "../shared/model.ts";
 import { hostOf } from "../shared/primitives.ts";
+import {
+  buildClaimTemporalEvidence,
+  prefixExcerpt,
+  renderClaimEvidence,
+} from "./temporalEvidence.ts";
 
 /**
  * Hebrew cues for a present-tense legal-status proposition. This is a
@@ -178,20 +183,42 @@ export async function assessTemporalValidity(opts: {
   }
 
   counters.temporal_checks_attempted = sensitive.length;
-  const evidenceText = capable
-    .map((s) => `מקור ${s.source_id} | ${s.title.slice(0, 120)} | ${s.url ?? ""}\n${
-      s.extracted_text.slice(0, 2_500)
-    }`)
-    .join("\n\n---\n\n");
-  const claimsText = sensitive
-    .map((c) => `claim_id: ${c.claim_id}\nטענה (מנוסחת כמצב הדין הנוכחי): ${c.proposition}`)
-    .join("\n\n");
+
+  // Claim-specific relevant evidence: the verified span and, when the claim
+  // names a statute section, the located section window from the SAME source.
+  // Only a claim with no current-law-capable supporting text falls back to the
+  // bounded prefixes of the capable documents that were read.
+  const fallbackExcerpts = capable.map(prefixExcerpt);
+  const packets = sensitive.map((c) => {
+    const built = buildClaimTemporalEvidence(c, opts.store);
+    if (built.excerpts.length) return built;
+    return {
+      claim_id: c.claim_id,
+      excerpts: fallbackExcerpts,
+      source_ids: capable.map((s) => s.source_id),
+      fallback_prefix: true,
+    };
+  });
+  const byClaimPacket = new Map(packets.map((p) => [p.claim_id, p]));
+
+  const blocks = sensitive.map((c) => {
+    const packet = byClaimPacket.get(c.claim_id)!;
+    return `claim_id: ${c.claim_id}\nטענה (מנוסחת כמצב הדין הנוכחי): ${c.proposition}\n--- טקסט רשמי רלוונטי לטענה ${c.claim_id} בלבד ---\n${
+      renderClaimEvidence(packet)
+    }`;
+  });
 
   const res = await chat({
     model: opts.model,
     messages: [
       { role: "system", content: SYSTEM },
-      { role: "user", content: `${claimsText}\n\n=== טקסט רשמי שנקרא ===\n${evidenceText}` },
+      {
+        role: "user",
+        content:
+          `לכל טענה מצורפים קטעי הטקסט הרשמי הרלוונטיים לאותה טענה בלבד. הערך כל טענה אך ורק מול הקטעים המופיעים תחתיה, ואל תסיק לגבי טענה אחת מקטעים של טענה אחרת.\n\n${
+            blocks.join("\n\n=====\n\n")
+          }`,
+      },
     ],
     tools: [TOOL],
     toolChoice: { name: TOOL.name },
@@ -214,7 +241,6 @@ export async function assessTemporalValidity(opts: {
     });
   }
 
-  const checked = capable.map((s) => s.source_id);
   for (const c of sensitive) {
     const v = byId.get(c.claim_id);
     const status: TemporalStatus = v?.status ?? "unresolved";
@@ -222,7 +248,8 @@ export async function assessTemporalValidity(opts: {
       claim_id: c.claim_id,
       temporal_status: status,
       detail: v?.reason || "לא התקבלה פסיקת תוקף עדכני",
-      checked_source_ids: checked,
+      checked_source_ids: byClaimPacket.get(c.claim_id)?.source_ids ??
+        capable.map((s) => s.source_id),
     });
     if (status === "current_verified") counters.temporal_current_verified += 1;
     else if (status === "contradicted") counters.temporal_contradicted += 1;
