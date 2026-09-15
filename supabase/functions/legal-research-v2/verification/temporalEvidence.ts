@@ -115,9 +115,11 @@ export function buildClaimTemporalEvidence(
   );
 
   const refs = (claim.sources ?? []).slice(0, TEMPORAL_EVIDENCE_LIMITS.MAX_SOURCES_PER_CLAIM);
+  const capableOwn: EvidenceSource[] = [];
   for (const ref of refs) {
     const source = store.get(ref.source_id);
     if (!source || !isCurrentLawCapable(source)) continue;
+    capableOwn.push(source);
 
     const local: TemporalExcerpt[] = [];
     const tokens = sections.length
