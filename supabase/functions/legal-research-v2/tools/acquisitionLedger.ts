@@ -137,6 +137,8 @@ export class AcquisitionLedger {
   private rows = new Map<string, AuthorityLedgerRow>();
   private reads = new Map<string, SourceReadRow>();
   private targets = new Map<string, AcquisitionTargetRow>();
+  private memo_gate_used = false;
+
 
   /**
    * Record an attempt. A binding (`acquired_source_id`) is created only when
