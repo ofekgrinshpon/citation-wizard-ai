@@ -25,7 +25,6 @@ import { chat, parseJsonLoose, type UsageLedger } from "../shared/model.ts";
 import { hostOf } from "../shared/primitives.ts";
 import {
   buildClaimTemporalEvidence,
-  prefixExcerpt,
   renderClaimEvidence,
 } from "./temporalEvidence.ts";
 
@@ -237,15 +236,14 @@ export async function assessTemporalValidity(opts: {
     });
   }
 
-  for (const c of sensitive) {
+  for (const c of checkable) {
     const v = byId.get(c.claim_id);
     const status: TemporalStatus = v?.status ?? "unresolved";
     assessments.push({
       claim_id: c.claim_id,
       temporal_status: status,
       detail: v?.reason || "לא התקבלה פסיקת תוקף עדכני",
-      checked_source_ids: byClaimPacket.get(c.claim_id)?.source_ids ??
-        capable.map((s) => s.source_id),
+      checked_source_ids: byClaimPacket.get(c.claim_id)?.source_ids ?? [],
     });
     if (status === "current_verified") counters.temporal_current_verified += 1;
     else if (status === "contradicted") counters.temporal_contradicted += 1;
