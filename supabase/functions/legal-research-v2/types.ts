@@ -375,6 +375,14 @@ export interface V2Telemetry {
   agent_turns?: AgentTurnRecord[];
   already_read_actions?: number;
   noop_already_read_suppressed?: number;
+  /** Span-hunting discipline (v2_span_hunting_efficiency_v1). */
+  targeted_rereads?: number;
+  targeted_rereads_new_quote?: number;
+  targeted_rereads_no_new_quote?: number;
+  span_hunting_exhaustions?: number;
+  span_hunting_reads_suppressed?: number;
+  new_quotes_served?: number;
+  duplicate_quotes_resurfaced?: number;
   authority_reacquisitions_prevented?: number;
   /** Authority-binding safety (v2_acquisition_ledger_verified_authority_binding_v1). */
   authority_bindings_created?: number;

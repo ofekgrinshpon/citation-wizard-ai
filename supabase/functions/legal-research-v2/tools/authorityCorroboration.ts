@@ -186,7 +186,7 @@ function judgmentSelfIdentity(args: {
   title: string;
   text: string;
   docketKey: string;
-}): { ok: true; detail: string } | { ok: false; basis: CorroborationBasis; detail: string } {
+}): { ok: boolean; basis?: CorroborationBasis; detail: string } {
   const form = classifyLocalCaselawBody({
     title: args.title ?? "",
     text: args.text ?? "",
@@ -257,7 +257,11 @@ export function corroborateCaseIdentity(args: {
   // No proceeding type was requested: docket + judgment self-identity only.
   if (!expectedCase.proceeding) {
     if (!selfIdentity.ok) {
-      return { corroborated: false, basis: selfIdentity.basis, detail: selfIdentity.detail };
+      return {
+        corroborated: false,
+        basis: selfIdentity.basis ?? "docket_mention_not_self_identifying",
+        detail: selfIdentity.detail,
+      };
     }
     return {
       corroborated: true,
@@ -284,7 +288,7 @@ export function corroborateCaseIdentity(args: {
     if (!selfIdentity.ok) {
       return {
         corroborated: false,
-        basis: selfIdentity.basis,
+        basis: selfIdentity.basis ?? "docket_mention_not_self_identifying",
         detail: `body cites ${num} but does not present itself as that judgment — ${selfIdentity.detail}`,
       };
     }

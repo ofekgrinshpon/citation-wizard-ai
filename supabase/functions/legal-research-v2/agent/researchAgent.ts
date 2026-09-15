@@ -189,6 +189,14 @@ export interface AgentContextStats extends AcquisitionStats {
   already_read_actions: number;
   noop_already_read_suppressed: number;
   authority_reacquisitions_prevented: number;
+  /** Span-hunting discipline (v2_span_hunting_efficiency_v1). */
+  targeted_rereads: number;
+  targeted_rereads_new_quote: number;
+  targeted_rereads_no_new_quote: number;
+  span_hunting_exhaustions: number;
+  span_hunting_reads_suppressed: number;
+  new_quotes_served: number;
+  duplicate_quotes_resurfaced: number;
   /** Authority-binding safety (v2_acquisition_ledger_verified_authority_binding_v1). */
   authority_bindings_created: number;
   authority_bindings_withheld: number;
@@ -222,6 +230,13 @@ export function newAgentStats(): AgentContextStats {
     already_read_actions: 0,
     noop_already_read_suppressed: 0,
     authority_reacquisitions_prevented: 0,
+    targeted_rereads: 0,
+    targeted_rereads_new_quote: 0,
+    targeted_rereads_no_new_quote: 0,
+    span_hunting_exhaustions: 0,
+    span_hunting_reads_suppressed: 0,
+    new_quotes_served: 0,
+    duplicate_quotes_resurfaced: 0,
     authority_bindings_created: 0,
     authority_bindings_withheld: 0,
     context_compactions: 0,
@@ -809,6 +824,21 @@ export async function runResearchAgent(opts: {
         // A cached / targeted read costs no fetch budget.
         if (!out.already_read) policy.note("fetch");
         if (out.already_read) stats.already_read_actions += 1;
+        // Span-hunting discipline (v2_span_hunting_efficiency_v1): a targeted
+        // re-read is productive only when it adds a NEW quotable excerpt.
+        if (out.already_read && typeof args.source_id === "string") {
+          stats.targeted_rereads += 1;
+          const newQuotes = out.new_quote_count ?? 0;
+          if (newQuotes > 0) stats.targeted_rereads_new_quote += 1;
+          else stats.targeted_rereads_no_new_quote += 1;
+          stats.new_quotes_served += newQuotes;
+          stats.duplicate_quotes_resurfaced += Math.max(0, (out.served_quote_count ?? 0) - newQuotes);
+          if (out.span_hunting_newly_exhausted) stats.span_hunting_exhaustions += 1;
+          if (out.span_hunting_suppressed) {
+            stats.span_hunting_reads_suppressed += 1;
+            turnNoOp = true;
+          }
+        }
         if (out.authority_reuse) stats.authority_reacquisitions_prevented += 1;
         if (out.authority_binding_created) stats.authority_bindings_created += 1;
         if (out.authority_binding_withheld) stats.authority_bindings_withheld += 1;
@@ -827,7 +857,9 @@ export async function runResearchAgent(opts: {
           if (out.error === "unsafe_url_blocked") stats.unsafe_urls_blocked += 1;
         }
         payload = out as unknown as Record<string, unknown>;
-        summary = out.already_read
+        summary = out.span_hunting_suppressed
+          ? `span_hunt_suppressed ${out.source_id}`
+          : out.already_read
           ? `already_read ${out.source_id}`
           : out.ok
           ? `${out.source_id} chars=${out.text_length} document=${out.is_actual_document}`
