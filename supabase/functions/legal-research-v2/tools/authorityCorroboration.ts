@@ -288,7 +288,7 @@ export function corroborateCaseIdentity(args: {
     if (!selfIdentity.ok) {
       return {
         corroborated: false,
-        basis: selfIdentity.basis,
+        basis: selfIdentity.basis ?? "docket_mention_not_self_identifying",
         detail: `body cites ${num} but does not present itself as that judgment — ${selfIdentity.detail}`,
       };
     }
