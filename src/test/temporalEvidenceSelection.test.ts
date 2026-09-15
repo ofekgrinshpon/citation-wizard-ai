@@ -7,12 +7,15 @@ import {
   TEMPORAL_EVIDENCE_LIMITS,
 } from "../../supabase/functions/legal-research-v2/verification/temporalEvidence.ts";
 import {
+  assessTemporalValidity,
   isCurrentLawCapable,
   isTemporallySensitive,
 } from "../../supabase/functions/legal-research-v2/verification/temporalValidity.ts";
+import { newUsageLedger } from "../../supabase/functions/legal-research-v2/shared/model.ts";
 import type {
   EvidenceSource,
   VerifiedClaim,
+  VerifiedEvidencePack,
 } from "../../supabase/functions/legal-research-v2/types.ts";
 import type { EvidenceStore } from "../../supabase/functions/legal-research-v2/evidence/evidenceStore.ts";
 
