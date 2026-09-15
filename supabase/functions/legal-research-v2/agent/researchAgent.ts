@@ -648,6 +648,10 @@ export async function runResearchAgent(opts: {
           }
           stats.raw_web_search_calls += 1;
           stats.raw_web_search_results += out.results.length;
+          const attRaw = attachDiscoveryResults(ledger, out.results, {
+            forAuthority: typeof args.for_authority === "string" ? args.for_authority : undefined,
+            stats,
+          });
           payload = {
             error: out.error,
             results: out.results.map((r) => ({
@@ -659,9 +663,12 @@ export async function runResearchAgent(opts: {
               date: r.published_date,
               possible_docket: r.possible_docket,
             })),
+            attached_to_targets: attRaw.attached ? attRaw.targets : undefined,
+            unknown_authority_key: attRaw.unknown_target,
             note:
               "תוצאות חיפוש גולמיות בלבד. אינן ראיה: יש להביא את גוף המסמך ב-fetch לפני כל שימוש.",
           };
+
           summary = `raw_web results=${out.results.length}${out.error ? ` error=${out.error}` : ""}`;
           timer.add("search", Date.now() - toolStarted);
         }
