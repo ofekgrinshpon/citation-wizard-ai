@@ -35,6 +35,14 @@ import {
   type AcquisitionLedgerJson,
   authorityKeyOf,
 } from "../tools/acquisitionLedger.ts";
+import {
+  type AcquisitionStats,
+  attachDiscoveryResults,
+  emptyAcquisitionStats,
+  pickMemoAcquisitionTarget,
+  runAcquireAuthority,
+} from "../tools/acquisitionOrchestrator.ts";
+
 import { AGENT_SYSTEM_PROMPT, buildAgentUserMessage, MEMO_TOOL } from "./prompt.ts";
 import { StopPolicy, type StopPolicyJson } from "./stopPolicy.ts";
 import { CommitTracker, obligationsSatisfied } from "./commitPolicy.ts";
