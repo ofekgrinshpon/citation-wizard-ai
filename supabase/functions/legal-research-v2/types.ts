@@ -424,6 +424,19 @@ export interface V2Telemetry {
   raw_web_search_deduped_queries?: number;
   raw_web_results_fetched?: number;
   raw_web_identity_rejects?: number;
+  /** Bounded authority acquisition (v2_authority_acquisition_orchestrator_v1). */
+  authority_targets_opened?: number;
+  authority_candidates_attached?: number;
+  authority_concrete_attempts?: number;
+  authority_discovery_refreshes?: number;
+  authority_targets_acquired?: number;
+  authority_targets_exhausted?: number;
+  authority_candidates_skipped_attempted?: number;
+  authority_candidates_skipped_discovery_entry?: number;
+  authority_parent_statute_reuse?: number;
+  authority_section_from_parent?: number;
+  authority_identity_conflicts?: number;
+  authority_memo_gate_used?: number;
   /** Outbound URLs refused by the deterministic safety gate. */
   unsafe_urls_blocked?: number;
   /** Compact per-run egress state (direct official + court relay). */
