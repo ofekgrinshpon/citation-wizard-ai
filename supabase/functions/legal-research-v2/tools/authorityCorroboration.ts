@@ -186,7 +186,7 @@ function judgmentSelfIdentity(args: {
   title: string;
   text: string;
   docketKey: string;
-}): { ok: true; detail: string } | { ok: false; basis: CorroborationBasis; detail: string } {
+}): { ok: boolean; basis?: CorroborationBasis; detail: string } {
   const form = classifyLocalCaselawBody({
     title: args.title ?? "",
     text: args.text ?? "",
