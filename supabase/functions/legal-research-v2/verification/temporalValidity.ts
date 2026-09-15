@@ -165,43 +165,39 @@ export async function assessTemporalValidity(opts: {
   counters.temporal_sensitive_claims = sensitive.length;
   if (!sensitive.length) return { assessments: [], counters };
 
-  const capable = opts.store.all().filter(isCurrentLawCapable).slice(0, 4);
   const assessments: TemporalAssessment[] = [];
-
-  // No current-law-capable document was read at all: nothing to check against.
-  if (!capable.length) {
-    for (const c of sensitive) {
-      assessments.push({
-        claim_id: c.claim_id,
-        temporal_status: "unresolved",
-        detail: "לא נקרא מקור רשמי המאפשר לקבוע את מצב הדין הנוכחי",
-        checked_source_ids: [],
-      });
-      counters.temporal_unresolved += 1;
-    }
-    return { assessments, counters };
-  }
-
-  counters.temporal_checks_attempted = sensitive.length;
 
   // Claim-specific relevant evidence: the verified span and, when the claim
   // names a statute section, the located section window from the SAME source.
-  // Only a claim with no current-law-capable supporting text falls back to the
-  // bounded prefixes of the capable documents that were read.
-  const fallbackExcerpts = capable.map(prefixExcerpt);
-  const packets = sensitive.map((c) => {
-    const built = buildClaimTemporalEvidence(c, opts.store);
-    if (built.excerpts.length) return built;
-    return {
-      claim_id: c.claim_id,
-      excerpts: fallbackExcerpts,
-      source_ids: capable.map((s) => s.source_id),
-      fallback_prefix: true,
-    };
-  });
+  // A claim with a capable supporting source but no precise excerpt gets a
+  // bounded prefix of THAT source only. A claim with no current-law-capable
+  // supporting evidence at all is deterministically `unresolved` — it is
+  // NEVER shown prefixes of unrelated official sources from elsewhere in
+  // the run (each current-state claim is judged only against evidence
+  // relevant to that claim).
+  const packets = sensitive.map((c) => buildClaimTemporalEvidence(c, opts.store));
   const byClaimPacket = new Map(packets.map((p) => [p.claim_id, p]));
 
-  const blocks = sensitive.map((c) => {
+  const checkable: VerifiedClaim[] = [];
+  for (const c of sensitive) {
+    const packet = byClaimPacket.get(c.claim_id)!;
+    if (!packet.excerpts.length) {
+      assessments.push({
+        claim_id: c.claim_id,
+        temporal_status: "unresolved",
+        detail: "לא נמצאה ראיה ממקור רשמי עדכני התומכת בטענה זו — לא ניתן לקבוע את מצב הדין הנוכחי",
+        checked_source_ids: [],
+      });
+      counters.temporal_unresolved += 1;
+      continue;
+    }
+    checkable.push(c);
+  }
+  if (!checkable.length) return { assessments, counters };
+
+  counters.temporal_checks_attempted = checkable.length;
+
+  const blocks = checkable.map((c) => {
     const packet = byClaimPacket.get(c.claim_id)!;
     return `claim_id: ${c.claim_id}\nטענה (מנוסחת כמצב הדין הנוכחי): ${c.proposition}\n--- טקסט רשמי רלוונטי לטענה ${c.claim_id} בלבד ---\n${
       renderClaimEvidence(packet)
