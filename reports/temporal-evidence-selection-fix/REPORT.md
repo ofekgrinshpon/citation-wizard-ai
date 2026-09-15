@@ -130,3 +130,41 @@ current-state claim. No detection, capability, support, identity, acquisition or
 relaxed — only the text the temporal model reads was corrected.
 
 TEMPORAL EVIDENCE SELECTION FIX SHIPPED — TARGETED VALIDATION PASSED
+
+## 11. Addendum — Temporal Claim Isolation Patch (2026-09-15)
+
+**Bug.** `assessTemporalValidity()` still fell back, for a sensitive claim whose
+claim-specific packet was empty, to the bounded prefixes of ALL current-law-capable
+documents read anywhere in the run (`fallbackExcerpts = capable.map(prefixExcerpt)`).
+A claim with no capable supporting evidence could therefore be judged against prefixes
+of unrelated official sources — cross-claim contamination, contradicting the invariant
+that each current-state claim is judged only against evidence relevant to that claim.
+
+**Fix.** The global capable-source fallback was removed:
+
+- `buildClaimTemporalEvidence()` now implements the only permitted fallback itself:
+  when the claim HAS a current-law-capable supporting source but no precise
+  section/span excerpt could be produced, it emits a bounded prefix of THAT same
+  source only (`fallback_prefix: true`). A claim with no capable supporting source
+  gets an empty packet — never an unrelated source's prefix.
+- `assessTemporalValidity()` no longer builds `fallbackExcerpts`. A sensitive claim
+  with an empty packet is deterministically `unresolved` with detail
+  "לא נמצאה ראיה ממקור רשמי עדכני התומכת בטענה זו — לא ניתן לקבוע את מצב הדין הנוכחי"
+  and `checked_source_ids: []`, without a model call. Only claims with claim-specific
+  evidence reach the temporal model; `checked_source_ids` can never contain an
+  unrelated source id.
+
+**Tests (5 new, 18 total in the file).** Same-source prefix fallback uses only the
+claim's own source; a blog-only claim gets no prefix even from its own source; a
+blog-supported claim becomes deterministically `unresolved` with zero model calls and
+empty `checked_source_ids` despite an official statute in the store; a source-less
+claim likewise; `checked_source_ids` never include unrelated ids. All pre-existing
+tests (Q29 section evidence, contradicted text, historical claims, per-claim
+partitioning, bounded excerpts) remain green and unchanged.
+
+**Suite:** 75 files, 825 tests, all passing. Deno check of both modules passes.
+Deployed legal-research-v2. Q29/Q24 were NOT rerun: their successful path (claim with
+capable supporting source + verified span + located section) produces an identical
+packet under this patch, so no behavioral change to those runs.
+
+TEMPORAL CLAIM ISOLATION PATCH SHIPPED — STRICTNESS VERIFIED
