@@ -180,7 +180,7 @@ export interface AgentTraceEntry {
 }
 
 
-export interface AgentContextStats {
+export interface AgentContextStats extends AcquisitionStats {
   largest_tool_response_chars: number;
   evidence_context_chars_last_turn: number;
   repeated_tool_calls_prevented: number;
@@ -214,6 +214,7 @@ export interface AgentContextStats {
 
 export function newAgentStats(): AgentContextStats {
   return {
+    ...emptyAcquisitionStats(),
     largest_tool_response_chars: 0,
     evidence_context_chars_last_turn: 0,
     repeated_tool_calls_prevented: 0,
