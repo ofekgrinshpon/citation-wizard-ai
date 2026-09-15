@@ -274,6 +274,7 @@ describe("temporal evidence — claim isolation patch (no cross-claim fallback)"
     });
     const c = claim({
       claim_id: "C-BLOG",
+      current_state_claim: true,
       sources: [{ source_id: "S2", display_title: "סקירה", verified_span: "סקירה משפטית", support: "supports" }],
     });
     const usage = newUsageLedger();
@@ -293,7 +294,7 @@ describe("temporal evidence — claim isolation patch (no cross-claim fallback)"
   });
 
   it("sensitive claim with no supporting sources at all → deterministic unresolved despite capable sources in store", async () => {
-    const c = claim({ claim_id: "C-NONE", sources: [] });
+    const c = claim({ claim_id: "C-NONE", sources: [], current_state_claim: true });
     const usage = newUsageLedger();
     const { assessments } = await assessTemporalValidity({
       pack: packOf([c]),
@@ -307,7 +308,7 @@ describe("temporal evidence — claim isolation patch (no cross-claim fallback)"
   });
 
   it("checked_source_ids never include an unrelated source id", async () => {
-    const c = claim({ claim_id: "C-B2", sources: [] });
+    const c = claim({ claim_id: "C-B2", sources: [], current_state_claim: true });
     const { assessments } = await assessTemporalValidity({
       pack: packOf([c]),
       store: storeOf([src({ source_id: "S-A" }), unrelatedOfficial]),
