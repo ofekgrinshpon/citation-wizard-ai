@@ -50,6 +50,18 @@ export interface TargetCandidate {
   url?: string;
   label?: string;
   candidate_kind?: "document" | "local_document" | "discovery_entry";
+  /** A stored corpus row is fetchable without a URL. */
+  local_document_id?: string;
+  /** Where the candidate came from. Ordering hint only — never a quality tier. */
+  origin?: "local_corpus" | "official_search_entry" | "search" | "raw_web" | "derived";
+  /** Why this candidate was linked to this authority (telemetry / tests). */
+  attach_basis?: string;
+}
+
+export interface ExpectedTargetIdentity {
+  docket?: string;
+  statute?: string;
+  section?: string;
 }
 
 export interface AcquisitionTargetRow {
@@ -57,6 +69,18 @@ export interface AcquisitionTargetRow {
   label?: string;
   opened_at: string;
   candidates: TargetCandidate[];
+  /**
+   * The identity this target is for, persisted server-side. The model may
+   * select a target, never redefine what it means.
+   */
+  expected_identity?: ExpectedTargetIdentity;
+  /** Concrete acquisition attempts spent on this target across the whole run. */
+  concrete_attempts?: number;
+  /** Targeted discovery refreshes already spent on this target. */
+  discovery_refreshes_used?: number;
+  /** Final for this run: no candidate left, or the attempt ceiling was hit. */
+  exhausted?: boolean;
+  exhaust_reason?: string;
   /** The agent may deliberately drop a target; it then stops being surfaced. */
   abandoned?: boolean;
   abandon_reason?: string;
@@ -66,7 +90,15 @@ export interface AcquisitionLedgerJson {
   rows: AuthorityLedgerRow[];
   reads?: SourceReadRow[];
   targets?: AcquisitionTargetRow[];
+  /** The one bounded pre-memo acquisition attempt already fired this run. */
+  memo_gate_used?: boolean;
 }
+
+/** Total concrete acquisition attempts allowed per authority, for the whole run. */
+export const MAX_CONCRETE_ATTEMPTS_PER_AUTHORITY = 4;
+/** Targeted discovery refreshes allowed per authority, for the whole run. */
+export const MAX_DISCOVERY_REFRESHES_PER_AUTHORITY = 1;
+
 
 /** Compact, agent-facing state of one authority. Derived only, decides nothing. */
 export interface AuthorityState {
@@ -105,6 +137,8 @@ export class AcquisitionLedger {
   private rows = new Map<string, AuthorityLedgerRow>();
   private reads = new Map<string, SourceReadRow>();
   private targets = new Map<string, AcquisitionTargetRow>();
+  private memo_gate_used = false;
+
 
   /**
    * Record an attempt. A binding (`acquired_source_id`) is created only when
@@ -206,29 +240,69 @@ export class AcquisitionLedger {
    */
   openTarget(
     key: string,
-    opts: { label?: string; candidates?: TargetCandidate[]; reopen?: boolean } = {},
+    opts: {
+      label?: string;
+      candidates?: TargetCandidate[];
+      reopen?: boolean;
+      expected_identity?: ExpectedTargetIdentity;
+    } = {},
   ): AcquisitionTargetRow {
     const row = this.targets.get(key) ??
       { authority_key: key, label: opts.label, opened_at: new Date().toISOString(), candidates: [] };
     if (opts.label && !row.label) row.label = opts.label;
+    // The identity of a target is fixed the first time it is opened. Later
+    // opens may only FILL missing fields, never redefine what the target is.
+    if (opts.expected_identity) {
+      const cur = row.expected_identity ?? {};
+      row.expected_identity = {
+        docket: cur.docket ?? opts.expected_identity.docket,
+        statute: cur.statute ?? opts.expected_identity.statute,
+        section: cur.section ?? opts.expected_identity.section,
+      };
+    }
     if (opts.reopen) {
       row.abandoned = false;
       row.abandon_reason = undefined;
     }
-    for (const c of opts.candidates ?? []) {
-      if (!c.url && !c.result_id) continue;
+    this.targets.set(key, row);
+    if (opts.candidates?.length) this.attachCandidates(key, opts.candidates);
+    return row;
+  }
+
+  /**
+   * Link candidates to an existing target. Deduplicated by result id and by
+   * normalized URL / local document id. Returns how many were newly linked.
+   */
+  attachCandidates(key: string, candidates: TargetCandidate[]): number {
+    const row = this.targets.get(key);
+    if (!row) return 0;
+    let attached = 0;
+    for (const c of candidates) {
+      if (!c.url && !c.result_id && !c.local_document_id) continue;
       const dup = row.candidates.some((x) =>
         (c.result_id && x.result_id === c.result_id) ||
+        (c.local_document_id && x.local_document_id === c.local_document_id) ||
         (c.url && x.url && normalizeAttemptUrl(x.url) === normalizeAttemptUrl(c.url))
       );
-      if (!dup) row.candidates.push(c);
+      if (dup) continue;
+      row.candidates.push(c);
+      attached += 1;
     }
-    this.targets.set(key, row);
-    return row;
+    // New candidates mean the target is workable again.
+    if (attached > 0 && row.exhausted && (row.concrete_attempts ?? 0) < MAX_CONCRETE_ATTEMPTS_PER_AUTHORITY) {
+      row.exhausted = false;
+      row.exhaust_reason = undefined;
+    }
+    return attached;
   }
 
   target(key: string): AcquisitionTargetRow | null {
     return this.targets.get(key) ?? null;
+  }
+
+  /** The identity this target stands for. Server-side truth, never model input. */
+  expectedIdentity(key: string): ExpectedTargetIdentity | undefined {
+    return this.targets.get(key)?.expected_identity;
   }
 
   /** The agent decided this target is no longer worth pursuing. */
@@ -239,14 +313,90 @@ export class AcquisitionLedger {
     row.abandon_reason = reason;
   }
 
+  /** Stable "was this exact path already tried?" key for a candidate. */
+  candidateAttemptKey(c: TargetCandidate): string | null {
+    // Mirrors localAttemptKey() in localCorpusBody.ts for stored-corpus rows.
+    if (c.local_document_id) return normalizeAttemptUrl(`local:legal_documents/${c.local_document_id}`);
+    if (c.url) return normalizeAttemptUrl(c.url);
+    return null;
+  }
+
+  private attemptedKeys(key: string): Set<string> {
+    return new Set((this.rows.get(key)?.attempts ?? []).map((a) => normalizeAttemptUrl(a.url)));
+  }
+
   /** Candidates for this target whose URL has not been attempted yet. */
   untriedCandidates(key: string): TargetCandidate[] {
     const row = this.targets.get(key);
     if (!row) return [];
-    const tried = new Set(
-      (this.rows.get(key)?.attempts ?? []).map((a) => normalizeAttemptUrl(a.url)),
-    );
-    return row.candidates.filter((c) => !c.url || !tried.has(normalizeAttemptUrl(c.url)));
+    const tried = this.attemptedKeys(key);
+    return row.candidates.filter((c) => {
+      const k = this.candidateAttemptKey(c);
+      return !k || !tried.has(k);
+    });
+  }
+
+  /**
+   * Untried candidates that are a concrete document, in deterministic
+   * acquisition order: stored corpus first, then discovered documents in the
+   * order they were linked, then derived/guessed URLs last. Search and portal
+   * entries are excluded — they can never consume an acquisition attempt.
+   */
+  concreteUntried(key: string): TargetCandidate[] {
+    const rank = (c: TargetCandidate): number => {
+      if (c.local_document_id || c.candidate_kind === "local_document") return 0;
+      if (c.origin === "derived") return 2;
+      return 1;
+    };
+    return this.untriedCandidates(key)
+      .filter((c) => c.candidate_kind !== "discovery_entry")
+      .filter((c) => !!c.url || !!c.local_document_id)
+      .map((c, i) => ({ c, i }))
+      .sort((a, b) => rank(a.c) - rank(b.c) || a.i - b.i)
+      .map((x) => x.c);
+  }
+
+  /** Concrete acquisition attempts still allowed for this authority this run. */
+  attemptsRemaining(key: string): number {
+    const used = this.targets.get(key)?.concrete_attempts ?? 0;
+    return Math.max(0, MAX_CONCRETE_ATTEMPTS_PER_AUTHORITY - used);
+  }
+
+  /** Count one concrete acquisition attempt against the per-authority ceiling. */
+  noteConcreteAttempt(key: string): number {
+    const row = this.targets.get(key);
+    if (!row) return 0;
+    row.concrete_attempts = (row.concrete_attempts ?? 0) + 1;
+    return row.concrete_attempts;
+  }
+
+  canRefreshDiscovery(key: string): boolean {
+    const row = this.targets.get(key);
+    if (!row) return false;
+    return (row.discovery_refreshes_used ?? 0) < MAX_DISCOVERY_REFRESHES_PER_AUTHORITY;
+  }
+
+  noteDiscoveryRefresh(key: string): number {
+    const row = this.targets.get(key);
+    if (!row) return 0;
+    row.discovery_refreshes_used = (row.discovery_refreshes_used ?? 0) + 1;
+    return row.discovery_refreshes_used;
+  }
+
+  markExhausted(key: string, reason: string): void {
+    const row = this.targets.get(key);
+    if (!row) return;
+    row.exhausted = true;
+    row.exhaust_reason = reason;
+  }
+
+  /** The one bounded pre-memo acquisition attempt this run is allowed. */
+  memoGateUsed(): boolean {
+    return this.memo_gate_used;
+  }
+
+  markMemoGateUsed(): void {
+    this.memo_gate_used = true;
   }
 
   /**
@@ -259,12 +409,27 @@ export class AcquisitionLedger {
       .map((t) => ({ ...t, untried: this.untriedCandidates(t.authority_key) }));
   }
 
+  /** Unresolved targets that still have a concrete path worth one attempt. */
+  workableTargets(): AcquisitionTargetRow[] {
+    return [...this.targets.values()].filter((t) =>
+      !t.abandoned && !t.exhausted && !this.acquired(t.authority_key) &&
+      this.attemptsRemaining(t.authority_key) > 0 &&
+      this.concreteUntried(t.authority_key).length > 0
+    );
+  }
+
   allTargets(): AcquisitionTargetRow[] {
     return [...this.targets.values()];
   }
 
+
   toJSON(): AcquisitionLedgerJson {
-    return { rows: this.all(), reads: this.allReads(), targets: this.allTargets() };
+    return {
+      rows: this.all(),
+      reads: this.allReads(),
+      targets: this.allTargets(),
+      memo_gate_used: this.memo_gate_used,
+    };
   }
 
   static fromJSON(json: AcquisitionLedgerJson | null | undefined): AcquisitionLedger {
@@ -272,8 +437,10 @@ export class AcquisitionLedger {
     for (const r of json?.rows ?? []) l.rows.set(r.authority_key, r);
     for (const r of json?.reads ?? []) l.reads.set(r.source_id, r);
     for (const t of json?.targets ?? []) l.targets.set(t.authority_key, t);
+    l.memo_gate_used = json?.memo_gate_used === true;
     return l;
   }
+
 
   /**
    * Short guidance handed back to the agent with a fetch result. Purely

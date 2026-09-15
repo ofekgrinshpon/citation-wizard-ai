@@ -35,6 +35,14 @@ import {
   type AcquisitionLedgerJson,
   authorityKeyOf,
 } from "../tools/acquisitionLedger.ts";
+import {
+  type AcquisitionStats,
+  attachDiscoveryResults,
+  emptyAcquisitionStats,
+  pickMemoAcquisitionTarget,
+  runAcquireAuthority,
+} from "../tools/acquisitionOrchestrator.ts";
+
 import { AGENT_SYSTEM_PROMPT, buildAgentUserMessage, MEMO_TOOL } from "./prompt.ts";
 import { StopPolicy, type StopPolicyJson } from "./stopPolicy.ts";
 import { CommitTracker, obligationsSatisfied } from "./commitPolicy.ts";
@@ -82,6 +90,7 @@ const TOOL_SPECS: ToolSpec[] = [
         query: { type: "string" },
         scope: { type: "string", enum: ["web", "corpus", "official", "academic"] },
         limit: { type: "number" },
+        for_authority: { type: "string" },
       },
       required: ["query"],
     },
@@ -89,7 +98,7 @@ const TOOL_SPECS: ToolSpec[] = [
   {
     name: "raw_web_search",
     description:
-      "חיפוש אינטרנט רגיל ורחב (תוצאות מדורגות גולמיות, בלי תשובה מנוסחת). השתמש בו כשתוצאות חיפוש גולמיות עשויות לאתר מקורות או מסמכים. domain_filter הוא אופציונלי. תוצאות אינן ראיה ואינן ניתנות לציטוט לפני fetch.",
+      "חיפוש אינטרנט רגיל ורחב (תוצאות מדורגות גולמיות, בלי תשובה מנוסחת). השתמש בו כשתוצאות חיפוש גולמיות עשויות לאתר מקורות או מסמכים. domain_filter הוא אופציונלי. אם החיפוש נועד לאסמכתה מסוימת שכבר נפתח לה יעד — העבר for_authority. תוצאות אינן ראיה ואינן ניתנות לציטוט לפני fetch.",
     parameters: {
       type: "object",
       additionalProperties: false,
@@ -97,6 +106,7 @@ const TOOL_SPECS: ToolSpec[] = [
         query: { type: "string" },
         limit: { type: "number" },
         domain_filter: { type: "array", items: { type: "string" } },
+        for_authority: { type: "string" },
       },
       required: ["query"],
     },
@@ -118,6 +128,17 @@ const TOOL_SPECS: ToolSpec[] = [
         drop_reason: { type: "string" },
       },
       required: ["kind"],
+    },
+  },
+  {
+    name: "acquire_authority",
+    description:
+      "השגה חסומה של גוף אסמכתה שכבר נפתח לה יעד (authority_key מ-lookup_authority). המערכת מנסה בעצמה, לפי סדר קבוע, את המועמדים הקונקרטיים הידועים עד להשגת גוף אמיתי שזהותו אושרה. אינה מרחיבה שום שער קבילות: כל גוף עובר בדיוק את אותן בדיקות כמו fetch. אם יוחזר needs_discovery — חפש נתיב אחר עם for_authority ואז קרא שוב.",
+    parameters: {
+      type: "object",
+      additionalProperties: false,
+      properties: { authority_key: { type: "string" } },
+      required: ["authority_key"],
     },
   },
   {
@@ -158,7 +179,8 @@ export interface AgentTraceEntry {
   summary: string;
 }
 
-export interface AgentContextStats {
+
+export interface AgentContextStats extends AcquisitionStats {
   largest_tool_response_chars: number;
   evidence_context_chars_last_turn: number;
   repeated_tool_calls_prevented: number;
@@ -192,6 +214,7 @@ export interface AgentContextStats {
 
 export function newAgentStats(): AgentContextStats {
   return {
+    ...emptyAcquisitionStats(),
     largest_tool_response_chars: 0,
     evidence_context_chars_last_turn: 0,
     repeated_tool_calls_prevented: 0,
@@ -484,7 +507,51 @@ export async function runResearchAgent(opts: {
       const args = parseJsonLoose<Record<string, unknown>>(call.arguments) ?? {};
       turnAction = turnAction || call.name;
       if (call.name === MEMO_TOOL.name) {
-        memo = normalizeMemo(args);
+        const candidateMemo = normalizeMemo(args);
+        // One bounded pre-memo acquisition check per run: a CORE claim names
+        // an authority that was opened, never acquired, and still has an
+        // untried concrete path. If that attempt produces new evidence, the
+        // memo is handed back ONCE so it can take the new body into account.
+        const gateKey = !ledger.memoGateUsed() && candidateMemo?.claims.length
+          ? pickMemoAcquisitionTarget(ledger, candidateMemo.claims)
+          : null;
+        if (gateKey && policy.checkTool("fetch") === null) {
+          ledger.markMemoGateUsed();
+          stats.authority_memo_gate_used += 1;
+          const acq = await runAcquireAuthority(gateKey, {
+            store: opts.store,
+            discovered,
+            ledger,
+            admin: opts.admin,
+            canFetch: () => policy.checkTool("fetch") === null,
+            noteFetch: () => policy.note("fetch"),
+            stats,
+            maxAttempts: 1,
+          });
+          if (acq.status === "acquired") {
+            trace.push({
+              step: policy.steps,
+              tool: "memo_acquisition_gate",
+              input: { authority_key: gateKey },
+              summary: `acquired ${acq.source_id}`,
+            });
+            messages.push({
+              role: "tool",
+              tool_call_id: call.id,
+              content: JSON.stringify({
+                memo_not_accepted_yet: true,
+                acquired_authority: gateKey,
+                source_id: acq.source_id,
+                exact_source_text: acq.exact_source_text,
+                instruction:
+                  `לפני קבלת התזכיר הושג גוף אמיתי עבור ${gateKey} (${acq.source_id}). קרא ממנו ממוקד ב-fetch({source_id, query}) אם צריך, עדכן את הטענות והראיות בהתאם, והגש את התזכיר שוב. זו בדיקה חד-פעמית.`,
+              }),
+              digest: JSON.stringify({ tool: "memo_acquisition_gate", summary: `acquired ${gateKey}` }),
+            });
+            continue;
+          }
+        }
+        memo = candidateMemo;
         trace.push({
           step: policy.steps,
           tool: "submit_research_memo",
@@ -494,6 +561,7 @@ export async function runResearchAgent(opts: {
         messages.push({ role: "tool", tool_call_id: call.id, content: JSON.stringify({ received: true }) });
         break;
       }
+
 
       const scope = typeof args.scope === "string" ? args.scope as SearchScope : undefined;
       const blocked = policy.checkTool(call.name, scope);
@@ -529,7 +597,14 @@ export async function runResearchAgent(opts: {
           // Provenance only — the relay gate still decides eligibility.
           registerCandidateProvenance(r.url, scope === "official" ? "search_first" : "retrieved");
         }
+        const att = attachDiscoveryResults(ledger, out.results, {
+          forAuthority: typeof args.for_authority === "string" ? args.for_authority : undefined,
+          stats,
+        });
         payload = compactSearchOutput(out) as unknown as Record<string, unknown>;
+        if (att.attached) payload.attached_to_targets = att.targets;
+        if (att.unknown_target) payload.unknown_authority_key = att.unknown_target;
+
         summary = `scope=${out.scope} results=${out.results.length}${out.error ? ` error=${out.error}` : ""}`;
         timer.add("search", Date.now() - toolStarted);
       } else if (call.name === "raw_web_search") {
@@ -573,6 +648,10 @@ export async function runResearchAgent(opts: {
           }
           stats.raw_web_search_calls += 1;
           stats.raw_web_search_results += out.results.length;
+          const attRaw = attachDiscoveryResults(ledger, out.results, {
+            forAuthority: typeof args.for_authority === "string" ? args.for_authority : undefined,
+            stats,
+          });
           payload = {
             error: out.error,
             results: out.results.map((r) => ({
@@ -584,9 +663,12 @@ export async function runResearchAgent(opts: {
               date: r.published_date,
               possible_docket: r.possible_docket,
             })),
+            attached_to_targets: attRaw.attached ? attRaw.targets : undefined,
+            unknown_authority_key: attRaw.unknown_target,
             note:
               "תוצאות חיפוש גולמיות בלבד. אינן ראיה: יש להביא את גוף המסמך ב-fetch לפני כל שימוש.",
           };
+
           summary = `raw_web results=${out.results.length}${out.error ? ` error=${out.error}` : ""}`;
           timer.add("search", Date.now() - toolStarted);
         }
@@ -650,6 +732,12 @@ export async function runResearchAgent(opts: {
           ledger.openTarget(out.authority_key, {
             label: out.candidates[0]?.label,
             reopen: true,
+            // The identity of the target is fixed here, server-side, from the
+            // lookup input — never from anything the model says later.
+            expected_identity: out.candidates.find((c) => c.expected_identity)?.expected_identity ??
+              (lookupInput.kind === "case"
+                ? { docket: lookupInput.docket }
+                : { statute: lookupInput.statute, section: lookupInput.section }),
             candidates: out.candidates
               .filter((c) => c.url || c.local_document_id)
               .map((c) => ({
@@ -657,16 +745,42 @@ export async function runResearchAgent(opts: {
                 url: c.url,
                 label: c.label,
                 candidate_kind: c.candidate_kind,
+                local_document_id: c.local_document_id,
+                origin: c.local_document_id
+                  ? "local_corpus" as const
+                  : c.candidate_kind === "discovery_entry"
+                  ? "official_search_entry" as const
+                  : "derived" as const,
+                attach_basis: "lookup_authority",
               })),
           });
-          if (!before) stats.acquisition_targets_opened += 1;
+          if (!before) {
+            stats.acquisition_targets_opened += 1;
+            stats.authority_targets_opened += 1;
+          }
         }
         payload = out as unknown as Record<string, unknown>;
         summary = `candidates=${out.candidates.length} registry=${out.registry_hint ?? "none"} target=${
           out.authority_key ?? "none"
         }`;
         timer.add("lookup", Date.now() - toolStarted);
+      } else if (call.name === "acquire_authority") {
+        opts.onActivity?.("reading");
+        const acq = await runAcquireAuthority(String(args.authority_key ?? ""), {
+          store: opts.store,
+          discovered,
+          ledger,
+          admin: opts.admin,
+          canFetch: () => policy.checkTool("fetch") === null,
+          noteFetch: () => policy.note("fetch"),
+          stats,
+        });
+        timer.add("fetch", Date.now() - toolStarted);
+        payload = acq as unknown as Record<string, unknown>;
+        summary = `acquire ${acq.authority_key} → ${acq.status}${acq.source_id ? ` ${acq.source_id}` : ""}`;
+        turnNoOp = acq.status !== "acquired";
       } else if (call.name === "fetch") {
+
         opts.onActivity?.("reading");
         const out = await runFetch(
           opts.store,
@@ -727,6 +841,25 @@ export async function runResearchAgent(opts: {
           payload = minimalAlreadyReadPayload(out.source_id, repeatCount, opts.store);
           summary = `already_read_noop ${out.source_id} x${repeatCount}`;
         }
+
+        // Re-reading a source that yields nothing more, while an authority the
+        // agent opened still has an untried concrete path, is exactly where
+        // runs used to stall. Deterministic pointer only — nothing is forced.
+        const sourceSpent = out.already_read ||
+          (out.source_id ? ledger.readState(out.source_id)?.exhausted === true : false) ||
+          (typeof args.locator === "string" && ledger.knownMissingLocator(out.source_id ?? "", args.locator));
+        if (sourceSpent) {
+          const workable = ledger.workableTargets()[0];
+          if (workable) {
+            payload.untried_acquisition_path = {
+              authority_key: workable.authority_key,
+              untried_candidates: ledger.concreteUntried(workable.authority_key).length,
+              instruction:
+                `נותר נתיב השגה שלא נוסה עבור ${workable.authority_key}. אפשר לקרוא ל-acquire_authority({authority_key:"${workable.authority_key}"}).`,
+            };
+          }
+        }
+
       } else {
         payload = { error: `unknown_tool:${call.name}` };
         summary = `unknown_tool:${call.name}`;
