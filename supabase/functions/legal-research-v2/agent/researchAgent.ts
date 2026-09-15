@@ -732,6 +732,12 @@ export async function runResearchAgent(opts: {
           ledger.openTarget(out.authority_key, {
             label: out.candidates[0]?.label,
             reopen: true,
+            // The identity of the target is fixed here, server-side, from the
+            // lookup input — never from anything the model says later.
+            expected_identity: out.candidates.find((c) => c.expected_identity)?.expected_identity ??
+              (lookupInput.kind === "case"
+                ? { docket: lookupInput.docket }
+                : { statute: lookupInput.statute, section: lookupInput.section }),
             candidates: out.candidates
               .filter((c) => c.url || c.local_document_id)
               .map((c) => ({
@@ -739,16 +745,42 @@ export async function runResearchAgent(opts: {
                 url: c.url,
                 label: c.label,
                 candidate_kind: c.candidate_kind,
+                local_document_id: c.local_document_id,
+                origin: c.local_document_id
+                  ? "local_corpus" as const
+                  : c.candidate_kind === "discovery_entry"
+                  ? "official_search_entry" as const
+                  : "derived" as const,
+                attach_basis: "lookup_authority",
               })),
           });
-          if (!before) stats.acquisition_targets_opened += 1;
+          if (!before) {
+            stats.acquisition_targets_opened += 1;
+            stats.authority_targets_opened += 1;
+          }
         }
         payload = out as unknown as Record<string, unknown>;
         summary = `candidates=${out.candidates.length} registry=${out.registry_hint ?? "none"} target=${
           out.authority_key ?? "none"
         }`;
         timer.add("lookup", Date.now() - toolStarted);
+      } else if (call.name === "acquire_authority") {
+        opts.onActivity?.("reading");
+        const acq = await runAcquireAuthority(String(args.authority_key ?? ""), {
+          store: opts.store,
+          discovered,
+          ledger,
+          admin: opts.admin,
+          canFetch: () => policy.checkTool("fetch") === null,
+          noteFetch: () => policy.note("fetch"),
+          stats,
+        });
+        timer.add("fetch", Date.now() - toolStarted);
+        payload = acq as unknown as Record<string, unknown>;
+        summary = `acquire ${acq.authority_key} → ${acq.status}${acq.source_id ? ` ${acq.source_id}` : ""}`;
+        turnNoOp = acq.status !== "acquired";
       } else if (call.name === "fetch") {
+
         opts.onActivity?.("reading");
         const out = await runFetch(
           opts.store,
