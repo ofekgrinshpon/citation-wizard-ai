@@ -102,21 +102,25 @@ export function buildResearchStateMessage(input: {
     return `${row.authority_key}: טרם הושג. נתיבים שנכשלו: ${failures || "(אין)"}`;
   });
 
-  // Acquisition targets the agent itself opened and has not obtained. Listed
-  // with their untried candidates so the option survives context compaction.
+  // Acquisition targets the agent itself opened and has not obtained. Only
+  // CONCRETE untried candidates are listed (search / portal entries can never
+  // yield a body), so the option survives context compaction and resume.
   // Informational only: no target has to be pursued.
   const openTargets = ledger.unresolvedTargets()
-    .filter((t) => t.untried.length > 0)
-    .map((t) => {
-      const list = t.untried.slice(0, 4)
+    .filter((t) => !t.exhausted)
+    .map((t) => ({ t, untried: ledger.concreteUntried(t.authority_key) }))
+    .filter((x) => x.untried.length > 0)
+    .map(({ t, untried }) => {
+      const list = untried.slice(0, 4)
         .map((c) =>
-          `${c.result_id ?? "?"}${c.candidate_kind === "discovery_entry" ? " (דף חיפוש)" : ""}${
+          `${c.result_id ?? "?"}${c.local_document_id ? " (קורפוס מקומי)" : ""}${
             c.url ? ` ${hostOfUrl(c.url)}` : ""
           }`
         )
         .join(", ");
-      return `${t.authority_key}${t.label ? ` — ${t.label.slice(0, 60)}` : ""}: מועמדים שטרם נוסו: ${list}`;
+      return `${t.authority_key}${t.label ? ` — ${t.label.slice(0, 60)}` : ""}: מועמדים קונקרטיים שטרם נוסו: ${list} (ניתן: acquire_authority({authority_key:"${t.authority_key}"}))`;
     });
+
 
   const budgets = `תקציב שנותר: צעדי מחקר ${policy.researchStepsLeft}, search ${
     Math.max(0, intake.budgets.max_search_calls - policy.totalSearchCalls)
