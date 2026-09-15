@@ -424,7 +424,12 @@ export class AcquisitionLedger {
 
 
   toJSON(): AcquisitionLedgerJson {
-    return { rows: this.all(), reads: this.allReads(), targets: this.allTargets() };
+    return {
+      rows: this.all(),
+      reads: this.allReads(),
+      targets: this.allTargets(),
+      memo_gate_used: this.memo_gate_used,
+    };
   }
 
   static fromJSON(json: AcquisitionLedgerJson | null | undefined): AcquisitionLedger {
@@ -432,8 +437,10 @@ export class AcquisitionLedger {
     for (const r of json?.rows ?? []) l.rows.set(r.authority_key, r);
     for (const r of json?.reads ?? []) l.reads.set(r.source_id, r);
     for (const t of json?.targets ?? []) l.targets.set(t.authority_key, t);
+    l.memo_gate_used = json?.memo_gate_used === true;
     return l;
   }
+
 
   /**
    * Short guidance handed back to the agent with a fetch result. Purely
