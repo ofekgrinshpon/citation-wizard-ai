@@ -479,3 +479,34 @@ export async function runAcquireAuthority(
     instruction: `עצירה זמנית עבור ${key}. נותרו ${ledger.attemptsRemaining(key)} ניסיונות.`,
   });
 }
+
+// ─── pre-memo acquisition gate ──────────────────────────────────────────────
+
+/**
+ * The single, deterministic pre-memo check: is a CORE claim of the memo tied
+ * to an authority the agent opened, never acquired, and that still has an
+ * untried concrete candidate?
+ *
+ * The link is a plain identity match between the claim text and the target's
+ * own docket / statute name. No relevance model, no ranking, no inference —
+ * if nothing matches literally, the memo is accepted as submitted.
+ */
+export function pickMemoAcquisitionTarget(
+  ledger: AcquisitionLedger,
+  claims: Array<{ proposition: string; importance?: string }>,
+): string | null {
+  const core = claims.filter((c) => (c.importance ?? "core") === "core").map((c) => c.proposition ?? "");
+  if (!core.length) return null;
+  for (const t of ledger.workableTargets()) {
+    const key = t.authority_key;
+    const docket = t.expected_identity?.docket ?? (key.startsWith("case:") ? key.slice(5) : undefined);
+    if (docket && core.some((p) => textCarriesDocket(p, docket))) return key;
+    const statute = t.expected_identity?.statute ??
+      (key.startsWith("statute:") ? key.slice(8).split("#")[0] : undefined);
+    if (statute) {
+      const coreName = normalizeAuthorityText(statuteCoreName(statute));
+      if (coreName.length >= 4 && core.some((p) => normalizeAuthorityText(p).includes(coreName))) return key;
+    }
+  }
+  return null;
+}
