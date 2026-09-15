@@ -413,6 +413,13 @@ export async function runAcquireAuthority(
         { admin: deps.admin },
       );
     } catch (e) {
+      // Record the attempt so the same path is never offered again.
+      ledger.note(key, {
+        url: c.url ?? `local:legal_documents/${c.local_document_id}`,
+        outcome: "failed",
+        reason: `fetch_error: ${e instanceof Error ? e.message : String(e)}`.slice(0, 120),
+        at: new Date().toISOString(),
+      });
       tried.push({
         candidate: candidateLabel(c),
         outcome: "failed",
@@ -420,6 +427,7 @@ export async function runAcquireAuthority(
       });
       continue;
     }
+
 
     if (ledger.acquired(key)) {
       const sid = ledger.get(key)!.acquired_source_id!;
