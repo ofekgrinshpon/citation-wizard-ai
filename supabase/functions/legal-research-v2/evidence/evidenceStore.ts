@@ -221,7 +221,23 @@ export class EvidenceStore {
    * to quote verbatim, and would reconstruct spans from memory.
    */
   serveQuotes(source_id: string, windows: string[], issue?: string): ServedQuote[] {
+    return this.serveQuotesWithNovelty(source_id, windows, issue).quotes;
+  }
+
+  /**
+   * Same serving path, but the caller also learns how many of the returned
+   * quotes were NEW (not already served earlier in this run). Quote ids, text
+   * and dedupe semantics are identical to `serveQuotes` — only the novelty
+   * count is additional. It is what lets the run tell a productive targeted
+   * re-read from paraphrased span hunting over text already in hand.
+   */
+  serveQuotesWithNovelty(
+    source_id: string,
+    windows: string[],
+    issue?: string,
+  ): { quotes: ServedQuote[]; new_count: number } {
     const served: ServedQuote[] = [];
+    let new_count = 0;
     for (const w of windows) {
       const text = cleanQuotableText(w).slice(0, QUOTE_LIMITS.MAX_CHARS);
       if (text.length < 40) continue;
@@ -234,11 +250,12 @@ export class EvidenceStore {
       const q: ServedQuote = { quote_id: `${source_id}-q${this.quoteSeq}`, source_id, issue, text };
       this.quotes.push(q);
       served.push(q);
+      new_count += 1;
     }
     if (this.quotes.length > QUOTE_LIMITS.MAX_KEPT) {
       this.quotes = this.quotes.slice(this.quotes.length - QUOTE_LIMITS.MAX_KEPT);
     }
-    return served;
+    return { quotes: served, new_count };
   }
 
   /** Literal excerpts already served in this run (most recent last). */

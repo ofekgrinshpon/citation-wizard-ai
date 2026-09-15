@@ -161,13 +161,22 @@ export function serveExactText(
   source_id: string,
   windows: string[] | undefined,
   issue?: string,
-): { windows?: string[]; exact_source_text?: Array<{ quote_id: string; text: string }> } {
-  if (!windows?.length) return {};
-  const served: ServedQuote[] = store.serveQuotes(source_id, windows, issue);
-  if (!served.length) return { windows };
+): {
+  windows?: string[];
+  exact_source_text?: Array<{ quote_id: string; text: string }>;
+  /** How many of the served quotes were new to this run (0 = nothing new). */
+  new_quote_count: number;
+  served_quote_count: number;
+} {
+  if (!windows?.length) return { new_quote_count: 0, served_quote_count: 0 };
+  const { quotes: served, new_count }: { quotes: ServedQuote[]; new_count: number } = store
+    .serveQuotesWithNovelty(source_id, windows, issue);
+  if (!served.length) return { windows, new_quote_count: 0, served_quote_count: 0 };
   return {
     windows: served.map((q) => q.text),
     exact_source_text: served.map((q) => ({ quote_id: q.quote_id, text: q.text })),
+    new_quote_count: new_count,
+    served_quote_count: served.length,
   };
 }
 
@@ -249,6 +258,17 @@ export interface FetchOutput {
   search_path_exhausted?: boolean;
   same_issue_no_yield?: number;
   no_new_evidence?: boolean;
+  /**
+   * Span-hunting discipline (v2_span_hunting_efficiency_v1): repeated targeted
+   * reads of this source stopped producing any new quotable text.
+   */
+  span_hunting_exhausted?: boolean;
+  /** This read was answered from state; no in-document search was performed. */
+  span_hunting_suppressed?: boolean;
+  /** Internal telemetry for the read that just ran. */
+  span_hunting_newly_exhausted?: boolean;
+  new_quote_count?: number;
+  served_quote_count?: number;
   error?: string;
 }
 
@@ -378,7 +398,37 @@ export async function runFetch(
     const sectionRequest = input.expected_identity?.section ?? input.locator ??
       (input.want === "relevant_section" ? input.query : undefined);
     const sectionToken = sectionRequest ? normalizeSectionToken(sectionRequest) : null;
+
+    // ── Span-hunting suppression (v2_span_hunting_efficiency_v1) ──────────
+    // Repeated paraphrased reads of a body that keep returning text already
+    // served cost a whole agent turn each and add nothing. Once this source
+    // is span-hunting exhausted, such a read is answered from state without
+    // running another in-document search. Structurally different reads — a
+    // section/locator never attempted here, or an explicit refetch_reason —
+    // still execute normally, so no source is ever permanently locked.
+    const structurallyNew = (!!sectionToken && ledger?.isNewLocator(src.source_id, sectionToken) === true &&
+      !ledger?.knownMissingLocator(src.source_id, sectionToken)) ||
+      !!input.refetch_reason?.trim();
+    if (ledger?.spanHuntingExhausted(src.source_id) && !structurallyNew) {
+      const prior = store.servedQuotes(src.source_id).slice(-FETCH_LIMITS.MAX_WINDOWS);
+      const state = ledger.readState(src.source_id);
+      return clampFetchOutput({
+        ok: false,
+        already_read: true,
+        no_new_evidence: true,
+        span_hunting_exhausted: true,
+        span_hunting_suppressed: true,
+        source_id: src.source_id,
+        same_issue_no_yield: state?.no_yield,
+        exact_source_text: prior.length
+          ? prior.map((q) => ({ quote_id: q.quote_id, text: q.text }))
+          : undefined,
+        instruction:
+          `מספר קריאות ממוקדות ב-${src.source_id} לא הפיקו טקסט ציטוט חדש. אל תמשיך לחפש במקור זה בניסוחים שונים. עשה אחת מאלה: (1) השתמש בקטעים המדויקים שכבר הוגשו לך; (2) פנה למקור או לנתיב השגה קונקרטי אחר; (3) הגש את תזכיר המחקר. קריאה בעלת מטרה שונה מהותית (סעיף מסוים שטרם התבקש כאן) עדיין אפשרית.`,
+      });
+    }
     if (sectionToken) {
+      ledger?.noteLocatorAttempt(src.source_id, sectionToken);
       if (ledger?.knownMissingLocator(src.source_id, sectionToken)) {
         const known = locateSection(src.extracted_text, sectionToken, {
           truncated: src.text_length >= FETCH_LIMITS.MAX_TEXT_CHARS,
@@ -422,9 +472,14 @@ export async function runFetch(
         found.found ? found.windows : fallbackWindows,
         found.found ? `סעיף ${sectionToken}` : input.query,
       );
+      const sectionYield = ledger?.noteQuoteYield(src.source_id, servedSection.new_quote_count);
       return clampFetchOutput({
         ok: found.found && src.fetch_status === "ok",
         already_read: true,
+        new_quote_count: servedSection.new_quote_count,
+        served_quote_count: servedSection.served_quote_count,
+        span_hunting_exhausted: sectionYield?.span_hunting_exhausted || undefined,
+        span_hunting_newly_exhausted: sectionYield?.newly_exhausted || undefined,
         source_id: src.source_id,
         title: src.title,
         text_length: src.text_length,
@@ -459,6 +514,11 @@ export async function runFetch(
       locator: yielded ? null : (input.query ?? input.locator ?? null),
     });
     const servedRead = serveExactText(store, src.source_id, ex.windows, input.query ?? input.locator);
+    if (input.locator) ledger?.noteLocatorAttempt(src.source_id, input.locator);
+    const quoteYield = ledger?.noteQuoteYield(src.source_id, servedRead.new_quote_count);
+    const spanAdvisory = quoteYield?.span_hunting_exhausted
+      ? ` מספר קריאות ממוקדות במקור זה לא הפיקו טקסט ציטוט חדש; קריאות נוספות בניסוח אחר יוחזרו ללא חיפוש נוסף. השתמש בקטעים שכבר הוגשו, פנה למקור אחר, או הגש את התזכיר.`
+      : "";
     const advisory = !yielded && read?.exhausted
       ? ` שים לב: ${read.no_yield} קריאות ממוקדות רצופות על מקור זה לא הניבו ראיה חדשה. ההמלצה היא לפנות למקור אחר או לנתיב השגה אחר, אך ההחלטה שלך.`
       : "";
@@ -473,12 +533,18 @@ export async function runFetch(
       identity_found: src.identity_fields,
       windows: servedRead.windows,
       exact_source_text: servedRead.exact_source_text,
-      no_new_evidence: yielded ? undefined : true,
+      new_quote_count: servedRead.new_quote_count,
+      served_quote_count: servedRead.served_quote_count,
+      span_hunting_exhausted: quoteYield?.span_hunting_exhausted || undefined,
+      span_hunting_newly_exhausted: quoteYield?.newly_exhausted || undefined,
+      no_new_evidence: yielded && servedRead.new_quote_count > 0 ? undefined : true,
       search_path_exhausted: !yielded && read?.exhausted ? true : undefined,
       same_issue_no_yield: yielded ? undefined : read?.no_yield,
       instruction: yielded
-        ? `קריאה ממוקדת בתוך ${src.source_id} (${ex.from}).${QUOTE_RULE}`
-        : `לא נמצאה התאמה לשאילתה בתוך ${src.source_id}; הוחזרה פתיחת המסמך בלבד (טקסט מילולי).${advisory}${QUOTE_RULE}`,
+        ? `קריאה ממוקדת בתוך ${src.source_id} (${ex.from}).${
+          servedRead.new_quote_count > 0 ? "" : " הטקסט שהוחזר כבר הוגש לך קודם — אין כאן ראיה חדשה."
+        }${spanAdvisory}${QUOTE_RULE}`
+        : `לא נמצאה התאמה לשאילתה בתוך ${src.source_id}; הוחזרה פתיחת המסמך בלבד (טקסט מילולי).${advisory}${spanAdvisory}${QUOTE_RULE}`,
     });
   }
 

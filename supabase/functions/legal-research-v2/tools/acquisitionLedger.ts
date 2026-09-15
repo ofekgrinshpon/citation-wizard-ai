@@ -39,6 +39,15 @@ export interface SourceReadRow {
   /** Section tokens already asked for on this source that were not present. */
   missing_locators: string[];
   exhausted: boolean;
+  /**
+   * Span-hunting discipline (v2_span_hunting_efficiency_v1). Counted on a
+   * different axis than `no_yield`: a query can match somewhere in the body
+   * (yield) and still return only text already served (no new quote).
+   */
+  consecutive_no_new_quotes?: number;
+  span_hunting_exhausted?: boolean;
+  /** Section tokens / locators already attempted here, present or not. */
+  attempted_locators?: string[];
 }
 
 /**
@@ -133,6 +142,13 @@ export function authorityKeyOf(input: { docket?: string; statute?: string; secti
 /** Consecutive no-evidence targeted reads on one source before we call it exhausted. */
 export const NO_YIELD_EXHAUSTION_THRESHOLD = 3;
 
+/**
+ * Consecutive targeted re-reads of the same source that produce NO new quote
+ * before that source is treated as span-hunting exhausted for now
+ * (v2_span_hunting_efficiency_v1).
+ */
+export const NO_NEW_QUOTE_THRESHOLD = 3;
+
 export class AcquisitionLedger {
   private rows = new Map<string, AuthorityLedgerRow>();
   private reads = new Map<string, SourceReadRow>();
@@ -200,8 +216,7 @@ export class AcquisitionLedger {
   // ── Per-source targeted-read yield (same-source no-yield exhaustion) ────
   /** Record one targeted read against an already stored body. */
   noteRead(source_id: string, opts: { yielded: boolean; locator?: string | null }): SourceReadRow {
-    const row = this.reads.get(source_id) ??
-      { source_id, no_yield: 0, yielded: 0, missing_locators: [], exhausted: false };
+    const row = this.reads.get(source_id) ?? this.newReadRow(source_id);
     if (opts.yielded) {
       row.yielded += 1;
       row.no_yield = 0;
@@ -218,6 +233,66 @@ export class AcquisitionLedger {
 
   readState(source_id: string): SourceReadRow | null {
     return this.reads.get(source_id) ?? null;
+  }
+
+  // ── Span-hunting discipline (v2_span_hunting_efficiency_v1) ─────────────
+  /**
+   * Record the QUOTE novelty of one targeted re-read. Productive means the
+   * read caused at least one new quote to be added to the evidence store;
+   * anything else is a paraphrase over text the run already holds.
+   */
+  noteQuoteYield(
+    source_id: string,
+    new_quotes: number,
+  ): SourceReadRow & { newly_exhausted: boolean } {
+    const row = this.reads.get(source_id) ?? this.newReadRow(source_id);
+    const was = row.span_hunting_exhausted === true;
+    if (new_quotes > 0) {
+      row.consecutive_no_new_quotes = 0;
+      row.span_hunting_exhausted = false;
+    } else {
+      row.consecutive_no_new_quotes = (row.consecutive_no_new_quotes ?? 0) + 1;
+      if (row.consecutive_no_new_quotes >= NO_NEW_QUOTE_THRESHOLD) row.span_hunting_exhausted = true;
+    }
+    this.reads.set(source_id, row);
+    return { ...row, newly_exhausted: !was && row.span_hunting_exhausted === true };
+  }
+
+  spanHuntingExhausted(source_id: string): boolean {
+    return this.reads.get(source_id)?.span_hunting_exhausted === true;
+  }
+
+  /** True when this locator / section token was never asked for on this source. */
+  isNewLocator(source_id: string, locator?: string | null): boolean {
+    const loc = locator?.trim();
+    if (!loc) return false;
+    const row = this.reads.get(source_id);
+    if (!row) return true;
+    if (row.missing_locators.includes(loc)) return false;
+    return !(row.attempted_locators ?? []).includes(loc);
+  }
+
+  /** Remember a locator / section token that was asked for on this source. */
+  noteLocatorAttempt(source_id: string, locator?: string | null): void {
+    const loc = locator?.trim();
+    if (!loc) return;
+    const row = this.reads.get(source_id) ?? this.newReadRow(source_id);
+    row.attempted_locators = row.attempted_locators ?? [];
+    if (!row.attempted_locators.includes(loc)) row.attempted_locators.push(loc);
+    this.reads.set(source_id, row);
+  }
+
+  private newReadRow(source_id: string): SourceReadRow {
+    return {
+      source_id,
+      no_yield: 0,
+      yielded: 0,
+      missing_locators: [],
+      exhausted: false,
+      consecutive_no_new_quotes: 0,
+      span_hunting_exhausted: false,
+      attempted_locators: [],
+    };
   }
 
   /** True when the same locator was already established as missing here. */
