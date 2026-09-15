@@ -115,9 +115,11 @@ export function buildClaimTemporalEvidence(
   );
 
   const refs = (claim.sources ?? []).slice(0, TEMPORAL_EVIDENCE_LIMITS.MAX_SOURCES_PER_CLAIM);
+  const capableOwn: EvidenceSource[] = [];
   for (const ref of refs) {
     const source = store.get(ref.source_id);
     if (!source || !isCurrentLawCapable(source)) continue;
+    capableOwn.push(source);
 
     const local: TemporalExcerpt[] = [];
     const tokens = sections.length
@@ -159,6 +161,22 @@ export function buildClaimTemporalEvidence(
       excerpts.push(...local);
       if (!sourceIds.includes(source.source_id)) sourceIds.push(source.source_id);
     }
+  }
+
+  // Same-source fallback: the claim HAS a current-law-capable supporting
+  // source, but no precise section/span excerpt could be produced. Use a
+  // bounded prefix of THAT source only — never an unrelated source.
+  if (!excerpts.length && capableOwn.length) {
+    for (const source of capableOwn) {
+      excerpts.push(prefixExcerpt(source));
+      if (!sourceIds.includes(source.source_id)) sourceIds.push(source.source_id);
+    }
+    return {
+      claim_id: claim.claim_id,
+      excerpts: excerpts.slice(0, TEMPORAL_EVIDENCE_LIMITS.MAX_EXCERPTS_PER_CLAIM),
+      source_ids: sourceIds,
+      fallback_prefix: true,
+    };
   }
 
   return {
