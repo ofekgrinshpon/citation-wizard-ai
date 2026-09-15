@@ -507,7 +507,51 @@ export async function runResearchAgent(opts: {
       const args = parseJsonLoose<Record<string, unknown>>(call.arguments) ?? {};
       turnAction = turnAction || call.name;
       if (call.name === MEMO_TOOL.name) {
-        memo = normalizeMemo(args);
+        const candidateMemo = normalizeMemo(args);
+        // One bounded pre-memo acquisition check per run: a CORE claim names
+        // an authority that was opened, never acquired, and still has an
+        // untried concrete path. If that attempt produces new evidence, the
+        // memo is handed back ONCE so it can take the new body into account.
+        const gateKey = !ledger.memoGateUsed() && candidateMemo?.claims.length
+          ? pickMemoAcquisitionTarget(ledger, candidateMemo.claims)
+          : null;
+        if (gateKey && policy.checkTool("fetch") === null) {
+          ledger.markMemoGateUsed();
+          stats.authority_memo_gate_used += 1;
+          const acq = await runAcquireAuthority(gateKey, {
+            store: opts.store,
+            discovered,
+            ledger,
+            admin: opts.admin,
+            canFetch: () => policy.checkTool("fetch") === null,
+            noteFetch: () => policy.note("fetch"),
+            stats,
+            maxAttempts: 1,
+          });
+          if (acq.status === "acquired") {
+            trace.push({
+              step: policy.steps,
+              tool: "memo_acquisition_gate",
+              input: { authority_key: gateKey },
+              summary: `acquired ${acq.source_id}`,
+            });
+            messages.push({
+              role: "tool",
+              tool_call_id: call.id,
+              content: JSON.stringify({
+                memo_not_accepted_yet: true,
+                acquired_authority: gateKey,
+                source_id: acq.source_id,
+                exact_source_text: acq.exact_source_text,
+                instruction:
+                  `לפני קבלת התזכיר הושג גוף אמיתי עבור ${gateKey} (${acq.source_id}). קרא ממנו ממוקד ב-fetch({source_id, query}) אם צריך, עדכן את הטענות והראיות בהתאם, והגש את התזכיר שוב. זו בדיקה חד-פעמית.`,
+              }),
+              digest: JSON.stringify({ tool: "memo_acquisition_gate", summary: `acquired ${gateKey}` }),
+            });
+            continue;
+          }
+        }
+        memo = candidateMemo;
         trace.push({
           step: policy.steps,
           tool: "submit_research_memo",
@@ -517,6 +561,7 @@ export async function runResearchAgent(opts: {
         messages.push({ role: "tool", tool_call_id: call.id, content: JSON.stringify({ received: true }) });
         break;
       }
+
 
       const scope = typeof args.scope === "string" ? args.scope as SearchScope : undefined;
       const blocked = policy.checkTool(call.name, scope);
