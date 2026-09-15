@@ -50,6 +50,18 @@ export interface TargetCandidate {
   url?: string;
   label?: string;
   candidate_kind?: "document" | "local_document" | "discovery_entry";
+  /** A stored corpus row is fetchable without a URL. */
+  local_document_id?: string;
+  /** Where the candidate came from. Ordering hint only — never a quality tier. */
+  origin?: "local_corpus" | "official_search_entry" | "search" | "raw_web" | "derived";
+  /** Why this candidate was linked to this authority (telemetry / tests). */
+  attach_basis?: string;
+}
+
+export interface ExpectedTargetIdentity {
+  docket?: string;
+  statute?: string;
+  section?: string;
 }
 
 export interface AcquisitionTargetRow {
@@ -57,6 +69,18 @@ export interface AcquisitionTargetRow {
   label?: string;
   opened_at: string;
   candidates: TargetCandidate[];
+  /**
+   * The identity this target is for, persisted server-side. The model may
+   * select a target, never redefine what it means.
+   */
+  expected_identity?: ExpectedTargetIdentity;
+  /** Concrete acquisition attempts spent on this target across the whole run. */
+  concrete_attempts?: number;
+  /** Targeted discovery refreshes already spent on this target. */
+  discovery_refreshes_used?: number;
+  /** Final for this run: no candidate left, or the attempt ceiling was hit. */
+  exhausted?: boolean;
+  exhaust_reason?: string;
   /** The agent may deliberately drop a target; it then stops being surfaced. */
   abandoned?: boolean;
   abandon_reason?: string;
@@ -66,7 +90,15 @@ export interface AcquisitionLedgerJson {
   rows: AuthorityLedgerRow[];
   reads?: SourceReadRow[];
   targets?: AcquisitionTargetRow[];
+  /** The one bounded pre-memo acquisition attempt already fired this run. */
+  memo_gate_used?: boolean;
 }
+
+/** Total concrete acquisition attempts allowed per authority, for the whole run. */
+export const MAX_CONCRETE_ATTEMPTS_PER_AUTHORITY = 4;
+/** Targeted discovery refreshes allowed per authority, for the whole run. */
+export const MAX_DISCOVERY_REFRESHES_PER_AUTHORITY = 1;
+
 
 /** Compact, agent-facing state of one authority. Derived only, decides nothing. */
 export interface AuthorityState {
