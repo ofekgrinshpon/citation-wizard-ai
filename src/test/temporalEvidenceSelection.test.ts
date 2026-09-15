@@ -224,3 +224,97 @@ describe("temporal evidence — unchanged behaviours", () => {
     expect(ev.source_ids).toHaveLength(0);
   });
 });
+
+describe("temporal evidence — claim isolation patch (no cross-claim fallback)", () => {
+  const unrelatedOfficial = src({
+    source_id: "S9",
+    title: "חוק העונשין, התשל\"ז-1977",
+    extracted_text: "חוק העונשין\n428א. סחיטת דמי חסות - מאסר שש שנים.",
+    identity_fields: { dockets: [], statutes: ["חוק העונשין"], sections: [] },
+  });
+
+  function packOf(claims: VerifiedClaim[]): VerifiedEvidencePack {
+    return { claims, unsupported_claims: [] } as unknown as VerifiedEvidencePack;
+  }
+
+  it("same-source prefix fallback: capable supporting source, no precise excerpt", () => {
+    const own = src({ source_id: "S8", extracted_text: "חוק רישוי עסקים, נוסח משולב, הוראות כלליות בלבד." });
+    const c = claim({
+      proposition: "כיום חובה להציג רישיון עסק במקום בולט",
+      sources: [{ source_id: "S8", display_title: "חוק רישוי עסקים", verified_span: "", support: "supports" }],
+    });
+    const ev = buildClaimTemporalEvidence(c, storeOf([own, unrelatedOfficial]));
+    expect(ev.fallback_prefix).toBe(true);
+    expect(ev.excerpts).toHaveLength(1);
+    expect(ev.excerpts[0].kind).toBe("source_prefix");
+    expect(ev.excerpts[0].source_id).toBe("S8");
+    expect(ev.source_ids).toEqual(["S8"]);
+    expect(renderClaimEvidence(ev)).not.toContain("סחיטת דמי חסות");
+  });
+
+  it("claim supported only by a non-capable blog gets NO prefix even from its own source", () => {
+    const blog = src({
+      source_id: "S2",
+      url: "https://some-blog.example.com/p",
+      title: "סקירה",
+      extracted_text: "סקירה משפטית כללית",
+    });
+    const c = claim({ sources: [{ source_id: "S2", display_title: "סקירה", verified_span: "", support: "supports" }] });
+    const ev = buildClaimTemporalEvidence(c, storeOf([blog, unrelatedOfficial]));
+    expect(ev.excerpts).toHaveLength(0);
+    expect(ev.fallback_prefix).toBe(false);
+  });
+
+  it("sensitive claim with no capable supporting source → deterministic unresolved, no model call, no unrelated sources checked", async () => {
+    const blog = src({
+      source_id: "S2",
+      url: "https://some-blog.example.com/p",
+      title: "סקירה",
+      extracted_text: "סקירה משפטית כללית",
+    });
+    const c = claim({
+      claim_id: "C-BLOG",
+      sources: [{ source_id: "S2", display_title: "סקירה", verified_span: "סקירה משפטית", support: "supports" }],
+    });
+    const usage = newUsageLedger();
+    const { assessments, counters } = await assessTemporalValidity({
+      pack: packOf([c]),
+      store: storeOf([blog, unrelatedOfficial]),
+      model: "test-model",
+      usage,
+    });
+    expect(assessments).toHaveLength(1);
+    expect(assessments[0].temporal_status).toBe("unresolved");
+    expect(assessments[0].detail).toContain("לא נמצאה ראיה ממקור רשמי עדכני");
+    expect(assessments[0].checked_source_ids).toEqual([]);
+    expect(usage.model_calls).toBe(0);
+    expect(counters.temporal_checks_attempted).toBe(0);
+    expect(counters.temporal_unresolved).toBe(1);
+  });
+
+  it("sensitive claim with no supporting sources at all → deterministic unresolved despite capable sources in store", async () => {
+    const c = claim({ claim_id: "C-NONE", sources: [] });
+    const usage = newUsageLedger();
+    const { assessments } = await assessTemporalValidity({
+      pack: packOf([c]),
+      store: storeOf([unrelatedOfficial]),
+      model: "test-model",
+      usage,
+    });
+    expect(assessments[0].temporal_status).toBe("unresolved");
+    expect(assessments[0].checked_source_ids).toEqual([]);
+    expect(usage.model_calls).toBe(0);
+  });
+
+  it("checked_source_ids never include an unrelated source id", async () => {
+    const c = claim({ claim_id: "C-B2", sources: [] });
+    const { assessments } = await assessTemporalValidity({
+      pack: packOf([c]),
+      store: storeOf([src({ source_id: "S-A" }), unrelatedOfficial]),
+      model: "test-model",
+      usage: newUsageLedger(),
+    });
+    expect(assessments[0].checked_source_ids).not.toContain("S-A");
+    expect(assessments[0].checked_source_ids).not.toContain("S9");
+  });
+});
