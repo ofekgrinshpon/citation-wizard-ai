@@ -841,6 +841,25 @@ export async function runResearchAgent(opts: {
           payload = minimalAlreadyReadPayload(out.source_id, repeatCount, opts.store);
           summary = `already_read_noop ${out.source_id} x${repeatCount}`;
         }
+
+        // Re-reading a source that yields nothing more, while an authority the
+        // agent opened still has an untried concrete path, is exactly where
+        // runs used to stall. Deterministic pointer only — nothing is forced.
+        const sourceSpent = out.already_read ||
+          (out.source_id ? ledger.readState(out.source_id)?.exhausted === true : false) ||
+          (typeof args.locator === "string" && ledger.knownMissingLocator(out.source_id ?? "", args.locator));
+        if (sourceSpent) {
+          const workable = ledger.workableTargets()[0];
+          if (workable) {
+            payload.untried_acquisition_path = {
+              authority_key: workable.authority_key,
+              untried_candidates: ledger.concreteUntried(workable.authority_key).length,
+              instruction:
+                `נותר נתיב השגה שלא נוסה עבור ${workable.authority_key}. אפשר לקרוא ל-acquire_authority({authority_key:"${workable.authority_key}"}).`,
+            };
+          }
+        }
+
       } else {
         payload = { error: `unknown_tool:${call.name}` };
         summary = `unknown_tool:${call.name}`;
