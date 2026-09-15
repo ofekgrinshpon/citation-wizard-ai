@@ -597,7 +597,14 @@ export async function runResearchAgent(opts: {
           // Provenance only — the relay gate still decides eligibility.
           registerCandidateProvenance(r.url, scope === "official" ? "search_first" : "retrieved");
         }
+        const att = attachDiscoveryResults(ledger, out.results, {
+          forAuthority: typeof args.for_authority === "string" ? args.for_authority : undefined,
+          stats,
+        });
         payload = compactSearchOutput(out) as unknown as Record<string, unknown>;
+        if (att.attached) payload.attached_to_targets = att.targets;
+        if (att.unknown_target) payload.unknown_authority_key = att.unknown_target;
+
         summary = `scope=${out.scope} results=${out.results.length}${out.error ? ` error=${out.error}` : ""}`;
         timer.add("search", Date.now() - toolStarted);
       } else if (call.name === "raw_web_search") {
