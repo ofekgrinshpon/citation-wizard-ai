@@ -90,6 +90,7 @@ const TOOL_SPECS: ToolSpec[] = [
         query: { type: "string" },
         scope: { type: "string", enum: ["web", "corpus", "official", "academic"] },
         limit: { type: "number" },
+        for_authority: { type: "string" },
       },
       required: ["query"],
     },
@@ -97,7 +98,7 @@ const TOOL_SPECS: ToolSpec[] = [
   {
     name: "raw_web_search",
     description:
-      "חיפוש אינטרנט רגיל ורחב (תוצאות מדורגות גולמיות, בלי תשובה מנוסחת). השתמש בו כשתוצאות חיפוש גולמיות עשויות לאתר מקורות או מסמכים. domain_filter הוא אופציונלי. תוצאות אינן ראיה ואינן ניתנות לציטוט לפני fetch.",
+      "חיפוש אינטרנט רגיל ורחב (תוצאות מדורגות גולמיות, בלי תשובה מנוסחת). השתמש בו כשתוצאות חיפוש גולמיות עשויות לאתר מקורות או מסמכים. domain_filter הוא אופציונלי. אם החיפוש נועד לאסמכתה מסוימת שכבר נפתח לה יעד — העבר for_authority. תוצאות אינן ראיה ואינן ניתנות לציטוט לפני fetch.",
     parameters: {
       type: "object",
       additionalProperties: false,
@@ -105,6 +106,7 @@ const TOOL_SPECS: ToolSpec[] = [
         query: { type: "string" },
         limit: { type: "number" },
         domain_filter: { type: "array", items: { type: "string" } },
+        for_authority: { type: "string" },
       },
       required: ["query"],
     },
@@ -126,6 +128,17 @@ const TOOL_SPECS: ToolSpec[] = [
         drop_reason: { type: "string" },
       },
       required: ["kind"],
+    },
+  },
+  {
+    name: "acquire_authority",
+    description:
+      "השגה חסומה של גוף אסמכתה שכבר נפתח לה יעד (authority_key מ-lookup_authority). המערכת מנסה בעצמה, לפי סדר קבוע, את המועמדים הקונקרטיים הידועים עד להשגת גוף אמיתי שזהותו אושרה. אינה מרחיבה שום שער קבילות: כל גוף עובר בדיוק את אותן בדיקות כמו fetch. אם יוחזר needs_discovery — חפש נתיב אחר עם for_authority ואז קרא שוב.",
+    parameters: {
+      type: "object",
+      additionalProperties: false,
+      properties: { authority_key: { type: "string" } },
+      required: ["authority_key"],
     },
   },
   {
@@ -165,6 +178,7 @@ export interface AgentTraceEntry {
   input: Record<string, unknown>;
   summary: string;
 }
+
 
 export interface AgentContextStats {
   largest_tool_response_chars: number;
