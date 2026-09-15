@@ -315,7 +315,7 @@ describe("invariants preserved", () => {
 
   it("does not change acquisition-target behaviour", () => {
     const ledger = new AcquisitionLedger();
-    ledger.openTarget("case:1239/19", { label: "רע\"א 1239/19" }, []);
+    ledger.openTarget("case:1239/19", { label: "רע\"א 1239/19" });
     for (let i = 0; i < 3; i += 1) ledger.noteQuoteYield("S1", 0);
     expect(ledger.unresolvedTargets().map((t) => t.authority_key)).toContain("case:1239/19");
   });
