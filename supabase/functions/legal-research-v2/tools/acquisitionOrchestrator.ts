@@ -360,7 +360,7 @@ export async function runAcquireAuthority(
       // Not an acquisition attempt: nothing left the process.
       ledger.note(key, {
         url: c.url,
-        outcome: "blocked",
+        outcome: "failed",
         reason: "unsafe_url",
         at: new Date().toISOString(),
       });
@@ -450,7 +450,7 @@ export async function runAcquireAuthority(
     if (ledger.concreteUntried(key)[0] === c) {
       ledger.note(key, {
         url: c.url ?? `local:legal_documents/${c.local_document_id}`,
-        outcome: "error",
+        outcome: "failed",
         reason: "no_usable_body",
         at: new Date().toISOString(),
       });
