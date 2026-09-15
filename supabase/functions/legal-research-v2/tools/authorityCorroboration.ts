@@ -257,7 +257,11 @@ export function corroborateCaseIdentity(args: {
   // No proceeding type was requested: docket + judgment self-identity only.
   if (!expectedCase.proceeding) {
     if (!selfIdentity.ok) {
-      return { corroborated: false, basis: selfIdentity.basis, detail: selfIdentity.detail };
+      return {
+        corroborated: false,
+        basis: selfIdentity.basis ?? "docket_mention_not_self_identifying",
+        detail: selfIdentity.detail,
+      };
     }
     return {
       corroborated: true,
