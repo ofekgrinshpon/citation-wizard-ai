@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { PLANS, type PlanId } from "@/lib/plans";
+import { PLANS, isPaidPlan, type PlanId } from "@/lib/plans";
 import { Coins, AlertTriangle } from "lucide-react";
 
 interface UserProfile {
@@ -58,7 +58,9 @@ interface UsersTableProps {
   onUserUpdated?: (userId: string, patch: Partial<UserProfile>) => void;
 }
 
-const PLAN_OPTIONS: PlanId[] = ["basic", "pro_monthly", "pro_semester", "pro_annual", "admin"];
+// Assignable plans must match what the backend accepts (trial/week/month/semester/admin).
+// Legacy plans stay visible for accounts already on them, but can't be assigned.
+const PLAN_OPTIONS: PlanId[] = ["trial", "week", "month", "semester", "admin"];
 
 const fmtDate = (iso: string | null) =>
   iso ? new Date(iso).toLocaleString("he-IL", { dateStyle: "short", timeStyle: "short" }) : "—";
@@ -123,7 +125,7 @@ const UsersTable = ({ users, usage = {}, adminUserIds, onUserUpdated }: UsersTab
     onUserUpdated?.(userId, {
       plan: newPlan,
       included_credits_remaining: r.remaining_included,
-      is_subscribed: newPlan !== "basic",
+      is_subscribed: isPaidPlan(newPlan),
     });
   };
 
