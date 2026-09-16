@@ -754,6 +754,8 @@ function finalizeAcquiredBody(args: {
   input: FetchInput;
   transport: "http" | "local_corpus";
   decode?: DecodeTelemetry;
+  /** Exact docket of the stored corpus row, when this body came from one. */
+  structuredDocket?: string | null;
 }): FetchOutput {
   const { store, ledger, entry, attemptKey, expectedIdentity, authorityKey, resolvedIdentity } = args;
   const { discovery, input, transport, decode } = args;
@@ -770,6 +772,7 @@ function finalizeAcquiredBody(args: {
     text: entry.extracted_text,
     identity_fields: entry.identity_fields,
     is_actual_document: entry.is_actual_document,
+    structured_docket: args.structuredDocket,
   });
 
   if (expectedDocket) {
@@ -964,5 +967,6 @@ async function acquireLocalBody(
     discovery,
     input,
     transport: "local_corpus",
+    structuredDocket: row.case_number,
   });
 }

@@ -51,6 +51,17 @@ const PREFIX_TABLE: PrefixDef[] = [
   { slug: "tap", canonicalHe: 'ת"פ', he: ['ת"פ', "ת״פ"] },
   { slug: "hpb", canonicalHe: 'הפ"ב', he: ['הפ"ב', "הפ״ב"] },
 
+  // Labour-court and administrative forms. Added because the corpus and the
+  // acceptance benchmark contain them (e.g. ע"ע 478/09) and their absence made
+  // a genuine labour judgment unrecognizable as a docket-bearing judgment.
+  { slug: "ee", canonicalHe: 'ע"ע', he: ['ע"ע', "ע״ע"] },
+  { slug: "avl", canonicalHe: 'עב"ל', he: ['עב"ל', "עב״ל"] },
+  { slug: "esk", canonicalHe: 'עס"ק', he: ['עס"ק', "עס״ק"] },
+  { slug: "sk", canonicalHe: 'ס"ק', he: ['ס"ק', "ס״ק"] },
+  { slug: "sesh", canonicalHe: 'סע"ש', he: ['סע"ש', "סע״ש"] },
+  { slug: "ab", canonicalHe: 'ע"ב', he: ['ע"ב', "ע״ב"] },
+  { slug: "amn", canonicalHe: 'עמ"נ', he: ['עמ"נ', "עמ״נ"] },
+  { slug: "ams", canonicalHe: 'עמ"ש', he: ['עמ"ש', "עמ״ש"] },
 ];
 
 // Build a single Hebrew alternation. Prefixes with ASCII `"` or Hebrew `״`
@@ -89,6 +100,11 @@ const NOQUOTE_MAP: Record<string, string> = {
   "תמש": 'תמ"ש',
   "ברם": 'בר"ם',
   "עהס": 'עה"ס',
+  "עע": 'ע"ע',
+  "עבל": 'עב"ל',
+  "סעש": 'סע"ש',
+  "עמנ": 'עמ"נ',
+  "עמש": 'עמ"ש',
 };
 const NOQUOTE_ALT = Object.keys(NOQUOTE_MAP)
   .sort((a, b) => b.length - a.length)
@@ -263,3 +279,15 @@ export function fieldsContainExactDocket(
 ): boolean {
   return dockets.some((d) => fields.some((f) => textContainsExactDocket(f, d)));
 }
+
+/**
+ * Normalized (quote-stripped) proceeding-type tokens for every docket prefix
+ * this module knows, e.g. `עא`, `בגץ`, `עע`. Used by authority corroboration
+ * to tell "the body carries a DIFFERENT proceeding type" (a contradiction)
+ * apart from "the body simply does not repeat the proceeding type here".
+ */
+export const PROCEEDING_TOKENS: ReadonlySet<string> = new Set(
+  PREFIX_TABLE.flatMap((p) => p.he).map((h) =>
+    h.replace(/[\u0022\u0027\u05F3\u05F4\u2018\u2019\u201C\u201D]/g, "").toLowerCase()
+  ),
+);
