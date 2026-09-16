@@ -48,18 +48,19 @@ const pack: VerifiedEvidencePack = {
 };
 
 describe("deterministic citation renderer", () => {
-  it("numbers footnotes sequentially and reuses a repeated source", () => {
+  it("numbers every citation occurrence chronologically with superscript markers", () => {
     const blocks: DraftBlock[] = [
       { type: "heading", text: "מסגרת נורמטיבית", source_ids: [] },
       { type: "paragraph", text: "פסקה ראשונה", source_ids: ["S1"] },
       { type: "paragraph", text: "פסקה שנייה", source_ids: ["S2", "S1"] },
     ];
     const out = renderAnswer(blocks, pack);
-    expect(out.footnotes.map((f) => f.index)).toEqual([1, 2]);
+    expect(out.footnotes.map((f) => f.index)).toEqual([1, 2, 3]);
+    expect(out.footnotes.map((f) => f.source_id)).toEqual(["S1", "S2", "S1"]);
     expect(out.cited_source_ids).toEqual(["S1", "S2"]);
-    expect(out.answer_markdown).toContain("פסקה ראשונה[^1]");
-    expect(out.answer_markdown).toContain("פסקה שנייה[^2][^1]");
-    expect(out.answer_markdown).toContain("[^1]: ");
+    expect(out.answer_markdown).toContain("פסקה ראשונה.¹");
+    expect(out.answer_markdown).toContain("פסקה שנייה.²³");
+    expect(out.answer_markdown).not.toContain("[^");
     expect(out.invariant_errors).toEqual([]);
   });
 

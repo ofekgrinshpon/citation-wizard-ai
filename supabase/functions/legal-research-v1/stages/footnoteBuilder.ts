@@ -24,6 +24,7 @@ import {
   splitSentences,
   type BlockEmissionTelemetry,
 } from "./perOccurrenceFootnotes.ts";
+import { applyOccurrenceFootnotes } from "./occurrenceFootnotes.ts";
 
 import type { Footnote, UsedSource } from "../lib/types.ts";
 import type { DrafterInputSource } from "./drafter.ts";
@@ -669,6 +670,21 @@ export function buildFootnotedAnswer(
       .map((u) => ({ ...u, number: remap.get(u.number)! }))
       .sort((a, b) => a.number - b.number);
   }
+
+  // ── footnote_presentation_rule37_v1 ──────────────────────────────────────
+  // Presentation parity with V2: every citation OCCURRENCE gets its own
+  // chronological footnote number, repeats render as שם / לעיל ה"ש. No source
+  // is added, removed or moved — only numbering and footnote text change.
+  {
+    const occ = applyOccurrenceFootnotes(finalAnswer, finalFootnotes, finalUsedSources);
+    if (occ.occurrence_count > 0) {
+      finalAnswer = occ.answer_markdown;
+      finalFootnotes = occ.footnotes;
+      finalUsedSources = occ.used_sources;
+    }
+  }
+
+
 
   // Recount markers on the final text for the invariant.
   let finalMarkerCount = 0;

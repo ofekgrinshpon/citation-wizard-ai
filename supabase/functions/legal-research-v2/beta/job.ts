@@ -84,19 +84,32 @@ export interface BetaResultShape {
 /** Map the deterministic V2 render onto the shape the beta UI already reads. */
 export function toBetaResult(out: Record<string, unknown>): BetaResultShape {
   const footnotes = (out.footnotes ?? []) as Footnote[];
+  // User-facing footnotes stay OCCURRENCE-based: one row per marker, never
+  // deduplicated by source. `used_sources` is the distinct-source analytics
+  // view and keeps the first occurrence number of each authority.
+  const seenSource = new Set<string>();
+  const used_sources: BetaResultShape["used_sources"] = [];
+  for (const f of footnotes) {
+    if (f.source_id && seenSource.has(f.source_id)) continue;
+    if (f.source_id) seenSource.add(f.source_id);
+    used_sources.push({
+      number: f.first_occurrence ?? f.index,
+      title: f.full_citation ?? f.citation,
+      url: f.url ?? null,
+    });
+  }
   return {
     answer: String(out.answer_markdown ?? ""),
     footnotes: footnotes.map((f) => ({
       number: f.index,
       title: f.citation,
-      url: f.url ?? null,
-      sources: [{ title: f.citation, url: f.url ?? null }],
+      url: f.repeat_kind && f.repeat_kind !== "full" ? null : (f.url ?? null),
+      sources: [{
+        title: f.citation,
+        url: f.repeat_kind && f.repeat_kind !== "full" ? null : (f.url ?? null),
+      }],
     })),
-    used_sources: footnotes.map((f) => ({
-      number: f.index,
-      title: f.citation,
-      url: f.url ?? null,
-    })),
+    used_sources,
     pipeline_version: "v2",
     run_id: String(out.run_id ?? ""),
     academic: (out.academic as Record<string, unknown> | undefined) ?? null,

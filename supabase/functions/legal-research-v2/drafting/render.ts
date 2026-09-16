@@ -12,6 +12,12 @@ import {
   normalizeHebrewNumberRanges,
 } from "../shared/primitives.ts";
 import { stripInternalIds } from "../shared/titleHygiene.ts";
+import {
+  buildOccurrenceFootnotes,
+  type CitationOccurrence,
+  placeMarkerAfterPunctuation,
+  toSuperscript,
+} from "../../_shared/footnoteOccurrences.ts";
 
 export interface CitationInfo {
   display_title: string;
@@ -47,10 +53,13 @@ export function formatCitation(info: CitationInfo): string {
 }
 
 function blockToMarkdown(block: DraftBlock, markers: string): string {
-  const text = normalizeHebrewNumberRanges(block.text.trim());
-  if (block.type === "heading") return `## ${text}`;
-  if (block.type === "list_item") return `- ${text}${markers}`;
-  return `${text}${markers}`;
+  const text = placeMarkerAfterPunctuation(
+    normalizeHebrewNumberRanges(block.text.trim()),
+    markers,
+  );
+  if (block.type === "heading") return `## ${normalizeHebrewNumberRanges(block.text.trim())}`;
+  if (block.type === "list_item") return `- ${text}`;
+  return text;
 }
 
 export function renderAnswer(
@@ -76,56 +85,78 @@ export function renderAnswer(
     }
   }
 
-  const footnotes: Footnote[] = [];
-  const indexBySource = new Map<string, number>();
   const invariant_errors: string[] = [];
-  const lines: string[] = [];
 
+  // ── Pass 1: citation occurrences in strict body-traversal order ──────────
+  const occurrences: CitationOccurrence[] = [];
+  const perBlockCounts: number[] = [];
   for (const block of blocks) {
     const ids = block.type === "heading" ? [] : block.source_ids;
-    const markerParts: string[] = [];
+    let count = 0;
     for (const id of ids) {
       const info = infoBySource.get(id);
       if (!info) {
         invariant_errors.push(`block cites unverified source ${id}`);
         continue;
       }
-      // Repeated sources reuse their first footnote number.
-      let idx = indexBySource.get(id);
-      if (idx === undefined) {
-        idx = offset + footnotes.length + 1;
-        indexBySource.set(id, idx);
-        footnotes.push({ index: idx, source_id: id, citation: formatCitation(info), url: info.url });
-      }
-      markerParts.push(`[^${idx}]`);
+      occurrences.push({
+        source_id: id,
+        full_citation: formatCitation(info),
+        locator: info.locator,
+        url: info.url,
+      });
+      count++;
     }
-    lines.push(blockToMarkdown(block, markerParts.join("")));
+    perBlockCounts.push(count);
   }
 
-  let answer_markdown = lines.join("\n\n").trim();
-  if (footnotes.length) {
-    answer_markdown += "\n\n" +
-      footnotes.map((f) => `[^${f.index}]: ${f.citation}`).join("\n");
-  }
+  // ── Pass 2: rule 37 repeat text + chronological numbering ────────────────
+  const built = buildOccurrenceFootnotes(occurrences, { offset });
+  const footnotes: Footnote[] = built.map((f) => ({
+    index: f.index,
+    source_id: f.source_id,
+    citation: f.citation,
+    full_citation: f.full_citation,
+    first_occurrence: f.first_occurrence,
+    repeat_kind: f.repeat_kind,
+    locator: f.locator,
+    url: f.url,
+  }));
 
-  // Invariants.
+  // ── Pass 3: body with superscript markers only (no definitions) ──────────
+  const lines: string[] = [];
+  let cursor = 0;
+  blocks.forEach((block, i) => {
+    const count = perBlockCounts[i] ?? 0;
+    const markers = built
+      .slice(cursor, cursor + count)
+      .map((f) => toSuperscript(f.index))
+      .join("");
+    cursor += count;
+    lines.push(blockToMarkdown(block, markers));
+  });
+
+  const answer_markdown = lines.join("\n\n").trim();
+
+  // Invariants: exactly one footnote row per marker, in appearance order.
   for (const f of footnotes) {
-    if (!answer_markdown.includes(`[^${f.index}]:`)) {
-      invariant_errors.push(`footnote ${f.index} has no definition`);
-    }
-    const markerCount = (answer_markdown.match(new RegExp(`\\[\\^${f.index}\\](?!:)`, "g")) ?? []).length;
-    if (markerCount === 0) invariant_errors.push(`footnote ${f.index} is never referenced`);
     if (!f.citation.trim()) invariant_errors.push(`footnote ${f.index} has empty citation text`);
   }
   const seq = footnotes.map((f) => f.index);
   if (seq.some((n, i) => n !== offset + i + 1)) {
     invariant_errors.push("footnote numbering is not sequential");
   }
+  if (/\[\^\d+\]/.test(answer_markdown)) {
+    invariant_errors.push("answer contains legacy markdown footnote markers");
+  }
+
+  const cited: string[] = [];
+  for (const f of footnotes) if (!cited.includes(f.source_id)) cited.push(f.source_id);
 
   return {
     answer_markdown,
     footnotes,
-    cited_source_ids: [...indexBySource.keys()],
+    cited_source_ids: cited,
     invariant_errors,
   };
 }
