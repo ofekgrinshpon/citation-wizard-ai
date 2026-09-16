@@ -33,6 +33,13 @@ import { locateSection, normalizeSectionToken } from "../evidence/sectionLocator
 import { textCarriesDocket } from "./localCorpusBody.ts";
 import { normalizeAuthorityText, statuteCoreName } from "./authorityCorroboration.ts";
 import type { SupabaseClient } from "../shared/primitives.ts";
+import {
+  buildRecoveryQuery,
+  recoveryOriginLabel,
+  type RecoverySearchFn,
+  type RecoveryTelemetry,
+  runExactAuthorityRecovery,
+} from "./exactAuthorityRecovery.ts";
 
 export type AcquireStatus =
   | "acquired"
@@ -63,6 +70,8 @@ export interface AcquireAuthorityOutput {
   discovery_refresh_available: boolean;
   tried: AcquireAttemptRecord[];
   instruction?: string;
+  /** Exact-authority recovery telemetry, when a recovery round was run. */
+  recovery?: RecoveryTelemetry;
 }
 
 /** Counters the agent folds into run telemetry. Nothing branches on them. */
@@ -79,6 +88,11 @@ export interface AcquisitionStats {
   authority_section_from_parent: number;
   authority_identity_conflicts: number;
   authority_memo_gate_used: number;
+  /** Exact-authority recovery (v2_exact_authority_recovery_v1). */
+  authority_recovery_triggered: number;
+  authority_recovery_candidates_attached: number;
+  authority_recovery_success: number;
+  authority_recovery_records: RecoveryTelemetry[];
 }
 
 export function emptyAcquisitionStats(): AcquisitionStats {
@@ -95,6 +109,10 @@ export function emptyAcquisitionStats(): AcquisitionStats {
     authority_section_from_parent: 0,
     authority_identity_conflicts: 0,
     authority_memo_gate_used: 0,
+    authority_recovery_triggered: 0,
+    authority_recovery_candidates_attached: 0,
+    authority_recovery_success: 0,
+    authority_recovery_records: [],
   };
 }
 
@@ -112,6 +130,11 @@ export interface AcquireDeps {
   fetchImpl?: typeof runFetch;
   /** Cap for this single call. Never raises the per-authority ceiling. */
   maxAttempts?: number;
+  /**
+   * Discovery backend for one bounded exact-authority recovery round. Absent
+   * → the old behaviour (hand the refresh back to the agent) is unchanged.
+   */
+  recoverySearch?: RecoverySearchFn;
 }
 
 // ─── candidate classification / attachment ──────────────────────────────────
@@ -344,6 +367,9 @@ export async function runAcquireAuthority(
   const perCall = Math.max(1, Math.min(deps.maxAttempts ?? MAX_CONCRETE_ATTEMPTS_PER_AUTHORITY, MAX_CONCRETE_ATTEMPTS_PER_AUTHORITY));
   const doFetch = deps.fetchImpl ?? runFetch;
   let usedThisCall = 0;
+  let recovery: RecoveryTelemetry | undefined;
+  let recoveryAttempts = 0;
+  let countingRecoveryAttempts = false;
 
   // Search / portal entries are stored, but never consume an attempt.
   const skippedEntries = ledger.untriedCandidates(key).filter((c) => !isConcreteCandidate(c)).length;
@@ -351,117 +377,181 @@ export async function runAcquireAuthority(
     deps.stats.authority_candidates_skipped_discovery_entry += skippedEntries;
   }
 
-  while (usedThisCall < perCall && ledger.attemptsRemaining(key) > 0) {
-    const queue = ledger.concreteUntried(key);
-    const c = queue[0];
-    if (!c) break;
+  /**
+   * One bounded round over the currently known concrete candidates. Returns a
+   * terminal output when the round ended the acquisition, otherwise null.
+   */
+  const runRound = async (): Promise<AcquireAuthorityOutput | null> => {
+    while (usedThisCall < perCall && ledger.attemptsRemaining(key) > 0) {
+      const queue = ledger.concreteUntried(key);
+      const c = queue[0];
+      if (!c) break;
 
-    if (c.url && !isSafeFetchUrl(c.url)) {
-      // Not an acquisition attempt: nothing left the process.
-      ledger.note(key, {
-        url: c.url,
-        outcome: "failed",
-        reason: "unsafe_url",
-        at: new Date().toISOString(),
-      });
-      tried.push({ candidate: candidateLabel(c), outcome: "skipped", reason: "unsafe_url" });
-      continue;
-    }
-    if (!deps.canFetch()) {
-      return finish("fetch_budget_exhausted", {
-        instruction: "תקציב ההבאות של הריצה מוצה. הגש את התזכיר עם מה שכבר הושג.",
-      });
-    }
+      if (c.url && !isSafeFetchUrl(c.url)) {
+        // Not an acquisition attempt: nothing left the process.
+        ledger.note(key, {
+          url: c.url,
+          outcome: "failed",
+          reason: "unsafe_url",
+          at: new Date().toISOString(),
+        });
+        tried.push({ candidate: candidateLabel(c), outcome: "skipped", reason: "unsafe_url" });
+        continue;
+      }
+      if (!deps.canFetch()) {
+        return finish("fetch_budget_exhausted", {
+          instruction: "תקציב ההבאות של הריצה מוצה. הגש את התזכיר עם מה שכבר הושג.",
+        });
+      }
 
-    // One synthetic discovery entry carrying the PERSISTED target identity.
-    const base = c.result_id ? deps.discovered.get(c.result_id) : undefined;
-    const expected = ledger.expectedIdentity(key);
-    if (
-      base?.expected_identity && expected &&
-      ((base.expected_identity.docket && expected.docket && base.expected_identity.docket !== expected.docket) ||
-        (base.expected_identity.statute && expected.statute && base.expected_identity.statute !== expected.statute))
-    ) {
-      if (deps.stats) deps.stats.authority_identity_conflicts += 1;
-    }
-    const rid = `ACQ-${++syntheticId}`;
-    const candidate: SearchResult = {
-      result_id: rid,
-      title: base?.title ?? c.label ?? c.url ?? key,
-      url: c.url ?? base?.url,
-      snippet: base?.snippet,
-      origin: base?.origin ?? `acquire:${c.origin ?? "candidate"}`,
-      possible_docket: base?.possible_docket,
-      local_document_id: c.local_document_id ?? base?.local_document_id,
-      local_match_basis: base?.local_match_basis,
-      candidate_kind: c.local_document_id ? "local_document" : "document",
-      authority_key: key,
-      expected_identity: expected ?? base?.expected_identity,
-    };
+      // One synthetic discovery entry carrying the PERSISTED target identity.
+      const base = c.result_id ? deps.discovered.get(c.result_id) : undefined;
+      const expected = ledger.expectedIdentity(key);
+      if (
+        base?.expected_identity && expected &&
+        ((base.expected_identity.docket && expected.docket && base.expected_identity.docket !== expected.docket) ||
+          (base.expected_identity.statute && expected.statute && base.expected_identity.statute !== expected.statute))
+      ) {
+        if (deps.stats) deps.stats.authority_identity_conflicts += 1;
+      }
+      const rid = `ACQ-${++syntheticId}`;
+      const candidate: SearchResult = {
+        result_id: rid,
+        title: base?.title ?? c.label ?? c.url ?? key,
+        url: c.url ?? base?.url,
+        snippet: base?.snippet,
+        origin: base?.origin ?? `acquire:${c.origin ?? "candidate"}`,
+        possible_docket: base?.possible_docket,
+        local_document_id: c.local_document_id ?? base?.local_document_id,
+        local_match_basis: base?.local_match_basis,
+        candidate_kind: c.local_document_id ? "local_document" : "document",
+        authority_key: key,
+        expected_identity: expected ?? base?.expected_identity,
+      };
 
-    ledger.noteConcreteAttempt(key);
-    usedThisCall += 1;
-    if (deps.stats) deps.stats.authority_concrete_attempts += 1;
-    deps.noteFetch();
+      ledger.noteConcreteAttempt(key);
+      usedThisCall += 1;
+      if (countingRecoveryAttempts) recoveryAttempts += 1;
+      if (deps.stats) deps.stats.authority_concrete_attempts += 1;
+      deps.noteFetch();
 
-    let out: FetchOutput;
-    try {
-      out = await doFetch(
-        deps.store,
-        new Map([[rid, candidate]]),
-        { result_id: rid },
-        ledger,
-        { admin: deps.admin },
-      );
-    } catch (e) {
-      // Record the attempt so the same path is never offered again.
-      ledger.note(key, {
-        url: c.url ?? `local:legal_documents/${c.local_document_id}`,
-        outcome: "failed",
-        reason: `fetch_error: ${e instanceof Error ? e.message : String(e)}`.slice(0, 120),
-        at: new Date().toISOString(),
-      });
+      let out: FetchOutput;
+      try {
+        out = await doFetch(
+          deps.store,
+          new Map([[rid, candidate]]),
+          { result_id: rid },
+          ledger,
+          { admin: deps.admin },
+        );
+      } catch (e) {
+        // Record the attempt so the same path is never offered again.
+        ledger.note(key, {
+          url: c.url ?? `local:legal_documents/${c.local_document_id}`,
+          outcome: "failed",
+          reason: `fetch_error: ${e instanceof Error ? e.message : String(e)}`.slice(0, 120),
+          at: new Date().toISOString(),
+        });
+        tried.push({
+          candidate: candidateLabel(c),
+          outcome: "failed",
+          reason: `fetch_error: ${e instanceof Error ? e.message : String(e)}`,
+        });
+        continue;
+      }
+
+      if (ledger.acquired(key)) {
+        const sid = ledger.get(key)!.acquired_source_id!;
+        tried.push({ candidate: candidateLabel(c), outcome: "acquired", reason: out.authority_binding_basis ?? "bound" });
+        if (deps.stats) deps.stats.authority_targets_acquired += 1;
+        if (recovery && countingRecoveryAttempts) {
+          recovery.recovery_success = true;
+          recovery.recovery_source_origin = recoveryOriginLabel(c);
+          if (deps.stats) deps.stats.authority_recovery_success += 1;
+        }
+        return finish("acquired", {
+          source_id: sid,
+          basis: out.authority_binding_basis ?? ledger.get(key)?.binding_basis,
+          title: out.title ?? deps.store.get(sid)?.title,
+          summary: out.summary,
+          windows: out.windows,
+          exact_source_text: out.exact_source_text,
+          instruction: out.instruction ??
+            `גוף האסמכתה הושג (${sid}). קרא ממנו ממוקד ב-fetch({source_id, query}).`,
+        });
+      }
+
       tried.push({
         candidate: candidateLabel(c),
         outcome: "failed",
-        reason: `fetch_error: ${e instanceof Error ? e.message : String(e)}`,
+        reason: out.authority_binding_basis ?? out.not_document_reason ?? out.instruction?.slice(0, 80) ??
+          (out.ok ? "identity_not_corroborated" : "fetch_failed"),
       });
-      continue;
+
+      // Defensive: a candidate that produced no ledger attempt would otherwise
+      // be offered again forever. `runFetch` records one for every path, but the
+      // queue is re-derived each round so a no-op cannot loop unbounded either.
+      if (ledger.concreteUntried(key)[0] === c) {
+        ledger.note(key, {
+          url: c.url ?? `local:legal_documents/${c.local_document_id}`,
+          outcome: "failed",
+          reason: "no_usable_body",
+          at: new Date().toISOString(),
+        });
+      }
     }
+    return null;
+  };
 
+  const first = await runRound();
+  if (first) return first;
 
-    if (ledger.acquired(key)) {
-      const sid = ledger.get(key)!.acquired_source_id!;
-      tried.push({ candidate: candidateLabel(c), outcome: "acquired", reason: out.authority_binding_basis ?? "bound" });
-      if (deps.stats) deps.stats.authority_targets_acquired += 1;
-      return finish("acquired", {
-        source_id: sid,
-        basis: out.authority_binding_basis ?? ledger.get(key)?.binding_basis,
-        title: out.title ?? deps.store.get(sid)?.title,
-        summary: out.summary,
-        windows: out.windows,
-        exact_source_text: out.exact_source_text,
-        instruction: out.instruction ??
-          `גוף האסמכתה הושג (${sid}). קרא ממנו ממוקד ב-fetch({source_id, query}).`,
-      });
-    }
-
-    tried.push({
-      candidate: candidateLabel(c),
-      outcome: "failed",
-      reason: out.authority_binding_basis ?? out.not_document_reason ?? out.instruction?.slice(0, 80) ??
-        (out.ok ? "identity_not_corroborated" : "fetch_failed"),
+  // ── exact-authority recovery (v2_exact_authority_recovery_v1) ────────────
+  // Deterministic, at most once per authority, and only when the target is
+  // still unresolved, has no concrete untried candidate left, still holds its
+  // single permitted discovery refresh, and its identity is concrete enough
+  // to search for. Nothing here admits anything: the candidates it attaches
+  // go through exactly the same fetch / document / identity / corroboration
+  // gates as every other candidate.
+  if (
+    deps.recoverySearch &&
+    ledger.concreteUntried(key).length === 0 &&
+    ledger.canRefreshDiscovery(key) &&
+    !ledger.target(key)?.abandoned &&
+    !ledger.acquired(key) &&
+    buildRecoveryQuery(key, ledger.expectedIdentity(key), ledger.target(key)?.label)
+  ) {
+    ledger.noteDiscoveryRefresh(key);
+    if (deps.stats) deps.stats.authority_discovery_refreshes += 1;
+    recovery = await runExactAuthorityRecovery(key, {
+      ledger,
+      discovered: deps.discovered,
+      search: deps.recoverySearch,
+      attach: (results, forAuthority) =>
+        attachDiscoveryResults(ledger, results, {
+          forAuthority,
+          basis: "exact_authority_recovery",
+          stats: deps.stats,
+        }),
+      isConcrete: (r) => isConcreteCandidate(r),
     });
-
-    // Defensive: a candidate that produced no ledger attempt would otherwise
-    // be offered again forever. `runFetch` records one for every path, but the
-    // queue is re-derived each round so a no-op cannot loop unbounded either.
-    if (ledger.concreteUntried(key)[0] === c) {
-      ledger.note(key, {
-        url: c.url ?? `local:legal_documents/${c.local_document_id}`,
-        outcome: "failed",
-        reason: "no_usable_body",
-        at: new Date().toISOString(),
-      });
+    if (deps.stats) {
+      deps.stats.authority_recovery_triggered += recovery.recovery_triggered ? 1 : 0;
+      deps.stats.authority_recovery_candidates_attached += recovery.concrete_candidates_attached;
+      if (deps.stats.authority_recovery_records.length < 12) {
+        deps.stats.authority_recovery_records.push(recovery);
+      }
+    }
+    if (recovery.concrete_candidates_attached > 0 && ledger.attemptsRemaining(key) > 0) {
+      countingRecoveryAttempts = true;
+      const second = await runRound();
+      recovery.recovery_acquisition_attempts = recoveryAttempts;
+      if (second) return { ...second, recovery };
+      if (!recovery.recovery_failure_reason) {
+        recovery.recovery_failure_reason = ledger.attemptsRemaining(key) === 0
+          ? "attempt_ceiling"
+          : "recovered_candidates_did_not_bind";
+      }
     }
   }
 
@@ -470,6 +560,7 @@ export async function runAcquireAuthority(
     ledger.noteDiscoveryRefresh(key);
     if (deps.stats) deps.stats.authority_discovery_refreshes += 1;
     return finish("needs_discovery", {
+      recovery,
       instruction:
         `לא נותרו מועמדים קונקרטיים עבור ${key}. חפש נתיב אחר ל-אותו מסמך (search/raw_web_search עם for_authority:"${key}"), ואז קרא שוב ל-acquire_authority. זו הזדמנות הרענון היחידה ליעד זה.`,
     });
@@ -479,11 +570,13 @@ export async function runAcquireAuthority(
     ledger.markExhausted(key, reason);
     if (deps.stats) deps.stats.authority_targets_exhausted += 1;
     return finish("exhausted", {
+      recovery,
       instruction:
         `לא ניתן היה להשיג גוף קריא עבור ${key} (${reason}). המשך בלעדיה, או בסס את הטענה על מקור אחר שכבר נקרא.`,
     });
   }
   return finish("exhausted", {
+    recovery,
     instruction: `עצירה זמנית עבור ${key}. נותרו ${ledger.attemptsRemaining(key)} ניסיונות.`,
   });
 }
