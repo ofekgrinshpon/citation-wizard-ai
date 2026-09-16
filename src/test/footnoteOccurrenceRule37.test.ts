@@ -1,12 +1,16 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  buildCompoundFootnotes,
   buildOccurrenceFootnotes,
   normalizeAnswerForDisplay,
   placeMarkerAfterPunctuation,
   toSuperscript,
 } from "../../supabase/functions/_shared/footnoteOccurrences";
-import { applyOccurrenceFootnotes } from "../../supabase/functions/legal-research-v1/stages/occurrenceFootnotes";
+import {
+  applyOccurrenceFootnotes,
+  type V1FootnoteRow,
+} from "../../supabase/functions/legal-research-v1/stages/occurrenceFootnotes";
 import { renderAnswer } from "../../supabase/functions/legal-research-v2/drafting/render";
 import type { DraftBlock, VerifiedEvidencePack } from "../../supabase/functions/legal-research-v2/types";
 
@@ -199,5 +203,147 @@ describe("V1 attachment path parity", () => {
     expect(out.footnotes[2].title).toBe(B_TITLE);
     expect(out.footnotes[3].title).toBe('עניין כהן, לעיל ה"ש 1.');
     expect(out.used_sources.map((u) => u.number)).toEqual([1, 3]);
+  });
+});
+
+describe("compound citation points (one marker, one footnote, many sources)", () => {
+  const pack3 = packOf([
+    { id: "S1", title: A_TITLE },
+    { id: "S2", title: B_TITLE },
+    { id: "S3", title: C_TITLE },
+  ]);
+  const compoundBlocks = (groups: string[][]): DraftBlock[] =>
+    groups.map((ids, i) => ({
+      type: "paragraph" as const,
+      text: `טענה ${i + 1}.`,
+      source_ids: ids,
+    }));
+
+  it("A: one sentence with two sources → one marker, one compound footnote", () => {
+    const out = renderAnswer(compoundBlocks([["S1", "S2"]]), pack3);
+    const markers = out.answer_markdown.match(/[⁰¹²³⁴⁵⁶⁷⁸⁹]+/gu);
+    expect(markers).toEqual(["¹"]);
+    expect(out.footnotes).toHaveLength(1);
+    expect(out.footnotes[0].source_ids).toEqual(["S1", "S2"]);
+    expect(out.footnotes[0].sources?.map((s) => s.source_id)).toEqual(["S1", "S2"]);
+    expect(out.footnotes[0].citation).toContain("בבלי");
+    expect(out.footnotes[0].citation).toContain("לוי");
+    expect(out.footnotes[0].citation).toContain(";");
+    expect(out.invariant_errors).toEqual([]);
+  });
+
+  it("B: A → B → A+B uses explicit לעיל ה\"ש per source", () => {
+    const out = renderAnswer(compoundBlocks([["S1"], ["S2"], ["S1", "S2"]]), pack3);
+    expect(out.footnotes).toHaveLength(3);
+    expect(out.footnotes[2].citation).toBe(
+      'עניין כהן, לעיל ה"ש 1; עניין שר הפנים, לעיל ה"ש 2.',
+    );
+  });
+
+  it("C: a compound repeated immediately is never a bare שם", () => {
+    const out = renderAnswer(compoundBlocks([["S1", "S2"], ["S1", "S2"]]), pack3);
+    expect(out.footnotes.map((f) => f.index)).toEqual([1, 2]);
+    expect(out.footnotes[1].citation).not.toContain("שם");
+    expect(out.footnotes[1].citation).toBe(
+      'עניין כהן, לעיל ה"ש 1; עניין שר הפנים, לעיל ה"ש 1.',
+    );
+  });
+
+  it("D: a single-source adjacent repeat still uses שם", () => {
+    const out = renderAnswer(compoundBlocks([["S1"], ["S1"]]), pack3);
+    expect(out.footnotes[1].citation).toBe("שם.");
+  });
+
+  it("E: compound followed by one of its sources is לעיל ה\"ש, not שם", () => {
+    const out = renderAnswer(compoundBlocks([["S1", "S2"], ["S1"]]), pack3);
+    expect(out.footnotes[1].citation).toBe('עניין כהן, לעיל ה"ש 1.');
+  });
+
+  it("F: single source followed by a compound repeats A and states B in full", () => {
+    const out = renderAnswer(compoundBlocks([["S1"], ["S1", "S2"]]), pack3);
+    const entries = out.footnotes[1].sources!;
+    expect(entries[0].citation).toBe('עניין כהן, לעיל ה"ש 1.');
+    expect(entries[1].repeat_kind).toBe("full");
+    expect(entries[1].citation).toContain("לוי");
+  });
+
+  it("the nine-occurrence compound sequence follows the spec", () => {
+    const out = renderAnswer(
+      compoundBlocks([["S1"], ["S2"], ["S1", "S2"], ["S1", "S2"], ["S2"]]),
+      pack3,
+    );
+    expect(out.footnotes.map((f) => f.citation)).toEqual([
+      out.footnotes[0].citation,
+      out.footnotes[1].citation,
+      'עניין כהן, לעיל ה"ש 1; עניין שר הפנים, לעיל ה"ש 2.',
+      'עניין כהן, לעיל ה"ש 1; עניין שר הפנים, לעיל ה"ש 2.',
+      'עניין שר הפנים, לעיל ה"ש 2.',
+    ]);
+    expect(out.footnotes[0].citation).toContain("בבלי");
+    expect(out.footnotes[1].citation).toContain("לוי");
+  });
+
+  it("G: keeps a per-source locator inside a compound footnote", () => {
+    const built = buildCompoundFootnotes([
+      [{ source_id: "A", full_citation: A_TITLE, locator: "עמ' 100" }],
+      [{ source_id: "B", full_citation: B_TITLE }],
+      [
+        { source_id: "A", full_citation: A_TITLE, locator: "עמ' 110" },
+        { source_id: "B", full_citation: B_TITLE, locator: "פסקה 5" },
+      ],
+    ]);
+    expect(built[2].citation).toBe(
+      'עניין כהן, לעיל ה"ש 1, בעמ\' 110; עניין שר הפנים, לעיל ה"ש 2, בפס\' 5.',
+    );
+  });
+
+  it("H: legislation and a judgment each keep their own repeat rule", () => {
+    const built = buildCompoundFootnotes([
+      [{ source_id: "L", full_citation: C_TITLE, locator: "סעיף 20" }],
+      [{ source_id: "J", full_citation: A_TITLE }],
+      [
+        { source_id: "J", full_citation: A_TITLE },
+        { source_id: "L", full_citation: C_TITLE, locator: "סעיף 25" },
+      ],
+    ]);
+    const entries = built[2].sources;
+    expect(entries[0].citation).toBe('עניין כהן, לעיל ה"ש 2.');
+    expect(entries[1].citation).toBe("ס' 25 לחוק הירושה.");
+    expect(entries[1].citation).not.toContain('לעיל ה"ש');
+  });
+
+  it("I/J: markers are one per citation point, multi-digit numbers still valid", () => {
+    const groups = Array.from({ length: 23 }, (_, i) => (i % 2 === 0 ? ["S1"] : ["S2"]));
+    groups[22] = ["S1", "S2", "S3"];
+    const out = renderAnswer(compoundBlocks(groups), pack3);
+    const markers = out.answer_markdown.match(/[⁰¹²³⁴⁵⁶⁷⁸⁹]+/gu)!;
+    // Exactly one marker per citation point, and the last one is footnote 23.
+    expect(markers).toHaveLength(23);
+    expect(markers[22]).toBe("²³");
+    expect(out.footnotes).toHaveLength(23);
+    expect(out.footnotes[22].source_ids).toEqual(["S1", "S2", "S3"]);
+    expect(out.invariant_errors).toEqual([]);
+  });
+
+  it("never adds or removes an approved source relationship", () => {
+    const out = renderAnswer(compoundBlocks([["S1", "S2"], ["S3"]]), pack3);
+    expect(out.footnotes.map((f) => f.source_ids)).toEqual([["S1", "S2"], ["S3"]]);
+  });
+});
+
+describe("V1 attachment path — compound marker runs", () => {
+  it("collapses a marker run into one number with a compound footnote row", () => {
+    const answer = "טענה א.¹ טענה ב.¹² טענה ג.²";
+    const footnotes: V1FootnoteRow[] = [
+      { number: 1, title: A_TITLE, url: "https://x/1" },
+      { number: 2, title: B_TITLE, url: "https://x/2" },
+    ];
+    const used = [{ number: 1 }, { number: 2 }];
+    const out = applyOccurrenceFootnotes(answer, footnotes, used);
+    expect(out.answer_markdown).toBe("טענה א.¹ טענה ב.² טענה ג.³");
+    expect(out.footnotes.map((f) => f.number)).toEqual([1, 2, 3]);
+    expect(out.footnotes[1].sources).toHaveLength(2);
+    expect(out.footnotes[1].title).not.toContain("שם");
+    expect(out.footnotes[2].title).toBe('עניין שר הפנים, לעיל ה"ש 2.');
   });
 });

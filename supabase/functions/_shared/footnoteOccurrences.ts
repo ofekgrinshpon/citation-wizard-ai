@@ -57,8 +57,9 @@ export function withBetPrefix(suffix: string): string {
   if (/^(בעמ['״]|בס['״]|בפס['״])/.test(trimmed)) return trimmed;
   if (/^עמ['״]/.test(trimmed)) return trimmed.replace(/^עמ/, "בעמ");
   if (/^ס['״]\s/.test(trimmed)) return trimmed.replace(/^ס/, "בס");
-  if (/^סעיף\b/.test(trimmed)) return trimmed.replace(/^סעיף\s*/, "בס' ");
-  if (/^פסקה\b/.test(trimmed)) return trimmed.replace(/^פסקה\s*/, "בפס' ");
+  // \b does not work next to Hebrew letters — match on whitespace/digit instead.
+  if (/^סעיף(?=[\s\d]|$)/.test(trimmed)) return trimmed.replace(/^סעיף\s*/, "בס' ");
+  if (/^פסקה(?=[\s\d]|$)/.test(trimmed)) return trimmed.replace(/^פסקה\s*/, "בפס' ");
   return trimmed;
 }
 
@@ -111,10 +112,10 @@ export interface CitationOccurrence {
 
 export type RepeatKind = "full" | "ibid" | "supra";
 
-export interface OccurrenceFootnote {
-  index: number;
+/** One verified source inside a footnote occurrence. */
+export interface FootnoteSourceEntry {
   source_id: string;
-  /** Text actually shown for this occurrence (full / שם / לעיל ה"ש). */
+  /** Text actually shown for this source here (full / שם / לעיל ה"ש). */
   citation: string;
   /** First-appearance citation of the same authority. */
   full_citation: string;
@@ -124,12 +125,39 @@ export interface OccurrenceFootnote {
   url?: string;
 }
 
+export interface OccurrenceFootnote extends FootnoteSourceEntry {
+  index: number;
+  /** Every verified source cited at this single textual point. */
+  sources: FootnoteSourceEntry[];
+  source_ids: string[];
+}
+
 /**
- * Turn a chronological list of citation occurrences into numbered footnotes
- * carrying rule 37 repeat text. Deterministic and side-effect free.
+ * A CITATION POINT in the body: one marker, one footnote number, one or more
+ * verified sources. Source relationships come from verification — this module
+ * only formats them.
  */
-export function buildOccurrenceFootnotes(
-  occurrences: CitationOccurrence[],
+export type CitationOccurrenceGroup = CitationOccurrence[];
+
+function joinCompound(entries: FootnoteSourceEntry[]): string {
+  if (entries.length === 1) return entries[0].citation;
+  return entries
+    .map((e) => e.citation.trim().replace(/[.\s]+$/u, ""))
+    .filter(Boolean)
+    .join("; ") + ".";
+}
+
+/**
+ * Turn a chronological list of citation POINTS into numbered footnotes
+ * carrying rule 37 repeat text. Deterministic and side-effect free.
+ *
+ * Strict שם rule: `שם` is used only when the current point and the immediately
+ * preceding point each cite exactly one source and it is the same source.
+ * Anything involving a compound footnote uses explicit repeat citations, so a
+ * reader can never be unsure which authority `שם` refers to.
+ */
+export function buildCompoundFootnotes(
+  groups: CitationOccurrenceGroup[],
   opts: { offset?: number } = {},
 ): OccurrenceFootnote[] {
   const offset = Math.max(0, Math.floor(opts.offset ?? 0));
@@ -141,82 +169,101 @@ export function buildOccurrenceFootnotes(
     lawName: string;
     locator: string;
   }>();
-  let prevSourceId: string | null = null;
+  /** Previous point's single source id, or null when it was compound/empty. */
+  let prevSoloSourceId: string | null = null;
 
-  return occurrences.map((occ, i) => {
+  return groups.map((group, i) => {
     const index = offset + i + 1;
-    const locator = (occ.locator ?? "").trim();
-    const prior = first.get(occ.source_id);
+    const solo = group.length === 1;
 
-    if (!prior) {
-      const isLegislation = occ.is_legislation ?? isLegislationText(occ.full_citation);
-      const label = (occ.short_label ?? "").trim() || extractShortSourceLabel(occ.full_citation);
-      const lawName = (occ.law_name ?? "").trim() ||
-        (isLegislation ? extractLawName(occ.full_citation) : "");
-      first.set(occ.source_id, {
-        index,
-        full: occ.full_citation,
-        label,
-        isLegislation,
-        lawName,
-        locator,
-      });
-      prevSourceId = occ.source_id;
+    const entries: FootnoteSourceEntry[] = group.map((occ) => {
+      const locator = (occ.locator ?? "").trim();
+      const prior = first.get(occ.source_id);
+
+      if (!prior) {
+        const isLegislation = occ.is_legislation ?? isLegislationText(occ.full_citation);
+        const label = (occ.short_label ?? "").trim() || extractShortSourceLabel(occ.full_citation);
+        const lawName = (occ.law_name ?? "").trim() ||
+          (isLegislation ? extractLawName(occ.full_citation) : "");
+        first.set(occ.source_id, { index, full: occ.full_citation, label, isLegislation, lawName, locator });
+        return {
+          source_id: occ.source_id,
+          citation: occ.full_citation,
+          full_citation: occ.full_citation,
+          first_occurrence: index,
+          repeat_kind: "full" as RepeatKind,
+          locator: locator || undefined,
+          url: occ.url,
+        };
+      }
+
+      // `שם` requires both points to be single-source and the same authority.
+      const adjacent = solo && prevSoloSourceId === occ.source_id;
+      const newLocator = locator && locator !== prior.locator ? locator : "";
+      let citation: string;
+      let repeat_kind: RepeatKind;
+
+      if (prior.isLegislation) {
+        // Rule 37.5 — legislation never uses לעיל ה"ש with a case-law label.
+        const section = extractSection(locator) || extractSection(prior.locator);
+        if (adjacent) {
+          repeat_kind = "ibid";
+          citation = newLocator && section ? `שם, בס' ${section}.` : "שם.";
+        } else {
+          repeat_kind = "supra";
+          citation = section && prior.lawName
+            ? `ס' ${section} ל${prior.lawName}.`
+            : prior.lawName
+            ? `${prior.lawName}, לעיל ה"ש ${prior.index}.`
+            : "שם.";
+        }
+      } else if (adjacent) {
+        repeat_kind = "ibid";
+        const suffix = newLocator ? withBetPrefix(newLocator) : "";
+        citation = suffix ? `שם, ${suffix}.` : "שם.";
+      } else {
+        repeat_kind = "supra";
+        const suffix = newLocator ? `, ${withBetPrefix(newLocator)}` : "";
+        citation = `${prior.label}, לעיל ה"ש ${prior.index}${suffix}.`;
+      }
+
       return {
-        index,
         source_id: occ.source_id,
-        citation: occ.full_citation,
-        full_citation: occ.full_citation,
-        first_occurrence: index,
-        repeat_kind: "full" as RepeatKind,
+        citation,
+        full_citation: prior.full,
+        first_occurrence: prior.index,
+        repeat_kind,
         locator: locator || undefined,
         url: occ.url,
       };
-    }
+    });
 
-    // Adjacency is decided by the PRECEDING occurrence's underlying source,
-    // never by whether that footnote was itself a repeat.
-    const adjacent = prevSourceId === occ.source_id;
-    const newLocator = locator && locator !== prior.locator ? locator : "";
-    let citation: string;
-    let repeat_kind: RepeatKind;
+    prevSoloSourceId = solo ? group[0].source_id : null;
 
-    if (prior.isLegislation) {
-      // Rule 37.5 — legislation never uses לעיל ה"ש with a case-law label.
-      const section = extractSection(locator) || extractSection(prior.locator);
-      if (adjacent) {
-        repeat_kind = "ibid";
-        citation = newLocator && section ? `שם, בס' ${section}.` : "שם.";
-      } else {
-        repeat_kind = "supra";
-        citation = section && prior.lawName
-          ? `ס' ${section} ל${prior.lawName}.`
-          : prior.lawName
-          ? `${prior.lawName}, לעיל ה"ש ${prior.index}.`
-          : "שם.";
-      }
-    } else if (adjacent) {
-      repeat_kind = "ibid";
-      const suffix = newLocator ? withBetPrefix(newLocator) : "";
-      citation = suffix ? `שם, ${suffix}.` : "שם.";
-    } else {
-      repeat_kind = "supra";
-      const suffix = newLocator ? `, ${withBetPrefix(newLocator)}` : "";
-      citation = `${prior.label}, לעיל ה"ש ${prior.index}${suffix}.`;
-    }
-
-    prevSourceId = occ.source_id;
+    const head = entries[0];
     return {
       index,
-      source_id: occ.source_id,
-      citation,
-      full_citation: prior.full,
-      first_occurrence: prior.index,
-      repeat_kind,
-      locator: locator || undefined,
-      url: occ.url,
+      sources: entries,
+      source_ids: entries.map((e) => e.source_id),
+      source_id: head?.source_id ?? "",
+      citation: entries.length ? joinCompound(entries) : "",
+      full_citation: head?.full_citation ?? "",
+      first_occurrence: head?.first_occurrence ?? index,
+      repeat_kind: head?.repeat_kind ?? "full",
+      locator: head?.locator,
+      url: entries.length === 1 ? head?.url : undefined,
     };
   });
+}
+
+/**
+ * Single-source convenience wrapper: each occurrence is its own citation point.
+ */
+export function buildOccurrenceFootnotes(
+  occurrences: CitationOccurrence[],
+  opts: { offset?: number } = {},
+): OccurrenceFootnote[] {
+  return buildCompoundFootnotes(occurrences.map((o) => [o]), opts);
 }
 
 /**

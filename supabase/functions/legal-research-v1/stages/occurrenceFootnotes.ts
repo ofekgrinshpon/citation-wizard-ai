@@ -7,7 +7,7 @@
 // which marker sits at which sentence.
 
 import {
-  buildOccurrenceFootnotes,
+  buildCompoundFootnotes,
   type CitationOccurrence,
   toSuperscript,
 } from "../../_shared/footnoteOccurrences.ts";
@@ -86,22 +86,25 @@ export function applyOccurrenceFootnotes<
   const valid = new Set(footnotes.map((f) => f.number));
   const byNumber = new Map(footnotes.map((f) => [f.number, f]));
 
-  // Pass 1 — occurrences in body order.
-  const occurrences: CitationOccurrence[] = [];
+  // Pass 1 — citation POINTS in body order. A marker run (e.g. "²³") is one
+  // textual citation point that carries several approved sources; it becomes
+  // one compound footnote, never two adjacent markers.
+  const groups: CitationOccurrence[][] = [];
   const runPlan: number[][] = [];
   for (const m of answer.matchAll(MARKER_RUN_RE)) {
     const nums = splitMarkerRun(m[0], valid);
+    if (nums.length === 0) continue;
     runPlan.push(nums);
-    for (const n of nums) {
+    groups.push(nums.map((n) => {
       const row = byNumber.get(n)!;
-      occurrences.push({
+      return {
         source_id: `E${n}`,
         full_citation: row.title,
         url: row.url ?? undefined,
-      });
-    }
+      };
+    }));
   }
-  if (occurrences.length === 0) {
+  if (groups.length === 0) {
     return {
       answer_markdown: answer,
       footnotes,
@@ -111,30 +114,34 @@ export function applyOccurrenceFootnotes<
     };
   }
 
-  const built = buildOccurrenceFootnotes(occurrences);
+  const built = buildCompoundFootnotes(groups);
 
-  // Pass 2 — rewrite markers in the same textual positions.
-  let cursor = 0;
+  // Pass 2 — exactly one marker per citation point, same textual positions.
   let runIndex = 0;
-  const answer_markdown = answer.replace(MARKER_RUN_RE, () => {
-    const nums = runPlan[runIndex++] ?? [];
-    const slice = built.slice(cursor, cursor + nums.length);
-    cursor += nums.length;
-    return slice.map((f) => toSuperscript(f.index)).join("");
+  const answer_markdown = answer.replace(MARKER_RUN_RE, (run) => {
+    if (splitMarkerRun(run, valid).length === 0) return run;
+    const f = built[runIndex++];
+    return f ? toSuperscript(f.index) : run;
   });
 
-  // Pass 3 — one footnote row per occurrence.
+  // Pass 3 — one footnote row per citation point, listing its sources.
   const newFootnotes = built.map((f) => {
-    const origin = byNumber.get(Number(f.source_id.slice(1)))!;
-    const isRepeat = f.repeat_kind !== "full";
+    const origin = byNumber.get(Number(f.sources[0].source_id.slice(1)))!;
+    const solo = f.sources.length === 1;
+    const soloFull = solo && f.sources[0].repeat_kind === "full";
     return {
       ...origin,
       number: f.index,
       title: f.citation,
-      url: isRepeat ? null : (origin.url ?? null),
-      sources: isRepeat
-        ? [{ title: f.citation, url: null }]
-        : (origin.sources ?? [{ title: origin.title, url: origin.url ?? null }]),
+      url: soloFull ? (origin.url ?? null) : null,
+      sources: f.sources.map((s) => {
+        const src = byNumber.get(Number(s.source_id.slice(1)))!;
+        return {
+          title: s.citation,
+          url: s.repeat_kind === "full" ? (src.url ?? null) : null,
+          source_type: src.source_type,
+        };
+      }),
     } as F;
   });
 
@@ -142,8 +149,10 @@ export function applyOccurrenceFootnotes<
   // occurrence number of the authority it belongs to.
   const firstOccurrenceOf = new Map<number, number>();
   for (const f of built) {
-    const old = Number(f.source_id.slice(1));
-    if (!firstOccurrenceOf.has(old)) firstOccurrenceOf.set(old, f.index);
+    for (const s of f.sources) {
+      const old = Number(s.source_id.slice(1));
+      if (!firstOccurrenceOf.has(old)) firstOccurrenceOf.set(old, s.first_occurrence);
+    }
   }
   const used_sources = usedSources
     .filter((u) => firstOccurrenceOf.has(u.number))
@@ -155,6 +164,6 @@ export function applyOccurrenceFootnotes<
     footnotes: newFootnotes,
     used_sources,
     occurrence_count: built.length,
-    repeat_count: built.filter((f) => f.repeat_kind !== "full").length,
+    repeat_count: built.filter((f) => f.sources.some((s) => s.repeat_kind !== "full")).length,
   };
 }
