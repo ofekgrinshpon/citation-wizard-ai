@@ -19,12 +19,18 @@ export type JudgmentBodyClass =
   | "listing_or_index_body";
 
 // ── V1 regex set (verbatim) ────────────────────────────────────────────────
-const OPENER_RE = /(ל\s?פני\s+(כבוד|הרכב)|בפני\s+(כבוד|הרכב)|בבית\s+המשפט)/;
-const DECISION_HEADER_RE = /(פסק\s*דין|גזר\s*דין|הכרעת\s*דין|החלטה)/;
-const PARTY_RE = /(המערער|המשיב|העותר|המבקש|הנאשם|התובע|הנתבע|מאשימה)/;
+// V1 set, widened ONLY for court forms the V1 corpus never covered: the labour
+// courts write "בבית הדין הארצי לעבודה" instead of "בבית המשפט", and their
+// dockets (ע"ע, עב"ל, ס"ק, סע"ש, עס"ק) were not in the V1 prefix alternation.
+// No signal was removed and no signal became optional.
+const OPENER_RE =
+  /(ל\s?פני\s+(כבוד|הרכב)|בפני\s+(כבוד|הרכב)|בבית\s+המשפט|בבית\s+הדין|בית\s+הדין\s+(הארצי|האזורי)\s+לעבודה)/;
+const DECISION_HEADER_RE = /(פסק[\s-]*דין|גזר[\s-]*דין|הכרעת[\s-]*דין|החלטה)/;
+const PARTY_RE =
+  /(המערער|המשיב|העותר|המבקש|הנאשם|התובע|הנתבע|מאשימה|המערערת|המשיבה|התובעת|הנתבעת|העובד|המעסיק)/;
 const VS_RE = /\sנגד\s|\sנ'\s|\sנ׳\s/;
 const DOCKET_RE =
-  /(בג"?ץ|בג״ץ|ע"?א|רע"?א|ע"?פ|רע"?פ|בש"?א|עה"?ס|עע"?ם|ד"?נ|תמ"?ש|ת"?א)\s*\d{1,6}\/\d{2,4}(?!\d)/;
+  /(בג"?ץ|בג״ץ|ע"?א|רע"?א|ע"?פ|רע"?פ|בש"?א|עה"?ס|עע"?ם|ד"?נ|תמ"?ש|ת"?א|ע"?ע|עב"?ל|עס"?ק|ס"?ק|סע"?ש|ע"?ב|עמ"?נ|עמ"?ש|בר"?ע)\s*\d{1,6}\/\d{2,4}(?!\d)/;
 
 const LISTING_VOCAB = [
   /תוצאות\s*חיפוש/g,
@@ -256,17 +262,83 @@ export function assessCaptionStructure(
     if (lineEnd === -1) lineEnd = body.length;
     const before = body.slice(Math.max(0, hit - CAPTION_WINDOW_BEFORE), lineStart);
     const after = body.slice(lineEnd, hit + CAPTION_WINDOW_AFTER);
-    const lines = captionLines(`${before}\n${after}`);
-    const signals = STRUCTURE_SIGNALS
-      .filter((g) => lines.some((l) => g.markers.some((m) => l.includes(m))))
-      .map((g) => g.name);
-    const ok = signals.length >= 2 && signals.some((s) => STRONG_SIGNALS.has(s));
-    if (ok || signals.length > best.signals.length) {
-      best = { self_identifying: ok, hit_offset: hit, signals, supporting };
+    const window = `${before}\n${after}`;
+    const lines = captionLines(window);
+    const signals = signalsIn((g) => lines.some((l) => g.markers.some((m) => l.includes(m))));
+    let ok = signals.length >= 2 && signals.some((s) => STRONG_SIGNALS.has(s));
+    let used = signals;
+
+    // Flattened-extraction caption. A PDF-to-text conversion can join the
+    // court line, the docket, the litigants and the panel into one long line,
+    // which the line-shaped probe above cannot see. The same window is then
+    // read without line structure — but the bar is RAISED, not lowered: three
+    // distinct signals instead of two, strong signal still mandatory. An
+    // article that merely cites the docket carries at most court identity plus
+    // one incidental term in the same window, so it still fails.
+    if (!ok) {
+      // The docket's OWN line is excluded above, which is correct for a
+      // line-structured caption but fatal for a flattened one, where the whole
+      // caption IS that line. Read a bounded raw window around the hit instead.
+      const raw = body.slice(
+        Math.max(0, hit - CAPTION_WINDOW_BEFORE),
+        hit + CAPTION_WINDOW_AFTER,
+      );
+      const flat = signalsIn((g) => g.markers.some((m) => raw.includes(m)));
+      if (flat.length >= FLATTENED_MIN_SIGNALS && flat.some((s) => STRONG_SIGNALS.has(s))) {
+        ok = true;
+        used = [...flat, "flattened_caption"];
+      }
+    }
+
+    if (ok || used.length > best.signals.length) {
+      best = { self_identifying: ok, hit_offset: hit, signals: used, supporting };
     }
     if (ok) break;
     hit = body.indexOf(docketKey, hit + docketKey.length);
   }
 
   return best;
+}
+
+/** Distinct structural signal names selected by `pick`. */
+function signalsIn(pick: (g: { name: string; markers: string[] }) => boolean): string[] {
+  return STRUCTURE_SIGNALS.filter(pick).map((g) => g.name);
+}
+
+/** Signals required when the caption survived extraction only as flat text. */
+export const FLATTENED_MIN_SIGNALS = 3;
+
+/** How much of the document head counts as its caption area. */
+export const HEAD_CHARS = 4_000;
+
+export interface HeadStructureVerdict {
+  /** Distinct caption-shaped structural signals in the document head. */
+  signals: string[];
+  /** At least two signals including a party-bearing (strong) one. */
+  judicial_head: boolean;
+  /** Docket numbers appearing in the head, normalized `n/yy`. */
+  dockets: string[];
+}
+
+/**
+ * Structure of the document HEAD, independent of any docket occurrence.
+ *
+ * Used only by the controlled structured-metadata path: when a PDF extraction
+ * dropped the docket line entirely, the head must still look like a judgment
+ * caption before stored metadata may supply the missing identity. It never
+ * establishes WHICH judgment the body is — only that it is one.
+ */
+export function assessHeadStructure(title: string, text: string): HeadStructureVerdict {
+  const head = normalizeKeepLines(`${title ?? ""}\n${text ?? ""}`).slice(0, HEAD_CHARS);
+  const lines = captionLines(head);
+  const signals = signalsIn((g) =>
+    lines.some((l) => g.markers.some((m) => l.includes(m))) ||
+    g.markers.some((m) => head.includes(m))
+  );
+  const dockets = [...new Set((head.match(/\d{1,6}\/\d{2,4}/g) ?? []))];
+  return {
+    signals,
+    judicial_head: signals.length >= 2 && signals.some((s) => STRONG_SIGNALS.has(s)),
+    dockets,
+  };
 }

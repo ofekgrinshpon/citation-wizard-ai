@@ -213,7 +213,10 @@ describe("case identity guard for broad-web candidates", () => {
       ...body("ראו דיון בעמוד 2553/01 של הקובץ"),
     });
     expect(r.corroborated).toBe(false);
-    expect(r.basis).toBe("docket_proceeding_type_mismatch");
+    // A bare digit mention is refused either as a proceeding-type mismatch or,
+    // now that a missing proceeding token no longer short-circuits, because the
+    // body has no judgment form at all. Both are hard refusals.
+    expect(["docket_proceeding_type_mismatch", "judgment_body_form_absent"]).toContain(r.basis);
   });
 
   it("does not require party names", () => {

@@ -140,8 +140,17 @@ export async function runLookupAuthority(
   input: LookupInput,
 ): Promise<LookupOutput> {
   const kind = input.kind === "statute" ? "statute" : "case";
+  // The expected identity must keep the FULL case identity — proceeding type,
+  // docket number and an explicitly supplied court qualifier. Reducing a
+  // request to bare digits erased the very distinction corroboration needs
+  // (ע"פ 6339/18 is not ע"א 6339/18). The stable authority key stays
+  // number-based for compatibility (see authorityKeyOf).
+  const detected = input.docket ? detectDockets(input.docket)[0] : undefined;
+  const docketNumber = detected?.number ??
+    (input.docket ? normalizeDocketText(input.docket) : undefined);
+  const courtQualifier = input.docket?.match(/\(([^)]{1,40})\)/)?.[0];
   const docket = input.docket
-    ? (detectDockets(input.docket)[0]?.number ?? normalizeDocketText(input.docket))
+    ? [detected?.prefix_he, courtQualifier, docketNumber].filter(Boolean).join(" ").trim()
     : undefined;
   const statute = input.statute?.trim();
   const section = input.section?.trim();
@@ -158,12 +167,17 @@ export async function runLookupAuthority(
   const needle = `${docket ?? ""} ${hint} ${statute ?? ""}`.trim();
   const registryRow = CANONICAL_AUTHORITIES.find((a) =>
     a.kind === kind &&
-    ((docket && a.docket === docket) ||
+    ((docketNumber && a.docket === docketNumber) ||
       a.match_terms.some((t) => t.length > 2 && needle.includes(t)))
   ) ?? null;
 
   const candidates: LookupCandidate[] = [];
-  candidates.push(...await localRecords(admin, kind, { docket, term: docket || statute || hint }));
+  candidates.push(
+    ...await localRecords(admin, kind, {
+      docket: docketNumber,
+      term: docketNumber || statute || hint,
+    }),
+  );
 
   for (const url of officialSearchUrls(kind, term || hint || docket || statute || "")) {
     const cls = classifyJudgmentUrl(url, "unknown");
