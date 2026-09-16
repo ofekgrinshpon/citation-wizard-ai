@@ -90,25 +90,40 @@ export function toBetaResult(out: Record<string, unknown>): BetaResultShape {
   const seenSource = new Set<string>();
   const used_sources: BetaResultShape["used_sources"] = [];
   for (const f of footnotes) {
-    if (f.source_id && seenSource.has(f.source_id)) continue;
-    if (f.source_id) seenSource.add(f.source_id);
-    used_sources.push({
-      number: f.first_occurrence ?? f.index,
-      title: f.full_citation ?? f.citation,
-      url: f.url ?? null,
-    });
+    for (const s of f.sources ?? [{ ...f }]) {
+      if (!s.source_id || seenSource.has(s.source_id)) continue;
+      seenSource.add(s.source_id);
+      used_sources.push({
+        number: s.first_occurrence ?? f.index,
+        title: s.full_citation ?? s.citation,
+        url: s.url ?? null,
+      });
+    }
   }
   return {
     answer: String(out.answer_markdown ?? ""),
-    footnotes: footnotes.map((f) => ({
-      number: f.index,
-      title: f.citation,
-      url: f.repeat_kind && f.repeat_kind !== "full" ? null : (f.url ?? null),
-      sources: [{
+    footnotes: footnotes.map((f) => {
+      const entries = f.sources?.length
+        ? f.sources
+        : [{
+          source_id: f.source_id,
+          citation: f.citation,
+          repeat_kind: f.repeat_kind,
+          url: f.url,
+        }];
+      return {
+        number: f.index,
         title: f.citation,
-        url: f.repeat_kind && f.repeat_kind !== "full" ? null : (f.url ?? null),
-      }],
-    })),
+        url: entries.length === 1 && entries[0].repeat_kind === "full"
+          ? (entries[0].url ?? null)
+          : null,
+        // One row per citation point; a compound point lists its sources here.
+        sources: entries.map((s) => ({
+          title: s.citation,
+          url: s.repeat_kind && s.repeat_kind !== "full" ? null : (s.url ?? null),
+        })),
+      };
+    }),
     used_sources,
     pipeline_version: "v2",
     run_id: String(out.run_id ?? ""),

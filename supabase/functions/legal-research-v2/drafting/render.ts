@@ -13,7 +13,7 @@ import {
 } from "../shared/primitives.ts";
 import { stripInternalIds } from "../shared/titleHygiene.ts";
 import {
-  buildOccurrenceFootnotes,
+  buildCompoundFootnotes,
   type CitationOccurrence,
   placeMarkerAfterPunctuation,
   toSuperscript,
@@ -87,53 +87,63 @@ export function renderAnswer(
 
   const invariant_errors: string[] = [];
 
-  // ── Pass 1: citation occurrences in strict body-traversal order ──────────
-  const occurrences: CitationOccurrence[] = [];
-  const perBlockCounts: number[] = [];
+  // ── Pass 1: citation POINTS in strict body-traversal order ───────────────
+  // One block = one citation point, however many verified sources support it.
+  const groups: CitationOccurrence[][] = [];
+  const blockGroupIndex: Array<number | null> = [];
   for (const block of blocks) {
     const ids = block.type === "heading" ? [] : block.source_ids;
-    let count = 0;
+    const group: CitationOccurrence[] = [];
     for (const id of ids) {
       const info = infoBySource.get(id);
       if (!info) {
         invariant_errors.push(`block cites unverified source ${id}`);
         continue;
       }
-      occurrences.push({
+      group.push({
         source_id: id,
         full_citation: formatCitation(info),
         locator: info.locator,
         url: info.url,
       });
-      count++;
     }
-    perBlockCounts.push(count);
+    if (group.length) {
+      blockGroupIndex.push(groups.length);
+      groups.push(group);
+    } else {
+      blockGroupIndex.push(null);
+    }
   }
 
   // ── Pass 2: rule 37 repeat text + chronological numbering ────────────────
-  const built = buildOccurrenceFootnotes(occurrences, { offset });
+  const built = buildCompoundFootnotes(groups, { offset });
   const footnotes: Footnote[] = built.map((f) => ({
     index: f.index,
     source_id: f.source_id,
+    source_ids: f.source_ids,
     citation: f.citation,
     full_citation: f.full_citation,
     first_occurrence: f.first_occurrence,
     repeat_kind: f.repeat_kind,
     locator: f.locator,
     url: f.url,
+    sources: f.sources.map((s) => ({
+      source_id: s.source_id,
+      citation: s.citation,
+      full_citation: s.full_citation,
+      first_occurrence: s.first_occurrence,
+      repeat_kind: s.repeat_kind,
+      locator: s.locator,
+      url: s.url,
+    })),
   }));
 
-  // ── Pass 3: body with superscript markers only (no definitions) ──────────
+  // ── Pass 3: body with exactly ONE superscript marker per citation point ──
   const lines: string[] = [];
-  let cursor = 0;
   blocks.forEach((block, i) => {
-    const count = perBlockCounts[i] ?? 0;
-    const markers = built
-      .slice(cursor, cursor + count)
-      .map((f) => toSuperscript(f.index))
-      .join("");
-    cursor += count;
-    lines.push(blockToMarkdown(block, markers));
+    const gi = blockGroupIndex[i];
+    const marker = gi === null || gi === undefined ? "" : toSuperscript(built[gi].index);
+    lines.push(blockToMarkdown(block, marker));
   });
 
   const answer_markdown = lines.join("\n\n").trim();
@@ -149,9 +159,14 @@ export function renderAnswer(
   if (/\[\^\d+\]/.test(answer_markdown)) {
     invariant_errors.push("answer contains legacy markdown footnote markers");
   }
+  if (groups.length !== footnotes.length) {
+    invariant_errors.push("footnote rows do not match citation points");
+  }
 
   const cited: string[] = [];
-  for (const f of footnotes) if (!cited.includes(f.source_id)) cited.push(f.source_id);
+  for (const f of built) {
+    for (const id of f.source_ids) if (!cited.includes(id)) cited.push(id);
+  }
 
   return {
     answer_markdown,

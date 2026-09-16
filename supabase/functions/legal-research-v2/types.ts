@@ -310,6 +310,17 @@ export interface Footnote {
   first_occurrence?: number;
   repeat_kind?: "full" | "ibid" | "supra";
   locator?: string;
+  /** Every verified source cited at this one textual point (compound footnote). */
+  source_ids?: string[];
+  sources?: Array<{
+    source_id: string;
+    citation: string;
+    full_citation?: string;
+    first_occurrence?: number;
+    repeat_kind?: "full" | "ibid" | "supra";
+    locator?: string;
+    url?: string;
+  }>;
 }
 
 export interface RenderedAnswer {
