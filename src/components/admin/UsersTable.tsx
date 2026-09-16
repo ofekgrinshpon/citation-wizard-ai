@@ -223,9 +223,17 @@ const UsersTable = ({ users, usage = {}, adminUserIds, onUserUpdated }: UsersTab
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            {PLAN_OPTIONS.map((p) => (
-                              <SelectItem key={p} value={p} className="text-xs">
-                                {PLANS[p].label}
+                            {(PLAN_OPTIONS.includes(planValue)
+                              ? PLAN_OPTIONS
+                              : [planValue, ...PLAN_OPTIONS]
+                            ).map((p) => (
+                              <SelectItem
+                                key={p}
+                                value={p}
+                                className="text-xs"
+                                disabled={!PLAN_OPTIONS.includes(p)}
+                              >
+                                {PLANS[p]?.label ?? p}
                               </SelectItem>
                             ))}
                           </SelectContent>
