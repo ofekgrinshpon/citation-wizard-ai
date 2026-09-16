@@ -18,6 +18,7 @@ import { toast } from "sonner";
 import { renderAnswerMarkdown } from "@/lib/legalQa/renderAnswerMarkdown";
 import { copyPlainText } from "@/lib/clipboard";
 import { normalizeHebrewNumberRanges } from "@/lib/hebrewNumberRange";
+import { normalizeAnswerForDisplay } from "@/lib/legalQa/footnoteDisplay";
 import {
   RESEARCH_PIPELINE,
   researchFunctionFor,
@@ -679,7 +680,7 @@ export function LegalResearchV1Panel({
   const handleCopyResult = async () => {
     if (!result) return;
     const parts: string[] = [];
-    parts.push(result.answer.trim());
+    parts.push(normalizeAnswerForDisplay(result.answer).trim());
     if (result.footnotes && result.footnotes.length > 0) {
       parts.push("");
       parts.push("הערות שוליים");
@@ -822,7 +823,7 @@ export function LegalResearchV1Panel({
               <div className="rounded-lg border border-border bg-card p-4">
                 <h3 className="text-sm font-bold text-foreground mb-2">תשובה</h3>
                 <div className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">
-                  {renderAnswerMarkdown(result.answer)}
+                  {renderAnswerMarkdown(normalizeAnswerForDisplay(result.answer))}
                 </div>
               </div>
             )}

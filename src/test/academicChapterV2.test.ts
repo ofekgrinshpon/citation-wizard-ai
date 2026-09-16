@@ -79,7 +79,7 @@ describe("continuous footnote numbering", () => {
       { footnote_offset: 7 },
     );
     expect(out.footnotes[0].index).toBe(8);
-    expect(out.answer_markdown).toContain("[^8]");
+    expect(out.answer_markdown).toContain("⁸");
     expect(out.invariant_errors).toEqual([]);
   });
 

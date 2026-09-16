@@ -302,8 +302,14 @@ export interface DraftBlock {
 export interface Footnote {
   index: number;
   source_id: string;
+  /** Text shown for THIS occurrence (full citation / שם / לעיל ה"ש). */
   citation: string;
   url?: string;
+  /** Occurrence bookkeeping (rule 37). Internal — never shown to the user. */
+  full_citation?: string;
+  first_occurrence?: number;
+  repeat_kind?: "full" | "ibid" | "supra";
+  locator?: string;
 }
 
 export interface RenderedAnswer {
