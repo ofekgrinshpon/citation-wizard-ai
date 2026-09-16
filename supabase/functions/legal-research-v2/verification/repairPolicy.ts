@@ -119,7 +119,9 @@ export interface RepairAcceptance {
     | "coverage_restored"
     | "coverage_still_missing"
     | "verified_claims_not_reduced"
-    | "verified_claims_reduced";
+    | "verified_claims_reduced"
+    | "verified_claims_produced"
+    | "still_zero_verified_claims";
   coverage_after?: CoverageAssessment;
 }
 
