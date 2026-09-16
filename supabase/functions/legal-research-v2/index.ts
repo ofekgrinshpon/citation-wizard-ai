@@ -296,6 +296,10 @@ async function runPipeline(
   const repair_due_to_central_insufficiency =
     repairDecision.reason === "central_issue_not_covered_after_narrowing";
   let repair_acceptance_reason: string | null = null;
+  // Evaluation-only forensics: the full per-claim verification chain of the
+  // memo as first written, captured before any repair can replace it.
+  const forensics_pre_repair = buildVerificationForensics(agent.memo, verification);
+  let forensics_repaired: ForensicEvidenceRow[] = [];
   const repairCapacityExhausted = repairDecision.repair && agent.policy.allExhausted();
   const repair_skip_reason = repairDecision.repair
     ? (repairCapacityExhausted ? "research_capacity_exhausted" : null)
