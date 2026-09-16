@@ -162,6 +162,6 @@ covered only by deterministic tests.
 - Historical answers keep their stored text; compound presentation applies to
   newly rendered answers only.
 
-FOOTNOTE PRESENTATION + RULE 37 — PARTIAL / REVIEW
+FOOTNOTE PRESENTATION + RULE 37 — PARTIAL
 
 NO RESEARCH OR VERIFICATION BEHAVIOUR CHANGED.
