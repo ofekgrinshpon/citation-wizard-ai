@@ -723,6 +723,11 @@ async function runPipeline(
     authority_section_from_parent: agent.stats.authority_section_from_parent,
     authority_identity_conflicts: agent.stats.authority_identity_conflicts,
     authority_memo_gate_used: agent.stats.authority_memo_gate_used,
+    /** Exact-authority recovery (v2_exact_authority_recovery_v1). */
+    authority_recovery_triggered: agent.stats.authority_recovery_triggered,
+    authority_recovery_candidates_attached: agent.stats.authority_recovery_candidates_attached,
+    authority_recovery_success: agent.stats.authority_recovery_success,
+    authority_recovery: agent.stats.authority_recovery_records,
     unsafe_urls_blocked: agent.stats.unsafe_urls_blocked,
     /** Per-run egress state (v2_per_run_egress_reset_v1). */
     egress: { ...egressTelemetry() },

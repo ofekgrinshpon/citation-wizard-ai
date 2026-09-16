@@ -445,6 +445,11 @@ export interface V2Telemetry {
   authority_section_from_parent?: number;
   authority_identity_conflicts?: number;
   authority_memo_gate_used?: number;
+  /** Exact-authority recovery (v2_exact_authority_recovery_v1). */
+  authority_recovery_triggered?: number;
+  authority_recovery_candidates_attached?: number;
+  authority_recovery_success?: number;
+  authority_recovery?: Array<Record<string, unknown>>;
   /** Outbound URLs refused by the deterministic safety gate. */
   unsafe_urls_blocked?: number;
   /** Compact per-run egress state (direct official + court relay). */

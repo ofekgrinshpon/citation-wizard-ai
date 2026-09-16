@@ -26,6 +26,7 @@ import type { SupabaseClient } from "../shared/primitives.ts";
 import { chat, type ChatMessage, parseJsonLoose, type ToolSpec, type UsageLedger } from "../shared/model.ts";
 import { runSearch } from "../tools/search.ts";
 import { rawQueryKey, runRawWebSearch } from "../tools/rawWebSearch.ts";
+import type { RecoverySearchFn } from "../tools/exactAuthorityRecovery.ts";
 import { runFetch } from "../tools/fetch.ts";
 import { runLookupAuthority } from "../tools/lookupAuthority.ts";
 import { seedResultIds } from "../tools/resultIds.ts";
@@ -427,6 +428,39 @@ export async function runResearchAgent(opts: {
 
   let pendingDirective: string | undefined;
 
+  /**
+   * Discovery backend for the one bounded exact-authority recovery round
+   * (v2_exact_authority_recovery_v1). Discovery only: the results are ordinary
+   * search results with no body, and every candidate they produce still goes
+   * through the unchanged fetch / identity / corroboration gates.
+   */
+  const recoverySearch: RecoverySearchFn = async ({ query, scope, limit }) => {
+    let results: SearchResult[] = [];
+    if (scope === "official") {
+      if (policy.checkTool("search") !== null) return [];
+      policy.note("search", "official");
+      const out = await runSearch(opts.admin, { query, scope: "official", limit });
+      results = out.results;
+    } else {
+      if (policy.checkTool("raw_web_search") !== null) return [];
+      policy.note("raw_web_search");
+      const out = await runRawWebSearch({ query, limit });
+      results = out.results;
+      stats.raw_web_search_calls += 1;
+      stats.raw_web_search_results += out.results.length;
+      for (const r of out.results) {
+        if (r.domain && !stats.raw_web_search_domains.includes(r.domain)) {
+          stats.raw_web_search_domains.push(r.domain);
+        }
+      }
+    }
+    for (const r of results) {
+      discovered.set(r.result_id, r);
+      registerCandidateProvenance(r.url, scope === "official" ? "search_first" : "retrieved");
+    }
+    return results;
+  };
+
   while (!policy.stepExhausted()) {
     if (stepsThisChunk >= chunkCap || Date.now() >= deadlineAt) {
       paused = true;
@@ -541,6 +575,7 @@ export async function runResearchAgent(opts: {
             canFetch: () => policy.checkTool("fetch") === null,
             noteFetch: () => policy.note("fetch"),
             stats,
+            recoverySearch,
             maxAttempts: 1,
           });
           if (acq.status === "acquired") {
@@ -789,6 +824,7 @@ export async function runResearchAgent(opts: {
           canFetch: () => policy.checkTool("fetch") === null,
           noteFetch: () => policy.note("fetch"),
           stats,
+          recoverySearch,
         });
         timer.add("fetch", Date.now() - toolStarted);
         payload = acq as unknown as Record<string, unknown>;
