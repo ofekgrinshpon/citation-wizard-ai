@@ -119,7 +119,9 @@ export interface RepairAcceptance {
     | "coverage_restored"
     | "coverage_still_missing"
     | "verified_claims_not_reduced"
-    | "verified_claims_reduced";
+    | "verified_claims_reduced"
+    | "verified_claims_produced"
+    | "still_zero_verified_claims";
   coverage_after?: CoverageAssessment;
 }
 
@@ -143,6 +145,15 @@ export function decideRepairAcceptance(input: {
     return coverage_after.central_issue_covered
       ? { accept: true, reason: "coverage_restored", coverage_after }
       : { accept: false, reason: "coverage_still_missing", coverage_after };
+  }
+  // A repair triggered because NOTHING verified cannot be accepted while the
+  // repaired pack still verifies nothing: 0 >= 0 is not an improvement, it is
+  // the same empty terminal state. Exactly one verified claim is enough; no
+  // higher minimum is introduced.
+  if (input.triggerReason === "no_verified_claims") {
+    return input.after.pack.claims.length >= 1
+      ? { accept: true, reason: "verified_claims_produced" }
+      : { accept: false, reason: "still_zero_verified_claims" };
   }
   return input.after.pack.claims.length >= input.before.pack.claims.length
     ? { accept: true, reason: "verified_claims_not_reduced" }

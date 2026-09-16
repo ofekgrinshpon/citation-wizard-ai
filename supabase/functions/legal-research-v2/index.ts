@@ -73,6 +73,10 @@ import { runDrafter } from "./drafting/draft.ts";
 import { renderAnswer } from "./drafting/render.ts";
 import { RunTimer, type RunTimingJson } from "./shared/timing.ts";
 import { decideRepairAcceptance, decideResearchRepair } from "./verification/repairPolicy.ts";
+import {
+  buildVerificationForensics,
+  type ForensicEvidenceRow,
+} from "./verification/forensics.ts";
 
 
 // deno-lint-ignore no-explicit-any
@@ -296,6 +300,10 @@ async function runPipeline(
   const repair_due_to_central_insufficiency =
     repairDecision.reason === "central_issue_not_covered_after_narrowing";
   let repair_acceptance_reason: string | null = null;
+  // Evaluation-only forensics: the full per-claim verification chain of the
+  // memo as first written, captured before any repair can replace it.
+  const forensics_pre_repair = buildVerificationForensics(agent.memo, verification);
+  let forensics_repaired: ForensicEvidenceRow[] = [];
   const repairCapacityExhausted = repairDecision.repair && agent.policy.allExhausted();
   const repair_skip_reason = repairDecision.repair
     ? (repairCapacityExhausted ? "research_capacity_exhausted" : null)
@@ -352,6 +360,7 @@ async function runPipeline(
         // own issue_summary.
         issue_summary: agent.memo.issue_summary,
       });
+      forensics_repaired = buildVerificationForensics(repaired.memo, reVerified);
       repair_acceptance_reason = acceptance.reason;
       if (acceptance.accept) {
         agent = { ...repaired, trace: [...agent.trace, ...repaired.trace] };
@@ -689,10 +698,17 @@ async function runPipeline(
     sufficiency_assessed: !!coverage?.assessed,
     surviving_core_claims: coverage?.surviving_core_claim_ids ?? [],
     unsupported_core_claims: coverage?.unsupported_core_claim_ids ?? [],
-    central_issue_covered: coverage ? coverage.central_issue_covered : true,
-    central_coverage_ratio: coverage?.coverage_ratio,
+    // An answer-mode run that ends with zero verified claims has covered
+    // nothing, whether or not a coverage assessment object exists.
+    central_issue_covered: pack.claims.length === 0
+      ? false
+      : (coverage ? coverage.central_issue_covered : true),
+    central_coverage_ratio: pack.claims.length === 0 ? 0 : coverage?.coverage_ratio,
     central_coverage_gap_terms: coverage?.lost_central_terms ?? [],
     repair_due_to_central_insufficiency,
+    /** Evaluation-only forensic verification chain (never user-facing). */
+    verification_forensics: forensics_pre_repair,
+    verification_forensics_repaired: forensics_repaired,
     ...temporalCounters,
     primary_authority_obligations: gapReport.obligations,
     primary_unreadable: gapReport.unreadable,
