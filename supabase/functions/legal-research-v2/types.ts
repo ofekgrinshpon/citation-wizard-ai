@@ -406,6 +406,9 @@ export interface V2Telemetry {
   central_coverage_ratio?: number;
   central_coverage_gap_terms?: string[];
   repair_due_to_central_insufficiency?: boolean;
+  /** Evaluation-only forensic verification chain (never shown to end users). */
+  verification_forensics?: unknown[];
+  verification_forensics_repaired?: unknown[];
   /** Safeguard A — current-law / temporal validity. */
   temporal_sensitive_claims: number;
   temporal_checks_attempted: number;
