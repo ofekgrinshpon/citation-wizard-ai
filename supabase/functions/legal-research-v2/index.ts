@@ -356,6 +356,7 @@ async function runPipeline(
         // own issue_summary.
         issue_summary: agent.memo.issue_summary,
       });
+      forensics_repaired = buildVerificationForensics(repaired.memo, reVerified);
       repair_acceptance_reason = acceptance.reason;
       if (acceptance.accept) {
         agent = { ...repaired, trace: [...agent.trace, ...repaired.trace] };
