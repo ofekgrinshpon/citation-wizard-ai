@@ -32,7 +32,7 @@ const NORMAL_HEADER = `בבית המשפט העליון\nרע"א 3365/20\nיונ
  * PDF (unpdf output): the header tokens arrive reversed, number first.
  */
 const REVERSED_HEADER =
-  `ןוילעה טפשמה תיבב\n3365/20 א"ער\nיאתנב 'נ לארשי רבוילינוי\n${PAD}`;
+  `ןוילעה טפשמה תיבב\n3365/20 א"רע\nיאתנב 'נ לארשי רבוילינוי\n${PAD}`;
 
 async function uploaded(
   store: EvidenceStore,
@@ -66,6 +66,14 @@ describe("body docket detector", () => {
 
   it("reads the reversed Hebrew-PDF form", () => {
     const d = detectDocketsInDocumentBody('3365/20 א"ער');
+    expect(d.refs.map((r) => r.docket_id)).toEqual(["raa-3365-20"]);
+    expect(d.reversed_used).toBe(true);
+  });
+
+  it("reads the REAL production extraction header (segment-reversed)", () => {
+    // Verbatim shape stored for רע"א 3365/20 by the production PDF extractor.
+    const head = 'העליון המשפט בבית\n3365/20 א"רע\nברון \'ע השופטת כבוד:לפני';
+    const d = detectDocketsInDocumentBody(head);
     expect(d.refs.map((r) => r.docket_id)).toEqual(["raa-3365-20"]);
     expect(d.reversed_used).toBe(true);
   });

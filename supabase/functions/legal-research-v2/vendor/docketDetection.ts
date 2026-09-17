@@ -305,13 +305,24 @@ export const PROCEEDING_TOKENS: ReadonlySet<string> = new Set(
 // narrow, deterministic shape from the same prefix table, instead of reversing
 // arbitrary text (which would manufacture false identities).
 
-/** `רע"א` → `א"ער`. Character-reversed prefix forms, built from the table. */
+/**
+ * Reversed prefix forms, built from the table (never from arbitrary text).
+ *
+ * Two shapes occur in real Hebrew PDF extraction:
+ *   - segment reversal around the gershayim — `רע"א` → `א"רע` (the shape the
+ *     production Supreme Court PDFs actually produce);
+ *   - full character reversal — `רע"א` → `א"ער`.
+ */
 const REVERSED_PREFIX_MAP: Record<string, string> = (() => {
   const map: Record<string, string> = {};
+  const QUOTE = /(["\u05F4'\u05F3])/;
   for (const p of PREFIX_TABLE) {
     for (const h of p.he) {
-      const rev = [...h].reverse().join("");
-      if (rev !== h) map[rev] = p.canonicalHe;
+      const forms = new Set<string>();
+      forms.add([...h].reverse().join(""));
+      const parts = h.split(QUOTE);
+      if (parts.length === 3) forms.add(`${parts[2]}${parts[1]}${parts[0]}`);
+      for (const f of forms) if (f !== h) map[f] = p.canonicalHe;
     }
   }
   return map;
