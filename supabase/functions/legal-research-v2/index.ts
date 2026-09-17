@@ -1063,10 +1063,27 @@ serve(async (req) => {
     // Admin accounts record a zero-delta consume; those are never refunded.
     const creditRequestId = cr.admin ? null : clientRequestId;
 
+    // Attachments travel with the same authenticated request the client
+    // already sends; only the destination function changed. Ownership is
+    // validated at extraction time against this user's storage prefix.
+    const rawAttachments = Array.isArray(body.attachments) ? body.attachments : [];
+    const attachmentInputs = rawAttachments
+      .filter((a): a is Record<string, unknown> => !!a && typeof a === "object")
+      .map((a) => ({
+        storage_path: String(a.storage_path ?? ""),
+        file_name: String(a.file_name ?? ""),
+        mime_type: String(a.mime_type ?? ""),
+        size: typeof a.size === "number" ? a.size : undefined,
+      }))
+      .filter((a) => a.storage_path && a.file_name)
+      .slice(0, 5);
+
     const betaIntake = buildIntake({
       run_id: crypto.randomUUID(),
       question,
       attachment_text: null,
+      attachments: attachmentInputs,
+      attachment_owner_id: user.id,
       academic_context: academicContext,
       footnote_offset: footnoteOffset,
       output_mode: sourceSearch ? "sources" : "answer",
