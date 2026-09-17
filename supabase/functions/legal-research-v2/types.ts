@@ -251,6 +251,7 @@ export type RejectionReason =
   | "empty_body"
   | "not_actual_document"
   | "identity_mismatch"
+  | "user_document_not_legal_authority"
   | "span_not_found"
   | "span_too_short"
   | "support_does_not_support"
