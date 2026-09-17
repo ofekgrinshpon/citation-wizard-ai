@@ -65,7 +65,6 @@ describe("served quote memory", () => {
     const intake = {
       question: "מהו איזון המשאבים?",
       normalized_question: "מהו איזון המשאבים?",
-      deliverable: "developed",
       docket_obligations: [],
       statute_obligations: [],
       budgets: {

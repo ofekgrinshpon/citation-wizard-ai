@@ -23,7 +23,8 @@ export interface StatuteObligation {
   variants: string[];
 }
 
-export type DeliverableKind = "focused" | "developed";
+// Research depth is decided by the Research Agent itself — no deterministic
+// deliverable classification exists in V2 any more.
 
 export interface Intake {
   run_id: string;
@@ -55,8 +56,6 @@ export interface Intake {
     docket_match: boolean;
     truncated: boolean;
   }>;
-  /** What the user asked to receive: a focused answer or a developed product. */
-  deliverable: DeliverableKind;
   budgets: ToolBudgets;
   /**
    * Evaluation-only Research Agent model override (model bake-off).

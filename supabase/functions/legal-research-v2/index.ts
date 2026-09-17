@@ -99,7 +99,7 @@ function json(body: unknown, status = 200): Response {
   });
 }
 
-import { classifyDeliverable } from "./agent/deliverable.ts";
+
 import {
   type AcademicProjectContext,
   buildProjectContextBlock,
@@ -148,8 +148,8 @@ export function buildIntake(input: {
     attachment_text: input.attachment_text?.trim() || null,
     attachments: (input.attachments ?? []).slice(0, 5),
     attachment_owner_id: input.attachment_owner_id ?? null,
-    // An academic body chapter is a developed product by construction.
-    deliverable: input.academic_context ? "developed" : classifyDeliverable(question),
+    // Research depth is the Research Agent's decision, including for academic
+    // body chapters — no deterministic classification here.
     budgets: {
       ...(input.output_mode === "sources" ? SOURCE_SEARCH_BUDGETS : DEFAULT_BUDGETS),
       ...(input.budgets ?? {}),
