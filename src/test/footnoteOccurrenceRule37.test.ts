@@ -5,7 +5,8 @@ import {
   buildOccurrenceFootnotes,
   normalizeAnswerForDisplay,
   placeMarkerAfterPunctuation,
-  toSuperscript,
+  extractShortSourceLabel,
+  placeMarkerAfterPunctuation,
 } from "../../supabase/functions/_shared/footnoteOccurrences";
 import {
   applyOccurrenceFootnotes,
