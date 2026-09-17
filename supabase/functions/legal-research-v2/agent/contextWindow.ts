@@ -131,7 +131,7 @@ export function buildResearchStateMessage(input: {
   const parts = [
     CONTEXT.STATE_MARKER,
     `שאלה: ${intake.normalized_question.slice(0, 400)}`,
-    `תוצר מבוקש: ${intake.deliverable === "developed" ? "תוצר מחקרי מפותח" : "תשובה ממוקדת"}`,
+    
     `מקורות שנקראו בריצה זו (הגוף המלא שמור בצד השרת; קריאה ממוקדת: fetch({source_id, query})):\n${
       sources.join("\n") || "(טרם נקראו מסמכים)"
     }`,

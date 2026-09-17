@@ -988,7 +988,7 @@ export async function runResearchAgent(opts: {
       obligations_satisfied: obligationsSatisfied(opts.intake, readable),
       stale_streak: commit.stale_streak,
       research_steps_left: policy.researchStepsLeft,
-      deliverable: opts.intake.deliverable,
+      
       unresolved_targets: ledger.unresolvedTargets().map((t) => ({
         authority_key: t.authority_key,
         untried: t.untried.length,

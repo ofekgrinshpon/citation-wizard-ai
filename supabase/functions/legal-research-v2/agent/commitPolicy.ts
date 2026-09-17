@@ -12,7 +12,7 @@
  * No sufficiency framework, no ranking, no rescue stage.
  */
 
-import type { DeliverableKind, EvidenceSource, Intake } from "../types.ts";
+import type { EvidenceSource, Intake } from "../types.ts";
 
 export interface CommitSignals {
   readable_count: number;
@@ -20,8 +20,6 @@ export interface CommitSignals {
   obligations_satisfied: number;
   stale_streak: number;
   research_steps_left: number;
-  /** What the user asked to receive; only wording of the early signal depends on it. */
-  deliverable?: DeliverableKind;
   /**
    * Authorities the agent itself chose to pursue that are still unacquired and
    * still have untried candidates. Information for the stale signal only —
@@ -62,14 +60,11 @@ export function obligationsSatisfied(intake: Intake, readable: EvidenceSource[])
 const MANDATORY_TEXT =
   "עצור את המחקר. שלב איסוף הראיות הסתיים. בהתבסס אך ורק על המסמכים שכבר נקראו בריצה זו, קרא עכשיו ל-submit_research_memo והגש את התזכיר הטוב ביותר האפשרי. סמן במפורש ב-unresolved_questions כל טענה שלא ניתן לבסס. אל תקרא ליותר אף כלי מחקר.";
 
-const EARLY_TEXT_FOCUSED =
-  "כבר קראת חומר שעשוי להספיק. או שתגיש עכשיו את תזכיר המחקר (submit_research_memo), או שתנסח לעצמך צורך מחקרי אחד ספציפי שטרם נענה — ורק אז תשתמש בכלי נוסף.";
-
-const EARLY_TEXT_DEVELOPED =
-  "קראת מספר מסמכים, אך המשתמש ביקש תוצר מחקרי מפותח. מספר המסמכים כשלעצמו אינו מעיד על מספיקות. בדוק עכשיו אם בסיס הראיות מתאים לעומק שהתבקש: האם הממדים המרכזיים של הסוגיה מיוצגים, האם יש ספרות או עמדות מתחרות משמעותיות, והאם הדין הראשוני הרלוונטי נקרא. אם התשובה שלילית — המשך לחקור בכיוון שחסר. רק אם בסיס הראיות כבר תומך בתוצר המפותח שהתבקש, הגש את תזכיר המחקר.";
+const EARLY_TEXT =
+  "קראת עד כה מספר מסמכים. מספר המסמכים כשלעצמו אינו מעיד על מספיקות. בחן מחדש את בקשת המשתמש בפועל ואת הראיות שבידך: אם כל הממדים המהותיים הנדרשים לאותה בקשה מבוססים דיים — הגש עכשיו את תזכיר המחקר (submit_research_memo). אם לא — נסח לעצמך פער מחקרי מהותי וקונקרטי אחד, והמשך לחקור ממוקד אליו.";
 
 function namedText(readyList: string): string {
-  return `גוף האסמכתה שנדרשה במפורש (${readyList}) הובא ונקרא בפועל. אם הוא כולל חומר המשיב לשאלת המשתמש — הגש עכשיו את תזכיר המחקר. אל תמשיך בגילוי מקורות נוספים אלא אם חסר לך רכיב ספציפי שאינו נמצא בגוף שנקרא.`;
+  return `גוף האסמכתה שנדרשה במפורש (${readyList}) הובא ונקרא בפועל. זו אינה בהכרח השלמת המשימה: בחן מחדש את בקשת המשתמש במלואה. אם אסמכתה זו יחד עם שאר הראיות מספיקה לכל מה שהתבקש — הגש עכשיו את תזכיר המחקר. אחרת המשך רק לעבר צרכי מחקר קונקרטיים שנותרו.`;
 }
 
 const STALE_TEXT =
@@ -133,7 +128,7 @@ export class CommitTracker {
       this.issued.add("early_commit");
       return {
         kind: "early_commit",
-        text: s.deliverable === "developed" ? EARLY_TEXT_DEVELOPED : EARLY_TEXT_FOCUSED,
+        text: EARLY_TEXT,
       };
     }
     // Re-issued while the run keeps producing nothing AND an acquisition
