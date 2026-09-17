@@ -10,6 +10,7 @@
  */
 
 import type {
+  AuthorityPromotionTelemetry,
   EvidenceSource,
   RejectedPair,
   ResearchMemo,
@@ -52,13 +53,17 @@ export function checkIdentity(
   source: EvidenceSource,
   expected: ExpectedIdentity,
 ): IdentityCheck {
-  const body = `${source.title}\n${source.extracted_text}`;
-  // Judgment identity: if the source presents itself as one of the run's
-  // explicit dockets (title mentions it), the body must carry that docket.
+  // body_only_identity_v1: a title/filename/discovery label may CLAIM an
+  // identity; only the extracted body may CONFIRM it. The title is therefore
+  // read for the claim side only and never enters the corroboration text.
+  const body = source.extracted_text ?? "";
+  const bodyCanonical = source.body_identity?.body_docket_ids ??
+    canonicalDocketIdsOf(body);
   for (const docket of expected.dockets) {
     const inTitle = normalizeDocketText(source.title).includes(normalizeDocketText(docket));
     if (!inTitle) continue;
-    const inBody = source.identity_fields.dockets.includes(docket) ||
+    const expectedIds = canonicalDocketIdsOf(docket);
+    const inBody = expectedIds.some((id) => bodyCanonical.includes(id)) ||
       normalizeDocketText(body).includes(normalizeDocketText(docket));
     if (!inBody) {
       return { ok: false, detail: `title claims ${docket} but the body does not contain it` };
@@ -74,7 +79,7 @@ export function checkIdentity(
     if (st.section) {
       const variants = buildSectionVariants(st.section);
       const hasSection = variants.some((v) => body.includes(v)) ||
-        source.identity_fields.sections.includes(st.section);
+        (source.body_identity?.sections ?? []).includes(st.section);
       if (!hasSection) {
         return { ok: false, detail: `statute body does not contain section ${st.section}` };
       }
@@ -82,6 +87,42 @@ export function checkIdentity(
     return { ok: true, detail: `statute ${st.statute} confirmed in body` };
   }
   return { ok: true, detail: "no explicit identity claim to contradict" };
+}
+
+/**
+ * Authority promotion for an uploaded document, from body identity only.
+ * Returns the decision plus the telemetry row (never user-facing).
+ */
+export function assessUserDocumentAuthority(
+  source: EvidenceSource,
+  expected: ExpectedIdentity,
+): { ok: boolean; telemetry: AuthorityPromotionTelemetry } {
+  const expected_docket_ids = [
+    ...new Set(expected.dockets.flatMap((d) => canonicalDocketIdsOf(d))),
+  ];
+  const bodyIdentity = source.body_identity ??
+    bodyIdentityOf(source.extracted_text ?? "", {
+      identity_zone_chars: source.user_document?.page_map?.[0]?.end,
+    });
+  const decision = userDocumentIsAuthority(bodyIdentity, {
+    docket_ids: expected_docket_ids,
+    statutes: expected.statutes,
+  });
+  return {
+    ok: decision.ok,
+    telemetry: {
+      source_id: source.source_id,
+      origin: source.origin,
+      expected_docket_ids,
+      expected_statutes: expected.statutes.map((s) => s.statute),
+      primary_docket_ids: bodyIdentity.primary_docket_ids,
+      body_docket_ids: bodyIdentity.body_docket_ids,
+      identity_zone_chars: bodyIdentity.identity_zone_chars,
+      reversed_pdf_detected: bodyIdentity.reversed_pdf_detected,
+      accepted: decision.ok,
+      reason: decision.reason,
+    },
+  };
 }
 
 
