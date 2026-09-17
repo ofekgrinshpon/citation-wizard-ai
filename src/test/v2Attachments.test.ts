@@ -12,12 +12,12 @@ import {
   userDocumentIsAuthority,
   validateAttachment,
 } from "../../supabase/functions/_shared/userDocumentsCore";
+import type { Intake } from "../../supabase/functions/legal-research-v2/types";
 import { EvidenceStore } from "../../supabase/functions/legal-research-v2/evidence/evidenceStore";
 import {
   preloadExtractedDocuments,
 } from "../../supabase/functions/legal-research-v2/evidence/userDocumentSources";
 import { attachmentContextBlock } from "../../supabase/functions/legal-research-v2/evidence/userDocumentSources";
-import { buildIntake } from "../../supabase/functions/legal-research-v2/index";
 import { researchFunctionFor, RESEARCH_FUNCTIONS } from "../config/researchPipeline";
 
 const USER = "user-1";
@@ -250,16 +250,19 @@ describe("agent manifest", () => {
   });
 
   it("rides on the intake so it survives resume", () => {
-    const intake = buildIntake({
+    const intake = {
       run_id: "r1",
       question: "מה קובע סעיף 7?",
+      docket_obligations: [],
+      statute_obligations: [],
+      attachment_text: null,
       attachments: [{
         storage_path: `${USER}/research/j/0-a.pdf`,
         file_name: "a.pdf",
         mime_type: "application/pdf",
       }],
       attachment_owner_id: USER,
-    });
+    } as unknown as Intake;
     expect(intake.attachments?.length).toBe(1);
     expect(intake.attachment_owner_id).toBe(USER);
     expect(attachmentContextBlock(intake)).toBe("");
