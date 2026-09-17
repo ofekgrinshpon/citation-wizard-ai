@@ -721,6 +721,18 @@ async function runPipeline(
     repeated_tool_calls_prevented: agent.stats.repeated_tool_calls_prevented,
     commit_directives: agent.stats.commit_directives,
     chunks_executed: chunk_index,
+    pipeline: "legal-research-v2",
+    attachment_count: attachments.attachment_count,
+    attachment_documents_loaded: attachments.attachment_documents_loaded,
+    attachment_chars_loaded: attachments.attachment_chars_loaded,
+    attachment_extract_errors: attachments.attachment_extract_errors,
+    attachment_sources_preloaded: attachments.attachment_sources_preloaded,
+    attachment_sources_cited: rendered.cited_source_ids.filter((id) =>
+      store.get(id)?.origin === "user_document"
+    ),
+    attachment_authority_rejections: (verification?.rejected ?? []).filter((r) =>
+      r.reason === "user_document_not_legal_authority"
+    ).length,
     /** Latency efficiency (legal_research_v2_latency_efficiency_v1). */
     phase_ms: timer.totalsMs(),
     agent_turns: timer.toJSON().turns,
