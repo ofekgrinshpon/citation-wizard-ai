@@ -13,6 +13,7 @@ import {
   validateAttachment,
 } from "../../supabase/functions/_shared/userDocumentsCore";
 import type { Intake } from "../../supabase/functions/legal-research-v2/types";
+import { renderAnswer } from "../../supabase/functions/legal-research-v2/drafting/render";
 import { EvidenceStore } from "../../supabase/functions/legal-research-v2/evidence/evidenceStore";
 import {
   preloadExtractedDocuments,
@@ -285,5 +286,79 @@ describe("frontend routing", () => {
     expect(researchFunctionFor({ hasAttachments: true })).toBe(RESEARCH_FUNCTIONS.v2);
     expect(researchFunctionFor({ hasAttachments: false })).toBe(RESEARCH_FUNCTIONS.v2);
     expect(researchFunctionFor()).toBe(RESEARCH_FUNCTIONS.v2);
+  });
+});
+
+describe("footnotes with an attachment source", () => {
+  const pack = {
+    claims: [
+      {
+        claim_id: "C1",
+        proposition: "סעיף 7 מחייב תשלום",
+        importance: "core" as const,
+        current_state_claim: false,
+        support_status: "supported" as const,
+        sources: [{
+          source_id: "S1",
+          display_title: "הסכם שכירות שצורף",
+          verified_span: "x",
+          locator: "עמ' 2",
+          support: "supports" as const,
+        }],
+      },
+      {
+        claim_id: "C2",
+        proposition: "תניה כזו נאכפת",
+        importance: "core" as const,
+        current_state_claim: false,
+        support_status: "supported" as const,
+        sources: [
+          {
+            source_id: "S1",
+            display_title: "הסכם שכירות שצורף",
+            verified_span: "y",
+            locator: "עמ' 2",
+            support: "supports" as const,
+          },
+          {
+            source_id: "S2",
+            display_title: 'ע"א 1234/20 פלוני נ׳ אלמוני',
+            url: "https://supreme.court.gov.il/x",
+            verified_span: "z",
+            support: "supports" as const,
+          },
+        ],
+      },
+    ],
+    unsupported_claims: [],
+  };
+
+  const blocks = [
+    { type: "paragraph" as const, text: "לפי ההסכם שצורף, השוכר חייב בתשלום.", source_ids: ["S1"] },
+    { type: "paragraph" as const, text: "תניה כזו ניתנת לאכיפה.", source_ids: ["S1", "S2"] },
+  ];
+
+  it("cites the uploaded file by title and page, with no URL", () => {
+    const out = renderAnswer(blocks, pack as never);
+    expect(out.invariant_errors).toEqual([]);
+    expect(out.footnotes[0].citation).toBe("הסכם שכירות שצורף, עמ' 2");
+    expect(out.footnotes[0].url).toBeUndefined();
+    expect(out.answer_markdown).toContain("¹");
+    expect(out.answer_markdown).not.toMatch(/\[\^\d+\]/);
+  });
+
+  it("gives an attachment + judgment point one marker with two sources", () => {
+    const out = renderAnswer(blocks, pack as never);
+    expect(out.footnotes.length).toBe(2);
+    expect(out.footnotes[1].sources.length).toBe(2);
+    expect(out.footnotes[1].sources[0].citation).toContain("לעיל ה\"ש 1");
+    expect(out.answer_markdown).toContain("²");
+  });
+
+  it("never exposes an internal source id or storage path", () => {
+    const out = renderAnswer(blocks, pack as never);
+    const all = out.answer_markdown + JSON.stringify(out.footnotes);
+    expect(all).not.toContain("user-1/research");
+    expect(out.footnotes[0].citation).not.toMatch(/\bS\d\b/);
   });
 });
