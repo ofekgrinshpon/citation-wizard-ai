@@ -165,3 +165,97 @@ covered only by deterministic tests.
 FOOTNOTE PRESENTATION + RULE 37 — PARTIAL
 
 NO RESEARCH OR VERIFICATION BEHAVIOUR CHANGED.
+
+---
+
+# 10. Final acceptance QA (read-only)
+
+No code was changed in this pass.
+
+## 10.1 Attached-PDF live run (V1 path)
+
+- PDF built for the test (Hebrew lease agreement, 6 clauses), uploaded to
+  `user-documents`, attached to a real query so `researchFunctionFor()` routed
+  to `legal-research-v1`.
+- run_id `39c8e761-4bc3-48b9-a270-8e76b0ddf9cb`, job_id
+  `4abd04f9-bbcf-4d2b-a55e-493257f376cf`, status `done`,
+  `marker_format: "superscript"`, 6 citation occurrences.
+
+Body (excerpt):
+
+```
+… שלא הייתה תמורה כלל.¹
+… אך הוא אינו מוחלט.²
+… בעת כריתת החוזה.³
+… את הסכום שנקבע בהסכם.⁴
+… תום הלב בעת אכיפת ההסכם.⁵
+… פער מהותי בין הסכום לנזק הצפוי.⁶
+```
+
+Footnotes: 1 full statute; 2 caselaw (compound); 3 `שם.`;
+4 caselaw full; 5 `חוק החוזים (תרופות בשל הפרת חוזה), לעיל ה"ש 1.`;
+6 `עניין אברהם רובינשטיין ושות' - חברה קבלנית, לעיל ה"ש 2.`
+
+Checks: numbering chronological ✔; every marker after the terminal
+punctuation ✔; exactly one marker per citation point ✔; one footnote list ✔;
+no `[^1]` anywhere ✔; `לעיל ה"ש` used for non-adjacent repeats ✔.
+
+## 10.2 Defect found — V1 compound point is collapsed into one synthetic source
+
+Footnote 2 carries **two distinct verified sources**
+(`candidate_id 9a3893eb…` caselaw and `39be49ed…` journal article — both
+`number: 2` in `used_sources`), but the V1 path renders them as one merged
+title string joined by `; כן ראו:` under a single `source_type: "compound"`
+entry with only the first source's URL. Consequences in this run:
+
+1. the second source's URL is not shown (link lost in UI and clipboard);
+2. footnote 3 is a bare `שם.` although the preceding point is compound —
+   the strict שם rule (one source on both sides) is satisfied only because
+   the compound was flattened into one pseudo-identity;
+3. footnote 4 restates the caselaw in **full** even though that same
+   authority already appeared inside footnote 2; Rule 37 expects
+   `…, לעיל ה"ש 2.`
+
+This is a V1 pre-renderer labelling issue (`stages/perOccurrenceFootnotes.ts`
+`compoundLabel()` merges titles before the shared occurrence engine sees
+them), not a regression of the V2 compound model. V2 output is unaffected.
+Left unfixed per the read-only scope of this task.
+
+## 10.3 Browser visual inspection
+
+Opened the completed run in the real app (`/app?job=4abd04f9…`), signed in,
+1280×1800. Findings: body prose readable; superscripts render as genuine
+raised markers, always after the punctuation; exactly one `הערות שוליים`
+card, no duplicate list; `שם.` and `לעיל ה"ש 1/2` read naturally; compound
+footnote 2 is one numbered item. Minor cosmetic issue: long `gov.il` URLs
+wrap mid-string in the RTL list and can leave a single trailing character on
+its own line (items 2 and 4) — layout is not broken, but URL wrapping is
+untidy. No marker-ambiguity issue; this answer has fewer than 10 footnotes,
+so the 10+ case rests on the deterministic multi-digit tests.
+
+## 10.4 Clipboard
+
+Clicked the real `העתק` button and read the clipboard. Output is body with
+superscript markers → blank line → `הערות שוליים` → exactly one chronological
+list (1–6), matching the body numbering. No `[^n]:` definitions, no duplicate
+list, compound footnote stays a single numbered item, `שם.` / `לעיל ה"ש`
+preserved. Same compound-merge limitation as 10.2 appears in the copied text.
+
+## 10.5 Alternating sources
+
+No extra long run was launched. The live run itself exercises the
+non-adjacent repeat pattern (statute at 1 → other authority at 2 → statute
+again at 5 as `לעיל ה"ש 1`), functionally equivalent to A → B → A. The exact
+A → B → A sequence remains covered deterministically.
+
+## 10.6 Acceptance
+
+Attached-PDF V1 path renders markers, numbering, punctuation placement and a
+single footnote list correctly, and the browser and clipboard checks pass.
+One genuine citation-presentation defect was reproduced: V1 collapses a
+multi-source citation point into a single merged label, losing a source URL
+and mis-applying Rule 37 for the sources inside it.
+
+FOOTNOTE PRESENTATION + RULE 37 — PARTIAL / REVIEW
+
+NO RESEARCH OR VERIFICATION BEHAVIOUR CHANGED.
