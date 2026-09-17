@@ -177,6 +177,25 @@ export interface IdentityFields {
   sections: string[];
 }
 
+/**
+ * Identity CONFIRMED by the extracted body alone (body_only_identity_v1).
+ *
+ * `identity_fields` above is discovery/display metadata and may be polluted by
+ * a title or a filename — it claims an identity. Only `body_identity` may
+ * confirm one, and only authority verification consumes it.
+ */
+export interface BodyIdentity {
+  /** Canonical docket ids (`raa:3365/20`) found in the identity/header zone. */
+  primary_docket_ids: string[];
+  /** Canonical docket ids anywhere in the body (incidental citations too). */
+  body_docket_ids: string[];
+  statutes: string[];
+  sections: string[];
+  identity_zone_chars: number;
+  reversed_pdf_detected: boolean;
+  ambiguous: boolean;
+}
+
 export interface EvidenceSource {
   source_id: string;
   url?: string;
@@ -189,6 +208,8 @@ export interface EvidenceSource {
   extracted_text: string;
   text_length: number;
   identity_fields: IdentityFields;
+  /** Body-only confirmed identity. The only identity authority checks trust. */
+  body_identity?: BodyIdentity;
   is_actual_document: boolean;
   not_document_reason?: string;
   origin: string;
