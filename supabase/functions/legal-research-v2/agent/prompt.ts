@@ -6,6 +6,7 @@
 
 import type { Intake } from "../types.ts";
 import { buildProjectContextBlock } from "../academic/projectContext.ts";
+import { attachmentContextBlock } from "../evidence/userDocumentSources.ts";
 
 export const AGENT_SYSTEM_PROMPT = `אתה חוקר משפטי ישראלי בכיר. תפקידך: לקבוע מה צריך לחקור, לחקור בפועל באמצעות הכלים, ולהחזיר תזכיר מחקר מבוסס מקורות שנקראו בפועל.
 
@@ -73,7 +74,10 @@ export function buildAgentUserMessage(intake: Intake): string {
       }.`,
     );
   }
-  if (intake.attachment_text) {
+  const manifest = attachmentContextBlock(intake);
+  if (manifest) parts.push(manifest);
+  // Legacy inline path (backwards compatibility only; production preloads).
+  if (!manifest && intake.attachment_text) {
     parts.push(`מסמך שצורף על ידי המשתמש (טקסט מלא/חלקי):\n${intake.attachment_text.slice(0, 40_000)}`);
   }
   parts.push(
