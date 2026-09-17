@@ -206,3 +206,91 @@ V2 ATTACHMENTS + V1 PRODUCTION RETIREMENT — REVIEW
 NORMAL LEGAL RESEARCH PRODUCTION TRAFFIC: V2 ONLY
 
 V1 PHYSICAL DELETION: DEFERRED UNTIL POST-MIGRATION STABILITY CHECK
+
+## 13. Body-Only Canonical Authority Identity (body_only_identity_v1)
+
+### Original defect
+The live T3 acceptance run showed an uploaded judgment promoted to legal
+authority. The control proved the promotion rested on the **file name**:
+`identityFieldsOf()` parsed `title + extracted_text`, so `רעא 3365-20 ....pdf`
+supplied the docket even when the body was a different judgment. Two further
+weaknesses compounded it: `identity_fields.dockets` stored bare numbers (so
+`ע"א 3365/20` could satisfy `רע"א 3365/20`), and `checkIdentity()` folded the
+source **title** into the "body must carry this docket" test, letting a
+search-result title self-confirm.
+
+### Second defect — Hebrew PDF extraction
+Production PDF extraction emits the header with reversed token order. The real
+corpus text for this judgment begins:
+
+```
+העליון המשפט בבית
+3365/20 א"רע
+```
+
+Note the true shape is **segment-reversed around the gershayim** (`רע"א` →
+`א"רע`), not character-reversed (`א"ער`). Both forms are now generated from the
+prefix table and both are recognised; a reversed form that is itself a genuine
+prefix is never registered, so no proceeding type can impersonate another.
+
+### Design
+- `detectDocketsInDocumentBody(text)` — body-oriented detector (normal,
+  segment-reversed, character-reversed, number-first). A bare number is never
+  an identity. `detectDockets()` (questions/search routing) is untouched.
+- `assessPrimaryDocumentDocket(text, { identity_zone_chars })` — primary
+  identity is read from a bounded opening identity zone (first extracted PDF
+  page where the page map is known, else 4,000 chars), returning primary and
+  full-body canonical docket ids plus an ambiguity flag.
+- `EvidenceStore.append()` / `appendUserDocument()` compute `body_identity`
+  **from the extracted body only**; the filename is never passed in and stays
+  display/extraction metadata.
+- `userDocumentIsAuthority(body, expected)` now compares canonical docket ids
+  (`raa:3365/20` ≠ `aa:3365/20`) and returns a reason: `body_docket_confirmed`,
+  `body_statute_confirmed`, `no_body_docket`, `body_docket_mismatch`,
+  `proceeding_type_mismatch`, `ambiguous_primary_docket`,
+  `body_identity_not_confirmed`.
+- `checkIdentity()` no longer includes the title in the corroboration body.
+- Fail-closed: an uncorroborated upload remains usable for claims about its own
+  contents; it cannot support a proposition of law. The run is not failed.
+- Telemetry `authority_promotions` (internal only) records expected/primary/body
+  docket ids, identity-zone size, reversed detection and the decision.
+
+### Tests
+`src/test/bodyOnlyAuthorityIdentity.test.ts` (19) runs the **real** construction
+path (EvidenceStore → body_identity → assessUserDocumentAuthority):
+A filename-only attack rejected; B genuine body + generic filename promoted;
+C reversed-PDF body promoted; D wrong filename never overrides a right body;
+E same number / wrong proceeding type rejected; F incidental deep citation is
+not primary identity; G reversed incidental citation likewise; H no body docket
+never promotes; plus real-corpus header fixture, uploaded-statute body-only
+controls, and fetched-source controls (title claims X / body Y → reject; genuine
+X body → accept, including reversed extraction).
+
+Full suite **971/971**, `tsgo` clean, `legal-research-v2` deployed. No drop in
+normal authority acquisition was observed.
+
+### Live acceptance
+| Run | File | Result |
+| --- | --- | --- |
+| L1 job `81175255-e9dc-4676-8b60-8466fc03e0d4` | `judgment.pdf` (genuine body) | Attachment preloaded and cited for document-content claims; the legal proposition came from the independently retrieved copy, so no promotion was needed. |
+| L2 job `92f73c5b-6afc-4a17-8edd-3f705745fe46` | `general-caselaw-summary.pdf` (genuine body, neutral name) | **Promoted from the body alone**: `primary_docket_ids ["raa:3365/20"]`, `reversed_pdf_detected true`, `identity_zone_chars 2899`, reason `body_docket_confirmed`. Proves filename independence. |
+| L3 job `cc7d0259-5fcd-49b8-88d2-f5ab7c0ef4ef` | `RAA 3365-20 Unilever.pdf` (body = ע"א 6278/22) | **Fail-closed**: zero attachment citations; the answer relied only on the independently retrieved genuine judgment. The deceptive filename produced no authority. |
+
+An earlier L2 variant (job `18ca4d9e-cd34-4418-b0f4-12be56381ac0`) recorded one
+`user_document_not_legal_authority` rejection, confirming the gate fires in
+production.
+
+### Remaining risks / cosmetic
+- A promoted uploaded judgment still renders with the cleaned filename
+  (`general-caselaw-summary, עמ' 2`) instead of the formal case citation.
+  Cosmetic, documented per §26, not fixed here.
+- Statute body identity relies on the curated statute registry, unchanged.
+- `attachment_chars_loaded = 0` after resume remains a cosmetic telemetry gap.
+
+V2 ATTACHMENTS + V1 PRODUCTION RETIREMENT — SHIP
+
+NORMAL LEGAL RESEARCH PRODUCTION TRAFFIC: V2 ONLY
+
+V1 PHYSICAL DELETION: DEFERRED UNTIL POST-MIGRATION STABILITY CHECK
+
+AUTHORITY IDENTITY VERIFICATION HARDENED TO BODY-ONLY CANONICAL MATCHING
