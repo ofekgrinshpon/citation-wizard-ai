@@ -1183,6 +1183,12 @@ serve(async (req) => {
     run_id: String(body.run_id ?? crypto.randomUUID()),
     question,
     attachment_text: typeof body.attachment_text === "string" ? body.attachment_text : null,
+    // Internal/smoke: attachments may be exercised with an explicit owner id.
+    attachments: Array.isArray(body.attachments)
+      // deno-lint-ignore no-explicit-any
+      ? (body.attachments as any[]).slice(0, 5)
+      : [],
+    attachment_owner_id: typeof body.smoke_user_id === "string" ? body.smoke_user_id : null,
     budgets: (body.budgets ?? undefined) as Partial<ToolBudgets> | undefined,
     agent_model: typeof body.agent_model === "string" ? body.agent_model : null,
     // Evaluation-only: the internal entry point may run an Academic Writing
