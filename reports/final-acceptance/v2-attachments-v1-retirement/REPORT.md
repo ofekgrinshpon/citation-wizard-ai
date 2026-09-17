@@ -121,22 +121,87 @@ or verification behaviour touched.
 The V1 compound-footnote defect (merged titles, lost second URL) is **not**
 fixed: it exists only on the retired production path.
 
-## 12. Remaining risks
+## 12. T3 — live uploaded judgment acceptance (read-only check)
 
-- T3 (live uploaded judgment used as named authority) was not exercised against
-  a real judgment file; identity behaviour rests on deterministic tests C/D.
-- T1/T2 lack explicit routing telemetry rows (pre-deploy), proven by endpoint
-  and citations instead.
+Genuine file: the published PDF of רע"א 3365/20 יוניליוור ישראל מזון בע"מ נ' שגיא
+בנתאי (7 pages, 114,643 bytes, 12,327 extracted chars; the docket appears in the
+PDF body). Uploaded to `user-documents` under the QA user's own path and sent
+through the normal authenticated beta request body.
+
+### Run A — job 46a65443-042c-4ddc-8958-41a63776ed89 / run df5761da-13e8-4d52-b95d-1d13a1956ccc
+Question named the proceeding and asked for its holding.
+- Routed to `legal-research-v2` (`pipeline: legal-research-v2`), attachment
+  extracted and preloaded as `S1`, no extraction errors.
+- The agent preferred an independently fetched copy of the same judgment (`S2`,
+  identity basis `docket רע"א 3365/20 confirmed in body`) and never submitted
+  `S1` as evidence (`identity_basis: not_submitted_as_evidence`).
+- Result: 2 footnotes, judgment cited normally, Rule 37 `שם.` on the repeat.
+- The attachment-as-authority path was therefore not exercised.
+- Telemetry note: `attachment_chars_loaded` reads 0 on runs that finish on a
+  resumed chunk (chunk 2/3) because the resume branch reports only the restored
+  source ids. Cosmetic telemetry gap; the source itself survives resume.
+
+### Run B — job 9c76a8a4-05b8-4419-be76-301a260b4a8b / run 5cab1c08-83c3-4f7f-97b3-3ba00b4cd536
+Question required reliance on the attached judgment.
+- Routed to `legal-research-v2`; `attachment_sources_preloaded: ["S1"]`,
+  `attachment_sources_cited: ["S1"]`, `attachment_extract_errors: []`,
+  `attachment_authority_rejections: 0`.
+- `S1` passed body-read, identity, span and support: forensics show C1
+  `supports` / verified, C3 `supports_partially`; 2 verified claims.
+- Quoted spans came from the uploaded body; locator `עמ' 5` from the page map.
+- Footnotes: 3 entries, `¹` after punctuation, `שם.` repeats, no storage path,
+  no source id, no hash, no signed URL.
+- The document was admitted as **legal authority** (it was not rendered with the
+  private-document `שצורף` form), so the promotion gate fired.
+
+### Control — why the promotion happened: FILENAME, not body corroboration
+
+`identityFieldsOf(text, title)` builds the identity head as
+`title + body`, and for a user document the "title" is the cleaned **filename**.
+Two deterministic probes against the shipped code:
+
+1. Body of an unrelated judgment (`ע"א 9999/11`) + filename
+   `רעא 3365-20 יוניליוור נ בנתאי` → identity dockets `["9999/11","3365/20"]`,
+   `userDocumentIsAuthority(..., expected ['רע"א 3365/20']) === true`.
+   A **wrong** judgment is promoted because of its filename.
+2. The real judgment body extracted by the production PDF path yields
+   `dockets: []` — unpdf returns Hebrew PDF text in reversed word order
+   (`3365/20 א"רע`), so `detectDockets` finds no prefixed docket in the body.
+
+Taken together: in Run B the uploaded judgment was promoted to legal authority
+on the strength of its filename, and body corroboration would have failed. This
+is exactly the control the acceptance check forbids. Deterministic tests C/D
+still pass because they pass hand-built identity fields straight into
+`userDocumentIsAuthority`, bypassing `identityFieldsOf`.
+
+No code was changed: the fix (body-only identity for user documents plus docket
+detection that survives reversed-order PDF extraction) affects the identity gate
+and must be designed and reviewed, not patched inside a read-only acceptance run.
+
+### T3 defect summary
+
+- D1 (blocking): uploaded documents can be promoted to legal authority from the
+  filename alone; a wrong judgment with the right filename would bind.
+- D2: Hebrew PDF bodies extract in reversed word order, so body docket
+  corroboration for uploaded judgments is currently ineffective.
+- D3 (cosmetic): an authority-promoted attachment cites as the cleaned filename
+  (`רעא 3365-20 יוניליוור נ בנתאי, עמ' 5`) rather than a full judgment citation.
+- D4 (cosmetic): `attachment_chars_loaded` is 0 when a run ends on a resumed chunk.
+
+## 13. Remaining risks
+
+- D1/D2 above — the attachment authority gate does not currently rest on body
+  identity.
 - Long-run stalls remain a general infrastructure issue, unrelated to attachments.
 
-## 13. V1 deletion plan
+## 14. V1 deletion plan
 
 Keep `supabase/functions/legal-research-v1` deployed and in-repo through the
 initial beta stability window. Once V2 attachment traffic is stable and no
 rollback has been needed, delete the function directory and the V1 branch of
 `researchFunctionFor`, migrating any still-needed test helpers into `_shared`.
 
-V2 ATTACHMENTS + V1 PRODUCTION RETIREMENT — PARTIAL
+V2 ATTACHMENTS + V1 PRODUCTION RETIREMENT — REVIEW
 
 NORMAL LEGAL RESEARCH PRODUCTION TRAFFIC: V2 ONLY
 
