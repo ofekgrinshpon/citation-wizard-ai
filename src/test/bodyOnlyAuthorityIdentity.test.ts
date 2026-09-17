@@ -178,12 +178,12 @@ describe("uploaded authority promotion — critical controls", () => {
 });
 
 describe("uploaded statute promotion stays body-only", () => {
-  const expected = { dockets: [], statutes: [{ statute: "חוק הירושה", section: "25" }] };
+  const expected = { dockets: [], statutes: [{ statute: "חוק העונשין", section: "300" }] };
 
   it("rejects a correctly named file whose body is a different statute", async () => {
     const store = new EvidenceStore();
     const src = await uploaded(store, {
-      file_name: "חוק הירושה.pdf",
+      file_name: "חוק העונשין.pdf",
       pages: [`חוק המקרקעין, תשכ"ט-1969\nסעיף 9 לחוק המקרקעין קובע${PAD}`, PAD],
     });
     expect(assessUserDocumentAuthority(src, expected).ok).toBe(false);
@@ -193,7 +193,7 @@ describe("uploaded statute promotion stays body-only", () => {
     const store = new EvidenceStore();
     const src = await uploaded(store, {
       file_name: "scan.pdf",
-      pages: [`סעיף 25 לחוק הירושה, תשכ"ה-1965 קובע${PAD}`, PAD],
+      pages: [`סעיף 300 לחוק העונשין, תשל"ז-1977 קובע${PAD}`, PAD],
     });
     const r = assessUserDocumentAuthority(src, expected);
     expect(r.ok).toBe(true);
