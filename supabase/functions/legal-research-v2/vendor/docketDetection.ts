@@ -322,7 +322,10 @@ const REVERSED_PREFIX_MAP: Record<string, string> = (() => {
       forms.add([...h].reverse().join(""));
       const parts = h.split(QUOTE);
       if (parts.length === 3) forms.add(`${parts[2]}${parts[1]}${parts[0]}`);
-      for (const f of forms) if (f !== h) map[f] = p.canonicalHe;
+      // Never register a reversed form that is itself a genuine prefix:
+      // that would let one proceeding type impersonate another.
+      const genuine = new Set(PREFIX_TABLE.flatMap((q) => q.he));
+      for (const f of forms) if (f !== h && !genuine.has(f)) map[f] = p.canonicalHe;
     }
   }
   return map;
