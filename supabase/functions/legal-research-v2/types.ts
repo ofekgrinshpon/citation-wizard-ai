@@ -354,6 +354,30 @@ export interface VerificationOutcome {
     span_verified_pairs: number;
     support_verdicts: Record<SupportVerdict, number>;
   };
+  /** Evaluation-only: why an uploaded document was / was not legal authority. */
+  authority_promotions?: AuthorityPromotionTelemetry[];
+}
+
+export type AuthorityPromotionReason =
+  | "body_docket_confirmed"
+  | "body_statute_confirmed"
+  | "no_body_docket"
+  | "body_docket_mismatch"
+  | "proceeding_type_mismatch"
+  | "ambiguous_primary_docket"
+  | "body_identity_not_confirmed";
+
+export interface AuthorityPromotionTelemetry {
+  source_id: string;
+  origin: string;
+  expected_docket_ids: string[];
+  expected_statutes: string[];
+  primary_docket_ids: string[];
+  body_docket_ids: string[];
+  identity_zone_chars: number;
+  reversed_pdf_detected: boolean;
+  accepted: boolean;
+  reason: AuthorityPromotionReason;
 }
 
 // ─── Drafting / rendering ───────────────────────────────────────────────────
