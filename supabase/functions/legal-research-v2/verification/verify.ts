@@ -333,7 +333,7 @@ export async function verifyMemo(opts: {
     // User documents cite as "<file title> שצורף, עמ' N" with a deterministic
     // page/section locator and no expiring signed URL.
     const isUploadedAuthority = !!ud &&
-      userDocumentIsAuthority(s.source.identity_fields, opts.expected);
+      assessUserDocumentAuthority(s.source, opts.expected).ok;
     list.push({
       source_id: s.source.source_id,
       display_title: ud && !isUploadedAuthority
