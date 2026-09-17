@@ -181,6 +181,7 @@ export class EvidenceStore {
       extracted_text: text,
       text_length: text.length,
       identity_fields,
+      body_identity: bodyIdentityOf(text),
       is_actual_document: input.is_actual_document,
       not_document_reason: input.not_document_reason,
       origin: input.origin,
@@ -214,6 +215,11 @@ export class EvidenceStore {
     const source_id = `S${this.seq}`;
     const text = input.text ?? "";
     const identity_fields = identityFieldsOf(text, input.file_name);
+    // Authority identity is derived from the BODY only — never the filename.
+    // The first extracted page bounds the identity (header) zone.
+    const body_identity = bodyIdentityOf(text, {
+      identity_zone_chars: input.pages[0]?.end,
+    });
     const title = userDocumentTitle(input.file_name);
     const entry: EvidenceSource = {
       source_id,
