@@ -26,7 +26,7 @@ interface PrefixDef {
 
 // Curated list; covers all common Supreme Court, appellate, and district
 // docket types the pipeline encounters. Additive — add more as needed.
-const PREFIX_TABLE: PrefixDef[] = [
+export const PREFIX_TABLE: PrefixDef[] = [
   { slug: "bagatz", canonicalHe: 'בג"ץ', he: ['בג"ץ', "בג״ץ", "בגץ"], en: ["HCJ"] },
   { slug: "dngz", canonicalHe: 'דנג"ץ', he: ['דנג"ץ', "דנג״ץ"], en: ["FHHCJ"] },
   { slug: "aa", canonicalHe: 'ע"א', he: ['ע"א', "ע״א"], en: ["CA"] },
@@ -291,3 +291,153 @@ export const PROCEEDING_TOKENS: ReadonlySet<string> = new Set(
     h.replace(/[\u0022\u0027\u05F3\u05F4\u2018\u2019\u201C\u201D]/g, "").toLowerCase()
   ),
 );
+
+// ─── Body-only canonical document identity (body_only_identity_v1) ──────────
+//
+// Authority promotion may never rest on a title, a filename or a discovery
+// label: those CLAIM an identity, they do not CONFIRM one. Confirmation may
+// come only from the extracted document body, and only from its own identity
+// (header) zone — a wrong judgment that merely cites the expected case deep
+// inside its text must not inherit that case's identity.
+//
+// Hebrew PDF extraction frequently reverses token order inside the header, so
+// `רע"א 3365/20` arrives as `3365/20 א"ער`. The detector below recognises that
+// narrow, deterministic shape from the same prefix table, instead of reversing
+// arbitrary text (which would manufacture false identities).
+
+/**
+ * Reversed prefix forms, built from the table (never from arbitrary text).
+ *
+ * Two shapes occur in real Hebrew PDF extraction:
+ *   - segment reversal around the gershayim — `רע"א` → `א"רע` (the shape the
+ *     production Supreme Court PDFs actually produce);
+ *   - full character reversal — `רע"א` → `א"ער`.
+ */
+const REVERSED_PREFIX_MAP: Record<string, string> = (() => {
+  const map: Record<string, string> = {};
+  const QUOTE = /(["\u05F4'\u05F3])/;
+  for (const p of PREFIX_TABLE) {
+    for (const h of p.he) {
+      const forms = new Set<string>();
+      forms.add([...h].reverse().join(""));
+      const parts = h.split(QUOTE);
+      if (parts.length === 3) forms.add(`${parts[2]}${parts[1]}${parts[0]}`);
+      // Never register a reversed form that is itself a genuine prefix:
+      // that would let one proceeding type impersonate another.
+      const genuine = new Set(PREFIX_TABLE.flatMap((q) => q.he));
+      for (const f of forms) if (f !== h && !genuine.has(f)) map[f] = p.canonicalHe;
+    }
+  }
+  return map;
+})();
+
+const REVERSED_PREFIX_ALT = Object.keys(REVERSED_PREFIX_MAP)
+  .map(escapeRe)
+  .sort((a, b) => b.length - a.length)
+  .join("|");
+
+/** `3365/20 א"ער` — number first, prefix characters reversed. */
+const REVERSED_DOCKET_RE = new RegExp(
+  `(${NUM_RE_SRC})\\s{0,3}(${REVERSED_PREFIX_ALT})(?![\\u0590-\\u05FF])`,
+  "g",
+);
+
+/** `3365/20 רע"א` — number first, prefix NOT reversed. */
+const NUMBER_FIRST_DOCKET_RE = new RegExp(
+  `(${NUM_RE_SRC})\\s{0,3}(${HEB_PREFIX_ALT})(?![\\u0590-\\u05FF])`,
+  "g",
+);
+
+export interface BodyDocketDetection {
+  refs: DocketRef[];
+  /** A reversed / number-first Hebrew-PDF form contributed at least one ref. */
+  reversed_used: boolean;
+}
+
+/**
+ * Document-body docket detection: the normal detector PLUS the narrowly
+ * defined Hebrew-PDF extraction forms. Deliberately NOT used for user
+ * questions or search routing — only for confirming what a document IS.
+ */
+export function detectDocketsInDocumentBody(text: string): BodyDocketDetection {
+  const src = String(text ?? "");
+  const found = new Map<string, DocketRef>();
+  let reversed_used = false;
+
+  for (const ref of detectDockets(src)) found.set(ref.docket_id, ref);
+
+  const pushCanonical = (canonicalHe: string, numberRaw: string) => {
+    const def = findPrefixDef(canonicalHe);
+    if (!def) return;
+    const number = normalizeNumber(numberRaw);
+    const docket_id = `${def.slug}-${number.replace(/\//g, "-")}`;
+    if (found.has(docket_id)) return;
+    found.set(docket_id, {
+      docket_id,
+      prefix_he: def.canonicalHe,
+      prefix_en: def.en?.[0],
+      number,
+      variants: buildVariants(def, number),
+    });
+    reversed_used = true;
+  };
+
+  for (const m of src.matchAll(REVERSED_DOCKET_RE)) {
+    pushCanonical(REVERSED_PREFIX_MAP[m[2]] ?? "", m[1]);
+  }
+  for (const m of src.matchAll(NUMBER_FIRST_DOCKET_RE)) {
+    const def = findPrefixDef(m[2]);
+    if (def) pushCanonical(def.canonicalHe, m[1]);
+  }
+
+  return { refs: [...found.values()], reversed_used };
+}
+
+/** Default identity (header) zone when no page map is available. */
+export const IDENTITY_ZONE_CHARS = 4_000;
+/** More distinct dockets than this in the header zone ⇒ ambiguous identity. */
+export const MAX_PRIMARY_DOCKETS = 3;
+
+export interface PrimaryDocketAssessment {
+  /** Canonical ids (`raa:3365/20`) confirmed in the document's identity zone. */
+  primary_docket_ids: string[];
+  /** Canonical ids anywhere in the body (incidental citations included). */
+  body_docket_ids: string[];
+  identity_zone_chars: number;
+  reversed_pdf_detected: boolean;
+  ambiguous: boolean;
+}
+
+/**
+ * Deterministic assessment of what the document itself IS, from its body only.
+ * `identity_zone_chars` should be the end offset of the first extracted page
+ * when a page map exists.
+ */
+export function assessPrimaryDocumentDocket(
+  text: string,
+  opts: { identity_zone_chars?: number } = {},
+): PrimaryDocketAssessment {
+  const body = String(text ?? "");
+  const zoneEnd = Math.min(
+    body.length,
+    Math.max(600, opts.identity_zone_chars ?? IDENTITY_ZONE_CHARS),
+  );
+  const zone = body.slice(0, zoneEnd);
+
+  const full = detectDocketsInDocumentBody(body);
+  const head = detectDocketsInDocumentBody(zone);
+  const primary = head.refs.map(normalizedDocketId);
+
+  return {
+    primary_docket_ids: primary,
+    body_docket_ids: full.refs.map(normalizedDocketId),
+    identity_zone_chars: zoneEnd,
+    reversed_pdf_detected: head.reversed_used || full.reversed_used,
+    ambiguous: primary.length > MAX_PRIMARY_DOCKETS,
+  };
+}
+
+/** Canonical ids for a free-text authority expectation (`רע"א 3365/20`). */
+export function canonicalDocketIdsOf(text: string): string[] {
+  return detectDockets(String(text ?? "")).map(normalizedDocketId);
+}

@@ -150,21 +150,26 @@ describe("claim-type safety", () => {
   });
 
   it("lets an uploaded judgment be authority only on body corroboration", () => {
-    const expected = { dockets: ['ע"א 1234/20'], statutes: [] };
-    expect(userDocumentIsAuthority({ dockets: ["1234/20"], statutes: [], sections: [] }, expected))
-      .toBe(true);
+    const expected = { docket_ids: ["aa:1234/20"], statutes: [] };
+    expect(
+      userDocumentIsAuthority({ primary_docket_ids: ["aa:1234/20"], statutes: [] }, expected).ok,
+    ).toBe(true);
     // wrong judgment uploaded
-    expect(userDocumentIsAuthority({ dockets: ["9999/11"], statutes: [], sections: [] }, expected))
-      .toBe(false);
+    expect(
+      userDocumentIsAuthority({ primary_docket_ids: ["aa:9999/11"], statutes: [] }, expected).ok,
+    ).toBe(false);
     // filename alone proves nothing: no identity at all
-    expect(userDocumentIsAuthority({ dockets: [], statutes: [], sections: [] }, expected))
+    expect(userDocumentIsAuthority({ primary_docket_ids: [], statutes: [] }, expected).ok)
       .toBe(false);
   });
 
   it("recognises an uploaded statute text as authority for the named statute", () => {
-    const expected = { dockets: [], statutes: [{ statute: "חוק הירושה", section: "25" }] };
+    const expected = { docket_ids: [], statutes: [{ statute: "חוק הירושה", section: "25" }] };
     expect(
-      userDocumentIsAuthority({ dockets: [], statutes: ["חוק הירושה"], sections: ["25"] }, expected),
+      userDocumentIsAuthority(
+        { primary_docket_ids: [], statutes: ["חוק הירושה"], sections: ["25"] },
+        expected,
+      ).ok,
     ).toBe(true);
   });
 });

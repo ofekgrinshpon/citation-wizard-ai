@@ -11,8 +11,9 @@
  * conversation context never carries whole judgments.
  */
 
-import type { EvidenceSource, IdentityFields } from "../types.ts";
+import type { BodyIdentity, EvidenceSource, IdentityFields } from "../types.ts";
 import {
+  assessPrimaryDocumentDocket,
   decodeHtmlEntities,
   detectDockets,
   detectStatuteSections,
@@ -38,6 +39,28 @@ export function normalizeUrlKey(raw: string): string {
   } catch {
     return (raw ?? "").trim();
   }
+}
+
+/**
+ * Body-ONLY identity (body_only_identity_v1). Never sees a title, a filename
+ * or any discovery metadata — this is the identity authority checks trust.
+ */
+export function bodyIdentityOf(
+  text: string,
+  opts: { identity_zone_chars?: number } = {},
+): BodyIdentity {
+  const body = text ?? "";
+  const primary = assessPrimaryDocumentDocket(body, opts);
+  const sections = detectStatuteSections(body.slice(0, 20_000));
+  return {
+    primary_docket_ids: primary.primary_docket_ids,
+    body_docket_ids: primary.body_docket_ids,
+    statutes: [...new Set(sections.map((s) => s.statute_title_he))],
+    sections: [...new Set(sections.map((s) => s.section).filter(Boolean) as string[])],
+    identity_zone_chars: primary.identity_zone_chars,
+    reversed_pdf_detected: primary.reversed_pdf_detected,
+    ambiguous: primary.ambiguous,
+  };
 }
 
 export function identityFieldsOf(text: string, title: string): IdentityFields {
@@ -158,6 +181,7 @@ export class EvidenceStore {
       extracted_text: text,
       text_length: text.length,
       identity_fields,
+      body_identity: bodyIdentityOf(text),
       is_actual_document: input.is_actual_document,
       not_document_reason: input.not_document_reason,
       origin: input.origin,
@@ -191,6 +215,11 @@ export class EvidenceStore {
     const source_id = `S${this.seq}`;
     const text = input.text ?? "";
     const identity_fields = identityFieldsOf(text, input.file_name);
+    // Authority identity is derived from the BODY only — never the filename.
+    // The first extracted page bounds the identity (header) zone.
+    const body_identity = bodyIdentityOf(text, {
+      identity_zone_chars: input.pages[0]?.end,
+    });
     const title = userDocumentTitle(input.file_name);
     const entry: EvidenceSource = {
       source_id,
@@ -201,6 +230,7 @@ export class EvidenceStore {
       extracted_text: text,
       text_length: text.length,
       identity_fields,
+      body_identity,
       is_actual_document: text.trim().length >= 400,
       not_document_reason: text.trim().length >= 400 ? undefined : "attachment_text_too_short",
       origin: "user_document",

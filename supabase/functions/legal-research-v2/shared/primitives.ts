@@ -24,10 +24,15 @@ export { extractDocumentText } from "../vendor/attachments.ts";
 
 // ── Israeli legal identity normalization ───────────────────────────────────
 export {
+  assessPrimaryDocumentDocket,
+  canonicalDocketIdsOf,
   candidateMatchesDocket,
   detectDockets,
+  detectDocketsInDocumentBody,
   normalizeDocketText,
+  normalizedDocketId,
   type DocketRef,
+  type PrimaryDocketAssessment,
 } from "../vendor/docketDetection.ts";
 
 export {

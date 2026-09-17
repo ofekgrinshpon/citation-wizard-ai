@@ -268,25 +268,66 @@ export function isLegalPropositionClaim(proposition: string): boolean {
   return /(חוקי|בלתי חוקי|תקף|בטל|ניתן לאכוף|אכיפ|לפי הדין|על פי הדין|ההלכה|הפסיקה)/.test(p);
 }
 
+export type AuthorityIdentityReason =
+  | "body_docket_confirmed"
+  | "body_statute_confirmed"
+  | "no_body_docket"
+  | "body_docket_mismatch"
+  | "proceeding_type_mismatch"
+  | "ambiguous_primary_docket"
+  | "body_identity_not_confirmed";
+
+/** Body-only identity of a document, in canonical form (`raa:3365/20`). */
+export interface ConfirmedBodyIdentity {
+  primary_docket_ids: string[];
+  body_docket_ids?: string[];
+  statutes: string[];
+  sections?: string[];
+  ambiguous?: boolean;
+}
+
 /**
- * An uploaded document may serve as legal authority only when its own body
- * corroborates an authority identity the run explicitly asked about.
- * The filename alone never qualifies.
+ * An uploaded document may serve as legal authority only when its OWN BODY —
+ * in its identity/header zone — canonically confirms an authority the run
+ * explicitly asked about. Docket type AND number must both match: `aa:3365/20`
+ * is not `raa:3365/20`. Filenames, titles and discovery labels never qualify,
+ * and an incidental citation deep inside another judgment never qualifies.
+ * Fail-closed: anything unconfirmed is rejected.
  */
 export function userDocumentIsAuthority(
-  identity: { dockets: string[]; statutes: string[]; sections: string[] },
-  expected: { dockets: string[]; statutes: Array<{ statute: string; section: string | null }> },
-): boolean {
+  body: ConfirmedBodyIdentity | null | undefined,
+  expected: {
+    docket_ids: string[];
+    statutes: Array<{ statute: string; section: string | null }>;
+  },
+): { ok: boolean; reason: AuthorityIdentityReason } {
+  if (!body) return { ok: false, reason: "body_identity_not_confirmed" };
   const norm = (s: string) => (s ?? "").replace(/["'״׳\s]/g, "");
-  for (const d of expected.dockets) {
-    const num = d.match(/\d{1,6}\/\d{2}/)?.[0];
-    if (!num) continue;
-    if (identity.dockets.some((x) => x.includes(num))) return true;
+
+  let docketReason: AuthorityIdentityReason | null = null;
+  if (expected.docket_ids.length) {
+    if (body.ambiguous) {
+      docketReason = "ambiguous_primary_docket";
+    } else if (!body.primary_docket_ids.length) {
+      docketReason = "no_body_docket";
+    } else if (body.primary_docket_ids.some((id) => expected.docket_ids.includes(id))) {
+      return { ok: true, reason: "body_docket_confirmed" };
+    } else {
+      const numberOf = (id: string) => id.split(":")[1] ?? "";
+      const sameNumber = body.primary_docket_ids.some((id) =>
+        expected.docket_ids.some((e) => numberOf(e) && numberOf(e) === numberOf(id))
+      );
+      docketReason = sameNumber ? "proceeding_type_mismatch" : "body_docket_mismatch";
+    }
   }
+
   for (const st of expected.statutes) {
-    if (identity.statutes.some((x) => norm(x).includes(norm(st.statute)))) return true;
+    if (body.statutes.some((x) => norm(x).includes(norm(st.statute)))) {
+      return { ok: true, reason: "body_statute_confirmed" };
+    }
   }
-  return false;
+
+  return { ok: false, reason: docketReason ?? "body_identity_not_confirmed" };
 }
 
 // ── Agent-facing manifest ──────────────────────────────────────────────────
