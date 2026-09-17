@@ -451,6 +451,8 @@ async function runPipeline(
     attachment_authority_rejections: (verification?.rejected ?? []).filter((r) =>
       r.reason === "user_document_not_legal_authority"
     ).length,
+    /** body_only_identity_v1 — why an uploaded document was / was not authority. */
+    authority_promotions: verification?.authority_promotions ?? [],
       phase_ms: timer.totalsMs(),
     };
     return {
@@ -733,6 +735,8 @@ async function runPipeline(
     attachment_authority_rejections: (verification?.rejected ?? []).filter((r) =>
       r.reason === "user_document_not_legal_authority"
     ).length,
+    /** body_only_identity_v1 — why an uploaded document was / was not authority. */
+    authority_promotions: verification?.authority_promotions ?? [],
     /** Latency efficiency (legal_research_v2_latency_efficiency_v1). */
     phase_ms: timer.totalsMs(),
     agent_turns: timer.toJSON().turns,
