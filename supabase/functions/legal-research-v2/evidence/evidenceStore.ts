@@ -20,6 +20,7 @@ import {
 } from "../shared/primitives.ts";
 import { cleanDisplayTitle, isMetadataLine, stripInternalIds } from "../shared/titleHygiene.ts";
 import { cleanQuotableText, QUOTE_LIMITS, type ServedQuote, snapWindow } from "./quotable.ts";
+import { userDocumentTitle } from "../../_shared/userDocumentsCore.ts";
 
 /** Query-preserving URL key: strips only tracking noise and fragments. */
 export function normalizeUrlKey(raw: string): string {
