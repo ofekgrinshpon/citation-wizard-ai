@@ -241,8 +241,11 @@ export async function verifyMemo(opts: {
       // explicitly asked about (uploaded judgment / statute). The filename
       // never qualifies, and no gate below is relaxed for attachments.
       if (source.origin === "user_document" && isLegalPropositionClaim(claim.proposition)) {
-        const authority = userDocumentIsAuthority(source.identity_fields, opts.expected);
-        if (!authority) {
+        const authority = assessUserDocumentAuthority(source, opts.expected);
+        if (!authority_promotions.some((t) => t.source_id === source.source_id)) {
+          authority_promotions.push(authority.telemetry);
+        }
+        if (!authority.ok) {
           const detail = "private user document cannot establish a proposition of law";
           rejected.push({
             claim_id: claim.claim_id,
@@ -377,5 +380,11 @@ export async function verifyMemo(opts: {
     }
   }
 
-  return { pack: { claims, unsupported_claims: unsupported }, rejected, per_source, counters };
+  return {
+    pack: { claims, unsupported_claims: unsupported },
+    rejected,
+    per_source,
+    counters,
+    authority_promotions,
+  };
 }
