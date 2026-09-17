@@ -133,7 +133,9 @@ export function extractShortSourceLabel(text: string): string {
     return `עניין ${pick}`;
   }
 
-  const hebrewLaw = cleaned.match(/(חוק[\s-]יסוד[^,\n]*|חוק[^,\n]*|פקודת[^,\n]*|פקודה[^,\n]*|תקנות[^,\n]*|צו[^,\n]*)/);
+  // Lead word must start a word: Hebrew has no \b, so require string start or a
+  // separator — otherwise "צו" inside "שצורף" collapses a user-document label.
+  const hebrewLaw = cleaned.match(/(?:^|[\s"'\u05f4\u05f3(\[])(חוק[\s-]יסוד[^,\n]*|חוק[^,\n]*|פקודת[^,\n]*|פקודה[^,\n]*|תקנות[^,\n]*|צו[\s-][^,\n]*)/);
   if (hebrewLaw) return hebrewLaw[1].trim();
 
   const englishLead = cleaned.match(/^([^,(\n]{3,80})/);
