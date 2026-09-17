@@ -12,12 +12,14 @@ export const RESEARCH_FUNCTIONS = {
 } as const;
 
 /**
- * File attachments are read by the V1 document pipeline only, so a question
- * with attached files keeps using V1 instead of silently losing the files.
+ * One destination for normal Legal Research, attachments or not.
+ *
+ * V2 reads user uploads as first-class preloaded evidence sources, so a file
+ * no longer diverts the request to V1. Rollback stays global and intentional:
+ * set RESEARCH_PIPELINE = "v1" above.
  */
-export function researchFunctionFor(opts: { hasAttachments: boolean }): string {
-  if (RESEARCH_PIPELINE === "v2" && !opts.hasAttachments) return RESEARCH_FUNCTIONS.v2;
-  return RESEARCH_FUNCTIONS.v1;
+export function researchFunctionFor(_opts: { hasAttachments: boolean } = { hasAttachments: false }): string {
+  return RESEARCH_PIPELINE === "v2" ? RESEARCH_FUNCTIONS.v2 : RESEARCH_FUNCTIONS.v1;
 }
 
 export const V1_STAGES: Array<{ key: string; label: string }> = [

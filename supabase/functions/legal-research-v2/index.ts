@@ -448,6 +448,9 @@ async function runPipeline(
     attachment_sources_cited: rendered.cited_source_ids.filter((id) =>
       store.get(id)?.origin === "user_document"
     ),
+    attachment_authority_rejections: (verification?.rejected ?? []).filter((r) =>
+      r.reason === "user_document_not_legal_authority"
+    ).length,
       phase_ms: timer.totalsMs(),
     };
     return {
