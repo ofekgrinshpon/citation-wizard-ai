@@ -11,8 +11,9 @@
  * conversation context never carries whole judgments.
  */
 
-import type { EvidenceSource, IdentityFields } from "../types.ts";
+import type { BodyIdentity, EvidenceSource, IdentityFields } from "../types.ts";
 import {
+  assessPrimaryDocumentDocket,
   decodeHtmlEntities,
   detectDockets,
   detectStatuteSections,
@@ -38,6 +39,28 @@ export function normalizeUrlKey(raw: string): string {
   } catch {
     return (raw ?? "").trim();
   }
+}
+
+/**
+ * Body-ONLY identity (body_only_identity_v1). Never sees a title, a filename
+ * or any discovery metadata — this is the identity authority checks trust.
+ */
+export function bodyIdentityOf(
+  text: string,
+  opts: { identity_zone_chars?: number } = {},
+): BodyIdentity {
+  const body = text ?? "";
+  const primary = assessPrimaryDocumentDocket(body, opts);
+  const sections = detectStatuteSections(body.slice(0, 20_000));
+  return {
+    primary_docket_ids: primary.primary_docket_ids,
+    body_docket_ids: primary.body_docket_ids,
+    statutes: [...new Set(sections.map((s) => s.statute_title_he))],
+    sections: [...new Set(sections.map((s) => s.section).filter(Boolean) as string[])],
+    identity_zone_chars: primary.identity_zone_chars,
+    reversed_pdf_detected: primary.reversed_pdf_detected,
+    ambiguous: primary.ambiguous,
+  };
 }
 
 export function identityFieldsOf(text: string, title: string): IdentityFields {
