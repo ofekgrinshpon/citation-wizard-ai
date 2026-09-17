@@ -230,6 +230,7 @@ export class EvidenceStore {
       extracted_text: text,
       text_length: text.length,
       identity_fields,
+      body_identity,
       is_actual_document: text.trim().length >= 400,
       not_document_reason: text.trim().length >= 400 ? undefined : "attachment_text_too_short",
       origin: "user_document",
