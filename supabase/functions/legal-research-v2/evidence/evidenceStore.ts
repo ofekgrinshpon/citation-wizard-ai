@@ -167,6 +167,59 @@ export class EvidenceStore {
     return entry;
   }
 
+  /**
+   * Append a user-uploaded document as a first-class evidence source.
+   *
+   * It enters the SAME append-only store as fetched web/corpus bodies and is
+   * subject to the same verification gates; the only difference is provenance
+   * (`origin: "user_document"`) and the page map that lets a verified span be
+   * attributed to a page/section.
+   */
+  async appendUserDocument(input: {
+    file_name: string;
+    mime_type: string;
+    kind: "pdf" | "docx";
+    storage_path: string;
+    text: string;
+    pages: Array<{ page: number; start: number; end: number }>;
+    truncated: boolean;
+    docket_match: boolean;
+    matched_dockets: string[];
+  }): Promise<EvidenceSource> {
+    this.seq += 1;
+    const source_id = `S${this.seq}`;
+    const text = input.text ?? "";
+    const identity_fields = identityFieldsOf(text, input.file_name);
+    const title = userDocumentTitle(input.file_name);
+    const entry: EvidenceSource = {
+      source_id,
+      title,
+      summary: summarizeSource(text, identity_fields),
+      sha256: await sha256Hex(text),
+      fetch_status: "ok",
+      extracted_text: text,
+      text_length: text.length,
+      identity_fields,
+      is_actual_document: text.trim().length >= 400,
+      not_document_reason: text.trim().length >= 400 ? undefined : "attachment_text_too_short",
+      origin: "user_document",
+      fetched_at: new Date().toISOString(),
+      user_document: {
+        file_name: input.file_name,
+        mime_type: input.mime_type,
+        kind: input.kind,
+        storage_path: input.storage_path,
+        page_count: input.pages.length,
+        truncated: input.truncated,
+        docket_match: input.docket_match,
+        matched_dockets: input.matched_dockets,
+        page_map: input.pages.map((p) => ({ page: p.page, start: p.start, end: p.end })),
+      },
+    };
+    this.sources.set(source_id, entry);
+    return entry;
+  }
+
   /** Existing entry for the same normalized URL, if any. */
   findByUrl(url: string): EvidenceSource | null {
     const id = this.byUrl.get(normalizeUrlKey(url));
