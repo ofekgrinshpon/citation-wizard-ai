@@ -27,6 +27,10 @@ import {
 import { modelConfig, newUsageLedger, type UsageLedger } from "./shared/model.ts";
 import { EvidenceStore } from "./evidence/evidenceStore.ts";
 import {
+  EMPTY_ATTACHMENT_TELEMETRY,
+  preloadUserDocuments,
+} from "./evidence/userDocumentSources.ts";
+import {
   type AgentStateJson,
   deserializeAgentState,
   runResearchAgent,
@@ -110,6 +114,9 @@ export function buildIntake(input: {
   run_id: string;
   question: string;
   attachment_text?: string | null;
+  /** Owned user uploads to preload as evidence sources. */
+  attachments?: Array<{ storage_path: string; file_name: string; mime_type: string; size?: number }>;
+  attachment_owner_id?: string | null;
   budgets?: Partial<ToolBudgets>;
   /** Evaluation-only Research Agent override. */
   agent_model?: string | null;
@@ -139,6 +146,8 @@ export function buildIntake(input: {
     docket_obligations: dockets,
     statute_obligations: statutes,
     attachment_text: input.attachment_text?.trim() || null,
+    attachments: (input.attachments ?? []).slice(0, 5),
+    attachment_owner_id: input.attachment_owner_id ?? null,
     // An academic body chapter is a developed product by construction.
     deliverable: input.academic_context ? "developed" : classifyDeliverable(question),
     budgets: {
@@ -201,6 +210,34 @@ async function runPipeline(
   // orchestration cost, not research cost — measure it explicitly.
   if (resume?.paused_at) timer.add("resume_gap", Date.now() - resume.paused_at);
   const heartbeat = () => opts.progress?.heartbeat();
+
+  // ── User-uploaded documents become evidence sources BEFORE research ─────
+  // Only on the first chunk: a resumed run restores them from the serialized
+  // EvidenceStore, so a preloaded attachment survives worker handover.
+  let attachments = EMPTY_ATTACHMENT_TELEMETRY;
+  if (!resume && (intake.attachments?.length ?? 0) > 0) {
+    try {
+      attachments = await preloadUserDocuments(admin, intake, store);
+    } catch (e) {
+      attachments = {
+        ...EMPTY_ATTACHMENT_TELEMETRY,
+        attachment_count: intake.attachments?.length ?? 0,
+        attachment_extract_errors: [{
+          file_name: "*",
+          message: e instanceof Error ? e.message : String(e),
+        }],
+      };
+    }
+  } else if (resume) {
+    attachments = {
+      ...EMPTY_ATTACHMENT_TELEMETRY,
+      attachment_count: intake.attachments?.length ?? 0,
+      attachment_sources_preloaded: store.all()
+        .filter((s) => s.origin === "user_document")
+        .map((s) => s.source_id),
+    };
+    attachments.attachment_documents_loaded = attachments.attachment_sources_preloaded.length;
+  }
 
   // Egress ledgers are module globals in a reused isolate: a cap or a stop
   // reason from an earlier run must never suppress acquisition in this one.
@@ -402,6 +439,15 @@ async function runPipeline(
       prompt_tokens: usage.prompt_tokens,
       completion_tokens: usage.completion_tokens,
       chunks_executed: chunk_index,
+    pipeline: "legal-research-v2",
+    attachment_count: attachments.attachment_count,
+    attachment_documents_loaded: attachments.attachment_documents_loaded,
+    attachment_chars_loaded: attachments.attachment_chars_loaded,
+    attachment_extract_errors: attachments.attachment_extract_errors,
+    attachment_sources_preloaded: attachments.attachment_sources_preloaded,
+    attachment_sources_cited: rendered.cited_source_ids.filter((id) =>
+      store.get(id)?.origin === "user_document"
+    ),
       phase_ms: timer.totalsMs(),
     };
     return {
