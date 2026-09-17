@@ -3,10 +3,10 @@ import { describe, expect, it } from "vitest";
 import {
   buildCompoundFootnotes,
   buildOccurrenceFootnotes,
+  extractShortSourceLabel,
   normalizeAnswerForDisplay,
   placeMarkerAfterPunctuation,
-  extractShortSourceLabel,
-  placeMarkerAfterPunctuation,
+  toSuperscript,
 } from "../../supabase/functions/_shared/footnoteOccurrences";
 import {
   applyOccurrenceFootnotes,
