@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { RESEARCH_FUNCTIONS } from "@/config/researchPipeline";
 import { ReLexLogo } from "@/components/ReLexLogo";
 import { useProjects } from "@/hooks/useProjects";
 import { Button } from "@/components/ui/button";
@@ -397,11 +398,11 @@ export function LegalSourceSearchPanel({ externalResult, onConsumeExternalResult
         job_id: string;
         run_id: string;
         status: string;
-      }>("legal-research-v1", {
+      }>(RESEARCH_FUNCTIONS.v2, {
         body: {
           question: q,
           project_id: currentProject?.id ?? null,
-          mode: "sources_only",
+          mode: "source_search",
         },
       });
       if (invokeErr || !data?.job_id) {
