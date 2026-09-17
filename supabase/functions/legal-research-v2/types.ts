@@ -31,7 +31,30 @@ export interface Intake {
   normalized_question: string;
   docket_obligations: DocketObligation[];
   statute_obligations: StatuteObligation[];
+  /** Legacy inline attachment text (backwards compatibility only). */
   attachment_text: string | null;
+  /** Owned files to preload as V2 evidence sources before research starts. */
+  attachments?: Array<{
+    storage_path: string;
+    file_name: string;
+    mime_type: string;
+    size?: number;
+  }>;
+  /** Owner of the attachment storage paths (ownership check input). */
+  attachment_owner_id?: string | null;
+  /**
+   * Compact, agent-facing description of the preloaded user documents. Filled
+   * after preload; survives chunk resume with the rest of the intake.
+   */
+  attachment_manifest?: Array<{
+    source_id: string;
+    file_name: string;
+    kind: "pdf" | "docx";
+    page_count: number;
+    head: string;
+    docket_match: boolean;
+    truncated: boolean;
+  }>;
   /** What the user asked to receive: a focused answer or a developed product. */
   deliverable: DeliverableKind;
   budgets: ToolBudgets;
@@ -170,6 +193,26 @@ export interface EvidenceSource {
   not_document_reason?: string;
   origin: string;
   fetched_at: string;
+  /**
+   * Present only for sources preloaded from a user-uploaded file. Carries the
+   * provenance a footnote needs (file, page map) and nothing internal is ever
+   * shown to the user.
+   */
+  user_document?: UserDocumentMeta;
+}
+
+export interface UserDocumentMeta {
+  file_name: string;
+  mime_type: string;
+  kind: "pdf" | "docx";
+  /** Internal storage reference — never rendered, never linked. */
+  storage_path: string;
+  page_count: number;
+  truncated: boolean;
+  docket_match: boolean;
+  matched_dockets: string[];
+  /** Offsets of each page/section inside `extracted_text`. */
+  page_map: Array<{ page: number; start: number; end: number }>;
 }
 
 // ─── Research memo (agent output) ───────────────────────────────────────────
@@ -208,6 +251,7 @@ export type RejectionReason =
   | "empty_body"
   | "not_actual_document"
   | "identity_mismatch"
+  | "user_document_not_legal_authority"
   | "span_not_found"
   | "span_too_short"
   | "support_does_not_support"
@@ -426,6 +470,15 @@ export interface V2Telemetry {
   /** Evaluation-only forensic verification chain (never shown to end users). */
   verification_forensics?: unknown[];
   verification_forensics_repaired?: unknown[];
+  /** Attachments (v2_attachments_v1) — routing + preload observability. */
+  pipeline?: string;
+  attachment_count?: number;
+  attachment_documents_loaded?: number;
+  attachment_chars_loaded?: number;
+  attachment_extract_errors?: Array<{ file_name: string; message: string }>;
+  attachment_sources_preloaded?: string[];
+  attachment_sources_cited?: string[];
+  attachment_authority_rejections?: number;
   /** Safeguard A — current-law / temporal validity. */
   temporal_sensitive_claims: number;
   temporal_checks_attempted: number;

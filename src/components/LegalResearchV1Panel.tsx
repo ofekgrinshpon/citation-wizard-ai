@@ -583,7 +583,7 @@ export function LegalResearchV1Panel({
       }>(
         sourcesMode
           ? RESEARCH_FUNCTIONS.v2
-          : researchFunctionFor({ hasAttachments: attachmentsPayload.length > 0 }),
+          : researchFunctionFor(),
         {
           question: q,
           ...(sourcesMode ? { mode: "source_search" } : {}),

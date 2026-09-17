@@ -24,6 +24,12 @@ import type { UsageLedger } from "../shared/model.ts";
 import { buildSectionVariants, normalizeDocketText } from "../shared/primitives.ts";
 import { matchSpan } from "./spanMatch.ts";
 import { verifySupport, type SupportInput } from "./supportVerifier.ts";
+import {
+  isLegalPropositionClaim,
+  locatorForOffset,
+  userDocumentCitationTitle,
+  userDocumentIsAuthority,
+} from "../../_shared/userDocumentsCore.ts";
 
 export interface ExpectedIdentity {
   dockets: string[];
@@ -183,6 +189,27 @@ export async function verifyMemo(opts: {
       st.identity = true;
       counters.identity_verified_pairs += 1;
 
+      // CHECK 1b — user-document claim type (v2_attachments_v1).
+      // A private uploaded file proves what IT says. It becomes legal
+      // authority only when its own body corroborates an authority the run
+      // explicitly asked about (uploaded judgment / statute). The filename
+      // never qualifies, and no gate below is relaxed for attachments.
+      if (source.origin === "user_document" && isLegalPropositionClaim(claim.proposition)) {
+        const authority = userDocumentIsAuthority(source.identity_fields, opts.expected);
+        if (!authority) {
+          const detail = "private user document cannot establish a proposition of law";
+          rejected.push({
+            claim_id: claim.claim_id,
+            source_id: ev.source_id,
+            reason: "user_document_not_legal_authority",
+            detail,
+            stage: "identity",
+          });
+          fail(ev.source_id, "identity", "user_document_not_legal_authority", detail);
+          continue;
+        }
+      }
+
       // CHECK 3 — verbatim span.
       const span = matchSpan(source.extracted_text, ev.quoted_span);
       if (!span.matched) {
@@ -251,12 +278,24 @@ export async function verifyMemo(opts: {
     stageOf(s.source.source_id).support = true;
 
     const list = byClaim.get(s.claim_id) ?? [];
+    const ud = s.source.user_document;
+    // User documents cite as "<file title> שצורף, עמ' N" with a deterministic
+    // page/section locator and no expiring signed URL.
+    const isUploadedAuthority = !!ud &&
+      userDocumentIsAuthority(s.source.identity_fields, opts.expected);
     list.push({
       source_id: s.source.source_id,
-      display_title: s.source.title,
-      url: s.source.url,
+      display_title: ud && !isUploadedAuthority
+        ? userDocumentCitationTitle(ud.file_name)
+        : s.source.title,
+      url: ud ? undefined : s.source.url,
       verified_span: s.span,
-      locator: s.locator,
+      locator: ud
+        ? locatorForOffset(
+          { kind: ud.kind, pages: ud.page_map.map((p) => ({ ...p, text: "" })) },
+          s.source.extracted_text.indexOf(s.span),
+        ) ?? s.locator
+        : s.locator,
       support: v.support,
     });
     byClaim.set(s.claim_id, list);

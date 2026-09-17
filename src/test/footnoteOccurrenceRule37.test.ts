@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   buildCompoundFootnotes,
   buildOccurrenceFootnotes,
+  extractShortSourceLabel,
   normalizeAnswerForDisplay,
   placeMarkerAfterPunctuation,
   toSuperscript,
@@ -345,5 +346,31 @@ describe("V1 attachment path — compound marker runs", () => {
     expect(out.footnotes[1].sources).toHaveLength(2);
     expect(out.footnotes[1].title).not.toContain("שם");
     expect(out.footnotes[2].title).toBe('עניין שר הפנים, לעיל ה"ש 2.');
+  });
+});
+
+describe("user-document repeat labels", () => {
+  it("does not mistake 'צו' inside שצורף for legislation", () => {
+    expect(extractShortSourceLabel("lease שצורף, מקטע 1")).toBe("lease שצורף");
+    expect(extractShortSourceLabel("הסכם שכירות שצורף, עמ' 4")).toBe("הסכם שכירות שצורף");
+  });
+
+  it("still detects real legislation lead words", () => {
+    expect(extractShortSourceLabel('חוק החוזים (תרופות), ס\' 15')).toBe("חוק החוזים (תרופות)");
+    expect(extractShortSourceLabel("צו הפיקוח על מצרכים, ס' 3")).toBe("צו הפיקוח על מצרכים");
+    expect(extractShortSourceLabel("פקודת הנזיקין, ס' 35")).toBe("פקודת הנזיקין");
+  });
+
+  it("keeps separate supra labels for two uploaded documents", () => {
+    const fn = buildCompoundFootnotes([
+      [{ source_id: "S1", full_citation: "lease שצורף, מקטע 1" }],
+      [{ source_id: "S2", full_citation: "letter שצורף, מקטע 1" }],
+      [
+        { source_id: "S1", full_citation: "lease שצורף, מקטע 1" },
+        { source_id: "S2", full_citation: "letter שצורף, מקטע 1" },
+      ],
+    ]);
+    expect(fn[2].sources[0].citation).toBe('lease שצורף, לעיל ה"ש 1.');
+    expect(fn[2].sources[1].citation).toBe('letter שצורף, לעיל ה"ש 2.');
   });
 });
