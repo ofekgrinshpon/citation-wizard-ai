@@ -31,7 +31,30 @@ export interface Intake {
   normalized_question: string;
   docket_obligations: DocketObligation[];
   statute_obligations: StatuteObligation[];
+  /** Legacy inline attachment text (backwards compatibility only). */
   attachment_text: string | null;
+  /** Owned files to preload as V2 evidence sources before research starts. */
+  attachments?: Array<{
+    storage_path: string;
+    file_name: string;
+    mime_type: string;
+    size?: number;
+  }>;
+  /** Owner of the attachment storage paths (ownership check input). */
+  attachment_owner_id?: string | null;
+  /**
+   * Compact, agent-facing description of the preloaded user documents. Filled
+   * after preload; survives chunk resume with the rest of the intake.
+   */
+  attachment_manifest?: Array<{
+    source_id: string;
+    file_name: string;
+    kind: "pdf" | "docx";
+    page_count: number;
+    head: string;
+    docket_match: boolean;
+    truncated: boolean;
+  }>;
   /** What the user asked to receive: a focused answer or a developed product. */
   deliverable: DeliverableKind;
   budgets: ToolBudgets;
