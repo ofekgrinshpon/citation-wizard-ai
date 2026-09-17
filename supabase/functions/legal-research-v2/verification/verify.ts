@@ -157,6 +157,7 @@ export async function verifyMemo(opts: {
   usage: UsageLedger;
 }): Promise<VerificationOutcome> {
   const rejected: RejectedPair[] = [];
+  const authority_promotions: AuthorityPromotionTelemetry[] = [];
   const counters = {
     total_evidence_pairs: 0,
     identity_verified_pairs: 0,
@@ -246,7 +247,8 @@ export async function verifyMemo(opts: {
           authority_promotions.push(authority.telemetry);
         }
         if (!authority.ok) {
-          const detail = "private user document cannot establish a proposition of law";
+          const detail =
+            `private user document cannot establish a proposition of law (${authority.telemetry.reason})`;
           rejected.push({
             claim_id: claim.claim_id,
             source_id: ev.source_id,
