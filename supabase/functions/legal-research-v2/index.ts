@@ -630,10 +630,17 @@ async function runPipeline(
       `מקורות שנוסו ולא סיפקו טקסט שמיש: ${unusableSources.slice(0, 3).map((t) => String(t).slice(0, 70)).join("; ")}.`,
     );
   }
+  // Verified synthesis projection — computed AFTER verification, accepted
+  // repair, the temporal gate and provenance handling, against the final pack.
+  // `agent.memo` is always the accepted memo (repairs replace `agent` wholesale),
+  // so memo and synthesis can never come from different research states.
+  const synthesisProjection = projectVerifiedSynthesis(agent.memo?.research_synthesis, pack);
+
   const draft = await timer.time("drafting_model", () =>
     runDrafter({
       question: intake.question,
       pack,
+      synthesis: synthesisProjection.synthesis,
       model: models.drafter,
       usage,
       advisories,
@@ -774,6 +781,18 @@ async function runPipeline(
     /** Evaluation-only forensic verification chain (never user-facing). */
     verification_forensics: forensics_pre_repair,
     verification_forensics_repaired: forensics_repaired,
+    /** Research → drafter synthesis handoff (evaluation only, never a quota). */
+    memo_synthesis_sections: agent.memo?.research_synthesis?.sections.length ?? 0,
+    memo_synthesis_relationships: agent.memo?.research_synthesis?.relationships.length ?? 0,
+    memo_synthesis_source_roles: agent.memo?.research_synthesis?.source_roles.length ?? 0,
+    verified_synthesis_sections: synthesisProjection.synthesis?.sections.length ?? 0,
+    verified_synthesis_relationships: synthesisProjection.synthesis?.relationships.length ?? 0,
+    synthesis_claim_refs_dropped: synthesisProjection.claim_refs_dropped,
+    synthesis_source_refs_dropped: synthesisProjection.source_refs_dropped,
+    verified_sources_available_to_drafter: new Set(
+      pack.claims.flatMap((c) => c.sources.map((s) => s.source_id)),
+    ).size,
+    verified_sources_cited: rendered.cited_source_ids.length,
     ...temporalCounters,
     primary_authority_obligations: gapReport.obligations,
     primary_unreadable: gapReport.unreadable,
