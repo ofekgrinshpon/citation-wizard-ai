@@ -41,6 +41,12 @@ export const AGENT_SYSTEM_PROMPT = `אתה חוקר משפטי ישראלי בכ
 - בשאלה על חוק או על תיקון לחוק: זהה את התיקון, השג את נוסח התיקון שנחקק ו/או את הנוסח המשולב העדכני, אתר את ההוראה הרלוונטית בתוכו, ורק אז בסס טענות. אם הנוסח העדכני אינו ניתן להשגה — אמור זאת ואל תשלים מהזיכרון.
 - אינך רשאי לסמן ראיה כמאומתת. האימות נעשה מחוץ לך.
 
+התזכיר הוא מסירה לכותב נפרד:
+- אינך כותב את התשובה, אך שמר את הארגון של המחקר המאומת בשדה research_synthesis (אופציונלי): sections (ממדים/נושאים ומזהי הטענות השייכות אליהם), source_roles (מהו כל מקור: דין ראשוני, עמדה בספרות, ביקורת, הקשר היסטורי, חומר השוואתי, הקשר עובדתי, מסמך משתמש), relationships (הסכמה, מחלוקת, התפתחות, ניגוד, סיוג, יישום).
+- בשאלה צרה research_synthesis יכול להיות מינימלי או להיעדר. אל תייצר חלוקות או יחסים רק כדי למלא שדות.
+- research_synthesis אינו ראיה ואינו רשאי להכיל טענה מהותית חדשה. אם המחקר מבסס מחלוקת, התפתחות, סיוג או ניגוד — נסח זאת כטענה רגילה מבוססת-ראיה (למשל C7) והפנה אליה ב-relationship_claim_id. אם C7 ייפול באימות, היחס ייעלם.
+- כשמקור אקדמי קריא מזהה במפורש מחבר ועמדה, עדיף לנסח טענה מיוחסת ("X טוען כי...") על פני "בספרות נטען". אל תמציא שמות ואל תכפה ייחוס כשהזהות אינה ודאית.
+
 בסיום קרא ל-submit_research_memo עם המבנה המלא. כל source_id חייב להיות מזהה שהוחזר לך מ-fetch מוצלח.`;
 
 export function buildAgentUserMessage(intake: Intake): string {
@@ -178,6 +184,75 @@ export const MEMO_TOOL = {
       },
       unresolved_questions: { type: "array", items: { type: "string" } },
       research_complete: { type: "boolean" },
+      research_synthesis: {
+        type: "object",
+        additionalProperties: false,
+        description:
+          "ארגון המחקר בלבד. אינו ראיה, אינו מוסיף טענות מהותיות, ומפנה אך ורק למזהי טענות שהוגשו ב-claims.",
+        properties: {
+          sections: {
+            type: "array",
+            items: {
+              type: "object",
+              additionalProperties: false,
+              properties: {
+                heading: { type: "string" },
+                purpose: { type: "string" },
+                claim_ids: { type: "array", items: { type: "string" } },
+              },
+              required: ["heading", "claim_ids"],
+            },
+          },
+          source_roles: {
+            type: "array",
+            items: {
+              type: "object",
+              additionalProperties: false,
+              properties: {
+                source_id: { type: "string" },
+                role: {
+                  type: "string",
+                  enum: [
+                    "primary_authority",
+                    "scholarship_position",
+                    "critique",
+                    "historical_context",
+                    "comparative_material",
+                    "factual_context",
+                    "user_document",
+                    "other",
+                  ],
+                },
+                claim_ids: { type: "array", items: { type: "string" } },
+              },
+              required: ["source_id", "role"],
+            },
+          },
+          relationships: {
+            type: "array",
+            items: {
+              type: "object",
+              additionalProperties: false,
+              properties: {
+                kind: {
+                  type: "string",
+                  enum: [
+                    "agreement",
+                    "disagreement",
+                    "development",
+                    "contrast",
+                    "qualification",
+                    "application",
+                  ],
+                },
+                relationship_claim_id: { type: "string" },
+                related_claim_ids: { type: "array", items: { type: "string" } },
+              },
+              required: ["kind", "relationship_claim_id", "related_claim_ids"],
+            },
+          },
+        },
+      },
     },
     required: ["issue_summary", "claims", "unresolved_questions", "research_complete"],
   },
