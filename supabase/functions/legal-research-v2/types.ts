@@ -553,6 +553,16 @@ export interface V2Telemetry {
   section_reads_missing?: number;
   sources_marked_exhausted?: number;
   unresolved_authorities?: string[];
+  /** Research → drafter synthesis handoff (evaluation only, never quotas). */
+  memo_synthesis_sections?: number;
+  memo_synthesis_relationships?: number;
+  memo_synthesis_source_roles?: number;
+  verified_synthesis_sections?: number;
+  verified_synthesis_relationships?: number;
+  synthesis_claim_refs_dropped?: number;
+  synthesis_source_refs_dropped?: number;
+  verified_sources_available_to_drafter?: number;
+  verified_sources_cited?: number;
   /** Why a research reopen was NOT performed after verification, when it wasn't. */
   repair_skip_reason?: string | null;
   repair_acceptance_reason?: string | null;

@@ -74,6 +74,7 @@ import {
   releaseOperationLock,
 } from "../_shared/operationLock.ts";
 import { runDrafter } from "./drafting/draft.ts";
+import { projectVerifiedSynthesis } from "./drafting/synthesis.ts";
 import { renderAnswer } from "./drafting/render.ts";
 import { RunTimer, type RunTimingJson } from "./shared/timing.ts";
 import { decideRepairAcceptance, decideResearchRepair } from "./verification/repairPolicy.ts";
