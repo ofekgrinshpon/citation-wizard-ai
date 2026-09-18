@@ -154,12 +154,20 @@ export async function runDrafter(opts: {
    * behaviour is byte-identical to before.
    */
   academic?: { guide: string; contextBlock?: string } | null;
+  /** Verified projection of the accepted memo's research synthesis. */
+  synthesis?: VerifiedResearchSynthesis | null;
 }): Promise<{ blocks: DraftBlock[]; error?: string; dropped_source_ids: string[] }> {
   const system = opts.academic
     ? `${SYSTEM}\n\n${opts.academic.guide}`
     : SYSTEM;
   const userInput = [
-    buildDrafterInput(opts.question, opts.pack, opts.advisories ?? [], opts.gapNotices ?? []),
+    buildDrafterInput(
+      opts.question,
+      opts.pack,
+      opts.advisories ?? [],
+      opts.gapNotices ?? [],
+      opts.synthesis ?? null,
+    ),
     opts.academic?.contextBlock ?? "",
   ].filter(Boolean).join("\n\n");
   const res = await chat({
