@@ -13,6 +13,10 @@ import {
 } from "../shared/primitives.ts";
 import { stripInternalIds } from "../shared/titleHygiene.ts";
 import {
+  type BibliographicMetadata,
+  formatAcademicCitation,
+} from "../shared/bibliographic.ts";
+import {
   buildCompoundFootnotes,
   type CitationOccurrence,
   placeMarkerAfterPunctuation,
@@ -23,10 +27,24 @@ export interface CitationInfo {
   display_title: string;
   url?: string;
   locator?: string;
+  /** Structured academic identity, when the source carries one. */
+  bibliographic?: BibliographicMetadata;
 }
 
 /** Deterministic Hebrew footnote text for one verified source. */
 export function formatCitation(info: CitationInfo): string {
+  // An academic source with structured identity cites as scholarship —
+  // author, title, journal, year — rather than as a bare page title + URL.
+  const academic = formatAcademicCitation(
+    info.bibliographic,
+    stripInternalIds((info.display_title ?? "").trim()),
+  );
+  if (academic) {
+    const loc = (info.locator ?? "").replace(/\bS\d{1,3}(?:-q\d{1,4})?\b/gu, "").trim();
+    let out = loc && !academic.includes(loc) ? `${academic}, ${loc}` : academic;
+    if (info.url && !out.includes(info.url)) out += ` ${info.url}`;
+    return normalizeHebrewNumberRanges(out.replace(/\s+/g, " ").trim());
+  }
   let title = stripInternalIds((info.display_title ?? "").trim()).replace(/\s+/g, " ");
   // A URL is never a title: it belongs at the end of the citation, once.
   if (/^https?:\/\//i.test(title)) title = "";
@@ -80,6 +98,7 @@ export function renderAnswer(
           display_title: s.display_title,
           url: s.url,
           locator: s.locator,
+          bibliographic: s.bibliographic,
         });
       }
     }

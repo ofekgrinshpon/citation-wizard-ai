@@ -348,6 +348,8 @@ export async function verifyMemo(opts: {
         ) ?? s.locator
         : s.locator,
       support: v.support,
+      // Identification/attribution only — never evidence of a proposition.
+      bibliographic: ud ? undefined : s.source.bibliographic,
     });
     byClaim.set(s.claim_id, list);
 
