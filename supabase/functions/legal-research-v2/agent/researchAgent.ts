@@ -53,6 +53,7 @@ import {
   dropPriorStateMessages,
 } from "./contextWindow.ts";
 import { RunTimer } from "../shared/timing.ts";
+import { normalizeResearchSynthesis } from "../drafting/synthesis.ts";
 
 /**
  * The smallest useful answer to a re-read that would add no new evidence.
@@ -307,6 +308,14 @@ function normalizeMemo(raw: unknown): ResearchMemo | null {
           : [],
       }))
     : [];
+  let research_synthesis;
+  try {
+    research_synthesis = normalizeResearchSynthesis(
+      (r as { research_synthesis?: unknown }).research_synthesis,
+    );
+  } catch {
+    research_synthesis = undefined;
+  }
   return {
     issue_summary: String(r.issue_summary ?? "").trim(),
     claims,
@@ -314,6 +323,7 @@ function normalizeMemo(raw: unknown): ResearchMemo | null {
       ? r.unresolved_questions.map((q) => String(q)).filter(Boolean)
       : [],
     research_complete: r.research_complete === true,
+    ...(research_synthesis ? { research_synthesis } : {}),
   };
 }
 
