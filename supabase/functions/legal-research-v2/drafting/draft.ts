@@ -92,7 +92,10 @@ export function buildDrafterInput(
   const notes = advisories.length
     ? `\n\nהנחיות מחייבות לניסוח:\n${advisories.map((a) => `- ${a}`).join("\n")}`
     : "";
-  return `השאלה:\n${question}\n\nטענות מאומתות ומקורותיהן:\n${claims || "(אין טענות מאומתות)"}\n\nנושאים שלא ניתן היה לבסס בראיות (יש להצהיר עליהם בגלוי, בלי לנחש):\n${gaps}${notes}`;
+  const structure = renderSynthesisForDrafter(synthesis);
+  return `השאלה:\n${question}\n\nטענות מאומתות ומקורותיהן:\n${claims || "(אין טענות מאומתות)"}${
+    structure ? `\n\n${structure}` : ""
+  }\n\nנושאים שלא ניתן היה לבסס בראיות (יש להצהיר עליהם בגלוי, בלי לנחש):\n${gaps}${notes}`;
 }
 
 
