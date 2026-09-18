@@ -52,6 +52,11 @@ export interface ChunkedPdfResult {
   chars_extracted: number;
   stopped_reason: ChunkedStopReason;
   latency_ms: number;
+  /**
+   * Embedded PDF document information (Title/Author/CreationDate…), when the
+   * file carries any. Bibliographic identity only — never evidence.
+   */
+  info?: Record<string, unknown>;
 }
 
 interface TextItemLike {
@@ -115,6 +120,15 @@ export async function extractPdfPagesBounded(
     };
   }
 
+  // Embedded document information, read once and never trusted as evidence.
+  let info: Record<string, unknown> | undefined;
+  try {
+    // deno-lint-ignore no-explicit-any
+    const meta = await (pdf as any).getMetadata?.();
+    const raw = meta?.info;
+    if (raw && typeof raw === "object") info = raw as Record<string, unknown>;
+  } catch { /* metadata is optional */ }
+
   const lastPage = Math.min(totalPages, startPage + opts.maxPages - 1);
   for (let p = startPage; p <= lastPage; p++) {
     if (now() >= deadline) {
@@ -177,5 +191,6 @@ export async function extractPdfPagesBounded(
     chars_extracted: text.length,
     stopped_reason: stopped,
     latency_ms: now() - started,
+    info,
   };
 }

@@ -26,6 +26,7 @@ import {
 } from "./shared/primitives.ts";
 import { modelConfig, newUsageLedger, type UsageLedger } from "./shared/model.ts";
 import { EvidenceStore } from "./evidence/evidenceStore.ts";
+import { buildAcademicYield } from "./evidence/academicYield.ts";
 import {
   EMPTY_ATTACHMENT_TELEMETRY,
   preloadUserDocuments,
@@ -700,6 +701,16 @@ async function runPipeline(
 
 
 
+  // Academic evidence yield + bibliographic identity (diagnostic only).
+  const academicYield = buildAcademicYield({
+    sources: store.all(),
+    quotes: store.servedQuotes(),
+    memo: agent.memo,
+    verification,
+    pack,
+    cited_source_ids: rendered.cited_source_ids,
+  });
+
   const telemetry: V2Telemetry = {
     run_id: intake.run_id,
     agent_steps: agent.policy.steps,
@@ -802,6 +813,17 @@ async function runPipeline(
     derivative_disclosure_shown,
     acquisition_ledger: agent.ledger.all(),
     source_funnel,
+    ...academicYield.counters,
+    academic_yield_ratios: academicYield.ratios,
+    academic_source_yield: academicYield.rows,
+    bibliographic_sources_with_authors: store.all().filter((s) =>
+      (s.bibliographic?.authors?.length ?? 0) > 0
+    ).length,
+    bibliographic_citations_rendered: rendered.footnotes.filter((f) =>
+      f.sources.some((x) =>
+        academicYield.rows.some((r) => r.source_id === x.source_id && r.has_bibliographic)
+      )
+    ).length,
     /** Acquisition transport (v2_local_corpus_body_acquisition_v1). */
     local_corpus_acquisitions: agent.stats.local_corpus_acquisitions,
     local_corpus_bindings: agent.stats.local_corpus_bindings,

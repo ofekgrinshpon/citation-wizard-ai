@@ -178,7 +178,12 @@ describe("evidence store — context discipline", () => {
     expect(ex.from).toBe("query");
     expect(ex.windows[0]).toContain("הלכת בבלי");
     expect(ex.windows[0].length).toBeLessThanOrEqual(1_300);
-    expect(store.get(src.source_id)!.text_length).toBe(body.length);
+    // The stored body is the canonical form of the extracted text: identical
+    // content, only trailing/edge whitespace normalized (academic_evidence_yield_v1).
+    const stored = store.get(src.source_id)!;
+    expect(stored.text_length).toBe(stored.extracted_text.length);
+    expect(Math.abs(stored.text_length - body.length)).toBeLessThanOrEqual(4);
+    expect(stored.extracted_text).toContain("הלכת בבלי קובעת כי הדין האזרחי חל.");
   });
 
   it("serializes and restores, keeping URL dedupe alive", async () => {

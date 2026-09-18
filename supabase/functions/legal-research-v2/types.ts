@@ -8,6 +8,31 @@
  */
 
 import type { AcademicProjectContext } from "./academic/projectContext.ts";
+import type { BibliographicMetadata } from "./shared/bibliographic.ts";
+import type { ExtractionStatus, TextQuality } from "./shared/academicText.ts";
+
+export type { BibliographicMetadata, ExtractionStatus, TextQuality };
+
+/** How a document body was (or was not) obtained over the wire. */
+export type AcquisitionStatus =
+  | "not_attempted"
+  | "http_failed"
+  | "blocked"
+  | "unsupported_response"
+  | "acquired";
+
+/** Bounded PDF extraction observability for one source. */
+export interface PdfExtractionMeta {
+  total_pages?: number;
+  pages_attempted?: number;
+  pages_extracted?: number;
+  first_page?: number | null;
+  last_page?: number | null;
+  chars_extracted?: number;
+  stop_reason?: string;
+  /** Pages already read by a bounded continuation read. */
+  continued_through_page?: number;
+}
 
 // ─── Intake ─────────────────────────────────────────────────────────────────
 
@@ -219,6 +244,18 @@ export interface EvidenceSource {
    * shown to the user.
    */
   user_document?: UserDocumentMeta;
+  /**
+   * Structured bibliographic identity (academic_bibliographic_identity_v1).
+   * Identification / attribution / citation only — NEVER evidence of a legal
+   * proposition, and never a precondition for a source being usable.
+   */
+  bibliographic?: BibliographicMetadata;
+  /** Evaluation-only acquisition + extraction diagnostics. */
+  acquisition_status?: AcquisitionStatus;
+  extraction_status?: ExtractionStatus;
+  content_type?: string;
+  text_quality?: TextQuality;
+  pdf_extraction?: PdfExtractionMeta;
 }
 
 export interface UserDocumentMeta {
@@ -363,6 +400,8 @@ export interface VerifiedSourceRef {
   locator?: string;
   support: SupportVerdict;
   support_provenance?: SupportProvenance;
+  /** Carried to the deterministic renderer so a footnote can be a citation. */
+  bibliographic?: BibliographicMetadata;
 }
 
 export interface VerifiedClaim {
@@ -476,6 +515,49 @@ import type { AuthorityLedgerRow } from "./tools/acquisitionLedger.ts";
 import type { AgentTurnRecord } from "./shared/timing.ts";
 
 // ─── Telemetry ──────────────────────────────────────────────────────────────
+
+/** Where a readable source stopped contributing (academic_evidence_yield_v1). */
+export type SpanYieldOutcome =
+  | "VERIFIED"
+  | "NOT_ACQUIRED"
+  | "UNUSABLE_EXTRACTION"
+  | "READ_NO_QUOTE_REQUESTED"
+  | "QUOTE_REQUESTED_NO_WINDOW"
+  | "WINDOW_SERVED_NOT_MEMOED"
+  | "MEMOED_SPAN_NOT_FOUND"
+  | "MEMOED_SUPPORT_FAILED";
+
+export type TerminalLossStage =
+  | "acquisition"
+  | "extraction"
+  | "agent_read"
+  | "quote_generation"
+  | "memo_selection"
+  | "span_verification"
+  | "support_verification"
+  | null;
+
+export interface AcademicSourceYieldRow {
+  source_id: string;
+  url?: string;
+  title?: string;
+  academic_source: boolean;
+  acquisition_status?: AcquisitionStatus;
+  extraction_status?: ExtractionStatus;
+  content_type?: string;
+  text_chars?: number;
+  text_quality?: TextQuality;
+  pdf_extraction?: PdfExtractionMeta;
+  quotes_served: number;
+  memo_evidence_pairs: number;
+  span_verified_pairs: number;
+  support_verified_pairs: number;
+  outcome: SpanYieldOutcome;
+  terminal_loss_stage: TerminalLossStage;
+  has_bibliographic: boolean;
+  metadata_basis?: string[];
+  cited: boolean;
+}
 
 export interface SourceFunnelRow {
   source_id: string;
@@ -603,6 +685,29 @@ export interface V2Telemetry {
 
   acquisition_ledger: AuthorityLedgerRow[];
   source_funnel: SourceFunnelRow[];
+  /** Academic evidence yield (academic_evidence_yield_v1) — diagnostic only. */
+  academic_discovered?: number;
+  academic_fetch_attempted?: number;
+  academic_acquired?: number;
+  academic_extracted_usable?: number;
+  academic_quotes_served?: number;
+  academic_sources_memoed?: number;
+  academic_sources_span_verified?: number;
+  academic_sources_support_verified?: number;
+  academic_sources_final_pack?: number;
+  academic_yield_ratios?: Record<string, number>;
+  academic_source_yield?: AcademicSourceYieldRow[];
+  /** Bibliographic identity coverage (academic_bibliographic_identity_v1). */
+  bibliographic_sources_with_metadata?: number;
+  bibliographic_sources_with_authors?: number;
+  bibliographic_citations_rendered?: number;
+  /** Repository landing pages resolved to their PDF via citation_pdf_url. */
+  repository_pdf_followed?: number;
+  /** Bounded later-page continuation reads of an academic PDF. */
+  pdf_continuation_reads?: number;
+  pdf_continuation_chars_added?: number;
+  /** Malformed URLs deterministically repaired before fetching. */
+  urls_repaired?: number;
   /** Bodies acquired from the stored corpus, with no HTTP fetch. */
   local_corpus_acquisitions?: number;
   local_corpus_bindings?: number;

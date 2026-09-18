@@ -20,6 +20,15 @@ import {
   sha256Hex,
 } from "../shared/primitives.ts";
 import { cleanDisplayTitle, isMetadataLine, stripInternalIds } from "../shared/titleHygiene.ts";
+import { stripHebrewPrefix } from "../shared/primitives.ts";
+import {
+  assessTextQuality,
+  canonicalizeDocumentText,
+  classifyExtraction,
+} from "../shared/academicText.ts";
+import type { BibliographicMetadata } from "../shared/bibliographic.ts";
+import { isGarbageMetadataValue } from "../shared/bibliographic.ts";
+import type { AcquisitionStatus, PdfExtractionMeta } from "../types.ts";
 import { cleanQuotableText, QUOTE_LIMITS, type ServedQuote, snapWindow } from "./quotable.ts";
 import { userDocumentTitle } from "../../_shared/userDocumentsCore.ts";
 
@@ -109,6 +118,57 @@ export function summarizeSource(text: string, identity: IdentityFields, maxChars
   return [idBits, head].filter(Boolean).join(" — ").slice(0, maxChars + 120);
 }
 
+/**
+ * Locate a term inside a body, tolerating the forms Hebrew academic prose
+ * actually uses (academic_evidence_yield_v1).
+ *
+ * Deterministic ladder, cheapest first — no embeddings, no second retrieval
+ * engine:
+ *   1. literal substring
+ *   2. punctuation/whitespace-insensitive match
+ *   3. prefix-stripped Hebrew match (ה/ו/ב/כ/ל/מ/ש)
+ *   4. longest-content-word match, prefix-stripped
+ */
+export function locateTerm(text: string, term: string): number {
+  const body = text ?? "";
+  const needle = String(term ?? "").trim();
+  if (needle.length < 2) return -1;
+  const direct = body.indexOf(needle);
+  if (direct >= 0) return direct;
+
+  // Loose form: collapse whitespace and drop punctuation on both sides, while
+  // keeping an index map back into the original body.
+  const map: number[] = [];
+  let loose = "";
+  for (let i = 0; i < body.length; i++) {
+    const ch = body[i];
+    if (/[\p{L}\p{N}]/u.test(ch)) {
+      loose += ch;
+      map.push(i);
+    }
+  }
+  const looseOf = (s: string) => s.replace(/[^\p{L}\p{N}]/gu, "");
+  const looseNeedle = looseOf(needle);
+  if (looseNeedle.length >= 4) {
+    const hit = loose.indexOf(looseNeedle);
+    if (hit >= 0) return map[hit];
+  }
+
+  const words = needle.split(/\s+/).filter((w) => w.length >= 3);
+  const candidates = [
+    ...words.map((w) => stripHebrewPrefix(w)),
+    ...words,
+  ].sort((a, b) => b.length - a.length);
+  for (const w of candidates) {
+    if (w.length < 3) continue;
+    const l = looseOf(w);
+    if (l.length < 3) continue;
+    const hit = loose.indexOf(l);
+    if (hit >= 0) return map[hit];
+  }
+  return -1;
+}
+
 /** Verbatim windows around search terms inside a body. */
 export function excerptWindows(
   text: string,
@@ -119,15 +179,8 @@ export function excerptWindows(
   const max = opts.max ?? 3;
   const out: string[] = [];
   const used: number[] = [];
-  for (const term of terms.slice(0, 6)) {
-    const needle = String(term ?? "").trim();
-    if (needle.length < 2) continue;
-    let idx = text.indexOf(needle);
-    if (idx < 0) {
-      // second chance: whitespace-insensitive scan on the longest word
-      const word = needle.split(/\s+/).sort((a, b) => b.length - a.length)[0] ?? "";
-      if (word.length >= 3) idx = text.indexOf(word);
-    }
+  for (const term of terms.slice(0, 8)) {
+    const idx = locateTerm(text, String(term ?? "").trim());
     if (idx < 0) continue;
     if (used.some((u) => Math.abs(u - idx) < windowChars / 2)) continue;
     used.push(idx);
@@ -161,6 +214,11 @@ export class EvidenceStore {
     extracted_text: string;
     is_actual_document: boolean;
     not_document_reason?: string;
+    /** Identification metadata only — never evidence (see bibliographic.ts). */
+    bibliographic?: BibliographicMetadata;
+    acquisition_status?: AcquisitionStatus;
+    content_type?: string;
+    pdf_extraction?: PdfExtractionMeta;
   }): Promise<EvidenceSource> {
     if (input.url) {
       const existing = this.byUrl.get(normalizeUrlKey(input.url));
@@ -168,7 +226,11 @@ export class EvidenceStore {
     }
     this.seq += 1;
     const source_id = `S${this.seq}`;
-    const text = input.extracted_text ?? "";
+    // ONE canonical text: what is stored is what is quoted and what the
+    // verifier matches against (academic_evidence_yield_v1, Option A).
+    const raw = input.extracted_text ?? "";
+    const text = canonicalizeDocumentText(raw);
+    const text_quality = assessTextQuality(text, raw);
     const identity_fields = identityFieldsOf(text, input.title);
     const entry: EvidenceSource = {
       source_id,
@@ -186,10 +248,58 @@ export class EvidenceStore {
       not_document_reason: input.not_document_reason,
       origin: input.origin,
       fetched_at: new Date().toISOString(),
+      bibliographic: input.bibliographic,
+      acquisition_status: input.acquisition_status ??
+        (input.fetch_status === "ok" ? "acquired" : "http_failed"),
+      extraction_status: input.fetch_status === "ok"
+        ? classifyExtraction(text, text_quality)
+        : "not_attempted",
+      content_type: input.content_type,
+      text_quality,
+      pdf_extraction: input.pdf_extraction,
     };
     this.sources.set(source_id, entry);
     if (input.url) this.byUrl.set(normalizeUrlKey(input.url), source_id);
     return entry;
+  }
+
+  /**
+   * Bounded later-page continuation: append additional canonical text to an
+   * existing PDF body. Append-only — nothing already stored is rewritten, so
+   * every span verified earlier still matches.
+   */
+  async extendBody(
+    source_id: string,
+    moreText: string,
+    pdf: Partial<PdfExtractionMeta> = {},
+  ): Promise<{ added: number; total: number } | null> {
+    const src = this.sources.get(source_id);
+    if (!src) return null;
+    const addition = canonicalizeDocumentText(moreText ?? "");
+    if (!addition) return { added: 0, total: src.text_length };
+    if (src.extracted_text.includes(addition.slice(0, 200))) {
+      return { added: 0, total: src.text_length };
+    }
+    const combined = `${src.extracted_text}\n\n${addition}`;
+    src.extracted_text = combined;
+    src.text_length = combined.length;
+    src.sha256 = await sha256Hex(combined);
+    src.text_quality = assessTextQuality(combined);
+    src.extraction_status = classifyExtraction(combined, src.text_quality);
+    src.pdf_extraction = { ...(src.pdf_extraction ?? {}), ...pdf };
+    return { added: addition.length, total: combined.length };
+  }
+
+  /**
+   * Attach or strengthen bibliographic metadata for a stored source. Weak
+   * values never overwrite stronger ones — merging is done by the caller via
+   * `mergeBibliographic`; this only stores the result.
+   */
+  setBibliographic(source_id: string, meta: BibliographicMetadata | undefined): void {
+    const src = this.sources.get(source_id);
+    if (!src || !meta) return;
+    if (meta.title && isGarbageMetadataValue(meta.title)) delete meta.title;
+    src.bibliographic = meta;
   }
 
   /**

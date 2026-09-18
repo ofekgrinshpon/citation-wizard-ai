@@ -13,7 +13,16 @@
  * part of it without re-injecting the document.
  */
 
-import type { EvidenceSource, SearchResult } from "../types.ts";
+import type { EvidenceSource, PdfExtractionMeta, SearchResult } from "../types.ts";
+import {
+  type BibliographicMetadata,
+  bibliographicFromSearch,
+  mergeBibliographic,
+  parseHtmlBibliographic,
+  parsePdfInfoMetadata,
+  pdfUrlFromHtmlMeta,
+} from "../shared/bibliographic.ts";
+import { normalizeMalformedUrl } from "../shared/urlNormalize.ts";
 import type { EvidenceStore } from "../evidence/evidenceStore.ts";
 import { excerptWindows } from "../evidence/evidenceStore.ts";
 import {
@@ -41,6 +50,9 @@ export const FETCH_LIMITS = {
   PDF_DEADLINE_MS: 12_000,
   PDF_ENOUGH_CHARS: 80_000,
   MIN_DOCUMENT_CHARS: 400,
+  /** Bounded later-page continuation of an already-acquired PDF. */
+  PDF_CONTINUATION_PAGES: 20,
+  PDF_CONTINUATION_CHARS: 90_000,
   /** Context ceilings — the agent never receives a whole body. */
   HEAD_CHARS: 1_400,
   WINDOW_CHARS: 1_200,
@@ -102,11 +114,24 @@ export interface DecodeTelemetry {
   fallback_applied: boolean;
 }
 
+export interface ExtractResult {
+  text: string;
+  error?: string;
+  decode?: DecodeTelemetry;
+  /** Raw markup, kept only so bibliographic meta tags can be parsed. */
+  html?: string;
+  pdf?: PdfExtractionMeta;
+  /** Bibliographic metadata found in the document itself. */
+  bibliographic?: BibliographicMetadata;
+  /** Repository landing page → the article PDF it declares. */
+  pdf_link?: string;
+}
+
 export async function extractByContentType(
   url: string,
   contentType: string,
   bytes: Uint8Array,
-): Promise<{ text: string; error?: string; decode?: DecodeTelemetry }> {
+): Promise<ExtractResult> {
   const ct = contentType.toLowerCase();
   const isPdf = ct.includes("pdf") || /\.pdf(\?|$)/i.test(url) ||
     (bytes.length > 4 && bytes[0] === 0x25 && bytes[1] === 0x50);
@@ -118,7 +143,20 @@ export async function extractByContentType(
         deadlineMs: FETCH_LIMITS.PDF_DEADLINE_MS,
         enoughChars: FETCH_LIMITS.PDF_ENOUGH_CHARS,
       });
-      return { text: res.text };
+      return {
+        text: res.text,
+        pdf: {
+          total_pages: res.total_pages,
+          pages_attempted: res.pages_attempted,
+          pages_extracted: res.pages_extracted,
+          first_page: res.first_page_extracted,
+          last_page: res.last_page_extracted,
+          chars_extracted: res.chars_extracted,
+          stop_reason: res.stopped_reason,
+          continued_through_page: res.last_page_extracted ?? undefined,
+        },
+        bibliographic: parsePdfInfoMetadata(res.info),
+      };
     } catch (e) {
       return { text: "", error: `pdf_extract_failed: ${e instanceof Error ? e.message : String(e)}` };
     }
@@ -142,7 +180,13 @@ export async function extractByContentType(
     fallback_applied: decoded.fallback_applied,
   };
   if (ct.includes("html") || /<html[\s>]/i.test(raw.slice(0, 2_000))) {
-    return { text: htmlToText(raw), decode };
+    return {
+      text: htmlToText(raw),
+      decode,
+      html: raw.slice(0, 400_000),
+      bibliographic: parseHtmlBibliographic(raw),
+      pdf_link: pdfUrlFromHtmlMeta(raw, url),
+    };
   }
   return { text: raw.trim(), decode };
 }
@@ -268,6 +312,16 @@ export interface FetchOutput {
   /** Internal telemetry for the read that just ran. */
   span_hunting_newly_exhausted?: boolean;
   new_quote_count?: number;
+  /** A malformed URL was deterministically repaired before fetching. */
+  url_repaired?: boolean;
+  /** A repository landing page was resolved to its article PDF. */
+  repository_pdf_followed?: boolean;
+  /** Provenance of the structured bibliographic metadata, if any. */
+  bibliographic_basis?: string[];
+  /** Bounded later-page continuation of an already-acquired PDF. */
+  pdf_continued?: boolean;
+  pdf_pages_added?: string;
+  pdf_chars_added?: number;
   served_quote_count?: number;
   error?: string;
 }
@@ -398,6 +452,17 @@ export async function runFetch(
     const sectionRequest = input.expected_identity?.section ?? input.locator ??
       (input.want === "relevant_section" ? input.query : undefined);
     const sectionToken = sectionRequest ? normalizeSectionToken(sectionRequest) : null;
+
+    // ── Bounded later-page continuation (academic_evidence_yield_v1) ──────
+    // A long law-review article often spends its first pages on title, table
+    // of contents and introduction, so the argument the agent needs sits past
+    // the initial page bound. This reads a BOUNDED further page range of a
+    // PDF already acquired in this run — append-only, hard ceilings intact,
+    // never the whole journal issue.
+    if (input.want === "pdf_page_range" || input.want === "later_pages") {
+      const cont = await continuePdfRead(store, src, input);
+      if (cont) return clampFetchOutput(cont);
+    }
 
     // ── Span-hunting suppression (v2_span_hunting_efficiency_v1) ──────────
     // Repeated paraphrased reads of a body that keep returning text already
@@ -557,7 +622,12 @@ export async function runFetch(
     return await acquireLocalBody(store, discovery, input, ledger, opts?.admin);
   }
 
-  const url = input.url || discovery?.url;
+  // Deterministic URL hygiene before anything else: backslash path separators
+  // and duplicated slashes leak in from PDFs and document text (observed on
+  // `https://fs.knesset.gov.il/\7\law\…`) and kill the fetch before it starts.
+  const rawUrl = input.url || discovery?.url;
+  const url = normalizeMalformedUrl(rawUrl);
+  const url_repaired = !!rawUrl && url !== String(rawUrl).trim();
   if (!url || !/^https?:\/\//i.test(url)) {
     return { ok: false, error: "no_usable_url" };
   }
@@ -624,6 +694,7 @@ export async function runFetch(
   const timer = setTimeout(() => controller.abort(), FETCH_LIMITS.TIMEOUT_MS);
   let entry: EvidenceSource;
   let decodeMeta: DecodeTelemetry | undefined;
+  let repositoryPdfFollowed = false;
   const noteFailure = (reason: string) => {
     if (ledger && authorityKey) {
       ledger.note(authorityKey, { url, outcome: "failed", reason, at: new Date().toISOString() });
@@ -671,11 +742,42 @@ export async function runFetch(
       noteFailure("document_too_large");
       return clampFetchOutput({ ok: false, source_id: entry.source_id, error: "document_too_large" });
     }
-    const { text, error, decode } = await extractByContentType(
-      url,
-      res.headers.get("content-type") ?? "",
-      buf,
-    );
+    const contentType = res.headers.get("content-type") ?? "";
+    let extracted = await extractByContentType(url, contentType, buf);
+    let bodyContentType = contentType;
+
+    // ── Repository landing page → the article itself ────────────────────
+    // Digital Commons / bepress / university repositories publish the article
+    // PDF in `citation_pdf_url` alongside full citation metadata. Following it
+    // once turns an abstract page into a readable body, and merges landing
+    // metadata with PDF body under ONE evidence identity.
+    let repository_pdf_followed = false;
+    if (extracted.pdf_link && extracted.pdf_link !== url) {
+      const pdfUrl = normalizeMalformedUrl(extracted.pdf_link);
+      if (checkUrlSafety(pdfUrl).safe) {
+        try {
+          const pdfRes = await officialFetch(pdfUrl, { signal: controller.signal });
+          if (pdfRes.ok) {
+            const pdfBuf = new Uint8Array(await pdfRes.arrayBuffer());
+            if (pdfBuf.length <= FETCH_LIMITS.MAX_BYTES) {
+              const pdfCt = pdfRes.headers.get("content-type") ?? "application/pdf";
+              const body = await extractByContentType(pdfUrl, pdfCt, pdfBuf);
+              if (!body.error && body.text.trim().length > extracted.text.trim().length) {
+                repository_pdf_followed = true;
+                bodyContentType = pdfCt;
+                extracted = {
+                  ...body,
+                  // Landing-page metadata is the stronger basis and wins.
+                  bibliographic: mergeBibliographic(extracted.bibliographic, body.bibliographic),
+                };
+              }
+            }
+          }
+        } catch { /* the landing page body remains usable */ }
+      }
+    }
+
+    const { text, error, decode, pdf } = extracted;
     decodeMeta = decode;
     const clipped = text.slice(0, FETCH_LIMITS.MAX_TEXT_CHARS);
     const docCheck = checkIsActualDocument(clipped);
@@ -688,7 +790,15 @@ export async function runFetch(
       extracted_text: clipped,
       is_actual_document: !error && docCheck.is_actual_document,
       not_document_reason: error ?? docCheck.reason,
+      content_type: bodyContentType,
+      pdf_extraction: pdf,
+      acquisition_status: error ? "unsupported_response" : "acquired",
+      bibliographic: mergeBibliographic(
+        extracted.bibliographic,
+        bibliographicFromSearch(discovery ?? undefined),
+      ),
     });
+    repositoryPdfFollowed = repository_pdf_followed;
     if (error) {
       noteFailure(error);
       return clampFetchOutput({
@@ -721,19 +831,24 @@ export async function runFetch(
     clearTimeout(timer);
   }
 
-  return finalizeAcquiredBody({
-    store,
-    ledger,
-    entry,
-    attemptKey: url,
-    expectedIdentity,
-    authorityKey,
-    resolvedIdentity,
-    discovery,
-    input,
-    transport: "http",
-    decode: decodeMeta,
-  });
+  return {
+    ...finalizeAcquiredBody({
+      store,
+      ledger,
+      entry,
+      attemptKey: url,
+      expectedIdentity,
+      authorityKey,
+      resolvedIdentity,
+      discovery,
+      input,
+      transport: "http",
+      decode: decodeMeta,
+    }),
+    url_repaired: url_repaired || undefined,
+    repository_pdf_followed: repositoryPdfFollowed || undefined,
+    bibliographic_basis: entry.bibliographic?.metadata_basis,
+  };
 }
 
 /**
@@ -969,4 +1084,87 @@ async function acquireLocalBody(
     transport: "local_corpus",
     structuredDocket: row.case_number,
   });
+}
+
+/**
+ * Bounded later-page continuation of an already-acquired academic PDF
+ * (academic_evidence_yield_v1).
+ *
+ * The first bounded pass may stop before the analytical core of a long
+ * article. Rather than re-reading the whole document (or lifting the global
+ * page ceiling), this re-fetches the same URL once and extracts the NEXT
+ * bounded page window, appending it to the existing body. Append-only, so no
+ * previously verified span can move; returns null when continuation does not
+ * apply, letting the normal re-read path run.
+ */
+async function continuePdfRead(
+  store: EvidenceStore,
+  src: EvidenceSource,
+  input: FetchInput,
+): Promise<FetchOutput | null> {
+  const meta = src.pdf_extraction;
+  const url = src.url;
+  if (!url || !meta?.total_pages) return null;
+  const readThrough = meta.continued_through_page ?? meta.last_page ?? 0;
+  if (readThrough <= 0 || readThrough >= meta.total_pages) {
+    return {
+      ok: false,
+      source_id: src.source_id,
+      error: "pdf_fully_read",
+      instruction: `כל העמודים הזמינים של ${src.source_id} כבר נקראו. השתמש בטקסט שברשותך או פנה למקור אחר.`,
+    };
+  }
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), FETCH_LIMITS.TIMEOUT_MS);
+  try {
+    const res = await officialFetch(url, { signal: controller.signal });
+    if (!res.ok) return { ok: false, source_id: src.source_id, error: `http_${res.status}` };
+    const buf = new Uint8Array(await res.arrayBuffer());
+    if (buf.length > FETCH_LIMITS.MAX_BYTES) {
+      return { ok: false, source_id: src.source_id, error: "document_too_large" };
+    }
+    const cont = await extractPdfPagesBounded(buf, {
+      startPage: readThrough + 1,
+      maxPages: FETCH_LIMITS.PDF_CONTINUATION_PAGES,
+      maxChars: FETCH_LIMITS.PDF_CONTINUATION_CHARS,
+      deadlineMs: FETCH_LIMITS.PDF_DEADLINE_MS,
+      enoughChars: FETCH_LIMITS.PDF_CONTINUATION_CHARS,
+    });
+    if (!cont.text.trim()) {
+      return { ok: false, source_id: src.source_id, error: "pdf_continuation_empty" };
+    }
+    const lastRead = cont.last_page_extracted ?? (readThrough + cont.pages_attempted);
+    const added = await store.extendBody(src.source_id, cont.text, {
+      total_pages: cont.total_pages,
+      last_page: lastRead,
+      continued_through_page: lastRead,
+      stop_reason: cont.stopped_reason,
+    });
+    const excerpt = store.excerpt(src.source_id, {
+      query: input.query,
+      locator: input.locator,
+      find: input.find,
+      maxChars: FETCH_LIMITS.WINDOW_CHARS,
+    });
+    const quotes = excerpt
+      ? store.serveQuotesWithNovelty(src.source_id, excerpt.windows, input.query)
+      : { quotes: [], new_count: 0 };
+    return {
+      ok: true,
+      source_id: src.source_id,
+      pdf_continued: true,
+      pdf_pages_added: `${readThrough + 1}-${lastRead}`,
+      pdf_chars_added: added?.added ?? 0,
+      exact_source_text: quotes.quotes.map((q) => ({ quote_id: q.quote_id, text: q.text })),
+      new_quote_count: quotes.new_count,
+    };
+  } catch (e) {
+    return {
+      ok: false,
+      source_id: src.source_id,
+      error: `pdf_continuation_failed: ${e instanceof Error ? e.message : String(e)}`,
+    };
+  } finally {
+    clearTimeout(timer);
+  }
 }
