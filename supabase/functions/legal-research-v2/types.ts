@@ -256,11 +256,65 @@ export interface MemoClaim {
   evidence: MemoEvidence[];
 }
 
+/**
+ * Organizational structure the research agent discovered. It is NEVER
+ * evidence: it may only point at claim ids whose propositions went through
+ * normal verification. A relationship whose relationship_claim_id fails
+ * verification disappears entirely.
+ */
+export type SynthesisSourceRole =
+  | "primary_authority"
+  | "scholarship_position"
+  | "critique"
+  | "historical_context"
+  | "comparative_material"
+  | "factual_context"
+  | "user_document"
+  | "other";
+
+export type SynthesisRelationshipKind =
+  | "agreement"
+  | "disagreement"
+  | "development"
+  | "contrast"
+  | "qualification"
+  | "application";
+
+export interface SynthesisSection {
+  heading: string;
+  purpose?: string;
+  claim_ids: string[];
+}
+
+export interface SynthesisSourceRole_Entry {
+  source_id: string;
+  role: SynthesisSourceRole;
+  claim_ids: string[];
+}
+
+export interface SynthesisRelationship {
+  kind: SynthesisRelationshipKind;
+  /** The verified claim that CARRIES the substantive relationship statement. */
+  relationship_claim_id: string;
+  related_claim_ids: string[];
+}
+
+export interface ResearchSynthesis {
+  sections: SynthesisSection[];
+  source_roles: SynthesisSourceRole_Entry[];
+  relationships: SynthesisRelationship[];
+}
+
+/** Projection of ResearchSynthesis onto the FINAL verified evidence pack. */
+export type VerifiedResearchSynthesis = ResearchSynthesis;
+
 export interface ResearchMemo {
   issue_summary: string;
   claims: MemoClaim[];
   unresolved_questions: string[];
   research_complete: boolean;
+  /** Optional; legacy memos and resumed runs without it work unchanged. */
+  research_synthesis?: ResearchSynthesis;
 }
 
 // ─── Verification ───────────────────────────────────────────────────────────
