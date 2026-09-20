@@ -15,6 +15,8 @@ import { stripInternalIds } from "../shared/titleHygiene.ts";
 import {
   type BibliographicMetadata,
   formatAcademicCitation,
+  isDiscoveryEndpointUrl,
+  sanitizeBibliographic,
 } from "../shared/bibliographic.ts";
 import {
   buildCompoundFootnotes,
@@ -35,19 +37,29 @@ export interface CitationInfo {
 export function formatCitation(info: CitationInfo): string {
   // An academic source with structured identity cites as scholarship —
   // author, title, journal, year — rather than as a bare page title + URL.
+  const safeMeta = sanitizeBibliographic(info.bibliographic, {
+    url: info.url,
+    title: info.display_title,
+  });
   const academic = formatAcademicCitation(
-    info.bibliographic,
+    safeMeta,
     stripInternalIds((info.display_title ?? "").trim()),
   );
   if (academic) {
     const loc = (info.locator ?? "").replace(/\bS\d{1,3}(?:-q\d{1,4})?\b/gu, "").trim();
-    let out = loc && !academic.includes(loc) ? `${academic}, ${loc}` : academic;
-    if (info.url && !out.includes(info.url)) out += ` ${info.url}`;
+    const out = loc && !academic.includes(loc) ? `${academic}, ${loc}` : academic;
+    // A structured academic citation carries no raw URL in its visible text —
+    // the link lives in the footnote's own `url` field.
     return normalizeHebrewNumberRanges(out.replace(/\s+/g, " ").trim());
   }
   let title = stripInternalIds((info.display_title ?? "").trim()).replace(/\s+/g, " ");
   // A URL is never a title: it belongs at the end of the citation, once.
   if (/^https?:\/\//i.test(title)) title = "";
+  // A discovery / metadata API endpoint is not scholarship: its generic label
+  // ("works", "search") must never be rendered as a document title.
+  if (isDiscoveryEndpointUrl(info.url) || /^(works|search|results|items|api)$/i.test(title)) {
+    title = "";
+  }
   if (!title || looksLikeFilename(title) || isBareInstitutionTitle(title)) {
     title = title || "";
   }

@@ -17,11 +17,20 @@ import type { EvidenceSource, PdfExtractionMeta, SearchResult } from "../types.t
 import {
   type BibliographicMetadata,
   bibliographicFromSearch,
+  isDiscoveryEndpointUrl,
   mergeBibliographic,
   parseHtmlBibliographic,
   parsePdfInfoMetadata,
   pdfUrlFromHtmlMeta,
+  sanitizeBibliographic,
 } from "../shared/bibliographic.ts";
+import {
+  classifyFetchException,
+  classifyHttpStatus,
+  classifyUnusableBody,
+  type FetchFailureClass,
+  isRecoverableFailure,
+} from "../shared/fetchDiagnostics.ts";
 import { normalizeMalformedUrl } from "../shared/urlNormalize.ts";
 import type { EvidenceStore } from "../evidence/evidenceStore.ts";
 import { excerptWindows } from "../evidence/evidenceStore.ts";
@@ -316,6 +325,10 @@ export interface FetchOutput {
   url_repaired?: boolean;
   /** A repository landing page was resolved to its article PDF. */
   repository_pdf_followed?: boolean;
+  /** Specific terminal cause of an acquisition failure (never "http_failed"). */
+  failure_class?: FetchFailureClass;
+  /** True when a bounded alternative-copy attempt could plausibly help. */
+  alternative_copy_worth_trying?: boolean;
   /** Provenance of the structured bibliographic metadata, if any. */
   bibliographic_basis?: string[];
   /** Bounded later-page continuation of an already-acquired PDF. */
@@ -644,6 +657,19 @@ export async function runFetch(
     };
   }
 
+  // A discovery / metadata API endpoint is not a document. Crossref, OpenAlex
+  // and similar services may point at scholarship; their query responses are
+  // never scholarship themselves and must never become an evidence citation.
+  if (isDiscoveryEndpointUrl(url)) {
+    return {
+      ok: false,
+      failure_class: "discovery_endpoint_not_a_document",
+      error: "discovery_endpoint_not_a_document",
+      instruction:
+        "כתובת זו היא ממשק חיפוש/מטא-דאטה ואינה גוף מסמך. השתמש בה לאיתור בלבד, והבא את המאמר או המסמך עצמו.",
+    };
+  }
+
   // Identity the deterministic layer already knows for this candidate travels
   // with it; the model does not have to restate it. It remains an acquisition
   // TARGET only — the body still has to corroborate it below.
@@ -674,6 +700,57 @@ export async function runFetch(
           `גוף האסמכתה ${authorityKey} כבר הובא ואומת זהותית (${acquired.source_id}). עבוד מתוכו: fetch({source_id:"${acquired.source_id}", query}). אל תחפש עותקים נוספים אלא אם חסר בו רכיב ספציפי — ואז ציין refetch_reason.`,
       });
     }
+    // ── Parent-statute reuse (exact_authority_resilience_v1) ───────────────
+    // `statute:X#12` and `statute:X` are the same body. When the consolidated
+    // statute was already acquired and identity-corroborated in this run, the
+    // requested section is located INSIDE it instead of spending another
+    // network attempt on a section-specific URL. Verification is unchanged:
+    // the parent body already passed corroboration, and a section that is not
+    // in the body is reported as missing, never assumed.
+    const hashAt = authorityKey.indexOf("#");
+    const parentKey = hashAt > 0 ? authorityKey.slice(0, hashAt) : null;
+    const parentId = parentKey ? ledger.get(parentKey)?.acquired_source_id : undefined;
+    const parentBody = parentId ? store.get(parentId) : null;
+    if (parentBody && parentBody.is_actual_document) {
+      const token = normalizeSectionToken(
+        expectedIdentity?.section ?? authorityKey.slice(hashAt + 1),
+      );
+      const located = token
+        ? locateSection(parentBody.extracted_text, token, {
+          window: FETCH_LIMITS.WINDOW_CHARS + 600,
+          truncated: parentBody.text_length >= FETCH_LIMITS.MAX_TEXT_CHARS,
+        })
+        : null;
+      if (located?.found) {
+        const servedParent = serveExactText(
+          store,
+          parentBody.source_id,
+          located.windows,
+          `סעיף ${token}`,
+        );
+        return clampFetchOutput({
+          ok: true,
+          authority_reuse: true,
+          already_read: true,
+          source_id: parentBody.source_id,
+          title: parentBody.title,
+          text_length: parentBody.text_length,
+          is_actual_document: true,
+          identity_found: parentBody.identity_fields,
+          section_requested: token ?? undefined,
+          section_found: true,
+          section_coverage: located.coverage,
+          windows: servedParent.windows,
+          exact_source_text: servedParent.exact_source_text,
+          new_quote_count: servedParent.new_quote_count,
+          served_quote_count: servedParent.served_quote_count,
+          authority_state: ledger.state(authorityKey) ?? undefined,
+          instruction:
+            `נוסח החוק המלא (${parentBody.source_id}) כבר הובא ואומת בריצה זו, וסעיף ${token} אותר בתוכו. אין צורך בהבאה נוספת.${QUOTE_RULE}`,
+        });
+      }
+    }
+
     const prior = ledger.attemptOn(authorityKey, url);
     if (prior && prior.outcome !== "acquired" && prior.outcome !== "readable_unconfirmed_identity") {
       return clampFetchOutput({
@@ -695,6 +772,7 @@ export async function runFetch(
   let entry: EvidenceSource;
   let decodeMeta: DecodeTelemetry | undefined;
   let repositoryPdfFollowed = false;
+  let failureClass: FetchFailureClass | undefined;
   const noteFailure = (reason: string) => {
     if (ledger && authorityKey) {
       ledger.note(authorityKey, { url, outcome: "failed", reason, at: new Date().toISOString() });
@@ -709,21 +787,27 @@ export async function runFetch(
       return clampFetchOutput({ ok: false, error: "unsafe_url_blocked" });
     }
     if (!res.ok) {
+      const cls = classifyHttpStatus(res.status);
       entry = await store.append({
         url,
         title,
         origin,
         fetch_status: "error",
-        fetch_error: `http_${res.status}`,
+        fetch_error: `${cls}:http_${res.status}`,
         extracted_text: "",
         is_actual_document: false,
-        not_document_reason: `http_${res.status}`,
+        not_document_reason: `${cls}:http_${res.status}`,
       });
-      noteFailure(`http_${res.status}`);
+      noteFailure(`${cls}:http_${res.status}`);
       return clampFetchOutput({
         ok: false,
         source_id: entry.source_id,
+        failure_class: cls,
+        alternative_copy_worth_trying: isRecoverableFailure(cls),
         error: `http_${res.status}`,
+        instruction: isRecoverableFailure(cls)
+          ? "השרת סירב לבקשה או שהמסמך אינו זמין בכתובת זו. חפש עותק ציבורי אחר של אותו מקור (מאגר מוסדי, אתר כתב העת, דף הסגל של המחבר, DOI) — לא מקור אחר."
+          : undefined,
         acquisition_note: authorityKey ? ledger?.advice(authorityKey) : undefined,
       });
     }
@@ -781,6 +865,13 @@ export async function runFetch(
     decodeMeta = decode;
     const clipped = text.slice(0, FETCH_LIMITS.MAX_TEXT_CHARS);
     const docCheck = checkIsActualDocument(clipped);
+    // Metadata fail-safe: weak embedded PDF fields can never outrank
+    // repository / publisher / search metadata, and a value that contradicts
+    // the source kind is dropped rather than rendered.
+    const mergedMeta = mergeBibliographic(
+      extracted.bibliographic,
+      bibliographicFromSearch(discovery ?? undefined),
+    );
     entry = await store.append({
       url,
       title,
@@ -793,19 +884,32 @@ export async function runFetch(
       content_type: bodyContentType,
       pdf_extraction: pdf,
       acquisition_status: error ? "unsupported_response" : "acquired",
-      bibliographic: mergeBibliographic(
-        extracted.bibliographic,
-        bibliographicFromSearch(discovery ?? undefined),
-      ),
+      bibliographic: sanitizeBibliographic(mergedMeta, { url, title }),
     });
     repositoryPdfFollowed = repository_pdf_followed;
     if (error) {
-      noteFailure(error);
+      const cls = classifyUnusableBody({
+        text: clipped,
+        reason: error,
+        content_type: bodyContentType,
+        is_pdf: /pdf/i.test(bodyContentType),
+      });
+      noteFailure(`${cls}:${error}`);
       return clampFetchOutput({
         ok: false,
         source_id: entry.source_id,
+        failure_class: cls,
+        alternative_copy_worth_trying: isRecoverableFailure(cls),
         error,
         acquisition_note: authorityKey ? ledger?.advice(authorityKey) : undefined,
+      });
+    }
+    if (!docCheck.is_actual_document) {
+      failureClass = classifyUnusableBody({
+        text: clipped,
+        reason: docCheck.reason,
+        content_type: bodyContentType,
+        is_pdf: /pdf/i.test(bodyContentType),
       });
     }
   } catch (e) {
@@ -820,10 +924,13 @@ export async function runFetch(
       is_actual_document: false,
       not_document_reason: "fetch_exception",
     });
-    noteFailure(msg.slice(0, 120));
+    const cls = classifyFetchException(msg);
+    noteFailure(`${cls}:${msg.slice(0, 100)}`);
     return clampFetchOutput({
       ok: false,
       source_id: entry.source_id,
+      failure_class: cls,
+      alternative_copy_worth_trying: isRecoverableFailure(cls),
       error: msg.slice(0, 200),
       acquisition_note: authorityKey ? ledger?.advice(authorityKey) : undefined,
     });
@@ -848,6 +955,8 @@ export async function runFetch(
     url_repaired: url_repaired || undefined,
     repository_pdf_followed: repositoryPdfFollowed || undefined,
     bibliographic_basis: entry.bibliographic?.metadata_basis,
+    failure_class: failureClass,
+    alternative_copy_worth_trying: failureClass ? isRecoverableFailure(failureClass) : undefined,
   };
 }
 

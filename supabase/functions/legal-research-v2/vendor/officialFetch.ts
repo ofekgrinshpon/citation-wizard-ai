@@ -123,15 +123,40 @@ export function officialHeaders(url: string, extra?: Record<string, string>): Re
   };
 }
 
-/** Default profile for every non-official host (unchanged behaviour). */
+/** Legacy bot profile, kept for callers that explicitly ask for it. */
 export const DEFAULT_UA = "Mozilla/5.0 (compatible; ReLexBot/1.0; +https://relexlm.com)";
+
+/**
+ * public_host_browser_profile_v1 — ordinary browser navigation headers for
+ * every other PUBLIC host.
+ *
+ * Many public academic and institutional servers (law-review repositories,
+ * SSRN, OECD, university hosts) reject a bare bot User-Agent with 403 while
+ * serving the very same public document to a normal browser. This sends what a
+ * browser sends and nothing more: no cookies, no login, no challenge solving,
+ * no paywall or CAPTCHA bypass.
+ */
+export function publicHeaders(url: string, extra?: Record<string, string>): Record<string, string> {
+  let referer = "";
+  try {
+    referer = `${new URL(url).origin}/`;
+  } catch { /* no referer */ }
+  return {
+    "User-Agent": BROWSER_UA,
+    "Accept":
+      "text/html,application/xhtml+xml,application/pdf,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+    "Accept-Language": "en-US,en;q=0.9,he;q=0.8",
+    ...(referer ? { "Referer": referer } : {}),
+    ...(extra ?? {}),
+  };
+}
 
 export interface OfficialFetchAttempt {
   host: string;
   url: string;
   /** Where the URL came from, when the caller knows. */
   url_origin: "search_first" | "derivation" | "retrieved" | "cache" | "unknown";
-  profile: "official_browser_like" | "default_bot";
+  profile: "official_browser_like" | "public_browser_like" | "default_bot";
   status: number | null;
   content_type: string | null;
   content_length: number | null;
@@ -247,17 +272,19 @@ export async function officialFetch(
   const gated = official && isRateLimitedHost(url);
   if (!gated) {
     const t0 = Date.now();
-    const headers = official
-      ? officialHeaders(url, opts.headers)
-      : { "User-Agent": DEFAULT_UA, ...(opts.headers ?? {}) };
+    const headers = official ? officialHeaders(url, opts.headers) : publicHeaders(url, opts.headers);
     const res = await fetch(url, {
       redirect: "follow",
       headers,
       ...(opts.method ? { method: opts.method } : {}),
       ...(opts.signal ? { signal: opts.signal } : {}),
     });
-    if (official) {
-      ledger.attempts.push(describe(url, opts, res, t0, "official_browser_like"));
+    // Per-attempt diagnostics for public hosts too: a 403 from a law-review
+    // repository must be distinguishable from a DNS failure.
+    if (ledger.attempts.length < 120) {
+      ledger.attempts.push(
+        describe(url, opts, res, t0, official ? "official_browser_like" : "public_browser_like"),
+      );
     }
     return res;
   }
