@@ -51,9 +51,15 @@ function officialSearchUrls(kind: "case" | "statute", term: string): string[] {
       `https://supremedecisions.court.gov.il/Home/Search?query=${q}`,
     ];
   }
+  // Statute entry points, deliberately more than one public route: a single
+  // official page being down must not end an exact-authority request
+  // (exact_authority_resilience_v1). Every entry here is a public search /
+  // landing page and still has to yield a corroborated body before use.
   return [
     `https://www.nevo.co.il/laws/#/search/${q}`,
     `https://main.knesset.gov.il/Activity/Legislation/Laws/Pages/LawPrimary.aspx?t=lawlaws&st=lawlaws&lawitemid=${q}`,
+    `https://he.wikisource.org/w/index.php?search=${q}&ns0=1`,
+    `https://www.gov.il/he/departments/legalInfo/?limit=10&freeText=${q}`,
   ];
 }
 
