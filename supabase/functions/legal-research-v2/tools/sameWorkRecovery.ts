@@ -104,10 +104,27 @@ export function identityFromSearchResult(
   const doi = DOI_RE.exec(r.url ?? "")?.[0] ?? DOI_RE.exec(text)?.[0];
   const year = YEAR_RE.exec(String(r.published_date ?? ""))?.[0] ?? YEAR_RE.exec(text)?.[0];
   return {
-    title: (r.title ?? "").trim() || undefined,
+    title: usableWorkTitle(r.title),
     year: year ?? undefined,
     doi: doi ? doi.replace(/[.,;]$/, "") : undefined,
   };
+}
+
+/** Placeholder titles that carry no bibliographic identity at all. */
+const PLACEHOLDER_TITLE_RE = /^(מקור ללא כותרת|untitled|document|pdf|download)$/i;
+/** Titles that are really a file name or a URL fragment, not a work title. */
+const FILENAME_TITLE_RE = /(\.(cgi|pdf|htm|html|aspx|php|doc|docx)\b|[?&=]|^[\w.\-]+$)/i;
+
+/**
+ * A title is usable only if it can actually name a work. A file name, a CGI
+ * path or a placeholder would otherwise turn rediscovery into a topic search.
+ */
+export function usableWorkTitle(raw: string | undefined): string | undefined {
+  const t = String(raw ?? "").trim();
+  if (!t || PLACEHOLDER_TITLE_RE.test(t)) return undefined;
+  if (FILENAME_TITLE_RE.test(t)) return undefined;
+  const words = t.split(/\s+/).filter((w) => w.length > 1);
+  return words.length >= 3 ? t : undefined;
 }
 
 export type SameWorkFailureReason =
