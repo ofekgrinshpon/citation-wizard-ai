@@ -207,3 +207,18 @@ describe("same-work live recovery", () => {
     expect(id.authors).toBeUndefined();
   });
 });
+
+describe("work titles from discovery metadata", () => {
+  it("rejects file names, CGI paths and placeholders as work titles", async () => {
+    const { usableWorkTitle } = await import(
+      "../../supabase/functions/legal-research-v2/tools/sameWorkRecovery.ts"
+    );
+    expect(usableWorkTitle("viewcontent.cgi")).toBeUndefined();
+    expect(usableWorkTitle("מקור ללא כותרת")).toBeUndefined();
+    expect(usableWorkTitle("SSRN_ID204528_code000000")).toBeUndefined();
+    expect(usableWorkTitle("abstract=204528")).toBeUndefined();
+    expect(usableWorkTitle("The End of History for Corporate Law")).toBe(
+      "The End of History for Corporate Law",
+    );
+  });
+});
