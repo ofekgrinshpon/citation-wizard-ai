@@ -177,6 +177,20 @@ const TOOL_SPECS: ToolSpec[] = [
         },
         find: { type: "array", items: { type: "string" } },
         refetch_reason: { type: "string" },
+        // Identity of the WORK you are trying to read (not of this URL). It is
+        // used only to look for another public copy of the SAME work if this
+        // URL fails; whether a candidate really is the same work is decided by
+        // deterministic server-side comparison, never by you.
+        work_identity: {
+          type: "object",
+          additionalProperties: false,
+          properties: {
+            title: { type: "string" },
+            authors: { type: "array", items: { type: "string" } },
+            year: { type: "string" },
+            doi: { type: "string" },
+          },
+        },
       },
     },
   },
@@ -909,12 +923,29 @@ export async function runResearchAgent(opts: {
               if (r.url && normalizeUrlKey(r.url) === wanted) { cand = r; break; }
             }
           }
-          const identity = identityFromSearchResult({
-            title: cand?.title ?? out.title,
+          const discoveryIdentity = identityFromSearchResult({
+            title: cand?.title,
             snippet: cand?.snippet,
             url: failedUrl,
             published_date: cand?.published_date,
           });
+          // A work identity the agent states is a HINT for naming the work in
+          // the rediscovery query. It can never decide equivalence: isSameWork
+          // still compares it against the candidate's own metadata.
+          const claimed = (args.work_identity ?? {}) as {
+            title?: unknown;
+            authors?: unknown;
+            year?: unknown;
+            doi?: unknown;
+          };
+          const identity = {
+            title: discoveryIdentity.title ?? (typeof claimed.title === "string" ? claimed.title : undefined),
+            authors: Array.isArray(claimed.authors)
+              ? claimed.authors.map((a) => String(a)).slice(0, 6)
+              : undefined,
+            year: discoveryIdentity.year ?? (typeof claimed.year === "string" ? claimed.year : undefined),
+            doi: discoveryIdentity.doi ?? (typeof claimed.doi === "string" ? claimed.doi : undefined),
+          };
           const key = workKey(identity);
           if (!key) stats.same_work_recovery_skipped_no_identity += 1;
           if (key && !sameWorkRecoveryUsed.has(key) && policy.checkTool("fetch") === null) {
