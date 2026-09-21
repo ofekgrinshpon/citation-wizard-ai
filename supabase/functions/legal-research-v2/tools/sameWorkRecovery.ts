@@ -259,5 +259,8 @@ export function noteSameWorkRecovery(
     }
   } else {
     stats.same_work_recovery_failed += 1;
+    if (tel.failure_reason && stats.same_work_recovery_failed_reasons.length < 20) {
+      stats.same_work_recovery_failed_reasons.push(tel.failure_reason);
+    }
   }
 }
