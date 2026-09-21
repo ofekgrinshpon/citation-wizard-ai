@@ -190,7 +190,7 @@ export interface AgentTraceEntry {
 }
 
 
-export interface AgentContextStats extends AcquisitionStats {
+export interface AgentContextStats extends AcquisitionStats, SameWorkRecoveryStats {
   largest_tool_response_chars: number;
   evidence_context_chars_last_turn: number;
   repeated_tool_calls_prevented: number;
@@ -235,6 +235,7 @@ export type { SameWorkRecoveryStats };
 export function newAgentStats(): AgentContextStats {
   return {
     ...emptyAcquisitionStats(),
+    ...emptySameWorkRecoveryStats(),
     largest_tool_response_chars: 0,
     evidence_context_chars_last_turn: 0,
     repeated_tool_calls_prevented: 0,
