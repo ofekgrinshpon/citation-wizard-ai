@@ -22,22 +22,17 @@ acquisition.
   overlap confirmed by a shared author surname or a matching year. Title-only
   stays rejected;
 - `isAcceptableAlternativeHost()` stays in the live path (pirate mirrors refused);
-- `usableWorkTitle()` rejects file names / CGI paths / placeholders
-  (`viewcontent.cgi`, `SSRN_ID…`, `מקור ללא כותרת`) as work titles, so a guessed
-  URL can no longer masquerade as identity;
-- the agent may pass a `work_identity` **hint** (title/authors/year/doi) used only
-  to *name* the work in the rediscovery query; equivalence is still computed
-  against the candidate's own metadata;
-- recovery search prefers `raw_web_search` and falls back to the ordinary `search`
-  discovery tool, both budget-gated by the existing stop policy.
+- `usableWorkTitle()` rejects file names / CGI paths / placeholders as work
+  titles, so a guessed URL cannot masquerade as identity;
+- the agent may pass a `work_identity` **hint** used only to *name* the work in
+  the rediscovery query; equivalence is computed against the candidate's own
+  metadata;
+- recovery search prefers `raw_web_search`, falls back to `search`, both
+  budget-gated by the existing stop policy.
 
 A recovered candidate re-enters `runFetch` normally: URL safety, document check,
 extraction, EvidenceStore, quote windows, span verification, support
-verification and provenance gates are all unchanged.
-
-Telemetry: `same_work_recovery_triggered / query_count / candidates_seen /
-candidates_rejected_identity / candidates_rejected_host / success / failed /
-failed_reasons / basis / recovered_host / skipped_no_identity`.
+verification and provenance gates are unchanged.
 
 ## 3. Tests
 
@@ -46,26 +41,30 @@ failed_reasons / basis / recovered_host / skipped_no_identity`.
 Full suite: **1027 passed / 86 files**. Typecheck clean. `legal-research-v2`
 deployed.
 
-## 4. Live validation
+## 4. Live validation (after search-provider top-up)
 
-| Run | Result |
-|---|---|
-| samework-F4-1789967336862 | recovery triggered 3×, 3 queries, 0 candidates |
-| samework-F4-1789967486048 | triggered 1×, reason `no_results`, 10 skips (pre-fix identity) |
-| samework-F4-1789967642493 | triggered 2×, both `no_results`, 0 identity skips |
+Search discovery is healthy again (`raw_web_search_results > 0` on every run),
+so these runs measure the integration, not an outage.
 
-Recovery is demonstrably **invoked in live acquisition** and is now reached with
-real work identity (skips fell to 0). It could not be completed because the
-discovery backend itself is returning nothing:
+| Run | Triggered | Candidates seen | Rejected on identity | Rejected on host | Recovered |
+|---|---|---|---|---|---|
+| samework-F1-1789970082691 (corporate governance) | 1 | 6 | 6 | 0 | 0 |
+| samework-F4-1789970668026 (Hansmann & Kraakman, named paper) | 3 | 10 | 9 | 0 | 0 |
+| samework-F2-1789970924667 (tattoo copyright) | 3 | 15 | 12 | 0 | 0 |
 
-```
-POST https://api.perplexity.ai/search → 401
-{"code":"insufficient_quota","message":"You exceeded your current quota…"}
-```
+Observations:
 
-`raw_web_search_results = 0` for every call in each run confirms this run-wide.
-With zero search results no alternative copy can be seen, so F1/F2/F3 were not
-run — they would measure the outage, not the integration.
+- recovery is **demonstrably invoked in live acquisition** on real failed
+  academic sources (7 triggers across 3 runs), with real candidate sets;
+- `same_work_recovery_skipped_no_identity` fell to 0–1 per run (was 7–12 before
+  the work-title fix), so recovery now reaches real work identity;
+- every rejection was `rejected_identity` → `no_equivalent_public_copy`; zero
+  unsafe hosts were used and zero title-only matches were accepted;
+- **no previously blocked public source was recovered.** The dominant cause is
+  that the discovery provider returns title + URL but usually no author and no
+  reliable year/DOI for the alternate copy, so `isSameWork()` cannot rise above
+  `title_only_insufficient`. Loosening it would admit wrong-work bindings, so it
+  was left unchanged.
 
 ## 5. Safety
 
