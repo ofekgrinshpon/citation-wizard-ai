@@ -28,6 +28,14 @@ import { runSearch } from "../tools/search.ts";
 import { rawQueryKey, runRawWebSearch } from "../tools/rawWebSearch.ts";
 import type { RecoverySearchFn } from "../tools/exactAuthorityRecovery.ts";
 import { runFetch } from "../tools/fetch.ts";
+import {
+  emptySameWorkRecoveryStats,
+  identityFromSearchResult,
+  noteSameWorkRecovery,
+  recoverSameWork,
+  type SameWorkRecoveryStats,
+  workKey,
+} from "../tools/sameWorkRecovery.ts";
 import { runLookupAuthority } from "../tools/lookupAuthority.ts";
 import { seedResultIds } from "../tools/resultIds.ts";
 import { registerCandidateProvenance } from "../shared/egressTelemetry.ts";
@@ -221,6 +229,8 @@ export interface AgentContextStats extends AcquisitionStats {
   raw_web_identity_rejects: number;
   unsafe_urls_blocked: number;
 }
+
+export type { SameWorkRecoveryStats };
 
 export function newAgentStats(): AgentContextStats {
   return {
