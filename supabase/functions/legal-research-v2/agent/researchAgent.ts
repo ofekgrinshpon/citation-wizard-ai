@@ -892,8 +892,10 @@ export async function runResearchAgent(opts: {
         // deterministic code (isSameWork), never by the model, and a recovered
         // body goes through the ordinary fetch / document / identity /
         // verification gates with no added trust.
+        // A body that arrived but is not a usable document is just as much an
+        // acquisition failure as a refused request, so both are covered.
         if (
-          !out.ok && out.alternative_copy_worth_trying && !out.already_read &&
+          out.alternative_copy_worth_trying && !out.already_read &&
           typeof args.source_id !== "string"
         ) {
           const cand = typeof args.result_id === "string" ? discovered.get(args.result_id) : undefined;
@@ -905,6 +907,7 @@ export async function runResearchAgent(opts: {
             published_date: cand?.published_date,
           });
           const key = workKey(identity);
+          if (!key) stats.same_work_recovery_skipped_no_identity += 1;
           if (key && !sameWorkRecoveryUsed.has(key) && policy.checkTool("fetch") === null) {
             sameWorkRecoveryUsed.add(key);
             const rec = await recoverSameWork({
