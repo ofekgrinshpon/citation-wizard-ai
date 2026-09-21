@@ -955,16 +955,29 @@ export async function runResearchAgent(opts: {
               failure_class: out.failure_class,
               already_attempted_urls: failedUrl ? [failedUrl] : [],
               search: async (query, limit) => {
-                if (policy.checkTool("raw_web_search") !== null) return [];
-                policy.note("raw_web_search");
-                const s = await runRawWebSearch({ query, limit });
-                stats.raw_web_search_calls += 1;
-                stats.raw_web_search_results += s.results.length;
-                for (const r of s.results) {
-                  discovered.set(r.result_id, r);
-                  registerCandidateProvenance(r.url, "retrieved");
+                const register = (rs: typeof discovered extends Map<string, infer R> ? R[] : never) => {
+                  for (const r of rs) {
+                    discovered.set(r.result_id, r);
+                    registerCandidateProvenance(r.url, "retrieved");
+                  }
+                  return rs;
+                };
+                if (policy.checkTool("raw_web_search") === null) {
+                  policy.note("raw_web_search");
+                  const s = await runRawWebSearch({ query, limit });
+                  stats.raw_web_search_calls += 1;
+                  stats.raw_web_search_results += s.results.length;
+                  if (s.results.length) return register(s.results);
                 }
-                return s.results;
+                // Raw web search can be unavailable or return nothing. The
+                // ordinary discovery tool is the same kind of discovery: it
+                // still cannot bind anything, and equivalence is still decided
+                // deterministically below.
+                if (policy.checkTool("search") !== null) return [];
+                policy.note("search");
+                const w = await runSearch(opts.admin, { query, scope: "web", limit });
+                stats.search_calls.web += 1;
+                return register(w.results);
               },
             });
             noteSameWorkRecovery(stats, rec.telemetry);
