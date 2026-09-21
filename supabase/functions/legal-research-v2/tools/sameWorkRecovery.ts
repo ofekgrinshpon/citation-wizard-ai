@@ -47,6 +47,8 @@ export interface SameWorkRecoveryStats {
   /** Failed acquisitions with too little identity to even build a query. */
   same_work_recovery_skipped_no_identity: number;
   same_work_recovery_basis: string[];
+  /** Terminal reason per failed recovery round — diagnostic only. */
+  same_work_recovery_failed_reasons: string[];
   same_work_recovered_host: string[];
 }
 
@@ -61,6 +63,7 @@ export function emptySameWorkRecoveryStats(): SameWorkRecoveryStats {
     same_work_recovery_failed: 0,
     same_work_recovery_skipped_no_identity: 0,
     same_work_recovery_basis: [],
+    same_work_recovery_failed_reasons: [],
     same_work_recovered_host: [],
   };
 }
