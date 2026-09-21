@@ -35,6 +35,7 @@ import {
   recoverSameWork,
   type SameWorkRecoveryStats,
   workKey,
+  normalizeUrlKey,
 } from "../tools/sameWorkRecovery.ts";
 import { runLookupAuthority } from "../tools/lookupAuthority.ts";
 import { seedResultIds } from "../tools/resultIds.ts";
@@ -898,8 +899,16 @@ export async function runResearchAgent(opts: {
           out.alternative_copy_worth_trying && !out.already_read &&
           typeof args.source_id !== "string"
         ) {
-          const cand = typeof args.result_id === "string" ? discovered.get(args.result_id) : undefined;
+          let cand = typeof args.result_id === "string" ? discovered.get(args.result_id) : undefined;
           const failedUrl = (typeof args.url === "string" ? args.url : undefined) ?? cand?.url;
+          // The agent may fetch a bare URL. Recover the discovery record for
+          // that URL so the work still has a title / date to identify it by.
+          if (!cand && failedUrl) {
+            const wanted = normalizeUrlKey(failedUrl);
+            for (const r of discovered.values()) {
+              if (r.url && normalizeUrlKey(r.url) === wanted) { cand = r; break; }
+            }
+          }
           const identity = identityFromSearchResult({
             title: cand?.title ?? out.title,
             snippet: cand?.snippet,
