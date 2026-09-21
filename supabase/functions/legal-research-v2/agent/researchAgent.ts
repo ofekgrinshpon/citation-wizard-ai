@@ -28,6 +28,15 @@ import { runSearch } from "../tools/search.ts";
 import { rawQueryKey, runRawWebSearch } from "../tools/rawWebSearch.ts";
 import type { RecoverySearchFn } from "../tools/exactAuthorityRecovery.ts";
 import { runFetch } from "../tools/fetch.ts";
+import {
+  emptySameWorkRecoveryStats,
+  identityFromSearchResult,
+  noteSameWorkRecovery,
+  recoverSameWork,
+  type SameWorkRecoveryStats,
+  workKey,
+  normalizeUrlKey,
+} from "../tools/sameWorkRecovery.ts";
 import { runLookupAuthority } from "../tools/lookupAuthority.ts";
 import { seedResultIds } from "../tools/resultIds.ts";
 import { registerCandidateProvenance } from "../shared/egressTelemetry.ts";
@@ -168,6 +177,20 @@ const TOOL_SPECS: ToolSpec[] = [
         },
         find: { type: "array", items: { type: "string" } },
         refetch_reason: { type: "string" },
+        // Identity of the WORK you are trying to read (not of this URL). It is
+        // used only to look for another public copy of the SAME work if this
+        // URL fails; whether a candidate really is the same work is decided by
+        // deterministic server-side comparison, never by you.
+        work_identity: {
+          type: "object",
+          additionalProperties: false,
+          properties: {
+            title: { type: "string" },
+            authors: { type: "array", items: { type: "string" } },
+            year: { type: "string" },
+            doi: { type: "string" },
+          },
+        },
       },
     },
   },
@@ -182,7 +205,7 @@ export interface AgentTraceEntry {
 }
 
 
-export interface AgentContextStats extends AcquisitionStats {
+export interface AgentContextStats extends AcquisitionStats, SameWorkRecoveryStats {
   largest_tool_response_chars: number;
   evidence_context_chars_last_turn: number;
   repeated_tool_calls_prevented: number;
@@ -222,9 +245,12 @@ export interface AgentContextStats extends AcquisitionStats {
   unsafe_urls_blocked: number;
 }
 
+export type { SameWorkRecoveryStats };
+
 export function newAgentStats(): AgentContextStats {
   return {
     ...emptyAcquisitionStats(),
+    ...emptySameWorkRecoveryStats(),
     largest_tool_response_chars: 0,
     evidence_context_chars_last_turn: 0,
     repeated_tool_calls_prevented: 0,
@@ -415,6 +441,12 @@ export async function runResearchAgent(opts: {
 }): Promise<AgentRunResult> {
   const policy = opts.policy ?? new StopPolicy(opts.intake.budgets);
   const discovered = opts.discovered ?? new Map<string, SearchResult>();
+  /**
+   * same_work_live_recovery_v1 — at most ONE rediscovery round per identified
+   * work. Not a retry loop: a work whose key is already here is never
+   * re-recovered, whatever the model asks for.
+   */
+  const sameWorkRecoveryUsed = new Set<string>();
   const commit = opts.commit ?? new CommitTracker();
   const ledger = opts.ledger ?? new AcquisitionLedger();
   const trace: AgentTraceEntry[] = opts.trace ?? [];
@@ -843,7 +875,7 @@ export async function runResearchAgent(opts: {
       } else if (call.name === "fetch") {
 
         opts.onActivity?.("reading");
-        const out = await runFetch(
+        let out = await runFetch(
           opts.store,
           discovered,
           {
@@ -869,6 +901,111 @@ export async function runResearchAgent(opts: {
         }
         // A cached / targeted read costs no fetch budget.
         if (!out.already_read) policy.note("fetch");
+
+        // ── Same-work live recovery (same_work_live_recovery_v1) ───────────
+        // One failed URL is not one failed source. Equivalence is decided by
+        // deterministic code (isSameWork), never by the model, and a recovered
+        // body goes through the ordinary fetch / document / identity /
+        // verification gates with no added trust.
+        // A body that arrived but is not a usable document is just as much an
+        // acquisition failure as a refused request, so both are covered.
+        if (
+          out.alternative_copy_worth_trying && !out.already_read &&
+          typeof args.source_id !== "string"
+        ) {
+          let cand = typeof args.result_id === "string" ? discovered.get(args.result_id) : undefined;
+          const failedUrl = (typeof args.url === "string" ? args.url : undefined) ?? cand?.url;
+          // The agent may fetch a bare URL. Recover the discovery record for
+          // that URL so the work still has a title / date to identify it by.
+          if (!cand && failedUrl) {
+            const wanted = normalizeUrlKey(failedUrl);
+            for (const r of discovered.values()) {
+              if (r.url && normalizeUrlKey(r.url) === wanted) { cand = r; break; }
+            }
+          }
+          const discoveryIdentity = identityFromSearchResult({
+            title: cand?.title,
+            snippet: cand?.snippet,
+            url: failedUrl,
+            published_date: cand?.published_date,
+          });
+          // A work identity the agent states is a HINT for naming the work in
+          // the rediscovery query. It can never decide equivalence: isSameWork
+          // still compares it against the candidate's own metadata.
+          const claimed = (args.work_identity ?? {}) as {
+            title?: unknown;
+            authors?: unknown;
+            year?: unknown;
+            doi?: unknown;
+          };
+          const identity = {
+            title: discoveryIdentity.title ?? (typeof claimed.title === "string" ? claimed.title : undefined),
+            authors: Array.isArray(claimed.authors)
+              ? claimed.authors.map((a) => String(a)).slice(0, 6)
+              : undefined,
+            year: discoveryIdentity.year ?? (typeof claimed.year === "string" ? claimed.year : undefined),
+            doi: discoveryIdentity.doi ?? (typeof claimed.doi === "string" ? claimed.doi : undefined),
+          };
+          const key = workKey(identity);
+          if (!key) stats.same_work_recovery_skipped_no_identity += 1;
+          if (key && !sameWorkRecoveryUsed.has(key) && policy.checkTool("fetch") === null) {
+            sameWorkRecoveryUsed.add(key);
+            const rec = await recoverSameWork({
+              failed_source_identity: identity,
+              failure_class: out.failure_class,
+              already_attempted_urls: failedUrl ? [failedUrl] : [],
+              search: async (query, limit) => {
+                const register = (rs: typeof discovered extends Map<string, infer R> ? R[] : never) => {
+                  for (const r of rs) {
+                    discovered.set(r.result_id, r);
+                    registerCandidateProvenance(r.url, "retrieved");
+                  }
+                  return rs;
+                };
+                if (policy.checkTool("raw_web_search") === null) {
+                  policy.note("raw_web_search");
+                  const s = await runRawWebSearch({ query, limit });
+                  stats.raw_web_search_calls += 1;
+                  stats.raw_web_search_results += s.results.length;
+                  if (s.results.length) return register(s.results);
+                }
+                // Raw web search can be unavailable or return nothing. The
+                // ordinary discovery tool is the same kind of discovery: it
+                // still cannot bind anything, and equivalence is still decided
+                // deterministically below.
+                if (policy.checkTool("search") !== null) return [];
+                policy.note("search", "web");
+                const w = await runSearch(opts.admin, { query, scope: "web", limit });
+                return register(w.results);
+              },
+            });
+            noteSameWorkRecovery(stats, rec.telemetry);
+            if (rec.recovered) {
+              const retry = await runFetch(
+                opts.store,
+                discovered,
+                {
+                  result_id: rec.candidate.result_id,
+                  query: typeof args.query === "string" ? args.query : undefined,
+                  locator: typeof args.locator === "string" ? args.locator : undefined,
+                  want: typeof args.want === "string" ? args.want : undefined,
+                  find: Array.isArray(args.find) ? args.find.map((f) => String(f)) : undefined,
+                },
+                ledger,
+                { admin: opts.admin },
+              );
+              if (!retry.already_read) policy.note("fetch");
+              out = {
+                ...retry,
+                same_work_recovered: true,
+                same_work_recovery_basis: rec.telemetry.basis,
+                same_work_recovered_host: rec.telemetry.recovered_host,
+              };
+            } else {
+              out = { ...out, same_work_recovery_failed_reason: rec.reason };
+            }
+          }
+        }
         if (out.already_read) stats.already_read_actions += 1;
         // Span-hunting discipline (v2_span_hunting_efficiency_v1): a targeted
         // re-read is productive only when it adds a NEW quotable excerpt.

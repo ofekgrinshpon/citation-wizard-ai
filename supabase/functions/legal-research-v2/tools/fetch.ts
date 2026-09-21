@@ -329,6 +329,16 @@ export interface FetchOutput {
   failure_class?: FetchFailureClass;
   /** True when a bounded alternative-copy attempt could plausibly help. */
   alternative_copy_worth_trying?: boolean;
+  /**
+   * same_work_live_recovery_v1 — this body came from another PUBLIC copy of
+   * the SAME work, accepted by the deterministic equivalence check. It carries
+   * no extra trust: every ordinary gate still applied.
+   */
+  same_work_recovered?: boolean;
+  same_work_recovery_basis?: string;
+  same_work_recovered_host?: string;
+  /** Precise reason a bounded same-work recovery round did not help. */
+  same_work_recovery_failed_reason?: string;
   /** Provenance of the structured bibliographic metadata, if any. */
   bibliographic_basis?: string[];
   /** Bounded later-page continuation of an already-acquired PDF. */

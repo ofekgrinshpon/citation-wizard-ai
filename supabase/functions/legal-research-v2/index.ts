@@ -848,6 +848,18 @@ async function runPipeline(
     authority_memo_gate_used: agent.stats.authority_memo_gate_used,
     /** Exact-authority recovery (v2_exact_authority_recovery_v1). */
     authority_recovery_triggered: agent.stats.authority_recovery_triggered,
+    /** Same-work live recovery (same_work_live_recovery_v1). Diagnostic only. */
+    same_work_recovery_triggered: agent.stats.same_work_recovery_triggered,
+    same_work_recovery_query_count: agent.stats.same_work_recovery_query_count,
+    same_work_candidates_seen: agent.stats.same_work_candidates_seen,
+    same_work_candidates_rejected_identity: agent.stats.same_work_candidates_rejected_identity,
+    same_work_candidates_rejected_host: agent.stats.same_work_candidates_rejected_host,
+    same_work_recovery_success: agent.stats.same_work_recovery_success,
+    same_work_recovery_failed: agent.stats.same_work_recovery_failed,
+    same_work_recovery_failed_reasons: agent.stats.same_work_recovery_failed_reasons,
+    same_work_recovery_skipped_no_identity: agent.stats.same_work_recovery_skipped_no_identity,
+    same_work_recovery_basis: agent.stats.same_work_recovery_basis,
+    same_work_recovered_host: agent.stats.same_work_recovered_host,
     authority_recovery_candidates_attached: agent.stats.authority_recovery_candidates_attached,
     authority_recovery_success: agent.stats.authority_recovery_success,
     authority_recovery: agent.stats.authority_recovery_records,
