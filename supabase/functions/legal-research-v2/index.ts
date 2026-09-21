@@ -873,6 +873,13 @@ async function runPipeline(
     same_work_recovered_after_enrichment: agent.stats.same_work_recovered_after_enrichment,
     same_work_equivalence_basis: agent.stats.same_work_equivalence_basis,
     same_work_enrichment_basis: agent.stats.same_work_enrichment_basis,
+    /** Same-work trust boundary (same_work_trust_boundary_v1). */
+    same_work_original_identity_trusted_fields:
+      agent.stats.same_work_original_identity_trusted_fields,
+    same_work_search_hint_fields: agent.stats.same_work_search_hint_fields,
+    same_work_agent_hint_used_for_query: agent.stats.same_work_agent_hint_used_for_query,
+    same_work_agent_hint_used_for_equivalence:
+      agent.stats.same_work_agent_hint_used_for_equivalence,
     authority_recovery_candidates_attached: agent.stats.authority_recovery_candidates_attached,
     authority_recovery_success: agent.stats.authority_recovery_success,
     authority_recovery: agent.stats.authority_recovery_records,

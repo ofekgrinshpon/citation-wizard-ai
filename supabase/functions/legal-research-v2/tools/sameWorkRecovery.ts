@@ -46,6 +46,25 @@ export const SAME_WORK_RECOVERY_LIMITS = {
   MAX_CANDIDATE_FETCH_ATTEMPTS: 1,
 } as const;
 
+/**
+ * Identity of the original work established by DETERMINISTIC, non-model
+ * sources only (discovery metadata, repository / journal metadata, a DOI
+ * parsed out of a discovered URL, already-acquired body identity). Only these
+ * fields may participate in the equivalence decision.
+ */
+export type TrustedWorkIdentity = WorkIdentity;
+
+/**
+ * A search-only hint. It may be model-supplied, so it may help NAME the work
+ * in the rediscovery query and nothing else. It never reaches `isSameWork()`.
+ */
+export interface RecoverySearchHint {
+  title?: string;
+  authors?: string[];
+  year?: string;
+  doi?: string;
+}
+
 export interface SameWorkRecoveryStats extends EnrichmentStats {
   same_work_recovery_triggered: number;
   same_work_recovery_query_count: number;
@@ -60,6 +79,12 @@ export interface SameWorkRecoveryStats extends EnrichmentStats {
   /** Terminal reason per failed recovery round — diagnostic only. */
   same_work_recovery_failed_reasons: string[];
   same_work_recovered_host: string[];
+  /** Trust-boundary telemetry (same_work_trust_boundary_v1). */
+  same_work_original_identity_trusted_fields: string[];
+  same_work_search_hint_fields: string[];
+  same_work_agent_hint_used_for_query: number;
+  /** Structurally impossible — must stay 0 for every run. */
+  same_work_agent_hint_used_for_equivalence: number;
 }
 
 export function emptySameWorkRecoveryStats(): SameWorkRecoveryStats {
@@ -76,6 +101,38 @@ export function emptySameWorkRecoveryStats(): SameWorkRecoveryStats {
     same_work_recovery_basis: [],
     same_work_recovery_failed_reasons: [],
     same_work_recovered_host: [],
+    same_work_original_identity_trusted_fields: [],
+    same_work_search_hint_fields: [],
+    same_work_agent_hint_used_for_query: 0,
+    same_work_agent_hint_used_for_equivalence: 0,
+  };
+}
+
+/** Which identity fields are actually present, for telemetry. */
+function presentFields(id: WorkIdentity | RecoverySearchHint | undefined): string[] {
+  const out: string[] = [];
+  if (!id) return out;
+  if (id.title) out.push("title");
+  if (id.authors?.length) out.push("authors");
+  if (id.year) out.push("year");
+  if (id.doi) out.push("doi");
+  return out;
+}
+
+/**
+ * Identity used ONLY to formulate the rediscovery query: trusted fields first,
+ * untrusted hint fields allowed to fill the gaps. Never used as proof.
+ */
+export function queryIdentity(
+  trusted: TrustedWorkIdentity,
+  hint: RecoverySearchHint | undefined,
+): WorkIdentity {
+  return {
+    title: trusted.title ?? hint?.title,
+    authors: trusted.authors?.length ? trusted.authors : hint?.authors,
+    year: trusted.year ?? hint?.year,
+    journal: trusted.journal,
+    doi: trusted.doi ?? hint?.doi,
   };
 }
 
@@ -162,6 +219,14 @@ export interface SameWorkRecoveryTelemetry {
   failure_reason?: SameWorkFailureReason;
   /** Per-candidate identity enrichment rounds — diagnostic only. */
   enrichment: EnrichmentTelemetry[];
+  /** Deterministic fields available to PROVE identity. */
+  trusted_fields: string[];
+  /** Untrusted, search-only hint fields that were supplied. */
+  hint_fields: string[];
+  /** A hint field actually widened the rediscovery query. */
+  hint_used_for_query: boolean;
+  /** Always false: hints are structurally excluded from equivalence. */
+  hint_used_for_equivalence: false;
 }
 
 export interface SameWorkRecoveryResult {
@@ -178,7 +243,15 @@ export interface SameWorkRecoveryResult {
 }
 
 export interface SameWorkRecoveryInput {
-  failed_source_identity: WorkIdentity;
+  /**
+   * TRUSTED identity of the failed work — deterministic sources only. This is
+   * the ONLY identity compared against a candidate.
+   */
+  failed_source_identity: TrustedWorkIdentity;
+  /**
+   * UNTRUSTED search hint (possibly model-supplied). Query formulation only.
+   */
+  search_hint?: RecoverySearchHint;
   failure_class?: FetchFailureClass;
   already_attempted_urls: string[];
   /** Discovery backend. Ordinary search results, no bodies, never citable. */
@@ -194,6 +267,11 @@ export interface SameWorkRecoveryInput {
 export async function recoverSameWork(
   input: SameWorkRecoveryInput,
 ): Promise<SameWorkRecoveryResult> {
+  const trustedFields = presentFields(input.failed_source_identity);
+  const hintFields = presentFields(input.search_hint);
+  const forQuery = queryIdentity(input.failed_source_identity, input.search_hint);
+  const hintUsedForQuery = presentFields(forQuery).some((f) => !trustedFields.includes(f));
+
   const tel: SameWorkRecoveryTelemetry = {
     triggered: false,
     candidates_seen: 0,
@@ -202,13 +280,18 @@ export async function recoverSameWork(
     rejected_already_attempted: 0,
     success: false,
     enrichment: [],
+    trusted_fields: trustedFields,
+    hint_fields: hintFields,
+    hint_used_for_query: hintUsedForQuery,
+    hint_used_for_equivalence: false,
   };
 
   if (input.failure_class && !isRecoverableFailure(input.failure_class)) {
     return { recovered: false, reason: "failure_not_recoverable", telemetry: { ...tel, failure_reason: "failure_not_recoverable" } };
   }
 
-  const query = buildAlternativeCopyQuery(input.failed_source_identity);
+  // The query may name the work with untrusted hints; proof may not.
+  const query = buildAlternativeCopyQuery(forQuery);
   if (!query) {
     return {
       recovered: false,
@@ -260,9 +343,15 @@ export async function recoverSameWork(
     ) {
       enriched += 1;
       const outcome = await enrichAndCompare({
+        // TRUSTED side only — the hint is passed separately and may narrow a
+        // metadata query, never prove equivalence.
         wanted: input.failed_source_identity,
         candidate: discoveryIdentity,
         candidate_url: r.url,
+        search_hint: {
+          author: input.search_hint?.authors?.[0],
+          year: input.search_hint?.year,
+        },
         deps: input.enrichment,
       });
       tel.enrichment.push(outcome.telemetry);
@@ -311,6 +400,19 @@ export function noteSameWorkRecovery(
   stats.same_work_candidates_seen += tel.candidates_seen;
   stats.same_work_candidates_rejected_identity += tel.rejected_identity;
   stats.same_work_candidates_rejected_host += tel.rejected_host;
+  for (const f of tel.trusted_fields ?? []) {
+    if (!stats.same_work_original_identity_trusted_fields.includes(f)) {
+      stats.same_work_original_identity_trusted_fields.push(f);
+    }
+  }
+  for (const f of tel.hint_fields ?? []) {
+    if (!stats.same_work_search_hint_fields.includes(f)) {
+      stats.same_work_search_hint_fields.push(f);
+    }
+  }
+  if (tel.hint_used_for_query) stats.same_work_agent_hint_used_for_query += 1;
+  // Structurally impossible; recorded so the invariant is observable live.
+  if (tel.hint_used_for_equivalence) stats.same_work_agent_hint_used_for_equivalence += 1;
   if (tel.success) {
     stats.same_work_recovery_success += 1;
     if (tel.basis) {
