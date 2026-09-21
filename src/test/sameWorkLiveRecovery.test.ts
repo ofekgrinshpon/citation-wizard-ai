@@ -52,8 +52,8 @@ describe("same-work live recovery", () => {
       ],
     });
     expect(rec.recovered).toBe(true);
-    if (rec.recovered) {
-      expect(rec.candidate.url).toContain("huji.ac.il");
+    {
+      expect(rec.candidate?.url).toContain("huji.ac.il");
       expect(rec.telemetry.basis === "title_and_year" || rec.telemetry.basis === "title_and_author").toBe(true);
       expect(rec.telemetry.recovered_host).toBe("law.huji.ac.il");
     }
@@ -74,7 +74,7 @@ describe("same-work live recovery", () => {
       ],
     });
     expect(rec.recovered).toBe(false);
-    if (!rec.recovered) expect(rec.reason).toBe("no_equivalent_public_copy");
+    expect(rec.reason).toBe("no_equivalent_public_copy");
   });
 
   it("R2b title-only similarity is never sufficient", () => {
@@ -96,7 +96,7 @@ describe("same-work live recovery", () => {
       ],
     });
     expect(rec.recovered).toBe(true);
-    if (rec.recovered) expect(rec.telemetry.basis).toBe("doi_exact");
+    expect(rec.telemetry.basis).toBe("doi_exact");
   });
 
   it("R4 rejects a pirate mirror even with an exact title", async () => {
@@ -113,7 +113,7 @@ describe("same-work live recovery", () => {
       ],
     });
     expect(rec.recovered).toBe(false);
-    if (!rec.recovered) expect(rec.telemetry.rejected_host).toBe(1);
+    expect(rec.telemetry.rejected_host).toBe(1);
   });
 
   it("R5 never retries the original dead URL", async () => {
@@ -139,7 +139,7 @@ describe("same-work live recovery", () => {
       search: async () => [result({ title: "Download PDF", url: "https://example.edu/files/a.pdf" })],
     });
     expect(rec.recovered).toBe(false);
-    if (!rec.recovered) expect(rec.telemetry.rejected_identity).toBe(1);
+    expect(rec.telemetry.rejected_identity).toBe(1);
   });
 
   it("R6b refuses to build a query when the failed work has no usable identity", async () => {
@@ -151,7 +151,7 @@ describe("same-work live recovery", () => {
       },
     });
     expect(rec.recovered).toBe(false);
-    if (!rec.recovered) expect(rec.reason).toBe("insufficient_identity_for_query");
+    expect(rec.reason).toBe("insufficient_identity_for_query");
   });
 
   it("R7 a non-recoverable failure class never triggers recovery", async () => {

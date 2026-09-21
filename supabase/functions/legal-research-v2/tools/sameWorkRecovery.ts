@@ -127,9 +127,14 @@ export interface SameWorkRecoveryTelemetry {
   failure_reason?: SameWorkFailureReason;
 }
 
-export type SameWorkRecoveryResult =
-  | { recovered: true; candidate: SearchResult; telemetry: SameWorkRecoveryTelemetry }
-  | { recovered: false; reason: SameWorkFailureReason; telemetry: SameWorkRecoveryTelemetry };
+export interface SameWorkRecoveryResult {
+  recovered: boolean;
+  /** Present only when `recovered` is true. */
+  candidate?: SearchResult;
+  /** Present only when `recovered` is false. */
+  reason?: SameWorkFailureReason;
+  telemetry: SameWorkRecoveryTelemetry;
+}
 
 export interface SameWorkRecoveryInput {
   failed_source_identity: WorkIdentity;
