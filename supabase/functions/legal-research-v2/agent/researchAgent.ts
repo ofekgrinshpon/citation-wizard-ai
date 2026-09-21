@@ -34,6 +34,7 @@ import {
   noteSameWorkRecovery,
   recoverSameWork,
   type SameWorkRecoveryStats,
+  queryIdentity,
   workKey,
   normalizeUrlKey,
 } from "../tools/sameWorkRecovery.ts";
@@ -930,29 +931,34 @@ export async function runResearchAgent(opts: {
             url: failedUrl,
             published_date: cand?.published_date,
           });
-          // A work identity the agent states is a HINT for naming the work in
-          // the rediscovery query. It can never decide equivalence: isSameWork
-          // still compares it against the candidate's own metadata.
+          // TRUST BOUNDARY (same_work_trust_boundary_v1).
+          // A work identity the agent states is a SEARCH HINT only: it may help
+          // name the work in the rediscovery query, and it is structurally
+          // excluded from equivalence. Proof comes exclusively from
+          // deterministic discovery metadata plus candidate-side enrichment.
           const claimed = (args.work_identity ?? {}) as {
             title?: unknown;
             authors?: unknown;
             year?: unknown;
             doi?: unknown;
           };
-          const identity = {
-            title: discoveryIdentity.title ?? (typeof claimed.title === "string" ? claimed.title : undefined),
+          const searchHint = {
+            title: typeof claimed.title === "string" ? claimed.title : undefined,
             authors: Array.isArray(claimed.authors)
               ? claimed.authors.map((a) => String(a)).slice(0, 6)
               : undefined,
-            year: discoveryIdentity.year ?? (typeof claimed.year === "string" ? claimed.year : undefined),
-            doi: discoveryIdentity.doi ?? (typeof claimed.doi === "string" ? claimed.doi : undefined),
+            year: typeof claimed.year === "string" ? claimed.year : undefined,
+            doi: typeof claimed.doi === "string" ? claimed.doi : undefined,
           };
-          const key = workKey(identity);
+          // Deterministic only — never an agent assertion.
+          const trustedIdentity = discoveryIdentity;
+          const key = workKey(queryIdentity(trustedIdentity, searchHint));
           if (!key) stats.same_work_recovery_skipped_no_identity += 1;
           if (key && !sameWorkRecoveryUsed.has(key) && policy.checkTool("fetch") === null) {
             sameWorkRecoveryUsed.add(key);
             const rec = await recoverSameWork({
-              failed_source_identity: identity,
+              failed_source_identity: trustedIdentity,
+              search_hint: searchHint,
               failure_class: out.failure_class,
               already_attempted_urls: failedUrl ? [failedUrl] : [],
               search: async (query, limit) => {

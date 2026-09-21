@@ -758,6 +758,12 @@ export interface V2Telemetry {
   same_work_recovered_after_enrichment?: number;
   same_work_equivalence_basis?: string[];
   same_work_enrichment_basis?: string[];
+  /** Same-work trust boundary (same_work_trust_boundary_v1). */
+  same_work_original_identity_trusted_fields?: string[];
+  same_work_search_hint_fields?: string[];
+  same_work_agent_hint_used_for_query?: number;
+  /** Invariant: always 0. */
+  same_work_agent_hint_used_for_equivalence?: number;
   authority_recovery_candidates_attached?: number;
   authority_recovery_success?: number;
   authority_recovery?: Array<Record<string, unknown>>;

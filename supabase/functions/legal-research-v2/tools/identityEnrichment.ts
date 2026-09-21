@@ -280,9 +280,15 @@ export interface EnrichmentOutcome {
  * deterministic equivalence check. No model judgement anywhere in this path.
  */
 export async function enrichAndCompare(input: {
+  /** TRUSTED identity of the original work. Only this may prove equivalence. */
   wanted: WorkIdentity;
   candidate: WorkIdentity;
   candidate_url?: string;
+  /**
+   * UNTRUSTED, search-only hint (may be model-supplied). It may narrow a
+   * metadata query; it never enters `isSameWork()` as a fact.
+   */
+  search_hint?: { author?: string; year?: string };
   deps: EnrichmentDeps;
 }): Promise<EnrichmentOutcome> {
   const tel = emptyEnrichmentTelemetry();
@@ -338,8 +344,8 @@ export async function enrichAndCompare(input: {
   if (input.deps.fetchTitleMetadata && needsMore && identity.title) {
     try {
       const res = await input.deps.fetchTitleMetadata(identity.title, {
-        author: input.wanted.authors?.[0],
-        year: input.wanted.year,
+        author: input.wanted.authors?.[0] ?? input.search_hint?.author,
+        year: input.wanted.year ?? input.search_hint?.year,
       });
       if (res?.record) {
         if (res.service === "openalex") tel.openalex = 1;
