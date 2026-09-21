@@ -974,9 +974,8 @@ export async function runResearchAgent(opts: {
                 // still cannot bind anything, and equivalence is still decided
                 // deterministically below.
                 if (policy.checkTool("search") !== null) return [];
-                policy.note("search");
+                policy.note("search", "web");
                 const w = await runSearch(opts.admin, { query, scope: "web", limit });
-                stats.search_calls.web += 1;
                 return register(w.results);
               },
             });
