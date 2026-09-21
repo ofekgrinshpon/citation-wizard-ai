@@ -26,6 +26,16 @@ import {
   type WorkIdentity,
 } from "./alternativeCopy.ts";
 import { isRecoverableFailure, type FetchFailureClass } from "../shared/fetchDiagnostics.ts";
+import {
+  ENRICHMENT_LIMITS,
+  emptyEnrichmentStats,
+  enrichAndCompare,
+  type EnrichmentDeps,
+  type EnrichmentStats,
+  type EnrichmentTelemetry,
+  noteEnrichment,
+  shouldEnrich,
+} from "./identityEnrichment.ts";
 
 export const SAME_WORK_RECOVERY_LIMITS = {
   /** Rediscovery queries per failed work, for the whole run. */
@@ -36,7 +46,7 @@ export const SAME_WORK_RECOVERY_LIMITS = {
   MAX_CANDIDATE_FETCH_ATTEMPTS: 1,
 } as const;
 
-export interface SameWorkRecoveryStats {
+export interface SameWorkRecoveryStats extends EnrichmentStats {
   same_work_recovery_triggered: number;
   same_work_recovery_query_count: number;
   same_work_candidates_seen: number;
@@ -54,6 +64,7 @@ export interface SameWorkRecoveryStats {
 
 export function emptySameWorkRecoveryStats(): SameWorkRecoveryStats {
   return {
+    ...emptyEnrichmentStats(),
     same_work_recovery_triggered: 0,
     same_work_recovery_query_count: 0,
     same_work_candidates_seen: 0,
@@ -135,6 +146,7 @@ export type SameWorkFailureReason =
   | "insufficient_identity_for_query"
   | "search_error"
   | "no_results"
+  | "identity_still_insufficient_after_enrichment"
   | "no_equivalent_public_copy";
 
 export interface SameWorkRecoveryTelemetry {
@@ -148,12 +160,18 @@ export interface SameWorkRecoveryTelemetry {
   basis?: EquivalenceVerdict["basis"];
   recovered_host?: string;
   failure_reason?: SameWorkFailureReason;
+  /** Per-candidate identity enrichment rounds — diagnostic only. */
+  enrichment: EnrichmentTelemetry[];
 }
 
 export interface SameWorkRecoveryResult {
   recovered: boolean;
   /** Present only when `recovered` is true. */
   candidate?: SearchResult;
+  /** Deterministic equivalence basis for an accepted candidate. */
+  equivalence_basis?: EquivalenceVerdict["basis"];
+  /** Which identity sources made equivalence provable, when enrichment ran. */
+  enrichment_basis?: string[];
   /** Present only when `recovered` is false. */
   reason?: SameWorkFailureReason;
   telemetry: SameWorkRecoveryTelemetry;
@@ -165,6 +183,11 @@ export interface SameWorkRecoveryInput {
   already_attempted_urls: string[];
   /** Discovery backend. Ordinary search results, no bodies, never citable. */
   search: (query: string, limit: number) => Promise<SearchResult[]>;
+  /**
+   * Bounded IDENTITY enrichment for a plausible candidate whose discovery
+   * record lacks author / year / DOI. Identity only — never evidence.
+   */
+  enrichment?: EnrichmentDeps;
 }
 
 /** One bounded same-work recovery round. The caller enforces once-per-work. */
@@ -178,6 +201,7 @@ export async function recoverSameWork(
     rejected_host: 0,
     rejected_already_attempted: 0,
     success: false,
+    enrichment: [],
   };
 
   if (input.failure_class && !isRecoverableFailure(input.failure_class)) {
@@ -208,6 +232,8 @@ export async function recoverSameWork(
   }
 
   const dead = new Set(input.already_attempted_urls.map(normalizeUrlKey).filter(Boolean));
+  let enriched = 0;
+  let enrichmentAttemptedAndInsufficient = false;
 
   for (const r of results) {
     if (!r.url) continue;
@@ -220,7 +246,35 @@ export async function recoverSameWork(
       tel.rejected_host += 1;
       continue;
     }
-    const verdict = isSameWork(input.failed_source_identity, identityFromSearchResult(r));
+    const discoveryIdentity = identityFromSearchResult(r);
+    let verdict = isSameWork(input.failed_source_identity, discoveryIdentity);
+    let enrichmentBasis: string[] | undefined;
+
+    // The candidate is plausible but discovery gave us title + URL only:
+    // gather identity (not evidence) and run the SAME check again.
+    if (
+      !verdict.same_work &&
+      input.enrichment &&
+      enriched < ENRICHMENT_LIMITS.MAX_CANDIDATES_PER_WORK &&
+      shouldEnrich(input.failed_source_identity, discoveryIdentity, verdict)
+    ) {
+      enriched += 1;
+      const outcome = await enrichAndCompare({
+        wanted: input.failed_source_identity,
+        candidate: discoveryIdentity,
+        candidate_url: r.url,
+        deps: input.enrichment,
+      });
+      tel.enrichment.push(outcome.telemetry);
+      enrichmentBasis = outcome.telemetry.basis;
+      if (outcome.hard_reject) {
+        tel.rejected_identity += 1;
+        continue;
+      }
+      verdict = outcome.verdict;
+      if (!verdict.same_work) enrichmentAttemptedAndInsufficient = true;
+    }
+
     if (!verdict.same_work) {
       tel.rejected_identity += 1;
       continue;
@@ -230,14 +284,19 @@ export async function recoverSameWork(
     try {
       tel.recovered_host = new URL(r.url).hostname.toLowerCase();
     } catch { /* host telemetry only */ }
-    return { recovered: true, candidate: r, telemetry: tel };
+    return {
+      recovered: true,
+      candidate: r,
+      equivalence_basis: verdict.basis,
+      enrichment_basis: enrichmentBasis,
+      telemetry: tel,
+    };
   }
 
-  return {
-    recovered: false,
-    reason: "no_equivalent_public_copy",
-    telemetry: { ...tel, failure_reason: "no_equivalent_public_copy" },
-  };
+  const reason: SameWorkFailureReason = enrichmentAttemptedAndInsufficient
+    ? "identity_still_insufficient_after_enrichment"
+    : "no_equivalent_public_copy";
+  return { recovered: false, reason, telemetry: { ...tel, failure_reason: reason } };
 }
 
 /** Fold one recovery round into the run counters. Telemetry only. */
@@ -246,6 +305,7 @@ export function noteSameWorkRecovery(
   tel: SameWorkRecoveryTelemetry,
 ): void {
   if (!tel.triggered) return;
+  for (const e of tel.enrichment ?? []) noteEnrichment(stats, e);
   stats.same_work_recovery_triggered += 1;
   stats.same_work_recovery_query_count += 1;
   stats.same_work_candidates_seen += tel.candidates_seen;
@@ -253,7 +313,12 @@ export function noteSameWorkRecovery(
   stats.same_work_candidates_rejected_host += tel.rejected_host;
   if (tel.success) {
     stats.same_work_recovery_success += 1;
-    if (tel.basis) stats.same_work_recovery_basis.push(tel.basis);
+    if (tel.basis) {
+      stats.same_work_recovery_basis.push(tel.basis);
+      if (!stats.same_work_equivalence_basis.includes(tel.basis)) {
+        stats.same_work_equivalence_basis.push(tel.basis);
+      }
+    }
     if (tel.recovered_host && !stats.same_work_recovered_host.includes(tel.recovered_host)) {
       stats.same_work_recovered_host.push(tel.recovered_host);
     }
