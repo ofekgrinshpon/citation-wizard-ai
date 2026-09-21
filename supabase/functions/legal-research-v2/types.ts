@@ -745,6 +745,19 @@ export interface V2Telemetry {
   same_work_recovery_skipped_no_identity?: number;
   same_work_recovery_basis?: string[];
   same_work_recovered_host?: string[];
+  /** Same-work identity enrichment (same_work_identity_enrichment_v1). */
+  same_work_enrichment_triggered?: number;
+  same_work_enrichment_landing_meta?: number;
+  same_work_enrichment_doi_lookup?: number;
+  same_work_enrichment_crossref?: number;
+  same_work_enrichment_openalex?: number;
+  same_work_enrichment_search_metadata?: number;
+  same_work_enrichment_success?: number;
+  same_work_enrichment_still_insufficient?: number;
+  same_work_enrichment_conflict?: number;
+  same_work_recovered_after_enrichment?: number;
+  same_work_equivalence_basis?: string[];
+  same_work_enrichment_basis?: string[];
   authority_recovery_candidates_attached?: number;
   authority_recovery_success?: number;
   authority_recovery?: Array<Record<string, unknown>>;

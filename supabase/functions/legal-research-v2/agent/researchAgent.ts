@@ -37,6 +37,7 @@ import {
   workKey,
   normalizeUrlKey,
 } from "../tools/sameWorkRecovery.ts";
+import { liveEnrichmentDeps } from "../tools/identityEnrichmentLive.ts";
 import { runLookupAuthority } from "../tools/lookupAuthority.ts";
 import { seedResultIds } from "../tools/resultIds.ts";
 import { registerCandidateProvenance } from "../shared/egressTelemetry.ts";
@@ -978,6 +979,8 @@ export async function runResearchAgent(opts: {
                 const w = await runSearch(opts.admin, { query, scope: "web", limit });
                 return register(w.results);
               },
+              // Identity only — never evidence, never cited.
+              enrichment: liveEnrichmentDeps(),
             });
             noteSameWorkRecovery(stats, rec.telemetry);
             if (rec.recovered) {
