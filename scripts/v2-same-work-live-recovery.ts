@@ -17,6 +17,10 @@ export const PROMPTS: Record<string, string> = {
   // F3 — institutional policy scholarship: previously lost at OECD / ECGI.
   F3:
     "מה אומרת הספרות והמדיניות הבינלאומית על הגנה על בעלי מניות מיעוט בחברות עם בעל שליטה, ואילו גישות מרכזיות מוצעות?",
+  // F4 — a NAMED foreign paper whose canonical copy sits behind SSRN: the
+  // discovery record carries a real title + authors, so equivalence can run.
+  F4:
+    "מה הטענה המרכזית במאמר \"The End of History for Corporate Law\" של Henry Hansmann ו-Reinier Kraakman? תסתמך על המאמר עצמו.",
 };
 
 const BASE = process.env.SUPABASE_URL as string;
