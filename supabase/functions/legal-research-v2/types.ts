@@ -733,6 +733,16 @@ export interface V2Telemetry {
   authority_memo_gate_used?: number;
   /** Exact-authority recovery (v2_exact_authority_recovery_v1). */
   authority_recovery_triggered?: number;
+  /** Same-work live recovery (same_work_live_recovery_v1). Diagnostic only. */
+  same_work_recovery_triggered?: number;
+  same_work_recovery_query_count?: number;
+  same_work_candidates_seen?: number;
+  same_work_candidates_rejected_identity?: number;
+  same_work_candidates_rejected_host?: number;
+  same_work_recovery_success?: number;
+  same_work_recovery_failed?: number;
+  same_work_recovery_basis?: string[];
+  same_work_recovered_host?: string[];
   authority_recovery_candidates_attached?: number;
   authority_recovery_success?: number;
   authority_recovery?: Array<Record<string, unknown>>;
