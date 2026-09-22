@@ -43,6 +43,10 @@ quote windows that were served but not memoed, per-source same-work /
 enrichment attribution (run-level counters only), and HTTP status codes for
 non-authority fetch failures (failure classes only). No value was inferred.
 
+Count note: the mechanical export finds 17 sources with terminal outcome
+`WINDOW_SERVED_NOT_MEMOED` across L1-L8; REPORT.md states 15. The export
+reflects the stored telemetry as-is and REPORT.md is left unchanged.
+
 QUALITY REVIEW MATERIALS EXPORTED
 
 PRODUCT CODE CHANGED: NO
