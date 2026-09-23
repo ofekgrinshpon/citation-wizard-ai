@@ -58,6 +58,22 @@ export function renderUsCase(f: ForeignCaseFields): RenderResult {
   if (!f.volume) missing.push("volume");
   if (!f.firstPage) missing.push("firstPage");
 
+  // Database-only path (M2A): an alternative publication identifier — never a
+  // reporter/volume/page. Requires docket, court and exact decision date.
+  const isDbOnly = !(f.volume && f.reporter && f.firstPage) && !!f.databaseIdentifier;
+  if (isDbOnly) {
+    const dbMissing: string[] = [];
+    if (!f.docket) dbMissing.push("docket");
+    if (!f.court) dbMissing.push("court");
+    if (!f.decisionDate) dbMissing.push("decisionDate");
+    if (f.caseName?.trim() && dbMissing.length === 0) {
+      const star = f.starPinpoint ?? (f.pinpoint ? f.pinpoint : undefined);
+      const core = `No. ${f.docket}, ${f.databaseIdentifier}${star ? `, at *${star}` : ""}`;
+      return finish(`${it(name)}, ${core} (${f.court} ${f.decisionDate})`, warnings, missing);
+    }
+    missing.push(...dbMissing);
+  }
+
   let core: string;
   if (f.volume && f.reporter && f.firstPage) {
     core = `${f.volume} ${f.reporter} ${pageSpan(f.firstPage, f.pinpoint)}`;
@@ -87,6 +103,16 @@ export function renderUkCase(f: ForeignCaseFields): RenderResult {
   const warnings: string[] = [];
   const missing: string[] = [];
   const name = f.caseName?.trim() || (missing.push("caseName"), miss("שם ההליך"));
+  // Traditional Law Reports without a neutral citation (M2A).
+  if (!f.neutral && f.reporter && f.firstPage && f.year) {
+    const vol = f.reporterVolume ? `${f.reporterVolume} ` : "";
+    const court = f.court ? ` (${f.court})` : "";
+    return finish(
+      `${it(name)} [${f.year}] ${vol}${f.reporter} ${pageSpan(f.firstPage, f.pinpoint)}${court}`,
+      warnings,
+      missing,
+    );
+  }
   const bits: string[] = [it(name)];
   if (f.neutral && f.year) {
     bits.push(`[${f.year}] ${f.neutral}`);
