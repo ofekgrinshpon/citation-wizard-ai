@@ -155,7 +155,7 @@ export function FootnoteReviewCard({
       </div>
 
       {/* Source type selector */}
-      <div className="mb-2 flex items-center gap-2">
+      <div className="mb-2 flex items-center gap-2 flex-wrap">
         <label className="text-[11px] text-muted-foreground">סוג מקור:</label>
         <div className="flex-1 max-w-[220px]">
           <Select
@@ -167,14 +167,33 @@ export function FootnoteReviewCard({
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {TYPE_OPTIONS.map((t) => (
-                <SelectItem key={t} value={t} className="text-xs">
-                  {SOURCE_TYPE_LABELS[t]}
-                </SelectItem>
-              ))}
+              <SelectGroup>
+                <SelectLabel className="text-[11px]">מקורות ישראליים</SelectLabel>
+                {TYPE_OPTIONS.map((t) => (
+                  <SelectItem key={t} value={t} className="text-xs">
+                    {SOURCE_TYPE_LABELS[t]}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+              <SelectGroup>
+                <SelectLabel className="text-[11px]">מקורות לועזיים</SelectLabel>
+                {FOREIGN_TYPE_OPTIONS.map(({ type, label }) => (
+                  <SelectItem key={type} value={type} className="text-xs">
+                    {label}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
             </SelectContent>
           </Select>
         </div>
+        {detectionLabel && (
+          <span
+            className="text-[11px] text-muted-foreground"
+            title="מקור לועזי מעוצב לפי כללי האזכור האחיד (כלל 35.1) והמדריך האמריקני המקובל"
+          >
+            {detectionLabel}
+          </span>
+        )}
       </div>
 
       {/* Output */}
