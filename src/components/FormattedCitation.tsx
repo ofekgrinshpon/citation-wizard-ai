@@ -63,7 +63,7 @@ function SegmentWithTooltip({
   );
 }
 
-/** Parse inline markers (**bold**, ##italic##, [חסר:...]) into React nodes */
+/** Parse inline markers (**bold**, ##italic##, ^^small caps^^, [חסר:...]) into React nodes */
 function parseInlineMarkers(
   text: string,
   highlightMissing: boolean
@@ -75,9 +75,10 @@ function parseInlineMarkers(
   while (remaining.length > 0) {
     const boldIdx = remaining.indexOf("**");
     const italicIdx = remaining.indexOf("##");
+    const smallCapsIdx = remaining.indexOf("^^");
     const missingIdx = highlightMissing ? remaining.indexOf("[חסר:") : -1;
 
-    const indices = [boldIdx, italicIdx, missingIdx].filter((i) => i !== -1);
+    const indices = [boldIdx, italicIdx, smallCapsIdx, missingIdx].filter((i) => i !== -1);
 
     if (indices.length === 0) {
       parts.push(<span key={key++}>{remaining}</span>);
@@ -85,9 +86,10 @@ function parseInlineMarkers(
     }
 
     const nextIdx = Math.min(...indices);
-    let nextType: "bold" | "italic" | "missing";
+    let nextType: "bold" | "italic" | "smallcaps" | "missing";
     if (nextIdx === boldIdx) nextType = "bold";
     else if (nextIdx === italicIdx) nextType = "italic";
+    else if (nextIdx === smallCapsIdx) nextType = "smallcaps";
     else nextType = "missing";
 
     if (nextIdx > 0) {
