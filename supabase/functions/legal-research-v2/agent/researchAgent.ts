@@ -697,16 +697,28 @@ export async function runResearchAgent(opts: {
           });
           continue;
         }
+        let acceptedMemo = candidateMemo;
         if (coverageBefore) {
+          /**
+           * The reflection must never cost the run an answer it already had.
+           * If the resubmitted memo carries no claims at all while the
+           * pre-check memo did, the pre-check memo stands. This is a safety
+           * fallback, not a quota: any non-empty resubmission is accepted as
+           * the agent wrote it, including one with fewer claims.
+           */
+          if (!acceptedMemo?.claims.length && coverageBefore.claims.length) {
+            acceptedMemo = coverageBefore;
+            stats.memo_coverage_reverted_to_pre_check += 1;
+          }
           noteCoverageOutcome(stats, {
             before: coverageBefore,
-            after: candidateMemo,
+            after: acceptedMemo,
             readAtCheck: coverageReadIds,
             researchCallsAfterCheck: researchToolCallsMade() - coverageToolCallsAtCheck,
           });
           coverageBefore = null;
         }
-        memo = candidateMemo;
+        memo = acceptedMemo;
         trace.push({
           step: policy.steps,
           tool: "submit_research_memo",

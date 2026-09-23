@@ -36,6 +36,8 @@ export interface CoverageCheckStats {
   memo_coverage_claims_added: number;
   /** The resubmitted memo recorded an additional unresolved gap. */
   memo_coverage_gap_left_explicit: number;
+  /** The resubmission came back empty, so the pre-check memo was kept. */
+  memo_coverage_reverted_to_pre_check: number;
 }
 
 export function emptyCoverageCheckStats(): CoverageCheckStats {
