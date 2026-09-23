@@ -89,7 +89,20 @@ export interface ForeignCaseFields {
   court?: string;
   year?: string;
   docket?: string;
+  /**
+   * Alternative publication identifier (Westlaw / Lexis), e.g.
+   * "2019 WL 1234567". NOT a reporter, volume, first page or pinpoint.
+   */
   databaseIdentifier?: string;
+  /**
+   * Star-page pinpoint inside a database-only case ("at *5" → "5").
+   * Kept separate from the reporter-page `pinpoint`.
+   */
+  starPinpoint?: string;
+  /** Exact decision date in Bluebook form, e.g. "Mar. 22, 2019" (database cases). */
+  decisionDate?: string;
+  /** Volume number inside a UK report year, e.g. "1" in "[1990] 1 WLR 1". */
+  reporterVolume?: string;
   /** Neutral citation body for UK sources, e.g. "UKSC 41". */
   neutral?: string;
 }
