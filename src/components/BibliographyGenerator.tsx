@@ -488,6 +488,24 @@ export function BibliographyGenerator() {
         <label className="text-sm font-semibold text-foreground mb-2 block">
           1. הדבק מקורות (כל מקור בשורה נפרדת)
         </label>
+        {!rawText.trim() && reviewItems.length === 0 && (
+          <div className="mb-3">
+            <p className="text-xs text-muted-foreground mb-2">
+              הדביקו רשימת מקורות — ReLex ימיין אותם לעברית ולאנגלית, לפי קטגוריות וסדר אלפביתי.
+            </p>
+            <button
+              type="button"
+              onClick={() =>
+                setRawText(
+                  'ע"א 6821/93 בנק המזרחי נ\' מגדל\nחוק-יסוד: כבוד האדם וחירותו\nAharon Barak, Proportionality (2012)',
+                )
+              }
+              className="rounded-full border border-border bg-card px-3 py-1 text-xs text-foreground hover:border-primary/40 transition-colors"
+            >
+              נסו עם רשימת דוגמה
+            </button>
+          </div>
+        )}
         <textarea
           value={rawText}
           onChange={(e) => setRawText(e.target.value)}

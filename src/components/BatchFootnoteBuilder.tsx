@@ -563,6 +563,29 @@ export function BatchFootnoteBuilder({}: BatchProps) {
       {/* === INPUT SECTION === */}
       {phase === "input" && (
         <>
+          {!hasAnyInput && (
+            <div className="mb-3 rounded-xl border border-dashed border-border bg-muted/30 p-3">
+              <p className="text-sm text-foreground">
+                הזינו מקורות לפי הסדר — ReLex יבנה הערות שוליים מסודרות ויחיל אוטומטית את כללי האזכור החוזר.
+              </p>
+              <div className="flex flex-wrap gap-2 mt-2">
+                {[
+                  'ע"א 6821/93 בנק המזרחי נ\' מגדל',
+                  "חוק החוזים (חלק כללי), התשל\"ג-1973",
+                  "Brown v. Board of Education, 347 U.S. 483 (1954)",
+                ].map((ex) => (
+                  <button
+                    key={ex}
+                    type="button"
+                    onClick={() => updateCellInput(cells[0].id, ex)}
+                    className="rounded-full border border-border bg-card px-3 py-1 text-xs text-foreground hover:border-primary/40 transition-colors"
+                  >
+                    {ex}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
           <div className="bg-card border border-border rounded-xl p-4 shadow-sm">
             <div className="space-y-2.5">
               {cells.map((cell, index) => (
