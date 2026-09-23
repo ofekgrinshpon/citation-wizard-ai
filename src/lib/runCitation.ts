@@ -19,6 +19,8 @@ import { validateCitationInput } from "@/lib/citationInputValidation";
 import { extractCitationFromResponse } from "@/lib/citationUtils";
 import { invokeFunction } from "@/lib/functionError";
 import { handleRefundResponse } from "@/lib/refundResponse";
+import { renderForeignCitation } from "@/data/bluebook";
+import { isForeignSourceType } from "@/data/bluebook/types";
 
 /** Pinpoint references (סעיף / עמ' / פסקה …) are not master sources. */
 export const PINPOINT_RE =
@@ -134,14 +136,39 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
   }
 
   if (verifiedMatch && !isPinpoint && isDirectVerifiedMatch(verifiedMatch, normalized)) {
+    // Verified identity is always kept. Formatting may be deterministically
+    // re-rendered when the stored citation carries enough structured fields;
+    // otherwise the stored text is preserved as-is (never guessed).
+    const reRendered = renderForeignCitation(verifiedMatch.full_citation);
+    const citation =
+      reRendered && reRendered.missing.length === 0
+        ? reRendered.citation
+        : verifiedMatch.full_citation;
     return {
-      reply: verifiedMatch.full_citation,
-      citation: verifiedMatch.full_citation,
+      reply: citation,
+      citation,
       sourceType,
       sourceLabel: verifiedMatch.source_type || sourceLabel,
       fromVerifiedStore: true,
       status: "verified",
     };
+  }
+
+  // 1b) Deterministic Bluebook rendering for a clearly identified foreign
+  // source (Israeli Rule 35.1). No model call, no fabricated fields.
+  if (!isPinpoint && isForeignSourceType(sourceType)) {
+    const rendered = renderForeignCitation(normalized);
+    if (rendered && rendered.missing.length === 0) {
+      return {
+        reply: rendered.citation,
+        citation: rendered.citation,
+        sourceType: rendered.detection.sourceType,
+        sourceLabel: SOURCE_TYPE_LABELS[rendered.detection.sourceType],
+        fromVerifiedStore: false,
+        status: rendered.warnings.length ? "warning" : "valid",
+        warningMsg: rendered.warnings[0],
+      };
+    }
   }
 
   // 2) Pinpoint + known master source → feed the verified details as a hint.
