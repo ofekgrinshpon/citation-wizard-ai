@@ -1,5 +1,7 @@
 // Abbreviation mappings based on נספחים א-י (Appendices A-J)
 // For normalizing free-text input
+import { detectForeignSource } from "@/data/bluebook/extract";
+
 
 // Court abbreviations (נספח א - סוגי הליכים)
 export const CASE_TYPE_ABBREVIATIONS: Record<string, string> = {
