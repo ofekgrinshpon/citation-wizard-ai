@@ -209,6 +209,16 @@ export function AppSidebar() {
         <span>מקורות מאומתים</span>
       </button>
 
+      <button
+        onClick={() => setGuideOpen(true)}
+        className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm text-primary hover:bg-muted transition-colors text-right w-full"
+      >
+        <HelpCircle size={14} />
+        <span>איך זה עובד?</span>
+      </button>
+
+      <UserGuideModal open={guideOpen} onOpenChange={setGuideOpen} />
+
       {isAdmin && (
         <>
           <div className="h-px bg-border my-2" />
