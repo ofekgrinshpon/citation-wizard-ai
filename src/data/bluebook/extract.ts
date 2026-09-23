@@ -332,7 +332,7 @@ function parseSecondaryParen(inner: string): ParsedParen | null {
 function titleLooksSafe(title: string): boolean {
   return (
     /[A-Za-z]{2}/.test(title) &&
-    !/[,;]|https?:|\bv\.?\s|\bin\s+[A-Z]/.test(title) &&
+    !/[,;]|https?:|\bv\.?\s/.test(title) &&
     !/^\d/.test(title) &&
     title.length <= 200
   );

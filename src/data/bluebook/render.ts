@@ -208,11 +208,11 @@ export function renderBook(f: ForeignBookFields): RenderResult {
   const head =
     (f.volume ? `${f.volume} ` : "") +
     sc(`${f.authors || miss("מחבר")}, ${f.bookTitle || miss("שם הספר")}`);
+  // Bluebook: contributors are comma-separated; edition and year are not.
   const paren = [
     f.editors ? `${f.editors} ed${f.editors.includes("&") ? "s" : ""}.` : "",
     f.translators ? `${f.translators} trans.` : "",
-    f.edition ? `${f.edition} ed.` : "",
-    f.year || miss("שנה"),
+    [f.edition ? `${f.edition} ed.` : "", f.year || miss("שנה")].filter(Boolean).join(" "),
   ]
     .filter(Boolean)
     .join(", ");
@@ -229,8 +229,7 @@ export function renderBookChapter(f: ForeignChapterFields): RenderResult {
   const pages = f.firstPage ? pageSpan(f.firstPage, f.pinpoint) : miss("עמוד");
   const paren = [
     f.editors ? `${f.editors} ed${/(&|,)/.test(f.editors) ? "s" : ""}.` : "",
-    f.edition ? `${f.edition} ed.` : "",
-    f.year || miss("שנה"),
+    [f.edition ? `${f.edition} ed.` : "", f.year || miss("שנה")].filter(Boolean).join(" "),
   ]
     .filter(Boolean)
     .join(", ");
