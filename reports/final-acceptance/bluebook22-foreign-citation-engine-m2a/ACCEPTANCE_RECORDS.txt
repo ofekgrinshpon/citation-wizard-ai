@@ -255,10 +255,10 @@
   family:       journal_article
   jurisdiction: US
   confidence:   deterministic
-  fields:       {"authors":"Richard H. Fallon","articleTitle":"Jr., The Core of an Uneasy Case for Judicial Review","volume":"121","journal":"Harv. L. Rev.","firstPage":"1693","year":"2008"}
+  fields:       {"authors":"Richard H. Fallon, Jr.","articleTitle":"The Core of an Uneasy Case for Judicial Review","volume":"121","journal":"Harv. L. Rev.","firstPage":"1693","year":"2008"}
   deterministic: yes
   final:        Richard H. Fallon, Jr., The Core of an Uneasy Case for Judicial Review, 121 Harv. L. Rev. 1693 (2008).
-  marked:       Richard H. Fallon, ##Jr., The Core of an Uneasy Case for Judicial Review##, 121 ^^Harv. L. Rev.^^ 1693 (2008).
+  marked:       Richard H. Fallon, Jr., ##The Core of an Uneasy Case for Judicial Review##, 121 ^^Harv. L. Rev.^^ 1693 (2008).
   warnings:     -
   fallback:     -
 

@@ -179,7 +179,7 @@ export function extractUkStatute(text: string) {
 }
 
 const ARTICLE_RE =
-  /^(?<authors>[^,]{3,120}),\s*(?<title>.{3,220}?),\s*(?<vol>\d+)\s+(?<journal>[A-Z][A-Za-z.'&\s]{2,60}?)\s+(?<page>\d+)(?:,\s*(?<pin>\d+(?:\s*[–\-]\s*\d+)?))?\s*\((?<year>(?:18|19|20)\d{2})\)/u;
+  /^(?<authors>[^,]{3,120}(?:,\s*(?:Jr\.|Sr\.|II|III|IV))?),\s*(?<title>.{3,220}?),\s*(?<vol>\d+)\s+(?<journal>[A-Z][A-Za-z.'&\s]{2,60}?)\s+(?<page>\d+)(?:,\s*(?<pin>\d+(?:\s*[–\-]\s*\d+)?))?\s*\((?<year>(?:18|19|20)\d{2})\)/u;
 
 export function extractJournalArticle(text: string): ForeignArticleFields | null {
   const m = ARTICLE_RE.exec(text.trim());

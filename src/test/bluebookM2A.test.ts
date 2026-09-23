@@ -177,3 +177,10 @@ describe("M2A — invariants", () => {
     expect(citationToPlain(r.citation)).toBe("T.R.S. Allan, Legislative Supremacy, 117 L.Q. Rev. 563 (2001).");
   });
 });
+
+describe("M2A — author suffix", () => {
+  it("'Jr.' stays with the author, not the title", () => {
+    const d = detectForeignSource("Richard H. Fallon, Jr., The Core of an Uneasy Case for Judicial Review, 121 Harv. L. Rev. 1693 (2008)")!;
+    expect(d.fields).toMatchObject({ authors: "Richard H. Fallon, Jr.", articleTitle: "The Core of an Uneasy Case for Judicial Review" });
+  });
+});
