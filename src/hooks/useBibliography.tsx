@@ -1,3 +1,4 @@
+import { detectForeignSource } from "@/data/bluebook/extract";
 import { useState, useCallback, useEffect, createContext, useContext } from "react";
 import { useProjects } from "@/hooks/useProjects";
 
@@ -30,6 +31,12 @@ export type BibSourceCategory =
   | "caselaw_magistrate"
   | "caselaw_specialized"
   | "literature"
+  | "foreign_caselaw"
+  | "foreign_legislation"
+  | "foreign_books"
+  | "foreign_articles"
+  | "foreign_internet"
+  | "foreign_other"
   | "misc"
   | "unknown";
 
@@ -41,8 +48,14 @@ const CATEGORY_ORDER: Record<string, number> = {
   caselaw_magistrate: 5,
   caselaw_specialized: 6,
   literature: 7,
-  misc: 8,
-  unknown: 9,
+  foreign_caselaw: 8,
+  foreign_legislation: 9,
+  foreign_books: 10,
+  foreign_articles: 11,
+  foreign_internet: 12,
+  foreign_other: 13,
+  misc: 14,
+  unknown: 15,
 };
 
 export const CATEGORY_LABELS: Record<string, string> = {
@@ -53,6 +66,12 @@ export const CATEGORY_LABELS: Record<string, string> = {
   caselaw_magistrate: "פסיקה – בית משפט שלום",
   caselaw_specialized: "פסיקה – בתי דין מיוחדים",
   literature: "ספרות משפטית",
+  foreign_caselaw: "פסיקה לועזית",
+  foreign_legislation: "חקיקה לועזית",
+  foreign_books: "ספרים לועזיים",
+  foreign_articles: "מאמרים לועזיים",
+  foreign_internet: "מקורות מרשתת לועזיים",
+  foreign_other: "מקורות לועזיים אחרים",
   misc: "שונות",
   unknown: "אחר",
 };
@@ -76,6 +95,24 @@ function hasAuthorPrefix(text: string, isEnglish: boolean): boolean {
   if (/נ['׳]\s|נגד\s/.test(trimmed)) return false;
 
   return /^[א-ת][א-ת"'׳״-]+(?:\s+[א-ת][א-ת"'׳״-]+){1,2}(?=,|\s+\*\*|\s+")/.test(trimmed);
+}
+
+const FOREIGN_KIND_TO_CATEGORY: Record<string, BibSourceCategory> = {
+  case: "foreign_caselaw",
+  constitution: "foreign_legislation",
+  statute: "foreign_legislation",
+  book: "foreign_books",
+  journal_article: "foreign_articles",
+  book_chapter: "foreign_books",
+  internet: "foreign_internet",
+  other: "foreign_other",
+};
+
+function englishSurname(trimmed: string): string | undefined {
+  const m = trimmed.match(/^([A-Z][A-Za-z'’.-]+(?:\s+[A-Z][A-Za-z'’.-]+){0,2})/);
+  if (!m) return undefined;
+  const parts = m[1].split(/\s+/);
+  return parts[parts.length - 1];
 }
 
 export function classifyCitation(text: string): {
@@ -111,6 +148,22 @@ export function classifyCitation(text: string): {
 
   let sourceType: BibSourceCategory = "unknown";
   let subCategory = "";
+
+  // Foreign (English) sources get their own grouping rather than collapsing into
+  // literature/misc. Deterministic families only; anything else → foreign_other.
+  if (isEnglish) {
+    const foreign = detectForeignSource(trimmed.replace(/\*\*|##|\^\^/g, ""));
+    const cat = foreign ? FOREIGN_KIND_TO_CATEGORY[foreign.kind] : undefined;
+    if (cat) {
+      return {
+        sourceType: cat,
+        language,
+        subCategory: CATEGORY_LABELS[cat],
+        year,
+        authorSurname: englishSurname(trimmed),
+      };
+    }
+  }
 
   // Order matters: structural markers (case-law, legislation) win over generic name patterns,
   // since legislation/case-law tokens are unambiguous while author detection is heuristic.

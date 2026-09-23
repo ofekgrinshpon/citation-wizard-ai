@@ -63,7 +63,7 @@ function SegmentWithTooltip({
   );
 }
 
-/** Parse inline markers (**bold**, ##italic##, [חסר:...]) into React nodes */
+/** Parse inline markers (**bold**, ##italic##, ^^small caps^^, [חסר:...]) into React nodes */
 function parseInlineMarkers(
   text: string,
   highlightMissing: boolean
@@ -75,9 +75,10 @@ function parseInlineMarkers(
   while (remaining.length > 0) {
     const boldIdx = remaining.indexOf("**");
     const italicIdx = remaining.indexOf("##");
+    const smallCapsIdx = remaining.indexOf("^^");
     const missingIdx = highlightMissing ? remaining.indexOf("[חסר:") : -1;
 
-    const indices = [boldIdx, italicIdx, missingIdx].filter((i) => i !== -1);
+    const indices = [boldIdx, italicIdx, smallCapsIdx, missingIdx].filter((i) => i !== -1);
 
     if (indices.length === 0) {
       parts.push(<span key={key++}>{remaining}</span>);
@@ -85,9 +86,10 @@ function parseInlineMarkers(
     }
 
     const nextIdx = Math.min(...indices);
-    let nextType: "bold" | "italic" | "missing";
+    let nextType: "bold" | "italic" | "smallcaps" | "missing";
     if (nextIdx === boldIdx) nextType = "bold";
     else if (nextIdx === italicIdx) nextType = "italic";
+    else if (nextIdx === smallCapsIdx) nextType = "smallcaps";
     else nextType = "missing";
 
     if (nextIdx > 0) {
@@ -123,10 +125,11 @@ function parseInlineMarkers(
       continue;
     }
 
-    const marker = nextType === "bold" ? "**" : "##";
+    const marker = nextType === "bold" ? "**" : nextType === "italic" ? "##" : "^^";
     const closeIdx = remaining.indexOf(marker, nextIdx + 2);
     if (closeIdx === -1) {
-      parts.push(<span key={key++}>{remaining.slice(nextIdx)}</span>);
+      // Unterminated marker: never leak the raw token to the user.
+      parts.push(<span key={key++}>{remaining.slice(nextIdx).split(marker).join("")}</span>);
       break;
     }
     const inner = remaining.slice(nextIdx + 2, closeIdx);
@@ -135,6 +138,12 @@ function parseInlineMarkers(
         <strong key={key++} className="font-bold">
           {inner}
         </strong>
+      );
+    } else if (nextType === "smallcaps") {
+      parts.push(
+        <span key={key++} style={{ fontVariant: "small-caps", fontVariantCaps: "small-caps" }}>
+          {inner}
+        </span>
       );
     } else {
       parts.push(

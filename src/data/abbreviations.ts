@@ -1,5 +1,7 @@
 // Abbreviation mappings based on נספחים א-י (Appendices A-J)
 // For normalizing free-text input
+import { detectForeignSource } from "@/data/bluebook/extract";
+
 
 // Court abbreviations (נספח א - סוגי הליכים)
 export const CASE_TYPE_ABBREVIATIONS: Record<string, string> = {
@@ -411,9 +413,13 @@ export function detectSourceType(text: string): SourceType {
   const literatureShape = looksLikeLiteratureShape(text) && !hasStrongStatuteSignal(text);
 
   
-  // Check for foreign sources
-  if (/[a-zA-Z]{3,}/.test(text) && /v\.|vs\./.test(normalized)) return 'foreign';
-  if (/[A-Z][a-z]+\s+v\.\s+[A-Z]/.test(text)) return 'foreign';
+  // Check for foreign sources (Israeli Rule 35.1 → current Bluebook).
+  // A clearly identifiable foreign source must resolve to a SPECIFIC family;
+  // generic `foreign` stays a last-resort fallback only.
+  const foreignHit = detectForeignSource(text);
+  if (foreignHit) return foreignHit.sourceType;
+  if (/[a-zA-Z]{3,}/.test(text) && /\bv\.|\bvs\./.test(normalized)) return 'foreign';
+  
   
   // Check for case law
   for (const abbr of Object.values(CASE_TYPE_ABBREVIATIONS)) {

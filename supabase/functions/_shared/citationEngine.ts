@@ -121,7 +121,10 @@ export const CITATION_RULES: Record<string, CitationRuleSet> = {
     ],
   },
 
-  // ─── Foreign sources (Bluebook – Rule 36) — minimal Deno mirror.
+  // ─── Foreign sources — Israeli Rule 35.1 incorporates the CURRENT Bluebook
+  // (internally: ruleset `foreign_bluebook_v22`). The 36.x numbers below are the
+  // Israeli guide's example numbering, NOT Bluebook rule numbers.
+  // Minimal Deno mirror.
   // Keep in sync with src/data/citationEngine.ts (no auto-sync). Required-fields
   // only; full notes/templates live on the React side.
   foreign_constitution: {
@@ -165,7 +168,7 @@ export const CITATION_RULES: Record<string, CitationRuleSet> = {
   foreign_case_us: {
     primaryRule: "36.4",
     ruleTitle: "כלל 36.4 – פסיקה (ארה\"ב)",
-    template: "{party1} v. {party2}, {volume} {reporter} {firstPage} ([{court} ]{year}).",
+    template: "[##{procPrefix}## ]{party1} v. {party2}, {volume} {reporter} {firstPage}[, {pinpoint}] ([{court} ]{year}).",
     example: "Atkins v. Virginia, 536 U.S. 304 (2002).",
     components: [
       { field: "party1", rule: "36.4", description: "צד א'", required: true, format: "plain" },
@@ -180,7 +183,7 @@ export const CITATION_RULES: Record<string, CitationRuleSet> = {
   foreign_case_other: {
     primaryRule: "36.5",
     ruleTitle: "כלל 36.5 – פסיקה (מדינות אחרות)",
-    template: "{party1} v. {party2} {volumeOrYear} {reporter} {firstPage} ({courtAndJurisdiction}).",
+    template: "{party1} v. {party2} {volumeOrYear} {reporter} {firstPage}[, {pinpoint}] ({courtAndJurisdiction}).",
     example: "Young v. Bristol Aeroplane Co. [1944] KB 718 (CA).",
     components: [
       { field: "party1", rule: "36.5", description: "צד א'", required: true, format: "plain" },
@@ -194,7 +197,7 @@ export const CITATION_RULES: Record<string, CitationRuleSet> = {
   foreign_book: {
     primaryRule: "36.6",
     ruleTitle: "כלל 36.6 – ספרים לועזיים",
-    template: "##{authors}##, ##{bookTitle}## ({year}).",
+    template: "[{volume} ]##{authors}##, ##{bookTitle}##[: ##{subtitle}##][ {pinpoint}] ([{edition}, ][{editor} eds., ][{translator} trans., ][{publisher} ]{year}).",
     example: "HAZEL GENN, JUDGING CIVIL JUSTICE (2010).",
     components: [
       { field: "authors", rule: "36.6", description: "מחברים", required: true, format: "italic" },
@@ -205,7 +208,7 @@ export const CITATION_RULES: Record<string, CitationRuleSet> = {
   foreign_journal_article: {
     primaryRule: "36.7",
     ruleTitle: "כלל 36.7 – מאמרים בכתבי עת לועזיים",
-    template: "{authors}, ##{articleTitle}##, {volume} ##{journal}## {firstPage} ({year}).",
+    template: "{authors}, ##{articleTitle}##[: ##{subtitle}##], {volume} ##{journal}## {firstPage}[, {pinpoint}] ({year}).",
     example: "Ruth Gavison, Privacy and the Limits of Law, 89 YALE L.J. 421 (1980).",
     components: [
       { field: "authors", rule: "36.7", description: "מחברים", required: true, format: "plain" },
@@ -219,7 +222,7 @@ export const CITATION_RULES: Record<string, CitationRuleSet> = {
   foreign_book_chapter: {
     primaryRule: "36.8",
     ruleTitle: "כלל 36.8 – מאמרים בספרים לועזיים",
-    template: "{authors}, ##{articleTitle}##, in ##{bookTitle}## {firstPage} ({editor} eds., {year}).",
+    template: "{authors}, ##{articleTitle}##, in ##{bookTitle}## {firstPage}[, {pinpoint}] ({editor} eds., {year}).",
     example: "Ayelet Shachar, Constituting Citizens, in CANADA IN THE WORLD 123 (Albert & Cameron eds., 2018).",
     components: [
       { field: "authors", rule: "36.8", description: "מחברים", required: true, format: "plain" },
@@ -233,7 +236,7 @@ export const CITATION_RULES: Record<string, CitationRuleSet> = {
   foreign_internet: {
     primaryRule: "36.9",
     ruleTitle: "כלל 36.9 – מקורות במרשתת לועזיים",
-    template: "##{title}##, ##{site}## ({date}), {url}.",
+    template: "[{author} ([@{handle}]), ]##{title}##, [{contentType} ]##{site}## ({date}), {url}.",
     example: "Katy Barnett, News, OPINIONS ON HIGH (Mar. 22, 2019), https://shorturl.at/ersHN.",
     components: [
       { field: "author", rule: "36.9", description: "מחבר", required: false, format: "plain" },

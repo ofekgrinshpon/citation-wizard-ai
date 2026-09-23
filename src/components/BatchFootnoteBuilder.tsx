@@ -10,7 +10,7 @@ import { useProjects } from "@/hooks/useProjects";
 import { useOffice } from "@/hooks/useOffice";
 import { insertCitationAsFootnote } from "@/lib/wordInsertion";
 import { toast } from "sonner";
-import { copyPlainText } from "@/lib/clipboard";
+import { copyCitationRich, copyCitationsRich } from "@/lib/citationRichText";
 import { ensureVerifiedSources } from "@/lib/verifiedSources";
 import { applyYearPreferences, isLegislationInput, extractLawNameFromInput, type YearPreferences } from "@/lib/citationUtils";
 import { runCitation, CitationRunError, type RunCitationResult } from "@/lib/runCitation";
@@ -472,14 +472,14 @@ export function BatchFootnoteBuilder({}: BatchProps) {
       toast.error("אין הערות שוליים להעתקה");
       return;
     }
-    copyPlainText(outputs);
+    copyCitationsRich(outputs.split("\n\n"));
     toast.success("כל הערות השוליים הועתקו ללוח!");
   };
 
   const copySingle = (cell: FootnoteCell) => {
     if (!cell.output) return;
     const citation = extractCitationOnly(cell.output);
-    copyPlainText(citation);
+    copyCitationRich(citation);
     toast.success(`הערה ${cell.id} הועתקה!`);
   };
 

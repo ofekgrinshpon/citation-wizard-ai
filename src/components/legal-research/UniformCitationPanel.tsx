@@ -5,7 +5,7 @@ import { runCitation, CitationRunError, type RunCitationResult } from "@/lib/run
 import { runPool, isTransientError } from "@/lib/concurrency";
 import { applyRepeatCitationRules, extractCitationOnly, stripPresentationWarnings } from "@/lib/footnoteRepeatRules";
 import { CREDIT_COSTS } from "@/lib/creditCosts";
-import { copyPlainText } from "@/lib/clipboard";
+import { copyCitationRich, copyCitationsRich } from "@/lib/citationRichText";
 import { insertCitationAsFootnote } from "@/lib/wordInsertion";
 import { useOffice } from "@/hooks/useOffice";
 import { useProjects } from "@/hooks/useProjects";
@@ -185,14 +185,14 @@ export function UniformCitationPanel({ footnotes }: Props) {
   const copySingle = async (id: number) => {
     const cell = cells.find((c) => c.id === id);
     if (!cell) return;
-    await copyPlainText(finalTextOf(cell));
+    await copyCitationRich(finalTextOf(cell));
     toast.success(`הערה ${id} הועתקה`);
   };
 
   const copyAll = async () => {
-    const text = cells.map((c) => `[${c.id}] ${finalTextOf(c)}`).join("\n\n");
-    if (!text.trim()) return;
-    await copyPlainText(text);
+    const lines = cells.map((c) => `[${c.id}] ${finalTextOf(c)}`);
+    if (!lines.join("").trim()) return;
+    await copyCitationsRich(lines);
     toast.success("כל ההערות הועתקו ללוח");
   };
 

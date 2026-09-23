@@ -33,6 +33,12 @@ const CATEGORY_OPTIONS: { value: BibSourceCategory; label: string; icon: string 
   { value: "caselaw_magistrate", label: "פסיקה – שלום", icon: "⚖️" },
   { value: "caselaw_specialized", label: "פסיקה – בתי דין מיוחדים", icon: "⚖️" },
   { value: "literature", label: "ספרות משפטית", icon: "📕" },
+  { value: "foreign_caselaw", label: "פסיקה לועזית", icon: "🌐" },
+  { value: "foreign_legislation", label: "חקיקה לועזית", icon: "🌐" },
+  { value: "foreign_books", label: "ספרים לועזיים", icon: "🌐" },
+  { value: "foreign_articles", label: "מאמרים לועזיים", icon: "🌐" },
+  { value: "foreign_internet", label: "מקורות מרשתת לועזיים", icon: "🌐" },
+  { value: "foreign_other", label: "מקורות לועזיים אחרים", icon: "🌐" },
   { value: "misc", label: "שונות", icon: "📁" },
   { value: "unknown", label: "אחר", icon: "❔" },
 ];
@@ -49,6 +55,12 @@ const CATEGORY_TO_SOURCE_TYPE: Partial<Record<BibSourceCategory, SourceType>> = 
   caselaw_district: "case_law_database",
   caselaw_magistrate: "case_law_database",
   caselaw_specialized: "case_law_database",
+  foreign_caselaw: "foreign_case_us",
+  foreign_legislation: "foreign_statute_us",
+  foreign_books: "foreign_book",
+  foreign_articles: "foreign_journal_article",
+  foreign_internet: "foreign_internet",
+  foreign_other: "foreign",
 };
 
 
