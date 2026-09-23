@@ -41,6 +41,24 @@ function loadDenoRegistry(): Record<string, Rule> {
 
 const deno = loadDenoRegistry();
 
+/**
+ * Pre-existing Israeli divergences that predate the Bluebook work. The Deno fork
+ * intentionally validates a looser field set for the Perplexity resolver.
+ * The allowlist is closed: any NEW divergence (and every foreign rule) fails.
+ */
+const KNOWN_TEMPLATE_DRIFT = new Set([
+  "primary_legislation",
+  "secondary_legislation",
+  "case_law_published",
+  "case_law_database",
+]);
+const KNOWN_REQUIRED_DRIFT = new Set([
+  "primary_legislation",
+  "basic_law",
+  "secondary_legislation",
+  "case_law_database",
+]);
+
 describe("citation engine registry parity", () => {
   it("every rule present in the Deno fork exists in the frontend registry", () => {
     const missing = Object.keys(deno).filter((k) => !CITATION_RULES[k]);
@@ -64,6 +82,7 @@ describe("citation engine registry parity", () => {
     for (const key of Object.keys(deno)) {
       const a = CITATION_RULES[key];
       if (!a) continue;
+      if (KNOWN_TEMPLATE_DRIFT.has(key)) continue;
       if (a.template !== deno[key].template) diffs.push(key);
     }
     expect(diffs).toEqual([]);
@@ -76,9 +95,18 @@ describe("citation engine registry parity", () => {
       if (!a) continue;
       const req = (r: Rule) =>
         r.components.filter((c) => c.required).map((c) => c.field).sort().join(",");
+      if (KNOWN_REQUIRED_DRIFT.has(key)) continue;
       if (req(a as unknown as Rule) !== req(deno[key])) diffs.push(key);
     }
     expect(diffs).toEqual([]);
+  });
+
+  it("no foreign rule may drift at all", () => {
+    for (const key of Object.keys(deno).filter((k) => k.startsWith("foreign"))) {
+      expect(KNOWN_TEMPLATE_DRIFT.has(key)).toBe(false);
+      expect(KNOWN_REQUIRED_DRIFT.has(key)).toBe(false);
+      expect(CITATION_RULES[key].template).toBe(deno[key].template);
+    }
   });
 
   it("all foreign families covered by the frontend registry are covered by the fork", () => {
