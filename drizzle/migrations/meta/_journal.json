@@ -8,6 +8,20 @@
       "when": 1789232194085,
       "tag": "0000_security_lock_internal_rpcs",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1790143303043,
+      "tag": "0001_v2_unattended_resume_watchdog",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1790143487902,
+      "tag": "0002_v2_watchdog_age_guard",
+      "breakpoints": true
     }
   ]
 }

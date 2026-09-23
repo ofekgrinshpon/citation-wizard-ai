@@ -66,6 +66,12 @@ import {
   toBetaResult,
 } from "./beta/job.ts";
 import { resolveOwnedProjectId } from "./beta/projectOwnership.ts";
+import {
+  decideAutoResume,
+  RESUME_WATCHDOG,
+  type ResumeDecision,
+  type WatchdogRow,
+} from "./beta/resumePolicy.ts";
 import { egressTelemetry, resetEgressStateForRun } from "./shared/egressTelemetry.ts";
 import {
   acquireOperationLock,
@@ -192,7 +198,14 @@ export interface ResumeState {
 async function runPipeline(
   admin: SupabaseClient,
   intake: Intake,
-  opts: { resume?: ResumeState | null; chunked?: boolean; progress?: ProgressSink } = {},
+  opts: {
+    resume?: ResumeState | null;
+    chunked?: boolean;
+    progress?: ProgressSink;
+    /** Carried into the mid-chunk checkpoint so an unattended resume can still
+     * finalize the user-facing job row. */
+    job?: BetaJob | null;
+  } = {},
 ): Promise<
   | ({ ok: true; paused?: false } & Record<string, unknown>)
   | { ok: true; paused: true; run_id: string; resume: ResumeState }
@@ -279,8 +292,12 @@ async function runPipeline(
               paused_at: Date.now(),
             },
             intake,
+            // Without these a mid-chunk recovery would lose the user's job.
+            job: opts.job ?? null,
+            stage: opts.progress?.current() ?? null,
           },
           chunk_index,
+          last_beat_at: new Date().toISOString(),
         }).eq("run_id", intake.run_id);
       }
       : undefined,
@@ -943,6 +960,24 @@ async function selfInvokeResume(run_id: string, supabaseUrl: string, serviceKey:
 }
 
 /**
+ * Run-row liveness. The watchdog only touches a run that has stopped beating,
+ * so an actively working worker can never be resumed underneath itself.
+ * Throttled, best-effort, and never allowed to fail a run.
+ */
+function createRunBeat(admin: SupabaseClient, run_id: string) {
+  let last = 0;
+  return async (force = false) => {
+    if (!force && Date.now() - last < RESUME_WATCHDOG.BEAT_MIN_INTERVAL_MS) return;
+    last = Date.now();
+    try {
+      await admin.from("v2_eval_runs")
+        .update({ last_beat_at: new Date().toISOString() })
+        .eq("run_id", run_id);
+    } catch {/* liveness is best-effort */}
+  };
+}
+
+/**
  * Run one chunk of a persisted run and either finish it or hand it to a new
  * worker. The chunk budget and MAX_CHUNKS bound the total work; the next hop
  * fires only when research actually remains.
@@ -971,12 +1006,33 @@ async function driveRun(
       }
       : null,
   );
+  // Every progress beat also proves to the watchdog that this worker is alive.
+  const beat = createRunBeat(admin, intake.run_id);
+  const liveProgress: ProgressSink = {
+    current: () => progress.current(),
+    advance: async (s) => {
+      await progress.advance(s);
+      await beat();
+    },
+    heartbeat: async () => {
+      await progress.heartbeat();
+      await beat();
+    },
+    finish: () => progress.finish(),
+  };
+  await beat(true);
   try {
-    const out = await runPipeline(admin, intake, { resume, chunked: true, progress });
+    const out = await runPipeline(admin, intake, {
+      resume,
+      chunked: true,
+      progress: liveProgress,
+      job,
+    });
     if ("paused" in out && out.paused) {
       await admin.from("v2_eval_runs").update({
         status: "paused",
         agent_state: { resume: out.resume, intake, job, stage: progress.current() },
+        last_beat_at: new Date().toISOString(),
       }).eq("run_id", intake.run_id);
       await selfInvokeResume(intake.run_id, supabaseUrl, serviceKey);
       return;
@@ -1006,6 +1062,87 @@ async function driveRun(
   }
 }
 
+/**
+ * One watchdog sweep: find abandoned checkpoints and hand each to exactly one
+ * fresh worker. Bounded by RESUME_WATCHDOG; every decision is reported.
+ *
+ * The claim is optimistic and atomic — `auto_resume_count` is advanced with the
+ * previously observed value in the WHERE clause, so two concurrent sweepers can
+ * never both own the same run.
+ */
+async function sweepStalledRuns(
+  admin: SupabaseClient,
+  supabaseUrl: string,
+  serviceKey: string,
+): Promise<{ examined: number; decisions: ResumeDecision[] }> {
+  const now = Date.now();
+  const staleBefore = new Date(now - RESUME_WATCHDOG.STALE_MS).toISOString();
+  const { data } = await admin
+    .from("v2_eval_runs")
+    .select("run_id, status, agent_state, last_beat_at, created_at, auto_resume_count, watchdog_claimed_at")
+    .in("status", ["running", "paused"])
+    .or(`last_beat_at.is.null,last_beat_at.lt.${staleBefore}`)
+    // Long-abandoned historical rows must never crowd the batch: they are not
+    // revivable, and a live run waiting for recovery always comes first.
+    .gt("created_at", new Date(now - RESUME_WATCHDOG.MAX_RUN_AGE_MS).toISOString())
+    .order("created_at", { ascending: false })
+    .limit(RESUME_WATCHDOG.BATCH);
+
+  const rows = (data ?? []) as WatchdogRow[];
+  const decisions: ResumeDecision[] = [];
+
+  for (const row of rows) {
+    const decision = decideAutoResume(row, now);
+    if (!decision.automatic_resume_triggered) {
+      decisions.push(decision);
+      continue;
+    }
+    const prior = row.auto_resume_count ?? 0;
+    const { data: claimed } = await admin
+      .from("v2_eval_runs")
+      .update({
+        auto_resume_count: prior + 1,
+        watchdog_claimed_at: new Date().toISOString(),
+        auto_resume_reason: decision.automatic_resume_reason,
+      })
+      .eq("run_id", row.run_id)
+      .eq("auto_resume_count", prior)
+      .in("status", ["running", "paused"])
+      .select("run_id");
+    if (!claimed?.length) {
+      decisions.push({
+        ...decision,
+        automatic_resume_triggered: false,
+        automatic_resume_reason: "claimed_by_other",
+        duplicate_resume_prevented: true,
+      });
+      continue;
+    }
+    // Same entry point a manual resume uses: the persisted checkpoint is
+    // replayed as-is, so usage, evidence and idempotency are untouched.
+    let ok = false;
+    try {
+      const res = await fetch(`${supabaseUrl}/functions/v1/legal-research-v2`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${serviceKey}`,
+          "Content-Type": "application/json",
+          "x-smoke-mode": "1",
+        },
+        body: JSON.stringify({ resume_run_id: row.run_id }),
+      });
+      ok = res.ok;
+    } catch {/* reported as a failed resume; the next sweep retries */}
+    decisions.push({
+      ...decision,
+      automatic_resume_count: prior + 1,
+      ...(ok ? {} : { automatic_resume_triggered: true }),
+    });
+    console.log(JSON.stringify({ watchdog: "auto_resume", run_id: row.run_id, ok, ...decision }));
+  }
+  return { examined: rows.length, decisions };
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
   if (req.method !== "POST") return json({ error: "method_not_allowed" }, 405);
@@ -1018,8 +1155,9 @@ serve(async (req) => {
   }
 
   const resumeRunId = typeof body.resume_run_id === "string" ? body.resume_run_id : null;
+  const watchdogTick = body.action === "resume_watchdog";
   const question = String(body.question ?? "").trim();
-  if (!question && !resumeRunId) return json({ error: "question_required" }, 400);
+  if (!question && !resumeRunId && !watchdogTick) return json({ error: "question_required" }, 400);
 
   const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
   const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
@@ -1042,6 +1180,28 @@ serve(async (req) => {
       (!!presented && smokeTokens.includes(presented)));
 
   const admin = createClient(supabaseUrl, serviceKey) as unknown as SupabaseClient;
+
+  // ── Unattended checkpoint recovery sweep (scheduler / service-role only) ─
+  if (watchdogTick) {
+    // The scheduler authenticates with a single-use, short-lived nonce that
+    // only the database can mint; no credential travels with the request.
+    let schedulerOk = false;
+    const nonce = typeof body.watchdog_nonce === "string" ? body.watchdog_nonce : null;
+    if (nonce) {
+      const { data: claimedTick } = await admin
+        .from("v2_watchdog_ticks")
+        .update({ used_at: new Date().toISOString() })
+        .eq("nonce", nonce)
+        .is("used_at", null)
+        .gt("created_at", new Date(Date.now() - 120_000).toISOString())
+        .select("nonce");
+      schedulerOk = !!claimedTick?.length;
+    }
+    if (!schedulerOk && !isSmoke) return json({ error: "unauthorized" }, 401);
+    const swept = await sweepStalledRuns(admin, supabaseUrl, serviceKey);
+    return json({ ok: true, watchdog: true, ...swept }, 200);
+  }
+
 
   // ══ Beta production entry ═══════════════════════════════════════════════
   // An authenticated beta user request. Routing/config only: the same job
@@ -1266,7 +1426,11 @@ serve(async (req) => {
     if (row.status !== "paused" && row.status !== "running") {
       return json({ error: `not_resumable:${row.status}` }, 409);
     }
-    await admin.from("v2_eval_runs").update({ status: "running" }).eq("run_id", resumeRunId);
+    await admin.from("v2_eval_runs").update({
+      status: "running",
+      last_beat_at: new Date().toISOString(),
+      watchdog_claimed_at: null,
+    }).eq("run_id", resumeRunId);
     const task = driveRun(
       admin,
       saved.intake,

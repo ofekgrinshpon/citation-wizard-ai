@@ -868,42 +868,72 @@ export type Database = {
       v2_eval_runs: {
         Row: {
           agent_state: Json | null
+          auto_resume_count: number
+          auto_resume_reason: string | null
           chunk_index: number
           created_at: string
           error: string | null
           finished_at: string | null
           id: string
           label: string | null
+          last_beat_at: string | null
           question: string
           result: Json | null
           run_id: string
           status: string
+          watchdog_claimed_at: string | null
         }
         Insert: {
           agent_state?: Json | null
+          auto_resume_count?: number
+          auto_resume_reason?: string | null
           chunk_index?: number
           created_at?: string
           error?: string | null
           finished_at?: string | null
           id?: string
           label?: string | null
+          last_beat_at?: string | null
           question: string
           result?: Json | null
           run_id: string
           status?: string
+          watchdog_claimed_at?: string | null
         }
         Update: {
           agent_state?: Json | null
+          auto_resume_count?: number
+          auto_resume_reason?: string | null
           chunk_index?: number
           created_at?: string
           error?: string | null
           finished_at?: string | null
           id?: string
           label?: string | null
+          last_beat_at?: string | null
           question?: string
           result?: Json | null
           run_id?: string
           status?: string
+          watchdog_claimed_at?: string | null
+        }
+        Relationships: []
+      }
+      v2_watchdog_ticks: {
+        Row: {
+          created_at: string
+          nonce: string
+          used_at: string | null
+        }
+        Insert: {
+          created_at?: string
+          nonce?: string
+          used_at?: string | null
+        }
+        Update: {
+          created_at?: string
+          nonce?: string
+          used_at?: string | null
         }
         Relationships: []
       }
@@ -1465,6 +1495,7 @@ export type Database = {
         Args: { _new_plan: string; _user_id: string }
         Returns: Json
       }
+      v2_resume_watchdog_tick: { Args: never; Returns: undefined }
     }
     Enums: {
       app_role: "admin" | "user"
