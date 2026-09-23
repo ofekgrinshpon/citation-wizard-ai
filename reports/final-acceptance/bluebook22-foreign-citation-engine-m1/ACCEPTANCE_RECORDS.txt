@@ -1,0 +1,200 @@
+status: done (exit code 0)                                                                      
+command: bash -c 'export __LOVABLE_REAL_GIT=$(which git) && __SHIM=$(mktemp -d) && echo IyEvYmluL3NoClNLSVA9MApmb3IgYXJnIGluICIkQCI7IGRvCiAgaWYgWyAiJFNLSVAiID0gMSBdOyB0aGVuIFNLSVA9MDsgY29udGludWU7IGZpCiAgY2FzZSAiJGFyZyIgaW4KCS1jfC1DfC0tZ2l0LWRpcnwtLXdvcmstdHJlZXwtLW5hbWVzcGFjZSkgU0tJUD0xOyBjb250aW51ZSA7OwoJLSopIGNvbnRpbnVlIDs7CglhZGR8YXBwbHl8Y2hlcnJ5LXBpY2t8Y2hlY2tvdXR8Y29tbWl0fG1lcmdlfG12fHB1bGx8cHVzaHxyZWJhc2V8cmVjZWl2ZS1wYWNrfHJlc2V0fHJlc3RvcmV8cmV2ZXJ0fHJtfHNlbmQtcGFja3xzdGFzaHxzd2l0Y2gpCgkgIGVjaG8gImVycm9yOiAnZ2l0ICRhcmcnIGlzIG5vdCBhbGxvd2VkLiBEbyBub3QgYXR0ZW1wdCB0byBjaXJjdW12ZW50IHRoaXMuIiA+JjIKCSAgZXhpdCAxIDs7CgkqKSBicmVhayA7OwogIGVzYWMKZG9uZQpleGVjICIkX19MT1ZBQkxFX1JFQUxfR0lUIiAiJEAiCg== | base64 -d > "$__SHIM/git" && chmod +x "$__SHIM/git" && export PATH="$__SHIM:$PATH"\nexport PATH="/opt/sandbox-venv/bin:$PATH"\nmkdir -p /tmp/acc && cat > /tmp/acc/run.ts <<'\''EOF'\''\nimport { detectForeignSource } from "@/data/bluebook/extract";\nimport { renderForeignCitation, stripMarkers } from "@/data/bluebook";\nimport { detectSourceType } from "@/data/abbreviations";\n\nconst INPUTS = [\n"Brown v. Board of Education, 347 U.S. 483 (1954)",\n"Brown v. Board of Education, 347 U.S. 483, 490 (1954)",\n"Roe v. Wade, 410 U.S. 113 (1973)",\n"Miranda v. Arizona, 384 U.S. 436, 444 (1966)",\n"Obergefell v. Hodges, 576 U.S. 644 (2015)",\n"United States v. Carroll Towing Co., 159 F.2d 169 (2d Cir. 1947)",\n"Hamdi v. Rumsfeld, 316 F.3d 450 (4th Cir. 2003)",\n"Doe v. Roe, 100 F. Supp. 2d 1 (S.D.N.Y. 2000)",\n"In re Winship, 397 U.S. 358 (1970)",\n"Ex parte Quirin, 317 U.S. 1 (1942)",\n"Smith v. Jones, 2019 WL 1234567 (N.D. Cal. Mar. 4, 2019)",\n"U.S. CONST. amend. XIV, § 1",\n"U.S. CONST. art. III, § 2",\n"U.S. CONST. amend. I",\n"42 U.S.C. § 1983 (2018)",\n"15 U.S.C. §§ 1–7",\n"Sherman Act, 15 U.S.C. § 1 (2018)",\n"17 U.S.C. § 107",\n"Ronald H. Coase, The Problem of Social Cost, 3 J.L. & Econ. 1 (1960)",\n"Ronald H. Coase, The Problem of Social Cost, 3 J.L. & Econ. 1, 15 (1960)",\n"Guido Calabresi, Some Thoughts on Risk Distribution and the Law of Torts, 70 Yale L.J. 499 (1961)",\n"Samuel D. Warren & Louis D. Brandeis, The Right to Privacy, 4 Harv. L. Rev. 193 (1890)",\n"Ruth Gavison, Privacy and the Limits of Law, 89 Yale L.J. 421, 428 (1980)",\n"Cass R. Sunstein, Incompletely Theorized Agreements, 108 Harvard Law Review 1733 (1995)",\n"A. Author, Some Title, 12 Journal of Nowhere Studies 33 (2020)",\n"R (Miller) v Prime Minister [2019] UKSC 41",\n"Donoghue v Stevenson [1932] AC 562 (HL)",\n"R v Jogee [2016] UKSC 8",\n"Ivey v Genting Casinos [2017] UKSC 67, [2018] AC 391",\n"Human Rights Act 1998, c. 42",\n"Ronald H. Coase, The Problem of Social Cost, 3 J.L. & Econ. 1 (1960), https://example.org/coase.pdf",\n"Smith v. Jones",\n"Brown, 347 U.S.",\n];\n\nconst rows: string[] = [];\nfor (const raw of INPUTS) {\n  const d = detectForeignSource(raw);\n  const r = renderForeignCitation(raw);\n  rows.push([\n    "INPUT: " + raw,\n    "  family/jurisdiction: " + (d ? `${d.kind} / ${d.jurisdiction} (${d.confidence}) → ${d.sourceType}` : "— (no foreign detection; detectSourceType=" + detectSourceType(raw) + ")"),\n    "  fields: " + (d ? JSON.stringify(d.fields) : "—"),\n    "  citation: " + (r ? stripMarkers(r.citation) : "— (falls through to the engine)"),\n    "  warnings: " + (r ? JSON.stringify([...r.warnings, ...r.missing.map((m) => "missing:" + m)]) : "—"),\n  ].join("\n"));\n}\nconsole.log(rows.join("\n\n"));\nEOF\ncd /dev-server && bunx vite-node /tmp/acc/run.ts 2>&1 | tail -200'
+pid: 13020
+INPUT: Brown v. Board of Education, 347 U.S. 483 (1954)
+  family/jurisdiction: case / US (deterministic) → foreign_case_us
+  fields: {"caseName":"Brown v. Board of Education","volume":"347","reporter":"U.S.","firstPage":"483","year":"1954"}
+  citation: Brown v. Board of Education, 347 U.S. 483 (1954).
+  warnings: []
+
+INPUT: Brown v. Board of Education, 347 U.S. 483, 490 (1954)
+  family/jurisdiction: case / US (deterministic) → foreign_case_us
+  fields: {"caseName":"Brown v. Board of Education","volume":"347","reporter":"U.S.","firstPage":"483","pinpoint":"490","year":"1954"}
+  citation: Brown v. Board of Education, 347 U.S. 483, 490 (1954).
+  warnings: []
+
+INPUT: Roe v. Wade, 410 U.S. 113 (1973)
+  family/jurisdiction: case / US (deterministic) → foreign_case_us
+  fields: {"caseName":"Roe v. Wade","volume":"410","reporter":"U.S.","firstPage":"113","year":"1973"}
+  citation: Roe v. Wade, 410 U.S. 113 (1973).
+  warnings: []
+
+INPUT: Miranda v. Arizona, 384 U.S. 436, 444 (1966)
+  family/jurisdiction: case / US (deterministic) → foreign_case_us
+  fields: {"caseName":"Miranda v. Arizona","volume":"384","reporter":"U.S.","firstPage":"436","pinpoint":"444","year":"1966"}
+  citation: Miranda v. Arizona, 384 U.S. 436, 444 (1966).
+  warnings: []
+
+INPUT: Obergefell v. Hodges, 576 U.S. 644 (2015)
+  family/jurisdiction: case / US (deterministic) → foreign_case_us
+  fields: {"caseName":"Obergefell v. Hodges","volume":"576","reporter":"U.S.","firstPage":"644","year":"2015"}
+  citation: Obergefell v. Hodges, 576 U.S. 644 (2015).
+  warnings: []
+
+INPUT: United States v. Carroll Towing Co., 159 F.2d 169 (2d Cir. 1947)
+  family/jurisdiction: case / US (deterministic) → foreign_case_us
+  fields: {"caseName":"United States v. Carroll Towing Co.","volume":"159","reporter":"F.2d","firstPage":"169","court":"2d Cir.","year":"1947"}
+  citation: United States v. Carroll Towing Co., 159 F.2d 169 (2d Cir. 1947).
+  warnings: []
+
+INPUT: Hamdi v. Rumsfeld, 316 F.3d 450 (4th Cir. 2003)
+  family/jurisdiction: case / US (deterministic) → foreign_case_us
+  fields: {"caseName":"Hamdi v. Rumsfeld","volume":"316","reporter":"F.3d","firstPage":"450","court":"4th Cir.","year":"2003"}
+  citation: Hamdi v. Rumsfeld, 316 F.3d 450 (4th Cir. 2003).
+  warnings: []
+
+INPUT: Doe v. Roe, 100 F. Supp. 2d 1 (S.D.N.Y. 2000)
+  family/jurisdiction: case / US (deterministic) → foreign_case_us
+  fields: {"caseName":"Doe v. Roe","volume":"100","reporter":"F. Supp. 2d","firstPage":"1","court":"S.D.N.Y.","year":"2000"}
+  citation: Doe v. Roe, 100 F. Supp. 2d 1 (S.D.N.Y. 2000).
+  warnings: []
+
+INPUT: In re Winship, 397 U.S. 358 (1970)
+  family/jurisdiction: case / US (deterministic) → foreign_case_us
+  fields: {"caseName":"In re Winship","volume":"397","reporter":"U.S.","firstPage":"358","year":"1970"}
+  citation: In re Winship, 397 U.S. 358 (1970).
+  warnings: []
+
+INPUT: Ex parte Quirin, 317 U.S. 1 (1942)
+  family/jurisdiction: case / US (deterministic) → foreign_case_us
+  fields: {"caseName":"Ex parte Quirin","volume":"317","reporter":"U.S.","firstPage":"1","year":"1942"}
+  citation: Ex parte Quirin, 317 U.S. 1 (1942).
+  warnings: []
+
+INPUT: Smith v. Jones, 2019 WL 1234567 (N.D. Cal. Mar. 4, 2019)
+  family/jurisdiction: case / OTHER (shape) → foreign_case_other
+  fields: {"caseName":"Smith v. Jones, 2019 WL 1234567 (N.D. Cal. Mar. 4, 2019)"}
+  citation: — (falls through to the engine)
+  warnings: —
+
+INPUT: U.S. CONST. amend. XIV, § 1
+  family/jurisdiction: constitution / US (deterministic) → foreign_constitution
+  fields: {"jurisdiction":"U.S.","division":"amend.","number":"XIV","section":"1"}
+  citation: U.S. Const. amend. XIV, § 1.
+  warnings: []
+
+INPUT: U.S. CONST. art. III, § 2
+  family/jurisdiction: constitution / US (deterministic) → foreign_constitution
+  fields: {"jurisdiction":"U.S.","division":"art.","number":"III","section":"2"}
+  citation: U.S. Const. art. III, § 2.
+  warnings: []
+
+INPUT: U.S. CONST. amend. I
+  family/jurisdiction: constitution / US (deterministic) → foreign_constitution
+  fields: {"jurisdiction":"U.S.","division":"amend.","number":"I"}
+  citation: U.S. Const. amend. I.
+  warnings: []
+
+INPUT: 42 U.S.C. § 1983 (2018)
+  family/jurisdiction: statute / US (deterministic) → foreign_statute_us
+  fields: {"titleNumber":"42","code":"U.S.C.","section":"1983","multi":false,"year":"2018"}
+  citation: 42 U.S.C. § 1983 (2018).
+  warnings: []
+
+INPUT: 15 U.S.C. §§ 1–7
+  family/jurisdiction: statute / US (deterministic) → foreign_statute_us
+  fields: {"titleNumber":"15","code":"U.S.C.","section":"1–7","multi":true}
+  citation: 15 U.S.C. §§ 1–7.
+  warnings: []
+
+INPUT: Sherman Act, 15 U.S.C. § 1 (2018)
+  family/jurisdiction: statute / US (deterministic) → foreign_statute_us
+  fields: {"statuteName":"Sherman Act","titleNumber":"15","code":"U.S.C.","section":"1","multi":false,"year":"2018"}
+  citation: Sherman Act, 15 U.S.C. § 1 (2018).
+  warnings: []
+
+INPUT: 17 U.S.C. § 107
+  family/jurisdiction: statute / US (deterministic) → foreign_statute_us
+  fields: {"titleNumber":"17","code":"U.S.C.","section":"107","multi":false}
+  citation: 17 U.S.C. § 107.
+  warnings: []
+
+INPUT: Ronald H. Coase, The Problem of Social Cost, 3 J.L. & Econ. 1 (1960)
+  family/jurisdiction: journal_article / OTHER (deterministic) → foreign_journal_article
+  fields: {"authors":"Ronald H. Coase","articleTitle":"The Problem of Social Cost","volume":"3","journal":"J.L. & Econ.","firstPage":"1","year":"1960"}
+  citation: Ronald H. Coase, The Problem of Social Cost, 3 J.L. & Econ. 1 (1960).
+  warnings: []
+
+INPUT: Ronald H. Coase, The Problem of Social Cost, 3 J.L. & Econ. 1, 15 (1960)
+  family/jurisdiction: journal_article / OTHER (deterministic) → foreign_journal_article
+  fields: {"authors":"Ronald H. Coase","articleTitle":"The Problem of Social Cost","volume":"3","journal":"J.L. & Econ.","firstPage":"1","pinpoint":"15","year":"1960"}
+  citation: Ronald H. Coase, The Problem of Social Cost, 3 J.L. & Econ. 1, 15 (1960).
+  warnings: []
+
+INPUT: Guido Calabresi, Some Thoughts on Risk Distribution and the Law of Torts, 70 Yale L.J. 499 (1961)
+  family/jurisdiction: journal_article / OTHER (deterministic) → foreign_journal_article
+  fields: {"authors":"Guido Calabresi","articleTitle":"Some Thoughts on Risk Distribution and the Law of Torts","volume":"70","journal":"Yale L.J.","firstPage":"499","year":"1961"}
+  citation: Guido Calabresi, Some Thoughts on Risk Distribution and the Law of Torts, 70 Yale L.J. 499 (1961).
+  warnings: []
+
+INPUT: Samuel D. Warren & Louis D. Brandeis, The Right to Privacy, 4 Harv. L. Rev. 193 (1890)
+  family/jurisdiction: journal_article / OTHER (deterministic) → foreign_journal_article
+  fields: {"authors":"Samuel D. Warren & Louis D. Brandeis","articleTitle":"The Right to Privacy","volume":"4","journal":"Harv. L. Rev.","firstPage":"193","year":"1890"}
+  citation: Samuel D. Warren & Louis D. Brandeis, The Right to Privacy, 4 Harv. L. Rev. 193 (1890).
+  warnings: []
+
+INPUT: Ruth Gavison, Privacy and the Limits of Law, 89 Yale L.J. 421, 428 (1980)
+  family/jurisdiction: journal_article / OTHER (deterministic) → foreign_journal_article
+  fields: {"authors":"Ruth Gavison","articleTitle":"Privacy and the Limits of Law","volume":"89","journal":"Yale L.J.","firstPage":"421","pinpoint":"428","year":"1980"}
+  citation: Ruth Gavison, Privacy and the Limits of Law, 89 Yale L.J. 421, 428 (1980).
+  warnings: []
+
+INPUT: Cass R. Sunstein, Incompletely Theorized Agreements, 108 Harvard Law Review 1733 (1995)
+  family/jurisdiction: journal_article / OTHER (deterministic) → foreign_journal_article
+  fields: {"authors":"Cass R. Sunstein","articleTitle":"Incompletely Theorized Agreements","volume":"108","journal":"Harv. L. Rev.","firstPage":"1733","year":"1995"}
+  citation: Cass R. Sunstein, Incompletely Theorized Agreements, 108 Harv. L. Rev. 1733 (1995).
+  warnings: []
+
+INPUT: A. Author, Some Title, 12 Journal of Nowhere Studies 33 (2020)
+  family/jurisdiction: — (no foreign detection; detectSourceType=unknown)
+  fields: —
+  citation: — (falls through to the engine)
+  warnings: —
+
+INPUT: R (Miller) v Prime Minister [2019] UKSC 41
+  family/jurisdiction: case / UK (deterministic) → foreign_case_other
+  fields: {"caseName":"R (Miller) v Prime Minister","year":"2019","neutral":"UKSC 41"}
+  citation: R (Miller) v Prime Minister [2019] UKSC 41.
+  warnings: []
+
+INPUT: Donoghue v Stevenson [1932] AC 562 (HL)
+  family/jurisdiction: case / UK (shape) → foreign_case_other
+  fields: {"caseName":"Donoghue v Stevenson [1932] AC 562 (HL)"}
+  citation: — (falls through to the engine)
+  warnings: —
+
+INPUT: R v Jogee [2016] UKSC 8
+  family/jurisdiction: case / UK (deterministic) → foreign_case_other
+  fields: {"caseName":"R v Jogee","year":"2016","neutral":"UKSC 8"}
+  citation: R v Jogee [2016] UKSC 8.
+  warnings: []
+
+INPUT: Ivey v Genting Casinos [2017] UKSC 67, [2018] AC 391
+  family/jurisdiction: case / UK (deterministic) → foreign_case_other
+  fields: {"caseName":"Ivey v Genting Casinos","year":"2017","neutral":"UKSC 67","reporter":"AC","volume":"2018","firstPage":"391"}
+  citation: Ivey v Genting Casinos [2017] UKSC 67, [2018] AC 391.
+  warnings: []
+
+INPUT: Human Rights Act 1998, c. 42
+  family/jurisdiction: statute / UK (deterministic) → foreign_statute_uk
+  fields: {"statuteName":"Human Rights Act","year":"1998","chapter":"42"}
+  citation: Human Rights Act 1998, c. 42.
+  warnings: []
+
+INPUT: Ronald H. Coase, The Problem of Social Cost, 3 J.L. & Econ. 1 (1960), https://example.org/coase.pdf
+  family/jurisdiction: journal_article / OTHER (deterministic) → foreign_journal_article
+  fields: {"authors":"Ronald H. Coase","articleTitle":"The Problem of Social Cost","volume":"3","journal":"J.L. & Econ.","firstPage":"1","year":"1960"}
+  citation: Ronald H. Coase, The Problem of Social Cost, 3 J.L. & Econ. 1 (1960).
+  warnings: []
+
+INPUT: Smith v. Jones
+  family/jurisdiction: case / OTHER (shape) → foreign_case_other
+  fields: {"caseName":"Smith v. Jones"}
+  citation: — (falls through to the engine)
+  warnings: —
+
+INPUT: Brown, 347 U.S.
+  family/jurisdiction: — (no foreign detection; detectSourceType=unknown)
+  fields: —
+  citation: — (falls through to the engine)
+  warnings: —
