@@ -163,6 +163,20 @@ describe("C7 — at most one reflection per run", () => {
   });
 });
 
+describe("C8 — the reflection can never cost the run its answer", () => {
+  it("keeps the pre-check memo when the resubmission comes back empty", () => {
+    const loop = readFileSync(
+      "supabase/functions/legal-research-v2/agent/researchAgent.ts",
+      "utf8",
+    );
+    expect(loop).toMatch(
+      /if \(!acceptedMemo\?\.claims\.length && coverageBefore\.claims\.length\) \{\s*acceptedMemo = coverageBefore;/,
+    );
+    expect(loop).toMatch(/memo_coverage_reverted_to_pre_check \+= 1/);
+    expect(emptyCoverageCheckStats().memo_coverage_reverted_to_pre_check).toBe(0);
+  });
+});
+
 describe("no classifier and no quota were introduced", () => {
   it("the coverage module never inspects the question text for keywords", () => {
     const mod = readFileSync(
