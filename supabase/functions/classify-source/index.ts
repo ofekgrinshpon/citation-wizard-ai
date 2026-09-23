@@ -34,6 +34,15 @@ const ALLOWED_TYPES = [
   "tv_show",
   "radio",
   "foreign",
+  "foreign_case_us",
+  "foreign_case_other",
+  "foreign_constitution",
+  "foreign_statute_us",
+  "foreign_statute_uk",
+  "foreign_book",
+  "foreign_journal_article",
+  "foreign_book_chapter",
+  "foreign_internet",
   "other",
   "unknown",
 ] as const;
@@ -66,7 +75,16 @@ const SYSTEM_PROMPT = `אתה מסווג מקורות משפטיים ישראל�
 - encyclopedia_entry: ערך באנציקלופדיה/מילון
 - academic_work: עבודת גמר/דוקטורט/תזה
 - correspondence / interview / lecture / press_release / film / tv_show / radio
-- foreign: מקור לועזי לפי Bluebook
+- foreign_case_us: פסיקה אמריקנית
+- foreign_case_other: פסיקה לועזית אחרת (אנגליה וכו')
+- foreign_constitution: חוקה לועזית
+- foreign_statute_us: חוק אמריקני (U.S.C.)
+- foreign_statute_uk: חוק אנגלי
+- foreign_book: ספר לועזי
+- foreign_journal_article: מאמר בכתב עת לועזי
+- foreign_book_chapter: פרק בספר לועזי
+- foreign_internet: מקור מרשתת לועזי
+- foreign: מקור לועזי שלא ניתן לסווג לאחת המשפחות לעיל (ברירת מחדל אחרונה בלבד)
 - other: דברי כנסת וכו'
 - unknown: אם באמת אי אפשר להחליט
 
@@ -85,6 +103,8 @@ const SYSTEM_PROMPT = `אתה מסווג מקורות משפטיים ישראל�
   * "חוק החוזים", "חוק החוזים (חלק כללי)", "פקודת הנזיקין" → primary_legislation.
   * "תקנות סדר הדין האזרחי" → secondary_legislation.
 - אם יש "חוק", "פקודת", "תקנות", "הצעת חוק", "חוק-יסוד" בתחילת הקלט → סוג החקיקה המתאים.
+- מקור לועזי: תמיד העדף משפחה ספציפית (פסיקה/חקיקה/חוקה/ספר/מאמר/פרק/אינטרנט). "foreign" הוא ברירת מחדל אחרונה בלבד.
+- מקור מסורתי שנמצא באינטרנט (למשל PDF של מאמר מ-Yale Law Journal) אינו מקור אינטרנט אלא מאמר.
 - אם באמת לא בטוח, בחר unknown עם confidence נמוך.`;
 
 
