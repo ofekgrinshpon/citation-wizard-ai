@@ -304,10 +304,17 @@ interface ParsedParen {
 
 /** Parse "(Jane Doe ed., 2d ed. 1994)" style parentheticals. Unknown parts → null. */
 function parseSecondaryParen(inner: string): ParsedParen | null {
-  const m = inner.trim().match(new RegExp(String.raw`^(?:(?<rest>.*?)[,\s]\s*)?(?:(?<ed>${ORDINAL_ED})\s+)?(?<year>(?:1[5-9]|20)\d{2})$`));
-  if (!m?.groups) return null;
-  const out: ParsedParen = { year: m.groups.year };
-  if (m.groups.ed) out.edition = m.groups.ed.replace(/\s+ed\.$/, "");
+  let t = inner.trim();
+  const y = t.match(/(?:^|[\s,])((?:1[5-9]|20)\d{2})$/);
+  if (!y) return null;
+  const out: ParsedParen = { year: y[1] };
+  t = t.slice(0, t.length - y[1].length).trim();
+  const ed = t.match(new RegExp(String.raw`(?:^|,\s*)(${ORDINAL_ED})$`));
+  if (ed) {
+    out.edition = ed[1].replace(/\s+ed\.$/, "");
+    t = t.slice(0, t.length - ed[0].length).trim();
+  }
+  const m = { groups: { rest: t } };
   const rest = (m.groups.rest || "").trim().replace(/,$/, "").trim();
   if (rest) {
     for (const part of rest.split(/,\s*(?=[A-Z])/)) {

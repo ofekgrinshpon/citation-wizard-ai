@@ -69,7 +69,7 @@ export function renderUsCase(f: ForeignCaseFields): RenderResult {
     if (f.caseName?.trim() && dbMissing.length === 0) {
       const star = f.starPinpoint ?? (f.pinpoint ? f.pinpoint : undefined);
       const core = `No. ${f.docket}, ${f.databaseIdentifier}${star ? `, at *${star}` : ""}`;
-      return finish(`${it(name)}, ${core} (${f.court} ${f.decisionDate})`, warnings, missing);
+      return finish(`${it(name)}, ${core} (${f.court} ${f.decisionDate})`, warnings, []);
     }
     missing.push(...dbMissing);
   }
