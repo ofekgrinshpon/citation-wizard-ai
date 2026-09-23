@@ -82,7 +82,7 @@ describe("Bluebook 22 — deterministic golden rendering (M1)", () => {
       year: "1994",
       pinpoint: "100",
     });
-    expect(plain(r.citation)).toBe("H.L.A. Hart, The Concept of Law 100 (2d ed., 1994).");
+    expect(plain(r.citation)).toBe("H.L.A. Hart, The Concept of Law 100 (2d ed. 1994).");
   });
 
   it("book chapter stays distinct from an article", () => {
