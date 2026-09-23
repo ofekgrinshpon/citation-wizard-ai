@@ -190,9 +190,9 @@ export function UniformCitationPanel({ footnotes }: Props) {
   };
 
   const copyAll = async () => {
-    const text = cells.map((c) => `[${c.id}] ${finalTextOf(c)}`).join("\n\n");
-    if (!text.trim()) return;
-    await copyPlainText(text);
+    const lines = cells.map((c) => `[${c.id}] ${finalTextOf(c)}`);
+    if (!lines.join("").trim()) return;
+    await copyCitationsRich(lines);
     toast.success("כל ההערות הועתקו ללוח");
   };
 
