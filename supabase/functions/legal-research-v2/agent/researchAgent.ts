@@ -56,6 +56,14 @@ import {
 } from "../tools/acquisitionOrchestrator.ts";
 
 import { AGENT_SYSTEM_PROMPT, buildAgentUserMessage, MEMO_TOOL } from "./prompt.ts";
+import {
+  buildCoverageReflection,
+  type CoverageCheckStats,
+  emptyCoverageCheckStats,
+  noteCoverageOutcome,
+  shouldRunCoverageCheck,
+  unusedReadSources,
+} from "./coverageCheck.ts";
 import { StopPolicy, type StopPolicyJson } from "./stopPolicy.ts";
 import { CommitTracker, obligationsSatisfied } from "./commitPolicy.ts";
 import {
@@ -207,7 +215,7 @@ export interface AgentTraceEntry {
 }
 
 
-export interface AgentContextStats extends AcquisitionStats, SameWorkRecoveryStats {
+export interface AgentContextStats extends AcquisitionStats, SameWorkRecoveryStats, CoverageCheckStats {
   largest_tool_response_chars: number;
   evidence_context_chars_last_turn: number;
   repeated_tool_calls_prevented: number;
@@ -253,6 +261,7 @@ export function newAgentStats(): AgentContextStats {
   return {
     ...emptyAcquisitionStats(),
     ...emptySameWorkRecoveryStats(),
+    ...emptyCoverageCheckStats(),
     largest_tool_response_chars: 0,
     evidence_context_chars_last_turn: 0,
     repeated_tool_calls_prevented: 0,
@@ -468,6 +477,12 @@ export async function runResearchAgent(opts: {
   let memo: ResearchMemo | null = null;
   let error: string | undefined;
   let paused = false;
+  /** Pre-memo coverage reflection state (agent_owned_coverage_check_v1). */
+  let coverageBefore: ResearchMemo | null = null;
+  let coverageReadIds = new Set<string>();
+  let coverageToolCallsAtCheck = 0;
+  const researchToolCallsMade = () =>
+    policy.totalSearchCalls + policy.fetch_calls + policy.lookup_calls + policy.raw_search_calls;
   let stepsThisChunk = 0;
 
   let pendingDirective: string | undefined;
@@ -644,6 +659,52 @@ export async function runResearchAgent(opts: {
             });
             continue;
           }
+        }
+        // One bounded pre-memo coverage reflection per run
+        // (agent_owned_coverage_check_v1). No quota, no forced source use:
+        // the agent alone decides whether a requested dimension is missing.
+        if (
+          shouldRunCoverageCheck({
+            memo: candidateMemo,
+            readable: opts.store.readable(),
+            alreadyUsed: stats.memo_coverage_check_triggered > 0,
+          })
+        ) {
+          const readable = opts.store.readable();
+          const unused = unusedReadSources(candidateMemo, readable);
+          stats.memo_coverage_check_triggered += 1;
+          stats.memo_coverage_unused_read_sources = unused.length;
+          coverageBefore = candidateMemo;
+          coverageReadIds = new Set(readable.map((s) => s.source_id));
+          coverageToolCallsAtCheck = researchToolCallsMade();
+          trace.push({
+            step: policy.steps,
+            tool: "memo_coverage_check",
+            input: {},
+            summary: `unused_read_sources=${unused.length}`,
+          });
+          messages.push({
+            role: "tool",
+            tool_call_id: call.id,
+            content: JSON.stringify({
+              memo_not_accepted_yet: true,
+              coverage_reflection: buildCoverageReflection({
+                question: opts.intake.question,
+                researchBudgetLeft: !policy.researchExhausted(),
+              }),
+            }),
+            digest: JSON.stringify({ tool: "memo_coverage_check" }),
+          });
+          continue;
+        }
+        if (coverageBefore) {
+          noteCoverageOutcome(stats, {
+            before: coverageBefore,
+            after: candidateMemo,
+            readAtCheck: coverageReadIds,
+            researchCallsAfterCheck: researchToolCallsMade() - coverageToolCallsAtCheck,
+          });
+          coverageBefore = null;
         }
         memo = candidateMemo;
         trace.push({

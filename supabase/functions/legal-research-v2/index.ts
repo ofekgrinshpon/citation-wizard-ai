@@ -884,6 +884,13 @@ async function runPipeline(
     authority_recovery_success: agent.stats.authority_recovery_success,
     authority_recovery: agent.stats.authority_recovery_records,
     unsafe_urls_blocked: agent.stats.unsafe_urls_blocked,
+    /** Pre-memo coverage reflection (agent_owned_coverage_check_v1). Diagnostic only. */
+    memo_coverage_check_triggered: agent.stats.memo_coverage_check_triggered,
+    memo_coverage_unused_read_sources: agent.stats.memo_coverage_unused_read_sources,
+    memo_coverage_used_existing_read_source: agent.stats.memo_coverage_used_existing_read_source,
+    memo_coverage_continued_research: agent.stats.memo_coverage_continued_research,
+    memo_coverage_claims_added: agent.stats.memo_coverage_claims_added,
+    memo_coverage_gap_left_explicit: agent.stats.memo_coverage_gap_left_explicit,
     /** Per-run egress state (v2_per_run_egress_reset_v1). */
     egress: { ...egressTelemetry() },
   };

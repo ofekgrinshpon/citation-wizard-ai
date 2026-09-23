@@ -764,6 +764,13 @@ export interface V2Telemetry {
   same_work_agent_hint_used_for_query?: number;
   /** Invariant: always 0. */
   same_work_agent_hint_used_for_equivalence?: number;
+  /** Pre-memo coverage reflection (agent_owned_coverage_check_v1). Diagnostic only. */
+  memo_coverage_check_triggered?: number;
+  memo_coverage_unused_read_sources?: number;
+  memo_coverage_used_existing_read_source?: number;
+  memo_coverage_continued_research?: number;
+  memo_coverage_claims_added?: number;
+  memo_coverage_gap_left_explicit?: number;
   authority_recovery_candidates_attached?: number;
   authority_recovery_success?: number;
   authority_recovery?: Array<Record<string, unknown>>;
