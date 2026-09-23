@@ -89,6 +89,22 @@ export function isWeakBasis(b: MetadataBasis | undefined): boolean {
   return !!b && WEAK_BASES.includes(b);
 }
 
+/**
+ * Bases that may CORROBORATE an author but never ORIGINATE one
+ * (pdf_author_requires_stronger_basis_v1).
+ *
+ * Embedded PDF document-info `Author` is whoever's word processor produced the
+ * file — a research assistant, a journal typesetter, a previous paper in the
+ * same template. Measured in Acceptance #4 it attributed a Weisman/Hamdani/
+ * Kastiel article to a third party and a Levi article to an unrelated name.
+ * A missing author is acceptable; a confidently wrong one is not.
+ */
+const AUTHOR_FORBIDDEN_SOLE_BASES: MetadataBasis[] = ["pdf_metadata"];
+
+export function canOriginateAuthor(b: MetadataBasis | undefined): boolean {
+  return !!b && !AUTHOR_FORBIDDEN_SOLE_BASES.includes(b);
+}
+
 const clean = (v: unknown): string | undefined => {
   const s = decodeHtmlEntities(String(v ?? "")).replace(/\s+/g, " ").trim();
   return s ? s.slice(0, 300) : undefined;
@@ -136,11 +152,39 @@ export function isGarbageMetadataValue(v: string | undefined): boolean {
   return false;
 }
 
+/**
+ * Narrow detector for machine-generated / internal document labels such as
+ * `fs3d rep bv 449` (Acceptance #4, L7). Deliberately conservative: it fires
+ * only on an all-lowercase, ASCII, short token run that carries an opaque code
+ * token AND either a bare trailing number or an internal-document word. Real
+ * titles ("Law and Finance", "Brown v. Board of Education", any Hebrew title)
+ * carry capitals or letters outside a–z and never reach the token tests.
+ */
+const DOC_LABEL_WORD = /^(rep|rept|rev|draft|final|copy|ver|vers|version|doc|docu|tmp|temp|out|att|encl|exh|appx)$/;
+const OPAQUE_TOKEN = /^(?=[a-z0-9]*\d)(?=[a-z0-9]*[a-z])[a-z0-9]{2,6}$|^[bcdfghjklmnpqrstvwxyz]{2,3}$/;
+
+export function looksLikeMachineDocumentLabel(v: string): boolean {
+  const s = v.trim();
+  if (!s) return false;
+  // Any capital letter or non-ASCII letter means a human wrote a title.
+  if (/[A-Z]/.test(s)) return false;
+  if (/[^\x00-\x7F]/.test(s)) return false;
+  const tokens = s.split(/\s+/).filter(Boolean);
+  if (tokens.length < 3 || tokens.length > 6) return false;
+  if (!tokens.every((t) => /^[a-z0-9.\-]+$/.test(t))) return false;
+  const opaque = tokens.filter((t) => OPAQUE_TOKEN.test(t)).length;
+  const docWord = tokens.some((t) => DOC_LABEL_WORD.test(t));
+  const trailingNumber = /^\d{2,}$/.test(tokens[tokens.length - 1]);
+  if (!opaque) return false;
+  return docWord || trailingNumber;
+}
+
 /** A title must look like a title, not like a sentence lifted from the body. */
 export function isGarbageTitleValue(v: string | undefined): boolean {
   if (isGarbageMetadataValue(v)) return true;
   const s = v!.trim();
   if (/^https?:\/\//i.test(s)) return true;
+  if (looksLikeMachineDocumentLabel(s)) return true;
   // Sentence-length running prose masquerading as a title.
   const words = s.split(/\s+/).length;
   if (words > 25) return true;
@@ -386,7 +430,14 @@ export function mergeBibliographic(
     for (const b of m.metadata_basis ?? []) if (!basis.includes(b)) basis.push(b);
     for (const d of m.dropped_fields ?? []) if (!dropped.includes(d)) dropped.push(d);
     take("title", m, m.title, (v) => !isGarbageTitleValue(v));
-    take("authors", m, m.authors, (v) => !isGarbageAuthorValue(v));
+    // Authors: an embedded-PDF basis may corroborate but never originate.
+    if (m.authors?.length && out.authors === undefined && !canOriginateAuthor(basisFor(m, "authors"))) {
+      if (!dropped.includes("authors:pdf_metadata_not_sole_basis")) {
+        dropped.push("authors:pdf_metadata_not_sole_basis");
+      }
+    } else {
+      take("authors", m, m.authors, (v) => !isGarbageAuthorValue(v));
+    }
     take("journal", m, m.journal, (v) => !isGarbageMetadataValue(v));
     take("volume", m, m.volume);
     take("issue", m, m.issue);
@@ -465,6 +516,16 @@ export function sanitizeBibliographic(
     if (kept.length !== out.authors.length) dropped.push("authors:failed_quality");
     if (kept.length) out.authors = kept;
     else delete out.authors;
+  }
+  // Last line of defence: metadata that never went through mergeBibliographic
+  // (a bare PDF-info candidate) must not render an author either.
+  if (out.authors?.length) {
+    const authorBasis = out.field_basis?.authors ??
+      (out.metadata_basis?.length === 1 ? out.metadata_basis[0] : undefined);
+    if (authorBasis && !canOriginateAuthor(authorBasis)) {
+      delete out.authors;
+      dropped.push("authors:pdf_metadata_not_sole_basis");
+    }
   }
   if (kindForbidsPersonalAuthor(kind) && out.authors?.length) {
     delete out.authors;
