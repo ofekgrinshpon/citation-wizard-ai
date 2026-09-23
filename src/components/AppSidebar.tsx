@@ -5,7 +5,8 @@ import { useProjects } from "@/hooks/useProjects";
 import { useCredits } from "@/hooks/useCredits";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Pencil, Infinity as InfinityIcon } from "lucide-react";
+import { Pencil, Infinity as InfinityIcon, HelpCircle } from "lucide-react";
+import { UserGuideModal } from "@/components/guide/UserGuideModal";
 
 export function AppSidebar() {
   const { user, isAdmin } = useAuth();
@@ -17,6 +18,8 @@ export function AppSidebar() {
   const [displayName, setDisplayName] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editName, setEditName] = useState("");
+  const [guideOpen, setGuideOpen] = useState(false);
+
 
   const initial = useMemo(() => {
     const source = (displayName || user?.email || "").trim();
@@ -208,6 +211,16 @@ export function AppSidebar() {
         <span>📚</span>
         <span>מקורות מאומתים</span>
       </button>
+
+      <button
+        onClick={() => setGuideOpen(true)}
+        className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm text-primary hover:bg-muted transition-colors text-right w-full"
+      >
+        <HelpCircle size={14} />
+        <span>איך זה עובד?</span>
+      </button>
+
+      <UserGuideModal open={guideOpen} onOpenChange={setGuideOpen} />
 
       {isAdmin && (
         <>
