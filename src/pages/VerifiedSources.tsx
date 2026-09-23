@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useSubscription } from "@/hooks/useSubscription";
-import { copyPlainText } from "@/lib/clipboard";
+import { copyCitationRich } from "@/lib/citationRichText";
 import { extractCitationFromResponse } from "@/lib/citationUtils";
 import { RenderCitation } from "@/components/admin/RenderCitation";
 import { toast } from "sonner";
@@ -89,7 +89,7 @@ export default function VerifiedSources() {
   };
 
   const handleCopy = async (citation: string) => {
-    await copyPlainText(cleanCitation(citation));
+    await copyCitationRich(cleanCitation(citation));
     toast.success("הציטוט הועתק");
   };
 
