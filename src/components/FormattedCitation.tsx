@@ -125,10 +125,11 @@ function parseInlineMarkers(
       continue;
     }
 
-    const marker = nextType === "bold" ? "**" : "##";
+    const marker = nextType === "bold" ? "**" : nextType === "italic" ? "##" : "^^";
     const closeIdx = remaining.indexOf(marker, nextIdx + 2);
     if (closeIdx === -1) {
-      parts.push(<span key={key++}>{remaining.slice(nextIdx)}</span>);
+      // Unterminated marker: never leak the raw token to the user.
+      parts.push(<span key={key++}>{remaining.slice(nextIdx).split(marker).join("")}</span>);
       break;
     }
     const inner = remaining.slice(nextIdx + 2, closeIdx);
@@ -137,6 +138,12 @@ function parseInlineMarkers(
         <strong key={key++} className="font-bold">
           {inner}
         </strong>
+      );
+    } else if (nextType === "smallcaps") {
+      parts.push(
+        <span key={key++} style={{ fontVariant: "small-caps", fontVariantCaps: "small-caps" }}>
+          {inner}
+        </span>
       );
     } else {
       parts.push(
