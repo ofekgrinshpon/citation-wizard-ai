@@ -48,6 +48,7 @@ export function emptyCoverageCheckStats(): CoverageCheckStats {
     memo_coverage_continued_research: 0,
     memo_coverage_claims_added: 0,
     memo_coverage_gap_left_explicit: 0,
+    memo_coverage_reverted_to_pre_check: 0,
   };
 }
 

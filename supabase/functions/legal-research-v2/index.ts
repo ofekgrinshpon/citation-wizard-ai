@@ -891,6 +891,7 @@ async function runPipeline(
     memo_coverage_continued_research: agent.stats.memo_coverage_continued_research,
     memo_coverage_claims_added: agent.stats.memo_coverage_claims_added,
     memo_coverage_gap_left_explicit: agent.stats.memo_coverage_gap_left_explicit,
+    memo_coverage_reverted_to_pre_check: agent.stats.memo_coverage_reverted_to_pre_check,
     /** Per-run egress state (v2_per_run_egress_reset_v1). */
     egress: { ...egressTelemetry() },
   };

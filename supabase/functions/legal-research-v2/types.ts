@@ -771,6 +771,7 @@ export interface V2Telemetry {
   memo_coverage_continued_research?: number;
   memo_coverage_claims_added?: number;
   memo_coverage_gap_left_explicit?: number;
+  memo_coverage_reverted_to_pre_check?: number;
   authority_recovery_candidates_attached?: number;
   authority_recovery_success?: number;
   authority_recovery?: Array<Record<string, unknown>>;
