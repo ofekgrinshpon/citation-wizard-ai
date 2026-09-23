@@ -115,32 +115,78 @@ export function normalizeCourt(raw: string | undefined): string | undefined {
  * Journal abbreviations — conservative whitelist. Unknown titles are preserved
  * exactly as supplied (never guessed).
  */
-export const JOURNAL_ABBREVIATIONS: Record<string, string> = {
-  "yale law journal": "Yale L.J.",
-  "harvard law review": "Harv. L. Rev.",
-  "columbia law review": "Colum. L. Rev.",
-  "stanford law review": "Stan. L. Rev.",
-  "university of chicago law review": "U. Chi. L. Rev.",
-  "michigan law review": "Mich. L. Rev.",
-  "california law review": "Calif. L. Rev.",
-  "new york university law review": "N.Y.U. L. Rev.",
-  "virginia law review": "Va. L. Rev.",
-  "cornell law review": "Cornell L. Rev.",
-  "georgetown law journal": "Geo. L.J.",
-  "northwestern university law review": "Nw. U. L. Rev.",
-  "university of pennsylvania law review": "U. Pa. L. Rev.",
-  "duke law journal": "Duke L.J.",
-  "texas law review": "Tex. L. Rev.",
-  "journal of law and economics": "J.L. & Econ.",
-  "journal of legal studies": "J. Legal Stud.",
-  "journal of political economy": "J. Pol. Econ.",
-  "american journal of international law": "Am. J. Int'l L.",
-  "law and contemporary problems": "Law & Contemp. Probs.",
-  "modern law review": "Mod. L. Rev.",
-  "cambridge law journal": "Cambridge L.J.",
-  "oxford journal of legal studies": "Oxford J. Legal Stud.",
-  "law quarterly review": "L.Q. Rev.",
+type JurisdictionCode = "US" | "UK" | "OTHER";
+
+/**
+ * Journal metadata — conservative whitelist of high-confidence mappings.
+ * Each entry: full title (lower-cased) → [abbreviation, jurisdiction of the
+ * publishing institution]. Jurisdiction is display metadata only; it never
+ * changes citation substance. Unknown titles are preserved exactly as supplied.
+ */
+const JOURNALS: Record<string, [string, JurisdictionCode]> = {
+  // — United States (M1) —
+  "yale law journal": ["Yale L.J.", "US"],
+  "harvard law review": ["Harv. L. Rev.", "US"],
+  "columbia law review": ["Colum. L. Rev.", "US"],
+  "stanford law review": ["Stan. L. Rev.", "US"],
+  "university of chicago law review": ["U. Chi. L. Rev.", "US"],
+  "michigan law review": ["Mich. L. Rev.", "US"],
+  "california law review": ["Calif. L. Rev.", "US"],
+  "new york university law review": ["N.Y.U. L. Rev.", "US"],
+  "virginia law review": ["Va. L. Rev.", "US"],
+  "cornell law review": ["Cornell L. Rev.", "US"],
+  "georgetown law journal": ["Geo. L.J.", "US"],
+  "northwestern university law review": ["Nw. U. L. Rev.", "US"],
+  "university of pennsylvania law review": ["U. Pa. L. Rev.", "US"],
+  "duke law journal": ["Duke L.J.", "US"],
+  "texas law review": ["Tex. L. Rev.", "US"],
+  "journal of law and economics": ["J.L. & Econ.", "US"],
+  "journal of legal studies": ["J. Legal Stud.", "US"],
+  "journal of political economy": ["J. Pol. Econ.", "US"],
+  "american journal of international law": ["Am. J. Int'l L.", "US"],
+  "law and contemporary problems": ["Law & Contemp. Probs.", "US"],
+  // — United States (M2A) —
+  "ucla law review": ["UCLA L. Rev.", "US"],
+  "vanderbilt law review": ["Vand. L. Rev.", "US"],
+  "minnesota law review": ["Minn. L. Rev.", "US"],
+  "iowa law review": ["Iowa L. Rev.", "US"],
+  "fordham law review": ["Fordham L. Rev.", "US"],
+  "notre dame law review": ["Notre Dame L. Rev.", "US"],
+  "boston university law review": ["B.U. L. Rev.", "US"],
+  "william and mary law review": ["Wm. & Mary L. Rev.", "US"],
+  "emory law journal": ["Emory L.J.", "US"],
+  "supreme court review": ["Sup. Ct. Rev.", "US"],
+  "harvard international law journal": ["Harv. Int'l L.J.", "US"],
+  "yale journal of international law": ["Yale J. Int'l L.", "US"],
+  "harvard journal of law and public policy": ["Harv. J.L. & Pub. Pol'y", "US"],
+  // — United Kingdom —
+  "modern law review": ["Mod. L. Rev.", "UK"],
+  "cambridge law journal": ["Cambridge L.J.", "UK"],
+  "oxford journal of legal studies": ["Oxford J. Legal Stud.", "UK"],
+  "law quarterly review": ["L.Q. Rev.", "UK"],
+  "international and comparative law quarterly": ["Int'l & Compar. L.Q.", "UK"],
+  "legal studies": ["Legal Stud.", "UK"],
 };
+
+export const JOURNAL_ABBREVIATIONS: Record<string, string> = Object.fromEntries(
+  Object.entries(JOURNALS).map(([k, [abbr]]) => [k, abbr]),
+);
+
+const ABBREV_KEY = (s: string) => s.toLowerCase().replace(/[^a-z0-9&']/g, "");
+const JURISDICTION_BY_ABBREV: Record<string, JurisdictionCode> = Object.fromEntries(
+  Object.values(JOURNALS).map(([abbr, j]) => [ABBREV_KEY(abbr), j]),
+);
+
+/**
+ * Jurisdiction of a KNOWN journal (by full title or canonical abbreviation).
+ * Unknown journals → "OTHER". Never inferred from author or URL.
+ */
+export function journalJurisdiction(raw: string | undefined): JurisdictionCode {
+  if (!raw) return "OTHER";
+  const t = raw.trim().toLowerCase().replace(/\s+/g, " ");
+  if (JOURNALS[t]) return JOURNALS[t][1];
+  return JURISDICTION_BY_ABBREV[ABBREV_KEY(raw)] ?? "OTHER";
+}
 
 /** Already-abbreviated forms we accept unchanged. */
 const ABBREV_SHAPE = /(?:\bL\.\s?(?:Rev|J)\b|\bJ\.\b|\bRev\.\b|\bQ\.\b|&)/;
@@ -157,8 +203,15 @@ export function normalizeJournalName(raw: string | undefined): string | undefine
 export function isKnownJournal(raw: string | undefined): boolean {
   if (!raw) return false;
   const t = raw.trim().toLowerCase().replace(/\s+/g, " ");
-  return !!JOURNAL_ABBREVIATIONS[t] || ABBREV_SHAPE.test(raw);
+  return !!JOURNAL_ABBREVIATIONS[t] || !!JURISDICTION_BY_ABBREV[ABBREV_KEY(raw)] || ABBREV_SHAPE.test(raw);
 }
+
+/** Traditional UK Law Reports series supported deterministically (M2A). */
+export const UK_REPORT_SERIES = ["AC", "QB", "KB", "Ch", "Fam", "WLR", "All ER"] as const;
+/** Series that carry a volume number inside the year, e.g. "[1990] 1 WLR 1". */
+export const UK_VOLUMED_SERIES = new Set<string>(["WLR", "All ER"]);
+/** Court parentheticals accepted after a traditional report citation. */
+export const UK_REPORT_COURTS = ["HL", "CA", "PC", "UKSC", "QB", "KB", "Ch", "Fam", "Comm", "Div Ct", "Civ Div", "Crim Div"] as const;
 
 /** UK neutral-citation court codes supported in Milestone 1. */
 export const UK_NEUTRAL_COURTS = ["UKSC", "UKHL", "UKPC", "EWCA", "EWHC"] as const;

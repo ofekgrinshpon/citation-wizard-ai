@@ -1,0 +1,335 @@
+#1 [DB]
+  input:        Hernandez v. Office of the Comm'r of Baseball, No. 18-cv-9035, 2019 WL 2537938, at *4 (S.D.N.Y. June 20, 2019)
+  family:       case
+  jurisdiction: US
+  confidence:   deterministic
+  fields:       {"caseName":"Hernandez v. Office of the Comm'r of Baseball","docket":"18-cv-9035","databaseIdentifier":"2019 WL 2537938","starPinpoint":"4","court":"S.D.N.Y.","decisionDate":"June 20, 2019","year":"2019"}
+  deterministic: yes
+  final:        Hernandez v. Office of the Comm'r of Baseball, No. 18-cv-9035, 2019 WL 2537938, at *4 (S.D.N.Y. June 20, 2019).
+  marked:       ##Hernandez v. Office of the Comm'r of Baseball##, No. 18-cv-9035, 2019 WL 2537938, at *4 (S.D.N.Y. June 20, 2019).
+  warnings:     -
+  fallback:     -
+
+#2 [DB]
+  input:        Faulkner v. Beer, No. 05-cv-2285, 2006 WL 2988054, at *2 (S.D.N.Y. Oct. 18, 2006)
+  family:       case
+  jurisdiction: US
+  confidence:   deterministic
+  fields:       {"caseName":"Faulkner v. Beer","docket":"05-cv-2285","databaseIdentifier":"2006 WL 2988054","starPinpoint":"2","court":"S.D.N.Y.","decisionDate":"Oct. 18, 2006","year":"2006"}
+  deterministic: yes
+  final:        Faulkner v. Beer, No. 05-cv-2285, 2006 WL 2988054, at *2 (S.D.N.Y. Oct. 18, 2006).
+  marked:       ##Faulkner v. Beer##, No. 05-cv-2285, 2006 WL 2988054, at *2 (S.D.N.Y. Oct. 18, 2006).
+  warnings:     -
+  fallback:     -
+
+#3 [DB]
+  input:        United States v. Johnson, No. 18-50175, 2019 U.S. App. LEXIS 23640, at *3 (9th Cir. Aug. 7, 2019)
+  family:       case
+  jurisdiction: US
+  confidence:   deterministic
+  fields:       {"caseName":"United States v. Johnson","docket":"18-50175","databaseIdentifier":"2019 U.S. App. LEXIS 23640","starPinpoint":"3","court":"9th Cir.","decisionDate":"Aug. 7, 2019","year":"2019"}
+  deterministic: yes
+  final:        United States v. Johnson, No. 18-50175, 2019 U.S. App. LEXIS 23640, at *3 (9th Cir. Aug. 7, 2019).
+  marked:       ##United States v. Johnson##, No. 18-50175, 2019 U.S. App. LEXIS 23640, at *3 (9th Cir. Aug. 7, 2019).
+  warnings:     -
+  fallback:     -
+
+#4 [DB]
+  input:        Ali v. City of New York, No. 11-cv-5469, 2012 U.S. Dist. LEXIS 124425, at *8 (S.D.N.Y. Aug. 30, 2012)
+  family:       case
+  jurisdiction: US
+  confidence:   deterministic
+  fields:       {"caseName":"Ali v. City of New York","docket":"11-cv-5469","databaseIdentifier":"2012 U.S. Dist. LEXIS 124425","starPinpoint":"8","court":"S.D.N.Y.","decisionDate":"Aug. 30, 2012","year":"2012"}
+  deterministic: yes
+  final:        Ali v. City of New York, No. 11-cv-5469, 2012 U.S. Dist. LEXIS 124425, at *8 (S.D.N.Y. Aug. 30, 2012).
+  marked:       ##Ali v. City of New York##, No. 11-cv-5469, 2012 U.S. Dist. LEXIS 124425, at *8 (S.D.N.Y. Aug. 30, 2012).
+  warnings:     -
+  fallback:     -
+
+#5 [DB]
+  input:        Lopez v. Garland, No. 20-1234, 2022 WL 1112233 (2d Cir. Apr. 14, 2022)
+  family:       case
+  jurisdiction: US
+  confidence:   deterministic
+  fields:       {"caseName":"Lopez v. Garland","docket":"20-1234","databaseIdentifier":"2022 WL 1112233","court":"2d Cir.","decisionDate":"Apr. 14, 2022","year":"2022"}
+  deterministic: yes
+  final:        Lopez v. Garland, No. 20-1234, 2022 WL 1112233 (2d Cir. Apr. 14, 2022).
+  marked:       ##Lopez v. Garland##, No. 20-1234, 2022 WL 1112233 (2d Cir. Apr. 14, 2022).
+  warnings:     -
+  fallback:     -
+
+#6 [UK]
+  input:        Donoghue v Stevenson [1932] AC 562 (HL)
+  family:       case
+  jurisdiction: UK
+  confidence:   deterministic
+  fields:       {"caseName":"Donoghue v Stevenson","year":"1932","reporter":"AC","firstPage":"562","court":"HL"}
+  deterministic: yes
+  final:        Donoghue v Stevenson [1932] AC 562 (HL).
+  marked:       ##Donoghue v Stevenson## [1932] AC 562 (HL).
+  warnings:     -
+  fallback:     -
+
+#7 [UK]
+  input:        Carlill v Carbolic Smoke Ball Co [1893] QB 256 (CA)
+  family:       case
+  jurisdiction: UK
+  confidence:   deterministic
+  fields:       {"caseName":"Carlill v Carbolic Smoke Ball Co","year":"1893","reporter":"QB","firstPage":"256","court":"CA"}
+  deterministic: yes
+  final:        Carlill v Carbolic Smoke Ball Co [1893] QB 256 (CA).
+  marked:       ##Carlill v Carbolic Smoke Ball Co## [1893] QB 256 (CA).
+  warnings:     -
+  fallback:     -
+
+#8 [UK]
+  input:        Anns v Merton London Borough Council [1978] AC 728 (HL)
+  family:       case
+  jurisdiction: UK
+  confidence:   deterministic
+  fields:       {"caseName":"Anns v Merton London Borough Council","year":"1978","reporter":"AC","firstPage":"728","court":"HL"}
+  deterministic: yes
+  final:        Anns v Merton London Borough Council [1978] AC 728 (HL).
+  marked:       ##Anns v Merton London Borough Council## [1978] AC 728 (HL).
+  warnings:     -
+  fallback:     -
+
+#9 [UK]
+  input:        Pepper v Hart [1993] AC 593, 634 (HL)
+  family:       case
+  jurisdiction: UK
+  confidence:   deterministic
+  fields:       {"caseName":"Pepper v Hart","year":"1993","reporter":"AC","firstPage":"593","pinpoint":"634","court":"HL"}
+  deterministic: yes
+  final:        Pepper v Hart [1993] AC 593, 634 (HL).
+  marked:       ##Pepper v Hart## [1993] AC 593, 634 (HL).
+  warnings:     -
+  fallback:     -
+
+#10 [UK]
+  input:        Ghaidan v Godin-Mendoza [2004] 2 WLR 113 (HL)
+  family:       case
+  jurisdiction: UK
+  confidence:   deterministic
+  fields:       {"caseName":"Ghaidan v Godin-Mendoza","year":"2004","reporterVolume":"2","reporter":"WLR","firstPage":"113","court":"HL"}
+  deterministic: yes
+  final:        Ghaidan v Godin-Mendoza [2004] 2 WLR 113 (HL).
+  marked:       ##Ghaidan v Godin-Mendoza## [2004] 2 WLR 113 (HL).
+  warnings:     -
+  fallback:     -
+
+#11 [UK-neutral]
+  input:        R (Miller) v Prime Minister [2019] UKSC 41
+  family:       case
+  jurisdiction: UK
+  confidence:   deterministic
+  fields:       {"caseName":"R (Miller) v Prime Minister","year":"2019","neutral":"UKSC 41"}
+  deterministic: yes
+  final:        R (Miller) v Prime Minister [2019] UKSC 41.
+  marked:       ##R (Miller) v Prime Minister## [2019] UKSC 41.
+  warnings:     -
+  fallback:     -
+
+#12 [BOOK]
+  input:        H.L.A. Hart, The Concept of Law 100 (2d ed. 1994)
+  family:       book
+  jurisdiction: OTHER
+  confidence:   deterministic
+  fields:       {"authors":"H.L.A. Hart","bookTitle":"The Concept of Law","edition":"2d","pinpoint":"100","year":"1994"}
+  deterministic: yes
+  final:        H.L.A. Hart, The Concept of Law 100 (2d ed. 1994).
+  marked:       ^^H.L.A. Hart, The Concept of Law^^ 100 (2d ed. 1994).
+  warnings:     -
+  fallback:     -
+
+#13 [BOOK]
+  input:        Ronald Dworkin, Law's Empire 45 (1986)
+  family:       book
+  jurisdiction: OTHER
+  confidence:   deterministic
+  fields:       {"authors":"Ronald Dworkin","bookTitle":"Law's Empire","pinpoint":"45","year":"1986"}
+  deterministic: yes
+  final:        Ronald Dworkin, Law's Empire 45 (1986).
+  marked:       ^^Ronald Dworkin, Law's Empire^^ 45 (1986).
+  warnings:     -
+  fallback:     -
+
+#14 [BOOK]
+  input:        Aharon Barak, Proportionality: Constitutional Rights and Their Limitations 131 (Doron Kalir trans., 2012)
+  family:       book
+  jurisdiction: OTHER
+  confidence:   deterministic
+  fields:       {"authors":"Aharon Barak","bookTitle":"Proportionality: Constitutional Rights and Their Limitations","translators":"Doron Kalir","pinpoint":"131","year":"2012"}
+  deterministic: yes
+  final:        Aharon Barak, Proportionality: Constitutional Rights and Their Limitations 131 (Doron Kalir trans., 2012).
+  marked:       ^^Aharon Barak, Proportionality: Constitutional Rights and Their Limitations^^ 131 (Doron Kalir trans., 2012).
+  warnings:     -
+  fallback:     -
+
+#15 [BOOK]
+  input:        John Rawls, A Theory of Justice (rev. ed. 1999)
+  family:       -
+  jurisdiction: -
+  confidence:   none
+  fields:       -
+  deterministic: no
+  final:        (existing engine)
+  marked:       -
+  warnings:     -
+  fallback:     no deterministic detection
+
+#16 [CHAPTER]
+  input:        Joseph Raz, The Rule of Law and Its Virtue, in The Authority of Law 210, 214 (1979)
+  family:       book_chapter
+  jurisdiction: OTHER
+  confidence:   deterministic
+  fields:       {"authors":"Joseph Raz","chapterTitle":"The Rule of Law and Its Virtue","bookTitle":"The Authority of Law","firstPage":"210","pinpoint":"214","year":"1979"}
+  deterministic: yes
+  final:        Joseph Raz, The Rule of Law and Its Virtue, in The Authority of Law 210, 214 (1979).
+  marked:       Joseph Raz, ##The Rule of Law and Its Virtue##, in ^^The Authority of Law^^ 210, 214 (1979).
+  warnings:     -
+  fallback:     -
+
+#17 [CHAPTER]
+  input:        Jeremy Waldron, The Concept and the Rule of Law, in Oxford Essays in Jurisprudence 1, 5 (Leslie Green & Brian Leiter eds., 2013)
+  family:       book_chapter
+  jurisdiction: OTHER
+  confidence:   deterministic
+  fields:       {"authors":"Jeremy Waldron","chapterTitle":"The Concept and the Rule of Law","bookTitle":"Oxford Essays in Jurisprudence","firstPage":"1","pinpoint":"5","editors":"Leslie Green & Brian Leiter","year":"2013"}
+  deterministic: yes
+  final:        Jeremy Waldron, The Concept and the Rule of Law, in Oxford Essays in Jurisprudence 1, 5 (Leslie Green & Brian Leiter eds., 2013).
+  marked:       Jeremy Waldron, ##The Concept and the Rule of Law##, in ^^Oxford Essays in Jurisprudence^^ 1, 5 (Leslie Green & Brian Leiter eds., 2013).
+  warnings:     -
+  fallback:     -
+
+#18 [CHAPTER]
+  input:        Lon L. Fuller, Positivism and Fidelity to Law, in Philosophy of Law 15 (Joel Feinberg ed., 5th ed. 1995)
+  family:       book_chapter
+  jurisdiction: OTHER
+  confidence:   deterministic
+  fields:       {"authors":"Lon L. Fuller","chapterTitle":"Positivism and Fidelity to Law","bookTitle":"Philosophy of Law","firstPage":"15","editors":"Joel Feinberg","edition":"5th","year":"1995"}
+  deterministic: yes
+  final:        Lon L. Fuller, Positivism and Fidelity to Law, in Philosophy of Law 15 (Joel Feinberg ed., 5th ed. 1995).
+  marked:       Lon L. Fuller, ##Positivism and Fidelity to Law##, in ^^Philosophy of Law^^ 15 (Joel Feinberg ed., 5th ed. 1995).
+  warnings:     -
+  fallback:     -
+
+#19 [CHAPTER]
+  input:        Frederick Schauer, Precedent, in The Routledge Companion to Philosophy of Law 123 (Andrei Marmor ed., 2012)
+  family:       book_chapter
+  jurisdiction: OTHER
+  confidence:   deterministic
+  fields:       {"authors":"Frederick Schauer","chapterTitle":"Precedent","bookTitle":"The Routledge Companion to Philosophy of Law","firstPage":"123","editors":"Andrei Marmor","year":"2012"}
+  deterministic: yes
+  final:        Frederick Schauer, Precedent, in The Routledge Companion to Philosophy of Law 123 (Andrei Marmor ed., 2012).
+  marked:       Frederick Schauer, ##Precedent##, in ^^The Routledge Companion to Philosophy of Law^^ 123 (Andrei Marmor ed., 2012).
+  warnings:     -
+  fallback:     -
+
+#20 [ARTICLE]
+  input:        Cass R. Sunstein, Incompletely Theorized Agreements, 108 Harvard Law Review 1733 (1995)
+  family:       journal_article
+  jurisdiction: US
+  confidence:   deterministic
+  fields:       {"authors":"Cass R. Sunstein","articleTitle":"Incompletely Theorized Agreements","volume":"108","journal":"Harv. L. Rev.","firstPage":"1733","year":"1995"}
+  deterministic: yes
+  final:        Cass R. Sunstein, Incompletely Theorized Agreements, 108 Harv. L. Rev. 1733 (1995).
+  marked:       Cass R. Sunstein, ##Incompletely Theorized Agreements##, 108 ^^Harv. L. Rev.^^ 1733 (1995).
+  warnings:     -
+  fallback:     -
+
+#21 [ARTICLE]
+  input:        Daniel J. Solove, A Taxonomy of Privacy, 154 U. Pa. L. Rev. 477, 490 (2006)
+  family:       journal_article
+  jurisdiction: US
+  confidence:   deterministic
+  fields:       {"authors":"Daniel J. Solove","articleTitle":"A Taxonomy of Privacy","volume":"154","journal":"U. Pa. L. Rev.","firstPage":"477","pinpoint":"490","year":"2006"}
+  deterministic: yes
+  final:        Daniel J. Solove, A Taxonomy of Privacy, 154 U. Pa. L. Rev. 477, 490 (2006).
+  marked:       Daniel J. Solove, ##A Taxonomy of Privacy##, 154 ^^U. Pa. L. Rev.^^ 477, 490 (2006).
+  warnings:     -
+  fallback:     -
+
+#22 [ARTICLE]
+  input:        Richard H. Fallon, Jr., The Core of an Uneasy Case for Judicial Review, 121 Harv. L. Rev. 1693 (2008)
+  family:       journal_article
+  jurisdiction: US
+  confidence:   deterministic
+  fields:       {"authors":"Richard H. Fallon, Jr.","articleTitle":"The Core of an Uneasy Case for Judicial Review","volume":"121","journal":"Harv. L. Rev.","firstPage":"1693","year":"2008"}
+  deterministic: yes
+  final:        Richard H. Fallon, Jr., The Core of an Uneasy Case for Judicial Review, 121 Harv. L. Rev. 1693 (2008).
+  marked:       Richard H. Fallon, Jr., ##The Core of an Uneasy Case for Judicial Review##, 121 ^^Harv. L. Rev.^^ 1693 (2008).
+  warnings:     -
+  fallback:     -
+
+#23 [ARTICLE]
+  input:        Mark Tushnet, Alternative Forms of Judicial Review, 101 Michigan Law Review 2781 (2003)
+  family:       journal_article
+  jurisdiction: US
+  confidence:   deterministic
+  fields:       {"authors":"Mark Tushnet","articleTitle":"Alternative Forms of Judicial Review","volume":"101","journal":"Mich. L. Rev.","firstPage":"2781","year":"2003"}
+  deterministic: yes
+  final:        Mark Tushnet, Alternative Forms of Judicial Review, 101 Mich. L. Rev. 2781 (2003).
+  marked:       Mark Tushnet, ##Alternative Forms of Judicial Review##, 101 ^^Mich. L. Rev.^^ 2781 (2003).
+  warnings:     -
+  fallback:     -
+
+#24 [ARTICLE]
+  input:        Aileen Kavanagh, The Idea of a Living Constitution, 16 Canadian Journal of Law and Jurisprudence 55 (2003)
+  family:       -
+  jurisdiction: -
+  confidence:   none
+  fields:       -
+  deterministic: no
+  final:        (existing engine)
+  marked:       -
+  warnings:     -
+  fallback:     no deterministic detection
+
+#25 [ARTICLE]
+  input:        T.R.S. Allan, Legislative Supremacy and the Rule of Law, 44 Cambridge Law Journal 111 (1985)
+  family:       journal_article
+  jurisdiction: UK
+  confidence:   deterministic
+  fields:       {"authors":"T.R.S. Allan","articleTitle":"Legislative Supremacy and the Rule of Law","volume":"44","journal":"Cambridge L.J.","firstPage":"111","year":"1985"}
+  deterministic: yes
+  final:        T.R.S. Allan, Legislative Supremacy and the Rule of Law, 44 Cambridge L.J. 111 (1985).
+  marked:       T.R.S. Allan, ##Legislative Supremacy and the Rule of Law##, 44 ^^Cambridge L.J.^^ 111 (1985).
+  warnings:     -
+  fallback:     -
+
+#26 [NEG]
+  input:        Smith v. Jones, 2019 WL 1234567
+  family:       case
+  jurisdiction: OTHER
+  confidence:   shape
+  fields:       {"caseName":"Smith v. Jones, 2019 WL 1234567"}
+  deterministic: no
+  final:        (existing engine)
+  marked:       -
+  warnings:     -
+  fallback:     shape-only signal
+
+#27 [NEG]
+  input:        Hart, The Concept of Law
+  family:       -
+  jurisdiction: -
+  confidence:   none
+  fields:       -
+  deterministic: no
+  final:        (existing engine)
+  marked:       -
+  warnings:     -
+  fallback:     no deterministic detection
+
+#28 [NEG]
+  input:        Annual Report [2019] AC 12
+  family:       -
+  jurisdiction: -
+  confidence:   none
+  fields:       -
+  deterministic: no
+  final:        (existing engine)
+  marked:       -
+  warnings:     -
+  fallback:     no deterministic detection
