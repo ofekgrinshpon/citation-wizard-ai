@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { SOURCE_TYPE_LABELS, type SourceType } from "@/data/abbreviations";
 import { FormattedCitation } from "./FormattedCitation";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { toForeignIdentity } from "@/data/bluebook/types";
 
 export interface ReviewCardCell {
   id: number;
@@ -51,6 +52,35 @@ const TYPE_OPTIONS: SourceType[] = [
   "religious",
 ];
 
+/** Foreign families (Rule 35.1 → current Bluebook). Family only — jurisdiction stays automatic. */
+const FOREIGN_TYPE_OPTIONS: { type: SourceType; label: string }[] = [
+  { type: "foreign_case_us", label: "פסיקה" },
+  { type: "foreign_statute_us", label: "חקיקה" },
+  { type: "foreign_constitution", label: "חוקה" },
+  { type: "foreign_book", label: "ספר" },
+  { type: "foreign_journal_article", label: "מאמר בכתב עת" },
+  { type: "foreign_book_chapter", label: "פרק בספר" },
+  { type: "foreign_internet", label: "מקור אינטרנטי" },
+  { type: "foreign", label: "אחר לועזי" },
+];
+
+const FOREIGN_KIND_LABELS: Record<string, string> = {
+  case: "פסיקה",
+  constitution: "חוקה",
+  statute: "חקיקה",
+  book: "ספר",
+  journal_article: "מאמר בכתב עת",
+  book_chapter: "פרק בספר",
+  internet: "מקור אינטרנטי",
+  other: "מקור לועזי",
+};
+
+const FOREIGN_JURISDICTION_LABELS: Record<string, string> = {
+  US: 'ארה"ב',
+  UK: "אנגליה",
+  OTHER: "לועזי",
+};
+
 export function FootnoteReviewCard({
   cell,
   onInputChange,
@@ -72,6 +102,12 @@ export function FootnoteReviewCard({
   }, [cell.output]);
 
   const activeType: SourceType = cell.sourceTypeOverride ?? cell.detectedType ?? "unknown";
+  const foreignIdentity = toForeignIdentity(activeType);
+  const detectionLabel = foreignIdentity
+    ? `זוהה: ${FOREIGN_KIND_LABELS[foreignIdentity.kind]} · ${
+        FOREIGN_JURISDICTION_LABELS[foreignIdentity.jurisdiction]
+      } · כלל מקורות לועזיים`
+    : null;
   const isLoading = cell.status === "loading";
   const isError = cell.status === "error";
   const isApproved = !!cell.approved;
