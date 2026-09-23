@@ -5,7 +5,8 @@ import { useProjects } from "@/hooks/useProjects";
 import { useCredits } from "@/hooks/useCredits";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Pencil, Infinity as InfinityIcon } from "lucide-react";
+import { Pencil, Infinity as InfinityIcon, HelpCircle } from "lucide-react";
+import { UserGuideModal } from "@/components/guide/UserGuideModal";
 
 export function AppSidebar() {
   const { user, isAdmin } = useAuth();
@@ -17,6 +18,8 @@ export function AppSidebar() {
   const [displayName, setDisplayName] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editName, setEditName] = useState("");
+  const [guideOpen, setGuideOpen] = useState(false);
+
 
   const initial = useMemo(() => {
     const source = (displayName || user?.email || "").trim();
