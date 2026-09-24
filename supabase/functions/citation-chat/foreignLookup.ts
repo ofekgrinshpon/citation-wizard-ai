@@ -531,101 +531,125 @@ export async function runForeignLookup(
   }
   empty.identity.matched = true;
 
-  // ── Extraction over identity-matched evidence ──
-  const strongMatched = identitySources.filter((s) => s.strong);
-  const evidencePool = strongMatched.length > 0 ? strongMatched : [];
-  // Weak sources may assist discovery but never ground fields alone.
-  let evidenceText = evidencePool.map((s) => `${s.title ?? ""} ${s.snippet ?? ""}`).join("\n");
-
-  let extracted = input.kind === "case"
-    ? extractCaseFromEvidence(evidenceText, input.jurisdiction)
-    : extractWorkFromEvidence(evidenceText, input.kind);
-
-  // Bounded single-page inspection of the best identity-matched strong source
-  // when snippets did not yield the fields we need.
-  const needMore = input.kind === "case"
-    ? !(extracted && (extracted.volume || extracted.databaseIdentifier || extracted.neutral || extracted.ukSeries))
-    : !(extracted && (extracted.year || extracted.volume));
-  let inspectedSource: LookupSource | null = null;
-  if (needMore && evidencePool.length > 0) {
-    inspectedSource = evidencePool[0];
-    const page = await fetchPageText(inspectedSource.url, doFetch);
-    if (page) {
-      const plain = page.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").slice(0, 200_000);
-      evidenceText = `${evidenceText}\n${plain}`;
-      extracted = input.kind === "case"
-        ? extractCaseFromEvidence(evidenceText, input.jurisdiction)
-        : extractWorkFromEvidence(evidenceText, input.kind);
-    }
-  }
-  if (!extracted) return empty;
-
-  // ── Identity conflicts (court / year the user supplied) ──
+  // ── Per-source extraction + grounding ────────────────────────────────────
+  // Weak sources assist discovery but never ground fields alone.
   const userCourt = input.parsedFields?.court;
   const userYear = input.parsedFields?.year ?? input.rawInput.match(/\b(19|20)\d{2}\b/)?.[0];
-  if (userCourt && extracted.court) {
-    if (normalizeCourtName(extracted.court) !== normalizeCourtName(userCourt)) {
-      empty.identity.conflicts.push(`court:${userCourt} vs ${extracted.court}`);
-      empty.identity.matched = false;
-      return { ...empty, identity: { ...empty.identity, matched: false } };
+  const strongMatched = identitySources.filter((s) => s.strong);
+
+  type Candidate = { field: string; value: string; donor: LookupSource; inspected: boolean };
+  const candidates: Candidate[] = [];
+
+  const fieldsForSource = (text: string): Record<string, string | undefined> => {
+    if (input.kind === "case") {
+      const c = extractCaseFromEvidence(text, input.jurisdiction);
+      if (!c) return {};
+      if (input.jurisdiction === "UK") {
+        return {
+          // Field names match the deterministic UK renderer.
+          neutral: c.neutral,
+          reporter: c.ukSeries,
+          reporterVolume: c.ukVolume,
+          firstPage: c.firstPage,
+          court: c.neutral ? undefined : c.court,
+          year: c.year,
+        };
+      }
+      return {
+        volume: c.volume,
+        reporter: c.reporter,
+        firstPage: c.firstPage,
+        court: c.court,
+        year: c.year,
+        docket: c.docket,
+        databaseIdentifier: c.databaseIdentifier,
+        decisionDate: c.decisionDate,
+      };
     }
-  }
-  if (userYear && extracted.year && userYear !== extracted.year) {
-    empty.identity.conflicts.push(`year:${userYear} vs ${extracted.year}`);
+    const w = extractWorkFromEvidence(text, input.kind);
+    return {
+      volume: w.volume,
+      journal: w.journal,
+      firstPage: w.firstPage,
+      year: w.year,
+      edition: w.edition,
+    };
+  };
+
+  // Identity-conflict filter: a source that disagrees with a user-supplied
+  // identity anchor (court / year) is discarded entirely.
+  const usable = strongMatched.filter((s) => {
+    const ev = `${s.title ?? ""} ${s.snippet ?? ""}`;
+    const c = input.kind === "case" ? extractCaseFromEvidence(ev, input.jurisdiction) : null;
+    if (c) {
+      if (userCourt && c.court && normalizeCourtName(c.court) !== normalizeCourtName(userCourt)) {
+        empty.identity.conflicts.push(`court:${userCourt} vs ${c.court}`);
+        return false;
+      }
+      if (userYear && c.year && userYear !== c.year) {
+        empty.identity.conflicts.push(`year:${userYear} vs ${c.year}`);
+        return false;
+      }
+    }
+    return true;
+  });
+  if (usable.length === 0 && strongMatched.length > 0) {
     return { ...empty, identity: { ...empty.identity, matched: false } };
   }
+  if (usable.length === 0) return empty;
 
-  // ── Field-level grounding: each field traced to its evidence source ──
-  const candidateFields: Record<string, string | undefined> =
-    input.kind === "case"
-      ? input.jurisdiction === "UK"
-        ? {
-            // Field names match the deterministic UK renderer.
-            neutral: extracted.neutral,
-            reporter: extracted.ukSeries,
-            reporterVolume: extracted.ukVolume,
-            firstPage: extracted.firstPage,
-            court: extracted.neutral ? undefined : extracted.court,
-            year: extracted.year,
-          }
-        : {
-            volume: extracted.volume,
-            reporter: extracted.reporter,
-            firstPage: extracted.firstPage,
-            court: extracted.court,
-            year: extracted.year,
-            docket: extracted.docket,
-            databaseIdentifier: extracted.databaseIdentifier,
-            decisionDate: extracted.decisionDate,
-          }
-      : {
-          volume: extracted.volume,
-          journal: extracted.journal,
-          firstPage: extracted.firstPage,
-          year: extracted.year,
-          edition: extracted.edition,
-        };
+  for (const s of usable) {
+    const ev = `${s.title ?? ""} ${s.snippet ?? ""}`;
+    const f = fieldsForSource(ev);
+    for (const [field, value] of Object.entries(f)) {
+      if (!value) continue;
+      if (field === "year" && userYear === value) continue; // user anchor ≠ new fact
+      // The value must literally appear in this source's evidence.
+      if (!ev.includes(value)) continue;
+      candidates.push({ field, value, donor: s, inspected: false });
+    }
+  }
 
-  for (const [field, value] of Object.entries(candidateFields)) {
-    if (!value) continue;
-    // Never echo back identity anchors the user already supplied as "facts".
-    if (field === "year" && userYear === value) continue;
-    // The value must literally appear in the evidence of an identity-matched
-    // strong source (or the inspected page of one). Inference ≠ grounding.
-    const donor = evidencePool.find((s) => {
-      const ev = inspectedSource === s ? evidenceText : `${s.title ?? ""} ${s.snippet ?? ""}`;
-      return ev.includes(value) || value.includes(ev.trim());
-    }) ?? (inspectedSource && evidenceText.includes(value) ? inspectedSource : null);
-    if (!donor) continue;
-    const quality = classifySource(donor.url);
+  // Bounded single-page inspection of the best identity-matched strong source
+  // when snippets yielded nothing. One fetch maximum; no link following.
+  if (candidates.length === 0) {
+    const best = usable[0];
+    const page = await fetchPageText(best.url, doFetch);
+    if (page) {
+      const plain = page.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").slice(0, 200_000);
+      const f = fieldsForSource(plain);
+      for (const [field, value] of Object.entries(f)) {
+        if (!value) continue;
+        if (field === "year" && userYear === value) continue;
+        if (!plain.includes(value)) continue;
+        candidates.push({ field, value, donor: best, inspected: true });
+      }
+    }
+  }
+
+  // ── Field-level acceptance with conflict detection ───────────────────────
+  // Identity anchors conflicting → handled above (discard source). A
+  // NON-identity field on which two identity-matched sources disagree → that
+  // field stays missing; the other grounded fields survive.
+  const byField = new Map<string, Candidate[]>();
+  for (const c of candidates) {
+    const list = byField.get(c.field) ?? [];
+    list.push(c);
+    byField.set(c.field, list);
+  }
+  for (const [field, list] of byField) {
+    const distinct = new Set(list.map((c) => c.value));
+    if (distinct.size > 1) continue; // conflicting non-identity field → missing
+    const chosen = list.find((c) => c.inspected) ?? list[0];
+    const quality = classifySource(chosen.donor.url);
     if (quality === "weak") continue;
-    empty.fields[field] = value;
+    empty.fields[field] = chosen.value;
     empty.grounded[field] = true;
     empty.provenance[field] = {
-      value,
-      sourceUrl: donor.url,
-      sourceTitle: donor.title,
-      basis: basisFor(quality, inspectedSource === donor),
+      value: chosen.value,
+      sourceUrl: chosen.donor.url,
+      sourceTitle: chosen.donor.title,
+      basis: basisFor(quality, chosen.inspected),
     };
   }
 
