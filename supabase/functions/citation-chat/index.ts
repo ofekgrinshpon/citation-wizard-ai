@@ -1781,6 +1781,48 @@ serve(async (req) => {
     }
 
 
+    // ── Milestone 2B: grounded foreign source lookup ─────────────────────
+    // Structured contract (no prompt wording): the client explicitly asks for
+    // bounded metadata recovery on a partial foreign citation. Discovery via
+    // Perplexity Search; extraction + grounding are deterministic; the client
+    // renders the citation with the existing Bluebook renderers. One citation
+    // operation = one credit; the single Tier-2 open-web retry is included.
+    let foreignLookupResult: ForeignLookupResult | null = null;
+    if (foreignLookupRequest && foreignLookupRequest.enabled === true) {
+      const flKind = foreignLookupRequest.kind;
+      const flJur = foreignLookupRequest.jurisdiction;
+      const flRaw = typeof foreignLookupRequest.rawInput === "string" ? foreignLookupRequest.rawInput : "";
+      const flParsed =
+        foreignLookupRequest.parsedFields && typeof foreignLookupRequest.parsedFields === "object"
+          ? (foreignLookupRequest.parsedFields as Record<string, string>)
+          : undefined;
+      if (
+        ["case", "journal_article", "book", "book_chapter"].includes(flKind) &&
+        ["US", "UK", "OTHER"].includes(flJur) &&
+        flRaw.trim()
+      ) {
+        const pplxKey = Deno.env.get("PERPLEXITY_API_KEY");
+        if (pplxKey) {
+          try {
+            foreignLookupResult = await runForeignLookup(
+              { kind: flKind, jurisdiction: flJur, rawInput: flRaw, parsedFields: flParsed },
+              { apiKey: pplxKey },
+            );
+          } catch (flErr) {
+            console.error("foreign lookup error:", flErr);
+            foreignLookupResult = null;
+          }
+          // Identity matched + at least one grounded new field → the client
+          // renders deterministically; no model call needed for this request.
+          if (foreignLookupResult?.identity.matched && Object.keys(foreignLookupResult.fields).length > 0) {
+            return new Response(JSON.stringify({ content: "", foreignLookup: foreignLookupResult }), {
+              headers: { ...corsHeaders, "Content-Type": "application/json" },
+            });
+          }
+        }
+      }
+    }
+
     let caseLawHint = "";
     let caseLawOverrideLabel: string | null = null;
     const classMatch = userInput.match(/\[סיווג אוטומטי:\s*([^\]]+)\]/);
@@ -3536,9 +3578,12 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
       );
     }
 
-    return new Response(JSON.stringify({ content }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    return new Response(
+      JSON.stringify(foreignLookupResult ? { content, foreignLookup: foreignLookupResult } : { content }),
+      {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      },
+    );
   } catch (e) {
     console.error("chat error:", e);
     await refundIfCharged("citation-chat exception");
