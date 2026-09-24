@@ -149,7 +149,7 @@ function hostMatches(host: string, list: string[]): boolean {
 
 type SourceQuality = "official" | "database" | "publisher" | "repository" | "weak";
 
-function classifySource(url: string): SourceQuality {
+export function classifySource(url: string): SourceQuality {
   const host = hostOf(url);
   if (!host) return "weak";
   if (hostMatches(host, OFFICIAL_HOSTS) || host.endsWith(".gov")) return "official";
@@ -266,7 +266,7 @@ const MONTHS: Record<string, string> = {
   jul: "July", aug: "Aug.", sep: "Sept.", oct: "Oct.", nov: "Nov.", dec: "Dec.",
 };
 
-function extractCaseFromEvidence(text: string, jurisdiction: ForeignLookupJurisdiction): CaseCite | null {
+export function extractCaseFromEvidence(text: string, jurisdiction: ForeignLookupJurisdiction): CaseCite | null {
   if (jurisdiction === "UK") {
     const n = text.match(UK_NEUTRAL_RE);
     if (n) return { year: n[1], neutral: `${n[2]} ${n[3]}`, court: n[4]?.trim() };
@@ -337,7 +337,7 @@ interface WorkCite {
   edition?: string;
 }
 
-function extractWorkFromEvidence(text: string, kind: ForeignLookupKind): WorkCite {
+export function extractWorkFromEvidence(text: string, kind: ForeignLookupKind): WorkCite {
   if (kind === "journal_article") {
     const m = text.match(ARTICLE_RE);
     if (m) {
