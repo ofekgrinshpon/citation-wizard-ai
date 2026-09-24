@@ -266,11 +266,11 @@ const MONTHS: Record<string, string> = {
   jul: "July", aug: "Aug.", sep: "Sept.", oct: "Oct.", nov: "Nov.", dec: "Dec.",
 };
 
-export // U.S. Reports / S. Ct. / L. Ed. citations carry only a year parenthetical —
+// U.S. Reports / S. Ct. / L. Ed. citations carry only a year parenthetical —
 // the reporter itself identifies the court.
 const US_REPORTS_YEAR_RE = /(\d+)\s+(U\. ?S\.|S\. ?Ct\.|L\. ?Ed\. ?2d|L\. ?Ed\.)\s+(\d+)\s*\((\d{4})\)/;
 
-function extractCaseFromEvidence(text: string, jurisdiction: ForeignLookupJurisdiction): CaseCite | null {
+export function extractCaseFromEvidence(text: string, jurisdiction: ForeignLookupJurisdiction): CaseCite | null {
   // Drop "appeals from" lines — those citations belong to OTHER decisions.
   text = text.replace(/On appeals from:[^\n]*/gi, " ").replace(/\s+/g, " ");
   if (jurisdiction === "US") {
@@ -368,7 +368,7 @@ function journalAnchoredInTitle(journal: string, title?: string): boolean {
   return words.length > 0 && words.slice(0, 2).every((w) => t.includes(w));
 }
 
-function extractWorkFromEvidence(text: string, kind: ForeignLookupKind, title?: string): WorkCite {
+export function extractWorkFromEvidence(text: string, kind: ForeignLookupKind, title?: string): WorkCite {
   text = text.replace(/\s+/g, " ");
   if (kind === "journal_article") {
     const m = text.match(ARTICLE_RE);
