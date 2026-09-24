@@ -289,7 +289,7 @@ export function extractCaseFromEvidence(text: string, jurisdiction: ForeignLooku
     const r = text.match(US_REPORTS_YEAR_RE);
     if (r) return { volume: r[1], reporter: r[2].replace(/ /g, ""), firstPage: r[3], court: "U.S.", year: r[4] };
     // Docketed decision: "No. 16-2321 (2d Cir. 2018)" / "(2d Cir. Dec. 12, 2018)".
-    const d = text.match(/No\.?\s+([0-9][A-Za-z0-9-]+)\s*\(([A-Za-z. ]*?(?:Cir\.|U\. ?S\.|[A-Z]\. ?[A-Za-z]+\.?)[^)]*?)\s*,?\s*([A-Z][a-z]+\.?\s+\d{1,2},?\s+)?(\d{4})\)/);
+    const d = text.match(/No\.?\s+([0-9][A-Za-z0-9-]+)\s*\(([A-Za-z0-9. ]*?(?:Cir\.|U\. ?S\.|[A-Z]\. ?[A-Za-z]+\.?)[^)]*?)\s*,?\s*([A-Z][a-z]+\.?\s+\d{1,2},?\s+)?(\d{4})\)/);
     if (d) {
       return {
         docket: d[1],
@@ -424,6 +424,8 @@ export function extractWorkFromEvidence(text: string, kind: ForeignLookupKind, t
   }
   const y = text.match(BOOK_YEAR_RE);
   if (y) return { edition: y[1] ? `${y[1]}${ordinalSuffix(Number(y[1]))} ed.` : undefined, year: y[2] };
+  const py = text.match(/(?:University Press|Clarendon Press|Routledge|Harvard University Press|Yale University Press|MIT Press|Oxford)[^\n]{0,24}?,\s*(?:[A-Z][a-z]+\.?\s+\d{1,2},\s*)?((?:17|18|19|20)\d{2})\b/);
+  if (py) return { year: py[1] };
   return {};
 }
 
