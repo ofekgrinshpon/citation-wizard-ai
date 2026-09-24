@@ -59,6 +59,7 @@ import {
   type DocketAnchorVia,
 } from "../_shared/trustedHosts.ts";
 import { normalizeHebrewNumberRanges } from "../_shared/hebrewNumberRange.ts";
+import { runForeignLookup, type ForeignLookupResult } from "./foreignLookup.ts";
 import { normalizeEditorPlacement } from "../_shared/articleCitationValidator.ts";
 import {
   isProvisionalCouncilDate,
@@ -1633,7 +1634,12 @@ serve(async (req) => {
   };
 
   try {
-    const { messages, requestId: clientReqId, batchId: clientBatchId } = await req.json();
+    const {
+      messages,
+      requestId: clientReqId,
+      batchId: clientBatchId,
+      foreignLookup: foreignLookupRequest,
+    } = await req.json();
     // Batch-priced usage: one internal unit per up to 5 processed citations.
     const usageBatchId = typeof clientBatchId === "string" && clientBatchId.length >= 8
       ? clientBatchId
