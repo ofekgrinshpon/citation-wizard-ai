@@ -489,6 +489,10 @@ async function searchOnce(
 }
 
 // ── Main entry ─────────────────────────────────────────────────────────────
+export function _dbgFieldsForSource(text: string, jurisdiction: ForeignLookupJurisdiction, kind: ForeignLookupKind, title?: string) {
+  return extractCaseFromEvidence(text, jurisdiction) ?? extractWorkFromEvidence(text, kind, title);
+}
+
 export async function runForeignLookup(
   input: ForeignLookupInput,
   deps?: LookupDeps,
