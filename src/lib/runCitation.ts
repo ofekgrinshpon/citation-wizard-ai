@@ -241,6 +241,53 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
 
   handleRefundResponse(data);
 
+  // 3a) M2B: grounded foreign metadata returned → merge + deterministic render.
+  // User-supplied identity anchors win; grounded lookup fields fill the gaps;
+  // anything ungrounded stays [חסר: …] via the existing renderer behavior.
+  const fl = (data as { foreignLookup?: {
+    identity?: { matched?: boolean };
+    fields?: Record<string, string>;
+  } } | null)?.foreignLookup;
+  if (foreignLookupRequest && fl?.identity?.matched && fl.fields && Object.keys(fl.fields).length > 0) {
+    const identity = toForeignIdentity(sourceType)!;
+    const baseFields: Record<string, unknown> = { ...(fl.fields as Record<string, unknown>) };
+    if (foreignDetection) {
+      // Never overwrite what the user supplied; lookup only fills gaps.
+      for (const [k, v] of Object.entries(foreignDetection.fields as Record<string, unknown>)) {
+        if (typeof v === "string" && v.trim()) baseFields[k] = v.trim();
+      }
+    }
+    const detection = {
+      sourceType,
+      kind: identity.kind,
+      jurisdiction: identity.jurisdiction,
+      confidence: "high" as const,
+      fields: baseFields as unknown as ForeignFields,
+    };
+    const rendered = renderForeignDetection(detection);
+    if (rendered && rendered.citation.trim()) {
+      const missingSummary =
+        rendered.missing.length > 0
+          ? getMissingFieldsSummary(sourceType, rendered.missing)
+          : null;
+      const warningBits = [...rendered.warnings];
+      if (missingSummary) warningBits.push(`חסרים פרטים לפי כלל 36.4: ${missingSummary}`);
+      const hasMissing = rendered.missing.length > 0;
+      const reply = hasMissing || warningBits.length
+        ? `${rendered.citation}\n⚠️ ${warningBits.join(" ") || missingSummary}`
+        : rendered.citation;
+      return {
+        reply,
+        citation: rendered.citation,
+        sourceType,
+        sourceLabel: SOURCE_TYPE_LABELS[sourceType],
+        fromVerifiedStore: false,
+        status: hasMissing || warningBits.length ? "warning" : "valid",
+        warningMsg: warningBits[0],
+      };
+    }
+  }
+
   const reply = (data?.content as string) || "";
   if (!reply.trim()) {
     throw new CitationRunError({
