@@ -618,7 +618,7 @@ export async function runForeignLookup(
   type Candidate = { field: string; value: string; donor: LookupSource; inspected: boolean };
   const candidates: Candidate[] = [];
 
-  const fieldsForSource = (text: string): Record<string, string | undefined> => {
+  const fieldsForSource = (text: string, pageTitle?: string): Record<string, string | undefined> => {
     if (input.kind === "case") {
       const c = extractCaseFromEvidence(text, input.jurisdiction);
       if (!c) return {};
@@ -644,7 +644,7 @@ export async function runForeignLookup(
         decisionDate: c.decisionDate,
       };
     }
-    const w = extractWorkFromEvidence(text, input.kind);
+    const w = extractWorkFromEvidence(text, input.kind, pageTitle);
     return {
       volume: w.volume,
       journal: w.journal,
@@ -679,7 +679,7 @@ export async function runForeignLookup(
 
   for (const s of usable) {
     const ev = `${s.title ?? ""} ${s.snippet ?? ""}`;
-    const f = fieldsForSource(ev);
+    const f = fieldsForSource(ev, s.title);
     for (const [field, value] of Object.entries(f)) {
       if (!value) continue;
       if (field === "year" && userYear === value) continue; // user anchor ≠ new fact
@@ -696,7 +696,7 @@ export async function runForeignLookup(
     const page = await fetchPageText(best.url, doFetch);
     if (page) {
       const plain = page.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").slice(0, 200_000);
-      const f = fieldsForSource(plain);
+      const f = fieldsForSource(plain, best.title);
       for (const [field, value] of Object.entries(f)) {
         if (!value) continue;
         if (field === "year" && userYear === value) continue;
