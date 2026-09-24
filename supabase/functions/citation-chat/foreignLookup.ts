@@ -288,11 +288,25 @@ export function extractCaseFromEvidence(text: string, jurisdiction: ForeignLooku
   if (jurisdiction === "US") {
     const r = text.match(US_REPORTS_YEAR_RE);
     if (r) return { volume: r[1], reporter: r[2].replace(/ /g, ""), firstPage: r[3], court: "U.S.", year: r[4] };
+    // Docketed decision: "No. 16-2321 (2d Cir. 2018)" / "(2d Cir. Dec. 12, 2018)".
+    const d = text.match(/No\.?\s+([0-9][A-Za-z0-9-]+)\s*\(([A-Za-z. ]*?(?:Cir\.|U\. ?S\.|[A-Z]\. ?[A-Za-z]+\.?)[^)]*?)\s*,?\s*([A-Z][a-z]+\.?\s+\d{1,2},?\s+)?(\d{4})\)/);
+    if (d) {
+      return {
+        docket: d[1],
+        court: d[2].trim(),
+        decisionDate: d[3] ? `${d[3].trim()} ${d[4]}` : undefined,
+        year: d[4],
+      };
+    }
   }
   if (jurisdiction === "UK") {
     const n = text.match(UK_NEUTRAL_RE);
     if (n) return { year: n[1], neutral: `${n[2]} ${n[3]}`, court: n[4]?.trim() };
     const t = text.match(UK_TRADITIONAL_RE);
+    if (!t) {
+      const dy = text.match(/\bdecided in ((?:17|18|19|20)\d{2})\b/);
+      if (dy) return { year: dy[1] };
+    }
     if (t) {
       return {
         year: t[1],
@@ -734,8 +748,9 @@ export async function runForeignLookup(
     list.push(c);
     byField.set(c.field, list);
   }
+  const journalKey = (v: string) => v.toLowerCase().replace(/[^a-z0-9]/g, "");
   for (const [field, list] of byField) {
-    const distinct = new Set(list.map((c) => c.value));
+    const distinct = new Set(list.map((c) => field === "journal" ? journalKey(c.value) : c.value));
     if ((globalThis as { __FL_DEBUG?: boolean }).__FL_DEBUG) console.error("DBG byfield", field, JSON.stringify([...distinct]), "cands", list.length);
     if (distinct.size > 1) continue; // conflicting non-identity field → missing
     const chosen = list.find((c) => c.inspected) ?? list[0];
