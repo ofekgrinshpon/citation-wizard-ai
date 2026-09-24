@@ -708,7 +708,7 @@ export async function runForeignLookup(
   // ── Different-work isolation for cases ─────────────────────────────────
   // Sources quoting a DIFFERENT decision (e.g. an overruling case citing the
   // target) cluster apart; keep only the plurality cluster.
-  if (input.kind === "case") {
+  {
     const sig = (c: Candidate) => {
       const f = fieldsForSource(`${c.donor.title ?? ""} ${c.donor.snippet ?? ""}`);
       const vol = f.volume ?? f.reporterVolume ?? "";
