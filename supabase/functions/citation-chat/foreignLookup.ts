@@ -266,9 +266,17 @@ const MONTHS: Record<string, string> = {
   jul: "July", aug: "Aug.", sep: "Sept.", oct: "Oct.", nov: "Nov.", dec: "Dec.",
 };
 
-export function extractCaseFromEvidence(text: string, jurisdiction: ForeignLookupJurisdiction): CaseCite | null {
+export // U.S. Reports / S. Ct. / L. Ed. citations carry only a year parenthetical —
+// the reporter itself identifies the court.
+const US_REPORTS_YEAR_RE = /(\d+)\s+(U\. ?S\.|S\. ?Ct\.|L\. ?Ed\. ?2d|L\. ?Ed\.)\s+(\d+)\s*\((\d{4})\)/;
+
+function extractCaseFromEvidence(text: string, jurisdiction: ForeignLookupJurisdiction): CaseCite | null {
   // Drop "appeals from" lines — those citations belong to OTHER decisions.
-  text = text.replace(/On appeals from:[^\n]*/gi, " ");
+  text = text.replace(/On appeals from:[^\n]*/gi, " ").replace(/\s+/g, " ");
+  if (jurisdiction === "US") {
+    const r = text.match(US_REPORTS_YEAR_RE);
+    if (r) return { volume: r[1], reporter: r[2].replace(/ /g, ""), firstPage: r[3], court: "U.S.", year: r[4] };
+  }
   if (jurisdiction === "UK") {
     const n = text.match(UK_NEUTRAL_RE);
     if (n) return { year: n[1], neutral: `${n[2]} ${n[3]}`, court: n[4]?.trim() };
@@ -353,7 +361,15 @@ function romanToArabic(r: string): string | null {
   return total > 0 ? String(total) : null;
 }
 
-function extractWorkFromEvidence(text: string, kind: ForeignLookupKind): WorkCite {
+function journalAnchoredInTitle(journal: string, title?: string): boolean {
+  if (!title) return false;
+  const words = normalizeTitle(journal).split(" ").filter((w) => w !== "the" && w !== "of" && w.length > 2);
+  const t = normalizeTitle(title);
+  return words.length > 0 && words.slice(0, 2).every((w) => t.includes(w));
+}
+
+function extractWorkFromEvidence(text: string, kind: ForeignLookupKind, title?: string): WorkCite {
+  text = text.replace(/\s+/g, " ");
   if (kind === "journal_article") {
     const m = text.match(ARTICLE_RE);
     if (m) {
@@ -367,14 +383,14 @@ function extractWorkFromEvidence(text: string, kind: ForeignLookupKind): WorkCit
     if (v) {
       const journal = v[1].replace(/[*#]/g, "").replace(/\s+/g, " ").trim();
       const volume = romanToArabic(v[2]);
-      if (volume && isPlausibleJournal(journal)) {
+      if (volume && isPlausibleJournal(journal) && journalAnchoredInTitle(journal, title)) {
         return { volume, journal, year: v[3], firstPage: v[4] };
       }
     }
     const vp = text.match(VOLUME_PAGES_RE);
     if (vp) {
       const journal = vp[1].replace(/[*#]/g, "").replace(/\s+/g, " ").trim();
-      if (isPlausibleJournal(journal)) {
+      if (isPlausibleJournal(journal) && journalAnchoredInTitle(journal, title)) {
         return { volume: vp[2], journal, year: vp[3], firstPage: vp[4] };
       }
     }
