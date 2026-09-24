@@ -1,51 +1,42 @@
 # Milestone 2B — Foreign Source Lookup (fill in missing details)
 
 ## Goal
-When someone types a partial foreign citation (for example "Capitol Records, LLC v. ReDigi Inc. (2d Cir. 2018)"), ReLex searches the web for the missing details, confirms them against real sources, and then builds the citation with the same fixed Bluebook formatter. If a detail can't be confirmed, it's still marked [חסר: …]. Nothing is guessed.
+A partial foreign citation (for example "Capitol Records, LLC v. ReDigi Inc. (2d Cir. 2018)") is completed through a web lookup, confirmed against real sources, then built by the same fixed Bluebook formatter. Unconfirmed details stay [חסר: …]. Nothing is guessed.
+
+## Core principle — search broadly, accept narrowly
+The preferred-domain lists are **Tier 1 discovery hints, not an allowlist**. Foreign legal and academic material lives across thousands of courts, publishers, journals, repositories, DOI pages and archives — a closed filter would create false negatives.
 
 ```text
-Input
- ├─ complete citation → local parser → Bluebook formatter → done (fast, free, as today)
- ├─ partial / name only → Perplexity lookup → confirmed details → same formatter → done
- └─ lookup can't confirm → [חסר: …] + warning (no guessing)
+local parser → Tier 1 (preferred domains) → at most one Tier 2 open-web retry
+→ strict identity + field-level grounding → accepted fields only → deterministic formatter
 ```
 
 ## Scope (existing families only)
-- US cases: volume, reporter, first page, court, year. Also Westlaw/Lexis number plus docket and date when there's no printed report.
+- US cases: volume, reporter, first page, court, year; or Westlaw/Lexis identifier + docket + date.
 - UK cases: neutral citation and/or law report (year, series, page, court).
 - Foreign journal articles: authors, title, volume, journal, first page, year.
-- Foreign books and book chapters: authors, title, edition, year; for chapters, also the editors, the book title and the first page.
-- US statutes and the US Constitution stay local only (the input already contains the section).
+- Foreign books and book chapters: authors, title, edition, year; chapters also editors, book title, first page.
+- US statutes and the US Constitution stay local only.
 
-Out of scope: C.F.R., legislative materials, EU and international sources, Word Add-in work, new source families, and changes to Israeli citations.
+Out of scope: C.F.R., legislative materials, EU/international sources, Word Add-in work, new source families, Israeli citation changes.
 
 ## Behaviour rules
-- The local fast path always runs first. The lookup runs only when the local formatter declines.
-- The lookup returns **structured fields only**, never a formatted citation. ReLex's formatter owns all punctuation, italics and small caps.
-- Each field is accepted only if a trusted source backs it and the source's party names or title match the input. Fields without that backing stay missing.
-- The case name, court and year the user typed must match what the lookup found. If they conflict, the lookup result is thrown away and the user sees a warning.
-- Repeat citations still follow Rule 37 (never Id./supra). Verified sources keep priority.
-- The credit cost stays the same as today's single citation.
+- The local fast path always runs first; the lookup runs only when the local formatter declines.
+- The lookup returns **structured candidate fields only** — never a formatted citation. The renderer in `src/data/bluebook/` owns all punctuation, italics and small caps.
+- **Tier 2** fires once when Tier 1 cannot ground enough fields — no domain filter. It exists to discover legitimate sources (journal sites, university repositories, publishers, DOI pages, official court domains) not on the initial list. No ever-expanding hard-coded domain lists.
+- **Trust is an acceptance rule, not just a hostname rule.** Strong evidence: official court source, recognized legal database, publisher/journal page, institutional repository, bibliographic metadata page identifying the same work. A random secondary page aids discovery but cannot alone ground a field.
+- **Identity matching is mandatory.** Cases: normalized party names must match; user-supplied court/year must not conflict; docket/reporter used as anchor when available. Works: strong title identity, authors corroborate; DOI is a strong anchor when independently returned. No inherited or manufactured identity fields. A conflict discards the lookup (not just a field).
+- **Field-level grounding:** each field is independently accepted or rejected; grounded fields render, ungrounded fields stay [חסר]. Not all-or-nothing.
+- **Grounding evidence:** may come from the result title, snippet, URL identity, structured metadata, or one bounded fetch of a promising identity-matched result. The full citation string (e.g. "910 F.3d 649") is NOT required to appear literally in a snippet.
+- **Bounded:** parser → Tier 1 → ≤1 Tier 2 → ≤1 inspection of the best match → grounding → formatter. No recursive loops.
+- Repeat citations keep Rule 37; verified sources keep priority; the credit cost stays at one citation.
 
 ## Technical details
-- **citation-chat:** add a `foreign_lookup` branch, taken when the classified type is `foreign_*` and the request asks for a lookup. It uses Perplexity sonar-pro with a JSON-schema response per family and a trusted-domain filter:
-  - US cases: courtlistener.com, law.cornell.edu, justia.com, supremecourt.gov, casetext.com, uscourts.gov, govinfo.gov
-  - UK cases: bailii.org, supremecourt.uk, nationalarchives.gov.uk
-  - Articles and books: publisher, SSRN, JSTOR, HeinOnline, university and Google Books pages
-  - The existing tier-2 fallback runs only when the trusted sources return nothing.
-- **Grounding:** the reporter citation (for example "910 F.3d 649") or the title must appear in the snippet or title of at least one trusted citation URL. Party names must match the input using the M1 name normalizer. Each field gets a `grounded: true/false` flag.
-- **Response:** `{ foreignLookup: { kind, jurisdiction, fields, grounded, sources[] } }`, alongside the existing `content` fallback.
-- **runCitation.ts:** once `renderForeignCitation` declines on a foreign type, call citation-chat with `foreignLookup: true`. Merge the user's fields with the grounded fields (user input wins on identity; a conflict means the result is discarded). Then call `renderForeignDetection`. Grounded fields that are still missing render as [חסר: field] with the existing כלל 36.4 warning. If the lookup fails, use today's behaviour.
-- **No second formatter:** the Deno side only extracts. All formatting stays in `src/data/bluebook/render.ts`.
-- **Tests (new bluebookM2B.test.ts, using a mocked Perplexity):**
-  - A partial US case fills volume, reporter and first page, then renders correctly.
-  - An ungrounded field stays [חסר].
-  - A party name mismatch discards the lookup result.
-  - A court or year conflict discards the lookup result.
-  - A UK case gets its neutral citation filled in.
-  - An article is completed with a journal abbreviation from the table only.
-  - A book edition and year are filled in.
-  - A complete input never calls the lookup.
-  - Plus regression checks for Rule 37, parity, Israeli citations and small caps.
-- **Live acceptance (at least 20 records):** 6 US cases (including ReDigi), 4 UK cases, 4 articles, 3 books, 2 chapters and 1 nonexistent case as a negative control. For each record, save the input, the lookup fields, their grounding, the sources, the final citation and any warnings.
-- **Report:** `reports/final-acceptance/bluebook22-foreign-citation-engine-m2b/REPORT.md` plus ACCEPTANCE_RECORDS.txt, with a SHIP / PARTIAL / HOLD verdict.
+- **citation-chat:** new `foreign_lookup` branch, taken when the classified type is `foreign_*` and the request asks for a lookup. Perplexity sonar-pro with a JSON-schema response per family. Tier 1 `search_domain_filter` per family (US cases: courtlistener.com, law.cornell.edu, justia.com, supremecourt.gov, uscourts.gov, govinfo.gov; UK cases: bailii.org, supremecourt.uk, nationalarchives.gov.uk; works: publisher/SSRN/JSTOR/HeinOnline/university/Google Books). Reuse the existing tier-2 open-web fallback (no filter). Optional: one bounded fetch of the best identity-matched result URL for field extraction.
+- **Response:** `{ foreignLookup: { kind, jurisdiction, fields, grounded: Record<field, boolean>, sources[] } }` alongside today's `content`.
+- **runCitation.ts:** after `renderForeignCitation` declines on a foreign type, call citation-chat with `foreignLookup: true`; merge user fields with grounded fields (user identity wins; conflict → discard); call `renderForeignDetection`; missing grounded fields render as [חסר: field] with the existing כלל 36.4 warning; lookup failure → today's behaviour.
+- **No second formatter** on the Deno side — extraction only.
+- **Tests (bluebookM2B.test.ts, mocked Perplexity):** partial US case completes and renders; ungrounded field stays [חסר]; party mismatch discards; court/year conflict discards; UK neutral filled; article journal abbreviation only from the table; book edition/year filled; complete input never calls the lookup; Tier 2 fires when Tier 1 is empty and a legitimate off-list source can still ground fields; regression: Rule 37, parity, Israeli citations, small caps.
+- **Live acceptance (at least 20 records):** 6 US cases (incl. ReDigi), 4 UK cases, 4 articles, 3 books, 2 chapters, 1 nonexistent case (negative). Per record save: input, family, Tier 1 queried, Tier 1 candidate sources, Tier 2 fired, Tier 2 candidate sources, identity anchors, candidate fields, accepted grounded fields, rejected fields, conflicts, final citation, warnings. Totals: tier1_completed, tier2_fired, tier2_rescued, identity_mismatch_rejected, fields_grounded, fields_left_missing — diagnostic only; no optimizing for Tier 1 hit rate.
+- **Success invariant:** legitimate sources outside the initial domain list are still discovered; a source being off-list is never a rejection reason; ungrounded details remain missing.
+- **Report:** `reports/final-acceptance/bluebook22-foreign-citation-engine-m2b/REPORT.md` + ACCEPTANCE_RECORDS.txt, SHIP / PARTIAL / HOLD verdict.
