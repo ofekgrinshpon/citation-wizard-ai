@@ -1,0 +1,211 @@
+=== US1 — ReDigi — the motivating case
+input: Capitol Records, LLC v. ReDigi Inc. (2d Cir. 2018)
+family: case / US | expected: fields
+identity: matched=true anchors=[parties:capitol records v redigi] conflicts=[]
+tier1Queried=true tier2Fired=false
+sources: tier1:https://law.justia.com/cases/federal/appellate-courts/ca2/16-2321/16-2321-2018-12-12.html | tier1:https://www.supremecourt.gov/DocketPDF/18/18-1430/90519/20190304145955525_00000003.pdf | tier1:https://www.supremecourt.gov/DocketPDF/18/18-1430/99242/20190510113929702_ReDigi%20Inc%20v%20Capitol%20Records%20Petition%20for%20a%20Writ%20of%20Certiorari.pdf | tier1:https://www.courtlistener.com/ | tier1:https://www.supremecourt.gov/DocketPDF/18/18-956/133385/20200219105952406_18-956_Amicus%20Brief%20in%20Support%20of%20Respondent.pdf | tier1:https://www.supremecourt.gov/DocketPDF/18/18-956/133298/20200218155210566_18-956%20bsac%20Helienne%20Lindvall%20et%20al--PDFA.pdf | tier1:https://www.courtlistener.com/c/ | tier1:https://www.supremecourt.gov/search.aspx?filename=/docket/docketfiles/html/public/18-1430.html
+accepted fields: {"court":"2d Cir.","docket":"16-2321","volume":"910","reporter":"F.3d","firstPage":"649","decisionDate":"Dec. 12, 2018"}
+provenance: {"court":{"value":"2d Cir.","sourceUrl":"https://law.justia.com/cases/federal/appellate-courts/ca2/16-2321/16-2321-2018-12-12.html","sourceTitle":"Capitol Records, LLC v. ReDigi Inc., No. 16-2321 (2d Cir. 2018)","basis":"structured_metadata"},"docket":{"value":"16-2321","sourceUrl":"https://law.justia.com/cases/federal/appellate-courts/ca2/16-2321/16-2321-2018-12-12.html","sourceTitle":"Capitol Records, LLC v. ReDigi Inc., No. 16-2321 (2d Cir. 2018)","basis":"structured_metadata"},"volume":{"value":"910","sourceUrl":"https://www.supremecourt.gov/DocketPDF/18/18-956/133385/20200219105952406_18-956_Amicus%20Brief%20in%20Support%20of%20Respondent.pdf","sourceTitle":"No. 18-956","basis":"official_record"},"reporter":{"value":"F.3d","sourceUrl":"https://www.supremecourt.gov/DocketPDF/18/18-956/133385/20200219105952406_18-956_Amicus%20Brief%20in%20Support%20of%20Respondent.pdf","sourceTitle":"No. 18-956","basis":"official_record"},"firstPage":{"value":"649","sourceUrl":"https://www.supremecourt.gov/DocketPDF/18/18-956/133385/20200219105952406_18-956_Amicus%20Brief%20in%20Support%20of%20Respondent.pdf","sourceTitle":"No. 18-956","basis":"official_record"},"decisionDate":{"value":"Dec. 12, 2018","sourceUrl":"https://www.supremecourt.gov/DocketPDF/18/18-956/133298/20200218155210566_18-956%20bsac%20Helienne%20Lindvall%20et%20al--PDFA.pdf","sourceTitle":"[PDF] Helienne Lindvall - Supreme Court of the United States","basis":"official_record"}}
+grounded=6 verdict=PASS
+
+=== US2 — Brown v. Board, name only
+input: Brown v. Board of Education
+family: case / US | expected: fields
+identity: matched=true anchors=[parties:brown v board education] conflicts=[]
+tier1Queried=true tier2Fired=false
+sources: tier1:https://www.govinfo.gov/app/details/USREPORTS-344/USREPORTS-344-1 | tier1:https://www.govinfo.gov/app/details/USREPORTS-349/USREPORTS-349-294 | tier1:https://www.supremecourt.gov/opinions/casefinder.aspx | tier1:https://supreme.justia.com/cases/federal/us/344/1/ | tier1:https://supreme.justia.com/cases/federal/us/volume/ | tier1:https://www.govinfo.gov/app/details/USREPORTS-347/USREPORTS-347-483 | tier1:https://supreme.justia.com/cases/federal/us/347/483/ | tier1:https://www.govinfo.gov/features/united-states-reports-release
+accepted fields: {"volume":"347","reporter":"U.S.","firstPage":"483","court":"U.S.","year":"1954"}
+provenance: {"volume":{"value":"347","sourceUrl":"https://supreme.justia.com/cases/federal/us/volume/","sourceTitle":"U.S. Supreme Court Opinions by Volume","basis":"structured_metadata"},"reporter":{"value":"U.S.","sourceUrl":"https://supreme.justia.com/cases/federal/us/volume/","sourceTitle":"U.S. Supreme Court Opinions by Volume","basis":"structured_metadata"},"firstPage":{"value":"483","sourceUrl":"https://supreme.justia.com/cases/federal/us/volume/","sourceTitle":"U.S. Supreme Court Opinions by Volume","basis":"structured_metadata"},"court":{"value":"U.S.","sourceUrl":"https://supreme.justia.com/cases/federal/us/volume/","sourceTitle":"U.S. Supreme Court Opinions by Volume","basis":"structured_metadata"},"year":{"value":"1954","sourceUrl":"https://supreme.justia.com/cases/federal/us/volume/","sourceTitle":"U.S. Supreme Court Opinions by Volume","basis":"structured_metadata"}}
+grounded=5 verdict=PASS
+
+=== US3 — Roe v. Wade, name only
+input: Roe v. Wade
+family: case / US | expected: fields
+identity: matched=true anchors=[parties:roe v wade] conflicts=[]
+tier1Queried=true tier2Fired=false
+sources: tier1:https://www.supremecourt.gov/opinions/casefinder.aspx | tier1:https://supreme.justia.com/cases/federal/us/410/113/ | tier1:https://www.law.cornell.edu/supremecourt/text/410/113 | tier1:https://www.supremecourt.gov/pdfs/transcripts/1972/70-18_10-11-1972.pdf | tier1:https://www.supremecourt.gov/pdfs/transcripts/1971/70-18_12-13-1971.pdf | tier1:https://www.courtlistener.com/c/ | tier1:https://www.supremecourt.gov/opinions/USReports.aspx | tier1:https://www.supremecourt.gov/search.aspx?Search=roe+v+wade&type=Site
+accepted fields: {"volume":"410","reporter":"U.S.","firstPage":"113","court":"U.S.","year":"1973"}
+provenance: {"volume":{"value":"410","sourceUrl":"https://supreme.justia.com/cases/federal/us/410/113/","sourceTitle":"Roe v. Wade | 410 U.S. 113 (1973) - Justia Supreme Court","basis":"structured_metadata"},"reporter":{"value":"U.S.","sourceUrl":"https://supreme.justia.com/cases/federal/us/410/113/","sourceTitle":"Roe v. Wade | 410 U.S. 113 (1973) - Justia Supreme Court","basis":"structured_metadata"},"firstPage":{"value":"113","sourceUrl":"https://supreme.justia.com/cases/federal/us/410/113/","sourceTitle":"Roe v. Wade | 410 U.S. 113 (1973) - Justia Supreme Court","basis":"structured_metadata"},"court":{"value":"U.S.","sourceUrl":"https://supreme.justia.com/cases/federal/us/410/113/","sourceTitle":"Roe v. Wade | 410 U.S. 113 (1973) - Justia Supreme Court","basis":"structured_metadata"},"year":{"value":"1973","sourceUrl":"https://supreme.justia.com/cases/federal/us/410/113/","sourceTitle":"Roe v. Wade | 410 U.S. 113 (1973) - Justia Supreme Court","basis":"structured_metadata"}}
+grounded=5 verdict=PASS
+
+=== US4 — Chevron, name only
+input: Chevron U.S.A. Inc. v. Natural Resources Defense Council, Inc.
+family: case / US | expected: fields
+identity: matched=true anchors=[parties:chevron u s a v natural resources defense council] conflicts=[]
+tier1Queried=true tier2Fired=false
+sources: tier1:https://www.govinfo.gov/app/details/USREPORTS-467/USREPORTS-467-837 | tier1:https://www.govinfo.gov/content/pkg/USREPORTS-467/pdf/USREPORTS-467-837.pdf | tier1:https://www.govinfo.gov/app/details/USREPORTS-467/USREPORTS-467-837/context | tier1:https://www.supremecourt.gov/pdfs/transcripts/1983/82-1005_82-1247_82-1591_02-29-1984.pdf | tier1:https://www.supremecourt.gov/opinions/23pdf/603us1r54_87ad.pdf | tier1:https://www.govinfo.gov/content/pkg/USREPORTS-467/pdf/USREPORTS-467-FrontMatter-4.pdf | tier1:https://www.supremecourt.gov/DocketPDF/17/17-71/44956/20180427174719932_17-71%20tsac%20Ctr.%20for%20Constitutional%20Jurisprudence.pdf | tier1:https://www.supremecourt.gov/DocketPDF/17/17-1703/60797/20180827144341045_17-1703%2018-2%20Honeywell%20Int.pdf
+accepted fields: {"volume":"467","reporter":"U.S.","firstPage":"837","court":"U.S.","year":"1984"}
+provenance: {"volume":{"value":"467","sourceUrl":"https://www.govinfo.gov/app/details/USREPORTS-467/USREPORTS-467-837","sourceTitle":"Chevron U.S.A. v. Natural Res. Def. Council, 467 U.S. 837 (1984)","basis":"official_record"},"reporter":{"value":"U.S.","sourceUrl":"https://www.govinfo.gov/app/details/USREPORTS-467/USREPORTS-467-837","sourceTitle":"Chevron U.S.A. v. Natural Res. Def. Council, 467 U.S. 837 (1984)","basis":"official_record"},"firstPage":{"value":"837","sourceUrl":"https://www.govinfo.gov/app/details/USREPORTS-467/USREPORTS-467-837","sourceTitle":"Chevron U.S.A. v. Natural Res. Def. Council, 467 U.S. 837 (1984)","basis":"official_record"},"court":{"value":"U.S.","sourceUrl":"https://www.govinfo.gov/app/details/USREPORTS-467/USREPORTS-467-837","sourceTitle":"Chevron U.S.A. v. Natural Res. Def. Council, 467 U.S. 837 (1984)","basis":"official_record"},"year":{"value":"1984","sourceUrl":"https://www.govinfo.gov/app/details/USREPORTS-467/USREPORTS-467-837","sourceTitle":"Chevron U.S.A. v. Natural Res. Def. Council, 467 U.S. 837 (1984)","basis":"official_record"}}
+grounded=5 verdict=PASS
+
+=== US5 — Obergefell, year only
+input: Obergefell v. Hodges (2015)
+family: case / US | expected: fields
+identity: matched=true anchors=[parties:obergefell v hodges] conflicts=[]
+tier1Queried=true tier2Fired=false
+sources: tier1:https://supreme.justia.com/cases/federal/us/576/14-556/case.pdf | tier1:https://www.supremecourt.gov/opinions/preliminaryprint/576us2pp.pdf | tier1:https://www.supremecourt.gov/opinions/boundvolumes/576US2PP_Web.pdf | tier1:https://www.supremecourt.gov/opinions/casefinder.aspx | tier1:https://www.courtlistener.com/help/api/rest/v3/citation-lookup/ | tier1:https://www.supremecourt.gov/DocketPDF/21/21-476/227884/20220614132338901_42501%20pdf%20Goldstein.pdf | tier1:https://www.law.cornell.edu/gender-justice/resource/Obergefell_v_Hodges | tier1:https://www.supremecourt.gov/search.aspx?Search=Obergefell+v.+Hodges
+accepted fields: {"volume":"576","reporter":"U.S.","firstPage":"644","court":"U.S."}
+provenance: {"volume":{"value":"576","sourceUrl":"https://www.supremecourt.gov/DocketPDF/21/21-476/227884/20220614132338901_42501%20pdf%20Goldstein.pdf","sourceTitle":"Obergefell v. Hodges","basis":"official_record"},"reporter":{"value":"U.S.","sourceUrl":"https://www.supremecourt.gov/DocketPDF/21/21-476/227884/20220614132338901_42501%20pdf%20Goldstein.pdf","sourceTitle":"Obergefell v. Hodges","basis":"official_record"},"firstPage":{"value":"644","sourceUrl":"https://www.supremecourt.gov/DocketPDF/21/21-476/227884/20220614132338901_42501%20pdf%20Goldstein.pdf","sourceTitle":"Obergefell v. Hodges","basis":"official_record"},"court":{"value":"U.S.","sourceUrl":"https://www.supremecourt.gov/DocketPDF/21/21-476/227884/20220614132338901_42501%20pdf%20Goldstein.pdf","sourceTitle":"Obergefell v. Hodges","basis":"official_record"}}
+grounded=4 verdict=PASS
+
+=== US6 — year conflict — real case, wrong year supplied
+input: Capitol Records, LLC v. ReDigi Inc. (2d Cir. 2021)
+family: case / US | expected: no_match
+identity: matched=true anchors=[parties:capitol records v redigi] conflicts=[year:2021 vs 2018; year:2021 vs 2018]
+tier1Queried=true tier2Fired=false
+sources: tier1:https://www.courtlistener.com/ | tier1:https://law.justia.com/cases/federal/appellate-courts/ca2/16-2321/16-2321-2018-12-12.html | tier1:https://www.supremecourt.gov/DocketPDF/18/18-1430/99242/20190510113929702_ReDigi%20Inc%20v%20Capitol%20Records%20Petition%20for%20a%20Writ%20of%20Certiorari.pdf | tier1:https://www.courtlistener.com/c/ | tier1:https://www.supremecourt.gov/DocketPDF/18/18-956/133298/20200218155210566_18-956%20bsac%20Helienne%20Lindvall%20et%20al--PDFA.pdf | tier1:https://dockets.justia.com/docket/new-york/nysdce/1:2012cv00095/390216 | tier1:https://www.supremecourt.gov/search.aspx?filename=/docket/docketfiles/html/public/18-1430.html | tier1:https://cases.justia.com/federal/district-courts/new-york/nysdce/1:2012cv00095/390216/169/3.pdf
+accepted fields: {}
+provenance: {}
+grounded=0 verdict=PASS
+
+=== UK1 — Donoghue v Stevenson, partial
+input: Donoghue v Stevenson [1932]
+family: case / UK | expected: fields
+identity: matched=true anchors=[parties:donoghue v stevenson] conflicts=[]
+tier1Queried=true tier2Fired=false
+sources: tier1:https://www.bailii.org/ | tier1:https://www.bailii.org/uk/cases/UKHL/1932/100.html | tier1:https://www.bailii.org/cgi-bin/find_by_citation.cgi | tier1:https://www.supremecourt.uk/docs/donoghue-v-stevenson-90th-anniversary-speech.pdf | tier1:https://www.judiciary.uk/wp-content/uploads/JCO/Documents/Speeches/mr-speech-hamburg-lecture-09072012.pdf | tier1:https://www.bailii.org/databases.html | tier1:https://supremecourt.uk/uploads/speech_181026_lady_hale_edinburgh_345c189fe4.pdf | tier1:https://caselaw.nationalarchives.gov.uk/search/advanced
+accepted fields: {"reporter":"AC","firstPage":"562"}
+provenance: {"reporter":{"value":"AC","sourceUrl":"https://supremecourt.uk/uploads/speech_181026_lady_hale_edinburgh_345c189fe4.pdf","sourceTitle":"[PDF] The Contribution of Scottish Cases to Developing United Kingdom","basis":"official_record"},"firstPage":{"value":"562","sourceUrl":"https://supremecourt.uk/uploads/speech_181026_lady_hale_edinburgh_345c189fe4.pdf","sourceTitle":"[PDF] The Contribution of Scottish Cases to Developing United Kingdom","basis":"official_record"}}
+grounded=2 verdict=PASS
+
+=== UK2 — Miller (No 2), name only
+input: R (Miller) v Prime Minister
+family: case / UK | expected: fields
+identity: matched=true anchors=[parties:r miller v prime minister] conflicts=[]
+tier1Queried=true tier2Fired=false
+sources: tier1:https://supremecourt.uk/cases/uksc-2019-0192 | tier1:https://supremecourt.uk/uploads/R_on_the_application_of_Miller_Appellant_v_The_Prime_Minister_Respondent_and_another_be6edb8cc1.pdf | tier1:https://www.bailii.org/ | tier1:https://www.bailii.org/cgi-bin/find_by_citation.cgi | tier1:https://supremecourt.uk/uploads/annual_report_2019_20_7229290b88.pdf | tier1:https://supremecourt.uk/uploads/speech_lord_stephens_10072026_3079decd10.pdf | tier1:https://supremecourt.uk/uploads/speech_lord_reed_141124_74ae8569d6.pdf | tier1:https://caselaw.nationalarchives.gov.uk/search/advanced
+accepted fields: {"neutral":"UKSC 41","year":"2019"}
+provenance: {"neutral":{"value":"UKSC 41","sourceUrl":"https://supremecourt.uk/cases/uksc-2019-0192","sourceTitle":"R (on the application of Miller) (Appellant) v The Prime Minister ...","basis":"official_record"},"year":{"value":"2019","sourceUrl":"https://supremecourt.uk/cases/uksc-2019-0192","sourceTitle":"R (on the application of Miller) (Appellant) v The Prime Minister ...","basis":"official_record"}}
+grounded=2 verdict=PASS
+
+=== UK3 — Entick v Carrington, historical
+input: Entick v Carrington [1765]
+family: case / UK | expected: fields
+identity: matched=true anchors=[parties:entick v carrington] conflicts=[]
+tier1Queried=true tier2Fired=false
+sources: tier1:https://www.bailii.org/ | tier1:https://www.bailii.org/cgi-bin/find_by_citation.cgi | tier1:https://www.bailii.org/form/search_cases.html/ | tier1:https://www.supremecourt.uk/uploads/time_present_and_time_past_lord_reed_lecture_24bf77f186.pdf | tier1:https://supremecourt.uk/uploads/20240215_Library_title_catalogue_b1057c30ca.pdf | tier1:https://caselaw.nationalarchives.gov.uk/search/advanced | tier1:https://www.bailii.org/indices/ew-cases-0079.html | tier1:https://caselaw.nationalarchives.gov.uk/how-to-search-find-case-law
+accepted fields: {}
+provenance: {}
+grounded=0 verdict=MISS
+
+=== UK4 — Hedley Byrne, partial
+input: Hedley Byrne & Co Ltd v Heller & Partners Ltd [1964]
+family: case / UK | expected: fields
+identity: matched=true anchors=[parties:hedley byrne & v heller & partners] conflicts=[year:1964 vs 1963; year:1964 vs 2023]
+tier1Queried=true tier2Fired=false
+sources: tier1:https://www.bailii.org/cgi-bin/markup.cgi?doc=uk/cases/UKHL/1963/4.html | tier1:https://www.bailii.org/cgi-bin/find_by_citation.cgi | tier1:https://www.bailii.org/ | tier1:https://supremecourt.uk/uploads/speech_151006_21dcae59f3.pdf | tier1:https://supremecourt.uk/uploads/pure_economic_loss_in_the_law_of_tort_lord_sales_29130aea64.pdf | tier1:https://www.judiciary.uk/wp-content/uploads/2024/05/Commercial-Court-Seminar-2024-Hidden-Clients.pdf | tier1:https://supremecourt.uk/uploads/speech_120607_908eee16bf.pdf | tier1:https://caselaw.nationalarchives.gov.uk/how-to-search-find-case-law
+accepted fields: {"reporter":"AC","firstPage":"465"}
+provenance: {"reporter":{"value":"AC","sourceUrl":"https://supremecourt.uk/uploads/speech_151006_21dcae59f3.pdf","sourceTitle":"[PDF] Lord Neuberger gives talk to commemorate the ICLR's 150th ...","basis":"official_record"},"firstPage":{"value":"465","sourceUrl":"https://supremecourt.uk/uploads/speech_151006_21dcae59f3.pdf","sourceTitle":"[PDF] Lord Neuberger gives talk to commemorate the ICLR's 150th ...","basis":"official_record"}}
+grounded=2 verdict=PASS
+
+=== A1 — Coase, title+author
+input: Ronald H. Coase, The Problem of Social Cost
+family: journal_article / US | expected: fields
+identity: matched=true anchors=[title:The Problem of Social Cost; author:Ronald H. Coase] conflicts=[]
+tier1Queried=true tier2Fired=false
+sources: tier1:https://onlinelibrary.wiley.com/doi/10.1002/sres.3850090105 | tier1:https://academic.oup.com/icc/article/30/5/1168/6363708 | tier1:https://link.springer.com/article/10.1007/s10657-010-9200-0 | tier1:https://www.cambridge.org/core/journals/journal-of-institutional-economics/article/understanding-the-problem-of-social-cost/E3C9F51D7A85350DA4F0FFD1888365CE | tier1:https://www.cambridge.org/core/journals/journal-of-institutional-economics/article/introduction-to-the-ronald-h-coase-memorial-issue/E83BB9CD20A83C0B0C9448803045AF06 | tier1:https://academic.oup.com/ej/article/132/644/1259/6519262 | tier1:https://link.springer.com/book/10.1007/978-1-349-12486-2?error=cookies_not_supported&code=f92663b8-2e96-4f27-960b-8d3083b0f476 | tier1:https://papers.ssrn.com/sol3/Delivery.cfm/SSRN_ID4301257_code1760564.pdf?abstractid=4041885&mirid=1
+accepted fields: {"volume":"3","journal":"The Journal of Law and Economics","firstPage":"1","year":"1960"}
+provenance: {"volume":{"value":"3","sourceUrl":"https://onlinelibrary.wiley.com/doi/10.1002/sres.3850090105","sourceTitle":"The problem of social cost. The Journal of Law and ...","basis":"publisher_metadata"},"journal":{"value":"The Journal of Law and Economics","sourceUrl":"https://onlinelibrary.wiley.com/doi/10.1002/sres.3850090105","sourceTitle":"The problem of social cost. The Journal of Law and ...","basis":"publisher_metadata"},"firstPage":{"value":"1","sourceUrl":"https://onlinelibrary.wiley.com/doi/10.1002/sres.3850090105","sourceTitle":"The problem of social cost. The Journal of Law and ...","basis":"publisher_metadata"},"year":{"value":"1960","sourceUrl":"https://onlinelibrary.wiley.com/doi/10.1002/sres.3850090105","sourceTitle":"The problem of social cost. The Journal of Law and ...","basis":"publisher_metadata"}}
+grounded=4 verdict=PASS
+
+=== A2 — Fuller & Perdue, title+authors
+input: Lon L. Fuller & William R. Perdue, Jr., The Reliance Interest in Contract Damages
+family: journal_article / US | expected: fields
+identity: matched=true anchors=[title:The Reliance Interest in Contract Damages; author:Lon L. Fuller & William R. Perdue, Jr.] conflicts=[]
+tier1Queried=true tier2Fired=false
+sources: tier1:https://academic.oup.com/book/32878/chapter/276333411?searchresult=1 | tier1:https://academic.oup.com/book/55147/chapter/424061745?guestAccessKey= | tier1:https://www.yalelawjournal.org/pdf/320_8hxk7cx2.pdf | tier1:https://academic.oup.com/ajj/article/69/3/217/7945758?rss=1 | tier1:https://onlinelibrary.wiley.com/doi/full/10.1111/ablj.70016 | tier1:https://papers.ssrn.com/sol3/papers.cfm?abstract_id=899798 | tier1:https://academic.oup.com/ojls/article/28/1/99/1559073 | tier1:https://academic.oup.com/jrls/article-abstract/7/1/87/890686
+accepted fields: {"volume":"46","journal":"Yale L.J.","firstPage":"52","year":"1936"}
+provenance: {"volume":{"value":"46","sourceUrl":"https://academic.oup.com/book/32878/chapter/276333411?searchresult=1","sourceTitle":"Theory of Contract Enforcement","basis":"publisher_metadata"},"journal":{"value":"Yale L.J.","sourceUrl":"https://academic.oup.com/book/32878/chapter/276333411?searchresult=1","sourceTitle":"Theory of Contract Enforcement","basis":"publisher_metadata"},"firstPage":{"value":"52","sourceUrl":"https://academic.oup.com/book/32878/chapter/276333411?searchresult=1","sourceTitle":"Theory of Contract Enforcement","basis":"publisher_metadata"},"year":{"value":"1936","sourceUrl":"https://academic.oup.com/book/32878/chapter/276333411?searchresult=1","sourceTitle":"Theory of Contract Enforcement","basis":"publisher_metadata"}}
+grounded=4 verdict=PASS
+
+=== A3 — Hart, Positivism and the Separation of Law and Morals
+input: H.L.A. Hart, Positivism and the Separation of Law and Morals
+family: journal_article / US | expected: fields
+identity: matched=true anchors=[title:Positivism and the Separation of Law and Morals; author:H.L.A. Hart] conflicts=[]
+tier1Queried=true tier2Fired=false
+sources: tier1:https://www.cambridge.org/core/books/abs/cambridge-companion-to-legal-positivism/history/0DFC2FE6BD289717D458B065B66BB3A4 | tier1:https://www.cambridge.org/core/books/abs/cambridge-companion-to-legal-positivism/critique/39A6000F40A6BC2AE3087948A70C55F5 | tier1:https://academic.oup.com/book/9055/chapter-abstract/155578535?redirectedFrom=fulltext | tier1:https://www.cambridge.org/core/journals/canadian-journal-of-law-and-society-la-revue-canadienne-droit-et-societe/article/abs/la-philosophie-du-droit-de-h-l-a-hart/E0595BF9F42282238F4839E54EF377FB | tier1:https://www.cambridge.org/core/journals/cambridge-law-journal/article/abs/enforcement-of-morals/452A343BF0FDB41A5EB116F89B1964D9 | tier1:https://academic.oup.com/ajj/article/59/2/111/2739013?login=true | tier1:https://www.cambridge.org/core/journals/canadian-journal-of-law-and-jurisprudence/article/abs/reconstructing-fullers-argument-against-legal-positivism/9BA5B17D0C877BA08245E3472C139EF8 | tier1:https://www.cambridge.org/core/books/abs/cambridge-companion-to-legal-positivism/main-tenets/626F6821FE1DF42389A4973D1F0396FB
+accepted fields: {}
+provenance: {}
+grounded=0 verdict=MISS
+
+=== A4 — Dworkin, The Model of Rules
+input: Ronald Dworkin, The Model of Rules
+family: journal_article / US | expected: fields
+identity: matched=true anchors=[title:The Model of Rules; author:Ronald Dworkin] conflicts=[]
+tier1Queried=true tier2Fired=false
+sources: tier1:https://www.cambridge.org/core/services/aop-cambridge-core/content/view/420B010824752091E014546B33081482/S1479244324000386a.pdf/dworkin-on-ordinary-language-philosophy-and-legal-principles-before-the-hart-dworkin-debate.pdf | tier1:https://yalelawjournal.org/essay/the-end-of-jurisprudence | tier1:https://www.cambridge.org/core/journals/canadian-journal-of-law-and-jurisprudence/article/sein-sollen-wollen-recasting-legal-norms-in-a-logicalteleological-key/CC5C313F50456EF15F03F5EB116FF9EF | tier1:https://academic.oup.com/ojls/article/42/2/548/6431752?guestAccessKey= | tier1:https://www.cambridge.org/core/journals/canadian-journal-of-law-and-jurisprudence/article/legal-positivism-and-the-moral-origins-of-legal-systems/CDBDD99E35D63DD479026211F39D6FC0 | tier1:https://www.cambridge.org/core/journals/cambridge-law-journal/article/abs/judicial-discretion-and-the-concept-of-law/3D3CB2F13D9D20B41C4D17DF9273E78C | tier1:https://academic.oup.com/ajj/article/69/2/127/7916466 | tier1:https://www.cambridge.org/core/journals/modern-intellectual-history/article/dworkin-on-ordinary-language-philosophy-and-legal-principles-before-the-hartdworkin-debate/420B010824752091E014546B33081482
+accepted fields: {"volume":"35","journal":"U. Chi. L. Rev.","firstPage":"14","year":"1967"}
+provenance: {"volume":{"value":"35","sourceUrl":"https://yalelawjournal.org/essay/the-end-of-jurisprudence","sourceTitle":"The End of Jurisprudence | Yale Law Journal","basis":"repository_metadata"},"journal":{"value":"U. Chi. L. Rev.","sourceUrl":"https://yalelawjournal.org/essay/the-end-of-jurisprudence","sourceTitle":"The End of Jurisprudence | Yale Law Journal","basis":"repository_metadata"},"firstPage":{"value":"14","sourceUrl":"https://yalelawjournal.org/essay/the-end-of-jurisprudence","sourceTitle":"The End of Jurisprudence | Yale Law Journal","basis":"repository_metadata"},"year":{"value":"1967","sourceUrl":"https://yalelawjournal.org/essay/the-end-of-jurisprudence","sourceTitle":"The End of Jurisprudence | Yale Law Journal","basis":"repository_metadata"}}
+grounded=4 verdict=PASS
+
+=== BK1 — Calabresi, Costs of Accidents
+input: Guido Calabresi, The Costs of Accidents
+family: book / US | expected: fields
+identity: matched=true anchors=[title:The Costs of Accidents; author:Guido Calabresi] conflicts=[]
+tier1Queried=true tier2Fired=false
+sources: tier1:https://www.cambridge.org/core/journals/cambridge-law-journal/article/costs-of-accidents-a-legal-and-economic-analysis-by-guido-calabresi-new-haven-and-london-yale-university-press-1970-x-331-and-index-8-pp-90s-net/1181550A538CA5AF317DD02090CF5D62 | tier1:https://books.google.com/books/about/The_Cost_of_Accidents.html?id=pdn8ynbpzQYC | tier1:https://link.springer.com/content/pdf/10.1057/gpp.1987.7.pdf?error=cookies_not_supported&code=d0dde7ab-5d42-4e2d-823f-ffe2b3d9a0b4 | tier1:https://yalelawjournal.org/feature/the-age-of-consent | tier1:https://papers.ssrn.com/sol3/papers.cfm?abstract_id=604561 | tier1:https://books.google.com/books/about/The_Costs_of_Accidents.html?id=PEMLlb7XxyMC | tier1:https://books.google.com/books/about/Costo_degli_incidenti_e_responsabilit%C3%A0.html?id=ZDQPAK2Kt1sC | tier1:https://yalelawjournal.org/article/tort-law-inside-out
+accepted fields: {"year":"1970"}
+provenance: {"year":{"value":"1970","sourceUrl":"https://link.springer.com/content/pdf/10.1057/gpp.1987.7.pdf?error=cookies_not_supported&code=d0dde7ab-5d42-4e2d-823f-ffe2b3d9a0b4","sourceTitle":"Introduction - Springer Nature","basis":"publisher_metadata"}}
+grounded=1 verdict=PASS
+
+=== BK2 — Hart, The Concept of Law
+input: H.L.A. Hart, The Concept of Law
+family: book / UK | expected: fields
+identity: matched=true anchors=[title:The Concept of Law; author:H.L.A. Hart] conflicts=[]
+tier1Queried=true tier2Fired=false
+sources: tier1:https://books.google.com/books/about/The_Concept_of_Law.html?id=KlNOAAAAYAAJ | tier1:https://books.google.com/books/about/The_Concept_of_Law.html?id=hC0UDAAAQBAJ | tier1:https://books.google.com/books/about/The_Concept_of_Law.html?id=zLgLAQAAIAAJ | tier1:https://academic.oup.com/ajj/article/7/1/169/213851 | tier1:https://academic.oup.com/ajj/article-abstract/7/1/169/213851 | tier1:https://academic.oup.com/ajj/article/7/1/169/213851?login=false | tier1:https://academic.oup.com/pq/article/13/51/188/1458519 | tier1:https://academic.oup.com/book/10055/chapter/157499328
+accepted fields: {}
+provenance: {}
+grounded=0 verdict=MISS
+
+=== BK3 — Holmes, The Common Law
+input: Oliver Wendell Holmes, Jr., The Common Law
+family: book / US | expected: fields
+identity: matched=true anchors=[title:The Common Law; author:Oliver Wendell Holmes, Jr.] conflicts=[]
+tier1Queried=true tier2Fired=false
+sources: tier1:https://books.google.com/books/about/The_Common_Law.html?id=0IFZfi9MpF8C | tier1:https://books.google.com/books/about/The_Common_Law.html?id=foycEQAAQBAJ | tier1:https://books.google.com/books/about/The_Common_Law.html?id=509IS4Y2xisC | tier1:https://books.google.com/books/about/The_Common_Law.html?id=0MAjT5qwuYsC | tier1:https://books.google.com/books/about/The_Common_Law.html?hl=es&id=INj8r44tAtkC | tier1:https://yalelawjournal.org/feature/legal-scholarship-for-judges | tier1:https://books.google.com/books/about/The_Common_Law_Cram_Edition.html?id=nKsN0gEACAAJ | tier1:https://yalelawjournal.org/essay/pointless-ip
+accepted fields: {"edition":"2nd ed."}
+provenance: {"edition":{"value":"2nd ed.","sourceUrl":"https://yalelawjournal.org/essay/pointless-ip","sourceTitle":"Pointless IP | Yale Law Journal","basis":"repository_metadata"}}
+grounded=1 verdict=PASS
+
+=== C1 — Shavell chapter in Handbook of Law and Economics
+input: Steven Shavell, Liability for Accidents, in Handbook of Law and Economics
+family: book_chapter / US | expected: fields
+identity: matched=true anchors=[title:Liability for Accidents; author:Steven Shavell] conflicts=[]
+tier1Queried=true tier2Fired=false
+sources: tier1:https://papers.ssrn.com/sol3/papers.cfm?abstract_id=849285 | tier1:https://papers.ssrn.com/sol3/papers.cfm?abstract_id=379802 | tier1:https://academic.oup.com/edited-volume/28361/chapter/215243398 | tier1:https://books.google.com/books/about/Handbook_of_Law_and_Economics.html?id=vmDIK95JYykC | tier1:https://link.springer.com/rwe/10.1057/978-1-349-95121-5_2248-1?error=cookies_not_supported&code=0a518121-f9ff-4d68-b376-49c7fff35e39 | tier1:https://academic.oup.com/edited-volume/28000/chapter/211742467?searchresult=1 | tier1:https://www.cambridge.org/core/books/abs/cambridge-handbook-of-compliance/deterrence-and-incapacitation/034A943A1041F2C727A9C2B053C92E12 | tier1:https://academic.oup.com/edited-volume/28361/chapter/215240454?searchresult=1
+accepted fields: {"year":"2008"}
+provenance: {"year":{"value":"2008","sourceUrl":"https://link.springer.com/rwe/10.1057/978-1-349-95121-5_2248-1?error=cookies_not_supported&code=0a518121-f9ff-4d68-b376-49c7fff35e39","sourceTitle":"Liability for Accidents | Springer Nature Link","basis":"publisher_metadata"}}
+grounded=1 verdict=PASS
+
+=== C2 — Posner chapter
+input: Richard A. Posner, Some Economics of Labor Law, in The Economics of Law
+family: book_chapter / US | expected: fields
+identity: matched=true anchors=[title:Some Economics of Labor Law; author:Richard A. Posner] conflicts=[]
+tier1Queried=true tier2Fired=false
+sources: tier1:https://yalelawjournal.org/essay/the-unbundled-union | tier1:https://yalelawjournal.org/pdf/204_z47fd9fu.pdf | tier1:https://academic.oup.com/edited-volume/58079/chapter/478589477?guestAccessKey= | tier1:https://yalelawjournal.org/article/the-new-labor-law | tier1:https://academic.oup.com/book/12409/chapter/162043381?searchresult=1 | tier1:https://academic.oup.com/edited-volume/28361/chapter/215243398 | tier1:https://academic.oup.com/book/2015/chapter/141900100 | tier1:https://academic.oup.com/chicago-scholarship-online/book/21136/chapter/180746628?guestAccessKey=
+accepted fields: {}
+provenance: {}
+grounded=0 verdict=MISS
+
+=== NEG1 — nonexistent case — must not fabricate
+input: Zxcvqwerty Holdings, LLC v. Asdfjkl Corp. (Fed. Cir. 2041)
+family: case / US | expected: no_match
+identity: matched=false anchors=[parties:zxcvqwerty holdings v asdfjkl] conflicts=[no_identity_matched_source]
+tier1Queried=true tier2Fired=false
+sources: tier1:https://www.courtlistener.com/ | tier1:https://pacer.uscourts.gov/find-case/search-national-index | tier1:https://www.courtlistener.com/recap/ | tier1:https://www.courtlistener.com/c/f3d/ | tier1:https://www.govinfo.gov/help/usreports | tier1:https://www.supremecourt.gov/opinions/casefinder.aspx | tier1:https://pacer.uscourts.gov/find-case/court-opinions | tier1:https://pacer.uscourts.gov/
+accepted fields: {}
+provenance: {}
+grounded=0 verdict=PASS
+
+=== AGGREGATE DIAGNOSTICS (report-only, not optimized) ===
+{
+  "tier1_completed": 14,
+  "tier2_fired": 0,
+  "tier2_rescued": 0,
+  "identity_mismatch_rejected": 1,
+  "identity_conflict_rejected": 1,
+  "fields_grounded": 46,
+  "fields_left_missing": 0,
+  "offlist_legitimate_accepted": 0
+}
