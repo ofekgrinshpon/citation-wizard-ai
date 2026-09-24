@@ -313,7 +313,7 @@ function extractCaseFromEvidence(text: string, jurisdiction: ForeignLookupJurisd
       volume: m[1],
       reporter: m[2].replace(/\s+/g, " ").trim(),
       firstPage: m[3],
-      court: m[4].trim(),
+      court: m[4]?.trim() || undefined,
       year: m[5],
     };
   }
