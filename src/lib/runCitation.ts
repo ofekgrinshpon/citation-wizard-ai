@@ -225,6 +225,7 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
     {
       messages: [{ role: "user", content: prompt }],
       requestId: crypto.randomUUID(),
+      ...(foreignLookupRequest ? { foreignLookup: foreignLookupRequest } : {}),
     },
     { projectId: opts.projectId ?? null }
   );
