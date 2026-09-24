@@ -1,41 +1,51 @@
-# academic_utilization_stabilization_v1
+# Milestone 2B — Foreign Source Lookup (fill in missing details)
 
-Use the sources the pipeline already acquired. No new retrieval, no discovery changes, no footnote-count target.
+## Goal
+When someone types a partial foreign citation (for example "Capitol Records, LLC v. ReDigi Inc. (2d Cir. 2018)"), ReLex searches the web for the missing details, confirms them against real sources, and then builds the citation with the same fixed Bluebook formatter. If a detail can't be confirmed, it's still marked [חסר: …]. Nothing is guessed.
 
-## What changes
+```text
+Input
+ ├─ complete citation → local parser → Bluebook formatter → done (fast, free, as today)
+ ├─ partial / name only → Perplexity lookup → confirmed details → same formatter → done
+ └─ lookup can't confirm → [חסר: …] + warning (no guessing)
+```
 
-### 1. Rule D area override in academic mode — `stages/claimSourceMatch.ts`
-Rule D currently drops any ref whose `legal_area` differs from the block's on a substantive block. In `academic_writing` mode, the drop becomes a warning when all of these hold: verifier verdict is `direct` or strong `partial`, the source profile is doctrinal/academic/commentary, a substantive body was acquired, `academicTopicalFit` (existing scorer in `academicAuthorityAlignment.ts`) passes, and the block category is one of `academic_framing`, `doctrinal_background`, `theoretical_explanation`, `literature_synthesis`, `critique_or_counterposition`, `methodological_framing`.
+## Scope (existing families only)
+- US cases: volume, reporter, first page, court, year. Also Westlaw/Lexis number plus docket and date when there's no printed report.
+- UK cases: neutral citation and/or law report (year, series, page, court).
+- Foreign journal articles: authors, title, volume, journal, first page, year.
+- Foreign books and book chapters: authors, title, edition, year; for chapters, also the editors, the book title and the first page.
+- US statutes and the US Constitution stay local only (the input already contains the section).
 
-Rule D stays strict for `court_holding`, `statutory`, docket-specific and binding-law claims, and for every non-academic mode. Topical-fit failure still drops.
+Out of scope: C.F.R., legislative materials, EU and international sources, Word Add-in work, new source families, and changes to Israeli citations.
 
-Telemetry `academic_rule_d_area_override`: `source_id, title, block_category, source_legal_area, block_legal_area, topical_fit_passed, overridden, final_decision`.
+## Behaviour rules
+- The local fast path always runs first. The lookup runs only when the local formatter declines.
+- The lookup returns **structured fields only**, never a formatted citation. ReLex's formatter owns all punctuation, italics and small caps.
+- Each field is accepted only if a trusted source backs it and the source's party names or title match the input. Fields without that backing stay missing.
+- The case name, court and year the user typed must match what the lookup found. If they conflict, the lookup result is thrown away and the user sees a warning.
+- Repeat citations still follow Rule 37 (never Id./supra). Verified sources keep priority.
+- The credit cost stays the same as today's single citation.
 
-### 2. Bibliography-only references for literature/framing blocks — `claimSourceMatch.ts` + `footnoteBuilder` wording
-Rule B (`commentary_in_substantive_block`) gains a narrow academic exception: a bibliography-only academic/journal/book source (direct or strong partial, subject-fit passing, real bibliographic identity) may be kept as a **reference-only** ref in `literature_synthesis`, `academic_framing`, `methodological_framing`, and `critique_or_counterposition` blocks whose wording is a literature pointer.
-
-Reference-only refs are marked in the ref record so they can never satisfy a substantive doctrinal, holding, statutory, rule, factual, or binding-law claim, and the drafter/footnote wording presents them as reading references (e.g. "ראו" pointer phrasing), not as proof. Listing/index pages, court result pages, metadata-only pages and found-only web pages remain non-supporting. Acquired full bodies are preferred over bib-only when both fit.
-
-Telemetry `academic_bib_reference_use`: `allowed_count, rejected_count, source_title, block_category, reference_only, reason`.
-
-### 3. Hebrew rebinding hardening — `stages/claimSourceRebinding.ts`
-`evaluateBinding` gains academic-aware inputs: source title/topic tokens (not just body/supported_points), safer Hebrew morphology normalization (clitic prefixes, construct forms, plural/definite variants), and an academic path where `verifier_verdict = direct` plus strong subject fit is sufficient to bind topically even when raw term overlap is thin.
-
-Off-topic sources still do not bind; secondary sources still never bind to primary-law claims; binding stays claim-category aware and the exact > facet > topical > area_direct hierarchy is unchanged.
-
-Telemetry `academic_hebrew_rebinding`: `attempted, source_id, title, old_binding_result, new_binding_result, reason, title_topic_match, verifier_verdict, topical_fit`.
-
-### 4. Drafter block coverage — `stages/drafterV2.ts` (+ academic style/source-use block)
-The academic source-use instructions state: for each substantive academic block, if the pack contains an eligible source for that block's role, emit at least one `source_ref`. Explicitly no minimum footnote count, no decorative citations, no citing sources that do not fit the block, and no extra citations forced into a single-paragraph `argument_paragraph` when one source carries the core claim.
-
-A post-draft measurement (no rewriting) records coverage.
-
-Telemetry `academic_source_coverage`: `substantive_blocks, blocks_with_available_source, blocks_with_source_ref, blocks_missing_ref_despite_available_source, reason`.
-
-## Out of scope
-Retrieval, discovery counts, judgment identity validation, docket limitation, source integrity, footnote rendering invariants, found-only support for substantive claims, any fixed citation count.
-
-## Validation
-- Unit tests extended in `src/test/academicAuthorityAlignment.test.ts` and `src/test/claimSourceRebinding.test.ts`: Rule D override conditions and its strict cases, bib-only allowed in literature blocks and rejected in doctrinal blocks, Hebrew title-token rebinding of "כגודל הציפייה" / "רבע מאה למהפכה החוקתית", off-topic non-rescue, drafter coverage counter.
-- Live run AW1, AW4, AW7, AW8 via `scripts/legal-research-v1-academic-writing-validation.ts`, checked against: AW4/AW7 direct subject-fit sources no longer dropped for area mismatch; AW8 direct on-topic sources no longer `claim_mismatch`; AW1 bib-only Barak/Bel Yosef cited only as literature pointers; AW7 not zero-footnote when direct acquired subject-fit sources exist and not over-cited; no secondary under a holding/statutory/docket/quote claim; rendering invariants clean.
-- Report + full answers to `reports/academic-utilization-stabilization/` and delivered in chat.
+## Technical details
+- **citation-chat:** add a `foreign_lookup` branch, taken when the classified type is `foreign_*` and the request asks for a lookup. It uses Perplexity sonar-pro with a JSON-schema response per family and a trusted-domain filter:
+  - US cases: courtlistener.com, law.cornell.edu, justia.com, supremecourt.gov, casetext.com, uscourts.gov, govinfo.gov
+  - UK cases: bailii.org, supremecourt.uk, nationalarchives.gov.uk
+  - Articles and books: publisher, SSRN, JSTOR, HeinOnline, university and Google Books pages
+  - The existing tier-2 fallback runs only when the trusted sources return nothing.
+- **Grounding:** the reporter citation (for example "910 F.3d 649") or the title must appear in the snippet or title of at least one trusted citation URL. Party names must match the input using the M1 name normalizer. Each field gets a `grounded: true/false` flag.
+- **Response:** `{ foreignLookup: { kind, jurisdiction, fields, grounded, sources[] } }`, alongside the existing `content` fallback.
+- **runCitation.ts:** once `renderForeignCitation` declines on a foreign type, call citation-chat with `foreignLookup: true`. Merge the user's fields with the grounded fields (user input wins on identity; a conflict means the result is discarded). Then call `renderForeignDetection`. Grounded fields that are still missing render as [חסר: field] with the existing כלל 36.4 warning. If the lookup fails, use today's behaviour.
+- **No second formatter:** the Deno side only extracts. All formatting stays in `src/data/bluebook/render.ts`.
+- **Tests (new bluebookM2B.test.ts, using a mocked Perplexity):**
+  - A partial US case fills volume, reporter and first page, then renders correctly.
+  - An ungrounded field stays [חסר].
+  - A party name mismatch discards the lookup result.
+  - A court or year conflict discards the lookup result.
+  - A UK case gets its neutral citation filled in.
+  - An article is completed with a journal abbreviation from the table only.
+  - A book edition and year are filled in.
+  - A complete input never calls the lookup.
+  - Plus regression checks for Rule 37, parity, Israeli citations and small caps.
+- **Live acceptance (at least 20 records):** 6 US cases (including ReDigi), 4 UK cases, 4 articles, 3 books, 2 chapters and 1 nonexistent case as a negative control. For each record, save the input, the lookup fields, their grounding, the sources, the final citation and any warnings.
+- **Report:** `reports/final-acceptance/bluebook22-foreign-citation-engine-m2b/REPORT.md` plus ACCEPTANCE_RECORDS.txt, with a SHIP / PARTIAL / HOLD verdict.
