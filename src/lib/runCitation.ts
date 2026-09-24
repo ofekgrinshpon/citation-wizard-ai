@@ -19,8 +19,13 @@ import { validateCitationInput } from "@/lib/citationInputValidation";
 import { extractCitationFromResponse } from "@/lib/citationUtils";
 import { invokeFunction } from "@/lib/functionError";
 import { handleRefundResponse } from "@/lib/refundResponse";
-import { renderForeignCitation } from "@/data/bluebook";
-import { isForeignSourceType } from "@/data/bluebook/types";
+import { renderForeignCitation, renderForeignDetection } from "@/data/bluebook";
+import { detectForeignSource } from "@/data/bluebook/extract";
+import {
+  isForeignSourceType,
+  toForeignIdentity,
+  type ForeignFields,
+} from "@/data/bluebook/types";
 
 /** Pinpoint references (סעיף / עמ' / פסקה …) are not master sources. */
 export const PINPOINT_RE =
@@ -171,6 +176,37 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
     }
   }
 
+  // 1c) Milestone 2B — grounded foreign lookup. Only when the deterministic
+  // foreign path declined AND the source type is a supported lookup family.
+  // The typed contract is sent explicitly; search hints ≠ evidence; the
+  // deterministic Bluebook renderer remains the sole formatter.
+  let foreignLookupRequest: Record<string, unknown> | null = null;
+  let foreignDetection = isForeignSourceType(sourceType) && !isPinpoint
+    ? detectForeignSource(normalized)
+    : null;
+  if (!isPinpoint && isForeignSourceType(sourceType)) {
+    const identity = toForeignIdentity(sourceType);
+    if (
+      identity &&
+      ["case", "journal_article", "book", "book_chapter"].includes(identity.kind) &&
+      (identity.jurisdiction === "US" || identity.jurisdiction === "UK")
+    ) {
+      const parsedFields: Record<string, string> = {};
+      if (foreignDetection) {
+        for (const [k, v] of Object.entries(foreignDetection.fields as Record<string, unknown>)) {
+          if (typeof v === "string" && v.trim()) parsedFields[k] = v.trim();
+        }
+      }
+      foreignLookupRequest = {
+        enabled: true,
+        kind: identity.kind,
+        jurisdiction: identity.jurisdiction,
+        rawInput: normalized,
+        parsedFields,
+      };
+    }
+  }
+
   // 2) Pinpoint + known master source → feed the verified details as a hint.
   if (verifiedMatch && isPinpoint) {
     const category = getVerifiedCategoryLabel(
@@ -189,6 +225,7 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
     {
       messages: [{ role: "user", content: prompt }],
       requestId: crypto.randomUUID(),
+      ...(foreignLookupRequest ? { foreignLookup: foreignLookupRequest } : {}),
     },
     { projectId: opts.projectId ?? null }
   );
@@ -203,6 +240,53 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
   }
 
   handleRefundResponse(data);
+
+  // 3a) M2B: grounded foreign metadata returned → merge + deterministic render.
+  // User-supplied identity anchors win; grounded lookup fields fill the gaps;
+  // anything ungrounded stays [חסר: …] via the existing renderer behavior.
+  const fl = (data as { foreignLookup?: {
+    identity?: { matched?: boolean };
+    fields?: Record<string, string>;
+  } } | null)?.foreignLookup;
+  if (foreignLookupRequest && fl?.identity?.matched && fl.fields && Object.keys(fl.fields).length > 0) {
+    const identity = toForeignIdentity(sourceType)!;
+    const baseFields: Record<string, unknown> = { ...(fl.fields as Record<string, unknown>) };
+    if (foreignDetection) {
+      // Never overwrite what the user supplied; lookup only fills gaps.
+      for (const [k, v] of Object.entries(foreignDetection.fields as Record<string, unknown>)) {
+        if (typeof v === "string" && v.trim()) baseFields[k] = v.trim();
+      }
+    }
+    const detection = {
+      sourceType,
+      kind: identity.kind,
+      jurisdiction: identity.jurisdiction,
+      confidence: "high" as const,
+      fields: baseFields as unknown as ForeignFields,
+    };
+    const rendered = renderForeignDetection(detection);
+    if (rendered && rendered.citation.trim()) {
+      const missingSummary =
+        rendered.missing.length > 0
+          ? getMissingFieldsSummary(sourceType, rendered.missing)
+          : null;
+      const warningBits = [...rendered.warnings];
+      if (missingSummary) warningBits.push(`חסרים פרטים לפי כלל 36.4: ${missingSummary}`);
+      const hasMissing = rendered.missing.length > 0;
+      const reply = hasMissing || warningBits.length
+        ? `${rendered.citation}\n⚠️ ${warningBits.join(" ") || missingSummary}`
+        : rendered.citation;
+      return {
+        reply,
+        citation: rendered.citation,
+        sourceType,
+        sourceLabel: SOURCE_TYPE_LABELS[sourceType],
+        fromVerifiedStore: false,
+        status: hasMissing || warningBits.length ? "warning" : "valid",
+        warningMsg: warningBits[0],
+      };
+    }
+  }
 
   const reply = (data?.content as string) || "";
   if (!reply.trim()) {
