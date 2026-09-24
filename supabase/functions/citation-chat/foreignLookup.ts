@@ -568,18 +568,26 @@ export async function runForeignLookup(
   // ── Field-level grounding: each field traced to its evidence source ──
   const candidateFields: Record<string, string | undefined> =
     input.kind === "case"
-      ? {
-          volume: extracted.volume,
-          reporter: extracted.reporter,
-          firstPage: extracted.firstPage,
-          court: extracted.court,
-          year: extracted.year,
-          docket: extracted.docket,
-          databaseIdentifier: extracted.databaseIdentifier,
-          decisionDate: extracted.decisionDate,
-          neutral: extracted.neutral,
-          reporterVolume: extracted.ukVolume,
-        }
+      ? input.jurisdiction === "UK"
+        ? {
+            // Field names match the deterministic UK renderer.
+            neutral: extracted.neutral,
+            reporter: extracted.ukSeries,
+            reporterVolume: extracted.ukVolume,
+            firstPage: extracted.firstPage,
+            court: extracted.neutral ? undefined : extracted.court,
+            year: extracted.year,
+          }
+        : {
+            volume: extracted.volume,
+            reporter: extracted.reporter,
+            firstPage: extracted.firstPage,
+            court: extracted.court,
+            year: extracted.year,
+            docket: extracted.docket,
+            databaseIdentifier: extracted.databaseIdentifier,
+            decisionDate: extracted.decisionDate,
+          }
       : {
           volume: extracted.volume,
           journal: extracted.journal,
