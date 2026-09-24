@@ -320,8 +320,13 @@ function extractCaseFromEvidence(text: string, jurisdiction: ForeignLookupJurisd
   return null;
 }
 
-const ARTICLE_RE =
-  /(\d{1,3})\s+([A-Z][A-Za-z.&' ]+?(?:Law (?:Review|Journal)|L\. ?Rev\.|L\. ?J\.|J\. ?Legal|Legal Stud\.|Oxford J\.|Cambridge L\. ?J\.|Mod\. L\. ?Rev\.|[A-Z][A-Za-z.&']* L\. ?[A-Za-z.]*))\s+(\d{1,4})(?:\s*,\s*\d+)?\s*\(?(\d{4})\)?/;
+// Lazy journal capture between volume and first page; the candidate is then
+// validated (must look like a periodical, not title words). The renderer's
+// deterministic table — never this module — owns abbreviation.
+const ARTICLE_RE = /(\d{1,3})\s+([A-Z][A-Za-z.&' ]+?)\s+(\d{1,4})(?:\s*,\s*\d+)?\s*\((\d{4})\)/;
+function isPlausibleJournal(s: string): boolean {
+  return /[A-Za-z]{2,}/.test(s) && /\.|Law|Journal|Rev|Stud|Econ|Legal/i.test(s);
+}
 const BOOK_YEAR_RE = /\((?:(\d+)(?:st|nd|rd|th)\s+ed\.?,?\s+)?(\d{4})\)/;
 
 interface WorkCite {
@@ -335,7 +340,12 @@ interface WorkCite {
 function extractWorkFromEvidence(text: string, kind: ForeignLookupKind): WorkCite {
   if (kind === "journal_article") {
     const m = text.match(ARTICLE_RE);
-    if (m) return { volume: m[1], journal: m[2].replace(/\s+/g, " ").trim(), firstPage: m[3], year: m[4] };
+    if (m) {
+      const journal = m[2].replace(/\s+/g, " ").trim();
+      if (isPlausibleJournal(journal)) {
+        return { volume: m[1], journal, firstPage: m[3], year: m[4] };
+      }
+    }
     return {};
   }
   const y = text.match(BOOK_YEAR_RE);
