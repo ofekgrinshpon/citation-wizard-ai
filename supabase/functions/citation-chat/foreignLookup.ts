@@ -183,6 +183,13 @@ function basisFor(q: SourceQuality, inspected: boolean): GroundingBasis {
 }
 
 // ── Identity normalization ─────────────────────────────────────────────────
+const PARTY_ABBREV: Record<string, string> = {
+  res: "resources", def: "defense", assn: "association", "ass'n": "association",
+  inc: "incorporated", co: "company", corp: "corporation", ltd: "limited",
+  univ: "university", inst: "institute", dept: "department", envtl: "environmental",
+  natl: "national", ctr: "center", comm: "commission", auth: "authority",
+};
+
 export function normalizePartyName(s: string): string {
   return s
     .toLowerCase()
@@ -202,8 +209,13 @@ function textContainsParty(text: string, party: string): boolean {
   const p = normalizePartyName(party);
   if (p.length < 3) return false;
   const t = normalizePartyName(text);
-  // Every significant token of the party name must appear.
-  return p.split(" ").every((tok) => tok.length < 3 || t.includes(tok));
+  // Every significant token of the party name must appear (abbreviations expanded).
+  return p.split(" ").every((tok) => {
+    if (tok.length < 3) return true;
+    const full = PARTY_ABBREV[tok] ?? tok;
+    return t.includes(tok) || t.includes(full) ||
+      t.split(" ").some((w) => (PARTY_ABBREV[w] ?? w) === full);
+  });
 }
 
 function normalizeTitle(s: string): string {
@@ -381,7 +393,7 @@ export function extractWorkFromEvidence(text: string, kind: ForeignLookupKind, t
     // Publisher page formats: "Journal X, Vol. III, 1960, pp. 1-44".
     const v = text.match(VOL_RE);
     if (v) {
-      const journal = v[1].replace(/[*#]/g, "").replace(/\s+/g, " ").trim();
+      const journal = (v[1].split(/\.\s+(?=[A-Z])/).pop() ?? v[1]).replace(/[*#]/g, "").replace(/\s+/g, " ").trim();
       const volume = romanToArabic(v[2]);
       if (volume && isPlausibleJournal(journal) && journalAnchoredInTitle(journal, title)) {
         return { volume, journal, year: v[3], firstPage: v[4] };
@@ -675,6 +687,39 @@ export async function runForeignLookup(
         if (!value) continue;
         if (field === "year" && userYear === value) continue;
         candidates.push({ field, value, donor: best, inspected: true });
+      }
+    }
+  }
+
+  // ── Different-work isolation for cases ─────────────────────────────────
+  // Sources quoting a DIFFERENT decision (e.g. an overruling case citing the
+  // target) cluster apart; keep only the plurality cluster.
+  if (input.kind === "case") {
+    const sig = (c: Candidate) => {
+      const f = fieldsForSource(`${c.donor.title ?? ""} ${c.donor.snippet ?? ""}`);
+      const vol = f.volume ?? f.reporterVolume ?? "";
+      const pg = f.firstPage ?? "";
+      const neu = f.neutral ?? "";
+      return vol || pg || neu ? `${neu}|${vol}|${pg}` : "";
+    };
+    const groups = new Map<string, number>();
+    const sigOf = new Map<Candidate, string>();
+    for (const c of candidates) {
+      const g = sig(c);
+      sigOf.set(c, g);
+      if (g) groups.set(g, (groups.get(g) ?? 0) + 1);
+    }
+    let best = "";
+    let bestN = 0;
+    let tie = false;
+    for (const [g, n] of groups) {
+      if (n > bestN) { best = g; bestN = n; tie = false; }
+      else if (n === bestN) tie = true;
+    }
+    if (best && !tie) {
+      for (let i = candidates.length - 1; i >= 0; i--) {
+        const g = sigOf.get(candidates[i]) ?? "";
+        if (g && g !== best) candidates.splice(i, 1);
       }
     }
   }
