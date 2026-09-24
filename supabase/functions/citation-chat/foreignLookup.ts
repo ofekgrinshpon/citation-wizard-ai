@@ -183,6 +183,13 @@ function basisFor(q: SourceQuality, inspected: boolean): GroundingBasis {
 }
 
 // ── Identity normalization ─────────────────────────────────────────────────
+const PARTY_ABBREV: Record<string, string> = {
+  res: "resources", def: "defense", assn: "association", "ass'n": "association",
+  inc: "incorporated", co: "company", corp: "corporation", ltd: "limited",
+  univ: "university", inst: "institute", dept: "department", envtl: "environmental",
+  natl: "national", ctr: "center", comm: "commission", auth: "authority",
+};
+
 export function normalizePartyName(s: string): string {
   return s
     .toLowerCase()
@@ -202,8 +209,13 @@ function textContainsParty(text: string, party: string): boolean {
   const p = normalizePartyName(party);
   if (p.length < 3) return false;
   const t = normalizePartyName(text);
-  // Every significant token of the party name must appear.
-  return p.split(" ").every((tok) => tok.length < 3 || t.includes(tok));
+  // Every significant token of the party name must appear (abbreviations expanded).
+  return p.split(" ").every((tok) => {
+    if (tok.length < 3) return true;
+    const full = PARTY_ABBREV[tok] ?? tok;
+    return t.includes(tok) || t.includes(full) ||
+      t.split(" ").some((w) => (PARTY_ABBREV[w] ?? w) === full);
+  });
 }
 
 function normalizeTitle(s: string): string {
@@ -276,11 +288,25 @@ export function extractCaseFromEvidence(text: string, jurisdiction: ForeignLooku
   if (jurisdiction === "US") {
     const r = text.match(US_REPORTS_YEAR_RE);
     if (r) return { volume: r[1], reporter: r[2].replace(/ /g, ""), firstPage: r[3], court: "U.S.", year: r[4] };
+    // Docketed decision: "No. 16-2321 (2d Cir. 2018)" / "(2d Cir. Dec. 12, 2018)".
+    const d = text.match(/No\.?\s+([0-9][A-Za-z0-9-]+)\s*\(([A-Za-z0-9. ]*?(?:Cir\.|U\. ?S\.|[A-Z]\. ?[A-Za-z]+\.?)[^)]*?)\s*,?\s*([A-Z][a-z]+\.?\s+\d{1,2},?\s+)?(\d{4})\)/);
+    if (d) {
+      return {
+        docket: d[1],
+        court: d[2].trim(),
+        decisionDate: d[3] ? `${d[3].trim()} ${d[4]}` : undefined,
+        year: d[4],
+      };
+    }
   }
   if (jurisdiction === "UK") {
     const n = text.match(UK_NEUTRAL_RE);
     if (n) return { year: n[1], neutral: `${n[2]} ${n[3]}`, court: n[4]?.trim() };
     const t = text.match(UK_TRADITIONAL_RE);
+    if (!t) {
+      const dy = text.match(/\bdecided in ((?:17|18|19|20)\d{2})\b/);
+      if (dy) return { year: dy[1] };
+    }
     if (t) {
       return {
         year: t[1],
@@ -381,7 +407,7 @@ export function extractWorkFromEvidence(text: string, kind: ForeignLookupKind, t
     // Publisher page formats: "Journal X, Vol. III, 1960, pp. 1-44".
     const v = text.match(VOL_RE);
     if (v) {
-      const journal = v[1].replace(/[*#]/g, "").replace(/\s+/g, " ").trim();
+      const journal = (v[1].split(/\.\s+(?=[A-Z])/).pop() ?? v[1]).replace(/[*#]/g, "").replace(/\s+/g, " ").trim();
       const volume = romanToArabic(v[2]);
       if (volume && isPlausibleJournal(journal) && journalAnchoredInTitle(journal, title)) {
         return { volume, journal, year: v[3], firstPage: v[4] };
@@ -398,6 +424,8 @@ export function extractWorkFromEvidence(text: string, kind: ForeignLookupKind, t
   }
   const y = text.match(BOOK_YEAR_RE);
   if (y) return { edition: y[1] ? `${y[1]}${ordinalSuffix(Number(y[1]))} ed.` : undefined, year: y[2] };
+  const py = text.match(/(?:University Press|Clarendon Press|Routledge|Harvard University Press|Yale University Press|MIT Press|Oxford)[^\n]{0,24}?,\s*(?:[A-Z][a-z]+\.?\s+\d{1,2},\s*)?((?:17|18|19|20)\d{2})\b/);
+  if (py) return { year: py[1] };
   return {};
 }
 
@@ -592,7 +620,7 @@ export async function runForeignLookup(
   type Candidate = { field: string; value: string; donor: LookupSource; inspected: boolean };
   const candidates: Candidate[] = [];
 
-  const fieldsForSource = (text: string): Record<string, string | undefined> => {
+  const fieldsForSource = (text: string, pageTitle?: string): Record<string, string | undefined> => {
     if (input.kind === "case") {
       const c = extractCaseFromEvidence(text, input.jurisdiction);
       if (!c) return {};
@@ -618,7 +646,7 @@ export async function runForeignLookup(
         decisionDate: c.decisionDate,
       };
     }
-    const w = extractWorkFromEvidence(text, input.kind);
+    const w = extractWorkFromEvidence(text, input.kind, pageTitle);
     return {
       volume: w.volume,
       journal: w.journal,
@@ -645,6 +673,7 @@ export async function runForeignLookup(
     }
     return true;
   });
+  if ((globalThis as { __FL_DEBUG?: boolean }).__FL_DEBUG) console.error("DBG identity", identitySources.length, "strong", strongMatched.length, "usable", usable.length);
   if (usable.length === 0 && strongMatched.length > 0) {
     return { ...empty, identity: { ...empty.identity, matched: false } };
   }
@@ -652,7 +681,7 @@ export async function runForeignLookup(
 
   for (const s of usable) {
     const ev = `${s.title ?? ""} ${s.snippet ?? ""}`;
-    const f = fieldsForSource(ev);
+    const f = fieldsForSource(ev, s.title);
     for (const [field, value] of Object.entries(f)) {
       if (!value) continue;
       if (field === "year" && userYear === value) continue; // user anchor ≠ new fact
@@ -669,11 +698,44 @@ export async function runForeignLookup(
     const page = await fetchPageText(best.url, doFetch);
     if (page) {
       const plain = page.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").slice(0, 200_000);
-      const f = fieldsForSource(plain);
+      const f = fieldsForSource(plain, best.title);
       for (const [field, value] of Object.entries(f)) {
         if (!value) continue;
         if (field === "year" && userYear === value) continue;
         candidates.push({ field, value, donor: best, inspected: true });
+      }
+    }
+  }
+
+  // ── Different-work isolation for cases ─────────────────────────────────
+  // Sources quoting a DIFFERENT decision (e.g. an overruling case citing the
+  // target) cluster apart; keep only the plurality cluster.
+  {
+    const sig = (c: Candidate) => {
+      const f = fieldsForSource(`${c.donor.title ?? ""} ${c.donor.snippet ?? ""}`);
+      const vol = f.volume ?? f.reporterVolume ?? "";
+      const pg = f.firstPage ?? "";
+      const neu = f.neutral ?? "";
+      return vol || pg || neu ? `${neu}|${vol}|${pg}` : "";
+    };
+    const groups = new Map<string, number>();
+    const sigOf = new Map<Candidate, string>();
+    for (const c of candidates) {
+      const g = sig(c);
+      sigOf.set(c, g);
+      if (g) groups.set(g, (groups.get(g) ?? 0) + 1);
+    }
+    let best = "";
+    let bestN = 0;
+    let tie = false;
+    for (const [g, n] of groups) {
+      if (n > bestN) { best = g; bestN = n; tie = false; }
+      else if (n === bestN) tie = true;
+    }
+    if (best && !tie) {
+      for (let i = candidates.length - 1; i >= 0; i--) {
+        const g = sigOf.get(candidates[i]) ?? "";
+        if (g && g !== best) candidates.splice(i, 1);
       }
     }
   }
@@ -688,8 +750,10 @@ export async function runForeignLookup(
     list.push(c);
     byField.set(c.field, list);
   }
+  const journalKey = (v: string) => v.toLowerCase().replace(/[^a-z0-9]/g, "");
   for (const [field, list] of byField) {
-    const distinct = new Set(list.map((c) => c.value));
+    const distinct = new Set(list.map((c) => field === "journal" ? journalKey(c.value) : c.value));
+    if ((globalThis as { __FL_DEBUG?: boolean }).__FL_DEBUG) console.error("DBG byfield", field, JSON.stringify([...distinct]), "cands", list.length);
     if (distinct.size > 1) continue; // conflicting non-identity field → missing
     const chosen = list.find((c) => c.inspected) ?? list[0];
     const quality = classifySource(chosen.donor.url);
