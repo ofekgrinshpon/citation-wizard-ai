@@ -267,6 +267,8 @@ const MONTHS: Record<string, string> = {
 };
 
 export function extractCaseFromEvidence(text: string, jurisdiction: ForeignLookupJurisdiction): CaseCite | null {
+  // Drop "appeals from" lines — those citations belong to OTHER decisions.
+  text = text.replace(/On appeals from:[^\n]*/gi, " ");
   if (jurisdiction === "UK") {
     const n = text.match(UK_NEUTRAL_RE);
     if (n) return { year: n[1], neutral: `${n[2]} ${n[3]}`, court: n[4]?.trim() };
@@ -337,13 +339,43 @@ interface WorkCite {
   edition?: string;
 }
 
-export function extractWorkFromEvidence(text: string, kind: ForeignLookupKind): WorkCite {
+export const VOL_RE = /([A-Z*][A-Za-z.&' *]+?),?\s+Vol\.?\s+([IVXLCDM]+|\d+),?\s+(\d{4}),?\s+pp?\.?\s*(\d+)/i;
+const VOLUME_PAGES_RE = /\*?([A-Z][A-Za-z.&' ]+?)\*?,?\s+Volume\s+(\d+)(?:,?\s+Issue\s+\d+)?,?\s*[A-Za-z]*\s*(\d{4}),?\s+Pages\s+(\d+)/;
+const ROMAN: Record<string, number> = { I: 1, V: 5, X: 10, L: 50, C: 100, D: 500, M: 1000 };
+function romanToArabic(r: string): string | null {
+  if (/^\d+$/.test(r)) return r;
+  if (!/^[IVXLCDM]+$/.test(r)) return null;
+  let total = 0;
+  for (let i = 0; i < r.length; i++) {
+    const v = ROMAN[r[i]];
+    total += i + 1 < r.length && ROMAN[r[i + 1]] > v ? -v : v;
+  }
+  return total > 0 ? String(total) : null;
+}
+
+function extractWorkFromEvidence(text: string, kind: ForeignLookupKind): WorkCite {
   if (kind === "journal_article") {
     const m = text.match(ARTICLE_RE);
     if (m) {
-      const journal = m[2].replace(/\s+/g, " ").trim();
+      const journal = m[2].replace(/[*#]/g, "").replace(/\s+/g, " ").trim();
       if (isPlausibleJournal(journal)) {
         return { volume: m[1], journal, firstPage: m[3], year: m[4] };
+      }
+    }
+    // Publisher page formats: "Journal X, Vol. III, 1960, pp. 1-44".
+    const v = text.match(VOL_RE);
+    if (v) {
+      const journal = v[1].replace(/[*#]/g, "").replace(/\s+/g, " ").trim();
+      const volume = romanToArabic(v[2]);
+      if (volume && isPlausibleJournal(journal)) {
+        return { volume, journal, year: v[3], firstPage: v[4] };
+      }
+    }
+    const vp = text.match(VOLUME_PAGES_RE);
+    if (vp) {
+      const journal = vp[1].replace(/[*#]/g, "").replace(/\s+/g, " ").trim();
+      if (isPlausibleJournal(journal)) {
+        return { volume: vp[2], journal, year: vp[3], firstPage: vp[4] };
       }
     }
     return {};
@@ -604,8 +636,8 @@ export async function runForeignLookup(
     for (const [field, value] of Object.entries(f)) {
       if (!value) continue;
       if (field === "year" && userYear === value) continue; // user anchor ≠ new fact
-      // The value must literally appear in this source's evidence.
-      if (!ev.includes(value)) continue;
+      // The value was deterministically extracted from THIS source's evidence —
+      // that is the grounding (basis: search_result_explicit for that source).
       candidates.push({ field, value, donor: s, inspected: false });
     }
   }
@@ -621,7 +653,6 @@ export async function runForeignLookup(
       for (const [field, value] of Object.entries(f)) {
         if (!value) continue;
         if (field === "year" && userYear === value) continue;
-        if (!plain.includes(value)) continue;
         candidates.push({ field, value, donor: best, inspected: true });
       }
     }
