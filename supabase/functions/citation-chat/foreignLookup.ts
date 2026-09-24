@@ -645,6 +645,7 @@ export async function runForeignLookup(
     }
     return true;
   });
+  if ((globalThis as { __FL_DEBUG?: boolean }).__FL_DEBUG) console.error("DBG identity", identitySources.length, "strong", strongMatched.length, "usable", usable.length);
   if (usable.length === 0 && strongMatched.length > 0) {
     return { ...empty, identity: { ...empty.identity, matched: false } };
   }
@@ -690,6 +691,7 @@ export async function runForeignLookup(
   }
   for (const [field, list] of byField) {
     const distinct = new Set(list.map((c) => c.value));
+    if ((globalThis as { __FL_DEBUG?: boolean }).__FL_DEBUG) console.error("DBG byfield", field, JSON.stringify([...distinct]), "cands", list.length);
     if (distinct.size > 1) continue; // conflicting non-identity field → missing
     const chosen = list.find((c) => c.inspected) ?? list[0];
     const quality = classifySource(chosen.donor.url);
