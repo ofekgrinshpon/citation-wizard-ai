@@ -492,7 +492,7 @@ export async function runForeignLookup(
       tier: r.tier,
       strong: classifySource(r.url) !== "weak",
     });
-    empty.sources.push({ url: r.url, title: r.title, tier: r.tier });
+    empty.sources.push({ url: r.url, title: r.title, tier: r.tier, snippet: r.snippet } as LookupSource & { tier: "tier1" | "tier2" });
   }
 
   // ── Identity matching ──
