@@ -251,7 +251,7 @@ interface CaseCite {
 }
 
 const US_CASE_RE = new RegExp(
-  `(\\d{1,4})\\s+(${REPORTER_TOKEN.source})\\s+(\\d{1,4})(?:\\s*,\\s*\\d+)?\\s*\\(([^()]*?)\\s+(\\d{4})\\)`,
+  `(\\d{1,4})\\s+(${REPORTER_TOKEN.source})\\s+(\\d{1,4})(?:\\s*,\\s*\\d+)?\\s*\\((?:(.{1,40}?)\\s+)?(\\d{4})\\)`,
   "g",
 );
 const UK_NEUTRAL_RE = /\[(\d{4})\]\s+(UKSC|UKHL|EWCA|EWHC|UKPC|UKUT)\s+(\d+)(?:\s*\(([^)]+)\))?/;
