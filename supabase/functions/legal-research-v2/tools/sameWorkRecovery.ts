@@ -273,7 +273,8 @@ export function buildSameWorkQueries(identity: WorkIdentity): string[] {
   const author = identity.authors?.[0]?.trim();
   if (identity.doi) out.push(`"${identity.doi}"`);
   if (title.length >= 8) {
-    if (author) out.push(`"${title}" ${author}`);
+    // Richest identity first (same shape as the original single query).
+    if (author) out.push([`"${title}"`, author, identity.year ?? "", "pdf"].filter(Boolean).join(" "));
     if (identity.year) out.push(`"${title}" ${identity.year} pdf`);
     out.push(`"${title}" pdf`);
   }
