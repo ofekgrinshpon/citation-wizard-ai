@@ -83,7 +83,7 @@ describe("Bluebook M2B — grounded foreign lookup", () => {
       sourceType: "foreign_case_us",
       kind: "case",
       jurisdiction: "US",
-      confidence: "high",
+      confidence: "deterministic",
       fields: { ...r.fields, caseName: "Capitol Records, LLC v. ReDigi Inc.", court: "2d Cir.", year: "2018" },
     });
     expect(rendered).not.toBeNull();
@@ -109,7 +109,7 @@ describe("Bluebook M2B — grounded foreign lookup", () => {
       sourceType: "foreign_case_us",
       kind: "case",
       jurisdiction: "US",
-      confidence: "high",
+      confidence: "deterministic",
       fields: { ...r.fields, caseName: "Capitol Records, LLC v. ReDigi Inc.", court: "2d Cir.", year: "2018" },
     });
     expect(rendered!.citation).toContain("[חסר:");
@@ -192,7 +192,7 @@ describe("Bluebook M2B — grounded foreign lookup", () => {
       sourceType: "foreign_case_other",
       kind: "case",
       jurisdiction: "UK",
-      confidence: "high",
+      confidence: "deterministic",
       fields: { ...r.fields, caseName: "Donoghue v Stevenson", year: "1932" },
     });
     expect(rendered!.citation).toBe("##Donoghue v Stevenson## [1932] AC 562 (HL).");
@@ -226,7 +226,7 @@ describe("Bluebook M2B — grounded foreign lookup", () => {
       sourceType: "foreign_journal_article",
       kind: "journal_article",
       jurisdiction: "US",
-      confidence: "high",
+      confidence: "deterministic",
       fields: { ...r.fields, authors: "Ronald H. Coase", articleTitle: "The Problem of Social Cost" },
     });
     expect(rendered!.citation).toContain("J.L. & Econ.");
@@ -362,7 +362,7 @@ describe("Bluebook M2B — grounded foreign lookup", () => {
       sourceType: "foreign_case_us",
       kind: "case",
       jurisdiction: "US",
-      confidence: "high",
+      confidence: "deterministic",
       fields: { ...r.fields, caseName: "Capitol Records, LLC v. ReDigi Inc.", court: "2d Cir.", year: "2018" },
     });
     expect(rendered!.citation).not.toMatch(/\b(Id\.|supra|infra)\b/);
@@ -388,7 +388,7 @@ describe("Bluebook M2B — grounded foreign lookup", () => {
       sourceType: "foreign_case_us",
       kind: "case",
       jurisdiction: "US",
-      confidence: "high",
+      confidence: "deterministic",
       fields: { ...r.fields, caseName: "Capitol Records, LLC v. ReDigi Inc.", court: "2d Cir.", year: "2018" },
     });
     expect(rendered!.citation).toContain("##");
