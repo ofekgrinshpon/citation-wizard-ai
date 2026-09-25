@@ -11,13 +11,14 @@
  *   • not evidence — an accepted candidate is fetched, extracted, document
  *     checked, stored, quoted, span-verified and support-verified exactly like
  *     any other body. Recovery grants no trust whatsoever;
- *   • not a retry loop — one query per work, bounded results, bounded fetch
- *     attempts, dead URLs never retried;
+ *   • not a retry loop — ≤3 identity queries per work, bounded results,
+ *     ≤3 equivalence-proven fetch attempts, dead URLs never retried;
  *   • not a paywall / login / CAPTCHA workaround — it looks for another
  *     publicly accessible copy of the same public document, nothing else.
  */
 
 import type { SearchResult } from "../types.ts";
+import type { BibliographicMetadata, MetadataBasis } from "../shared/bibliographic.ts";
 import {
   buildAlternativeCopyQuery,
   isAcceptableAlternativeHost,
@@ -38,12 +39,20 @@ import {
 } from "./identityEnrichment.ts";
 
 export const SAME_WORK_RECOVERY_LIMITS = {
-  /** Rediscovery queries per failed work, for the whole run. */
-  MAX_QUERIES_PER_WORK: 1,
-  /** Candidate results considered from that one query. */
+  /**
+   * Rediscovery queries per failed work, for the whole run. Three covers the
+   * distinct identity ladders (DOI / title+author / title+year+pdf / title+pdf)
+   * without turning recovery into topic search; later queries run only when
+   * earlier ones yielded no acquired copy.
+   */
+  MAX_QUERIES_PER_WORK: 3,
+  /** Candidate results considered per query. */
   MAX_RESULTS: 6,
-  /** Candidate bodies actually fetched after acceptance. */
-  MAX_CANDIDATE_FETCH_ATTEMPTS: 1,
+  /**
+   * Equivalence-proven candidate bodies fetched per work. One broken copy must
+   * not end recovery, but one broken work must not eat the run either.
+   */
+  MAX_CANDIDATE_FETCH_ATTEMPTS: 3,
 } as const;
 
 /**
@@ -85,6 +94,15 @@ export interface SameWorkRecoveryStats extends EnrichmentStats {
   same_work_agent_hint_used_for_query: number;
   /** Structurally impossible — must stay 0 for every run. */
   same_work_agent_hint_used_for_equivalence: number;
+  /** original_identity_enrichment_v1 / multi-candidate telemetry. */
+  same_work_original_fields_before: string[];
+  same_work_original_fields_after: string[];
+  same_work_original_field_provenance: string[];
+  same_work_equivalent_candidates: number;
+  same_work_candidate_fetch_attempts: number;
+  same_work_candidate_fetch_failures: string[];
+  landing_document_candidates: number;
+  landing_document_attempted: number;
 }
 
 export function emptySameWorkRecoveryStats(): SameWorkRecoveryStats {
@@ -105,6 +123,14 @@ export function emptySameWorkRecoveryStats(): SameWorkRecoveryStats {
     same_work_search_hint_fields: [],
     same_work_agent_hint_used_for_query: 0,
     same_work_agent_hint_used_for_equivalence: 0,
+    same_work_original_fields_before: [],
+    same_work_original_fields_after: [],
+    same_work_original_field_provenance: [],
+    same_work_equivalent_candidates: 0,
+    same_work_candidate_fetch_attempts: 0,
+    same_work_candidate_fetch_failures: [],
+    landing_document_candidates: 0,
+    landing_document_attempted: 0,
   };
 }
 
@@ -181,6 +207,82 @@ export function identityFromSearchResult(
   };
 }
 
+/** Bases strong enough to IDENTIFY a work (never evidence). */
+const IDENTITY_BASES: ReadonlySet<MetadataBasis> = new Set(["repository_page", "html_meta", "search_metadata"]);
+
+export interface TrustedIdentityBuild {
+  identity: TrustedWorkIdentity;
+  fields_before: string[];
+  fields_after: string[];
+  /** field → provenance that supplied it. */
+  provenance: Record<string, string>;
+}
+
+/**
+ * Trusted identity of the FAILED ORIGINAL work (original_identity_enrichment_v1).
+ *
+ * Merges, conservatively and deterministically: discovery metadata, a DOI in
+ * the failed URL, and sanitized bibliographic metadata already extracted from
+ * the failed/unusable landing page — only fields whose per-field basis is
+ * repository / HTML / search metadata. Embedded PDF metadata and body text keep
+ * their existing (weak) trust level and never join. Model assertions never
+ * reach this function. Identity ≠ evidence: the landing page stays non-evidence.
+ */
+export function buildTrustedWorkIdentity(input: {
+  discovery: { title?: string; snippet?: string; url?: string; published_date?: string };
+  stored_bibliographic?: BibliographicMetadata;
+}): TrustedIdentityBuild {
+  const base = identityFromSearchResult(input.discovery);
+  const before = presentFields(base);
+  const provenance: Record<string, string> = {};
+  for (const f of before) provenance[f] = "discovery";
+  const id: TrustedWorkIdentity = { ...base };
+  const meta = input.stored_bibliographic;
+  const strong = (f: "title" | "authors" | "year" | "journal") => {
+    const b = meta?.field_basis?.[f] ?? meta?.metadata_basis?.[0];
+    return !!b && IDENTITY_BASES.has(b);
+  };
+  if (meta) {
+    if (!id.title && strong("title")) {
+      const t = usableWorkTitle(meta.title);
+      if (t) { id.title = t; provenance.title = meta.field_basis?.title ?? "landing_meta"; }
+    }
+    if (!id.authors?.length && meta.authors?.length && strong("authors")) {
+      id.authors = meta.authors.slice(0, 6);
+      provenance.authors = meta.field_basis?.authors ?? "landing_meta";
+    }
+    if (!id.year && meta.year && /^(19|20)\d{2}$/.test(meta.year) && strong("year")) {
+      id.year = meta.year;
+      provenance.year = meta.field_basis?.year ?? "landing_meta";
+    }
+    if (!id.journal && meta.journal && strong("journal")) {
+      id.journal = meta.journal;
+      provenance.journal = meta.field_basis?.journal ?? "landing_meta";
+    }
+  }
+  return { identity: id, fields_before: before, fields_after: presentFields(id), provenance };
+}
+
+/**
+ * Ordered, deduped query ladder for the SAME work — every query names the
+ * work, never the topic. Only identity fields actually present are used.
+ */
+export function buildSameWorkQueries(identity: WorkIdentity): string[] {
+  const out: string[] = [];
+  const title = (identity.title ?? "").trim().slice(0, 120);
+  const author = identity.authors?.[0]?.trim();
+  if (identity.doi) out.push(`"${identity.doi}"`);
+  if (title.length >= 8) {
+    if (author) out.push(`"${title}" ${author}`);
+    if (identity.year) out.push(`"${title}" ${identity.year} pdf`);
+    out.push(`"${title}" pdf`);
+  }
+  const seen = new Set<string>();
+  return out
+    .filter((q) => { const k = q.toLowerCase(); if (seen.has(k)) return false; seen.add(k); return true; })
+    .slice(0, SAME_WORK_RECOVERY_LIMITS.MAX_QUERIES_PER_WORK);
+}
+
 /** Placeholder titles that carry no bibliographic identity at all. */
 const PLACEHOLDER_TITLE_RE = /^(מקור ללא כותרת|untitled|document|pdf|download)$/i;
 /** Titles that are really a file name or a URL fragment, not a work title. */
@@ -204,12 +306,20 @@ export type SameWorkFailureReason =
   | "search_error"
   | "no_results"
   | "identity_still_insufficient_after_enrichment"
-  | "no_equivalent_public_copy";
+  | "no_equivalent_public_copy"
+  | "equivalent_copies_failed_acquisition";
 
 export interface SameWorkRecoveryTelemetry {
   triggered: boolean;
   query?: string;
+  /** Every rediscovery query actually issued (≤ MAX_QUERIES_PER_WORK). */
+  queries: string[];
   candidates_seen: number;
+  /** Candidates that passed deterministic same-work equivalence. */
+  equivalent_candidates: number;
+  candidate_fetch_attempts: number;
+  /** failure_class (or "unusable_body") per failed equivalent-copy fetch. */
+  candidate_fetch_failures: string[];
   rejected_identity: number;
   rejected_host: number;
   rejected_already_attempted: number;
@@ -261,6 +371,13 @@ export interface SameWorkRecoveryInput {
    * record lacks author / year / DOI. Identity only — never evidence.
    */
   enrichment?: EnrichmentDeps;
+  /**
+   * Acquire an equivalence-proven candidate through the ORDINARY fetch path.
+   * When supplied, recovery tries up to MAX_CANDIDATE_FETCH_ATTEMPTS proven
+   * copies and succeeds only when one returns a readable document. When
+   * omitted, the first proven candidate is returned (caller fetches).
+   */
+  acquire?: (candidate: SearchResult) => Promise<{ ok: boolean; failure_class?: string }>;
 }
 
 /** One bounded same-work recovery round. The caller enforces once-per-work. */
@@ -274,7 +391,11 @@ export async function recoverSameWork(
 
   const tel: SameWorkRecoveryTelemetry = {
     triggered: false,
+    queries: [],
     candidates_seen: 0,
+    equivalent_candidates: 0,
+    candidate_fetch_attempts: 0,
+    candidate_fetch_failures: [],
     rejected_identity: 0,
     rejected_host: 0,
     rejected_already_attempted: 0,
@@ -291,8 +412,8 @@ export async function recoverSameWork(
   }
 
   // The query may name the work with untrusted hints; proof may not.
-  const query = buildAlternativeCopyQuery(forQuery);
-  if (!query) {
+  const queries = buildSameWorkQueries(forQuery);
+  if (!queries.length || !buildAlternativeCopyQuery(forQuery)) {
     return {
       recovered: false,
       reason: "insufficient_identity_for_query",
@@ -301,88 +422,114 @@ export async function recoverSameWork(
   }
 
   tel.triggered = true;
-  tel.query = query;
-
-  let results: SearchResult[] = [];
-  try {
-    results = await input.search(query, SAME_WORK_RECOVERY_LIMITS.MAX_RESULTS);
-  } catch {
-    return { recovered: false, reason: "search_error", telemetry: { ...tel, failure_reason: "search_error" } };
-  }
-  results = results.slice(0, SAME_WORK_RECOVERY_LIMITS.MAX_RESULTS);
-  if (!results.length) {
-    return { recovered: false, reason: "no_results", telemetry: { ...tel, failure_reason: "no_results" } };
-  }
+  tel.query = queries[0];
 
   const dead = new Set(input.already_attempted_urls.map(normalizeUrlKey).filter(Boolean));
+  const inspected = new Set<string>();
   let enriched = 0;
   let enrichmentAttemptedAndInsufficient = false;
+  let anyResults = false;
+  let searchErrors = 0;
 
-  for (const r of results) {
-    if (!r.url) continue;
-    tel.candidates_seen += 1;
-    if (dead.has(normalizeUrlKey(r.url))) {
-      tel.rejected_already_attempted += 1;
+  for (const query of queries) {
+    if (tel.candidate_fetch_attempts >= SAME_WORK_RECOVERY_LIMITS.MAX_CANDIDATE_FETCH_ATTEMPTS) break;
+    tel.queries.push(query);
+    let results: SearchResult[] = [];
+    try {
+      results = await input.search(query, SAME_WORK_RECOVERY_LIMITS.MAX_RESULTS);
+    } catch {
+      searchErrors += 1;
       continue;
     }
-    if (!isAcceptableAlternativeHost(r.url)) {
-      tel.rejected_host += 1;
-      continue;
-    }
-    const discoveryIdentity = identityFromSearchResult(r);
-    let verdict = isSameWork(input.failed_source_identity, discoveryIdentity);
-    let enrichmentBasis: string[] | undefined;
+    results = results.slice(0, SAME_WORK_RECOVERY_LIMITS.MAX_RESULTS);
+    if (results.length) anyResults = true;
 
-    // The candidate is plausible but discovery gave us title + URL only:
-    // gather identity (not evidence) and run the SAME check again.
-    if (
-      !verdict.same_work &&
-      input.enrichment &&
-      enriched < ENRICHMENT_LIMITS.MAX_CANDIDATES_PER_WORK &&
-      shouldEnrich(input.failed_source_identity, discoveryIdentity, verdict)
-    ) {
-      enriched += 1;
-      const outcome = await enrichAndCompare({
-        // TRUSTED side only — the hint is passed separately and may narrow a
-        // metadata query, never prove equivalence.
-        wanted: input.failed_source_identity,
-        candidate: discoveryIdentity,
-        candidate_url: r.url,
-        search_hint: {
-          author: input.search_hint?.authors?.[0],
-          year: input.search_hint?.year,
-        },
-        deps: input.enrichment,
-      });
-      tel.enrichment.push(outcome.telemetry);
-      enrichmentBasis = outcome.telemetry.basis;
-      if (outcome.hard_reject) {
+    for (const r of results) {
+      if (!r.url) continue;
+      const key = normalizeUrlKey(r.url);
+      if (inspected.has(key)) continue;
+      inspected.add(key);
+      tel.candidates_seen += 1;
+      if (dead.has(key)) {
+        tel.rejected_already_attempted += 1;
+        continue;
+      }
+      if (!isAcceptableAlternativeHost(r.url)) {
+        tel.rejected_host += 1;
+        continue;
+      }
+      const discoveryIdentity = identityFromSearchResult(r);
+      let verdict = isSameWork(input.failed_source_identity, discoveryIdentity);
+      let enrichmentBasis: string[] | undefined;
+
+      if (
+        !verdict.same_work &&
+        input.enrichment &&
+        enriched < ENRICHMENT_LIMITS.MAX_CANDIDATES_PER_WORK &&
+        shouldEnrich(input.failed_source_identity, discoveryIdentity, verdict)
+      ) {
+        enriched += 1;
+        const outcome = await enrichAndCompare({
+          wanted: input.failed_source_identity,
+          candidate: discoveryIdentity,
+          candidate_url: r.url,
+          search_hint: {
+            author: input.search_hint?.authors?.[0],
+            year: input.search_hint?.year,
+          },
+          deps: input.enrichment,
+        });
+        tel.enrichment.push(outcome.telemetry);
+        enrichmentBasis = outcome.telemetry.basis;
+        if (outcome.hard_reject) {
+          tel.rejected_identity += 1;
+          continue;
+        }
+        verdict = outcome.verdict;
+        if (!verdict.same_work) enrichmentAttemptedAndInsufficient = true;
+      }
+
+      if (!verdict.same_work) {
         tel.rejected_identity += 1;
         continue;
       }
-      verdict = outcome.verdict;
-      if (!verdict.same_work) enrichmentAttemptedAndInsufficient = true;
-    }
+      tel.equivalent_candidates += 1;
+      const accept = (): SameWorkRecoveryResult => {
+        tel.success = true;
+        tel.basis = verdict.basis;
+        try {
+          tel.recovered_host = new URL(r.url!).hostname.toLowerCase();
+        } catch { /* host telemetry only */ }
+        return {
+          recovered: true,
+          candidate: r,
+          equivalence_basis: verdict.basis,
+          enrichment_basis: enrichmentBasis,
+          telemetry: tel,
+        };
+      };
+      if (!input.acquire) return accept();
 
-    if (!verdict.same_work) {
-      tel.rejected_identity += 1;
-      continue;
+      // Equivalence-proven copy: acquire through the ordinary fetch path.
+      tel.candidate_fetch_attempts += 1;
+      dead.add(key);
+      let got: { ok: boolean; failure_class?: string };
+      try {
+        got = await input.acquire(r);
+      } catch {
+        got = { ok: false, failure_class: "fetch_exception" };
+      }
+      if (got.ok) return accept();
+      tel.candidate_fetch_failures.push(got.failure_class ?? "unusable_body");
+      if (tel.candidate_fetch_attempts >= SAME_WORK_RECOVERY_LIMITS.MAX_CANDIDATE_FETCH_ATTEMPTS) break;
     }
-    tel.success = true;
-    tel.basis = verdict.basis;
-    try {
-      tel.recovered_host = new URL(r.url).hostname.toLowerCase();
-    } catch { /* host telemetry only */ }
-    return {
-      recovered: true,
-      candidate: r,
-      equivalence_basis: verdict.basis,
-      enrichment_basis: enrichmentBasis,
-      telemetry: tel,
-    };
   }
 
-  const reason: SameWorkFailureReason = enrichmentAttemptedAndInsufficient
+  const reason: SameWorkFailureReason = tel.candidate_fetch_attempts > 0
+    ? "equivalent_copies_failed_acquisition"
+    : !anyResults
+    ? (searchErrors === tel.queries.length ? "search_error" : "no_results")
+    : enrichmentAttemptedAndInsufficient
     ? "identity_still_insufficient_after_enrichment"
     : "no_equivalent_public_copy";
   return { recovered: false, reason, telemetry: { ...tel, failure_reason: reason } };
@@ -396,7 +543,12 @@ export function noteSameWorkRecovery(
   if (!tel.triggered) return;
   for (const e of tel.enrichment ?? []) noteEnrichment(stats, e);
   stats.same_work_recovery_triggered += 1;
-  stats.same_work_recovery_query_count += 1;
+  stats.same_work_recovery_query_count += Math.max(1, tel.queries?.length ?? 0);
+  stats.same_work_equivalent_candidates += tel.equivalent_candidates ?? 0;
+  stats.same_work_candidate_fetch_attempts += tel.candidate_fetch_attempts ?? 0;
+  for (const f of tel.candidate_fetch_failures ?? []) {
+    if (stats.same_work_candidate_fetch_failures.length < 30) stats.same_work_candidate_fetch_failures.push(f);
+  }
   stats.same_work_candidates_seen += tel.candidates_seen;
   stats.same_work_candidates_rejected_identity += tel.rejected_identity;
   stats.same_work_candidates_rejected_host += tel.rejected_host;
