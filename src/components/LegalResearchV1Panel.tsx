@@ -7,6 +7,7 @@ import { InsufficientCreditsDialog } from "@/components/InsufficientCreditsDialo
 import { CREDIT_COSTS } from "@/lib/creditCosts";
 import { ReLexLogo } from "@/components/ReLexLogo";
 import { ResearchEmptyState } from "@/components/guide/ResearchEmptyState";
+import { SourcesEmptyState } from "@/components/guide/SourcesEmptyState";
 import { useProjects } from "@/hooks/useProjects";
 import { Button } from "@/components/ui/button";
 import {
