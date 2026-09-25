@@ -385,9 +385,9 @@ export function LegalResearchV1Panel({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [openJob?.id, openJob?.at]);
 
-  // Resume-on-mount. The job lives in the database, so a refresh, a new tab or
-  // a returning session all reattach: ?job=<id> deep link first, then this
-  // browser-persistent hint, then the user's most recent job in this project.
+  // Resume-on-mount. A direct link or durable hint may restore its exact job.
+  // Without either one, only an unfinished job is recovered automatically;
+  // completed answers stay in history and must not reappear after Clear.
   // Skip when a history-replay payload is being injected — the cached result
   // must win over any leftover job state.
   useEffect(() => {
@@ -418,12 +418,13 @@ export function LegalResearchV1Panel({
       // Source search has no cross-session fallback lookup: the shared job
       // table also holds answer jobs, which must never surface here.
       if (sourcesMode) return;
-      // No durable hint (including jobs launched before this fix): recover the
-      // newest recent answer job, skipping source-search jobs that live in the
-      // same table.
+      // No durable hint (including jobs launched before this fix): recover only
+      // the newest active answer job. Never auto-open a completed answer here,
+      // otherwise clearing the panel is undone by the next refresh.
       let query = supabase
         .from("legal_research_jobs")
         .select("id, result")
+        .in("status", ACTIVE_STATUSES)
         .gte("created_at", new Date(Date.now() - 30 * 24 * 60 * 60_000).toISOString())
         .order("created_at", { ascending: false })
         .limit(5);
@@ -652,10 +653,21 @@ export function LegalResearchV1Panel({
   const handleClearAll = () => {
     if (loading || uploadingFiles) return;
     const doClear = () => {
+      stopAll();
+      clearResume();
+      setJobUrlParam(null);
       setQuestion("");
       setFiles([]);
       setResult(null);
       setError(null);
+      setJobId(null);
+      setResumed(false);
+      setJustCompleted(false);
+      setInfraFailure(false);
+      setCurrentStage(null);
+      setCompletedStages([]);
+      setProgressLabel(null);
+      setElapsed(0);
     };
     if (result || question.trim().length > 100) {
       toast("לנקות הכל?", {
