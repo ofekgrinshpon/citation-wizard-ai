@@ -39,7 +39,6 @@ import { MaintenanceCard } from "@/components/MaintenanceCard";
 import { LegalResearchV1Panel } from "@/components/LegalResearchV1Panel";
 import { LegalSourceSearchPanel } from "@/components/LegalSourceSearchPanel";
 import { ReLexLogo } from "@/components/ReLexLogo";
-import { ResearchEmptyState } from "@/components/guide/ResearchEmptyState";
 import { ACADEMIC_WRITING_ENABLED } from "@/config/features";
 import { AcademicWritingComingSoon } from "@/components/AcademicWritingComingSoon";
 
@@ -3277,14 +3276,13 @@ export function LegalQAChat({ onResultSaved, externalResult, onConsumeExternalRe
         )}
 
         {!isAcademic && !result && !loading && !error && taskMode !== "research" && taskMode !== "legal_source_search" && (
-          <ResearchEmptyState
-            hasUploadedFiles={uploadedFiles.length > 0}
-            onPickExample={(text) => {
-              setQuestion(text);
-              textareaRef.current?.focus();
-            }}
-            onStart={() => textareaRef.current?.focus()}
-          />
+          <div className="flex flex-col items-center justify-center py-10 px-4 text-center" dir="rtl">
+            <div className="mb-4"><ReLexLogo size={56} /></div>
+            <h2 className="text-foreground text-lg font-bold mb-2">סיכום פסק דין</h2>
+            <p className="text-muted-foreground text-sm max-w-md">
+              העלו פסק דין (PDF / DOCX) או הדביקו את שם פסק הדין או את הטקסט שלו, וקבלו סיכום מובנה.
+            </p>
+          </div>
         )}
 
 

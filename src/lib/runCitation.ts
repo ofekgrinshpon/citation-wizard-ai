@@ -261,7 +261,7 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
       sourceType,
       kind: identity.kind,
       jurisdiction: identity.jurisdiction,
-      confidence: "high" as const,
+      confidence: "deterministic" as const,
       fields: baseFields as unknown as ForeignFields,
     };
     const rendered = renderForeignDetection(detection);
