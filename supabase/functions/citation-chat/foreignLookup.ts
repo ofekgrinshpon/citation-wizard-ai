@@ -543,7 +543,7 @@ export async function runForeignLookup(
   // Tier 1 — preferred-domain discovery hints.
   empty.diagnostics.tier1Queried = true;
   const hints = tier1Hints(input.kind, input.jurisdiction);
-  let results = (await searchOnce(query, hints, doFetch, apiKey)).map((r) => ({
+  let results: Array<{ title?: string; url?: string; snippet?: string; tier: "tier1" | "tier2" }> = (await searchOnce(query, hints, doFetch, apiKey)).map((r) => ({
     ...r,
     tier: "tier1" as const,
   }));
