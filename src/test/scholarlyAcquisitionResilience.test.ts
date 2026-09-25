@@ -32,7 +32,7 @@ function mockFetch(routes: Record<string, { status?: number; body: string; ct?: 
   const calls: string[] = [];
   vi.stubGlobal("fetch", vi.fn(async (input: string | URL | Request) => {
     const url = typeof input === "string" ? input : input instanceof URL ? input.toString() : input.url;
-    calls.push(url);
+    calls.push(url); console.log("F", url, !!routes[url]);
     const r = routes[url];
     if (!r) return new Response("not found", { status: 404 });
     const res = new Response(r.body, { status: r.status ?? 200, headers: { "content-type": r.ct ?? "text/html" } });
@@ -58,6 +58,7 @@ describe("landing-page document discovery", () => {
       .toBe("https://repo.example.edu/files/7.pdf");
     const store = new EvidenceStore();
     const out = await runFetch(store, new Map(), { url: page });
+    console.log("OUT", JSON.stringify(out).slice(0,400));
     expect(out.ok).toBe(true);
     expect(out.repository_pdf_followed).toBe(true);
     expect(out.is_actual_document).toBe(true);
