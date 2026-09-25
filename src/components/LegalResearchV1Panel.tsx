@@ -723,9 +723,14 @@ export function LegalResearchV1Panel({
       <div className="flex-1 min-h-0 overflow-y-auto space-y-4 pb-4">
         {!loading && !error && !result && !infraFailure && (
           sourcesMode ? (
-            <div className="flex flex-col items-center justify-center h-full py-12 text-center">
-              <div className="mb-4"><ReLexLogo size={56} /></div>
-            </div>
+            <SourcesEmptyState
+              hasUploadedFiles={files.length > 0}
+              onPickExample={(text) => {
+                setQuestion(text);
+                questionRef.current?.focus();
+              }}
+              onStart={() => questionRef.current?.focus()}
+            />
           ) : (
             <ResearchEmptyState
               hasUploadedFiles={files.length > 0}
