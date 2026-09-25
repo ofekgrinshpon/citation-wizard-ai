@@ -795,6 +795,8 @@ export async function runFetch(
   let entry: EvidenceSource;
   let decodeMeta: DecodeTelemetry | undefined;
   let repositoryPdfFollowed = false;
+  let landingDocumentCandidates = 0;
+  let landingDocumentAttempted = 0;
   let failureClass: FetchFailureClass | undefined;
   const noteFailure = (reason: string) => {
     if (ledger && authorityKey) {
@@ -989,6 +991,8 @@ export async function runFetch(
     }),
     url_repaired: url_repaired || undefined,
     repository_pdf_followed: repositoryPdfFollowed || undefined,
+    landing_document_candidates: landingDocumentCandidates || undefined,
+    landing_document_attempted: landingDocumentAttempted || undefined,
     bibliographic_basis: entry.bibliographic?.metadata_basis,
     failure_class: failureClass,
     alternative_copy_worth_trying: failureClass ? isRecoverableFailure(failureClass) : undefined,
