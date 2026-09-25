@@ -21,6 +21,7 @@ import {
   mergeBibliographic,
   parseHtmlBibliographic,
   parsePdfInfoMetadata,
+  documentLinksFromHtml,
   pdfUrlFromHtmlMeta,
   sanitizeBibliographic,
 } from "../shared/bibliographic.ts";
@@ -134,6 +135,11 @@ export interface ExtractResult {
   bibliographic?: BibliographicMetadata;
   /** Repository landing page → the article PDF it declares. */
   pdf_link?: string;
+  /**
+   * Bounded, ordered direct-document candidates (citation_pdf_url first).
+   * Acquisition candidates only — never evidence until fetched.
+   */
+  pdf_links?: string[];
 }
 
 export async function extractByContentType(
@@ -195,6 +201,7 @@ export async function extractByContentType(
       html: raw.slice(0, 400_000),
       bibliographic: parseHtmlBibliographic(raw),
       pdf_link: pdfUrlFromHtmlMeta(raw, url),
+      pdf_links: documentLinksFromHtml(raw, url),
     };
   }
   return { text: raw.trim(), decode };
@@ -341,6 +348,12 @@ export interface FetchOutput {
   same_work_recovery_failed_reason?: string;
   /** Provenance of the structured bibliographic metadata, if any. */
   bibliographic_basis?: string[];
+  /** Landing page → direct-document candidates discovered / tried (telemetry). */
+  landing_document_candidates?: number;
+  landing_document_attempted?: number;
+  /** Deterministic same-work recovery telemetry (diagnostic only). */
+  same_work_candidate_fetch_attempts?: number;
+  same_work_candidate_fetch_failures?: string[];
   /** Bounded later-page continuation of an already-acquired PDF. */
   pdf_continued?: boolean;
   pdf_pages_added?: string;
@@ -845,30 +858,42 @@ export async function runFetch(
     // PDF in `citation_pdf_url` alongside full citation metadata. Following it
     // once turns an abstract page into a readable body, and merges landing
     // metadata with PDF body under ONE evidence identity.
+    //
+    // Generalised (landing_document_discovery_v1): citation_pdf_url stays the
+    // first candidate; other generic direct-document links follow. At most
+    // MAX_LANDING_DOCUMENT_CANDIDATES are tried, first success wins, no
+    // recursion (a followed PDF's own links are never followed).
     let repository_pdf_followed = false;
-    if (extracted.pdf_link && extracted.pdf_link !== url) {
-      const pdfUrl = normalizeMalformedUrl(extracted.pdf_link);
-      if (checkUrlSafety(pdfUrl).safe) {
-        try {
-          const pdfRes = await officialFetch(pdfUrl, { signal: controller.signal });
-          if (pdfRes.ok) {
-            const pdfBuf = new Uint8Array(await pdfRes.arrayBuffer());
-            if (pdfBuf.length <= FETCH_LIMITS.MAX_BYTES) {
-              const pdfCt = pdfRes.headers.get("content-type") ?? "application/pdf";
-              const body = await extractByContentType(pdfUrl, pdfCt, pdfBuf);
-              if (!body.error && body.text.trim().length > extracted.text.trim().length) {
-                repository_pdf_followed = true;
-                bodyContentType = pdfCt;
-                extracted = {
-                  ...body,
-                  // Landing-page metadata is the stronger basis and wins.
-                  bibliographic: mergeBibliographic(extracted.bibliographic, body.bibliographic),
-                };
-              }
-            }
-          }
-        } catch { /* the landing page body remains usable */ }
-      }
+    const landingCandidates = (extracted.pdf_links ?? (extracted.pdf_link ? [extracted.pdf_link] : []))
+      .filter((l) => l !== url);
+    landingDocumentCandidates = landingCandidates.length;
+    const landingText = extracted.text.trim().length;
+    for (const link of landingCandidates) {
+      if (repository_pdf_followed) break;
+      const pdfUrl = normalizeMalformedUrl(link);
+      if (!checkUrlSafety(pdfUrl).safe) continue;
+      landingDocumentAttempted += 1;
+      try {
+        const pdfRes = await officialFetch(pdfUrl, { signal: controller.signal });
+        const finalPdfUrl = typeof pdfRes.url === "string" && pdfRes.url ? pdfRes.url : pdfUrl;
+        if (!pdfRes.ok || !checkUrlSafety(finalPdfUrl).safe) continue;
+        const pdfBuf = new Uint8Array(await pdfRes.arrayBuffer());
+        if (pdfBuf.length > FETCH_LIMITS.MAX_BYTES) continue;
+        const pdfCt = pdfRes.headers.get("content-type") ?? "application/pdf";
+        const body = await extractByContentType(pdfUrl, pdfCt, pdfBuf);
+        if (!body.error && body.text.trim().length > landingText) {
+          repository_pdf_followed = true;
+          bodyContentType = pdfCt;
+          const landingMeta = extracted.bibliographic;
+          extracted = {
+            ...body,
+            pdf_links: undefined,
+            pdf_link: undefined,
+            // Landing-page metadata is the stronger basis and wins.
+            bibliographic: mergeBibliographic(landingMeta, body.bibliographic),
+          };
+        }
+      } catch { /* the landing page body remains usable; try the next */ }
     }
 
     const { text, error, decode, pdf } = extracted;
