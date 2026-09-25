@@ -181,7 +181,7 @@ describe("same-work live recovery", () => {
       },
     });
     expect(calls).toBe(1);
-    expect(SAME_WORK_RECOVERY_LIMITS.MAX_QUERIES_PER_WORK).toBe(1);
+    expect(SAME_WORK_RECOVERY_LIMITS.MAX_QUERIES_PER_WORK).toBe(3);
     const stats = emptySameWorkRecoveryStats();
     noteSameWorkRecovery(stats, rec.telemetry);
     expect(stats.same_work_recovery_triggered).toBe(1);
