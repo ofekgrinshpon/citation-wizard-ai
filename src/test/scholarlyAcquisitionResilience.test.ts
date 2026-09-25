@@ -24,6 +24,27 @@ const PROSE = Array.from({ length: 120 }, (_, i) =>
 ).join("\n\n");
 const ARTICLE_HTML = `<html><body><article>${PROSE.split("\n\n").map((p) => `<p>${p}</p>`).join("")}</article></body></html>`;
 
+/** Minimal valid text PDF so the ordinary PDF extractor reads a real body. */
+function makePdf(lines: string[]): string {
+  const esc = (t: string) => t.replace(/[\\()]/g, (c) => "\\" + c);
+  const content = "BT /F1 9 Tf 20 800 Td 11 TL " + lines.map((l) => `(${esc(l)}) '`).join(" ") + " ET";
+  const objs = [
+    "<< /Type /Catalog /Pages 2 0 R >>",
+    "<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
+    "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 842] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>",
+    `<< /Length ${content.length} >>\nstream\n${content}\nendstream`,
+    "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>",
+  ];
+  let out = "%PDF-1.4\n";
+  const offs: number[] = [];
+  objs.forEach((o, i) => { offs.push(out.length); out += `${i + 1} 0 obj\n${o}\nendobj\n`; });
+  const x = out.length;
+  out += `xref\n0 ${objs.length + 1}\n0000000000 65535 f \n` + offs.map((o) => `${String(o).padStart(10, "0")} 00000 n \n`).join("");
+  out += `trailer\n<< /Size ${objs.length + 1} /Root 1 0 R >>\nstartxref\n${x}\n%%EOF`;
+  return out;
+}
+const ARTICLE_PDF = makePdf(PROSE.split("\n\n").slice(0, 70).map((p) => p.slice(0, 120)));
+
 let n = 0;
 const result = (p: Partial<SearchResult>): SearchResult =>
   ({ result_id: `S${++n}`, title: "", origin: "perplexity:raw_web", ...p }) as SearchResult;
@@ -32,7 +53,7 @@ function mockFetch(routes: Record<string, { status?: number; body: string; ct?: 
   const calls: string[] = [];
   vi.stubGlobal("fetch", vi.fn(async (input: string | URL | Request) => {
     const url = typeof input === "string" ? input : input instanceof URL ? input.toString() : input.url;
-    calls.push(url); console.log("F", url, !!routes[url]);
+    calls.push(url);
     const r = routes[url];
     if (!r) return new Response("not found", { status: 404 });
     const res = new Response(r.body, { status: r.status ?? 200, headers: { "content-type": r.ct ?? "text/html" } });
@@ -52,13 +73,12 @@ describe("landing-page document discovery", () => {
     const page = "https://repo.example.edu/item/7";
     mockFetch({
       [page]: { body: landing(`<a href="/other.pdf">PDF</a>`).replace("<head>", `<head><meta name="citation_pdf_url" content="https://repo.example.edu/files/7.pdf">`) },
-      "https://repo.example.edu/files/7.pdf": { body: ARTICLE_HTML },
+      "https://repo.example.edu/files/7.pdf": { body: ARTICLE_PDF, ct: "application/pdf" },
     });
     expect(documentLinksFromHtml(landing("").replace("<head>", `<head><meta name="citation_pdf_url" content="/files/7.pdf">`), page)[0])
       .toBe("https://repo.example.edu/files/7.pdf");
     const store = new EvidenceStore();
     const out = await runFetch(store, new Map(), { url: page });
-    console.log("OUT", JSON.stringify(out).slice(0,400));
     expect(out.ok).toBe(true);
     expect(out.repository_pdf_followed).toBe(true);
     expect(out.is_actual_document).toBe(true);
@@ -70,7 +90,7 @@ describe("landing-page document discovery", () => {
     const page = "https://journal.example.org/articles/42";
     mockFetch({
       [page]: { body: landing(`<a href="../downloads/42.pdf">Download PDF</a>`) },
-      "https://journal.example.org/downloads/42.pdf": { body: ARTICLE_HTML },
+      "https://journal.example.org/downloads/42.pdf": { body: ARTICLE_PDF, ct: "application/pdf" },
     });
     const out = await runFetch(new EvidenceStore(), new Map(), { url: page });
     expect(out.ok).toBe(true);
@@ -104,7 +124,7 @@ describe("original-work identity + multi-candidate recovery", () => {
       failed_source_identity: build.identity,
       failure_class: "http_403_forbidden",
       already_attempted_urls: ["https://uni.example.ac.il/paper"],
-      search: async () => [result({ title: TITLE, url: "https://author.example.com/levin.pdf", snippet: "Noa Levin" })],
+      search: async () => [result({ title: TITLE, url: "https://author.example.com/levin.pdf", published_date: "2019" })],
       acquire: async () => ({ ok: true }),
     });
     expect(rec.recovered).toBe(true);
@@ -113,7 +133,7 @@ describe("original-work identity + multi-candidate recovery", () => {
       failed_source_identity: { title: TITLE },
       failure_class: "http_403_forbidden",
       already_attempted_urls: [],
-      search: async () => [result({ title: TITLE, url: "https://author.example.com/levin.pdf", snippet: "Noa Levin" })],
+      search: async () => [result({ title: TITLE, url: "https://author.example.com/levin.pdf", published_date: "2019" })],
     });
     expect(bare.recovered).toBe(false);
   });

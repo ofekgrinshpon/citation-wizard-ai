@@ -114,7 +114,8 @@ describe("same-work trust boundary", () => {
       failure_class: "http_403_forbidden",
       already_attempted_urls: [],
       search: async (q) => {
-        seen = q;
+        // Queries form an ordered ladder; the hint shapes the richest one.
+        seen += ` ${q}`;
         return [];
       },
     });
