@@ -30,6 +30,7 @@ import type { RecoverySearchFn } from "../tools/exactAuthorityRecovery.ts";
 import { runFetch } from "../tools/fetch.ts";
 import {
   emptySameWorkRecoveryStats,
+  buildTrustedWorkIdentity,
   identityFromSearchResult,
   noteSameWorkRecovery,
   recoverSameWork,
@@ -976,6 +977,8 @@ export async function runResearchAgent(opts: {
         }
         // A cached / targeted read costs no fetch budget.
         if (!out.already_read) policy.note("fetch");
+        stats.landing_document_candidates += out.landing_document_candidates ?? 0;
+        stats.landing_document_attempted += out.landing_document_attempted ?? 0;
 
         // ── Same-work live recovery (same_work_live_recovery_v1) ───────────
         // One failed URL is not one failed source. Equivalence is decided by
@@ -998,12 +1001,25 @@ export async function runResearchAgent(opts: {
               if (r.url && normalizeUrlKey(r.url) === wanted) { cand = r; break; }
             }
           }
-          const discoveryIdentity = identityFromSearchResult({
-            title: cand?.title,
-            snippet: cand?.snippet,
-            url: failedUrl,
-            published_date: cand?.published_date,
+          // Trusted identity of the FAILED ORIGINAL: discovery metadata + DOI in
+          // the URL + sanitized landing-page bibliographic metadata already in
+          // the EvidenceStore (identity only — that page stays non-evidence).
+          const failedEntry = out.source_id ? opts.store.get(out.source_id) : null;
+          const trustedBuild = buildTrustedWorkIdentity({
+            discovery: {
+              title: cand?.title ?? failedEntry?.title,
+              snippet: cand?.snippet,
+              url: failedUrl,
+              published_date: cand?.published_date,
+            },
+            stored_bibliographic: failedEntry?.bibliographic,
           });
+          const discoveryIdentity = trustedBuild.identity;
+          for (const [list, vals] of [
+            [stats.same_work_original_fields_before, trustedBuild.fields_before],
+            [stats.same_work_original_fields_after, trustedBuild.fields_after],
+            [stats.same_work_original_field_provenance, Object.entries(trustedBuild.provenance).map(([f, b]) => `${f}:${b}`)],
+          ] as const) for (const v of vals) if (!(list as string[]).includes(v)) (list as string[]).push(v);
           // TRUST BOUNDARY (same_work_trust_boundary_v1).
           // A work identity the agent states is a SEARCH HINT only: it may help
           // name the work in the rediscovery query, and it is structurally
@@ -1029,6 +1045,7 @@ export async function runResearchAgent(opts: {
           if (!key) stats.same_work_recovery_skipped_no_identity += 1;
           if (key && !sameWorkRecoveryUsed.has(key) && policy.checkTool("fetch") === null) {
             sameWorkRecoveryUsed.add(key);
+            let lastRetry: typeof out | undefined;
             const rec = await recoverSameWork({
               failed_source_identity: trustedIdentity,
               search_hint: searchHint,
@@ -1060,31 +1077,47 @@ export async function runResearchAgent(opts: {
               },
               // Identity only — never evidence, never cited.
               enrichment: liveEnrichmentDeps(),
+              // Each equivalence-proven copy goes through the ORDINARY fetch
+              // path — document check, extraction, EvidenceStore, verification
+              // — with no added trust. Fetch budget is still enforced.
+              acquire: async (candidate) => {
+                if (policy.checkTool("fetch") !== null) return { ok: false, failure_class: "fetch_budget_exhausted" };
+                const retry = await runFetch(
+                  opts.store,
+                  discovered,
+                  {
+                    result_id: candidate.result_id,
+                    query: typeof args.query === "string" ? args.query : undefined,
+                    locator: typeof args.locator === "string" ? args.locator : undefined,
+                    want: typeof args.want === "string" ? args.want : undefined,
+                    find: Array.isArray(args.find) ? args.find.map((f) => String(f)) : undefined,
+                  },
+                  ledger,
+                  { admin: opts.admin },
+                );
+                if (!retry.already_read) policy.note("fetch");
+                lastRetry = retry;
+                const ok = retry.ok && retry.is_actual_document === true && !retry.alternative_copy_worth_trying;
+                return { ok, failure_class: ok ? undefined : (retry.failure_class ?? retry.error ?? "unusable_body") };
+              },
             });
             noteSameWorkRecovery(stats, rec.telemetry);
-            if (rec.recovered) {
-              const retry = await runFetch(
-                opts.store,
-                discovered,
-                {
-                  result_id: rec.candidate.result_id,
-                  query: typeof args.query === "string" ? args.query : undefined,
-                  locator: typeof args.locator === "string" ? args.locator : undefined,
-                  want: typeof args.want === "string" ? args.want : undefined,
-                  find: Array.isArray(args.find) ? args.find.map((f) => String(f)) : undefined,
-                },
-                ledger,
-                { admin: opts.admin },
-              );
-              if (!retry.already_read) policy.note("fetch");
+            if (rec.recovered && lastRetry) {
               out = {
-                ...retry,
+                ...lastRetry,
                 same_work_recovered: true,
                 same_work_recovery_basis: rec.telemetry.basis,
                 same_work_recovered_host: rec.telemetry.recovered_host,
+                same_work_candidate_fetch_attempts: rec.telemetry.candidate_fetch_attempts,
+                same_work_candidate_fetch_failures: rec.telemetry.candidate_fetch_failures,
               };
             } else {
-              out = { ...out, same_work_recovery_failed_reason: rec.reason };
+              out = {
+                ...out,
+                same_work_recovery_failed_reason: rec.reason,
+                same_work_candidate_fetch_attempts: rec.telemetry.candidate_fetch_attempts,
+                same_work_candidate_fetch_failures: rec.telemetry.candidate_fetch_failures,
+              };
             }
           }
         }

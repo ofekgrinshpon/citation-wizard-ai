@@ -304,6 +304,74 @@ export function pdfUrlFromHtmlMeta(html: string, baseUrl?: string): string | und
   }
 }
 
+/** Hard cap on landing-page document candidates returned (and later tried). */
+export const MAX_LANDING_DOCUMENT_CANDIDATES = 3;
+
+/** Anchor text that marks site chrome rather than the work's own document. */
+const CHROME_ANCHOR_RE =
+  /\b(privacy|terms|cookie|policy|guidelines?|instructions?|submission|author guide|style ?guide|brochure|catalog(ue)?|newsletter|annual report|advertis|subscribe|login|sign in|donate|cv|resume)\b/i;
+const DOC_ANCHOR_RE = /\b(pdf|download|full[\s-]?text|view (article|paper)|הורד|הורדה|טקסט מלא)\b/i;
+
+/**
+ * Plausible direct-document links on an HTML landing page — generic, bounded
+ * and host-agnostic (landing_document_discovery_v1).
+ *
+ * Signals, strongest first: `citation_pdf_url`; `<link type="application/pdf">`;
+ * `<a type="application/pdf">`; `<a href>` whose PATH ends in `.pdf` (anchors
+ * whose text says PDF / download / full text rank first). Site chrome (policies,
+ * guidelines, login) is skipped. Relative URLs resolve against the page; only
+ * http(s) survives; duplicates and the page itself are dropped.
+ *
+ * A returned link is an ACQUISITION CANDIDATE only — never evidence until it
+ * is fetched, extracted and document-checked like any other body.
+ */
+export function documentLinksFromHtml(html: string, baseUrl: string): string[] {
+  const out: string[] = [];
+  const seen = new Set<string>();
+  let self = "";
+  try { self = new URL(baseUrl).toString().replace(/#.*$/, ""); } catch { return out; }
+  const push = (raw: string | undefined) => {
+    if (!raw) return;
+    let abs: URL;
+    try { abs = new URL(decodeHtmlEntities(raw.trim()), baseUrl); } catch { return; }
+    if (abs.protocol !== "https:" && abs.protocol !== "http:") return;
+    abs.hash = "";
+    const s = abs.toString();
+    const key = s.toLowerCase();
+    if (s === self || seen.has(key)) return;
+    seen.add(key);
+    out.push(s);
+  };
+
+  push(pdfUrlFromHtmlMeta(html, baseUrl));
+
+  const slice = html.slice(0, 400_000);
+  for (const m of slice.matchAll(/<link\b[^>]*>/gi)) {
+    const tag = m[0];
+    if (!/type\s*=\s*["']?application\/pdf/i.test(tag)) continue;
+    push(/href\s*=\s*["']([^"']+)["']/i.exec(tag)?.[1]);
+  }
+
+  const strong: string[] = [];
+  const weak: string[] = [];
+  for (const m of slice.matchAll(/<a\b([^>]*)>([\s\S]{0,300}?)<\/a>/gi)) {
+    const attrs = m[1];
+    const href = /href\s*=\s*["']([^"']+)["']/i.exec(attrs)?.[1];
+    if (!href || /^(javascript|mailto|tel):/i.test(href.trim())) continue;
+    const text = m[2].replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+    if (CHROME_ANCHOR_RE.test(text)) continue;
+    let path = "";
+    try { path = new URL(decodeHtmlEntities(href.trim()), baseUrl).pathname; } catch { continue; }
+    const typedPdf = /type\s*=\s*["']?application\/pdf/i.test(attrs);
+    const pdfPath = /\.pdf$/i.test(path);
+    if (!typedPdf && !pdfPath) continue;
+    (typedPdf || DOC_ANCHOR_RE.test(text) ? strong : weak).push(href);
+  }
+  for (const h of [...strong, ...weak]) push(h);
+
+  return out.slice(0, MAX_LANDING_DOCUMENT_CANDIDATES);
+}
+
 /** Stamp one basis on every field this candidate actually carries. */
 function withBasis(meta: BibliographicMetadata, basis: MetadataBasis): BibliographicMetadata {
   const field_basis: Partial<Record<BibliographicField, MetadataBasis>> = {};
