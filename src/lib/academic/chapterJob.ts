@@ -24,12 +24,16 @@ export interface SourceRegistryEntry {
   chapters_used_in: string[];
 }
 
+/** The role a chapter plays in the paper — detected in the editor, not here. */
+export type AcademicChapterRole = "body" | "introduction" | "conclusion" | "abstract";
+
 export interface ChapterContextInput {
   projectId?: string | null;
   researchQuestion: string;
   outlineTitles: string[];
   chapterIndex: number;
   chapterTitle: string;
+  chapterRole?: AcademicChapterRole;
   instructions?: string | null;
   existingText?: string | null;
   completedChapters: Array<{ title: string; memory?: ChapterMemory | null; content?: string | null }>;
@@ -48,10 +52,11 @@ export function buildProjectContext(input: ChapterContextInput) {
     chapter: {
       index: input.chapterIndex,
       title: input.chapterTitle,
-      role: "body" as const,
+      role: input.chapterRole ?? "body",
       instructions: input.instructions?.trim() || null,
       existing_text_excerpt: input.existingText?.slice(0, EXISTING_TEXT_CHARS) || null,
     },
+
     completed_chapters: input.completedChapters
       .filter((c) => c.memory || c.content)
       .slice(-8)
