@@ -1020,6 +1020,17 @@ export async function runResearchAgent(opts: {
             [stats.same_work_original_fields_after, trustedBuild.fields_after],
             [stats.same_work_original_field_provenance, Object.entries(trustedBuild.provenance).map(([f, b]) => `${f}:${b}`)],
           ] as const) for (const v of vals) if (!(list as string[]).includes(v)) (list as string[]).push(v);
+          // decorated_title_normalization_v1 — diagnostic only.
+          if (trustedBuild.author_from_title) stats.same_work_original_author_from_title += 1;
+          if (
+            trustedBuild.raw_title && trustedBuild.normalized_title &&
+            trustedBuild.raw_title !== trustedBuild.normalized_title
+          ) {
+            if (stats.same_work_original_title_raw.length < 20) {
+              stats.same_work_original_title_raw.push(trustedBuild.raw_title.slice(0, 200));
+              stats.same_work_original_title_normalized.push(trustedBuild.normalized_title.slice(0, 200));
+            }
+          }
           // TRUST BOUNDARY (same_work_trust_boundary_v1).
           // A work identity the agent states is a SEARCH HINT only: it may help
           // name the work in the rediscovery query, and it is structurally

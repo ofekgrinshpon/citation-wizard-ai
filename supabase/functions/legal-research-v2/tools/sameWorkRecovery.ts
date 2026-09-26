@@ -27,6 +27,8 @@ import {
   type WorkIdentity,
 } from "./alternativeCopy.ts";
 import { isRecoverableFailure, type FetchFailureClass } from "../shared/fetchDiagnostics.ts";
+import { splitDecoratedScholarlyTitle } from "../shared/decoratedTitle.ts";
+import { titleSimilarity } from "./alternativeCopy.ts";
 import {
   ENRICHMENT_LIMITS,
   emptyEnrichmentStats,
@@ -34,6 +36,7 @@ import {
   type EnrichmentDeps,
   type EnrichmentStats,
   type EnrichmentTelemetry,
+  identityFromMetadataRecord,
   noteEnrichment,
   shouldEnrich,
 } from "./identityEnrichment.ts";
@@ -103,6 +106,13 @@ export interface SameWorkRecoveryStats extends EnrichmentStats {
   same_work_candidate_fetch_failures: string[];
   landing_document_candidates: number;
   landing_document_attempted: number;
+  /** decorated_title_normalization_v1 / original_work_enrichment_v1. */
+  same_work_original_title_raw: string[];
+  same_work_original_title_normalized: string[];
+  same_work_original_author_from_title: number;
+  same_work_original_enrichment_attempted: number;
+  same_work_original_enrichment_success: number;
+  same_work_original_fields_after_enrichment: string[];
 }
 
 export function emptySameWorkRecoveryStats(): SameWorkRecoveryStats {
@@ -131,6 +141,12 @@ export function emptySameWorkRecoveryStats(): SameWorkRecoveryStats {
     same_work_candidate_fetch_failures: [],
     landing_document_candidates: 0,
     landing_document_attempted: 0,
+    same_work_original_title_raw: [],
+    same_work_original_title_normalized: [],
+    same_work_original_author_from_title: 0,
+    same_work_original_enrichment_attempted: 0,
+    same_work_original_enrichment_success: 0,
+    same_work_original_fields_after_enrichment: [],
   };
 }
 
@@ -200,8 +216,15 @@ export function identityFromSearchResult(
   const text = `${r.title ?? ""} ${r.snippet ?? ""}`;
   const doi = DOI_RE.exec(r.url ?? "")?.[0] ?? DOI_RE.exec(text)?.[0];
   const year = YEAR_RE.exec(String(r.published_date ?? ""))?.[0] ?? YEAR_RE.exec(text)?.[0];
+  // Discovery providers decorate work titles with the byline / volume
+  // ("Title | Author (כרך ב)"). Separating that decoration deterministically
+  // gives `isSameWork()` a real title and a real author instead of one glued
+  // string — it does not relax any equivalence rule.
+  const split = splitDecoratedScholarlyTitle(r.title);
+  const title = usableWorkTitle(split?.title ?? r.title);
   return {
-    title: usableWorkTitle(r.title),
+    title,
+    authors: title && split?.authors?.length ? split.authors.slice(0, 2) : undefined,
     year: year ?? undefined,
     doi: doi ? doi.replace(/[.,;]$/, "") : undefined,
   };
@@ -216,6 +239,12 @@ export interface TrustedIdentityBuild {
   fields_after: string[];
   /** field → provenance that supplied it. */
   provenance: Record<string, string>;
+  /** Raw discovery title, before decoration was separated. */
+  raw_title?: string;
+  /** Core title actually used for identity. */
+  normalized_title?: string;
+  /** An author was separated off a decorated discovery title. */
+  author_from_title: boolean;
 }
 
 /**
@@ -233,9 +262,12 @@ export function buildTrustedWorkIdentity(input: {
   stored_bibliographic?: BibliographicMetadata;
 }): TrustedIdentityBuild {
   const base = identityFromSearchResult(input.discovery);
+  const split = splitDecoratedScholarlyTitle(input.discovery.title);
+  const authorFromTitle = !!(base.authors?.length && split?.authors?.length);
   const before = presentFields(base);
   const provenance: Record<string, string> = {};
   for (const f of before) provenance[f] = "discovery";
+  if (authorFromTitle) provenance.authors = "discovery_title";
   const id: TrustedWorkIdentity = { ...base };
   const meta = input.stored_bibliographic;
   const strong = (f: "title" | "authors" | "year" | "journal") => {
@@ -260,7 +292,15 @@ export function buildTrustedWorkIdentity(input: {
       provenance.journal = meta.field_basis?.journal ?? "landing_meta";
     }
   }
-  return { identity: id, fields_before: before, fields_after: presentFields(id), provenance };
+  return {
+    identity: id,
+    fields_before: before,
+    fields_after: presentFields(id),
+    provenance,
+    raw_title: split?.raw,
+    normalized_title: id.title,
+    author_from_title: authorFromTitle,
+  };
 }
 
 /**
@@ -338,6 +378,13 @@ export interface SameWorkRecoveryTelemetry {
   hint_used_for_query: boolean;
   /** Always false: hints are structurally excluded from equivalence. */
   hint_used_for_equivalence: false;
+  /** original_work_enrichment_v1 — ONE title lookup for the ORIGINAL work. */
+  original_enrichment_attempted: boolean;
+  original_enrichment_success: boolean;
+  /** Trusted fields present after the original-work lookup. */
+  original_fields_after_enrichment: string[];
+  /** field:basis for every field the original-work lookup added. */
+  original_enrichment_provenance: string[];
 }
 
 export interface SameWorkRecoveryResult {
@@ -381,14 +428,60 @@ export interface SameWorkRecoveryInput {
   acquire?: (candidate: SearchResult) => Promise<{ ok: boolean; failure_class?: string }>;
 }
 
+/**
+ * ONE bounded IDENTITY lookup for the FAILED ORIGINAL work
+ * (original_work_enrichment_v1).
+ *
+ * Discovery sometimes leaves the original work with a title and nothing else,
+ * so every alternative copy is rejected as `title_only_insufficient` even when
+ * it plainly is the same article. This adds AT MOST ONE title-based metadata
+ * lookup for the original, and accepts its fields only when the service is
+ * demonstrably talking about the same title.
+ *
+ * Invariants: identity only — nothing here is quotable, citable or storable as
+ * evidence; `isSameWork()` is untouched; a failure or an ambiguous answer
+ * leaves the identity exactly as it was and never fails the run.
+ */
+async function enrichOriginalIdentity(
+  original: TrustedWorkIdentity,
+  deps: EnrichmentDeps | undefined,
+  tel: SameWorkRecoveryTelemetry,
+): Promise<TrustedWorkIdentity> {
+  const needs = !!original.title && !original.authors?.length && !original.year && !original.doi;
+  if (!needs || !deps?.fetchTitleMetadata) return original;
+
+  tel.original_enrichment_attempted = true;
+  try {
+    const res = await deps.fetchTitleMetadata(original.title!, {});
+    const fields = identityFromMetadataRecord(res?.record);
+    if (
+      !fields.title ||
+      titleSimilarity(original.title, fields.title) < ENRICHMENT_LIMITS.MIN_TITLE_SIMILARITY
+    ) {
+      return original;
+    }
+    const basis = res?.service === "openalex" ? "openalex" : "crossref";
+    const out: TrustedWorkIdentity = { ...original };
+    const added: string[] = [];
+    if (fields.authors?.length) { out.authors = fields.authors.slice(0, 6); added.push("authors"); }
+    if (fields.year) { out.year = fields.year; added.push("year"); }
+    if (fields.journal) { out.journal = fields.journal; added.push("journal"); }
+    if (fields.doi) { out.doi = fields.doi; added.push("doi"); }
+    if (!added.length) return original;
+    tel.original_enrichment_success = true;
+    for (const f of added) tel.original_enrichment_provenance.push(`${f}:${basis}`);
+    return out;
+  } catch {
+    // Identity enrichment never fails a research run.
+    return original;
+  }
+}
+
 /** One bounded same-work recovery round. The caller enforces once-per-work. */
 export async function recoverSameWork(
   input: SameWorkRecoveryInput,
 ): Promise<SameWorkRecoveryResult> {
-  const trustedFields = presentFields(input.failed_source_identity);
   const hintFields = presentFields(input.search_hint);
-  const forQuery = queryIdentity(input.failed_source_identity, input.search_hint);
-  const hintUsedForQuery = presentFields(forQuery).some((f) => !trustedFields.includes(f));
 
   const tel: SameWorkRecoveryTelemetry = {
     triggered: false,
@@ -402,15 +495,29 @@ export async function recoverSameWork(
     rejected_already_attempted: 0,
     success: false,
     enrichment: [],
-    trusted_fields: trustedFields,
+    trusted_fields: presentFields(input.failed_source_identity),
     hint_fields: hintFields,
-    hint_used_for_query: hintUsedForQuery,
+    hint_used_for_query: false,
     hint_used_for_equivalence: false,
+    original_enrichment_attempted: false,
+    original_enrichment_success: false,
+    original_fields_after_enrichment: presentFields(input.failed_source_identity),
+    original_enrichment_provenance: [],
   };
 
   if (input.failure_class && !isRecoverableFailure(input.failure_class)) {
     return { recovered: false, reason: "failure_not_recoverable", telemetry: { ...tel, failure_reason: "failure_not_recoverable" } };
   }
+
+  // ONE bounded IDENTITY lookup for the ORIGINAL work when discovery left it
+  // title-only. Identity, never evidence; a miss never fails the run.
+  const wanted = await enrichOriginalIdentity(input.failed_source_identity, input.enrichment, tel);
+  const trustedFields = presentFields(wanted);
+  tel.trusted_fields = trustedFields;
+  tel.original_fields_after_enrichment = trustedFields;
+
+  const forQuery = queryIdentity(wanted, input.search_hint);
+  tel.hint_used_for_query = presentFields(forQuery).some((f) => !trustedFields.includes(f));
 
   // The query may name the work with untrusted hints; proof may not.
   const queries = buildSameWorkQueries(forQuery);
@@ -460,18 +567,18 @@ export async function recoverSameWork(
         continue;
       }
       const discoveryIdentity = identityFromSearchResult(r);
-      let verdict = isSameWork(input.failed_source_identity, discoveryIdentity);
+      let verdict = isSameWork(wanted, discoveryIdentity);
       let enrichmentBasis: string[] | undefined;
 
       if (
         !verdict.same_work &&
         input.enrichment &&
         enriched < ENRICHMENT_LIMITS.MAX_CANDIDATES_PER_WORK &&
-        shouldEnrich(input.failed_source_identity, discoveryIdentity, verdict)
+        shouldEnrich(wanted, discoveryIdentity, verdict)
       ) {
         enriched += 1;
         const outcome = await enrichAndCompare({
-          wanted: input.failed_source_identity,
+          wanted,
           candidate: discoveryIdentity,
           candidate_url: r.url,
           search_hint: {
@@ -544,6 +651,18 @@ export function noteSameWorkRecovery(
   if (!tel.triggered) return;
   for (const e of tel.enrichment ?? []) noteEnrichment(stats, e);
   stats.same_work_recovery_triggered += 1;
+  if (tel.original_enrichment_attempted) stats.same_work_original_enrichment_attempted += 1;
+  if (tel.original_enrichment_success) stats.same_work_original_enrichment_success += 1;
+  for (const f of tel.original_fields_after_enrichment ?? []) {
+    if (!stats.same_work_original_fields_after_enrichment.includes(f)) {
+      stats.same_work_original_fields_after_enrichment.push(f);
+    }
+  }
+  for (const p of tel.original_enrichment_provenance ?? []) {
+    if (!stats.same_work_original_field_provenance.includes(p)) {
+      stats.same_work_original_field_provenance.push(p);
+    }
+  }
   stats.same_work_recovery_query_count += Math.max(1, tel.queries?.length ?? 0);
   stats.same_work_equivalent_candidates += tel.equivalent_candidates ?? 0;
   stats.same_work_candidate_fetch_attempts += tel.candidate_fetch_attempts ?? 0;
