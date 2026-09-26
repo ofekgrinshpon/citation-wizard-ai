@@ -170,9 +170,16 @@ export function buildProjectContextBlock(ctx: AcademicProjectContext): string {
       }`,
     );
   }
+  const roleHe = {
+    body: "פרק גוף",
+    introduction: "פרק מבוא",
+    conclusion: "פרק סיכום",
+    abstract: "תקציר",
+  }[ctx.chapter.role];
   parts.push(
-    `הפרק הנוכחי: פרק ${ctx.chapter.index + 1} — "${ctx.chapter.title}". תפקידו בעבודה נגזר ממקומו במתווה.`,
+    `הפרק הנוכחי: פרק ${ctx.chapter.index + 1} — "${ctx.chapter.title}" (${roleHe}). תפקידו בעבודה נגזר ממקומו במתווה.`,
   );
+
   if (ctx.chapter.instructions) {
     parts.push(`הנחיות המשתמש לפרק זה: ${ctx.chapter.instructions}`);
   }
