@@ -57,4 +57,12 @@ export const QUOTE_LIMITS = {
   /** Quotes re-surfaced in the rolling research state each turn. */
   STATE_QUOTES: 6,
   STATE_CHARS: 520,
+  /**
+   * Compact catalog of every stored quote (durable_quote_references_v1).
+   * Ids + a short preview only: the agent may cite any of them by quote_id
+   * without the literal text still being in its context.
+   */
+  CATALOG_MAX: 24,
+  CATALOG_PREVIEW_CHARS: 120,
 };
+
