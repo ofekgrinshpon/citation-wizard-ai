@@ -238,6 +238,12 @@ export interface TrustedIdentityBuild {
   fields_after: string[];
   /** field → provenance that supplied it. */
   provenance: Record<string, string>;
+  /** Raw discovery title, before decoration was separated. */
+  raw_title?: string;
+  /** Core title actually used for identity. */
+  normalized_title?: string;
+  /** An author was separated off a decorated discovery title. */
+  author_from_title: boolean;
 }
 
 /**
