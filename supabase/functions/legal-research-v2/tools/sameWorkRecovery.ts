@@ -651,6 +651,18 @@ export function noteSameWorkRecovery(
   if (!tel.triggered) return;
   for (const e of tel.enrichment ?? []) noteEnrichment(stats, e);
   stats.same_work_recovery_triggered += 1;
+  if (tel.original_enrichment_attempted) stats.same_work_original_enrichment_attempted += 1;
+  if (tel.original_enrichment_success) stats.same_work_original_enrichment_success += 1;
+  for (const f of tel.original_fields_after_enrichment ?? []) {
+    if (!stats.same_work_original_fields_after_enrichment.includes(f)) {
+      stats.same_work_original_fields_after_enrichment.push(f);
+    }
+  }
+  for (const p of tel.original_enrichment_provenance ?? []) {
+    if (!stats.same_work_original_field_provenance.includes(p)) {
+      stats.same_work_original_field_provenance.push(p);
+    }
+  }
   stats.same_work_recovery_query_count += Math.max(1, tel.queries?.length ?? 0);
   stats.same_work_equivalent_candidates += tel.equivalent_candidates ?? 0;
   stats.same_work_candidate_fetch_attempts += tel.candidate_fetch_attempts ?? 0;
