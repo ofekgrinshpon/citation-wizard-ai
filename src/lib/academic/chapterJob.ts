@@ -79,14 +79,22 @@ export function buildProjectContext(input: ChapterContextInput) {
   };
 }
 
+const ROLE_BRIEF: Record<AcademicChapterRole, string> = {
+  body: "כתוב פרק גוף בעבודה אקדמית משפטית בשם",
+  introduction: "כתוב פרק מבוא בעבודה אקדמית משפטית בשם",
+  conclusion: "כתוב פרק סיכום בעבודה אקדמית משפטית בשם",
+  abstract: "כתוב תקציר של עבודה אקדמית משפטית בשם",
+};
+
 /** The chapter brief the research agent receives as the "question". */
 export function buildChapterQuestion(input: {
   researchQuestion: string;
   chapterTitle: string;
+  chapterRole?: AcademicChapterRole;
   instructions?: string | null;
 }): string {
   return [
-    `כתוב פרק גוף בעבודה אקדמית משפטית בשם "${input.chapterTitle}".`,
+    `${ROLE_BRIEF[input.chapterRole ?? "body"]} "${input.chapterTitle}".`,
     `שאלת המחקר של העבודה: ${input.researchQuestion}`,
     input.instructions?.trim()
       ? `הנחיות נוספות לפרק: ${input.instructions.trim()}`
@@ -94,6 +102,7 @@ export function buildChapterQuestion(input: {
     "חקור את הסוגיות שהפרק נדרש להן ובסס אותן במקורות שנקראו בפועל.",
   ].filter(Boolean).join("\n");
 }
+
 
 export interface StartChapterJobResult {
   jobId?: string;
