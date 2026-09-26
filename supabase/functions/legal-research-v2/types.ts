@@ -276,10 +276,18 @@ export interface UserDocumentMeta {
 
 export interface MemoEvidence {
   source_id: string;
-  quoted_span: string;
+  /**
+   * Verbatim span copied from the source body. Optional only because an
+   * evidence pair may instead point at a stored quote (`quote_id`), which the
+   * server resolves into exactly this field before verification.
+   */
+  quoted_span?: string;
+  /** Id of an excerpt already served from THIS source in this run. */
+  quote_id?: string;
   locator?: string;
   reason: string;
 }
+
 
 export interface MemoClaim {
   claim_id: string;
