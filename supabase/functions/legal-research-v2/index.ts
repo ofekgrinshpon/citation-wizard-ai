@@ -734,6 +734,41 @@ async function runPipeline(
     };
   });
 
+  // Source utilization: how much of what was readable reached the memo, the
+  // verified pack and the answer. Observability only — never a gate.
+  const readableIds = new Set(store.readable().map((s) => s.source_id));
+  const memoSourceIds = new Set<string>();
+  for (const c of agent.memo?.claims ?? []) {
+    for (const e of c.evidence) if (e.source_id) memoSourceIds.add(e.source_id);
+  }
+  const packSourceIds = new Set<string>();
+  for (const c of pack.claims) for (const s of c.sources) packSourceIds.add(s.source_id);
+  const terminalLossStage: Record<string, string> = {};
+  for (const s of store.all()) {
+    const id = s.source_id;
+    if (!readableIds.has(id)) terminalLossStage[id] = "acquisition";
+    else if (!store.servedQuotes(id).length) terminalLossStage[id] = "no_quote";
+    else if (!memoSourceIds.has(id)) terminalLossStage[id] = "memo_selection";
+    else if (!packSourceIds.has(id)) terminalLossStage[id] = "verification";
+    else if (!citedSet.has(id)) terminalLossStage[id] = "drafting";
+  }
+  const draftWordCount = draft.blocks
+    .map((b) => b.text ?? "")
+    .join(" ")
+    .split(/\s+/)
+    .filter(Boolean).length;
+  const targetMin = draftingBrief?.target_words?.min ?? null;
+  const targetMax = draftingBrief?.target_words?.max ?? null;
+  const targetRangeMet = targetMin === null && targetMax === null
+    ? null
+    : (targetMin === null || draftWordCount >= targetMin) &&
+      (targetMax === null || draftWordCount <= targetMax);
+  const targetShortfallReason = targetRangeMet === false && targetMin !== null &&
+      draftWordCount < targetMin
+    ? (pack.claims.length < 6 ? "thin_verified_pack" : "drafter_stopped_short")
+    : null;
+
+
 
 
   // Academic evidence yield + bibliographic identity (diagnostic only).
