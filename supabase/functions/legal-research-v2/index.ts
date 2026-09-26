@@ -927,8 +927,38 @@ async function runPipeline(
     memo_coverage_claims_added: agent.stats.memo_coverage_claims_added,
     memo_coverage_gap_left_explicit: agent.stats.memo_coverage_gap_left_explicit,
     memo_coverage_reverted_to_pre_check: agent.stats.memo_coverage_reverted_to_pre_check,
+    /** Durable quote references (durable_quote_references_v1). Diagnostic only. */
+    quotes_available_at_memo: agent.stats.quotes_available_at_memo,
+    quote_ids_referenced_in_memo: agent.stats.quote_ids_referenced_in_memo,
+    memo_evidence_resolved_from_quote_id: agent.stats.memo_evidence_resolved_from_quote_id,
+    invalid_quote_id: agent.stats.invalid_quote_id,
+    quote_source_mismatch: agent.stats.quote_source_mismatch,
+    memo_evidence_dropped_unresolvable: agent.stats.memo_evidence_dropped_unresolvable,
+    sources_with_quotes_not_memoed: agent.stats.sources_with_quotes_not_memoed,
+    /** Source utilization funnel (read → memo → pack). Diagnostic only. */
+    readable_unique_sources: readableIds.size,
+    memo_unique_sources: memoSourceIds.size,
+    verified_pack_unique_sources: packSourceIds.size,
+    readable_to_memo_ratio: readableIds.size ? memoSourceIds.size / readableIds.size : 0,
+    memo_to_pack_ratio: memoSourceIds.size ? packSourceIds.size / memoSourceIds.size : 0,
+    terminal_loss_stage: terminalLossStage,
+    /** Agent-owned drafting brief (agent_owned_drafting_brief_v1). Diagnostic only. */
+    drafting_brief_present: !!draftingBrief,
+    drafting_brief_deliverable: draftingBrief?.deliverable ?? null,
+    drafting_brief_depth: draftingBrief?.depth ?? null,
+    drafting_brief_target_words_min: draftingBrief?.target_words?.min ?? null,
+    drafting_brief_target_words_max: draftingBrief?.target_words?.max ?? null,
+    drafting_brief_goals_count: draftingBrief?.goals?.length ?? 0,
+    drafting_brief_structure_items: draftingBrief?.structure?.length ?? 0,
+    /** Draft result. Diagnostic only — length is a soft target, never a gate. */
+    draft_word_count: draftWordCount,
+    draft_blocks: draft.blocks.length,
+    drafter_finish_reason: draft.finish_reason ?? null,
+    target_range_met: targetRangeMet,
+    target_range_shortfall_reason: targetShortfallReason,
     /** Per-run egress state (v2_per_run_egress_reset_v1). */
     egress: { ...egressTelemetry() },
+
   };
 
   return {
