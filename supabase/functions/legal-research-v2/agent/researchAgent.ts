@@ -225,11 +225,16 @@ export interface AgentTraceEntry {
 }
 
 
-export interface AgentContextStats extends AcquisitionStats, SameWorkRecoveryStats, CoverageCheckStats {
+export interface AgentContextStats
+  extends AcquisitionStats, SameWorkRecoveryStats, CoverageCheckStats, QuoteResolutionStats {
   largest_tool_response_chars: number;
   evidence_context_chars_last_turn: number;
   repeated_tool_calls_prevented: number;
   commit_directives: string[];
+  /** Durable quote references (durable_quote_references_v1). Diagnostic only. */
+  quotes_available_at_memo: number;
+  sources_with_quotes_not_memoed: number;
+
   /** Latency-efficiency counters (legal_research_v2_latency_efficiency_v1). */
   already_read_actions: number;
   noop_already_read_suppressed: number;
