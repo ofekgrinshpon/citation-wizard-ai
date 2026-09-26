@@ -323,7 +323,7 @@ export interface AgentRunResult {
   stats: AgentContextStats;
 }
 
-function normalizeMemo(raw: unknown): ResearchMemo | null {
+export function normalizeMemo(raw: unknown): ResearchMemo | null {
   const r = raw as Partial<ResearchMemo> | null;
   if (!r || typeof r !== "object") return null;
   const claims: MemoClaim[] = Array.isArray(r.claims)
@@ -340,6 +340,11 @@ function normalizeMemo(raw: unknown): ResearchMemo | null {
             .map((e) => ({
               source_id: String(e.source_id),
               quoted_span: String(e.quoted_span ?? ""),
+              // Durable reference to an excerpt already served from this
+              // source. Resolved server-side before verification.
+              ...(typeof e.quote_id === "string" && e.quote_id.trim()
+                ? { quote_id: e.quote_id.trim() }
+                : {}),
               locator: typeof e.locator === "string" ? e.locator : undefined,
               reason: String(e.reason ?? ""),
             }))
@@ -354,6 +359,9 @@ function normalizeMemo(raw: unknown): ResearchMemo | null {
   } catch {
     research_synthesis = undefined;
   }
+  const drafting_brief = normalizeDraftingBrief(
+    (r as { drafting_brief?: unknown }).drafting_brief,
+  );
   return {
     issue_summary: String(r.issue_summary ?? "").trim(),
     claims,
@@ -362,8 +370,10 @@ function normalizeMemo(raw: unknown): ResearchMemo | null {
       : [],
     research_complete: r.research_complete === true,
     ...(research_synthesis ? { research_synthesis } : {}),
+    ...(drafting_brief ? { drafting_brief } : {}),
   };
 }
+
 
 /** Deterministic key used for repeated-call detection. */
 export function toolCallKey(name: string, args: Record<string, unknown>): string {
