@@ -56,7 +56,7 @@ describe("decorated scholarly title normalization", () => {
     const attempted: string[] = [];
     const rec = await recoverSameWork({
       failed_source_identity: trusted.identity,
-      failure_class: "unsupported_response",
+      failure_class: "block_page",
       already_attempted_urls: ["https://law.haifa.ac.il/wp-content/uploads/2021/11/b2_6.pdf"],
       search: async () => [candidate],
       acquire: async (c) => {
@@ -129,7 +129,7 @@ describe("decorated scholarly title normalization", () => {
     });
     const rec = await recoverSameWork({
       failed_source_identity: { title: "Known Article Title" },
-      failure_class: "unsupported_response",
+      failure_class: "block_page",
       already_attempted_urls: [],
       enrichment: deps,
       search: async () => [candidate],
@@ -160,7 +160,7 @@ describe("decorated scholarly title normalization", () => {
     };
     const rec = await recoverSameWork({
       failed_source_identity: { title: "Known Article Title" },
-      failure_class: "unsupported_response",
+      failure_class: "block_page",
       already_attempted_urls: [],
       enrichment: deps,
       search: async () => [],
@@ -201,13 +201,13 @@ describe("decorated scholarly title normalization", () => {
     };
     const rec = await recoverSameWork({
       failed_source_identity: { title: CORE },
-      failure_class: "unsupported_response",
+      failure_class: "block_page",
       already_attempted_urls: [],
       enrichment: deps,
       search: async () => [result({ title: CORE, url: "https://repo.example.org/x.pdf" })],
       acquire: async () => {
         acquireCalls += 1;
-        return { ok: false, failure_class: "unsupported_response" };
+        return { ok: false, failure_class: "block_page" };
       },
     });
     expect(rec.telemetry.original_enrichment_success).toBe(true);
