@@ -431,10 +431,7 @@ export interface SameWorkRecoveryInput {
 export async function recoverSameWork(
   input: SameWorkRecoveryInput,
 ): Promise<SameWorkRecoveryResult> {
-  const trustedFields = presentFields(input.failed_source_identity);
   const hintFields = presentFields(input.search_hint);
-  const forQuery = queryIdentity(input.failed_source_identity, input.search_hint);
-  const hintUsedForQuery = presentFields(forQuery).some((f) => !trustedFields.includes(f));
 
   const tel: SameWorkRecoveryTelemetry = {
     triggered: false,
@@ -448,15 +445,29 @@ export async function recoverSameWork(
     rejected_already_attempted: 0,
     success: false,
     enrichment: [],
-    trusted_fields: trustedFields,
+    trusted_fields: presentFields(input.failed_source_identity),
     hint_fields: hintFields,
-    hint_used_for_query: hintUsedForQuery,
+    hint_used_for_query: false,
     hint_used_for_equivalence: false,
+    original_enrichment_attempted: false,
+    original_enrichment_success: false,
+    original_fields_after_enrichment: presentFields(input.failed_source_identity),
+    original_enrichment_provenance: [],
   };
 
   if (input.failure_class && !isRecoverableFailure(input.failure_class)) {
     return { recovered: false, reason: "failure_not_recoverable", telemetry: { ...tel, failure_reason: "failure_not_recoverable" } };
   }
+
+  // ONE bounded IDENTITY lookup for the ORIGINAL work when discovery left it
+  // title-only. Identity, never evidence; a miss never fails the run.
+  const wanted = await enrichOriginalIdentity(input.failed_source_identity, input.enrichment, tel);
+  const trustedFields = presentFields(wanted);
+  tel.trusted_fields = trustedFields;
+  tel.original_fields_after_enrichment = trustedFields;
+
+  const forQuery = queryIdentity(wanted, input.search_hint);
+  tel.hint_used_for_query = presentFields(forQuery).some((f) => !trustedFields.includes(f));
 
   // The query may name the work with untrusted hints; proof may not.
   const queries = buildSameWorkQueries(forQuery);
