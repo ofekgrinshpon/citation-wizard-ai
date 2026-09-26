@@ -457,6 +457,20 @@ export class EvidenceStore {
     return source_id ? this.quotes.filter((q) => q.source_id === source_id) : [...this.quotes];
   }
 
+  /**
+   * Stable lookup of ONE stored quote by its id (durable_quote_references_v1).
+   *
+   * The returned text is exactly what was served earlier from this source's
+   * stored body — the model can never supply, alter or widen it. Unknown ids
+   * return null; nothing is ever synthesized here.
+   */
+  quote(quote_id: string): ServedQuote | null {
+    const id = String(quote_id ?? "").trim();
+    if (!id) return null;
+    return this.quotes.find((q) => q.quote_id === id) ?? null;
+  }
+
+
   toJSON(): EvidenceStoreJson {
     return { seq: this.seq, sources: this.all(), quotes: this.quotes };
   }

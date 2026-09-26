@@ -143,6 +143,34 @@ export function buildCoverageReflection(input: {
   ].join("\n");
 }
 
+/**
+ * A separate, NON-BINDING availability note handed alongside the reflection
+ * (durable_quote_references_v1): which read sources the memo has not used and
+ * how many stored excerpts each still holds, so the agent knows what is
+ * available to it after context compaction.
+ *
+ * It states availability only — no legal conclusion, no required source, no
+ * quota. The agent still decides whether any of them is relevant.
+ */
+export function buildUnusedSourceSummary(
+  entries: Array<{ source_id: string; title?: string | null; quote_count: number }>,
+): string {
+  if (!entries.length) return "";
+  const lines = entries.slice(0, 12).map((e) =>
+    `- ${e.source_id}${e.title ? ` — ${String(e.title).slice(0, 90)}` : ""}: ${
+      e.quote_count > 0
+        ? `${e.quote_count} קטעים מילוליים שמורים, ניתן להפנות אליהם ב-quote_id`
+        : "נקרא; אין קטע מילולי שמור (ניתן fetch({source_id, query}) לקריאה ממוקדת)"
+    }`
+  );
+  return [
+    "מקורות שנקראו בריצה זו ואינם מופיעים בתזכיר (מידע בלבד — אין חובה להשתמש באף אחד מהם, ואין כאן קביעה משפטית):",
+    ...lines,
+    "אם אחד מהם מכסה ממד מהותי בבקשת המשתמש שהתזכיר אינו מכסה — שקול אותו לפני ההגשה. אם אינו רלוונטי, אינו תומך בטענה או כפול — השאר אותו בחוץ.",
+  ].join("\n");
+}
+
+
 /** Deterministic before/after diagnostics for the resubmitted memo. */
 export function noteCoverageOutcome(
   stats: CoverageCheckStats,

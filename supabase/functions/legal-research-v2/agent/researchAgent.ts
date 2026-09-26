@@ -59,12 +59,21 @@ import {
 import { AGENT_SYSTEM_PROMPT, buildAgentUserMessage, MEMO_TOOL } from "./prompt.ts";
 import {
   buildCoverageReflection,
+  buildUnusedSourceSummary,
   type CoverageCheckStats,
   emptyCoverageCheckStats,
+  memoedSourceIds,
   noteCoverageOutcome,
   shouldRunCoverageCheck,
   unusedReadSources,
 } from "./coverageCheck.ts";
+import {
+  emptyQuoteResolutionStats,
+  type QuoteResolutionStats,
+  resolveMemoQuoteRefs,
+} from "../evidence/quoteResolution.ts";
+import { normalizeDraftingBrief } from "../drafting/draftingBrief.ts";
+
 import { StopPolicy, type StopPolicyJson } from "./stopPolicy.ts";
 import { CommitTracker, obligationsSatisfied } from "./commitPolicy.ts";
 import {
@@ -216,11 +225,16 @@ export interface AgentTraceEntry {
 }
 
 
-export interface AgentContextStats extends AcquisitionStats, SameWorkRecoveryStats, CoverageCheckStats {
+export interface AgentContextStats
+  extends AcquisitionStats, SameWorkRecoveryStats, CoverageCheckStats, QuoteResolutionStats {
   largest_tool_response_chars: number;
   evidence_context_chars_last_turn: number;
   repeated_tool_calls_prevented: number;
   commit_directives: string[];
+  /** Durable quote references (durable_quote_references_v1). Diagnostic only. */
+  quotes_available_at_memo: number;
+  sources_with_quotes_not_memoed: number;
+
   /** Latency-efficiency counters (legal_research_v2_latency_efficiency_v1). */
   already_read_actions: number;
   noop_already_read_suppressed: number;
@@ -263,10 +277,14 @@ export function newAgentStats(): AgentContextStats {
     ...emptyAcquisitionStats(),
     ...emptySameWorkRecoveryStats(),
     ...emptyCoverageCheckStats(),
+    ...emptyQuoteResolutionStats(),
+    quotes_available_at_memo: 0,
+    sources_with_quotes_not_memoed: 0,
     largest_tool_response_chars: 0,
     evidence_context_chars_last_turn: 0,
     repeated_tool_calls_prevented: 0,
     commit_directives: [],
+
     already_read_actions: 0,
     noop_already_read_suppressed: 0,
     authority_reacquisitions_prevented: 0,
@@ -323,7 +341,7 @@ export interface AgentRunResult {
   stats: AgentContextStats;
 }
 
-function normalizeMemo(raw: unknown): ResearchMemo | null {
+export function normalizeMemo(raw: unknown): ResearchMemo | null {
   const r = raw as Partial<ResearchMemo> | null;
   if (!r || typeof r !== "object") return null;
   const claims: MemoClaim[] = Array.isArray(r.claims)
@@ -340,6 +358,11 @@ function normalizeMemo(raw: unknown): ResearchMemo | null {
             .map((e) => ({
               source_id: String(e.source_id),
               quoted_span: String(e.quoted_span ?? ""),
+              // Durable reference to an excerpt already served from this
+              // source. Resolved server-side before verification.
+              ...(typeof e.quote_id === "string" && e.quote_id.trim()
+                ? { quote_id: e.quote_id.trim() }
+                : {}),
               locator: typeof e.locator === "string" ? e.locator : undefined,
               reason: String(e.reason ?? ""),
             }))
@@ -354,6 +377,9 @@ function normalizeMemo(raw: unknown): ResearchMemo | null {
   } catch {
     research_synthesis = undefined;
   }
+  const drafting_brief = normalizeDraftingBrief(
+    (r as { drafting_brief?: unknown }).drafting_brief,
+  );
   return {
     issue_summary: String(r.issue_summary ?? "").trim(),
     claims,
@@ -362,8 +388,10 @@ function normalizeMemo(raw: unknown): ResearchMemo | null {
       : [],
     research_complete: r.research_complete === true,
     ...(research_synthesis ? { research_synthesis } : {}),
+    ...(drafting_brief ? { drafting_brief } : {}),
   };
 }
+
 
 /** Deterministic key used for repeated-call detection. */
 export function toolCallKey(name: string, args: Record<string, unknown>): string {
@@ -616,7 +644,27 @@ export async function runResearchAgent(opts: {
       const args = parseJsonLoose<Record<string, unknown>>(call.arguments) ?? {};
       turnAction = turnAction || call.name;
       if (call.name === MEMO_TOOL.name) {
-        const candidateMemo = normalizeMemo(args);
+        // Durable quote references are resolved against the evidence store
+        // BEFORE anything else looks at the memo: a quote_id becomes the exact
+        // stored text, an unknown or foreign id is refused, and verification
+        // then runs on ordinary verbatim spans, unchanged.
+        const resolved = resolveMemoQuoteRefs(normalizeMemo(args), opts.store);
+        const candidateMemo = resolved.memo;
+        stats.quote_ids_referenced_in_memo += resolved.stats.quote_ids_referenced_in_memo;
+        stats.memo_evidence_resolved_from_quote_id +=
+          resolved.stats.memo_evidence_resolved_from_quote_id;
+        stats.invalid_quote_id += resolved.stats.invalid_quote_id;
+        stats.quote_source_mismatch += resolved.stats.quote_source_mismatch;
+        stats.memo_evidence_dropped_unresolvable +=
+          resolved.stats.memo_evidence_dropped_unresolvable;
+        stats.quotes_available_at_memo = opts.store.servedQuotes().length;
+        {
+          const memoed = memoedSourceIds(candidateMemo);
+          stats.sources_with_quotes_not_memoed = new Set(
+            opts.store.servedQuotes().map((q) => q.source_id).filter((id) => !memoed.has(id)),
+          ).size;
+        }
+
         // One bounded pre-memo acquisition check per run: a CORE claim names
         // an authority that was opened, never acquired, and still has an
         // untried concrete path. If that attempt produces new evidence, the
@@ -693,9 +741,18 @@ export async function runResearchAgent(opts: {
                 question: opts.intake.question,
                 researchBudgetLeft: !policy.researchExhausted(),
               }),
+              // Availability only — never a quota and never a conclusion.
+              available_unused_sources: buildUnusedSourceSummary(
+                unused.map((s) => ({
+                  source_id: s.source_id,
+                  title: s.bibliographic?.title ?? s.title,
+                  quote_count: opts.store.servedQuotes(s.source_id).length,
+                })),
+              ),
             }),
             digest: JSON.stringify({ tool: "memo_coverage_check" }),
           });
+
           continue;
         }
         let acceptedMemo = candidateMemo;

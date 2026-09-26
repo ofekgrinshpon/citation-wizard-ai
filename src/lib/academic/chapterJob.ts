@@ -24,12 +24,16 @@ export interface SourceRegistryEntry {
   chapters_used_in: string[];
 }
 
+/** The role a chapter plays in the paper — detected in the editor, not here. */
+export type AcademicChapterRole = "body" | "introduction" | "conclusion" | "abstract";
+
 export interface ChapterContextInput {
   projectId?: string | null;
   researchQuestion: string;
   outlineTitles: string[];
   chapterIndex: number;
   chapterTitle: string;
+  chapterRole?: AcademicChapterRole;
   instructions?: string | null;
   existingText?: string | null;
   completedChapters: Array<{ title: string; memory?: ChapterMemory | null; content?: string | null }>;
@@ -48,10 +52,11 @@ export function buildProjectContext(input: ChapterContextInput) {
     chapter: {
       index: input.chapterIndex,
       title: input.chapterTitle,
-      role: "body" as const,
+      role: input.chapterRole ?? "body",
       instructions: input.instructions?.trim() || null,
       existing_text_excerpt: input.existingText?.slice(0, EXISTING_TEXT_CHARS) || null,
     },
+
     completed_chapters: input.completedChapters
       .filter((c) => c.memory || c.content)
       .slice(-8)
@@ -74,14 +79,22 @@ export function buildProjectContext(input: ChapterContextInput) {
   };
 }
 
+const ROLE_BRIEF: Record<AcademicChapterRole, string> = {
+  body: "כתוב פרק גוף בעבודה אקדמית משפטית בשם",
+  introduction: "כתוב פרק מבוא בעבודה אקדמית משפטית בשם",
+  conclusion: "כתוב פרק סיכום בעבודה אקדמית משפטית בשם",
+  abstract: "כתוב תקציר של עבודה אקדמית משפטית בשם",
+};
+
 /** The chapter brief the research agent receives as the "question". */
 export function buildChapterQuestion(input: {
   researchQuestion: string;
   chapterTitle: string;
+  chapterRole?: AcademicChapterRole;
   instructions?: string | null;
 }): string {
   return [
-    `כתוב פרק גוף בעבודה אקדמית משפטית בשם "${input.chapterTitle}".`,
+    `${ROLE_BRIEF[input.chapterRole ?? "body"]} "${input.chapterTitle}".`,
     `שאלת המחקר של העבודה: ${input.researchQuestion}`,
     input.instructions?.trim()
       ? `הנחיות נוספות לפרק: ${input.instructions.trim()}`
@@ -89,6 +102,7 @@ export function buildChapterQuestion(input: {
     "חקור את הסוגיות שהפרק נדרש להן ובסס אותן במקורות שנקראו בפועל.",
   ].filter(Boolean).join("\n");
 }
+
 
 export interface StartChapterJobResult {
   jobId?: string;

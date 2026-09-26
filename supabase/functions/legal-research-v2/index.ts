@@ -113,7 +113,9 @@ import {
   buildProjectContextBlock,
   parseProjectContext,
 } from "./academic/projectContext.ts";
-import { ACADEMIC_BODY_CHAPTER_GUIDE, ACADEMIC_BODY_GUIDE_VERSION } from "./academic/writingGuide.ts";
+import { ACADEMIC_BODY_GUIDE_VERSION, buildAcademicWritingGuide } from "./academic/writingGuide.ts";
+import { academicGuideRole, isAcademicDeliverable } from "./drafting/draftingBrief.ts";
+
 import { buildChapterMemory } from "./academic/chapterMemory.ts";
 import { SOURCE_SCOUTING_CONTRACT, SOURCE_SEARCH_BUDGETS } from "./sources/contract.ts";
 import { buildSourcePack } from "./sources/sourcePack.ts";
@@ -655,6 +657,23 @@ async function runPipeline(
   // so memo and synthesis can never come from different research states.
   const synthesisProjection = projectVerifiedSynthesis(agent.memo?.research_synthesis, pack);
 
+  // Agent-owned description of the deliverable. Writing guidance only — it is
+  // never evidence and can never add a claim.
+  const draftingBrief = agent.memo?.drafting_brief ?? null;
+  // The academic guide follows the deliverable, not only the Academic Writing
+  // project: an academic chapter asked for in ordinary research gets it too.
+  const academicRole = intake.academic_context?.chapter.role ?? "body";
+  const academicGuide = intake.academic_context
+    ? {
+      guide: buildAcademicWritingGuide(academicRole),
+      contextBlock: buildProjectContextBlock(intake.academic_context),
+    }
+    : isAcademicDeliverable(draftingBrief)
+    ? {
+      guide: buildAcademicWritingGuide(academicGuideRole(draftingBrief)),
+    }
+    : null;
+
   const draft = await timer.time("drafting_model", () =>
     runDrafter({
       question: intake.question,
@@ -664,13 +683,10 @@ async function runPipeline(
       usage,
       advisories,
       gapNotices,
-      academic: intake.academic_context
-        ? {
-          guide: ACADEMIC_BODY_CHAPTER_GUIDE,
-          contextBlock: buildProjectContextBlock(intake.academic_context),
-        }
-        : null,
+      brief: draftingBrief,
+      academic: academicGuide,
     }));
+
   const blocks = derivative_disclosure_shown
     ? [
       {
@@ -715,6 +731,41 @@ async function runPipeline(
       cited: citedSet.has(s.source_id),
     };
   });
+
+  // Source utilization: how much of what was readable reached the memo, the
+  // verified pack and the answer. Observability only — never a gate.
+  const readableIds = new Set(store.readable().map((s) => s.source_id));
+  const memoSourceIds = new Set<string>();
+  for (const c of agent.memo?.claims ?? []) {
+    for (const e of c.evidence) if (e.source_id) memoSourceIds.add(e.source_id);
+  }
+  const packSourceIds = new Set<string>();
+  for (const c of pack.claims) for (const s of c.sources) packSourceIds.add(s.source_id);
+  const terminalLossStage: Record<string, string> = {};
+  for (const s of store.all()) {
+    const id = s.source_id;
+    if (!readableIds.has(id)) terminalLossStage[id] = "acquisition";
+    else if (!store.servedQuotes(id).length) terminalLossStage[id] = "no_quote";
+    else if (!memoSourceIds.has(id)) terminalLossStage[id] = "memo_selection";
+    else if (!packSourceIds.has(id)) terminalLossStage[id] = "verification";
+    else if (!citedSet.has(id)) terminalLossStage[id] = "drafting";
+  }
+  const draftWordCount = draft.blocks
+    .map((b) => b.text ?? "")
+    .join(" ")
+    .split(/\s+/)
+    .filter(Boolean).length;
+  const targetMin = draftingBrief?.target_words?.min ?? null;
+  const targetMax = draftingBrief?.target_words?.max ?? null;
+  const targetRangeMet = targetMin === null && targetMax === null
+    ? null
+    : (targetMin === null || draftWordCount >= targetMin) &&
+      (targetMax === null || draftWordCount <= targetMax);
+  const targetShortfallReason = targetRangeMet === false && targetMin !== null &&
+      draftWordCount < targetMin
+    ? (pack.claims.length < 6 ? "thin_verified_pack" : "drafter_stopped_short")
+    : null;
+
 
 
 
@@ -909,8 +960,38 @@ async function runPipeline(
     memo_coverage_claims_added: agent.stats.memo_coverage_claims_added,
     memo_coverage_gap_left_explicit: agent.stats.memo_coverage_gap_left_explicit,
     memo_coverage_reverted_to_pre_check: agent.stats.memo_coverage_reverted_to_pre_check,
+    /** Durable quote references (durable_quote_references_v1). Diagnostic only. */
+    quotes_available_at_memo: agent.stats.quotes_available_at_memo,
+    quote_ids_referenced_in_memo: agent.stats.quote_ids_referenced_in_memo,
+    memo_evidence_resolved_from_quote_id: agent.stats.memo_evidence_resolved_from_quote_id,
+    invalid_quote_id: agent.stats.invalid_quote_id,
+    quote_source_mismatch: agent.stats.quote_source_mismatch,
+    memo_evidence_dropped_unresolvable: agent.stats.memo_evidence_dropped_unresolvable,
+    sources_with_quotes_not_memoed: agent.stats.sources_with_quotes_not_memoed,
+    /** Source utilization funnel (read → memo → pack). Diagnostic only. */
+    readable_unique_sources: readableIds.size,
+    memo_unique_sources: memoSourceIds.size,
+    verified_pack_unique_sources: packSourceIds.size,
+    readable_to_memo_ratio: readableIds.size ? memoSourceIds.size / readableIds.size : 0,
+    memo_to_pack_ratio: memoSourceIds.size ? packSourceIds.size / memoSourceIds.size : 0,
+    terminal_loss_stage: terminalLossStage,
+    /** Agent-owned drafting brief (agent_owned_drafting_brief_v1). Diagnostic only. */
+    drafting_brief_present: !!draftingBrief,
+    drafting_brief_deliverable: draftingBrief?.deliverable ?? null,
+    drafting_brief_depth: draftingBrief?.depth ?? null,
+    drafting_brief_target_words_min: draftingBrief?.target_words?.min ?? null,
+    drafting_brief_target_words_max: draftingBrief?.target_words?.max ?? null,
+    drafting_brief_goals_count: draftingBrief?.goals?.length ?? 0,
+    drafting_brief_structure_items: draftingBrief?.structure?.length ?? 0,
+    /** Draft result. Diagnostic only — length is a soft target, never a gate. */
+    draft_word_count: draftWordCount,
+    draft_blocks: draft.blocks.length,
+    drafter_finish_reason: draft.finish_reason ?? null,
+    target_range_met: targetRangeMet,
+    target_range_shortfall_reason: targetShortfallReason,
     /** Per-run egress state (v2_per_run_egress_reset_v1). */
     egress: { ...egressTelemetry() },
+
   };
 
   return {

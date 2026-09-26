@@ -41,13 +41,21 @@ export const AGENT_SYSTEM_PROMPT = `אתה חוקר משפטי ישראלי בכ
 - בשאלה על חוק או על תיקון לחוק: זהה את התיקון, השג את נוסח התיקון שנחקק ו/או את הנוסח המשולב העדכני, אתר את ההוראה הרלוונטית בתוכו, ורק אז בסס טענות. אם הנוסח העדכני אינו ניתן להשגה — אמור זאת ואל תשלים מהזיכרון.
 - אינך רשאי לסמן ראיה כמאומתת. האימות נעשה מחוץ לך.
 
+ביסוס ראיה בתזכיר:
+- לכל ראיה שתי דרכים שוות ערך: quoted_span (העתקה מילולית מדויקת) או quote_id של קטע שכבר הוגש לך מאותו מקור בריצה זו. רשימת הקטעים השמורים מופיעה במצב המחקר גם לאחר שהטקסט עצמו כבר אינו לפניך.
+- quote_id עדיף כאשר הקטע כבר חולץ: הוא מבטיח טקסט מדויק ומונע קריאה חוזרת מיותרת. מקור שקראת וחילצת ממנו קטע מתאים אינו אמור "ללכת לאיבוד" רק משום שהטקסט כבר אינו בהקשר שלך.
+- quote_id חייב להשתייך לאותו source_id. מזהה שאינו קיים או שייך למקור אחר — הראיה תידחה; אין להמציא מזהים.
+
 התזכיר הוא מסירה לכותב נפרד:
 - אינך כותב את התשובה, אך שמר את הארגון של המחקר המאומת בשדה research_synthesis (אופציונלי): sections (ממדים/נושאים ומזהי הטענות השייכות אליהם), source_roles (מהו כל מקור: דין ראשוני, עמדה בספרות, ביקורת, הקשר היסטורי, חומר השוואתי, הקשר עובדתי, מסמך משתמש), relationships (הסכמה, מחלוקת, התפתחות, ניגוד, סיוג, יישום).
 - בשאלה צרה research_synthesis יכול להיות מינימלי או להיעדר. אל תייצר חלוקות או יחסים רק כדי למלא שדות.
 - research_synthesis אינו ראיה ואינו רשאי להכיל טענה מהותית חדשה. אם המחקר מבסס מחלוקת, התפתחות, סיוג או ניגוד — נסח זאת כטענה רגילה מבוססת-ראיה (למשל C7) והפנה אליה ב-relationship_claim_id. אם C7 ייפול באימות, היחס ייעלם.
 - כשמקור אקדמי קריא מזהה במפורש מחבר ועמדה, עדיף לנסח טענה מיוחסת ("X טוען כי...") על פני "בספרות נטען". אל תמציא שמות ואל תכפה ייחוס כשהזהות אינה ודאית.
+- מלא גם את drafting_brief: מהו התוצר שהמשתמש ביקש בפועל (תשובה קצרה, ניתוח, פרק מבוא או פרק גוף בעבודה אקדמית, סקירת ספרות, ניתוח משווה, סיכום), מה עומק הכתיבה הנדרש, לאיזה קהל, יעד אורך רך אם המשימה מכתיבה אותו, ומה מטרות הפרק ומבנהו המוצע. הסק זאת ממשמעות הבקשה עצמה, לא ממילות מפתח ולא מתווית חיצונית. בקשה כמו "אני כותב סמינריון... תכתוב לי פרק מבוא" היא פרק מבוא אקדמי מפותח ולא תשובת שאלה קצרה.
+- drafting_brief הוא הנחיית כתיבה בלבד: אסור שיכיל טענה משפטית, קביעה מה הדין או הוראה לכתוב מסקנה שאינה עולה מהראיות המאומתות. יעד האורך רך — אם החומר המאומת אינו מספיק, עדיף קצר ואמין.
 
 בסיום קרא ל-submit_research_memo עם המבנה המלא. כל source_id חייב להיות מזהה שהוחזר לך מ-fetch מוצלח.`;
+
 
 export function buildAgentUserMessage(intake: Intake): string {
   const parts: string[] = [`שאלת המשתמש:\n${intake.question}`];
@@ -171,13 +179,23 @@ export const MEMO_TOOL = {
                 additionalProperties: false,
                 properties: {
                   source_id: { type: "string" },
-                  quoted_span: { type: "string" },
+                  quoted_span: {
+                    type: "string",
+                    description:
+                      "ציטוט מילולי מדויק מגוף המקור. ניתן להשמיט אם סופק quote_id.",
+                  },
+                  quote_id: {
+                    type: "string",
+                    description:
+                      "מזהה של קטע מילולי שכבר הוגש לך מאותו מקור בריצה זו (למשל S6-q17). השרת ישלוף את הטקסט השמור במדויק. חייב להשתייך לאותו source_id. יש לספק quoted_span או quote_id (לפחות אחד).",
+                  },
                   locator: { type: "string" },
                   reason: { type: "string" },
                 },
-                required: ["source_id", "quoted_span", "reason"],
+                required: ["source_id", "reason"],
               },
             },
+
           },
           required: ["claim_id", "proposition", "importance", "evidence"],
         },
@@ -253,7 +271,47 @@ export const MEMO_TOOL = {
           },
         },
       },
+      drafting_brief: {
+        type: "object",
+        additionalProperties: false,
+        description:
+          "אפיון התוצר שהמשתמש ביקש, כפי שאתה מבין אותו מהבקשה עצמה. הנחיית כתיבה בלבד: אינו ראיה, אינו קובע מה הדין ואינו מתיר לכותב להוסיף טענה שאינה מאומתת.",
+        properties: {
+          deliverable: {
+            type: "string",
+            enum: [
+              "short_answer",
+              "legal_analysis",
+              "research_answer",
+              "academic_introduction",
+              "academic_body_chapter",
+              "literature_review",
+              "comparative_analysis",
+              "conclusion",
+              "other",
+            ],
+          },
+          depth: { type: "string", enum: ["concise", "standard", "deep"] },
+          audience: {
+            type: "string",
+            enum: ["general", "legal_professional", "law_student", "academic"],
+          },
+          target_words: {
+            type: "object",
+            additionalProperties: false,
+            description: "יעד אורך רך בלבד. אמינות קודמת לאורך; אין למלא אורך בחזרות.",
+            properties: { min: { type: "number" }, max: { type: "number" } },
+          },
+          goals: { type: "array", items: { type: "string" } },
+          structure: { type: "array", items: { type: "string" } },
+          emphasis: { type: "array", items: { type: "string" } },
+          style: { type: "string" },
+          limitations: { type: "array", items: { type: "string" } },
+        },
+        required: ["deliverable", "depth"],
+      },
     },
     required: ["issue_summary", "claims", "unresolved_questions", "research_complete"],
+
   },
 };

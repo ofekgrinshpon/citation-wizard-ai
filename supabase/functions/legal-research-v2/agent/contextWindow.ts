@@ -140,7 +140,8 @@ export function buildResearchStateMessage(input: {
   // away, so without this block the agent would have no verbatim text left to
   // quote from and would reconstruct spans from memory — which the verifier
   // rejects. Full bodies still never enter the conversation.
-  const quotes = store.servedQuotes().slice(-QUOTE_LIMITS.STATE_QUOTES);
+  const allQuotes = store.servedQuotes();
+  const quotes = allQuotes.slice(-QUOTE_LIMITS.STATE_QUOTES);
   if (quotes.length) {
     parts.push(
       `קטעים מילוליים שכבר הוגשו לך (העתק מהם מילה במילה ב-quoted_span; אין לנסח מחדש):\n${
@@ -150,6 +151,30 @@ export function buildResearchStateMessage(input: {
       }`,
     );
   }
+  // Durable quote catalog (durable_quote_references_v1): ids + a short preview
+  // of EVERY excerpt still held server-side, including ones whose literal text
+  // has long since been compacted out of the conversation. Any of them can be
+  // cited in the memo as {source_id, quote_id} — no verbatim text needed.
+  const catalog = allQuotes.slice(-QUOTE_LIMITS.CATALOG_MAX);
+  if (catalog.length) {
+    const bySource = new Map<string, string[]>();
+    for (const q of catalog) {
+      const line = `${q.quote_id}${q.issue ? ` | ${q.issue.slice(0, 60)}` : ""} | "${
+        q.text.slice(0, QUOTE_LIMITS.CATALOG_PREVIEW_CHARS)
+      }…"`;
+      const list = bySource.get(q.source_id) ?? [];
+      list.push(line);
+      bySource.set(q.source_id, list);
+    }
+    parts.push(
+      `קטעים מילוליים שמורים הזמינים לשימוש בתזכיר (הטקסט המלא שמור בצד השרת). ניתן לבסס טענה עליהם בלי לשלוח טקסט מילולי, באמצעות evidence: {source_id, quote_id, reason}:\n${
+        [...bySource.entries()]
+          .map(([sid, lines]) => `${sid}:\n${lines.map((l) => `  - ${l}`).join("\n")}`)
+          .join("\n")
+      }`,
+    );
+  }
+
   if (authorities.length) parts.push(`מצב הבאת אסמכתאות:\n${authorities.join("\n")}`);
   if (openTargets.length) {
     parts.push(

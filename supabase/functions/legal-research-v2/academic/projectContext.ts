@@ -30,6 +30,8 @@ export interface AcademicKnownSource {
   chapters_used_in?: string[];
 }
 
+export type AcademicChapterRoleValue = "body" | "introduction" | "conclusion" | "abstract";
+
 export interface AcademicProjectContext {
   project_id: string | null;
   research_question: string;
@@ -38,7 +40,7 @@ export interface AcademicProjectContext {
   chapter: {
     index: number;
     title: string;
-    role: "body";
+    role: AcademicChapterRoleValue;
     instructions?: string | null;
     existing_text_excerpt?: string | null;
   };
@@ -46,6 +48,7 @@ export interface AcademicProjectContext {
   established_conclusions: string[];
   known_sources: AcademicKnownSource[];
 }
+
 
 /** Hard bounds — the block can never grow with the paper. */
 export const CONTEXT_LIMITS = {
@@ -134,11 +137,15 @@ export function parseProjectContext(raw: unknown): AcademicProjectContext | null
     chapter: {
       index: Number.isFinite(chapterRaw.index) ? Number(chapterRaw.index) : 0,
       title,
-      role: "body",
+      role: chapterRaw.role === "introduction" || chapterRaw.role === "conclusion" ||
+          chapterRaw.role === "abstract"
+        ? chapterRaw.role
+        : "body",
       instructions: str(chapterRaw.instructions, CONTEXT_LIMITS.instructions_chars) || null,
       existing_text_excerpt:
         str(chapterRaw.existing_text_excerpt, CONTEXT_LIMITS.existing_text_chars) || null,
     },
+
     completed_chapters,
     established_conclusions: strList(
       r.established_conclusions,
@@ -163,9 +170,16 @@ export function buildProjectContextBlock(ctx: AcademicProjectContext): string {
       }`,
     );
   }
+  const roleHe = {
+    body: "פרק גוף",
+    introduction: "פרק מבוא",
+    conclusion: "פרק סיכום",
+    abstract: "תקציר",
+  }[ctx.chapter.role];
   parts.push(
-    `הפרק הנוכחי: פרק ${ctx.chapter.index + 1} — "${ctx.chapter.title}". תפקידו בעבודה נגזר ממקומו במתווה.`,
+    `הפרק הנוכחי: פרק ${ctx.chapter.index + 1} — "${ctx.chapter.title}" (${roleHe}). תפקידו בעבודה נגזר ממקומו במתווה.`,
   );
+
   if (ctx.chapter.instructions) {
     parts.push(`הנחיות המשתמש לפרק זה: ${ctx.chapter.instructions}`);
   }
