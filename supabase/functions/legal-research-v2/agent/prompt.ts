@@ -263,7 +263,47 @@ export const MEMO_TOOL = {
           },
         },
       },
+      drafting_brief: {
+        type: "object",
+        additionalProperties: false,
+        description:
+          "אפיון התוצר שהמשתמש ביקש, כפי שאתה מבין אותו מהבקשה עצמה. הנחיית כתיבה בלבד: אינו ראיה, אינו קובע מה הדין ואינו מתיר לכותב להוסיף טענה שאינה מאומתת.",
+        properties: {
+          deliverable: {
+            type: "string",
+            enum: [
+              "short_answer",
+              "legal_analysis",
+              "research_answer",
+              "academic_introduction",
+              "academic_body_chapter",
+              "literature_review",
+              "comparative_analysis",
+              "conclusion",
+              "other",
+            ],
+          },
+          depth: { type: "string", enum: ["concise", "standard", "deep"] },
+          audience: {
+            type: "string",
+            enum: ["general", "legal_professional", "law_student", "academic"],
+          },
+          target_words: {
+            type: "object",
+            additionalProperties: false,
+            description: "יעד אורך רך בלבד. אמינות קודמת לאורך; אין למלא אורך בחזרות.",
+            properties: { min: { type: "number" }, max: { type: "number" } },
+          },
+          goals: { type: "array", items: { type: "string" } },
+          structure: { type: "array", items: { type: "string" } },
+          emphasis: { type: "array", items: { type: "string" } },
+          style: { type: "string" },
+          limitations: { type: "array", items: { type: "string" } },
+        },
+        required: ["deliverable", "depth"],
+      },
     },
     required: ["issue_summary", "claims", "unresolved_questions", "research_complete"],
+
   },
 };
