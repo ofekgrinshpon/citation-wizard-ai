@@ -149,14 +149,26 @@ export async function runDrafter(opts: {
   /** High-level, source-level description of what could not be acquired/verified. */
   gapNotices?: string[];
   /**
-   * Academic Writing body chapter only: the genre guide and the paper's
-   * framing block. Normal legal research never sets this, and its drafting
-   * behaviour is byte-identical to before.
+   * Academic writing guide + the paper's framing block. Normal legal research
+   * without an academic deliverable never sets this.
    */
   academic?: { guide: string; contextBlock?: string } | null;
   /** Verified projection of the accepted memo's research synthesis. */
   synthesis?: VerifiedResearchSynthesis | null;
-}): Promise<{ blocks: DraftBlock[]; error?: string; dropped_source_ids: string[] }> {
+  /**
+   * Agent-owned description of the deliverable the user asked for. Writing
+   * guidance only: it can never add a claim or authority, and its length
+   * target is soft.
+   */
+  brief?: DraftingBrief | null;
+}): Promise<
+  {
+    blocks: DraftBlock[];
+    error?: string;
+    dropped_source_ids: string[];
+    finish_reason?: string | null;
+  }
+> {
   const system = opts.academic
     ? `${SYSTEM}\n\n${opts.academic.guide}`
     : SYSTEM;
@@ -168,6 +180,7 @@ export async function runDrafter(opts: {
       opts.gapNotices ?? [],
       opts.synthesis ?? null,
     ),
+    renderDraftingBrief(opts.brief ?? null),
     opts.academic?.contextBlock ?? "",
   ].filter(Boolean).join("\n\n");
   const res = await chat({
@@ -182,8 +195,16 @@ export async function runDrafter(opts: {
   });
   if (!res.ok) return { blocks: [], error: `drafter_error_${res.http_status}`, dropped_source_ids: [] };
   const parsed = parseJsonLoose<{ blocks?: DraftBlock[] }>(res.tool_calls[0]?.arguments ?? res.content);
-  if (!parsed?.blocks?.length) return { blocks: [], error: "drafter_no_blocks", dropped_source_ids: [] };
-  const first = sanitizeBlocks(parsed.blocks, opts.pack);
+  if (!parsed?.blocks?.length) {
+    return {
+      blocks: [],
+      error: "drafter_no_blocks",
+      dropped_source_ids: [],
+      finish_reason: res.finish_reason,
+    };
+  }
+  const first = { ...sanitizeBlocks(parsed.blocks, opts.pack), finish_reason: res.finish_reason };
+
 
   // A draft that cites nothing while verified evidence exists is a drafting
   // failure, not an honest answer: ask once for the same text with its sources.
