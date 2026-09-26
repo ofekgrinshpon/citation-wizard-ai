@@ -7,9 +7,16 @@
  * source_ids to blocks and the renderer does the rest.
  */
 
-import type { DraftBlock, VerifiedEvidencePack, VerifiedResearchSynthesis } from "../types.ts";
+import type {
+  DraftBlock,
+  DraftingBrief,
+  VerifiedEvidencePack,
+  VerifiedResearchSynthesis,
+} from "../types.ts";
 import { chat, parseJsonLoose, type UsageLedger } from "../shared/model.ts";
+import { renderDraftingBrief } from "./draftingBrief.ts";
 import { renderSynthesisForDrafter } from "./synthesis.ts";
+
 
 const SYSTEM =
   `אתה עורך דין בכיר הכותב תשובה משפטית בעברית משפטית מדויקת.
