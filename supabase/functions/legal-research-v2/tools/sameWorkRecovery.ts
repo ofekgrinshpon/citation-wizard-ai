@@ -427,6 +427,55 @@ export interface SameWorkRecoveryInput {
   acquire?: (candidate: SearchResult) => Promise<{ ok: boolean; failure_class?: string }>;
 }
 
+/**
+ * ONE bounded IDENTITY lookup for the FAILED ORIGINAL work
+ * (original_work_enrichment_v1).
+ *
+ * Discovery sometimes leaves the original work with a title and nothing else,
+ * so every alternative copy is rejected as `title_only_insufficient` even when
+ * it plainly is the same article. This adds AT MOST ONE title-based metadata
+ * lookup for the original, and accepts its fields only when the service is
+ * demonstrably talking about the same title.
+ *
+ * Invariants: identity only — nothing here is quotable, citable or storable as
+ * evidence; `isSameWork()` is untouched; a failure or an ambiguous answer
+ * leaves the identity exactly as it was and never fails the run.
+ */
+async function enrichOriginalIdentity(
+  original: TrustedWorkIdentity,
+  deps: EnrichmentDeps | undefined,
+  tel: SameWorkRecoveryTelemetry,
+): Promise<TrustedWorkIdentity> {
+  const needs = !!original.title && !original.authors?.length && !original.year && !original.doi;
+  if (!needs || !deps?.fetchTitleMetadata) return original;
+
+  tel.original_enrichment_attempted = true;
+  try {
+    const res = await deps.fetchTitleMetadata(original.title!, {});
+    const fields = identityFromMetadataRecord(res?.record);
+    if (
+      !fields.title ||
+      titleSimilarity(original.title, fields.title) < ENRICHMENT_LIMITS.MIN_TITLE_SIMILARITY
+    ) {
+      return original;
+    }
+    const basis = res?.service === "openalex" ? "openalex" : "crossref";
+    const out: TrustedWorkIdentity = { ...original };
+    const added: string[] = [];
+    if (fields.authors?.length) { out.authors = fields.authors.slice(0, 6); added.push("authors"); }
+    if (fields.year) { out.year = fields.year; added.push("year"); }
+    if (fields.journal) { out.journal = fields.journal; added.push("journal"); }
+    if (fields.doi) { out.doi = fields.doi; added.push("doi"); }
+    if (!added.length) return original;
+    tel.original_enrichment_success = true;
+    for (const f of added) tel.original_enrichment_provenance.push(`${f}:${basis}`);
+    return out;
+  } catch {
+    // Identity enrichment never fails a research run.
+    return original;
+  }
+}
+
 /** One bounded same-work recovery round. The caller enforces once-per-work. */
 export async function recoverSameWork(
   input: SameWorkRecoveryInput,
