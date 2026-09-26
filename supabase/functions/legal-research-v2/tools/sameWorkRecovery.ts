@@ -200,8 +200,15 @@ export function identityFromSearchResult(
   const text = `${r.title ?? ""} ${r.snippet ?? ""}`;
   const doi = DOI_RE.exec(r.url ?? "")?.[0] ?? DOI_RE.exec(text)?.[0];
   const year = YEAR_RE.exec(String(r.published_date ?? ""))?.[0] ?? YEAR_RE.exec(text)?.[0];
+  // Discovery providers decorate work titles with the byline / volume
+  // ("Title | Author (כרך ב)"). Separating that decoration deterministically
+  // gives `isSameWork()` a real title and a real author instead of one glued
+  // string — it does not relax any equivalence rule.
+  const split = splitDecoratedScholarlyTitle(r.title);
+  const title = usableWorkTitle(split?.title ?? r.title);
   return {
-    title: usableWorkTitle(r.title),
+    title,
+    authors: title && split?.authors?.length ? split.authors.slice(0, 2) : undefined,
     year: year ?? undefined,
     doi: doi ? doi.replace(/[.,;]$/, "") : undefined,
   };
