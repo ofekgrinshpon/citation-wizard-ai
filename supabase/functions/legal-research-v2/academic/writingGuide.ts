@@ -39,3 +39,6 @@ const ACADEMIC_GUIDE_BODY =
 - מעברים בין פסקאות יהיו ענייניים ונובעים מהטיעון, לא מילות קישור ריקות.
 - הימנע מניסוח מנופח, מהכללות חגיגיות וממשפטי סיכום שאין להם תוכן.
 - קשור את הפרק להקשר העבודה שסופק, בלי להסתמך עליו כמקור ובלי לחזור על מה שכבר נקבע בפרקים קודמים.`;
+
+/** Back-compatible alias: the body-chapter guide. */
+export const ACADEMIC_BODY_CHAPTER_GUIDE = buildAcademicWritingGuide("body");
