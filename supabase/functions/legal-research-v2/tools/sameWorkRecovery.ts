@@ -517,18 +517,18 @@ export async function recoverSameWork(
         continue;
       }
       const discoveryIdentity = identityFromSearchResult(r);
-      let verdict = isSameWork(input.failed_source_identity, discoveryIdentity);
+      let verdict = isSameWork(wanted, discoveryIdentity);
       let enrichmentBasis: string[] | undefined;
 
       if (
         !verdict.same_work &&
         input.enrichment &&
         enriched < ENRICHMENT_LIMITS.MAX_CANDIDATES_PER_WORK &&
-        shouldEnrich(input.failed_source_identity, discoveryIdentity, verdict)
+        shouldEnrich(wanted, discoveryIdentity, verdict)
       ) {
         enriched += 1;
         const outcome = await enrichAndCompare({
-          wanted: input.failed_source_identity,
+          wanted,
           candidate: discoveryIdentity,
           candidate_url: r.url,
           search_hint: {
