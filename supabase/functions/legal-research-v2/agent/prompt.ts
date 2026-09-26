@@ -171,13 +171,23 @@ export const MEMO_TOOL = {
                 additionalProperties: false,
                 properties: {
                   source_id: { type: "string" },
-                  quoted_span: { type: "string" },
+                  quoted_span: {
+                    type: "string",
+                    description:
+                      "ציטוט מילולי מדויק מגוף המקור. ניתן להשמיט אם סופק quote_id.",
+                  },
+                  quote_id: {
+                    type: "string",
+                    description:
+                      "מזהה של קטע מילולי שכבר הוגש לך מאותו מקור בריצה זו (למשל S6-q17). השרת ישלוף את הטקסט השמור במדויק. חייב להשתייך לאותו source_id. יש לספק quoted_span או quote_id (לפחות אחד).",
+                  },
                   locator: { type: "string" },
                   reason: { type: "string" },
                 },
-                required: ["source_id", "quoted_span", "reason"],
+                required: ["source_id", "reason"],
               },
             },
+
           },
           required: ["claim_id", "proposition", "importance", "evidence"],
         },
