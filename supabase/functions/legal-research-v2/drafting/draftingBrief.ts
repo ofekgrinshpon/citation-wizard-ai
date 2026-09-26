@@ -148,3 +148,15 @@ export function isAcademicDeliverable(brief: DraftingBrief | null | undefined): 
     brief?.deliverable === "academic_body_chapter" ||
     brief?.deliverable === "literature_review";
 }
+
+/**
+ * Which academic chapter role the agent's declared deliverable corresponds to.
+ * This is not a classifier: the agent already chose the deliverable, this only
+ * maps its own choice onto the existing writing-guide roles.
+ */
+export function academicGuideRole(
+  brief: DraftingBrief | null | undefined,
+): "introduction" | "body" {
+  return brief?.deliverable === "academic_introduction" ? "introduction" : "body";
+}
+
