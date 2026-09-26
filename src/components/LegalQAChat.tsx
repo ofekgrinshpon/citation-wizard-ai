@@ -2090,6 +2090,7 @@ export function LegalQAChat({ onResultSaved, externalResult, onConsumeExternalRe
       outlineTitles,
       chapterIndex: chapterIdx,
       chapterTitle: title,
+      chapterRole: chapterRole(title),
       instructions: opts?.instructions ?? null,
       existingText: chapters[chapterIdx]?.content ?? null,
       completedChapters: chapters
@@ -2099,7 +2100,8 @@ export function LegalQAChat({ onResultSaved, externalResult, onConsumeExternalRe
     });
 
     const started = await startChapterJob({
-      question: buildChapterQuestion({ researchQuestion: rq, chapterTitle: title, instructions: opts?.instructions ?? null }),
+      question: buildChapterQuestion({ researchQuestion: rq, chapterTitle: title, chapterRole: chapterRole(title), instructions: opts?.instructions ?? null }),
+
       projectId: projectId ?? null,
       projectContext,
       footnoteOffset,
