@@ -113,7 +113,9 @@ import {
   buildProjectContextBlock,
   parseProjectContext,
 } from "./academic/projectContext.ts";
-import { ACADEMIC_BODY_CHAPTER_GUIDE, ACADEMIC_BODY_GUIDE_VERSION } from "./academic/writingGuide.ts";
+import { ACADEMIC_BODY_GUIDE_VERSION, buildAcademicWritingGuide } from "./academic/writingGuide.ts";
+import { isAcademicDeliverable } from "./drafting/draftingBrief.ts";
+
 import { buildChapterMemory } from "./academic/chapterMemory.ts";
 import { SOURCE_SCOUTING_CONTRACT, SOURCE_SEARCH_BUDGETS } from "./sources/contract.ts";
 import { buildSourcePack } from "./sources/sourcePack.ts";
