@@ -36,6 +36,7 @@ import {
   type EnrichmentDeps,
   type EnrichmentStats,
   type EnrichmentTelemetry,
+  identityFromMetadataRecord,
   noteEnrichment,
   shouldEnrich,
 } from "./identityEnrichment.ts";
