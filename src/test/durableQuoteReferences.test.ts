@@ -129,10 +129,17 @@ describe("T6–T7 quote availability after compaction", () => {
     const { store, s6, s7, q6, q7 } = await storeWithQuotes();
     const msg = buildResearchStateMessage({
       store,
-      stepsLeft: 5,
-      researchStepsLeft: 3,
-      obligations: [],
       ledger: new AcquisitionLedger(),
+      intake: {
+        normalized_question: "מיצוי זכויות בעותק דיגיטלי",
+        budgets: { max_search_calls: 8, max_fetch_calls: 12, max_lookup_calls: 6 },
+      },
+      policy: {
+        researchStepsLeft: 4,
+        totalSearchCalls: 1,
+        fetch_calls: 2,
+        lookup_calls: 0,
+      },
     } as never);
     expect(msg).toContain(q6.quote_id);
     expect(msg).toContain(q7.quote_id);
