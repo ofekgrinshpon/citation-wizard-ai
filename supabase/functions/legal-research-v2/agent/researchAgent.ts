@@ -741,9 +741,18 @@ export async function runResearchAgent(opts: {
                 question: opts.intake.question,
                 researchBudgetLeft: !policy.researchExhausted(),
               }),
+              // Availability only — never a quota and never a conclusion.
+              available_unused_sources: buildUnusedSourceSummary(
+                unused.map((s) => ({
+                  source_id: s.source_id,
+                  title: s.bibliographic?.title ?? s.title,
+                  quote_count: opts.store.servedQuotes(s.source_id).length,
+                })),
+              ),
             }),
             digest: JSON.stringify({ tool: "memo_coverage_check" }),
           });
+
           continue;
         }
         let acceptedMemo = candidateMemo;
