@@ -377,6 +377,13 @@ export interface SameWorkRecoveryTelemetry {
   hint_used_for_query: boolean;
   /** Always false: hints are structurally excluded from equivalence. */
   hint_used_for_equivalence: false;
+  /** original_work_enrichment_v1 — ONE title lookup for the ORIGINAL work. */
+  original_enrichment_attempted: boolean;
+  original_enrichment_success: boolean;
+  /** Trusted fields present after the original-work lookup. */
+  original_fields_after_enrichment: string[];
+  /** field:basis for every field the original-work lookup added. */
+  original_enrichment_provenance: string[];
 }
 
 export interface SameWorkRecoveryResult {
