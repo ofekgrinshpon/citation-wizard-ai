@@ -59,12 +59,21 @@ import {
 import { AGENT_SYSTEM_PROMPT, buildAgentUserMessage, MEMO_TOOL } from "./prompt.ts";
 import {
   buildCoverageReflection,
+  buildUnusedSourceSummary,
   type CoverageCheckStats,
   emptyCoverageCheckStats,
+  memoedSourceIds,
   noteCoverageOutcome,
   shouldRunCoverageCheck,
   unusedReadSources,
 } from "./coverageCheck.ts";
+import {
+  emptyQuoteResolutionStats,
+  type QuoteResolutionStats,
+  resolveMemoQuoteRefs,
+} from "../evidence/quoteResolution.ts";
+import { normalizeDraftingBrief } from "../drafting/draftingBrief.ts";
+
 import { StopPolicy, type StopPolicyJson } from "./stopPolicy.ts";
 import { CommitTracker, obligationsSatisfied } from "./commitPolicy.ts";
 import {
