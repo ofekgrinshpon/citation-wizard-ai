@@ -644,7 +644,27 @@ export async function runResearchAgent(opts: {
       const args = parseJsonLoose<Record<string, unknown>>(call.arguments) ?? {};
       turnAction = turnAction || call.name;
       if (call.name === MEMO_TOOL.name) {
-        const candidateMemo = normalizeMemo(args);
+        // Durable quote references are resolved against the evidence store
+        // BEFORE anything else looks at the memo: a quote_id becomes the exact
+        // stored text, an unknown or foreign id is refused, and verification
+        // then runs on ordinary verbatim spans, unchanged.
+        const resolved = resolveMemoQuoteRefs(normalizeMemo(args), opts.store);
+        const candidateMemo = resolved.memo;
+        stats.quote_ids_referenced_in_memo += resolved.stats.quote_ids_referenced_in_memo;
+        stats.memo_evidence_resolved_from_quote_id +=
+          resolved.stats.memo_evidence_resolved_from_quote_id;
+        stats.invalid_quote_id += resolved.stats.invalid_quote_id;
+        stats.quote_source_mismatch += resolved.stats.quote_source_mismatch;
+        stats.memo_evidence_dropped_unresolvable +=
+          resolved.stats.memo_evidence_dropped_unresolvable;
+        stats.quotes_available_at_memo = opts.store.servedQuotes().length;
+        {
+          const memoed = memoedSourceIds(candidateMemo);
+          stats.sources_with_quotes_not_memoed = new Set(
+            opts.store.servedQuotes().map((q) => q.source_id).filter((id) => !memoed.has(id)),
+          ).size;
+        }
+
         // One bounded pre-memo acquisition check per run: a CORE claim names
         // an authority that was opened, never acquired, and still has an
         // untried concrete path. If that attempt produces new evidence, the
