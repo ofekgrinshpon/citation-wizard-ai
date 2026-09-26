@@ -353,6 +353,37 @@ export interface ResearchSynthesis {
 /** Projection of ResearchSynthesis onto the FINAL verified evidence pack. */
 export type VerifiedResearchSynthesis = ResearchSynthesis;
 
+/**
+ * What the user asked for as a deliverable, as understood by the research
+ * agent from the request itself (agent_owned_drafting_brief_v1).
+ *
+ * WRITING GUIDANCE ONLY. It is never evidence: it cannot assert law, create
+ * authority, add a claim or license the drafter to write anything the
+ * verified evidence pack does not support. Length targets are soft.
+ */
+export type DraftingDeliverable =
+  | "short_answer"
+  | "legal_analysis"
+  | "research_answer"
+  | "academic_introduction"
+  | "academic_body_chapter"
+  | "literature_review"
+  | "comparative_analysis"
+  | "conclusion"
+  | "other";
+
+export interface DraftingBrief {
+  deliverable: DraftingDeliverable;
+  depth: "concise" | "standard" | "deep";
+  audience?: "general" | "legal_professional" | "law_student" | "academic";
+  target_words?: { min?: number; max?: number };
+  goals?: string[];
+  structure?: string[];
+  emphasis?: string[];
+  style?: string;
+  limitations?: string[];
+}
+
 export interface ResearchMemo {
   issue_summary: string;
   claims: MemoClaim[];
@@ -360,7 +391,10 @@ export interface ResearchMemo {
   research_complete: boolean;
   /** Optional; legacy memos and resumed runs without it work unchanged. */
   research_synthesis?: ResearchSynthesis;
+  /** Optional deliverable description handed to the drafter. */
+  drafting_brief?: DraftingBrief;
 }
+
 
 // ─── Verification ───────────────────────────────────────────────────────────
 
