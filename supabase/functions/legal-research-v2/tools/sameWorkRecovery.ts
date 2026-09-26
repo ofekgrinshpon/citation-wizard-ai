@@ -291,7 +291,15 @@ export function buildTrustedWorkIdentity(input: {
       provenance.journal = meta.field_basis?.journal ?? "landing_meta";
     }
   }
-  return { identity: id, fields_before: before, fields_after: presentFields(id), provenance };
+  return {
+    identity: id,
+    fields_before: before,
+    fields_after: presentFields(id),
+    provenance,
+    raw_title: split?.raw,
+    normalized_title: id.title,
+    author_from_title: authorFromTitle,
+  };
 }
 
 /**
