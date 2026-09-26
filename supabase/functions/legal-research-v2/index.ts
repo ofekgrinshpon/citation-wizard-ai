@@ -114,7 +114,7 @@ import {
   parseProjectContext,
 } from "./academic/projectContext.ts";
 import { ACADEMIC_BODY_GUIDE_VERSION, buildAcademicWritingGuide } from "./academic/writingGuide.ts";
-import { isAcademicDeliverable } from "./drafting/draftingBrief.ts";
+import { academicGuideRole, isAcademicDeliverable } from "./drafting/draftingBrief.ts";
 
 import { buildChapterMemory } from "./academic/chapterMemory.ts";
 import { SOURCE_SCOUTING_CONTRACT, SOURCE_SEARCH_BUDGETS } from "./sources/contract.ts";
@@ -670,9 +670,7 @@ async function runPipeline(
     }
     : isAcademicDeliverable(draftingBrief)
     ? {
-      guide: buildAcademicWritingGuide(
-        draftingBrief?.deliverable === "academic_introduction" ? "introduction" : "body",
-      ),
+      guide: buildAcademicWritingGuide(academicGuideRole(draftingBrief)),
     }
     : null;
 
