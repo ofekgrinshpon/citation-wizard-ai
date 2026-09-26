@@ -9,3 +9,7 @@
 - [ ] 10. Telemetry (quotes, source utilization, brief, draft result)
 - [ ] 11. Regression tests T1–T12
 - [ ] 12. Acceptance run (Astra, same question) vs baseline 9d8998c1
+
+## Status (handoff track)
+- [x] Parts 1-11 implemented; 1196 tests + typecheck pass; legal-research-v2 deployed.
+- [ ] Part 12 acceptance run — BLOCKED: run fb436e14 stopped with AI credits 402 (agent + drafter). Re-run once credits are topped up.
