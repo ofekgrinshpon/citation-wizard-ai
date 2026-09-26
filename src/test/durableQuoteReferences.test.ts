@@ -9,6 +9,7 @@ import { describe, expect, it } from "vitest";
 import { EvidenceStore } from "../../supabase/functions/legal-research-v2/evidence/evidenceStore.ts";
 import { resolveMemoQuoteRefs } from "../../supabase/functions/legal-research-v2/evidence/quoteResolution.ts";
 import { buildResearchStateMessage } from "../../supabase/functions/legal-research-v2/agent/contextWindow.ts";
+import { AcquisitionLedger } from "../../supabase/functions/legal-research-v2/tools/acquisitionLedger.ts";
 import { buildUnusedSourceSummary } from "../../supabase/functions/legal-research-v2/agent/coverageCheck.ts";
 import {
   academicGuideRole,
@@ -131,6 +132,7 @@ describe("T6–T7 quote availability after compaction", () => {
       stepsLeft: 5,
       researchStepsLeft: 3,
       obligations: [],
+      ledger: new AcquisitionLedger(),
     } as never);
     expect(msg).toContain(q6.quote_id);
     expect(msg).toContain(q7.quote_id);
@@ -184,7 +186,7 @@ describe("T8–T10 agent-owned drafting brief", () => {
     // explicitly allows a shorter answer when the evidence is thin.
     expect(brief!.target_words!.min!).toBeLessThanOrEqual(brief!.target_words!.max!);
     expect(renderDraftingBrief(brief)).toMatch(/קצר/);
-    expect(normalizeDraftingBrief({ deliverable: "nonsense", depth: "x" })?.depth).toBe("standard");
+    expect(normalizeDraftingBrief({ deliverable: "legal_analysis", depth: "x" })?.depth).toBe("standard");
   });
 });
 
