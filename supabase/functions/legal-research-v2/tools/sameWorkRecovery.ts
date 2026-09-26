@@ -27,6 +27,8 @@ import {
   type WorkIdentity,
 } from "./alternativeCopy.ts";
 import { isRecoverableFailure, type FetchFailureClass } from "../shared/fetchDiagnostics.ts";
+import { splitDecoratedScholarlyTitle } from "../shared/decoratedTitle.ts";
+import { titleSimilarity } from "./alternativeCopy.ts";
 import {
   ENRICHMENT_LIMITS,
   emptyEnrichmentStats,
@@ -103,6 +105,13 @@ export interface SameWorkRecoveryStats extends EnrichmentStats {
   same_work_candidate_fetch_failures: string[];
   landing_document_candidates: number;
   landing_document_attempted: number;
+  /** decorated_title_normalization_v1 / original_work_enrichment_v1. */
+  same_work_original_title_raw: string[];
+  same_work_original_title_normalized: string[];
+  same_work_original_author_from_title: number;
+  same_work_original_enrichment_attempted: number;
+  same_work_original_enrichment_success: number;
+  same_work_original_fields_after_enrichment: string[];
 }
 
 export function emptySameWorkRecoveryStats(): SameWorkRecoveryStats {
@@ -131,6 +140,12 @@ export function emptySameWorkRecoveryStats(): SameWorkRecoveryStats {
     same_work_candidate_fetch_failures: [],
     landing_document_candidates: 0,
     landing_document_attempted: 0,
+    same_work_original_title_raw: [],
+    same_work_original_title_normalized: [],
+    same_work_original_author_from_title: 0,
+    same_work_original_enrichment_attempted: 0,
+    same_work_original_enrichment_success: 0,
+    same_work_original_fields_after_enrichment: [],
   };
 }
 
