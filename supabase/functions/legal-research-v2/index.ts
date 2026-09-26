@@ -655,6 +655,25 @@ async function runPipeline(
   // so memo and synthesis can never come from different research states.
   const synthesisProjection = projectVerifiedSynthesis(agent.memo?.research_synthesis, pack);
 
+  // Agent-owned description of the deliverable. Writing guidance only — it is
+  // never evidence and can never add a claim.
+  const draftingBrief = agent.memo?.drafting_brief ?? null;
+  // The academic guide follows the deliverable, not only the Academic Writing
+  // project: an academic chapter asked for in ordinary research gets it too.
+  const academicRole = intake.academic_context?.chapter.role ?? "body";
+  const academicGuide = intake.academic_context
+    ? {
+      guide: buildAcademicWritingGuide(academicRole),
+      contextBlock: buildProjectContextBlock(intake.academic_context),
+    }
+    : isAcademicDeliverable(draftingBrief)
+    ? {
+      guide: buildAcademicWritingGuide(
+        draftingBrief?.deliverable === "academic_introduction" ? "introduction" : "body",
+      ),
+    }
+    : null;
+
   const draft = await timer.time("drafting_model", () =>
     runDrafter({
       question: intake.question,
@@ -664,13 +683,10 @@ async function runPipeline(
       usage,
       advisories,
       gapNotices,
-      academic: intake.academic_context
-        ? {
-          guide: ACADEMIC_BODY_CHAPTER_GUIDE,
-          contextBlock: buildProjectContextBlock(intake.academic_context),
-        }
-        : null,
+      brief: draftingBrief,
+      academic: academicGuide,
     }));
+
   const blocks = derivative_disclosure_shown
     ? [
       {
