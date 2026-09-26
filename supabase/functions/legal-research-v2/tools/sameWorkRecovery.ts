@@ -261,9 +261,12 @@ export function buildTrustedWorkIdentity(input: {
   stored_bibliographic?: BibliographicMetadata;
 }): TrustedIdentityBuild {
   const base = identityFromSearchResult(input.discovery);
+  const split = splitDecoratedScholarlyTitle(input.discovery.title);
+  const authorFromTitle = !!(base.authors?.length && split?.authors?.length);
   const before = presentFields(base);
   const provenance: Record<string, string> = {};
   for (const f of before) provenance[f] = "discovery";
+  if (authorFromTitle) provenance.authors = "discovery_title";
   const id: TrustedWorkIdentity = { ...base };
   const meta = input.stored_bibliographic;
   const strong = (f: "title" | "authors" | "year" | "journal") => {
