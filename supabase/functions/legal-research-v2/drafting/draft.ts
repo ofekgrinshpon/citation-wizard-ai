@@ -233,6 +233,7 @@ export async function runDrafter(opts: {
     repair.tool_calls[0]?.arguments ?? repair.content,
   );
   if (!reparsed?.blocks?.length) return first;
-  const second = sanitizeBlocks(reparsed.blocks, opts.pack);
+  const second = { ...sanitizeBlocks(reparsed.blocks, opts.pack), finish_reason: repair.finish_reason };
   return second.blocks.some((b) => b.source_ids.length > 0) ? second : first;
+
 }
