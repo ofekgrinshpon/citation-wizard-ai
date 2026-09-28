@@ -315,6 +315,10 @@ export interface GatedBlock {
   untrusted_source_ids: string[];
   /** Derived from verified claims only — the only citations ever rendered. */
   derived_source_ids: string[];
+  /** Claim-specific locator per derived source (from the block's verified claims). */
+  source_locators: Record<string, string>;
+  /** Set by the coverage safeguard when the text says more than its claims. */
+  coverage_issue?: string;
 }
 
 export interface GateResult {
@@ -345,9 +349,19 @@ export function gateAnswerBlocks(
       else unknown_claim_ids.push(id);
     }
     const derived = new Set<string>();
+    const locs = new Map<string, string[]>();
     for (const id of verified_claim_ids) {
-      for (const s of verified.get(id)!.sources) derived.add(s.source_id);
+      for (const s of verified.get(id)!.sources) {
+        derived.add(s.source_id);
+        const loc = (s.locator ?? "").trim();
+        if (!loc) continue;
+        const arr = locs.get(s.source_id) ?? [];
+        if (!arr.includes(loc)) arr.push(loc);
+        locs.set(s.source_id, arr);
+      }
     }
+    const source_locators: Record<string, string> = {};
+    for (const [sid, arr] of locs) source_locators[sid] = arr.join(", ");
     const untrusted_source_ids = (block.source_ids ?? []).filter((s) => !derived.has(s));
     const status: BlockStatus = failed_claim_ids.length || unknown_claim_ids.length
       ? "requires_repair"
@@ -363,8 +377,13 @@ export function gateAnswerBlocks(
       unknown_claim_ids,
       untrusted_source_ids,
       derived_source_ids: [...derived],
+      source_locators,
     };
   });
+  return finalizeGate(gated);
+}
+
+function finalizeGate(gated: GatedBlock[]): GateResult {
   const unverified = new Set<string>();
   for (const g of gated) for (const id of [...g.failed_claim_ids, ...g.unknown_claim_ids]) unverified.add(id);
   return {
@@ -376,10 +395,125 @@ export function gateAnswerBlocks(
         type: g.block.type,
         text: g.block.text,
         source_ids: g.block.type === "heading" ? [] : g.derived_source_ids,
+        ...(g.block.type !== "heading" && Object.keys(g.source_locators).length
+          ? { source_locators: g.source_locators }
+          : {}),
       })),
     requires_repair: gated.filter((g) => g.status === "requires_repair"),
     claims_referenced_but_unverified: [...unverified],
   };
+}
+
+// ─── Answer-block coverage safeguard ────────────────────────────────────
+/*
+ * After ordinary verification, one batched call (same verifier model) asks
+ * whether each substantive block's legal/factual content is covered by the
+ * verified propositions it cites, and whether each claimless non-heading
+ * block is pure framing. It never rewrites and never adds claims. Failing
+ * blocks go to the same agent's single repair; unrepaired ones never publish.
+ */
+
+export interface BlockCoverageVerdict {
+  block_index: number;
+  coverage: "covered" | "overclaims" | "framing" | "substantive";
+  reason?: string;
+}
+
+const COVERAGE_TOOL = {
+  name: "report_block_coverage",
+  description: "Report coverage for each listed answer block.",
+  parameters: {
+    type: "object",
+    additionalProperties: false,
+    properties: {
+      results: {
+        type: "array",
+        items: {
+          type: "object",
+          additionalProperties: false,
+          properties: {
+            block_index: { type: "number" },
+            coverage: { type: "string", enum: ["covered", "overclaims", "framing", "substantive"] },
+            reason: { type: "string" },
+          },
+          required: ["block_index", "coverage"],
+        },
+      },
+    },
+    required: ["results"],
+  },
+};
+
+const COVERAGE_SYSTEM = `אתה בודק כיסוי בלבד. אינך כותב מחדש ואינך מוסיף טענות.
+לכל בלוק עם טענות מאומתות: קבע "covered" אם התוכן המשפטי/העובדתי המהותי של הבלוק מכוסה על ידי הטענות המאומתות שאליהן הוא מפנה (ניסוח, מעבר, סיכום והסבר מותרים), או "overclaims" אם הבלוק קובע תוכן משפטי/עובדתי מהותי שאינו מופיע בטענות אלה (סעיף, הלכה, תאריך, שם, מסקנה או קביעה נוספת).
+לכל בלוק בלי טענות: "framing" אם הוא רק מסגור/מעבר/הצגת שאלת המשתמש/מבנה הפרק, או "substantive" אם הוא כולל קביעה משפטית או עובדתית מהותית.
+הסבר קצר ב-reason כשאינו covered/framing.`;
+
+/** Blocks that need a coverage verdict (headings never do). */
+export function coverageTargets(gate: GateResult): GatedBlock[] {
+  return gate.blocks.filter((g) =>
+    g.block.type !== "heading" && (g.status === "accepted" || g.status === "framing")
+  );
+}
+
+export async function checkAnswerBlockCoverage(opts: {
+  gate: GateResult;
+  pack: AgentAnswerPack;
+  model: string;
+  usage: UsageLedger;
+}): Promise<{ verdicts: BlockCoverageVerdict[]; error?: string; checked: number }> {
+  const targets = coverageTargets(opts.gate);
+  if (!targets.length) return { verdicts: [], checked: 0 };
+  const byId = new Map(opts.pack.claims.map((c) => [c.claim_id, c]));
+  const lines = targets.map((g) => {
+    const props = g.verified_claim_ids
+      .map((id) => `   - ${id}: ${byId.get(id)?.proposition ?? ""}`)
+      .join("\n");
+    return `[${g.index}] ${g.block.text}\n${props ? `  טענות מאומתות:\n${props}` : "  (ללא טענות)"}`;
+  }).join("\n\n");
+  const res = await chat({
+    model: opts.model,
+    messages: [
+      { role: "system", content: COVERAGE_SYSTEM },
+      { role: "user", content: `בלוקים לבדיקה:\n\n${lines}` },
+    ],
+    tools: [COVERAGE_TOOL],
+    toolChoice: { name: COVERAGE_TOOL.name },
+    usage: opts.usage,
+  });
+  if (!res.ok) return { verdicts: [], error: `coverage_error_${res.http_status}`, checked: targets.length };
+  const parsed = parseJsonLoose<{ results?: BlockCoverageVerdict[] }>(
+    res.tool_calls[0]?.arguments ?? res.content,
+  );
+  const allowed = new Set(targets.map((g) => g.index));
+  const verdicts = (parsed?.results ?? []).filter((v) =>
+    v && allowed.has(Number(v.block_index)) &&
+    ["covered", "overclaims", "framing", "substantive"].includes(String(v.coverage))
+  ).map((v) => ({ ...v, block_index: Number(v.block_index) }));
+  return { verdicts, checked: targets.length, ...(parsed ? {} : { error: "coverage_unparsed" }) };
+}
+
+/**
+ * Pure: move blocks the coverage check flagged into requires_repair. A claim-
+ * backed block flagged "overclaims" and a claimless block flagged
+ * "substantive" can no longer publish as-is.
+ */
+export function applyBlockCoverage(gate: GateResult, verdicts: BlockCoverageVerdict[]): GateResult {
+  const v = new Map(verdicts.map((x) => [x.block_index, x]));
+  const blocks = gate.blocks.map((g) => {
+    const verdict = v.get(g.index);
+    if (!verdict || g.block.type === "heading") return g;
+    if (g.status === "accepted" && verdict.coverage === "overclaims") {
+      return { ...g, status: "requires_repair" as const, coverage_issue: `overclaims: ${verdict.reason ?? ""}`.trim() };
+    }
+    if (g.status === "framing" && verdict.coverage === "substantive") {
+      return { ...g, status: "requires_repair" as const, coverage_issue: `substantive_without_claims: ${verdict.reason ?? ""}`.trim() };
+    }
+    return g;
+  });
+  const out = finalizeGate(blocks);
+  // Coverage issues are not unverified claims — keep that list as it was.
+  return { ...out, claims_referenced_but_unverified: gate.claims_referenced_but_unverified };
 }
 
 export function wordCount(blocks: Array<{ text: string }>): number {
@@ -413,6 +547,13 @@ export function buildAgentAnswerRepairMessage(input: {
       : "נפלה באימות (ללא ראיה מאומתת או בשל בדיקת תוקף עדכני)";
     reasons.push(`- ${id}${u ? ` — ${u.proposition}` : ""}: ${why}`);
   }
+  const coverageIssues = input.gate.requires_repair
+    .filter((g) => g.coverage_issue)
+    .map((g) => `- בלוק ${g.index + 1}: ${
+      g.coverage_issue!.startsWith("overclaims")
+        ? "הטקסט אומר יותר ממה שה-claims המאומתים שלו תומכים"
+        : "בלוק ללא claim_ids הכולל קביעה משפטית/עובדתית מהותית"
+    }${g.coverage_issue!.includes(":") ? ` — ${g.coverage_issue!.split(":").slice(1).join(":").trim()}` : ""}`);
   const affected = input.gate.requires_repair.map((g) => g.index + 1).join(", ");
   return `האימות הסתיים. חלק מהטענות שעליהן נשענת התשובה שכתבת לא עברו אימות. סבב תיקון אחד בלבד.
 
@@ -423,6 +564,9 @@ ${answer}
 
 טענות שנכשלו והסיבה המדויקת:
 ${reasons.join("\n") || "(אין)"}
+
+בלוקים שתוכנם חורג מהטענות המאומתות:
+${coverageIssues.join("\n") || "(אין)"}
 
 טענות מאומתות שנותרו (מותר להסתמך עליהן):
 ${verified || "(אין)"}

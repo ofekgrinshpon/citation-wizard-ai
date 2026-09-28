@@ -24,7 +24,8 @@ import {
   detectStatuteSections,
   type SupabaseClient,
 } from "./shared/primitives.ts";
-import { modelConfig, newUsageLedger, type UsageLedger } from "./shared/model.ts";
+import { modelConfig, newUsageLedger, separateDrafterEnabled, type UsageLedger } from "./shared/model.ts";
+import { AWAITING_USER_STATUS, applyUserReply, type AskUserRequest, normalizeReply } from "./beta/clarification.ts";
 import { EvidenceStore } from "./evidence/evidenceStore.ts";
 import { buildAcademicYield } from "./evidence/academicYield.ts";
 import {
@@ -85,6 +86,8 @@ import { projectVerifiedSynthesis } from "./drafting/synthesis.ts";
 import { renderAnswer } from "./drafting/render.ts";
 import {
   buildAgentAnswerRepairMessage,
+  applyBlockCoverage,
+  checkAnswerBlockCoverage,
   gateAnswerBlocks,
   wordCount as agentAnswerWordCount,
 } from "./drafting/draft.ts";
@@ -135,8 +138,6 @@ export function buildIntake(input: {
   budgets?: Partial<ToolBudgets>;
   /** Evaluation-only Research Agent override. */
   agent_model?: string | null;
-  /** Evaluation-only: the research agent writes the final answer itself. */
-  agent_authored_answer?: boolean;
   /** Evaluation-only Research Agent reasoning effort override. */
   agent_reasoning_effort?: "medium" | "high";
   /** Academic Writing body chapter only — framing context, never evidence. */
@@ -174,7 +175,11 @@ export function buildIntake(input: {
       ...(input.budgets ?? {}),
     },
     agent_model: input.agent_model?.trim() || null,
-    ...(input.agent_authored_answer === true ? { agent_authored_answer: true } : {}),
+    // Production answer path: the agent writes the answer. Only the emergency
+    // env rollback (V2_USE_SEPARATE_DRAFTER=true) restores the separate drafter.
+    ...(input.output_mode !== "sources" && !separateDrafterEnabled()
+      ? { agent_authored_answer: true, ask_user_enabled: true }
+      : {}),
     ...(input.agent_reasoning_effort === "high" ? { agent_reasoning_effort: "high" as const } : {}),
     academic_context: input.academic_context ?? null,
     footnote_offset: Math.max(0, Math.floor(input.footnote_offset ?? 0)),
@@ -206,6 +211,8 @@ export interface ResumeState {
   timing?: RunTimingJson;
   /** When the previous chunk stopped — the next chunk measures the gap. */
   paused_at?: number;
+  /** Set while/after the run waited for the user's clarification reply. */
+  awaiting_since?: number;
 }
 
 async function runPipeline(
@@ -221,7 +228,7 @@ async function runPipeline(
   } = {},
 ): Promise<
   | ({ ok: true; paused?: false } & Record<string, unknown>)
-  | { ok: true; paused: true; run_id: string; resume: ResumeState }
+  | { ok: true; paused: true; run_id: string; resume: ResumeState; awaiting_user?: AskUserRequest }
 > {
   const resume = opts.resume ?? null;
   const started = resume?.started_at ?? Date.now();
@@ -237,6 +244,17 @@ async function runPipeline(
   // Time spent between a paused chunk and the worker that picks it up is
   // orchestration cost, not research cost — measure it explicitly.
   if (resume?.paused_at) timer.add("resume_gap", Date.now() - resume.paused_at);
+  // Resuming after an ask_user reply: the wait is user time, never research
+  // time and never a stall. Budgets, evidence and usage continue unchanged.
+  if (resume?.awaiting_since && prior) {
+    const waited = Math.max(0, Date.now() - resume.awaiting_since);
+    timer.add("awaiting_user", waited);
+    prior.stats = {
+      ...prior.stats,
+      user_clarification_turns: (prior.stats?.user_clarification_turns ?? 0) + 1,
+      awaiting_user_duration_ms: (prior.stats?.awaiting_user_duration_ms ?? 0) + waited,
+    };
+  }
   const heartbeat = () => opts.progress?.heartbeat();
 
   // ── User-uploaded documents become evidence sources BEFORE research ─────
@@ -316,6 +334,24 @@ async function runPipeline(
       : undefined,
   });
 
+  // ask_user: park the run with the full checkpoint. Not a final answer.
+  if (agent.awaiting_user && !agent.memo) {
+    return {
+      ok: true,
+      paused: true,
+      run_id: intake.run_id,
+      awaiting_user: agent.awaiting_user,
+      resume: {
+        agent_state: serializeAgentState({ result: agent, store }),
+        chunk_index,
+        usage,
+        started_at: started,
+        timing: timer.toJSON(),
+        awaiting_since: Date.now(),
+      },
+    };
+  }
+
   if (agent.paused && !agent.memo && chunk_index < CHUNK.MAX_CHUNKS) {
     return {
       ok: true,
@@ -382,6 +418,7 @@ async function runPipeline(
   if (agent.memo && verification && needsRepair) {
     repair_cycles = 1;
     const repaired = await runResearchAgent({
+      allowAskUser: false,
       admin,
       intake,
       store,
@@ -529,6 +566,7 @@ async function runPipeline(
     if (needsTemporalRepair) {
       temporalCounters.temporal_repairs = 1;
       const repaired = await runResearchAgent({
+      allowAskUser: false,
         admin,
         intake,
         store,
@@ -587,6 +625,7 @@ async function runPipeline(
     derivative_fallback_attempted = true;
     const missing = gapReport.unreadable.filter((d) => !gapReport.derivative.includes(d));
     const fallback = await runResearchAgent({
+      allowAskUser: false,
       admin,
       intake,
       store,
@@ -685,19 +724,32 @@ async function runPipeline(
     }
     : null;
 
-  // ═════ EXPERIMENT — agent-authored answer (evaluation only) ═════════════
+  // ═════ Agent-authored answer — production answer path ═══════════════════
   // The SAME research agent wrote answer_blocks inside its memo. Verification
   // above is unchanged; here each block is gated against surviving claims and
   // its citations derive from verified claims only. No separate drafter.
-  let agentAnswerTelemetry: Record<string, unknown> = { agent_authored_answer_enabled: false, agent_reasoning_effort: intake.agent_reasoning_effort ?? "medium" };
+  let agentAnswerTelemetry: Record<string, unknown> = {
+    agent_authored_answer_enabled: false,
+    separate_drafter_called: true,
+    agent_reasoning_effort: intake.agent_reasoning_effort ?? "medium",
+  };
   let draft: Awaited<ReturnType<typeof runDrafter>>;
   if (intake.agent_authored_answer) {
     const initialBlocks = agent.memo?.answer_blocks ?? [];
-    const initialGate = gateAnswerBlocks(
+    const claimGate = gateAnswerBlocks(
       initialBlocks,
       pack,
       (agent.memo?.claims ?? []).map((c) => c.claim_id),
     );
+    // Coverage safeguard: one batched call, same verifier model.
+    const coverage = await timer.time("verification_model", () =>
+      checkAnswerBlockCoverage({ gate: claimGate, pack, model: models.verifier, usage }));
+    const initialGate = applyBlockCoverage(claimGate, coverage.verdicts);
+    const coverageCounts = {
+      covered: coverage.verdicts.filter((v) => v.coverage === "covered").length,
+      overclaims: coverage.verdicts.filter((v) => v.coverage === "overclaims").length,
+      substantive: coverage.verdicts.filter((v) => v.coverage === "substantive").length,
+    };
     const claimRefs = initialBlocks.reduce((n, b) => n + b.claim_ids.length, 0);
     const uniqueClaims = new Set(initialBlocks.flatMap((b) => b.claim_ids));
     const memoClaimSources = new Map(
@@ -713,11 +765,13 @@ async function runPipeline(
     let repairRemovedClaimRefs = 0;
     let repairOutcome: string | null = null;
     let blocksDroppedUnrepaired = initialGate.requires_repair.length;
+    let repairCoverageOverclaims: number | null = null;
 
     if (initialGate.requires_repair.length && agent.memo) {
       repairTriggered = true;
       const callsBefore = agent.policy.search_calls + agent.policy.fetch_calls + agent.policy.lookup_calls;
       const repaired = await runResearchAgent({
+      allowAskUser: false,
         admin,
         intake,
         store,
@@ -755,11 +809,19 @@ async function runPipeline(
           }
         }
         reVerified = { ...reVerified, pack: annotateProvenance(reVerified.pack, store, obligations) };
-        const reGate = gateAnswerBlocks(
+        const reClaimGate = gateAnswerBlocks(
           repaired.memo.answer_blocks,
           reVerified.pack,
           repaired.memo.claims.map((c) => c.claim_id),
         );
+        // Repaired blocks face the same coverage check; still-failing blocks
+        // are dropped, never published.
+        const reCoverage = await timer.time("verification_model", () =>
+          checkAnswerBlockCoverage({ gate: reClaimGate, pack: reVerified.pack, model: models.verifier, usage }));
+        const reGate = applyBlockCoverage(reClaimGate, reCoverage.verdicts);
+        repairCoverageOverclaims = reCoverage.verdicts.filter((v) =>
+          v.coverage === "overclaims" || v.coverage === "substantive"
+        ).length;
         const before = new Set(initialBlocks.map((b) => b.text));
         repairBlocksChanged = repaired.memo.answer_blocks.filter((b) => !before.has(b.text)).length;
         const refsAfter = new Set(repaired.memo.answer_blocks.flatMap((b) => b.claim_ids));
@@ -797,6 +859,14 @@ async function runPipeline(
       claims_referenced_but_unverified: initialGate.claims_referenced_but_unverified,
       untrusted_model_source_ids: initialGate.blocks.reduce((n, g) => n + g.untrusted_source_ids.length, 0),
       agent_answer_repair_triggered: repairTriggered,
+      answer_blocks: initialBlocks.length,
+      answer_blocks_claim_covered: coverageCounts.covered,
+      answer_blocks_overclaiming: coverageCounts.overclaims,
+      answer_blocks_substantive_without_claims: coverageCounts.substantive,
+      framing_blocks: initialGate.blocks.filter((g) => g.status === "framing").length,
+      answer_coverage_checked: coverage.checked,
+      answer_coverage_error: coverage.error ?? null,
+      repair_coverage_failures: repairCoverageOverclaims,
       agent_answer_repair_outcome: repairOutcome,
       repair_research_calls: repairResearchCalls,
       repair_blocks_changed: repairBlocksChanged,
@@ -1122,8 +1192,18 @@ async function runPipeline(
     drafting_brief_structure_items: draftingBrief?.structure?.length ?? 0,
     /** Draft result. Diagnostic only — length is a soft target, never a gate. */
     draft_word_count: draftWordCount,
-    /** agent_authored_answer experiment — evaluation telemetry only. */
+    /** Architecture + answer verification. */
     ...agentAnswerTelemetry,
+    agent_model: agentModel,
+    agent_authored_answer: !!intake.agent_authored_answer,
+    reasoning_effort: intake.agent_reasoning_effort ?? "medium",
+    ask_user_enabled: !!intake.ask_user_enabled,
+    ask_user_calls: agent.stats.ask_user_calls ?? 0,
+    awaiting_user_entered: (agent.stats.ask_user_calls ?? 0) > 0,
+    awaiting_user_duration_ms: agent.stats.awaiting_user_duration_ms ?? 0,
+    resumed_after_user: (agent.stats.user_clarification_turns ?? 0) > 0,
+    user_clarification_turns: agent.stats.user_clarification_turns ?? 0,
+    claims_verified: pack.claims.length,
     final_answer_words: draftWordCount,
     final_answer_blocks: draft.blocks.length,
     final_unique_sources: rendered.cited_source_ids.length,
@@ -1252,6 +1332,35 @@ async function driveRun(
       progress: liveProgress,
       job,
     });
+    if ("paused" in out && out.paused && out.awaiting_user) {
+      // Parked for the user: full checkpoint kept, no self-invoke, no charge.
+      // The watchdog and the stale-job reaper only look at running/paused/
+      // queued rows, so this state is never resumed or timed out on its own.
+      await admin.from("v2_eval_runs").update({
+        status: AWAITING_USER_STATUS,
+        agent_state: {
+          resume: out.resume,
+          intake,
+          job,
+          stage: progress.current(),
+          awaiting_user: out.awaiting_user,
+        },
+        last_beat_at: new Date().toISOString(),
+      }).eq("run_id", intake.run_id);
+      if (job) {
+        await admin.from("legal_research_jobs").update({
+          status: AWAITING_USER_STATUS,
+          progress_label_he: "ממתין לתשובתך",
+          last_progress_at: new Date().toISOString(),
+          result: {
+            run_id: intake.run_id,
+            output_mode: "answer",
+            clarification: out.awaiting_user,
+          },
+        }).eq("id", job.id).in("status", ["running", "queued"]);
+      }
+      return;
+    }
     if ("paused" in out && out.paused) {
       await admin.from("v2_eval_runs").update({
         status: "paused",
@@ -1380,8 +1489,11 @@ serve(async (req) => {
 
   const resumeRunId = typeof body.resume_run_id === "string" ? body.resume_run_id : null;
   const watchdogTick = body.action === "resume_watchdog";
+  const clarificationReply = body.action === "answer_clarification";
   const question = String(body.question ?? "").trim();
-  if (!question && !resumeRunId && !watchdogTick) return json({ error: "question_required" }, 400);
+  if (!question && !resumeRunId && !watchdogTick && !clarificationReply) {
+    return json({ error: "question_required" }, 400);
+  }
 
   const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
   const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
@@ -1426,6 +1538,70 @@ serve(async (req) => {
     return json({ ok: true, watchdog: true, ...swept }, 200);
   }
 
+
+  // ══ Clarification reply: resume the SAME parked run ═════════════════════
+  // Ownership + awaiting_user status are checked; the reply is appended to the
+  // same conversation; budgets, EvidenceStore, usage and the job carry over.
+  // No credit is consumed here — the whole research is one charged operation.
+  if (clarificationReply) {
+    let userId: string | null = null;
+    if (!isSmoke) {
+      if (!authHeader.startsWith("Bearer ")) return json({ error: "unauthorized" }, 401);
+      const userClient = createClient(supabaseUrl, Deno.env.get("SUPABASE_ANON_KEY") ?? "", {
+        global: { headers: { Authorization: authHeader } },
+      });
+      const { data: u } = await userClient.auth.getUser();
+      if (!u?.user) return json({ error: "unauthorized" }, 401);
+      userId = u.user.id;
+    }
+    let runId = typeof body.run_id === "string" ? body.run_id : null;
+    if (!runId && typeof body.job_id === "string") {
+      const { data: j } = await admin.from("legal_research_jobs")
+        .select("user_id, result").eq("id", body.job_id).maybeSingle();
+      const jr = j as { user_id?: string; result?: { run_id?: string } } | null;
+      if (jr && (userId === null || jr.user_id === userId)) runId = jr.result?.run_id ?? null;
+    }
+    if (!runId) return json({ error: "run_not_found" }, 404);
+    const { data: row } = await admin.from("v2_eval_runs")
+      .select("run_id, status, agent_state").eq("run_id", runId).maybeSingle();
+    const decision = applyUserReply({
+      row: row as { status?: string; agent_state?: unknown } | null,
+      reply: normalizeReply(body.user_message),
+      userId,
+      now: Date.now(),
+    });
+    if (!decision.ok) return json({ error: decision.error }, decision.status);
+    // Atomic claim: only one reply can move the run out of awaiting_user.
+    const { data: claimed } = await admin.from("v2_eval_runs").update({
+      status: "running",
+      agent_state: decision.agent_state,
+      last_beat_at: new Date().toISOString(),
+      watchdog_claimed_at: null,
+    }).eq("run_id", runId).eq("status", AWAITING_USER_STATUS).select("run_id");
+    if (!claimed?.length) return json({ error: "not_awaiting_user" }, 409);
+    const saved = decision.agent_state;
+    const job = (saved.job ?? null) as BetaJob | null;
+    if (job) {
+      await admin.from("legal_research_jobs").update({
+        status: "running",
+        resumed_at: new Date().toISOString(),
+        last_progress_at: new Date().toISOString(),
+        progress_label_he: "ממשיך במחקר",
+        result: { run_id: runId, output_mode: "answer" },
+      }).eq("id", job.id).eq("status", AWAITING_USER_STATUS);
+    }
+    const task = driveRun(
+      admin,
+      saved.intake as Intake,
+      saved.resume as ResumeState,
+      supabaseUrl,
+      serviceKey,
+      job,
+      (saved.stage ?? null) as ProgressStage | null,
+    );
+    if (typeof EdgeRuntime !== "undefined" && EdgeRuntime?.waitUntil) EdgeRuntime.waitUntil(task);
+    return json({ ok: true, resumed: true, run_id: runId, job_id: job?.id ?? null }, 202);
+  }
 
   // ══ Beta production entry ═══════════════════════════════════════════════
   // An authenticated beta user request. Routing/config only: the same job
@@ -1680,7 +1856,6 @@ serve(async (req) => {
     attachment_owner_id: typeof body.smoke_user_id === "string" ? body.smoke_user_id : null,
     budgets: (body.budgets ?? undefined) as Partial<ToolBudgets> | undefined,
     agent_model: typeof body.agent_model === "string" ? body.agent_model : null,
-    agent_authored_answer: body.agent_authored_answer === true,
     agent_reasoning_effort: body.agent_reasoning_effort === "high" ? "high" : undefined,
     // Evaluation-only: the internal entry point may run an Academic Writing
     // body chapter with a deliverable-level research contract.

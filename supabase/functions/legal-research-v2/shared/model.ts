@@ -16,12 +16,26 @@ export interface ModelConfig {
   drafter: string;
 }
 
+/** Production default Research Agent (agent-authored answer architecture). */
+export const DEFAULT_AGENT_MODEL = "openai/gpt-6-astra";
+
 export function modelConfig(): ModelConfig {
   return {
-    agent: Deno.env.get("V2_AGENT_MODEL") || "openai/gpt-5.6-terra",
+    agent: Deno.env.get("V2_AGENT_MODEL") || DEFAULT_AGENT_MODEL,
     verifier: Deno.env.get("V2_VERIFIER_MODEL") || "google/gemini-3.7-flash",
+    // Used only by the emergency rollback path (V2_USE_SEPARATE_DRAFTER=true).
     drafter: Deno.env.get("V2_DRAFTER_MODEL") || "google/gemini-3.1-pro-preview",
   };
+}
+
+/**
+ * Emergency rollback only. When "true", answer mode returns to the legacy
+ * Research Agent → separate Drafter path. Default (unset/anything else): the
+ * Research Agent writes the answer itself. There is no automatic routing.
+ */
+export function separateDrafterEnabled(env?: (k: string) => string | undefined): boolean {
+  const get = env ?? ((k: string) => (typeof Deno !== "undefined" ? Deno.env.get(k) : undefined));
+  return (get("V2_USE_SEPARATE_DRAFTER") ?? "").trim().toLowerCase() === "true";
 }
 
 export interface ToolSpec {

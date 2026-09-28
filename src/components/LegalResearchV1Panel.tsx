@@ -86,6 +86,9 @@ const INFRA_FAILURE_HE =
   "המחקר הופסק בגלל תקלה תשתיתית. לא מוצגת תשובת ביניים. אם נוצל שימוש, הוא הוחזר למכסה או סומן להחזר.";
 
 const ACTIVE_STATUSES = ["queued", "running", "pending"];
+/** The research agent paused to ask the user one clarification question. */
+const AWAITING_USER = "awaiting_user";
+type Clarification = { question: string; context?: string; options?: string[] };
 
 /** A reaped/watchdog job is an infrastructure failure, never a legal answer. */
 function isInfrastructureFailure(
@@ -188,6 +191,9 @@ export function LegalResearchV1Panel({
   const [resumed, setResumed] = useState(false);
   const [infraFailure, setInfraFailure] = useState(false);
   const [justCompleted, setJustCompleted] = useState(false);
+  const [clarification, setClarification] = useState<Clarification | null>(null);
+  const [replyText, setReplyText] = useState("");
+  const [replySending, setReplySending] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const progressTimerRef = useRef<number | null>(null);
@@ -277,6 +283,17 @@ export function LegalResearchV1Panel({
       setProgressLabel(row.progress_label_he ?? null);
     }
 
+    if (row.status === AWAITING_USER) {
+      const c = (row.result as Record<string, unknown> | undefined)?.clarification as Clarification | undefined;
+      if (pollTimerRef.current) {
+        window.clearInterval(pollTimerRef.current);
+        pollTimerRef.current = null;
+      }
+      setLoading(false);
+      if (c?.question) setClarification(c);
+      return false;
+    }
+    setClarification(null);
     if (ACTIVE_STATUSES.includes(row.status)) return false;
 
     stopAll();
@@ -356,6 +373,14 @@ export function LegalResearchV1Panel({
     setJustCompleted(false);
     setResult(null);
     const startedAt = row.started_at || row.created_at;
+    if (row.status === AWAITING_USER) {
+      setJobId(jid);
+      setJobUrlParam(jid);
+      persistResume(jid, startedAt ? Date.parse(startedAt) : Date.now());
+      startRef.current = startedAt ? Date.parse(startedAt) : Date.now();
+      applyJobRow(row);
+      return true;
+    }
     if (ACTIVE_STATUSES.includes(row.status)) {
       setJobId(jid);
       setLoading(true);
@@ -425,7 +450,7 @@ export function LegalResearchV1Panel({
       let query = supabase
         .from("legal_research_jobs")
         .select("id, result")
-        .in("status", ACTIVE_STATUSES)
+        .in("status", [...ACTIVE_STATUSES, AWAITING_USER])
         .gte("created_at", new Date(Date.now() - 30 * 24 * 60 * 60_000).toISOString())
         .order("created_at", { ascending: false })
         .limit(5);
@@ -640,6 +665,27 @@ export function LegalResearchV1Panel({
   };
 
 
+  const sendClarification = async (text: string) => {
+    const reply = text.trim();
+    if (!reply || !jobId || replySending) return;
+    setReplySending(true);
+    const { errorInfo } = await invokeFunction<{ ok: boolean }>(RESEARCH_FUNCTIONS.v2, {
+      action: "answer_clarification",
+      job_id: jobId,
+      user_message: reply,
+    });
+    setReplySending(false);
+    if (errorInfo) {
+      toast.error(errorInfo.message || "לא הצלחנו לשלוח את התשובה. נסו שוב.");
+      return;
+    }
+    setClarification(null);
+    setReplyText("");
+    setLoading(true);
+    startProgress(startRef.current || Date.now());
+    pollJob(jobId);
+  };
+
   const debug = (result?.debug ?? {}) as Record<string, any>;
   // Diagnostics are never shown to normal users: they require an explicit
   // ?debug=1 opt-in AND an admin session (or a local dev build).
@@ -662,6 +708,8 @@ export function LegalResearchV1Panel({
       setResult(null);
       setError(null);
       setJobId(null);
+      setClarification(null);
+      setReplyText("");
       setResumed(false);
       setJustCompleted(false);
       setInfraFailure(false);
@@ -722,7 +770,7 @@ export function LegalResearchV1Panel({
     <div className="flex flex-col h-full min-h-0" dir="rtl">
       {/* ── Top region: loading / error / result (scrollable) ── */}
       <div className="flex-1 min-h-0 overflow-y-auto space-y-4 pb-4">
-        {!loading && !error && !result && !infraFailure && (
+        {!loading && !error && !result && !infraFailure && !clarification && (
           sourcesMode ? (
             <SourcesEmptyState
               hasUploadedFiles={files.length > 0}
@@ -815,6 +863,58 @@ export function LegalResearchV1Panel({
             </div>
 
             <GhostAnswer />
+          </div>
+        )}
+
+        {clarification && !loading && (
+          <div className="rounded-lg border border-primary/30 bg-primary/5 p-4 space-y-3 animate-fade-in">
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <ReLexLogo size={16} showText={false} />
+              <span>שאלת הבהרה לפני שממשיכים במחקר</span>
+            </div>
+            {clarification.context && (
+              <p className="text-xs text-muted-foreground leading-relaxed">{clarification.context}</p>
+            )}
+            <p className="text-sm font-medium text-foreground leading-relaxed">{clarification.question}</p>
+            {clarification.options && clarification.options.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {clarification.options.map((opt) => (
+                  <Button
+                    key={opt}
+                    variant="outline"
+                    size="sm"
+                    disabled={replySending}
+                    onClick={() => sendClarification(opt)}
+                  >
+                    {opt}
+                  </Button>
+                ))}
+              </div>
+            )}
+            <div className="flex items-end gap-2">
+              <textarea
+                value={replyText}
+                onChange={(e) => setReplyText(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    sendClarification(replyText);
+                  }
+                }}
+                rows={2}
+                placeholder="אפשר גם לענות במילים שלך…"
+                className="flex-1 resize-none rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                disabled={replySending}
+              />
+              <Button
+                size="icon"
+                onClick={() => sendClarification(replyText)}
+                disabled={replySending || !replyText.trim()}
+                aria-label="שליחת תשובה"
+              >
+                {replySending ? <Loader2 className="w-4 h-4 animate-spin" /> : <ArrowUp className="w-4 h-4" />}
+              </Button>
+            </div>
           </div>
         )}
 

@@ -22,6 +22,13 @@
       "when": 1790143487902,
       "tag": "0002_v2_watchdog_age_guard",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1790587034207,
+      "tag": "0003_research_jobs_resumed_at",
+      "breakpoints": true
     }
   ]
 }
