@@ -1643,7 +1643,7 @@ serve(async (req) => {
     const { data: userData } = await (userClient as any).auth.getUser();
     const user = userData?.user as { id: string } | undefined;
     if (!user) return json({ error: "unauthorized" }, 401);
-    if (question.length < 5) return json({ error: "question_required" }, 400);
+    if (question.length < (typeof body.conversation_id === "string" ? 2 : 5)) return json({ error: "question_required" }, 400);
 
     // Academic Writing body chapter: same job table, same refund rules, same
     // unchanged research pipeline — only the intake carries paper framing.
