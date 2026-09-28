@@ -137,6 +137,8 @@ export function buildIntake(input: {
   agent_model?: string | null;
   /** Evaluation-only: the research agent writes the final answer itself. */
   agent_authored_answer?: boolean;
+  /** Evaluation-only Research Agent reasoning effort override. */
+  agent_reasoning_effort?: "medium" | "high";
   /** Academic Writing body chapter only — framing context, never evidence. */
   academic_context?: AcademicProjectContext | null;
   footnote_offset?: number;
@@ -173,6 +175,7 @@ export function buildIntake(input: {
     },
     agent_model: input.agent_model?.trim() || null,
     ...(input.agent_authored_answer === true ? { agent_authored_answer: true } : {}),
+    ...(input.agent_reasoning_effort === "high" ? { agent_reasoning_effort: "high" as const } : {}),
     academic_context: input.academic_context ?? null,
     footnote_offset: Math.max(0, Math.floor(input.footnote_offset ?? 0)),
     research_contract: input.output_mode === "sources"
@@ -686,7 +689,7 @@ async function runPipeline(
   // The SAME research agent wrote answer_blocks inside its memo. Verification
   // above is unchanged; here each block is gated against surviving claims and
   // its citations derive from verified claims only. No separate drafter.
-  let agentAnswerTelemetry: Record<string, unknown> = { agent_authored_answer_enabled: false };
+  let agentAnswerTelemetry: Record<string, unknown> = { agent_authored_answer_enabled: false, agent_reasoning_effort: intake.agent_reasoning_effort ?? "medium" };
   let draft: Awaited<ReturnType<typeof runDrafter>>;
   if (intake.agent_authored_answer) {
     const initialBlocks = agent.memo?.answer_blocks ?? [];
@@ -1677,6 +1680,7 @@ serve(async (req) => {
     budgets: (body.budgets ?? undefined) as Partial<ToolBudgets> | undefined,
     agent_model: typeof body.agent_model === "string" ? body.agent_model : null,
     agent_authored_answer: body.agent_authored_answer === true,
+    agent_reasoning_effort: body.agent_reasoning_effort === "high" ? "high" : undefined,
     // Evaluation-only: the internal entry point may run an Academic Writing
     // body chapter with a deliverable-level research contract.
     academic_context: body.academic_context ? parseProjectContext(body.academic_context) : null,

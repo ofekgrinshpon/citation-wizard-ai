@@ -88,6 +88,8 @@ export interface Intake {
    * never overridable.
    */
   agent_model?: string | null;
+  /** EVALUATION ONLY: Research Agent reasoning effort (Responses API). Absent = "medium". */
+  agent_reasoning_effort?: "medium" | "high";
   /**
    * EVALUATION ONLY (agent_authored_answer experiment). When true the Research
    * Agent writes the final answer blocks itself and the separate drafter is

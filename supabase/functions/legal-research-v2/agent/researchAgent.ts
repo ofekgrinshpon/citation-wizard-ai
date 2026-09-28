@@ -608,6 +608,7 @@ export async function runResearchAgent(opts: {
       tools: forceMemo ? [memoTool] : toolSpecs,
       toolChoice: forceMemo ? { name: memoTool.name } : "auto",
       usage: opts.usage,
+      ...(opts.intake.agent_reasoning_effort === "high" ? { reasoningEffort: "high" as const } : {}),
     });
     const modelMs = Date.now() - modelStarted;
     timer.add("agent_model", modelMs);
