@@ -55,7 +55,7 @@ export function ResearchConversationPanel() {
   const [loadingConv, setLoadingConv] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [insufficient, setInsufficient] = useState({ open: false, required: CREDIT_COSTS.research, remaining: 0 });
+  const [insufficient, setInsufficient] = useState<{ open: boolean; required: number; remaining: number }>({ open: false, required: CREDIT_COSTS.research, remaining: 0 });
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const atBottomRef = useRef(true);
