@@ -7,7 +7,7 @@ import {
   buildAgentAnswerRepairMessage,
   gateAnswerBlocks,
   normalizeAnswerBlocks,
-} from "../../supabase/functions/legal-research-v2/drafting/agentAnswer";
+} from "../../supabase/functions/legal-research-v2/drafting/draft";
 import { renderAnswer } from "../../supabase/functions/legal-research-v2/drafting/render";
 import { normalizeMemo } from "../../supabase/functions/legal-research-v2/agent/researchAgent";
 import {

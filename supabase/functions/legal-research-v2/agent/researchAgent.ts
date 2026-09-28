@@ -63,7 +63,7 @@ import {
   buildAgentUserMessage,
   MEMO_TOOL,
 } from "./prompt.ts";
-import { normalizeAnswerBlocks } from "../drafting/agentAnswer.ts";
+import { normalizeAnswerBlocks } from "../drafting/draft.ts";
 import {
   buildCoverageReflection,
   buildUnusedSourceSummary,
