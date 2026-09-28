@@ -783,6 +783,7 @@ async function runPipeline(
     } as Awaited<ReturnType<typeof runDrafter>>;
     agentAnswerTelemetry = {
       agent_authored_answer_enabled: true,
+      agent_reasoning_effort: intake.agent_reasoning_effort ?? "medium",
       separate_drafter_called: false,
       agent_answer_blocks_initial: initialBlocks.length,
       agent_answer_words_initial: agentAnswerWordCount(initialBlocks),
