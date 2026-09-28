@@ -56,7 +56,14 @@ import {
   runAcquireAuthority,
 } from "../tools/acquisitionOrchestrator.ts";
 
-import { AGENT_SYSTEM_PROMPT, buildAgentUserMessage, MEMO_TOOL } from "./prompt.ts";
+import {
+  AGENT_ANSWER_MEMO_TOOL,
+  AGENT_AUTHORED_ANSWER_ADDENDUM,
+  AGENT_SYSTEM_PROMPT,
+  buildAgentUserMessage,
+  MEMO_TOOL,
+} from "./prompt.ts";
+import { normalizeAnswerBlocks } from "../drafting/draft.ts";
 import {
   buildCoverageReflection,
   buildUnusedSourceSummary,
@@ -380,6 +387,7 @@ export function normalizeMemo(raw: unknown): ResearchMemo | null {
   const drafting_brief = normalizeDraftingBrief(
     (r as { drafting_brief?: unknown }).drafting_brief,
   );
+  const answer_blocks = normalizeAnswerBlocks((r as { answer_blocks?: unknown }).answer_blocks);
   return {
     issue_summary: String(r.issue_summary ?? "").trim(),
     claims,
@@ -389,6 +397,7 @@ export function normalizeMemo(raw: unknown): ResearchMemo | null {
     research_complete: r.research_complete === true,
     ...(research_synthesis ? { research_synthesis } : {}),
     ...(drafting_brief ? { drafting_brief } : {}),
+    ...(answer_blocks ? { answer_blocks } : {}),
   };
 }
 
@@ -494,11 +503,21 @@ export async function runResearchAgent(opts: {
   const timer = opts.timer ?? new RunTimer();
   const chunkCap = opts.maxStepsThisChunk ?? Number.POSITIVE_INFINITY;
   const deadlineAt = opts.deadlineAt ?? Number.POSITIVE_INFINITY;
+  // Evaluation only: the experiment swaps in the memo tool with answer_blocks.
+  const memoTool = opts.intake.agent_authored_answer ? AGENT_ANSWER_MEMO_TOOL : MEMO_TOOL;
+  const toolSpecs: ToolSpec[] = opts.intake.agent_authored_answer
+    ? TOOL_SPECS.map((t) => (t === MEMO_TOOL ? memoTool : t)) as ToolSpec[]
+    : TOOL_SPECS;
 
   const messages: ChatMessage[] = opts.priorMessages
     ? [...opts.priorMessages]
     : [
-      { role: "system", content: AGENT_SYSTEM_PROMPT },
+      {
+        role: "system",
+        content: opts.intake.agent_authored_answer
+          ? AGENT_SYSTEM_PROMPT + AGENT_AUTHORED_ANSWER_ADDENDUM
+          : AGENT_SYSTEM_PROMPT,
+      },
       { role: "user", content: buildAgentUserMessage(opts.intake) },
     ];
   if (opts.extraUserMessage) messages.push({ role: "user", content: opts.extraUserMessage });
@@ -586,8 +605,8 @@ export async function runResearchAgent(opts: {
     const res = await chat({
       model: opts.model,
       messages,
-      tools: forceMemo ? [MEMO_TOOL] : TOOL_SPECS,
-      toolChoice: forceMemo ? { name: MEMO_TOOL.name } : "auto",
+      tools: forceMemo ? [memoTool] : toolSpecs,
+      toolChoice: forceMemo ? { name: memoTool.name } : "auto",
       usage: opts.usage,
     });
     const modelMs = Date.now() - modelStarted;

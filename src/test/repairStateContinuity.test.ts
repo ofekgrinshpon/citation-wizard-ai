@@ -39,8 +39,8 @@ describe("repair re-entry forwards run state (index.ts call sites)", () => {
   const src = readFileSync("supabase/functions/legal-research-v2/index.ts", "utf8");
   const calls = src.split("runResearchAgent({").slice(1);
 
-  it("has exactly four research entries: initial + three bounded repairs", () => {
-    expect(calls).toHaveLength(4);
+  it("has exactly five research entries: initial + three bounded repairs + one eval-only agent-answer repair", () => {
+    expect(calls).toHaveLength(5);
   });
 
   it("every call site forwards ledger, commit and stats", () => {
@@ -205,7 +205,7 @@ describe("I — boundedness preserved", () => {
 
   it("no repair path re-enters research more than once", () => {
     const src = readFileSync("supabase/functions/legal-research-v2/index.ts", "utf8");
-    expect(src.split("runResearchAgent({")).toHaveLength(5); // 4 calls
+    expect(src.split("runResearchAgent({")).toHaveLength(6); // 4 calls + eval-only agent-answer repair
     expect(/while\s*\(.*repair/i.test(src)).toBe(false);
     expect(/for\s*\(.*repair/i.test(src)).toBe(false);
   });

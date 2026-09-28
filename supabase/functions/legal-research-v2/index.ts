@@ -83,6 +83,11 @@ import {
 import { runDrafter } from "./drafting/draft.ts";
 import { projectVerifiedSynthesis } from "./drafting/synthesis.ts";
 import { renderAnswer } from "./drafting/render.ts";
+import {
+  buildAgentAnswerRepairMessage,
+  gateAnswerBlocks,
+  wordCount as agentAnswerWordCount,
+} from "./drafting/draft.ts";
 import { RunTimer, type RunTimingJson } from "./shared/timing.ts";
 import { decideRepairAcceptance, decideResearchRepair } from "./verification/repairPolicy.ts";
 import {
@@ -130,6 +135,8 @@ export function buildIntake(input: {
   budgets?: Partial<ToolBudgets>;
   /** Evaluation-only Research Agent override. */
   agent_model?: string | null;
+  /** Evaluation-only: the research agent writes the final answer itself. */
+  agent_authored_answer?: boolean;
   /** Academic Writing body chapter only — framing context, never evidence. */
   academic_context?: AcademicProjectContext | null;
   footnote_offset?: number;
@@ -165,6 +172,7 @@ export function buildIntake(input: {
       ...(input.budgets ?? {}),
     },
     agent_model: input.agent_model?.trim() || null,
+    ...(input.agent_authored_answer === true ? { agent_authored_answer: true } : {}),
     academic_context: input.academic_context ?? null,
     footnote_offset: Math.max(0, Math.floor(input.footnote_offset ?? 0)),
     research_contract: input.output_mode === "sources"
@@ -630,7 +638,7 @@ async function runPipeline(
   await opts.progress?.advance("writing");
 
   // ── Draft + deterministic render ────────────────────────────────────────
-  const pack = verification?.pack ?? { claims: [], unsupported_claims: [] };
+  let pack = verification?.pack ?? { claims: [], unsupported_claims: [] };
 
   // High-level, source-level gap notices. Rejected propositions themselves are
   // NEVER handed to the drafter — they stay in telemetry.
@@ -674,18 +682,143 @@ async function runPipeline(
     }
     : null;
 
-  const draft = await timer.time("drafting_model", () =>
-    runDrafter({
-      question: intake.question,
+  // ═════ EXPERIMENT — agent-authored answer (evaluation only) ═════════════
+  // The SAME research agent wrote answer_blocks inside its memo. Verification
+  // above is unchanged; here each block is gated against surviving claims and
+  // its citations derive from verified claims only. No separate drafter.
+  let agentAnswerTelemetry: Record<string, unknown> = { agent_authored_answer_enabled: false };
+  let draft: Awaited<ReturnType<typeof runDrafter>>;
+  if (intake.agent_authored_answer) {
+    const initialBlocks = agent.memo?.answer_blocks ?? [];
+    const initialGate = gateAnswerBlocks(
+      initialBlocks,
       pack,
-      synthesis: synthesisProjection.synthesis,
-      model: models.drafter,
-      usage,
-      advisories,
-      gapNotices,
-      brief: draftingBrief,
-      academic: academicGuide,
-    }));
+      (agent.memo?.claims ?? []).map((c) => c.claim_id),
+    );
+    const claimRefs = initialBlocks.reduce((n, b) => n + b.claim_ids.length, 0);
+    const uniqueClaims = new Set(initialBlocks.flatMap((b) => b.claim_ids));
+    const memoClaimSources = new Map(
+      (agent.memo?.claims ?? []).map((c) => [c.claim_id, c.evidence.map((e) => e.source_id)]),
+    );
+    const uniqueSources = new Set<string>();
+    for (const id of uniqueClaims) for (const s of memoClaimSources.get(id) ?? []) uniqueSources.add(s);
+    let finalBlocks = initialGate.accepted;
+    let repairTriggered = false;
+    let repairResearchCalls = 0;
+    let repairBlocksChanged = 0;
+    let repairWordsAfter: number | null = null;
+    let repairRemovedClaimRefs = 0;
+    let repairOutcome: string | null = null;
+    let blocksDroppedUnrepaired = initialGate.requires_repair.length;
+
+    if (initialGate.requires_repair.length && agent.memo) {
+      repairTriggered = true;
+      const callsBefore = agent.policy.search_calls + agent.policy.fetch_calls + agent.policy.lookup_calls;
+      const repaired = await runResearchAgent({
+        admin,
+        intake,
+        store,
+        model: agentModel,
+        usage,
+        timer,
+        chunkIndex: chunk_index,
+        heartbeat,
+        priorMessages: agent.messages,
+        extraUserMessage: buildAgentAnswerRepairMessage({
+          blocks: initialBlocks,
+          gate: initialGate,
+          pack,
+          rejected: verification?.rejected ?? [],
+          unsupported: pack.unsupported_claims,
+        }),
+        policy: agent.policy,
+        discovered: agent.discovered,
+        ledger: agent.ledger,
+        commit: agent.commit,
+        stats: agent.stats,
+      });
+      repairResearchCalls = repaired.policy.search_calls + repaired.policy.fetch_calls +
+        repaired.policy.lookup_calls - callsBefore;
+      if (repaired.memo?.answer_blocks?.length) {
+        // Repaired memo goes through the SAME verification + temporal gate +
+        // provenance annotation. Nothing new is published unverified.
+        let reVerified = await timer.time("verification_model", () =>
+          verifyMemo({ memo: repaired.memo!, store, expected, model: models.verifier, usage }));
+        if (reVerified.pack.claims.length) {
+          const reTemporal = await timer.time("temporal_model", () =>
+            assessTemporalValidity({ pack: reVerified.pack, store, model: models.verifier, usage }));
+          if (reTemporal.assessments.length) {
+            reVerified = { ...reVerified, pack: applyTemporalGate(reVerified.pack, reTemporal.assessments).pack };
+          }
+        }
+        reVerified = { ...reVerified, pack: annotateProvenance(reVerified.pack, store, obligations) };
+        const reGate = gateAnswerBlocks(
+          repaired.memo.answer_blocks,
+          reVerified.pack,
+          repaired.memo.claims.map((c) => c.claim_id),
+        );
+        const before = new Set(initialBlocks.map((b) => b.text));
+        repairBlocksChanged = repaired.memo.answer_blocks.filter((b) => !before.has(b.text)).length;
+        const refsAfter = new Set(repaired.memo.answer_blocks.flatMap((b) => b.claim_ids));
+        repairRemovedClaimRefs = [...uniqueClaims].filter((id) => !refsAfter.has(id)).length;
+        finalBlocks = reGate.accepted;
+        blocksDroppedUnrepaired = reGate.requires_repair.length;
+        repairWordsAfter = agentAnswerWordCount(reGate.accepted);
+        agent = { ...repaired, trace: [...agent.trace, ...repaired.trace] };
+        verification = reVerified;
+        pack = reVerified.pack;
+        repairOutcome = "repaired_and_reverified";
+      } else {
+        repairOutcome = repaired.error ? `repair_failed:${repaired.error.slice(0, 80)}` : "repair_no_answer";
+      }
+    }
+
+    draft = {
+      blocks: finalBlocks,
+      dropped_source_ids: [],
+      ...(initialBlocks.length ? {} : { error: "agent_answer_missing" }),
+    } as Awaited<ReturnType<typeof runDrafter>>;
+    agentAnswerTelemetry = {
+      agent_authored_answer_enabled: true,
+      separate_drafter_called: false,
+      agent_answer_blocks_initial: initialBlocks.length,
+      agent_answer_words_initial: agentAnswerWordCount(initialBlocks),
+      agent_answer_claim_refs: claimRefs,
+      agent_answer_unique_claims: uniqueClaims.size,
+      agent_answer_unique_sources: uniqueSources.size,
+      answer_blocks_all_claims_verified: initialGate.blocks.filter((g) => g.status === "accepted").length,
+      answer_blocks_framing_only: initialGate.blocks.filter((g) => g.status === "framing").length,
+      answer_blocks_requiring_repair: initialGate.requires_repair.length,
+      answer_blocks_clean_first_pass: initialGate.requires_repair.length === 0,
+      claims_referenced_but_unverified: initialGate.claims_referenced_but_unverified,
+      untrusted_model_source_ids: initialGate.blocks.reduce((n, g) => n + g.untrusted_source_ids.length, 0),
+      agent_answer_repair_triggered: repairTriggered,
+      agent_answer_repair_outcome: repairOutcome,
+      repair_research_calls: repairResearchCalls,
+      repair_blocks_changed: repairBlocksChanged,
+      repair_words_before: repairTriggered ? agentAnswerWordCount(initialBlocks) : null,
+      repair_words_after: repairWordsAfter,
+      repair_removed_claim_refs: repairRemovedClaimRefs,
+      blocks_dropped_unverified: blocksDroppedUnrepaired,
+      final_verified_claims_used: new Set(
+        (agent.memo?.answer_blocks ?? initialBlocks).flatMap((b) => b.claim_ids)
+          .filter((id) => pack.claims.some((c) => c.claim_id === id)),
+      ).size,
+    };
+  } else {
+    draft = await timer.time("drafting_model", () =>
+      runDrafter({
+        question: intake.question,
+        pack,
+        synthesis: synthesisProjection.synthesis,
+        model: models.drafter,
+        usage,
+        advisories,
+        gapNotices,
+        brief: draftingBrief,
+        academic: academicGuide,
+      }));
+  }
 
   const blocks = derivative_disclosure_shown
     ? [
@@ -985,6 +1118,12 @@ async function runPipeline(
     drafting_brief_structure_items: draftingBrief?.structure?.length ?? 0,
     /** Draft result. Diagnostic only — length is a soft target, never a gate. */
     draft_word_count: draftWordCount,
+    /** agent_authored_answer experiment — evaluation telemetry only. */
+    ...agentAnswerTelemetry,
+    final_answer_words: draftWordCount,
+    final_answer_blocks: draft.blocks.length,
+    final_unique_sources: rendered.cited_source_ids.length,
+    final_footnotes: rendered.footnotes.length,
     draft_blocks: draft.blocks.length,
     drafter_finish_reason: draft.finish_reason ?? null,
     target_range_met: targetRangeMet,
@@ -1537,6 +1676,7 @@ serve(async (req) => {
     attachment_owner_id: typeof body.smoke_user_id === "string" ? body.smoke_user_id : null,
     budgets: (body.budgets ?? undefined) as Partial<ToolBudgets> | undefined,
     agent_model: typeof body.agent_model === "string" ? body.agent_model : null,
+    agent_authored_answer: body.agent_authored_answer === true,
     // Evaluation-only: the internal entry point may run an Academic Writing
     // body chapter with a deliverable-level research contract.
     academic_context: body.academic_context ? parseProjectContext(body.academic_context) : null,

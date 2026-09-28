@@ -89,6 +89,12 @@ export interface Intake {
    */
   agent_model?: string | null;
   /**
+   * EVALUATION ONLY (agent_authored_answer experiment). When true the Research
+   * Agent writes the final answer blocks itself and the separate drafter is
+   * never called. Absent/false keeps production behaviour unchanged.
+   */
+  agent_authored_answer?: boolean;
+  /**
    * Academic Writing body chapter only. Framing context for the paper the
    * chapter belongs to — never evidence, never citable. Absent for every
    * normal legal-research run.
@@ -393,6 +399,18 @@ export interface ResearchMemo {
   research_synthesis?: ResearchSynthesis;
   /** Optional deliverable description handed to the drafter. */
   drafting_brief?: DraftingBrief;
+  /** Evaluation only: answer written by the research agent itself. */
+  answer_blocks?: AgentAnswerBlock[];
+}
+
+/** Evaluation only (agent_authored_answer). Never evidence. */
+export interface AgentAnswerBlock {
+  type: "heading" | "paragraph" | "list_item";
+  text: string;
+  /** Claims from the same memo that support the substantive content of this block. */
+  claim_ids: string[];
+  /** Model-declared refs — observability only; citations derive from verified claims. */
+  source_ids?: string[];
 }
 
 

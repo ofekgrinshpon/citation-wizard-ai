@@ -165,7 +165,7 @@ describe("F/G — boundedness and budgets", () => {
   const src = readFileSync("supabase/functions/legal-research-v2/index.ts", "utf8");
 
   it("F. a sufficiency repair cannot trigger a second verification repair cycle", () => {
-    expect(src.split("runResearchAgent({")).toHaveLength(5); // initial + 3 bounded repairs
+    expect(src.split("runResearchAgent({")).toHaveLength(6); // initial + 3 bounded repairs + eval-only agent-answer repair
     expect(src).toMatch(/repair_cycles = 1;/);
     expect(/while\s*\(.*repair/i.test(src)).toBe(false);
     expect(/for\s*\(.*repair/i.test(src)).toBe(false);
