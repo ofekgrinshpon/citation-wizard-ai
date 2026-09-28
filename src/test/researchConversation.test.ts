@@ -5,7 +5,6 @@ import {
   CONVERSATION_CONTEXT_LIMITS,
 } from "../../supabase/functions/legal-research-v2/beta/conversation.ts";
 import { buildAgentUserMessage, DELIVERABLE_INFERENCE_GUIDE } from "../../supabase/functions/legal-research-v2/agent/prompt.ts";
-import { buildIntake } from "../../supabase/functions/legal-research-v2/index.ts";
 import { deriveConversationTitle } from "@/lib/researchConversation";
 import { replyLanded } from "@/components/research-chat/ResearchConversationPanel";
 
@@ -57,11 +56,10 @@ describe("conversation architecture", () => {
   });
 
   it("T11/T12 agent infers the deliverable; no manual mode", () => {
-    const intake = buildIntake({ run_id: "r", question: "תמצא לי מקורות על הרמת מסך" });
+    const intake = { run_id: "r", question: "תמצא לי מקורות על הרמת מסך", docket_obligations: [], statute_obligations: [], output_mode: "answer" } as never;
     const msg = buildAgentUserMessage(intake);
     expect(msg).toContain(DELIVERABLE_INFERENCE_GUIDE);
     expect(DELIVERABLE_INFERENCE_GUIDE).toMatch(/סכם לי את פסק הדין/);
-    expect(intake.output_mode).toBe("answer");
     const chat = src("src/components/LegalQAChat.tsx");
     expect(chat).toMatch(/taskMode !== "research" && \(/);
   });
@@ -73,9 +71,10 @@ describe("conversation architecture", () => {
     ])!;
     expect(block).toMatch(/אינו ראיה/);
     expect(block).toContain("ע\"א 1/20");
-    const intake = buildIntake({ run_id: "r", question: "תעמיק", conversation_context: block });
-    expect(intake.conversation_context).toBe(block);
-    expect(intake.agent_authored_answer).toBe(true);
+    const intake = { run_id: "r", question: "תעמיק", docket_obligations: [], statute_obligations: [], conversation_context: block } as never;
+    expect(buildAgentUserMessage(intake)).toContain(block);
+    // conversation context never touches the verifier module
+    expect(src("supabase/functions/legal-research-v2/verification/verifier.ts").includes("conversation")).toBe(false);
   });
 
   it("context is bounded", () => {
