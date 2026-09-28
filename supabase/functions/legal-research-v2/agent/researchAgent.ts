@@ -59,11 +59,14 @@ import {
 import {
   AGENT_ANSWER_MEMO_TOOL,
   AGENT_AUTHORED_ANSWER_ADDENDUM,
+  ASK_USER_GUIDANCE,
+  ASK_USER_TOOL,
   AGENT_SYSTEM_PROMPT,
   buildAgentUserMessage,
   MEMO_TOOL,
 } from "./prompt.ts";
 import { normalizeAnswerBlocks } from "../drafting/draft.ts";
+import { type AskUserRequest, parseAskUserArgs } from "../beta/clarification.ts";
 import {
   buildCoverageReflection,
   buildUnusedSourceSummary,
@@ -238,6 +241,10 @@ export interface AgentContextStats
   evidence_context_chars_last_turn: number;
   repeated_tool_calls_prevented: number;
   commit_directives: string[];
+  /** ask_user clarification pauses (answer mode). */
+  ask_user_calls: number;
+  user_clarification_turns: number;
+  awaiting_user_duration_ms: number;
   /** Durable quote references (durable_quote_references_v1). Diagnostic only. */
   quotes_available_at_memo: number;
   sources_with_quotes_not_memoed: number;
@@ -298,6 +305,9 @@ export function newAgentStats(): AgentContextStats {
     targeted_rereads: 0,
     targeted_rereads_new_quote: 0,
     targeted_rereads_no_new_quote: 0,
+    ask_user_calls: 0,
+    user_clarification_turns: 0,
+    awaiting_user_duration_ms: 0,
     span_hunting_exhaustions: 0,
     span_hunting_reads_suppressed: 0,
     new_quotes_served: 0,
@@ -339,6 +349,8 @@ export interface AgentRunResult {
   error?: string;
   /** True when the chunk ended on its step/time budget, not on a decision. */
   paused: boolean;
+  /** Set when the agent parked the run with ask_user. Never a final answer. */
+  awaiting_user?: AskUserRequest;
   trace: AgentTraceEntry[];
   policy: StopPolicy;
   discovered: Map<string, SearchResult>;
@@ -487,6 +499,8 @@ export async function runResearchAgent(opts: {
   chunkIndex?: number;
   /** Liveness ping so a long, healthy run is never mistaken for an abandoned one. */
   heartbeat?: () => Promise<void> | void;
+  /** False for repair re-entries: a repair turn never parks for the user. */
+  allowAskUser?: boolean;
 }): Promise<AgentRunResult> {
   const policy = opts.policy ?? new StopPolicy(opts.intake.budgets);
   const discovered = opts.discovered ?? new Map<string, SearchResult>();
@@ -505,18 +519,21 @@ export async function runResearchAgent(opts: {
   const deadlineAt = opts.deadlineAt ?? Number.POSITIVE_INFINITY;
   // Evaluation only: the experiment swaps in the memo tool with answer_blocks.
   const memoTool = opts.intake.agent_authored_answer ? AGENT_ANSWER_MEMO_TOOL : MEMO_TOOL;
-  const toolSpecs: ToolSpec[] = opts.intake.agent_authored_answer
+  const askUserAllowed = !!opts.intake.ask_user_enabled && opts.allowAskUser !== false;
+  const baseSpecs: ToolSpec[] = opts.intake.agent_authored_answer
     ? TOOL_SPECS.map((t) => (t === MEMO_TOOL ? memoTool : t)) as ToolSpec[]
     : TOOL_SPECS;
+  const toolSpecs: ToolSpec[] = askUserAllowed ? [...baseSpecs, ASK_USER_TOOL as ToolSpec] : baseSpecs;
+  let awaitingUser: AskUserRequest | null = null;
 
   const messages: ChatMessage[] = opts.priorMessages
     ? [...opts.priorMessages]
     : [
       {
         role: "system",
-        content: opts.intake.agent_authored_answer
+        content: (opts.intake.agent_authored_answer
           ? AGENT_SYSTEM_PROMPT + AGENT_AUTHORED_ANSWER_ADDENDUM
-          : AGENT_SYSTEM_PROMPT,
+          : AGENT_SYSTEM_PROMPT) + (opts.intake.ask_user_enabled ? ASK_USER_GUIDANCE : ""),
       },
       { role: "user", content: buildAgentUserMessage(opts.intake) },
     ];
@@ -663,6 +680,32 @@ export async function runResearchAgent(opts: {
     for (const call of res.tool_calls) {
       const args = parseJsonLoose<Record<string, unknown>>(call.arguments) ?? {};
       turnAction = turnAction || call.name;
+      // Every tool call needs a result message; once the run is parked for
+      // the user, sibling calls of the same turn are skipped, not executed.
+      if (awaitingUser) {
+        messages.push({ role: "tool", tool_call_id: call.id, content: JSON.stringify({ skipped: "awaiting_user" }) });
+        continue;
+      }
+      if (call.name === "ask_user") {
+        const ask = askUserAllowed ? parseAskUserArgs(args) : null;
+        if (!ask) {
+          messages.push({
+            role: "tool",
+            tool_call_id: call.id,
+            content: JSON.stringify({ error: askUserAllowed ? "question_required" : "ask_user_unavailable" }),
+          });
+          continue;
+        }
+        stats.ask_user_calls = (stats.ask_user_calls ?? 0) + 1;
+        awaitingUser = ask;
+        trace.push({ step: policy.steps, tool: "ask_user", input: ask as unknown as Record<string, unknown>, summary: "awaiting_user" });
+        messages.push({
+          role: "tool",
+          tool_call_id: call.id,
+          content: JSON.stringify({ status: "awaiting_user", note: "תשובת המשתמש תגיע בהודעה הבאה." }),
+        });
+        continue;
+      }
       if (call.name === MEMO_TOOL.name) {
         // Durable quote references are resolved against the evidence store
         // BEFORE anything else looks at the memo: a quote_id becomes the exact
@@ -1313,6 +1356,7 @@ export async function runResearchAgent(opts: {
     });
 
     if (memo) break;
+    if (awaitingUser) break;
 
     if (opts.checkpoint) {
       const snapshot: AgentRunResult = {
@@ -1352,8 +1396,11 @@ export async function runResearchAgent(opts: {
     }
   }
 
-  if (!memo && !error && !paused) error = "agent_step_budget_exhausted_without_memo";
-  return { memo, error, paused, trace, policy, discovered, messages, commit, ledger, stats };
+  if (!memo && !error && !paused && !awaitingUser) error = "agent_step_budget_exhausted_without_memo";
+  return {
+    memo, error, paused, trace, policy, discovered, messages, commit, ledger, stats,
+    ...(awaitingUser ? { awaiting_user: awaitingUser } : {}),
+  };
 }
 
 /** Serialize everything a later invocation needs to resume this run. */

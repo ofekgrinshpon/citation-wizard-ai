@@ -126,11 +126,15 @@ export function renderAnswer(
     const ids = block.type === "heading" ? [] : block.source_ids;
     const group: CitationOccurrence[] = [];
     for (const id of ids) {
-      const info = infoBySource.get(id);
-      if (!info) {
+      const baseInfo = infoBySource.get(id);
+      if (!baseInfo) {
         invariant_errors.push(`block cites unverified source ${id}`);
         continue;
       }
+      // The locator is claim-specific: a block supported by the claim about
+      // s. 37 cites s. 37, never the first section seen for that statute.
+      const claimLocator = block.type === "heading" ? undefined : block.source_locators?.[id];
+      const info = claimLocator ? { ...baseInfo, locator: claimLocator } : baseInfo;
       group.push({
         source_id: id,
         full_citation: formatCitation(info),

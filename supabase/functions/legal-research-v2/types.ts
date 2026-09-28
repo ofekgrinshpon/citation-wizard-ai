@@ -91,11 +91,13 @@ export interface Intake {
   /** EVALUATION ONLY: Research Agent reasoning effort (Responses API). Absent = "medium". */
   agent_reasoning_effort?: "medium" | "high";
   /**
-   * EVALUATION ONLY (agent_authored_answer experiment). When true the Research
-   * Agent writes the final answer blocks itself and the separate drafter is
-   * never called. Absent/false keeps production behaviour unchanged.
+   * Production answer path: the Research Agent writes the final answer blocks
+   * itself and the separate drafter is never called. False only for source
+   * search or when the emergency V2_USE_SEPARATE_DRAFTER rollback is on.
    */
   agent_authored_answer?: boolean;
+  /** The agent may pause the run with ask_user (answer mode only). */
+  ask_user_enabled?: boolean;
   /**
    * Academic Writing body chapter only. Framing context for the paper the
    * chapter belongs to — never evidence, never citable. Absent for every
@@ -540,6 +542,11 @@ export interface DraftBlock {
   type: "heading" | "paragraph" | "list_item";
   text: string;
   source_ids: string[];
+  /**
+   * Claim-specific locator per cited source (e.g. "ס' 37"), derived from the
+   * block's verified claims. Wins over the source's first-seen locator.
+   */
+  source_locators?: Record<string, string>;
 }
 
 export interface Footnote {

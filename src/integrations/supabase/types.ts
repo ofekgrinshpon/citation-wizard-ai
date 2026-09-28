@@ -538,6 +538,7 @@ export type Database = {
           project_id: string | null
           question: string
           result: Json | null
+          resumed_at: string | null
           started_at: string | null
           status: string
           updated_at: string
@@ -557,6 +558,7 @@ export type Database = {
           project_id?: string | null
           question: string
           result?: Json | null
+          resumed_at?: string | null
           started_at?: string | null
           status?: string
           updated_at?: string
@@ -576,6 +578,7 @@ export type Database = {
           project_id?: string | null
           question?: string
           result?: Json | null
+          resumed_at?: string | null
           started_at?: string | null
           status?: string
           updated_at?: string
