@@ -79,8 +79,8 @@ export function trackConversationEvent(event: string, details: Record<string, un
 
 const LEADING_FILLERS = [
   /^(היי|שלום|הי)[,!\s]+/,
-  /^(אתה|את)\s+(יכול|יכולה)\s+(ל)?/,
-  /^(תוכל|תוכלי)\s+(ל)?/,
+  /^(אתה|את)\s+(יכול|יכולה)\s+/,
+  /^(תוכל|תוכלי)\s+/,
   /^(אפשר|אני\s+צריך|אני\s+צריכה|אני\s+רוצה)\s+(ש)?/,
   /^בבקשה[,\s]+/,
 ];

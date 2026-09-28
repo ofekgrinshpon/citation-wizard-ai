@@ -56,7 +56,7 @@ describe("conversation architecture", () => {
   });
 
   it("T11/T12 agent infers the deliverable; no manual mode", () => {
-    const intake = { run_id: "r", question: "תמצא לי מקורות על הרמת מסך", docket_obligations: [], statute_obligations: [], output_mode: "answer" } as never;
+    const intake = { run_id: "r", question: "תמצא לי מקורות על הרמת מסך", docket_obligations: [], statute_obligations: [], budgets: { max_agent_steps: 10, max_search_calls: 10, max_fetch_calls: 10, max_lookup_calls: 10 }, output_mode: "answer" } as never;
     const msg = buildAgentUserMessage(intake);
     expect(msg).toContain(DELIVERABLE_INFERENCE_GUIDE);
     expect(DELIVERABLE_INFERENCE_GUIDE).toMatch(/סכם לי את פסק הדין/);
@@ -71,10 +71,10 @@ describe("conversation architecture", () => {
     ])!;
     expect(block).toMatch(/אינו ראיה/);
     expect(block).toContain("ע\"א 1/20");
-    const intake = { run_id: "r", question: "תעמיק", docket_obligations: [], statute_obligations: [], conversation_context: block } as never;
+    const intake = { run_id: "r", question: "תעמיק", docket_obligations: [], statute_obligations: [], budgets: { max_agent_steps: 10, max_search_calls: 10, max_fetch_calls: 10, max_lookup_calls: 10 }, conversation_context: block } as never;
     expect(buildAgentUserMessage(intake)).toContain(block);
     // conversation context never touches the verifier module
-    expect(src("supabase/functions/legal-research-v2/verification/verifier.ts").includes("conversation")).toBe(false);
+    expect(src("supabase/functions/legal-research-v2/verification/supportVerifier.ts").includes("conversation")).toBe(false);
   });
 
   it("context is bounded", () => {
