@@ -140,13 +140,14 @@ async function responsesChat(opts: {
   usage?: UsageLedger;
   signal?: AbortSignal;
   fail: (status: number, error: string, terminal?: boolean) => ChatResult;
+  reasoningEffort?: "medium" | "high";
 }): Promise<ChatResult> {
   const body: Record<string, unknown> = {
     model: opts.model,
     input: toResponsesInput(opts.messages),
     stream: true,
     store: false,
-    reasoning: { effort: "medium", summary: "auto" },
+    reasoning: { effort: opts.reasoningEffort ?? "medium", summary: "auto" },
   };
   if (opts.tools?.length) {
     body.tools = opts.tools.map((t) => ({
@@ -269,6 +270,8 @@ export async function chat(opts: {
   toolChoice?: "auto" | "required" | { name: string };
   usage?: UsageLedger;
   signal?: AbortSignal;
+  /** Evaluation-only; Responses API calls only. Default "medium". */
+  reasoningEffort?: "medium" | "high";
 }): Promise<ChatResult> {
   const apiKey = Deno.env.get("LOVABLE_API_KEY");
   const fail = (status: number, error: string, terminal = true): ChatResult => ({
