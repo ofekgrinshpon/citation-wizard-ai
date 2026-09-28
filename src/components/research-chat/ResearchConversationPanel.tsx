@@ -36,7 +36,7 @@ const EXAMPLES = [
 ];
 
 /** A job's reply has landed when the thread ends with its assistant message. */
-function replyLanded(messages: MessageRow[], job: JobState): boolean {
+export function replyLanded(messages: MessageRow[], job: JobState): boolean {
   const last = messages[messages.length - 1];
   if (!last || last.role !== "assistant" || last.job_id !== job.id) return false;
   return job.status === AWAITING_USER ? last.kind === "clarification" : last.kind !== "clarification";
