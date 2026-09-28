@@ -528,6 +528,7 @@ export type Database = {
           client_request_id: string | null
           completed_at: string | null
           completed_stages: string[]
+          conversation_id: string | null
           created_at: string
           credit_request_id: string | null
           current_stage: string | null
@@ -537,10 +538,12 @@ export type Database = {
           progress_label_he: string | null
           project_id: string | null
           question: string
+          response_message_id: string | null
           result: Json | null
           resumed_at: string | null
           started_at: string | null
           status: string
+          trigger_message_id: string | null
           updated_at: string
           user_id: string
         }
@@ -548,6 +551,7 @@ export type Database = {
           client_request_id?: string | null
           completed_at?: string | null
           completed_stages?: string[]
+          conversation_id?: string | null
           created_at?: string
           credit_request_id?: string | null
           current_stage?: string | null
@@ -557,10 +561,12 @@ export type Database = {
           progress_label_he?: string | null
           project_id?: string | null
           question: string
+          response_message_id?: string | null
           result?: Json | null
           resumed_at?: string | null
           started_at?: string | null
           status?: string
+          trigger_message_id?: string | null
           updated_at?: string
           user_id: string
         }
@@ -568,6 +574,7 @@ export type Database = {
           client_request_id?: string | null
           completed_at?: string | null
           completed_stages?: string[]
+          conversation_id?: string | null
           created_at?: string
           credit_request_id?: string | null
           current_stage?: string | null
@@ -577,14 +584,24 @@ export type Database = {
           progress_label_he?: string | null
           project_id?: string | null
           question?: string
+          response_message_id?: string | null
           result?: Json | null
           resumed_at?: string | null
           started_at?: string | null
           status?: string
+          trigger_message_id?: string | null
           updated_at?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "legal_research_jobs_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "research_conversations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       operation_lock_events: {
         Row: {
@@ -771,6 +788,97 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      research_conversations: {
+        Row: {
+          archived_at: string | null
+          created_at: string
+          id: string
+          last_message_at: string
+          project_id: string | null
+          title: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          archived_at?: string | null
+          created_at?: string
+          id?: string
+          last_message_at?: string
+          project_id?: string | null
+          title?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          archived_at?: string | null
+          created_at?: string
+          id?: string
+          last_message_at?: string
+          project_id?: string | null
+          title?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "research_conversations_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      research_messages: {
+        Row: {
+          attachments: Json | null
+          content: string
+          conversation_id: string
+          created_at: string
+          footnotes: Json | null
+          id: string
+          job_id: string | null
+          kind: string
+          metadata: Json | null
+          role: string
+          used_sources: Json | null
+        }
+        Insert: {
+          attachments?: Json | null
+          content: string
+          conversation_id: string
+          created_at?: string
+          footnotes?: Json | null
+          id?: string
+          job_id?: string | null
+          kind?: string
+          metadata?: Json | null
+          role: string
+          used_sources?: Json | null
+        }
+        Update: {
+          attachments?: Json | null
+          content?: string
+          conversation_id?: string
+          created_at?: string
+          footnotes?: Json | null
+          id?: string
+          job_id?: string | null
+          kind?: string
+          metadata?: Json | null
+          role?: string
+          used_sources?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "research_messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "research_conversations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       secondary_source_bodies: {
         Row: {
