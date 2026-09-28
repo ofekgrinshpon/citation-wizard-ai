@@ -29,6 +29,13 @@
       "when": 1790587034207,
       "tag": "0003_research_jobs_resumed_at",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1790609343431,
+      "tag": "0004_research_conversations",
+      "breakpoints": true
     }
   ]
 }

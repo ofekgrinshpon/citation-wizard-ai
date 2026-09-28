@@ -37,6 +37,7 @@ type StageEvent = {
 import { CitationReviewPanel } from "@/components/legal-qa/CitationReviewPanel";
 import { MaintenanceCard } from "@/components/MaintenanceCard";
 import { LegalResearchV1Panel } from "@/components/LegalResearchV1Panel";
+import { ResearchConversationPanel } from "@/components/research-chat/ResearchConversationPanel";
 import { LegalSourceSearchPanel } from "@/components/LegalSourceSearchPanel";
 import { ReLexLogo } from "@/components/ReLexLogo";
 import { ACADEMIC_WRITING_ENABLED } from "@/config/features";
@@ -184,6 +185,14 @@ const RESEARCH_INTENTS: { id: TaskMode; label: string }[] = [
 ];
 
 const RESEARCH_INTENT_IDS: TaskMode[] = RESEARCH_INTENTS.map((i) => i.id);
+
+function LegacyBackToChat() {
+  return (
+    <div className="mb-3">
+      <a href="/app" className="text-xs text-primary underline">חזרה לשיחות</a>
+    </div>
+  );
+}
 
 const DAVID_FONT = "David, 'David Libre', serif";
 const MAX_FILE_SIZE = 20 * 1024 * 1024; // 20MB
@@ -2474,6 +2483,12 @@ export function LegalQAChat({ onResultSaved, externalResult, onConsumeExternalRe
 
   const activeMode = TASK_MODES.find((m) => m.id === taskMode) ?? TASK_MODES[0];
   const isAcademic = taskMode === "academic_writing";
+  // Old research history (pre-conversation jobs / cached answers) and legacy
+  // ?job= deep links still open in the legacy panel.
+  const legacyResearchView =
+    !!legalResearchV1External ||
+    !!(externalJob && externalJob.mode === "answer") ||
+    (typeof window !== "undefined" && new URLSearchParams(window.location.search).has("job"));
 
   return (
     <div className="flex flex-col h-full" style={{ direction: "rtl" }}>
@@ -2516,8 +2531,9 @@ export function LegalQAChat({ onResultSaved, externalResult, onConsumeExternalRe
           })}
         </div>
 
-        {/* Intent selector inside the Legal Research workspace */}
-        {!isAcademic && (
+        {/* Legacy intent selector — only shown while viewing an old source-search /
+            case-summary result. New work goes through the conversation. */}
+        {!isAcademic && taskMode !== "research" && (
           <div className="flex items-center gap-1 rounded-xl border border-border bg-muted/40 p-1">
             {RESEARCH_INTENTS.map((intent) => {
               const active = taskMode === intent.id;
@@ -3248,15 +3264,18 @@ export function LegalQAChat({ onResultSaved, externalResult, onConsumeExternalRe
         )}
 
         {/* ── Non-academic empty state ── */}
-        {!isAcademic && taskMode === "research" && (
+        {!isAcademic && taskMode === "research" && (legacyResearchView ? (
           <div className="h-full flex flex-col py-4">
+            <LegacyBackToChat />
             <LegalResearchV1Panel
               externalResult={legalResearchV1External}
               onConsumeExternalResult={onConsumeExternalResult}
               openJob={externalJob && externalJob.mode === "answer" ? { id: externalJob.id, at: externalJob.at } : null}
             />
           </div>
-        )}
+        ) : (
+          <ResearchConversationPanel />
+        ))}
 
         {/* Source search runs on the V2 research agent and terminates in the
             deterministic Source Renderer. The legacy V1 panel stays mounted

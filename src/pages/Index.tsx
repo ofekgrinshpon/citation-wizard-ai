@@ -34,6 +34,7 @@ import { AppSidebar } from "@/components/AppSidebar";
 import { FootnotesSection } from "@/components/FootnotesSection";
 import { CitationHistorySidebar } from "@/components/CitationHistorySidebar";
 import { QAHistorySidebar } from "@/components/QAHistorySidebar";
+import { ResearchConversationSidebar } from "@/components/research-chat/ResearchConversationSidebar";
 import { ReLexLogo } from "@/components/ReLexLogo";
 
 interface Message {
@@ -1231,6 +1232,10 @@ const Index = () => {
         {user && !isOfficeAddin && (
           <div className="hidden md:flex self-stretch">
             {mode === "legalqa" ? (
+              <ResearchConversationSidebar
+                projectId={projectId ?? null}
+                onNavigate={() => { setQaExternalJob(null); setQaExternalResult(null); }}
+                legacyHistory={
               <QAHistorySidebar
                 projectId={projectId ?? null}
                 refreshKey={qaRefreshKey}
@@ -1264,6 +1269,8 @@ const Index = () => {
                     setQaExternalResult({ question, result, taskMode: safeMode });
                   }
                 }}
+              />
+                }
               />
             ) : (
               <CitationHistorySidebar

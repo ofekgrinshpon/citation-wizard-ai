@@ -25,6 +25,7 @@ import {
   type SupabaseClient,
 } from "./shared/primitives.ts";
 import { modelConfig, newUsageLedger, separateDrafterEnabled, type UsageLedger } from "./shared/model.ts";
+import { clarificationMessageText, loadOwnedConversationContext, postAssistantMessage } from "./beta/conversation.ts";
 import { AWAITING_USER_STATUS, applyUserReply, type AskUserRequest, normalizeReply } from "./beta/clarification.ts";
 import { EvidenceStore } from "./evidence/evidenceStore.ts";
 import { buildAcademicYield } from "./evidence/academicYield.ts";
@@ -147,6 +148,7 @@ export function buildIntake(input: {
   research_contract?: string | null;
   /** "sources" terminates in the Source Renderer instead of the drafter. */
   output_mode?: "answer" | "sources";
+  conversation_context?: string | null;
 }): Intake {
   const question = (input.question ?? "").trim();
   const dockets = detectDockets(question).map((d) => ({
@@ -187,6 +189,7 @@ export function buildIntake(input: {
       ? (input.research_contract?.trim() || SOURCE_SCOUTING_CONTRACT)
       : (input.research_contract?.trim() || null),
     output_mode: input.output_mode === "sources" ? "sources" : "answer",
+    conversation_context: input.conversation_context?.trim() || null,
   };
 }
 
@@ -1286,6 +1289,9 @@ function createRunBeat(admin: SupabaseClient, run_id: string) {
  * worker. The chunk budget and MAX_CHUNKS bound the total work; the next hop
  * fires only when research actually remains.
  */
+const CHAT_FAILURE_HE =
+  "לא הצלחתי להשלים את המחקר הפעם בגלל תקלה. אם נוצל שימוש, הוא הוחזר. אפשר לנסות לשלוח את ההודעה שוב.";
+
 async function driveRun(
   admin: SupabaseClient,
   intake: Intake,
@@ -1358,6 +1364,11 @@ async function driveRun(
             clarification: out.awaiting_user,
           },
         }).eq("id", job.id).in("status", ["running", "queued"]);
+        await postAssistantMessage(admin, job.id, {
+          kind: "clarification",
+          content: clarificationMessageText(out.awaiting_user),
+          metadata: { run_id: intake.run_id, options: out.awaiting_user.options ?? [], ask_user: true },
+        });
       }
       return;
     }
@@ -1374,8 +1385,20 @@ async function driveRun(
     // down at any moment, and the answer must never be the thing that is lost.
     if (job) {
       const blocked = gatewayFailure(out as Record<string, unknown>);
-      if (blocked) await finishJobError(admin, job, blocked);
-      else await finishJobSuccess(admin, job, toBetaResult(out as Record<string, unknown>));
+      if (blocked) {
+        await finishJobError(admin, job, blocked);
+        await postAssistantMessage(admin, job.id, { kind: "text", content: CHAT_FAILURE_HE, metadata: { run_id: intake.run_id, failed: true } });
+      } else {
+        const br = toBetaResult(out as Record<string, unknown>) as unknown as Record<string, unknown>;
+        await finishJobSuccess(admin, job, br as unknown as Parameters<typeof finishJobSuccess>[2]);
+        await postAssistantMessage(admin, job.id, {
+          kind: "research_answer",
+          content: String(br.answer ?? "").trim() || CHAT_FAILURE_HE,
+          footnotes: br.footnotes ?? null,
+          used_sources: br.used_sources ?? null,
+          metadata: { run_id: intake.run_id, output_mode: br.output_mode ?? "answer" },
+        });
+      }
       await progress.finish();
     }
     await admin.from("v2_eval_runs").update({
@@ -1386,7 +1409,10 @@ async function driveRun(
     }).eq("run_id", intake.run_id);
   } catch (e) {
     const message = e instanceof Error ? e.message : String(e);
-    if (job) await finishJobError(admin, job, message);
+    if (job) {
+      await finishJobError(admin, job, message);
+      await postAssistantMessage(admin, job.id, { kind: "text", content: CHAT_FAILURE_HE, metadata: { run_id: intake.run_id, failed: true } });
+    }
     await admin.from("v2_eval_runs").update({
       status: "error",
       error: message,
@@ -1617,7 +1643,7 @@ serve(async (req) => {
     const { data: userData } = await (userClient as any).auth.getUser();
     const user = userData?.user as { id: string } | undefined;
     if (!user) return json({ error: "unauthorized" }, 401);
-    if (question.length < 5) return json({ error: "question_required" }, 400);
+    if (question.length < (typeof body.conversation_id === "string" ? 2 : 5)) return json({ error: "question_required" }, 400);
 
     // Academic Writing body chapter: same job table, same refund rules, same
     // unchanged research pipeline — only the intake carries paper framing.
@@ -1739,9 +1765,14 @@ serve(async (req) => {
       .filter((a) => a.storage_path && a.file_name)
       .slice(0, 5);
 
+    const conv = await loadOwnedConversationContext(userClient, body.conversation_id);
+    const triggerMessageId = conv.conversationId && typeof body.trigger_message_id === "string"
+      ? body.trigger_message_id
+      : null;
     const betaIntake = buildIntake({
       run_id: crypto.randomUUID(),
       question,
+      conversation_context: sourceSearch || academicContext ? null : conv.context,
       attachment_text: null,
       attachments: attachmentInputs,
       attachment_owner_id: user.id,
@@ -1756,6 +1787,8 @@ serve(async (req) => {
         user_id: user.id,
         project_id: projectId,
         question,
+        conversation_id: conv.conversationId,
+        trigger_message_id: triggerMessageId,
         status: "running",
         client_request_id: clientRequestId,
         credit_request_id: creditRequestId,
