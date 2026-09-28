@@ -108,6 +108,7 @@ const App = () => (
                   <Route path="/" element={<Landing />} />
                   <Route path="/auth" element={<Auth />} />
                   <Route path="/app" element={<BibliographyProvider><Index /></BibliographyProvider>} />
+                  <Route path="/app/chat/:conversationId" element={<BibliographyProvider><Index /></BibliographyProvider>} />
                   <Route path="/admin" element={<Admin />} />
                   <Route path="/profile" element={<Profile />} />
                   <Route path="/verified-sources" element={<VerifiedSources />} />
