@@ -6,6 +6,10 @@ import { useCredits } from "@/hooks/useCredits";
 import { CREDIT_COSTS } from "@/lib/creditCosts";
 import { InsufficientCreditsDialog } from "@/components/InsufficientCreditsDialog";
 import { toast } from "sonner";
+import { MessageSquare } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { ResearchConversationSidebar } from "./ResearchConversationSidebar";
 import { ResearchChatMessage } from "./ResearchChatMessage";
 import { ConversationComposer, type ComposerHandle } from "./ConversationComposer";
 import {
@@ -50,6 +54,7 @@ export function ResearchConversationPanel() {
   const [sending, setSending] = useState(false);
   const [loadingConv, setLoadingConv] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const [insufficient, setInsufficient] = useState({ open: false, required: CREDIT_COSTS.research, remaining: 0 });
 
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -221,6 +226,25 @@ export function ResearchConversationPanel() {
 
   return (
     <div className="h-full flex flex-col" dir="rtl">
+      <div className="md:hidden flex items-center justify-between pt-2">
+        <Sheet open={drawerOpen} onOpenChange={setDrawerOpen}>
+          <SheetTrigger asChild>
+            <Button variant="outline" size="sm" className="gap-1.5 text-xs">
+              <MessageSquare className="w-3.5 h-3.5" />
+              שיחות
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="right" className="p-0 w-72">
+            <ResearchConversationSidebar
+              projectId={currentProject?.id ?? null}
+              onNavigate={() => setDrawerOpen(false)}
+            />
+          </SheetContent>
+        </Sheet>
+        {conversation?.title && (
+          <span className="text-xs text-muted-foreground truncate max-w-[60%]">{conversation.title}</span>
+        )}
+      </div>
       <div
         ref={scrollRef}
         onScroll={(e) => {
