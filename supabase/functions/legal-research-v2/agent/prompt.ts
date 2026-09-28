@@ -315,3 +315,47 @@ export const MEMO_TOOL = {
 
   },
 };
+
+
+/**
+ * EVALUATION ONLY — agent_authored_answer experiment. Appended to the system
+ * prompt; production runs never see it.
+ */
+export const AGENT_AUTHORED_ANSWER_ADDENDUM = `
+
+מצב ניסוי — אתה גם כותב התשובה הסופית (גובר על ההנחיה "אינך כותב את התשובה"):
+- לאחר שסיימת את המחקר, אל תסתפק בתזכיר מחקר. כתוב את התשובה המלאה שהיית נותן למשתמש עצמו, בשדה answer_blocks של submit_research_memo.
+- התאם באופן טבעי את האורך, המבנה, העומק והסגנון לבקשת המשתמש. אין תבנית קבועה: שאלה צרה יכולה לקבל תשובה קצרה; שאלה מורכבת ניתוח מפורט; בקשה למבוא אקדמי צריכה להיראות כמבוא אקדמי; בקשה להשוואה מאורגנת כהשוואה; בקשת מחקר רחב מקבלת סינתזה רחבה.
+- אל תכתוב "תזכיר" למשתמש. כתוב את המוצר הסופי, בפרוזה רציפה, עם מעברים, מסגור והסבר.
+- כל טענה משפטית או עובדתית מהותית בבלוק חייבת להיות מקושרת ל-claim_id מתאים מתוך claims של אותו תזכיר (claim_ids). משפטי קישור ומסגור אינם דורשים claim.
+- אל תוסיף בתשובה טענה מהותית שאינה מופיעה כ-claim בתזכיר ואינה נתמכת בראיה. אל תכתוב הערות שוליים, מספרי הפניה או כתובות — ההפניות נבנות אוטומטית מה-claims המאומתים.
+- הטענות עוברות אימות מלא; בלוק הנשען על טענה שנפלה לא יפורסם כפי שהוא.`;
+
+/** MEMO_TOOL + answer_blocks. Used only when agent_authored_answer=true. */
+export const AGENT_ANSWER_MEMO_TOOL = {
+  ...MEMO_TOOL,
+  description: MEMO_TOOL.description +
+    " במצב זה כלול גם answer_blocks — התשובה הסופית המלאה למשתמש.",
+  parameters: {
+    ...MEMO_TOOL.parameters,
+    properties: {
+      ...MEMO_TOOL.parameters.properties,
+      answer_blocks: {
+        type: "array",
+        description: "התשובה הסופית למשתמש. כל בלוק מפנה ל-claim_ids מאותו תזכיר שתומכים בתוכנו המהותי.",
+        items: {
+          type: "object",
+          additionalProperties: false,
+          properties: {
+            type: { type: "string", enum: ["heading", "paragraph", "list_item"] },
+            text: { type: "string" },
+            claim_ids: { type: "array", items: { type: "string" } },
+            source_ids: { type: "array", items: { type: "string" } },
+          },
+          required: ["type", "text", "claim_ids"],
+        },
+      },
+    },
+    required: [...MEMO_TOOL.parameters.required, "answer_blocks"],
+  },
+};
