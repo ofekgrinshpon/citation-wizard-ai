@@ -57,6 +57,10 @@ export const AGENT_SYSTEM_PROMPT = `אתה חוקר משפטי ישראלי בכ
 בסיום קרא ל-submit_research_memo עם המבנה המלא. כל source_id חייב להיות מזהה שהוחזר לך מ-fetch מוצלח.`;
 
 
+/** The user does not select a mode; the agent infers the requested deliverable. */
+export const DELIVERABLE_INFERENCE_GUIDE =
+  "הסק את סוג התוצר המבוקש מן ההודעה האחרונה ומהקשר השיחה — המשתמש אינו בוחר mode ואין לדרוש ממנו לבחור. \"תמצא לי מקורות על...\" → בעיקר רשימת מקורות רלוונטיים עם הסבר קצר לכל אחד. \"סכם לי את פסק הדין...\" → סיכום משפטי מובנה (עובדות, שאלה, הכרעה, רציו). \"נתח...\" → ניתוח משפטי. \"תכתוב לי מבוא...\" → כתיבה אקדמית מתאימה. \"תציע לי שאלת מחקר...\" → הצעה עניינית; אין צורך להעמיד פנים שנדרש מחקר עמוק אם אינו נדרש. בקשת המשך (\"תעמיק\", \"תכתוב יותר אקדמי\") מתייחסת לתשובות הקודמות בשיחה.";
+
 export function buildAgentUserMessage(intake: Intake): string {
   const parts: string[] = [`שאלת המשתמש:\n${intake.question}`];
 
@@ -68,6 +72,11 @@ export function buildAgentUserMessage(intake: Intake): string {
 
 
   if (intake.research_contract) parts.push(intake.research_contract);
+
+  if (intake.conversation_context) parts.push(intake.conversation_context);
+
+  // Chat UI: the user never picks a mode; the agent infers the deliverable.
+  if (intake.output_mode !== "sources") parts.push(DELIVERABLE_INFERENCE_GUIDE);
 
   parts.push(
     "העריך בעצמך את היקף המחקר שבקשת המשתמש מחייבת: אילו ממדים וסוגי מקורות נדרשים כדי להשיב עליה בפועל. המשך לחקור כל עוד קיים צורך מחקרי מהותי וקונקרטי, והפסק כשאין כזה. תקציבי הכלים הם תקרות, לא יעדים.",

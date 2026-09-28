@@ -118,6 +118,8 @@ export interface Intake {
    * answer drafter. Nothing else in the pipeline branches on this.
    */
   output_mode?: "answer" | "sources";
+  /** Chat UI: prior conversation turns. Framing only — never evidence. */
+  conversation_context?: string | null;
 }
 
 export interface ToolBudgets {
