@@ -16,7 +16,7 @@
  */
 
 export type ForeignLookupKind = "case" | "journal_article" | "book" | "book_chapter";
-export type ForeignLookupJurisdiction = "US" | "UK" | "OTHER";
+export type ForeignLookupJurisdiction = "US" | "UK" | "OTHER" | "UNKNOWN";
 
 export interface ForeignLookupInput {
   kind: ForeignLookupKind;
@@ -53,8 +53,20 @@ export interface ForeignLookupResult {
     { value: string; sourceUrl?: string; sourceTitle?: string; basis: GroundingBasis }
   >;
   sources: Array<{ url: string; title?: string; tier: "tier1" | "tier2" }>;
-  identity: { matched: boolean; anchors: string[]; conflicts: string[] };
-  diagnostics: { tier1Queried: boolean; tier2Fired: boolean };
+  identity: {
+    matched: boolean;
+    anchors: string[];
+    conflicts: string[];
+    /** Verified jurisdiction (set only once resolved from evidence). */
+    jurisdiction?: "US" | "UK";
+    /** True when the jurisdiction was discovered by the lookup, not given. */
+    jurisdictionDiscovered?: boolean;
+    court?: string;
+    year?: string;
+  };
+  /** Two or more plausible, different records — the user must choose. */
+  disambiguation?: Array<{ jurisdiction: "US" | "UK"; label: string; url: string }>;
+  diagnostics: { tier1Queried: boolean; tier2Fired: boolean; jurisdictionResolvedBy?: string };
   error?: string;
 }
 
@@ -95,6 +107,9 @@ const TIER1_HINTS: Record<string, string[]> = {
 };
 
 function tier1Hints(kind: ForeignLookupKind, jurisdiction: ForeignLookupJurisdiction): string[] {
+  if (kind === "case" && isUnresolvedJurisdiction(jurisdiction)) {
+    return [...TIER1_HINTS["case:US"], ...TIER1_HINTS["case:UK"]];
+  }
   if (kind === "case") return TIER1_HINTS[`case:${jurisdiction}`] ?? [];
   return TIER1_HINTS.academic;
 }
@@ -611,6 +626,54 @@ export async function runForeignLookup(
   }
   empty.identity.matched = true;
 
+  // ── Identity discovery: resolve jurisdiction from evidence, never guess ──
+  if (input.kind === "case" && isUnresolvedJurisdiction(input.jurisdiction)) {
+    const strongIds = identitySources.filter((s) => s.strong);
+    const records: Array<{ jurisdiction: "US" | "UK"; sig: string; label: string; url: string; rank: number }> = [];
+    for (const s of strongIds) {
+      const r = resolveRecordJurisdiction(s);
+      if (r) records.push(r);
+    }
+    if (records.length === 0) {
+      empty.identity.matched = false;
+      empty.identity.conflicts.push("jurisdiction_unresolved");
+      return empty;
+    }
+    const jurs = new Set(records.map((r) => r.jurisdiction));
+    // Distinct records with a concrete citation signature.
+    const bySig = new Map<string, (typeof records)[number]>();
+    for (const r of records) if (r.sig && !bySig.has(r.sig)) bySig.set(r.sig, r);
+    const counts = new Map<string, number>();
+    for (const r of records) if (r.sig) counts.set(r.sig, (counts.get(r.sig) ?? 0) + 1);
+    const sorted = [...counts.entries()].sort((a, b) => b[1] - a[1]);
+    const tieAtTop = sorted.length > 1 && sorted[0][1] === sorted[1][1];
+    const noUserAnchor = !input.parsedFields?.court && !input.parsedFields?.year &&
+      !/\b(19|20)\d{2}\b/.test(input.rawInput);
+    if (jurs.size > 1 || (tieAtTop && noUserAnchor)) {
+      empty.identity.matched = false;
+      empty.identity.conflicts.push(jurs.size > 1 ? "ambiguous_jurisdiction" : "ambiguous_record");
+      const opts = bySig.size ? [...bySig.values()] : records;
+      empty.disambiguation = opts
+        .sort((a, b) => a.rank - b.rank)
+        .slice(0, 5)
+        .map((r) => ({ jurisdiction: r.jurisdiction, label: r.label, url: r.url }));
+      return empty;
+    }
+    const resolved = [...jurs][0];
+    input = { ...input, jurisdiction: resolved };
+    empty.jurisdiction = resolved;
+    empty.identity.jurisdiction = resolved;
+    empty.identity.jurisdictionDiscovered = true;
+    empty.diagnostics.jurisdictionResolvedBy = records[0].url;
+    // Keep only identity sources consistent with the resolved jurisdiction.
+    for (let i = identitySources.length - 1; i >= 0; i--) {
+      const r = resolveRecordJurisdiction(identitySources[i]);
+      if (r && r.jurisdiction !== resolved) identitySources.splice(i, 1);
+    }
+  } else if (input.kind === "case" && (input.jurisdiction === "US" || input.jurisdiction === "UK")) {
+    empty.identity.jurisdiction = input.jurisdiction;
+  }
+
   // ── Per-source extraction + grounding ────────────────────────────────────
   // Weak sources assist discovery but never ground fields alone.
   const userCourt = input.parsedFields?.court;
@@ -768,7 +831,44 @@ export async function runForeignLookup(
     };
   }
 
+  if (input.kind === "case") {
+    empty.identity.court = empty.fields.court ?? input.parsedFields?.court;
+    empty.identity.year = empty.fields.year ?? userYear;
+  }
   return empty;
+}
+
+export function isUnresolvedJurisdiction(j: ForeignLookupJurisdiction): boolean {
+  return j === "UNKNOWN" || j === "OTHER";
+}
+
+const UK_HOST_RE = /(^|\.)(bailii\.org|supremecourt\.uk|nationalarchives\.gov\.uk|judiciary\.uk|legislation\.gov\.uk)$|\.uk$/;
+const US_HOST_RE = /(^|\.)(courtlistener\.com|law\.cornell\.edu|justia\.com|supremecourt\.gov|uscourts\.gov|govinfo\.gov|casetext\.com)$/;
+
+/**
+ * Determine the jurisdiction of ONE identity-matched source from its own
+ * evidence: an explicit citation form first, the host of an official /
+ * recognised database second. Returns null when the source proves nothing.
+ */
+export function resolveRecordJurisdiction(
+  s: { url: string; title?: string; snippet?: string },
+): { jurisdiction: "US" | "UK"; sig: string; label: string; url: string; rank: number } | null {
+  const ev = `${s.title ?? ""} ${s.snippet ?? ""}`;
+  const q = classifySource(s.url);
+  const rank = q === "official" ? 0 : q === "database" ? 1 : 2;
+  const label = (s.title ?? s.url).slice(0, 160);
+  const uk = extractCaseFromEvidence(ev, "UK");
+  if (uk && (uk.neutral || uk.ukSeries)) {
+    return { jurisdiction: "UK", sig: `UK|${uk.year ?? ""}|${uk.neutral ?? ""}|${uk.ukSeries ?? ""}|${uk.firstPage ?? ""}`, label, url: s.url, rank };
+  }
+  const us = extractCaseFromEvidence(ev, "US");
+  if (us && (us.volume || us.docket || us.databaseIdentifier)) {
+    return { jurisdiction: "US", sig: `US|${us.volume ?? ""}|${us.reporter ?? ""}|${us.firstPage ?? ""}|${us.docket ?? ""}|${us.databaseIdentifier ?? ""}`, label, url: s.url, rank };
+  }
+  const host = hostOf(s.url) ?? "";
+  if (UK_HOST_RE.test(host)) return { jurisdiction: "UK", sig: "", label, url: s.url, rank };
+  if (US_HOST_RE.test(host)) return { jurisdiction: "US", sig: "", label, url: s.url, rank };
+  return null;
 }
 
 function normalizeCourtName(s: string): string {
