@@ -2495,7 +2495,8 @@ export function LegalQAChat({ onResultSaved, externalResult, onConsumeExternalRe
       {/* Top section: Mode Cards */}
       <div className="px-2 sm:px-4 pt-3 pb-1.5 space-y-2.5">
 
-        <div className="grid grid-cols-2 gap-2">
+        {/* Mode cards hidden while Academic Writing is off — the chat infers the task. */}
+        <div className={ACADEMIC_WRITING_ENABLED ? "grid grid-cols-2 gap-2" : "hidden"}>
           {TASK_MODES.filter((m) => TOP_LEVEL_MODE_IDS.includes(m.id)).map((m) => {
             const isSelected = m.id === "research"
               ? RESEARCH_INTENT_IDS.includes(taskMode)
