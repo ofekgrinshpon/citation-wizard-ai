@@ -25,7 +25,7 @@ import {
   type SupabaseClient,
 } from "./shared/primitives.ts";
 import { modelConfig, newUsageLedger, separateDrafterEnabled, type UsageLedger } from "./shared/model.ts";
-import { routeModel } from "./beta/modelRouter.ts";
+import { routeModel, answerDirectChat, OUT_OF_SCOPE_REPLY_HE } from "./beta/modelRouter.ts";
 import type { ModelRoute } from "./beta/modelRouter.ts";
 import { clarificationMessageText, loadOwnedConversationContext, postAssistantMessage } from "./beta/conversation.ts";
 import { AWAITING_USER_STATUS, applyUserReply, type AskUserRequest, normalizeReply } from "./beta/clarification.ts";
@@ -1203,6 +1203,10 @@ async function runPipeline(
     /** Architecture + answer verification. */
     ...agentAnswerTelemetry,
     agent_model: agentModel,
+    router_action: intake.model_route?.action ?? null,
+    router_model_choice: intake.model_route?.model ?? null,
+    router_reason: intake.model_route?.reason ?? null,
+    research_started: true,
     model_selected: intake.model_route?.model ?? null,
     model_route_reason: intake.model_route?.reason ?? null,
     model_route_source: intake.model_route?.source ?? null,
@@ -1705,6 +1709,89 @@ serve(async (req) => {
       return json({ ok: true, job_id: existing.id, status: existing.status, reused: true }, 202);
     }
 
+    // Attachments travel with the same authenticated request the client
+    // already sends; only the destination function changed. Ownership is
+    // validated at extraction time against this user's storage prefix.
+    const rawAttachments = Array.isArray(body.attachments) ? body.attachments : [];
+    const attachmentInputs = rawAttachments
+      .filter((a): a is Record<string, unknown> => !!a && typeof a === "object")
+      .map((a) => ({
+        storage_path: String(a.storage_path ?? ""),
+        file_name: String(a.file_name ?? ""),
+        mime_type: String(a.mime_type ?? ""),
+        size: typeof a.size === "number" ? a.size : undefined,
+      }))
+      .filter((a) => a.storage_path && a.file_name)
+      .slice(0, 5);
+
+    const conv = await loadOwnedConversationContext(userClient, body.conversation_id);
+    const triggerMessageId = conv.conversationId && typeof body.trigger_message_id === "string"
+      ? body.trigger_message_id
+      : null;
+    const conversationContext = sourceSearch || academicContext ? null : conv.context;
+    // Sol/Astra routing happens once, before research. The chosen model then
+    // runs freely under the existing hard ceilings; no escalation.
+    const modelRoute = sourceSearch ? null : await routeModel({
+      question,
+      conversation_context: conversationContext,
+      has_attachments: attachmentInputs.length > 0,
+      academic: !!academicContext,
+      allow_direct: !!conv.conversationId,
+    });
+
+    // ── Direct turns (out_of_scope / chat): no lock, no charge, no research,
+    // no verifier, no footnotes. A finished job row carries the reply so the
+    // chat's normal job polling picks it up.
+    if (modelRoute && modelRoute.action !== "research" && conv.conversationId) {
+      const direct = modelRoute.action === "chat"
+        ? await answerDirectChat({ question, conversation_context: conversationContext })
+        : null;
+      const content = modelRoute.action === "out_of_scope"
+        ? OUT_OF_SCOPE_REPLY_HE
+        : direct?.ok ? direct.content : CHAT_FAILURE_HE;
+      const telemetry = {
+        router_action: modelRoute.action,
+        router_model_choice: modelRoute.model,
+        router_reason: modelRoute.reason,
+        router_source: modelRoute.source,
+        router_ms: modelRoute.router_ms,
+        router_error: modelRoute.router_error,
+        research_started: false,
+        search_calls: 0,
+        runtime_ms: modelRoute.router_ms + (direct?.ms ?? 0),
+        prompt_tokens: modelRoute.router_prompt_tokens + (direct?.prompt_tokens ?? 0),
+        completion_tokens: modelRoute.router_completion_tokens + (direct?.completion_tokens ?? 0),
+        direct_model: direct?.model_id ?? null,
+        direct_error: direct?.error ?? null,
+        credits_charged: 0,
+      };
+      const now = new Date().toISOString();
+      const { data: dj, error: djErr } = await admin.from("legal_research_jobs").insert({
+        user_id: user.id,
+        project_id: projectId,
+        question,
+        conversation_id: conv.conversationId,
+        trigger_message_id: triggerMessageId,
+        status: "done",
+        client_request_id: clientRequestId,
+        credit_request_id: null,
+        current_stage: "done",
+        progress_label_he: null,
+        completed_stages: [],
+        started_at: now,
+        finished_at: now,
+        result: { direct: true, telemetry },
+      }).select("id").maybeSingle();
+      if (djErr || !dj?.id) return json({ error: "job_create_failed", detail: djErr?.message ?? null }, 500);
+      await postAssistantMessage(admin, dj.id, {
+        kind: "text",
+        content,
+        metadata: { direct: true, router_action: modelRoute.action, telemetry },
+      });
+      return json({ ok: true, job_id: dj.id, status: "done", action: modelRoute.action }, 200);
+    }
+
+
     // ── Account-level concurrency protection ────────────────────────────
     // Acquired BEFORE any credit charge: a refused second attempt costs the
     // user nothing and never reaches a model provider. Answer mode and source
@@ -1763,34 +1850,6 @@ serve(async (req) => {
     // Admin accounts record a zero-delta consume; those are never refunded.
     const creditRequestId = cr.admin ? null : clientRequestId;
 
-    // Attachments travel with the same authenticated request the client
-    // already sends; only the destination function changed. Ownership is
-    // validated at extraction time against this user's storage prefix.
-    const rawAttachments = Array.isArray(body.attachments) ? body.attachments : [];
-    const attachmentInputs = rawAttachments
-      .filter((a): a is Record<string, unknown> => !!a && typeof a === "object")
-      .map((a) => ({
-        storage_path: String(a.storage_path ?? ""),
-        file_name: String(a.file_name ?? ""),
-        mime_type: String(a.mime_type ?? ""),
-        size: typeof a.size === "number" ? a.size : undefined,
-      }))
-      .filter((a) => a.storage_path && a.file_name)
-      .slice(0, 5);
-
-    const conv = await loadOwnedConversationContext(userClient, body.conversation_id);
-    const triggerMessageId = conv.conversationId && typeof body.trigger_message_id === "string"
-      ? body.trigger_message_id
-      : null;
-    const conversationContext = sourceSearch || academicContext ? null : conv.context;
-    // Sol/Astra routing happens once, before research. The chosen model then
-    // runs freely under the existing hard ceilings; no escalation.
-    const modelRoute = sourceSearch ? null : await routeModel({
-      question,
-      conversation_context: conversationContext,
-      has_attachments: attachmentInputs.length > 0,
-      academic: !!academicContext,
-    });
     const betaIntake = buildIntake({
       run_id: crypto.randomUUID(),
       question,

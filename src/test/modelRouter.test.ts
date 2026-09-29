@@ -5,6 +5,8 @@ import {
   routeModel,
   ROUTE_MODELS,
   buildRouterUserMessage,
+  answerDirectChat,
+  OUT_OF_SCOPE_REPLY_HE,
 } from "../../supabase/functions/legal-research-v2/beta/modelRouter.ts";
 
 const ok = (content: string) => async () => ({
@@ -61,5 +63,51 @@ describe("Sol/Astra router", () => {
     expect(idx).toMatch(/model_selected: intake\.model_route/);
     const router = readFileSync("supabase/functions/legal-research-v2/beta/modelRouter.ts", "utf8");
     expect(router).not.toMatch(/budgets|max_agent_steps|verifyClaim/);
+  });
+
+  const route = (json: string, extra: Record<string, unknown> = {}) =>
+    routeModel({ question: "q", has_attachments: false, allow_direct: true, ...extra } as never, { chat: ok(json) });
+
+  it("A1 recipe → out_of_scope, Sol, no research", async () => {
+    const r = await route('{"action":"out_of_scope","model":"astra","reason":"לא משפטי"}', { question: "כתוב לי מתכון לעוגה" });
+    expect(r.action).toBe("out_of_scope");
+    expect(r.model).toBe("sol");
+    expect(OUT_OF_SCOPE_REPLY_HE).toMatch(/עוזר משפטי/);
+  });
+
+  it("A2 follow-up clarification → chat on Sol", async () => {
+    const r = await route('{"action":"chat","model":"sol","reason":"הבהרה"}', { question: "מה התכוונת במה שאמרת קודם?" });
+    expect(r.action).toBe("chat");
+    expect(r.model_id).toBe(ROUTE_MODELS.sol);
+  });
+
+  it("A3 case-law search / original research question → research", async () => {
+    expect((await route('{"action":"research","model":"sol","reason":"איתור"}')).action).toBe("research");
+    const q = await route('{"action":"research","model":"astra","reason":"מקוריות"}');
+    expect(q.action).toBe("research");
+    expect(q.model).toBe("astra");
+  });
+
+  it("A4 general topics may be chat; old {model} output still means research", async () => {
+    expect((await route('{"action":"chat","model":"sol","reason":"x"}')).action).toBe("chat");
+    expect(parseRouterOutput('{"model":"sol"}')?.action).toBe("research");
+    expect(parseRouterOutput('{"action":"banana","model":"sol"}')).toBeNull();
+  });
+
+  it("A5 direct turns are impossible with attachments or outside the chat", async () => {
+    expect((await route('{"action":"chat","model":"sol"}', { has_attachments: true })).action).toBe("research");
+    expect((await route('{"action":"out_of_scope","model":"sol"}', { allow_direct: false })).action).toBe("research");
+  });
+
+  it("A6 direct chat answer is a single Sol call; direct path skips search/verifier/footnotes/charge", async () => {
+    let model = "";
+    const r = await answerDirectChat({ question: "q" }, { chat: (async (a: { model: string }) => { model = a.model; return { ok: true, content: "תשובה", prompt_tokens: 1, completion_tokens: 1 }; }) as never });
+    expect(r.ok).toBe(true);
+    expect(model).toBe(ROUTE_MODELS.sol);
+    const idx = readFileSync("supabase/functions/legal-research-v2/index.ts", "utf8");
+    const direct = idx.slice(idx.indexOf("Direct turns (out_of_scope / chat)"), idx.indexOf("Account-level concurrency protection"));
+    expect(direct).not.toMatch(/"consume_credits"|driveRun\(|verifyClaim|footnotes:/);
+    expect(direct).toMatch(/research_started: false/);
+    expect(idx.indexOf("Direct turns")).toBeLessThan(idx.indexOf('"consume_credits"'));
   });
 });
