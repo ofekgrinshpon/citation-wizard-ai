@@ -1798,7 +1798,7 @@ serve(async (req) => {
           : undefined;
       if (
         ["case", "journal_article", "book", "book_chapter"].includes(flKind) &&
-        ["US", "UK", "OTHER"].includes(flJur) &&
+        ["US", "UK", "OTHER", "UNKNOWN"].includes(flJur) &&
         flRaw.trim()
       ) {
         const pplxKey = Deno.env.get("PERPLEXITY_API_KEY");
@@ -1814,7 +1814,10 @@ serve(async (req) => {
           }
           // Identity matched + at least one grounded new field → the client
           // renders deterministically; no model call needed for this request.
-          if (foreignLookupResult?.identity.matched && Object.keys(foreignLookupResult.fields).length > 0) {
+          if (
+            (foreignLookupResult?.identity.matched && Object.keys(foreignLookupResult.fields).length > 0) ||
+            (foreignLookupResult?.disambiguation && foreignLookupResult.disambiguation.length > 1)
+          ) {
             return new Response(JSON.stringify({ content: "", foreignLookup: foreignLookupResult }), {
               headers: { ...corsHeaders, "Content-Type": "application/json" },
             });
