@@ -24,8 +24,57 @@ import { detectForeignSource } from "@/data/bluebook/extract";
 import {
   isForeignSourceType,
   toForeignIdentity,
+  toSourceType,
   type ForeignFields,
+  type ForeignJurisdiction,
+  type ForeignSourceKind,
 } from "@/data/bluebook/types";
+import type { ForeignDetection } from "@/data/bluebook/extract";
+
+interface ForeignLookupResponse {
+  identity?: { matched?: boolean; jurisdiction?: "US" | "UK" };
+  fields?: Record<string, string>;
+  disambiguation?: Array<{ jurisdiction: "US" | "UK"; label: string; url: string }>;
+}
+
+/** "X v. Y" shape (any common-law jurisdiction). */
+const FOREIGN_CASE_SHAPE = /[A-Za-z][^\n]*?\s+v(?:s)?\.?\s+[A-Za-z]/;
+
+export function extractForeignCaseName(raw: string): string | null {
+  const m = raw.match(/^\s*(.+?\s+v(?:s)?\.?\s+.+?)(?:\s*[,(\[]\s*(?:\d|\[)|\s*\(|\s*\[|$)/);
+  return m ? m[1].trim().replace(/[,\s]+$/, "") : null;
+}
+
+/**
+ * Decide whether a foreign input is eligible for the grounded lookup and
+ * with which jurisdiction. A case-shaped input without an explicit
+ * US/UK anchor goes out as "UNKNOWN": the lookup verifies the jurisdiction
+ * from the matched record instead of the client guessing it.
+ */
+export function planForeignLookup(
+  sourceType: SourceType,
+  raw: string,
+  detection: ForeignDetection | null,
+): { kind: ForeignSourceKind; jurisdiction: "US" | "UK" | "OTHER" | "UNKNOWN" } | null {
+  const identity = toForeignIdentity(sourceType);
+  const caseShaped = FOREIGN_CASE_SHAPE.test(raw);
+  if (detection && detection.kind === "case" && (detection.jurisdiction === "US" || detection.jurisdiction === "UK")) {
+    return { kind: "case", jurisdiction: detection.jurisdiction };
+  }
+  if (identity && ["journal_article", "book", "book_chapter"].includes(identity.kind)) {
+    return { kind: identity.kind, jurisdiction: identity.jurisdiction };
+  }
+  if (identity?.kind === "case" || ((sourceType === "foreign") && caseShaped)) {
+    if (!caseShaped) return null;
+    // Explicit anchors in the text itself (court / reporter) are fast-path identity.
+    if (identity?.kind === "case" && identity.jurisdiction === "US" && /\b(Cir\.|U\.S\.|F\.\s?(?:2d|3d|4th|Supp)|S\.D\.N\.Y\.|D\.\s?[A-Z])/.test(raw)) {
+      return { kind: "case", jurisdiction: "US" };
+    }
+    if (/\b(UKSC|UKHL|EWCA|EWHC|UKPC|WLR|All ER)\b/.test(raw)) return { kind: "case", jurisdiction: "UK" };
+    return { kind: "case", jurisdiction: "UNKNOWN" };
+  }
+  return null;
+}
 
 /** Pinpoint references (סעיף / עמ' / פסקה …) are not master sources. */
 export const PINPOINT_RE =
@@ -185,22 +234,22 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
     ? detectForeignSource(normalized)
     : null;
   if (!isPinpoint && isForeignSourceType(sourceType)) {
-    const identity = toForeignIdentity(sourceType);
-    if (
-      identity &&
-      ["case", "journal_article", "book", "book_chapter"].includes(identity.kind) &&
-      (identity.jurisdiction === "US" || identity.jurisdiction === "UK")
-    ) {
+    const plan = planForeignLookup(sourceType, normalized, foreignDetection);
+    if (plan) {
       const parsedFields: Record<string, string> = {};
       if (foreignDetection) {
         for (const [k, v] of Object.entries(foreignDetection.fields as Record<string, unknown>)) {
           if (typeof v === "string" && v.trim()) parsedFields[k] = v.trim();
         }
       }
+      if (plan.kind === "case" && !parsedFields.caseName) {
+        const name = extractForeignCaseName(normalized);
+        if (name) parsedFields.caseName = name;
+      }
       foreignLookupRequest = {
         enabled: true,
-        kind: identity.kind,
-        jurisdiction: identity.jurisdiction,
+        kind: plan.kind,
+        jurisdiction: plan.jurisdiction,
         rawInput: normalized,
         parsedFields,
       };
@@ -244,47 +293,65 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
   // 3a) M2B: grounded foreign metadata returned → merge + deterministic render.
   // User-supplied identity anchors win; grounded lookup fields fill the gaps;
   // anything ungrounded stays [חסר: …] via the existing renderer behavior.
-  const fl = (data as { foreignLookup?: {
-    identity?: { matched?: boolean };
-    fields?: Record<string, string>;
-  } } | null)?.foreignLookup;
+  const fl = (data as { foreignLookup?: ForeignLookupResponse } | null)?.foreignLookup;
+  if (foreignLookupRequest && fl?.disambiguation && fl.disambiguation.length > 1) {
+    const lines = fl.disambiguation.map(
+      (o, i) => `${i + 1}. ${o.label} (${o.jurisdiction === "UK" ? "בריטניה" : "ארה\"ב"}) — ${o.url}`,
+    );
+    const reply = `נמצאו כמה פסקי דין אפשריים בשם זה. כדי לא לנחש, בחרו את הנכון והוסיפו את הערכאה או השנה:\n${lines.join("\n")}`;
+    return {
+      reply,
+      citation: "",
+      sourceType,
+      sourceLabel: SOURCE_TYPE_LABELS[sourceType],
+      fromVerifiedStore: false,
+      status: "warning",
+      warningMsg: "נדרשת בחירה בין כמה פסקי דין",
+    };
+  }
   if (foreignLookupRequest && fl?.identity?.matched && fl.fields && Object.keys(fl.fields).length > 0) {
-    const identity = toForeignIdentity(sourceType)!;
-    const baseFields: Record<string, unknown> = { ...(fl.fields as Record<string, unknown>) };
-    if (foreignDetection) {
+    const req = foreignLookupRequest as { kind: ForeignSourceKind; jurisdiction: string; parsedFields: Record<string, string> };
+    // Jurisdiction comes from the verified record when the input did not state it.
+    const resolvedJur: ForeignJurisdiction | null =
+      req.kind === "case"
+        ? (fl.identity.jurisdiction ?? (req.jurisdiction === "US" || req.jurisdiction === "UK" ? req.jurisdiction : null))
+        : ((req.jurisdiction as ForeignJurisdiction) ?? "OTHER");
+    if (resolvedJur) {
+      const effectiveType = req.kind === "case" ? toSourceType("case", resolvedJur) : sourceType;
+      const baseFields: Record<string, unknown> = { ...(fl.fields as Record<string, unknown>) };
       // Never overwrite what the user supplied; lookup only fills gaps.
-      for (const [k, v] of Object.entries(foreignDetection.fields as Record<string, unknown>)) {
+      for (const [k, v] of Object.entries(req.parsedFields)) {
         if (typeof v === "string" && v.trim()) baseFields[k] = v.trim();
       }
-    }
-    const detection = {
-      sourceType,
-      kind: identity.kind,
-      jurisdiction: identity.jurisdiction,
-      confidence: "deterministic" as const,
-      fields: baseFields as unknown as ForeignFields,
-    };
-    const rendered = renderForeignDetection(detection);
-    if (rendered && rendered.citation.trim()) {
-      const missingSummary =
-        rendered.missing.length > 0
-          ? getMissingFieldsSummary(sourceType, rendered.missing)
-          : null;
-      const warningBits = [...rendered.warnings];
-      if (missingSummary) warningBits.push(`חסרים פרטים לפי כלל 36.4: ${missingSummary}`);
-      const hasMissing = rendered.missing.length > 0;
-      const reply = hasMissing || warningBits.length
-        ? `${rendered.citation}\n⚠️ ${warningBits.join(" ") || missingSummary}`
-        : rendered.citation;
-      return {
-        reply,
-        citation: rendered.citation,
-        sourceType,
-        sourceLabel: SOURCE_TYPE_LABELS[sourceType],
-        fromVerifiedStore: false,
-        status: hasMissing || warningBits.length ? "warning" : "valid",
-        warningMsg: warningBits[0],
+      const detection = {
+        sourceType: effectiveType,
+        kind: req.kind,
+        jurisdiction: resolvedJur,
+        confidence: "deterministic" as const,
+        fields: baseFields as unknown as ForeignFields,
       };
+      const rendered = renderForeignDetection(detection);
+      if (rendered && rendered.citation.trim()) {
+        const missingSummary =
+          rendered.missing.length > 0
+            ? getMissingFieldsSummary(effectiveType, rendered.missing)
+            : null;
+        const warningBits = [...rendered.warnings];
+        if (missingSummary) warningBits.push(`חסרים פרטים: ${missingSummary}`);
+        const hasMissing = rendered.missing.length > 0;
+        const reply = hasMissing || warningBits.length
+          ? `${rendered.citation}\n⚠️ ${warningBits.join(" ") || missingSummary}`
+          : rendered.citation;
+        return {
+          reply,
+          citation: rendered.citation,
+          sourceType: effectiveType,
+          sourceLabel: SOURCE_TYPE_LABELS[effectiveType],
+          fromVerifiedStore: false,
+          status: hasMissing || warningBits.length ? "warning" : "valid",
+          warningMsg: warningBits[0],
+        };
+      }
     }
   }
 
