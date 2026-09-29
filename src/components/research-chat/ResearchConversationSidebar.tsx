@@ -110,8 +110,8 @@ export function ResearchConversationSidebar({
         </div>
       </div>
 
-      <ScrollArea className="flex-1">
-        <div className="p-2 space-y-3">
+      <ScrollArea className="flex-1 [&>[data-radix-scroll-area-viewport]>div]:!block">
+        <div className="p-2 space-y-3 w-full min-w-0 overflow-hidden">
           {groups.length === 0 && (
             <p className="text-xs text-muted-foreground text-center py-6">
               {query ? "לא נמצאו שיחות" : "עדיין אין שיחות"}
