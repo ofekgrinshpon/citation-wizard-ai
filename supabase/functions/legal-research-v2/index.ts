@@ -1779,6 +1779,7 @@ serve(async (req) => {
         progress_label_he: null,
         completed_stages: [],
         started_at: now,
+        finished_at: now,
         result: { direct: true, telemetry },
       }).select("id").maybeSingle();
       if (djErr || !dj?.id) return json({ error: "job_create_failed", detail: djErr?.message ?? null }, 500);
