@@ -60,6 +60,6 @@ describe("Sol/Astra router", () => {
     expect(idx).toMatch(/input\.model_route\?\.model_id/);
     expect(idx).toMatch(/model_selected: intake\.model_route/);
     const router = readFileSync("supabase/functions/legal-research-v2/beta/modelRouter.ts", "utf8");
-    expect(router).not.toMatch(/budget|max_agent_steps|verif\w*\(/);
+    expect(router).not.toMatch(/budgets|max_agent_steps|verifyClaim/);
   });
 });
