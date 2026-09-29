@@ -108,6 +108,16 @@ export function ResearchConversationPanel() {
     }, POLL_MS);
   }, [settle]);
 
+  // Switching project leaves the open conversation behind: start a fresh chat.
+  const projectRef = useRef<string | null | undefined>(undefined);
+  useEffect(() => {
+    const pid = currentProject?.id ?? null;
+    if (projectRef.current === undefined) { projectRef.current = pid; return; }
+    if (projectRef.current === pid) return;
+    projectRef.current = pid;
+    if (conversationId) navigate("/app");
+  }, [currentProject?.id, conversationId, navigate]);
+
   // Load the conversation named in the URL (refresh, deep link, sidebar).
   useEffect(() => {
     if (!conversationId) {
