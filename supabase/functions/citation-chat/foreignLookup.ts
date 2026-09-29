@@ -652,7 +652,10 @@ export async function runForeignLookup(
     if (jurs.size > 1 || (tieAtTop && noUserAnchor)) {
       empty.identity.matched = false;
       empty.identity.conflicts.push(jurs.size > 1 ? "ambiguous_jurisdiction" : "ambiguous_record");
-      const opts = bySig.size ? [...bySig.values()] : records;
+      const opts = [...bySig.values()];
+      for (const r of records) {
+        if (!opts.some((o) => o.jurisdiction === r.jurisdiction)) opts.push(r);
+      }
       empty.disambiguation = opts
         .sort((a, b) => a.rank - b.rank)
         .slice(0, 5)
