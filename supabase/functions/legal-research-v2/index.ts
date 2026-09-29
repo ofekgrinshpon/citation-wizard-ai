@@ -25,6 +25,8 @@ import {
   type SupabaseClient,
 } from "./shared/primitives.ts";
 import { modelConfig, newUsageLedger, separateDrafterEnabled, type UsageLedger } from "./shared/model.ts";
+import { routeModel } from "./beta/modelRouter.ts";
+import type { ModelRoute } from "./beta/modelRouter.ts";
 import { clarificationMessageText, loadOwnedConversationContext, postAssistantMessage } from "./beta/conversation.ts";
 import { AWAITING_USER_STATUS, applyUserReply, type AskUserRequest, normalizeReply } from "./beta/clarification.ts";
 import { EvidenceStore } from "./evidence/evidenceStore.ts";
@@ -149,6 +151,8 @@ export function buildIntake(input: {
   /** "sources" terminates in the Source Renderer instead of the drafter. */
   output_mode?: "answer" | "sources";
   conversation_context?: string | null;
+  /** Sol/Astra router decision (chat answer path). Sets the agent model. */
+  model_route?: ModelRoute | null;
 }): Intake {
   const question = (input.question ?? "").trim();
   const dockets = detectDockets(question).map((d) => ({
@@ -176,7 +180,8 @@ export function buildIntake(input: {
       ...(input.output_mode === "sources" ? SOURCE_SEARCH_BUDGETS : DEFAULT_BUDGETS),
       ...(input.budgets ?? {}),
     },
-    agent_model: input.agent_model?.trim() || null,
+    agent_model: input.agent_model?.trim() || input.model_route?.model_id || null,
+    model_route: input.model_route ?? null,
     // Production answer path: the agent writes the answer. Only the emergency
     // env rollback (V2_USE_SEPARATE_DRAFTER=true) restores the separate drafter.
     ...(input.output_mode !== "sources" && !separateDrafterEnabled()
@@ -1198,6 +1203,14 @@ async function runPipeline(
     /** Architecture + answer verification. */
     ...agentAnswerTelemetry,
     agent_model: agentModel,
+    model_selected: intake.model_route?.model ?? null,
+    model_route_reason: intake.model_route?.reason ?? null,
+    model_route_source: intake.model_route?.source ?? null,
+    model_router_model: intake.model_route?.router_model ?? null,
+    model_router_ms: intake.model_route?.router_ms ?? 0,
+    model_router_prompt_tokens: intake.model_route?.router_prompt_tokens ?? 0,
+    model_router_completion_tokens: intake.model_route?.router_completion_tokens ?? 0,
+    model_router_error: intake.model_route?.router_error ?? null,
     agent_authored_answer: !!intake.agent_authored_answer,
     reasoning_effort: intake.agent_reasoning_effort ?? "medium",
     ask_user_enabled: !!intake.ask_user_enabled,
@@ -1769,10 +1782,20 @@ serve(async (req) => {
     const triggerMessageId = conv.conversationId && typeof body.trigger_message_id === "string"
       ? body.trigger_message_id
       : null;
+    const conversationContext = sourceSearch || academicContext ? null : conv.context;
+    // Sol/Astra routing happens once, before research. The chosen model then
+    // runs freely under the existing hard ceilings; no escalation.
+    const modelRoute = sourceSearch ? null : await routeModel({
+      question,
+      conversation_context: conversationContext,
+      has_attachments: attachmentInputs.length > 0,
+      academic: !!academicContext,
+    });
     const betaIntake = buildIntake({
       run_id: crypto.randomUUID(),
       question,
-      conversation_context: sourceSearch || academicContext ? null : conv.context,
+      model_route: modelRoute,
+      conversation_context: conversationContext,
       attachment_text: null,
       attachments: attachmentInputs,
       attachment_owner_id: user.id,
