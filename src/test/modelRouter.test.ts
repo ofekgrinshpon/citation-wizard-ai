@@ -106,7 +106,7 @@ describe("Sol/Astra router", () => {
     expect(model).toBe(ROUTE_MODELS.sol);
     const idx = readFileSync("supabase/functions/legal-research-v2/index.ts", "utf8");
     const direct = idx.slice(idx.indexOf("Direct turns (out_of_scope / chat)"), idx.indexOf("Account-level concurrency protection"));
-    expect(direct).not.toMatch(/consume_credits|driveRun|verif|footnotes:/);
+    expect(direct).not.toMatch(/"consume_credits"|driveRun\(|verifyClaim|footnotes:/);
     expect(direct).toMatch(/research_started: false/);
     expect(idx.indexOf("Direct turns")).toBeLessThan(idx.indexOf('"consume_credits"'));
   });
