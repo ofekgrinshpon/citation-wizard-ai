@@ -9,8 +9,12 @@ import { ContactSection } from "@/components/ContactSection";
 import { ChevronDown, Check, Sparkles } from "lucide-react";
 import { PLANS, type PlanId } from "@/lib/plans";
 import { UsageLimitsInfoDialog } from "@/components/usage/UsageLimitsInfoDialog";
-import howItWorksVideo from "@/assets/relex-how-it-works.mp4.asset.json";
-import howItWorksPoster from "@/assets/relex-how-it-works-poster.jpg.asset.json";
+import howItWorksVideo from "@/assets/guide/ReLex_How_It_Works.mp4.asset.json";
+import howItWorksPoster from "@/assets/guide/poster.jpg.asset.json";
+import guideCitationImg from "@/assets/guide/citation.jpg.asset.json";
+import guideFootnotesImg from "@/assets/guide/footnotes.jpg.asset.json";
+import guideBibliographyImg from "@/assets/guide/bibliography.jpg.asset.json";
+import guideAssistantImg from "@/assets/guide/assistant.jpg.asset.json";
 
 function useInView(ref: RefObject<HTMLElement | null>, threshold = 0.15) {
   const [visible, setVisible] = useState(false);
