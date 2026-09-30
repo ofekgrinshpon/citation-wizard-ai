@@ -40,28 +40,28 @@ const capabilities: Capability[] = [
   {
     title: "העוזר המשפטי",
     description:
-      "מחקר משפטי, סיכום פסיקה, בקרה למסמכים וכתיבה אקדמית — עם תוצאות מובנות ומותאמות לעבודה משפטית.",
-    image: "/how-it-works/legal-assistant.png",
+      "שאלה משפטית בשפה שלכם — תשובה עם הפניות למקורות, והמשך שיחה באותו נושא.",
+    image: guideAssistantImg.url,
     highlight: true,
-    chips: ["מחקר משפטי", "סיכום פסיקה", "בקרה למסמכים", "כתיבה אקדמית"],
+    chips: ["שאלה חופשית", "הפניות למקורות", "המשך שיחה"],
   },
   {
     title: "אזכור אחיד",
     description:
-      "הפקת אזכור אחיד משפטי בעברית — בהתאם לכללי האזכור האחיד.",
-    image: "/how-it-works/uniform-citation.png",
+      "מפרטי מקור לאזכור מסודר — לפי כללי האזכור האחיד וה־Bluebook.",
+    image: guideCitationImg.url,
   },
   {
     title: "הערות שוליים",
     description:
-      "הוסיפו מספר מקורות ובנו הערות שוליים מסודרות באופן אוטומטי.",
-    image: "/how-it-works/step3.png",
+      "המקורות שלכם, לפי סדר ההופעה — כולל כללי האזכור החוזר.",
+    image: guideFootnotesImg.url,
   },
   {
     title: "ביבליוגרפיה",
     description:
-      "צרו רשימה ביבליוגרפית מסודרת ממספר מקורות.",
-    image: "/how-it-works/step4.png",
+      "מרשימת מקורות לביבליוגרפיה — מיון לפי קטגוריות וסדר אלפביתי, בעברית ובאנגלית.",
+    image: guideBibliographyImg.url,
   },
 ];
 
