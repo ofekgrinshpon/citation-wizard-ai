@@ -39,6 +39,7 @@ interface PendingIntegrity {
   rawInput: string;
   fullCitation: string;
   sourceType: string | null;
+  telemetry?: CostTelemetry;
 }
 
 type Phase = "input" | "review" | "final";
@@ -390,6 +391,7 @@ export function BatchFootnoteBuilder({}: BatchProps) {
               fullCitation,
               sourceType: label !== "לא ידוע" ? label : null,
               yearPreferences: prefs,
+              telemetry: cell.telemetry,
             });
           } else {
             integrityQueue.push({
@@ -398,6 +400,7 @@ export function BatchFootnoteBuilder({}: BatchProps) {
               rawInput: cell.input,
               fullCitation,
               sourceType: label !== "לא ידוע" ? label : null,
+              telemetry: cell.telemetry,
             });
           }
         } else if (isVerified) {
@@ -405,6 +408,7 @@ export function BatchFootnoteBuilder({}: BatchProps) {
             rawInput: cell.input,
             fullCitation,
             sourceType: label !== "לא ידוע" ? label : null,
+            telemetry: cell.telemetry,
           });
         }
 
@@ -520,6 +524,7 @@ export function BatchFootnoteBuilder({}: BatchProps) {
       sourceType,
       autoVerified: true,
       yearPreferences: prefs,
+      telemetry: currentIntegrity.telemetry,
     }]).catch(() => {});
 
     // Move to next
@@ -537,6 +542,7 @@ export function BatchFootnoteBuilder({}: BatchProps) {
       sourceType,
       autoVerified: true,
       yearPreferences: { hasHebrewYear: true, hasGregorianYear: true },
+      telemetry: currentIntegrity.telemetry,
     }]).catch(() => {});
 
     setPendingIntegrity(prev => prev.slice(1));
