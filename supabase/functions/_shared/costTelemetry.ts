@@ -65,7 +65,7 @@ export const COST_STAGES = [
   "refill_tier1", "refill_tier2",
   // legal-research-v2 (explicit at each call site)
   "v2_router", "v2_direct_chat", "v2_research_agent", "v2_support_verifier", "v2_temporal_validity",
-  "v2_drafter", "v2_drafter_repair", "v2_academic_drafter", "v2_sonar_search", "v2_raw_web_search",
+  "v2_drafter", "v2_drafter_repair", "v2_coverage_check", "v2_sonar_search", "v2_raw_web_search",
   // zero-work layers
   "client_verified_store", "server_verified_store", "local_foreign_formatter", "footnote_import",
   "unspecified",

@@ -204,6 +204,7 @@ export async function runDrafter(opts: {
     tools: [TOOL],
     toolChoice: { name: TOOL.name },
     usage: opts.usage,
+    costStage: "v2_drafter",
   });
   if (!res.ok) return { blocks: [], error: `drafter_error_${res.http_status}`, dropped_source_ids: [] };
   const parsed = parseJsonLoose<{ blocks?: DraftBlock[] }>(res.tool_calls[0]?.arguments ?? res.content);
@@ -239,6 +240,7 @@ export async function runDrafter(opts: {
     tools: [TOOL],
     toolChoice: { name: TOOL.name },
     usage: opts.usage,
+    costStage: "v2_drafter_repair",
   });
   if (!repair.ok) return first;
   const reparsed = parseJsonLoose<{ blocks?: DraftBlock[] }>(
@@ -480,6 +482,7 @@ export async function checkAnswerBlockCoverage(opts: {
     tools: [COVERAGE_TOOL],
     toolChoice: { name: COVERAGE_TOOL.name },
     usage: opts.usage,
+    costStage: "v2_coverage_check",
   });
   if (!res.ok) return { verdicts: [], error: `coverage_error_${res.http_status}`, checked: targets.length };
   const parsed = parseJsonLoose<{ results?: BlockCoverageVerdict[] }>(
