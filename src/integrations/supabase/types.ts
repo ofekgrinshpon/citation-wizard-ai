@@ -157,18 +157,24 @@ export type Database = {
         Row: {
           attempt_seq: number
           cached_input_tokens: number | null
+          capture_status: string
           citation_tokens: number | null
+          completion_latency_ms: number | null
           created_at: string
           endpoint: string
           estimate_complete: boolean
           estimated_usd: number | null
+          event_kind: string
           feature: string
           function_name: string
+          header_latency_ms: number | null
           http_status: number | null
           id: string
           input_tokens: number | null
+          latency_complete: boolean
           latency_ms: number
           model: string | null
+          origin: string
           outcome: string
           output_tokens: number | null
           price_version: string
@@ -176,6 +182,9 @@ export type Database = {
           provider_reported_usd: number | null
           provider_request_id: string | null
           reasoning_tokens: number | null
+          request_count: number | null
+          requested_model: string | null
+          response_model: string | null
           search_context_size: string | null
           search_queries: number | null
           stage: string
@@ -186,18 +195,24 @@ export type Database = {
         Insert: {
           attempt_seq: number
           cached_input_tokens?: number | null
+          capture_status?: string
           citation_tokens?: number | null
+          completion_latency_ms?: number | null
           created_at?: string
           endpoint: string
           estimate_complete?: boolean
           estimated_usd?: number | null
+          event_kind?: string
           feature: string
           function_name: string
+          header_latency_ms?: number | null
           http_status?: number | null
           id: string
           input_tokens?: number | null
+          latency_complete?: boolean
           latency_ms: number
           model?: string | null
+          origin?: string
           outcome: string
           output_tokens?: number | null
           price_version: string
@@ -205,6 +220,9 @@ export type Database = {
           provider_reported_usd?: number | null
           provider_request_id?: string | null
           reasoning_tokens?: number | null
+          request_count?: number | null
+          requested_model?: string | null
+          response_model?: string | null
           search_context_size?: string | null
           search_queries?: number | null
           stage: string
@@ -215,18 +233,24 @@ export type Database = {
         Update: {
           attempt_seq?: number
           cached_input_tokens?: number | null
+          capture_status?: string
           citation_tokens?: number | null
+          completion_latency_ms?: number | null
           created_at?: string
           endpoint?: string
           estimate_complete?: boolean
           estimated_usd?: number | null
+          event_kind?: string
           feature?: string
           function_name?: string
+          header_latency_ms?: number | null
           http_status?: number | null
           id?: string
           input_tokens?: number | null
+          latency_complete?: boolean
           latency_ms?: number
           model?: string | null
+          origin?: string
           outcome?: string
           output_tokens?: number | null
           price_version?: string
@@ -234,6 +258,9 @@ export type Database = {
           provider_reported_usd?: number | null
           provider_request_id?: string | null
           reasoning_tokens?: number | null
+          request_count?: number | null
+          requested_model?: string | null
+          response_model?: string | null
           search_context_size?: string | null
           search_queries?: number | null
           stage?: string

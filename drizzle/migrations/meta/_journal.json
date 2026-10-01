@@ -43,6 +43,13 @@
       "when": 1790834178304,
       "tag": "0005_create_ai_cost_events",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1790834930154,
+      "tag": "0006_ai_cost_events_v2",
+      "breakpoints": true
     }
   ]
 }
