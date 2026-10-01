@@ -343,3 +343,22 @@ describe("billing invariants", () => {
     expect(s).not.toMatch(/usageBatchId\s*=.*telemetry/i);
   });
 });
+
+describe("correction 3c9ae08", () => {
+  it("explicit EUR total_cost is not USD; USD/absent accepted", async () => {
+    const m = await import("../../supabase/functions/_shared/costTelemetry.ts");
+    expect(m.parseUsage({ usage: { cost: { total_cost: 0.01, currency: "EUR" } } }).provider_reported_usd).toBeNull();
+    expect(m.parseUsage({ usage: { cost: { total_cost: 0.01, currency: 7 } } }).provider_reported_usd).toBeNull();
+    expect(m.parseUsage({ usage: { cost: { total_cost: 0.01, currency: "usd" } } }).provider_reported_usd).toBe(0.01);
+    expect(m.parseUsage({ usage: { cost: { total_cost: 0.01 } } }).provider_reported_usd).toBe(0.01);
+  });
+  it("client body reader bounds actual bytes/time regardless of Content-Length", async () => {
+    const v = await import("../../supabase/functions/cost-telemetry-event/validate.ts");
+    const big = new Request("http://x", { method: "POST", body: "x".repeat(9000) }); // no trusted header
+    expect(await v.readClientBody(big.body)).toMatchObject({ ok: false, status: 413 });
+    const slow = new ReadableStream<Uint8Array>({ start() { /* never enqueues */ } });
+    expect(await v.readClientBody(slow, 30)).toMatchObject({ ok: false, status: 408 });
+    const okReq = new Request("http://x", { method: "POST", body: '{"events":[]}' });
+    expect(await v.readClientBody(okReq.body)).toEqual({ ok: true, value: { events: [] } });
+  });
+});
