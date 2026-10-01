@@ -36,6 +36,13 @@
       "when": 1790609343431,
       "tag": "0004_research_conversations",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1790834178304,
+      "tag": "0005_create_ai_cost_events",
+      "breakpoints": true
     }
   ]
 }
