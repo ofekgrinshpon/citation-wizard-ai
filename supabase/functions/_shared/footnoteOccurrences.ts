@@ -236,7 +236,7 @@ export function buildCompoundFootnotes(
           citation = simple && prior.lawName
             ? `ס' ${simple} ל${prior.lawName}.`
             : locator && prior.lawName
-            ? `${prior.lawName}, לעיל ה"ש ${prior.index}, ${withBetPrefix(locator)}.`
+            ? `${locator} ל${prior.lawName}.`
             : prior.lawName
             ? `${prior.lawName}, לעיל ה"ש ${prior.index}.`
             : "שם.";

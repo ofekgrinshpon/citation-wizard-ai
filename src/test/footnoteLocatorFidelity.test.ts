@@ -12,6 +12,25 @@ const CASE = 'ע"א 1/00 פלוני נ\' אלמוני';
 const occ = (id: string, full: string, locator?: string): CitationOccurrence => ({ source_id: id, full_citation: full, locator });
 
 describe("footnote locator fidelity", () => {
+  it("non-adjacent complex legislation uses the law name, never לעיל ה\"ש", () => {
+    const f = buildOccurrenceFootnotes([
+      occ("L", LAW, "סעיף 1"),
+      occ("C", CASE),
+      occ("L", LAW, "סעיף 56(א), סעיף 54"),
+      occ("C", CASE),
+      occ("L", LAW, "סעיפים 47–48"),
+      occ("C", CASE),
+      occ("L", LAW, "פרק ד׳, סעיפים 18–19"),
+      occ("C", CASE),
+      occ("L", LAW, "סעיף 54"),
+    ]);
+    expect(f[2].citation).toBe("סעיף 56(א), סעיף 54 לחוק דוגמה.");
+    expect(f[4].citation).toBe("סעיפים 47–48 לחוק דוגמה.");
+    expect(f[6].citation).toBe("פרק ד׳, סעיפים 18–19 לחוק דוגמה.");
+    expect(f[8].citation).toBe("ס' 54 לחוק דוגמה.");
+    for (const i of [2, 4, 6, 8]) expect(f[i].citation).not.toContain("לעיל");
+  });
+
   it("keeps every provision of a multi-section locator", () => {
     const f = buildOccurrenceFootnotes([occ("L", LAW), occ("L", LAW, "סעיף 56(א), סעיף 54")]);
     expect(f[1].citation).toContain("56(א)");
