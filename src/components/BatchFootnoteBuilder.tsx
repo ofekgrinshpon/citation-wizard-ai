@@ -351,7 +351,7 @@ export function BatchFootnoteBuilder({}: BatchProps) {
 
       setCells(normalized.map((cell) => updatedCells.find((u) => u.id === cell.id) ?? cell));
 
-      const verifiedCandidates: { rawInput: string; fullCitation: string; sourceType: string | null; yearPreferences?: YearPreferences }[] = [];
+      const verifiedCandidates: { rawInput: string; fullCitation: string; sourceType: string | null; yearPreferences?: YearPreferences; telemetry?: CostTelemetry }[] = [];
       const integrityQueue: PendingIntegrity[] = [];
 
       for (const cell of updatedCells) {
