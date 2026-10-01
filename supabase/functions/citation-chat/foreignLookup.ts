@@ -75,7 +75,7 @@ export interface LookupDeps {
   apiKey?: string | null;
 }
 
-import { trackedFetch } from "../_shared/costTelemetry.ts";
+import { trackedFetch, type CostStage } from "../_shared/costTelemetry.ts";
 const PPLX_SEARCH_URL = "https://api.perplexity.ai/search";
 const TIMEOUT_MS = 20_000;
 const MAX_RESULTS = 8;

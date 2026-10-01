@@ -1733,6 +1733,7 @@ serve((req) => withCostTelemetry("citation-chat", async () => {
               console.log(
                 `[credit] free_path=verified_source_hit user=${userId ?? "unknown"} request_id=${creditRequestId} amount=0`,
               );
+              recordZeroWork("server_verified_store", "cache_hit");
               return new Response(JSON.stringify({ content: bestMatch.full_citation }), {
                 headers: { ...corsHeaders, "Content-Type": "application/json" },
               });
