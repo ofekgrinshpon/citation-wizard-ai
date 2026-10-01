@@ -207,3 +207,17 @@ describe("static coverage", () => {
     expect((m.match(/beginAttempt\(/g) ?? []).length).toBe(2);
   });
 });
+
+describe("parseResponsesUsage reported cost", () => {
+  it("accepts explicit USD only", async () => {
+    const { parseResponsesUsage } = await import("../../supabase/functions/_shared/costTelemetry");
+    const u = (cost: unknown) => parseResponsesUsage({ usage: { input_tokens: 1, cost } }).provider_reported_usd;
+    expect(u({ total_cost: 0.012, currency: "usd" })).toBe(0.012);
+    expect(u({ total_cost: 0, currency: "USD" })).toBe(0);
+    expect(u({ total_cost: 0.012 })).toBeNull();
+    expect(u({ total_cost: 0.012, currency: "EUR" })).toBeNull();
+    expect(u({ total_cost: -1, currency: "USD" })).toBeNull();
+    expect(u({ total_cost: "0.01", currency: "USD" })).toBeNull();
+    expect(u(undefined)).toBeNull();
+  });
+});
