@@ -166,9 +166,10 @@ export function setTelemetryFromBody(body: unknown, defaultFeature: CostFeature 
 }
 
 type Writer = (rows: CostEvent[]) => Promise<void>;
-type RawWriter = (rows: CostEvent[], signal: AbortSignal) => Promise<{ ok: boolean; status: number }>;
+export type WriteMode = "ignore" | "merge";
+type RawWriter = (rows: CostEvent[], signal: AbortSignal, mode?: WriteMode) => Promise<{ ok: boolean; status: number }>;
 
-const defaultRawWriter: RawWriter = async (rows, signal) => {
+const defaultRawWriter: RawWriter = async (rows, signal, mode = "ignore") => {
   // deno-lint-ignore no-explicit-any
   const env = (globalThis as any).Deno?.env;
   const url = env?.get("SUPABASE_URL");
@@ -180,7 +181,10 @@ const defaultRawWriter: RawWriter = async (rows, signal) => {
       apikey: key,
       Authorization: `Bearer ${key}`,
       "Content-Type": "application/json",
-      Prefer: "resolution=ignore-duplicates,return=minimal",
+      // "merge" is used only for FINAL attempt rows so a completion always wins
+      // over an earlier start/fallback row with the same stable id; start and
+      // fallback rows use "ignore" so they can never overwrite completed data.
+      Prefer: `resolution=${mode === "merge" ? "merge-duplicates" : "ignore-duplicates"},return=minimal`,
     },
     body: JSON.stringify(rows),
     signal,
@@ -196,7 +200,7 @@ let retryDelayMs = 250;
  * Deadline-bounded write with at most WRITE_MAX_RETRIES transient retries.
  * Same rows (same stable ids) on every retry; the table ignores duplicates.
  */
-export async function writeWithRetry(rows: CostEvent[]): Promise<{ attempts: number; ok: boolean }> {
+export async function writeWithRetry(rows: CostEvent[], mode: WriteMode = "ignore"): Promise<{ attempts: number; ok: boolean }> {
   let attempts = 0;
   for (let i = 0; i <= WRITE_MAX_RETRIES; i++) {
     attempts++;
@@ -205,7 +209,7 @@ export async function writeWithRetry(rows: CostEvent[]): Promise<{ attempts: num
     let transient = false;
     try {
       const r = await Promise.race([
-        rawWriter(rows, ctrl.signal),
+        rawWriter(rows, ctrl.signal, mode),
         new Promise<never>((_, rej) => ctrl.signal.addEventListener("abort", () => rej(new Error("timeout")))),
       ]);
       if (r.ok) return { attempts, ok: true };
@@ -223,11 +227,29 @@ export async function writeWithRetry(rows: CostEvent[]): Promise<{ attempts: num
   return { attempts, ok: false };
 }
 
-let writer: Writer = async (rows) => { await writeWithRetry(rows); };
+const FALLBACK_ROWS = new WeakSet<CostEvent>();
+async function defaultWriter(rows: CostEvent[]) {
+  const fin = rows.filter((r) => !FALLBACK_ROWS.has(r));
+  const fb = rows.filter((r) => FALLBACK_ROWS.has(r));
+  if (fin.length) await writeWithRetry(fin, "merge");
+  if (fb.length) await writeWithRetry(fb, "ignore");
+}
+let writer: Writer = defaultWriter;
 /** Test hooks. */
 export function __setCostWriter(w: Writer | null) {
-  writer = w ?? (async (rows) => { await writeWithRetry(rows); });
+  writer = w ?? defaultWriter;
 }
+/**
+ * Durable per-attempt writer: start rows ("ignore") are written when the
+ * attempt starts, final rows ("merge") as soon as the attempt ends — not at
+ * chunk end — so a worker restart cannot lose completed attempts.
+ */
+type DurableWriter = (rows: CostEvent[], mode: WriteMode) => Promise<unknown>;
+let durableWriter: DurableWriter = (rows, mode) => writeWithRetry(rows, mode);
+export function __setDurableWriter(w: DurableWriter | null) {
+  durableWriter = w ?? ((rows, mode) => writeWithRetry(rows, mode));
+}
+
 export function __setRawWriter(w: RawWriter | null, delayMs = 250) {
   rawWriter = w ?? defaultRawWriter;
   retryDelayMs = delayMs;
@@ -249,6 +271,10 @@ export async function flushEvents(pending: Pending[], deadlineMs = FLUSH_DEADLIN
     if (timer) clearTimeout(timer);
     // Never silently drop: unresolved/failed captures are recorded as incomplete.
     const rows = pending.map((p, i) => results[i] ?? { ...p.fallback, capture_status: done[i] ? "read_error" : "flush_deadline" } as CostEvent);
+    // Final rows are also written durably at attempt end; re-sending them is
+    // harmless (same id). Fallback rows are tagged so they use ignore-duplicates
+    // and can never overwrite a completion that landed first.
+    rows.forEach((r, i) => { if (!results[i]) FALLBACK_ROWS.add(r); });
     await writer(rows);
   } catch (e) {
     console.warn("[cost-telemetry] flush failed", e instanceof Error ? e.name : "error");
@@ -456,6 +482,19 @@ export async function readBounded(
 function pushPending(ctx: Ctx, p: Pending) {
   if (ctx.pending.length < MAX_EVENTS_PER_REQUEST) ctx.pending.push(p);
   else ctx.dropped++;
+  if (p.fallback.event_kind !== "provider_attempt") return;
+  // Durable start row (snapshot; marked not-finalized). Then finalize the SAME
+  // id as soon as the attempt resolves. Both are bounded background writes.
+  try {
+    const start = { ...p.fallback, outcome: "capture_incomplete", capture_status: "flush_deadline" } as CostEvent;
+    const startWrite = Promise.resolve().then(() => durableWriter([start], "ignore")).catch(() => {});
+    schedule(startWrite.then(() => {}));
+    schedule(p.promise.then(async (ev) => {
+      if (!ev) return;
+      await startWrite; // start can never land after (and be mistaken for) the final row
+      await durableWriter([ev], "merge");
+    }).catch(() => {}));
+  } catch { /* never throw */ }
 }
 
 /**

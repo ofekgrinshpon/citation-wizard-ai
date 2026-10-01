@@ -352,7 +352,7 @@ async function chatGuarded(opts: {
   if (!apiKey) return fail(401, "LOVABLE_API_KEY missing");
 
   if (usesResponsesApi(opts.model)) {
-    return await responsesChat({ ...opts, apiKey, fail });
+    return await responsesChat({ ...opts, signal: guard.signal, apiKey, fail });
   }
 
   const body: Record<string, unknown> = {
