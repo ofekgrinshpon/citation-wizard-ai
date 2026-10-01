@@ -101,6 +101,7 @@ const Index = () => {
 
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
+  const telemetryRef = useRef<CostTelemetry | null>(null);
   const [loading, setLoading] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState<string | null>(null);
   const [mode, setMode] = useState<AppMode>("legalqa");
