@@ -41,6 +41,8 @@ export function resetSearchResultIds(): void {
   resetResultIds();
 }
 
+import { trackedFetch } from "../../_shared/costTelemetry.ts";
+
 declare const Deno: { env: { get(key: string): string | undefined } };
 
 async function perplexitySearch(
@@ -53,7 +55,7 @@ async function perplexitySearch(
   const sys = `${SCOPE_INSTRUCTION[scope]} החזר עד ${limit} מקורות. אל תמציא קישורים.`;
   let r: Response;
   try {
-    r = await fetch(PPLX_URL, {
+    r = await trackedFetch(PPLX_URL, {
       method: "POST",
       headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -88,7 +90,7 @@ async function perplexitySearch(
           },
         },
       }),
-    });
+    }, { stage: "v2_sonar_search" });
   } catch (e) {
     return { results: [], error: `network_error: ${e instanceof Error ? e.message : String(e)}` };
   }
