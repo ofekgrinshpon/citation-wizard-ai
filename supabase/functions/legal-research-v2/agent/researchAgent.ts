@@ -1381,6 +1381,10 @@ export async function runResearchAgent(opts: {
     if (memo) break;
     if (awaitingUser) break;
 
+    if (replayReasoning) {
+      const { dropped_items } = enforceReplayBudget(messages);
+      if (dropped_items) stats.reasoning_items_dropped = (stats.reasoning_items_dropped ?? 0) + dropped_items;
+    }
     if (opts.checkpoint) {
       const snapshot: AgentRunResult = {
         memo: null,
