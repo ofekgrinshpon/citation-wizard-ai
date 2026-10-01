@@ -12,6 +12,7 @@ import {
   beginAttempt, isAbortError, parseUsage, parseResponsesUsage,
   type AttemptRecorder, type CostStage, type ParsedUsage,
 } from "../../_shared/costTelemetry.ts";
+import { guardProviderCall, type ProviderGuard } from "./providerLiveness.ts";
 
 const GATEWAY_URL = "https://ai.gateway.lovable.dev/v1/chat/completions";
 
@@ -319,7 +320,12 @@ async function responsesChatGuarded(opts: {
   };
 }
 
-export async function chat(opts: {
+export async function chat(opts: Parameters<typeof chatGuarded>[0]): Promise<ChatResult> {
+  const guard = guardProviderCall(opts.signal);
+  try { return await chatGuarded(opts, guard); } finally { guard.done(); }
+}
+
+async function chatGuarded(opts: {
   model: string;
   messages: ChatMessage[];
   tools?: ToolSpec[];
@@ -330,7 +336,7 @@ export async function chat(opts: {
   reasoningEffort?: "medium" | "high";
   /** Telemetry-only role tag; never sent to the provider. */
   costStage?: CostStage;
-}): Promise<ChatResult> {
+}, guard: ProviderGuard): Promise<ChatResult> {
   const apiKey = Deno.env.get("LOVABLE_API_KEY");
   const fail = (status: number, error: string, terminal = true): ChatResult => ({
     ok: false,
