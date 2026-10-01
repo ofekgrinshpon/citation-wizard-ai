@@ -81,3 +81,16 @@ export class RunTimer {
     return t;
   }
 }
+
+/**
+ * Which timing bucket a resume gap belongs to. "handoff" = voluntary chunk
+ * hand-off idle time; "checkpoint" = recovered after a worker died mid-step
+ * (includes unfinished execution + stale detection); absent = legacy row.
+ */
+export function resumeGapPhase(kind: "handoff" | "checkpoint" | undefined | null): string {
+  return kind === "handoff"
+    ? "resume_gap"
+    : kind === "checkpoint"
+    ? "recovered_mid_call_elapsed"
+    : "resume_gap_unclassified";
+}

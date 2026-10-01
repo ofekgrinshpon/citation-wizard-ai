@@ -10,6 +10,8 @@
 // =========================================================================
 
 import { withCostTelemetry, setCostCorrelation } from "../_shared/costTelemetry.ts";
+import { invokeResumeHandoff } from "./beta/resumeHandoff.ts";
+import { resumeGapPhase } from "./shared/timing.ts";
 import { withProviderLiveness } from "./shared/providerLiveness.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
@@ -233,6 +235,10 @@ export interface ResumeState {
   awaiting_since?: number;
 }
 
+async function selfInvokeResume(run_id: string, supabaseUrl: string, serviceKey: string) {
+  return await invokeResumeHandoff(run_id, supabaseUrl, serviceKey);
+}
+
 async function runPipeline(
   admin: SupabaseClient,
   intake: Intake,
@@ -261,17 +267,7 @@ async function runPipeline(
   const timer = RunTimer.fromJSON(resume?.timing);
   // Time spent between a paused chunk and the worker that picks it up is
   // orchestration cost, not research cost — measure it explicitly.
-  if (resume?.paused_at) {
-    const gap = Date.now() - resume.paused_at;
-    timer.add(
-      resume.pause_kind === "handoff"
-        ? "resume_gap"
-        : resume.pause_kind === "checkpoint"
-        ? "recovered_mid_call_elapsed"
-        : "resume_gap_unclassified",
-      gap,
-    );
-  }
+  if (resume?.paused_at) timer.add(resumeGapPhase(resume.pause_kind), Date.now() - resume.paused_at);
   // Resuming after an ask_user reply: the wait is user time, never research
   // time and never a stall. Budgets, evidence and usage continue unchanged.
   if (resume?.awaiting_since && prior) {
@@ -1292,52 +1288,6 @@ async function runPipeline(
   };
 }
 
-/** Kick a fresh worker to continue a paused run. */
-export interface ResumeHandoffAck {
-  ok: boolean;
-  status: number | null;
-  error: "http" | "network" | null;
-  at: string;
-}
-
-/**
- * Observe the hand-off acknowledgment. Never retries (no ownership fencing
- * exists); a failed hand-off is left to the existing watchdog, but is now
- * explicit. Network errors are recorded and rethrown, as before.
- */
-async function selfInvokeResume(
-  run_id: string,
-  supabaseUrl: string,
-  serviceKey: string,
-): Promise<ResumeHandoffAck> {
-  let res: Response;
-  try {
-    res = await fetch(`${supabaseUrl}/functions/v1/legal-research-v2`, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${serviceKey}`,
-      "Content-Type": "application/json",
-      "x-smoke-mode": "1",
-    },
-    body: JSON.stringify({ resume_run_id: run_id }),
-  });
-  } catch (e) {
-    console.error(JSON.stringify({ event: "v2_resume_handoff_failed", run_id, error: "network" }));
-    throw e;
-  }
-  try { await res.body?.cancel(); } catch { /* ignore */ }
-  const ack: ResumeHandoffAck = {
-    ok: res.ok,
-    status: res.status,
-    error: res.ok ? null : "http",
-    at: new Date().toISOString(),
-  };
-  if (!res.ok) {
-    console.error(JSON.stringify({ event: "v2_resume_handoff_failed", run_id, status: res.status }));
-  }
-  return ack;
-}
-
 /**
  * Run-row liveness. The watchdog only touches a run that has stopped beating,
  * so an actively working worker can never be resumed underneath itself.
@@ -1462,20 +1412,9 @@ async function driveRunInner(
         last_beat_at: new Date().toISOString(),
       }).eq("run_id", intake.run_id);
       const ack = await selfInvokeResume(intake.run_id, supabaseUrl, serviceKey);
-      if (!ack.ok) {
-        // Explicit, bounded metadata only; recovery stays with the watchdog.
-        try {
-          await admin.from("v2_eval_runs").update({
-            agent_state: {
-              resume: out.resume,
-              intake,
-              job,
-              stage: progress.current(),
-              handoff: ack,
-            },
-          }).eq("run_id", intake.run_id);
-        } catch { /* telemetry must never fail the run */ }
-      }
+      // Failures are logged inside selfInvokeResume; run state is never
+      // rewritten here (no fencing) — the watchdog owns recovery.
+      void ack;
       return;
     }
     // The user-facing job row is finalized FIRST: an edge worker can be shut
