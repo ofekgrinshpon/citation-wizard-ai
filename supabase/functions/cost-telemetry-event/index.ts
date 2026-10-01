@@ -6,7 +6,7 @@
  */
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { writeWithRetry } from "../_shared/costTelemetry.ts";
-import { buildClientEvents } from "./validate.ts";
+import { buildClientEvents, readClientBody } from "./validate.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -28,10 +28,9 @@ Deno.serve(async (req) => {
   });
   const { data, error } = await sb.auth.getUser();
   if (error || !data?.user) return json({ error: "unauthorized" }, 401);
-  const len = Number(req.headers.get("content-length") ?? "0");
-  if (len > 8192) return json({ error: "too_large" }, 413);
-  let body: unknown;
-  try { body = await req.json(); } catch { return json({ error: "invalid_json" }, 400); }
+  const parsed = await readClientBody(req.body);
+  if (!parsed.ok) return json({ error: parsed.error }, parsed.status);
+  const body = parsed.value;
   const rows = buildClientEvents(body);
   if (!rows) return json({ error: "invalid_events" }, 400);
   const r = await writeWithRetry(rows);

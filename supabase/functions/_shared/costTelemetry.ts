@@ -360,8 +360,21 @@ export function parseUsage(json: unknown): ParsedUsage {
     citation_tokens: int(u.citation_tokens),
     search_queries: int(u.num_search_queries),
     search_context_size: ctx === "low" || ctx === "medium" || ctx === "high" ? ctx : null,
-    provider_reported_usd: num(cost.total_cost),
+    provider_reported_usd: reportedUsd(cost),
   };
+}
+
+/**
+ * Provenance: usage.cost.total_cost is the PROVIDER-REPORTED amount from the
+ * response body (not an invoice). Accepted as USD only when cost.currency is
+ * explicitly "USD" (case-normalized) or absent (legacy Perplexity contract,
+ * which documents USD). Any other / invalid currency -> null. Never converts.
+ */
+export function reportedUsd(cost: Record<string, unknown>): number | null {
+  if (!("currency" in cost) || cost.currency === undefined) return num(cost.total_cost);
+  const c = cost.currency;
+  if (typeof c === "string" && c.trim().toUpperCase() === "USD") return num(cost.total_cost);
+  return null;
 }
 
 export function estimateUsd(

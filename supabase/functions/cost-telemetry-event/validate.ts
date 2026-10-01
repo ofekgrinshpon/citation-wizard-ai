@@ -1,3 +1,4 @@
+import { readBounded } from "../_shared/costTelemetry.ts";
 import {
   sanitizeFeature, sanitizeUuid, zeroWorkEvent,
   ZERO_WORK_LAYERS, type ZeroWorkLayer, type CostEvent,
@@ -28,3 +29,19 @@ export function buildClientEvents(body: unknown): CostEvent[] | null {
   return out;
 }
 
+
+
+export const CLIENT_BODY_BYTE_CAP = 8192;
+export const CLIENT_BODY_TIME_CAP_MS = 3000;
+
+/** Reads ACTUAL bytes (ignores Content-Length) bounded by size and time, then parses JSON. */
+export async function readClientBody(
+  body: ReadableStream<Uint8Array> | null,
+  timeCapMs = CLIENT_BODY_TIME_CAP_MS,
+): Promise<{ ok: true; value: unknown } | { ok: false; status: number; error: string }> {
+  const r = await readBounded(body, CLIENT_BODY_BYTE_CAP, timeCapMs);
+  if (r.status === "body_byte_cap") return { ok: false, status: 413, error: "too_large" };
+  if (r.status === "body_time_cap") return { ok: false, status: 408, error: "body_timeout" };
+  if (r.status !== "complete" || r.text == null) return { ok: false, status: 400, error: "read_error" };
+  try { return { ok: true, value: JSON.parse(r.text) }; } catch { return { ok: false, status: 400, error: "invalid_json" }; }
+}
