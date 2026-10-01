@@ -1,3 +1,4 @@
+import { newTelemetryBatch, sourceTelemetry, reportZeroWork } from "@/lib/costTelemetry";
 import { detectForeignSource } from "@/data/bluebook/extract";
 import { useState, useCallback, useEffect, createContext, useContext } from "react";
 import { useProjects } from "@/hooks/useProjects";
@@ -447,6 +448,10 @@ export function BibliographyProvider({ children }: { children: React.ReactNode }
       return rebuildBibliographyEntries([...manualEntries, ...normalizedItems]);
     });
 
+    if (normalizedItems.length > 0) {
+      // One metadata-only event per import action (no provider work).
+      reportZeroWork(sourceTelemetry(newTelemetryBatch("bibliography")), "footnote_import", "deterministic");
+    }
     return normalizedItems.length;
   }, []);
 

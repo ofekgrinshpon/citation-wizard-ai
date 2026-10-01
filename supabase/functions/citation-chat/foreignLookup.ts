@@ -75,7 +75,7 @@ export interface LookupDeps {
   apiKey?: string | null;
 }
 
-import { trackedFetch } from "../_shared/costTelemetry.ts";
+import { trackedFetch, type CostStage } from "../_shared/costTelemetry.ts";
 const PPLX_SEARCH_URL = "https://api.perplexity.ai/search";
 const TIMEOUT_MS = 20_000;
 const MAX_RESULTS = 8;
@@ -508,11 +508,13 @@ async function searchOnce(
   domains: string[] | null,
   doFetch: typeof fetch,
   apiKey: string,
+  stage: CostStage = "unspecified",
 ): Promise<RawResult[]> {
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), TIMEOUT_MS);
   try {
-    const resp = await doFetch(PPLX_SEARCH_URL, {
+    const fetch3 = doFetch as (u: string, i: RequestInit, o?: { stage?: CostStage }) => Promise<Response>;
+    const resp = await fetch3(PPLX_SEARCH_URL, {
       method: "POST",
       headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -521,7 +523,7 @@ async function searchOnce(
         ...(domains && domains.length ? { search_domain_filter: domains } : {}),
       }),
       signal: ctrl.signal,
-    });
+    }, { stage });
     if (!resp.ok) return [];
     const json = (await resp.json().catch(() => null)) as { results?: RawResult[] } | null;
     return Array.isArray(json?.results) ? json!.results! : [];
@@ -559,7 +561,7 @@ export async function runForeignLookup(
   // Tier 1 — preferred-domain discovery hints.
   empty.diagnostics.tier1Queried = true;
   const hints = tier1Hints(input.kind, input.jurisdiction);
-  let results: Array<{ title?: string; url?: string; snippet?: string; tier: "tier1" | "tier2" }> = (await searchOnce(query, hints, doFetch, apiKey)).map((r) => ({
+  let results: Array<{ title?: string; url?: string; snippet?: string; tier: "tier1" | "tier2" }> = (await searchOnce(query, hints, doFetch, apiKey, "foreign_search_tier1")).map((r) => ({
     ...r,
     tier: "tier1" as const,
   }));
@@ -568,7 +570,7 @@ export async function runForeignLookup(
   const hasUsable = results.some((r) => r.url && classifySource(r.url) !== "weak");
   if (!hasUsable || results.length === 0) {
     empty.diagnostics.tier2Fired = true;
-    const t2 = (await searchOnce(query, null, doFetch, apiKey)).map((r) => ({
+    const t2 = (await searchOnce(query, null, doFetch, apiKey, "foreign_search_tier2")).map((r) => ({
       ...r,
       tier: "tier2" as const,
     }));

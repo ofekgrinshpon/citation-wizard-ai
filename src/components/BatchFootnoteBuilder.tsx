@@ -183,9 +183,9 @@ export function BatchFootnoteBuilder({}: BatchProps) {
   const runSingleCitation = async (
     input: string,
     overrideType?: SourceType,
-    telemetryBatch = newTelemetryBatch("footnotes"),
+    telemetry: CostTelemetry = sourceTelemetry(newTelemetryBatch("footnotes")),
   ): Promise<RunCitationResult> =>
-    runCitation({ rawInput: input, overrideType, projectId, useVerifiedStore: true, telemetry: sourceTelemetry(telemetryBatch) });
+    runCitation({ rawInput: input, overrideType, projectId, useVerifiedStore: true, telemetry });
 
   const applyResultToCell = (c: FootnoteCell, res: RunCitationResult): FootnoteCell => ({
     ...c,
@@ -224,10 +224,12 @@ export function BatchFootnoteBuilder({}: BatchProps) {
 
     // Bounded concurrency: each citation-chat call does grounded web lookups,
     // so firing every row at once gets the batch rate-limited.
+    // One stable telemetry identity per logical row, created BEFORE retries.
     const telemetryBatch = newTelemetryBatch("footnotes");
+    const rowTelemetry = activeCells.map(() => sourceTelemetry(telemetryBatch));
     const results = await runPool(
       activeCells,
-      (cell) => runSingleCitation(cell.input, cell.sourceTypeOverride, telemetryBatch),
+      (cell, i) => runSingleCitation(cell.input, cell.sourceTypeOverride, rowTelemetry[i]),
       {
         concurrency: 2,
         retries: 1,

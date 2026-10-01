@@ -151,7 +151,7 @@ Deno.serve((req) => withCostTelemetry("classify-source", async () => {
         ],
         response_format: { type: "json_object" },
       }),
-    });
+    }, { stage: "classifier" });
 
     if (!resp.ok) {
       const text = await resp.text();

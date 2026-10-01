@@ -1,4 +1,4 @@
-import { newTelemetryBatch, sourceTelemetry, } from "@/lib/costTelemetry";
+import { newTelemetryBatch, sourceTelemetry, type CostTelemetry } from "@/lib/costTelemetry";
 import { useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useBibliography, CATEGORY_LABELS, classifyCitation, type BibSourceCategory } from "@/hooks/useBibliography";
@@ -121,7 +121,7 @@ export function BibliographyGenerator() {
   const lookupOne = async (
     rawInput: string,
     sourceTypeHint?: BibSourceCategory,
-    telemetryBatch = newTelemetryBatch("bibliography"),
+    telemetry: CostTelemetry = sourceTelemetry(newTelemetryBatch("bibliography")),
   ): Promise<Omit<ReviewItem, "id" | "isEditing" | "editValue">> => {
     const overrideType =
       sourceTypeHint && sourceTypeHint !== "unknown"
@@ -132,7 +132,7 @@ export function BibliographyGenerator() {
       rawInput,
       overrideType,
       useVerifiedStore: true,
-      telemetry: sourceTelemetry(telemetryBatch),
+      telemetry,
     });
 
     const citation = cleanCitation(result.citation);
@@ -200,10 +200,12 @@ export function BibliographyGenerator() {
 
     try {
       let done = 0;
+      // One stable telemetry identity per logical row, created BEFORE retries.
       const telemetryBatch = newTelemetryBatch("bibliography");
+      const rowTelemetry = lines.map(() => sourceTelemetry(telemetryBatch));
       const results = await runPool(
         lines,
-        (line) => lookupOne(line, undefined, telemetryBatch),
+        (line, i) => lookupOne(line, undefined, rowTelemetry[i]),
         {
           concurrency: CONCURRENCY,
           retries: 1,

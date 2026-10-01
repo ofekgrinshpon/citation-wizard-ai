@@ -184,7 +184,7 @@ async function handleRefill(req: Request): Promise<Response> {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(reqBody),
-      });
+      }, { stage: useAllowlist ? "refill_tier1" : "refill_tier2" });
       if (!r.ok) {
         const t = await r.text().catch(() => "");
         return { ok: false as const, status: r.status, detail: t.slice(0, 300) };
