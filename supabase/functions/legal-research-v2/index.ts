@@ -10,6 +10,7 @@
 // =========================================================================
 
 import { withCostTelemetry, setCostCorrelation } from "../_shared/costTelemetry.ts";
+import { withProviderLiveness } from "./shared/providerLiveness.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
 
@@ -1361,12 +1362,12 @@ async function driveRunInner(
   };
   await beat(true);
   try {
-    const out = await runPipeline(admin, intake, {
+    const out = await withProviderLiveness(() => liveProgress.heartbeat(), () => runPipeline(admin, intake, {
       resume,
       chunked: true,
       progress: liveProgress,
       job,
-    });
+    }));
     if ("paused" in out && out.paused && out.awaiting_user) {
       // Parked for the user: full checkpoint kept, no self-invoke, no charge.
       // The watchdog and the stale-job reaper only look at running/paused/

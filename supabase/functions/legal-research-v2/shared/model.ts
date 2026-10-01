@@ -12,6 +12,7 @@ import {
   beginAttempt, isAbortError, parseUsage, parseResponsesUsage,
   type AttemptRecorder, type CostStage, type ParsedUsage,
 } from "../../_shared/costTelemetry.ts";
+import { guardProviderCall, type ProviderGuard } from "./providerLiveness.ts";
 
 const GATEWAY_URL = "https://ai.gateway.lovable.dev/v1/chat/completions";
 
@@ -150,7 +151,12 @@ function toResponsesInput(messages: ChatMessage[]): Array<Record<string, unknown
   return input;
 }
 
-async function responsesChat(opts: {
+async function responsesChat(opts: Parameters<typeof responsesChatGuarded>[0]): Promise<ChatResult> {
+  const guard = guardProviderCall(opts.signal);
+  try { return await responsesChatGuarded(opts, guard); } finally { guard.done(); }
+}
+
+async function responsesChatGuarded(opts: {
   apiKey: string;
   model: string;
   messages: ChatMessage[];
@@ -161,7 +167,7 @@ async function responsesChat(opts: {
   fail: (status: number, error: string, terminal?: boolean) => ChatResult;
   reasoningEffort?: "medium" | "high";
   costStage?: CostStage;
-}): Promise<ChatResult> {
+}, guard: ProviderGuard): Promise<ChatResult> {
   const body: Record<string, unknown> = {
     model: opts.model,
     input: toResponsesInput(opts.messages),
@@ -198,12 +204,13 @@ async function responsesChat(opts: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(body),
-      ...(opts.signal ? { signal: opts.signal } : {}),
+      signal: guard.signal,
     });
   } catch (e) {
     finishFetchError(rec, e);
     return opts.fail(0, `network_error: ${e instanceof Error ? e.message : String(e)}`, false);
   }
+  guard.touch();
   rec?.headers(resp.status, resp.headers);
   if (!resp.ok || !resp.body) {
     rec?.finish({ outcome: "http_error", capture_status: "error_body_unread" });
@@ -268,6 +275,7 @@ async function responsesChat(opts: {
     }
     const { done, value } = chunk;
     if (done) break;
+    guard.touch();
     buf += decoder.decode(value, { stream: true });
     const lines = buf.split("\n");
     buf = lines.pop() ?? "";
@@ -312,7 +320,12 @@ async function responsesChat(opts: {
   };
 }
 
-export async function chat(opts: {
+export async function chat(opts: Parameters<typeof chatGuarded>[0]): Promise<ChatResult> {
+  const guard = guardProviderCall(opts.signal);
+  try { return await chatGuarded(opts, guard); } finally { guard.done(); }
+}
+
+async function chatGuarded(opts: {
   model: string;
   messages: ChatMessage[];
   tools?: ToolSpec[];
@@ -323,7 +336,7 @@ export async function chat(opts: {
   reasoningEffort?: "medium" | "high";
   /** Telemetry-only role tag; never sent to the provider. */
   costStage?: CostStage;
-}): Promise<ChatResult> {
+}, guard: ProviderGuard): Promise<ChatResult> {
   const apiKey = Deno.env.get("LOVABLE_API_KEY");
   const fail = (status: number, error: string, terminal = true): ChatResult => ({
     ok: false,
@@ -339,7 +352,7 @@ export async function chat(opts: {
   if (!apiKey) return fail(401, "LOVABLE_API_KEY missing");
 
   if (usesResponsesApi(opts.model)) {
-    return await responsesChat({ ...opts, apiKey, fail });
+    return await responsesChat({ ...opts, signal: guard.signal, apiKey, fail });
   }
 
   const body: Record<string, unknown> = {
@@ -366,13 +379,14 @@ export async function chat(opts: {
       method: "POST",
       headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify(body),
-      ...(opts.signal ? { signal: opts.signal } : {}),
+      signal: guard.signal,
     });
   } catch (e) {
     finishFetchError(rec, e);
     return fail(0, `network_error: ${e instanceof Error ? e.message : String(e)}`, false);
   }
 
+  guard.touch();
   rec?.headers(resp.status, resp.headers);
   if (!resp.ok) {
     rec?.finish({ outcome: "http_error", capture_status: "error_body_unread" });
