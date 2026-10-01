@@ -1,3 +1,4 @@
+import { trackedFetch, withCostTelemetry, setTelemetryFromBody } from "../_shared/costTelemetry.ts";
 // Gemini-backed source-type classifier.
 // Returns one of the SourceType enum values from src/data/abbreviations.ts
 // with a confidence (0..1) and a one-line reason in Hebrew.
@@ -114,7 +115,7 @@ interface ClassifyResult {
   reason: string;
 }
 
-Deno.serve(async (req) => {
+Deno.serve((req) => withCostTelemetry("classify-source", async () => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
   try {
@@ -127,6 +128,7 @@ Deno.serve(async (req) => {
     }
 
     const body = await req.json().catch(() => ({}));
+    setTelemetryFromBody(body);
     const rawText: string = (body?.rawText || "").toString().trim();
     if (!rawText) {
       return new Response(
@@ -135,7 +137,7 @@ Deno.serve(async (req) => {
       );
     }
 
-    const resp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    const resp = await trackedFetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${LOVABLE_API_KEY}`,
@@ -191,4 +193,4 @@ Deno.serve(async (req) => {
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   }
-});
+}));

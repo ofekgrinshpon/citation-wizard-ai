@@ -75,6 +75,7 @@ export interface LookupDeps {
   apiKey?: string | null;
 }
 
+import { trackedFetch } from "../_shared/costTelemetry.ts";
 const PPLX_SEARCH_URL = "https://api.perplexity.ai/search";
 const TIMEOUT_MS = 20_000;
 const MAX_RESULTS = 8;
@@ -552,7 +553,7 @@ export async function runForeignLookup(
   };
   const apiKey = deps?.apiKey ?? null;
   if (!apiKey) return { ...empty, error: "missing_perplexity_credentials" };
-  const doFetch = deps?.fetchImpl ?? fetch;
+  const doFetch = deps?.fetchImpl ?? trackedFetch;
   const query = buildQuery(input);
 
   // Tier 1 — preferred-domain discovery hints.

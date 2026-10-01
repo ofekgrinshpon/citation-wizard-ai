@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { trackedFetch, withCostTelemetry, setTelemetryFromBody } from "../_shared/costTelemetry.ts";
 import { USAGE_BATCH_GROUP } from "../_shared/usageWeights.ts";
 
 // ── Canonical database-name mapping (Rule 19.1 + extended sources) ──
@@ -122,7 +123,7 @@ async function perplexityWithFallback(
     docket_anchor_via: "none",
   };
 
-  const t1 = await fetch("https://api.perplexity.ai/chat/completions", {
+  const t1 = await trackedFetch("https://api.perplexity.ai/chat/completions", {
     method: "POST",
     headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
     body: JSON.stringify(tier1Body),
@@ -181,7 +182,7 @@ async function perplexityWithFallback(
   if (result.tier1_trusted === 0) {
     console.log(`[pplx-fallback:${logTag}] tier1 returned 0 trusted citations → firing tier2`);
   }
-  const t2 = await fetch("https://api.perplexity.ai/chat/completions", {
+  const t2 = await trackedFetch("https://api.perplexity.ai/chat/completions", {
     method: "POST",
     headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
     body: JSON.stringify(t2Body),
@@ -327,7 +328,7 @@ async function verifyDecisionDate(
     const fullRef = `${caseType} ${caseNumber}`;
     const part = padiPart ? `(${padiPart})` : "";
     const padiRef = `פ"ד ${padiVolume}${part} ${padiPage || ""}`.trim();
-    const resp = await fetch("https://api.perplexity.ai/chat/completions", {
+    const resp = await trackedFetch("https://api.perplexity.ai/chat/completions", {
       method: "POST",
       headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -457,7 +458,7 @@ async function retryOldSupremeDocket(
         { role: "user", content: query },
       ],
     };
-    const resp = await fetch("https://api.perplexity.ai/chat/completions", {
+    const resp = await trackedFetch("https://api.perplexity.ai/chat/completions", {
       method: "POST",
       headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify(body),
@@ -782,7 +783,7 @@ async function verifyBiblioAuthor(
 ): Promise<{ author: string; citations: unknown; search_results: unknown } | null> {
   try {
     const kindHe = kind === "article" ? "המאמר" : "הספר";
-    const resp = await fetch("https://api.perplexity.ai/chat/completions", {
+    const resp = await trackedFetch("https://api.perplexity.ai/chat/completions", {
       method: "POST",
       headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -828,7 +829,7 @@ async function fallbackBiblioSearch(
   preferKind: "book" | "article",
 ): Promise<{ hint: string; kind: string } | null> {
   try {
-    const resp = await fetch("https://api.perplexity.ai/chat/completions", {
+    const resp = await trackedFetch("https://api.perplexity.ai/chat/completions", {
       method: "POST",
       headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -1583,7 +1584,7 @@ const SYSTEM_PROMPT = `אתה מומחה לכללי האזכור האחיד בכ
 *** 2. רע"א 1908/94 בנק המזרחי המאוחד נ' מגדל כפר שיתופי (1995) ***
 *** לאיזה פסק דין התכוונת?" ***`;
 
-serve(async (req) => {
+serve((req) => withCostTelemetry("citation-chat", async () => {
   if (req.method === "OPTIONS")
     return new Response(null, { headers: corsHeaders });
 
@@ -1639,7 +1640,11 @@ serve(async (req) => {
       requestId: clientReqId,
       batchId: clientBatchId,
       foreignLookup: foreignLookupRequest,
-    } = await req.json();
+    } = await req.json().then((b: Record<string, unknown>) => {
+      // Telemetry ids are separate from the billing batchId (never mixed).
+      setTelemetryFromBody(b, "uniform_citation");
+      return b;
+    });
     // Batch-priced usage: one internal unit per up to 5 processed citations.
     const usageBatchId = typeof clientBatchId === "string" && clientBatchId.length >= 8
       ? clientBatchId
@@ -2191,7 +2196,7 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                   if (parsed.found && !parsed.isPublished) {
                     console.log(`[case-law] First search says unpublished for ${fullCaseRef}, running verification search...`);
                     try {
-                      const verifyResp = await fetch("https://api.perplexity.ai/chat/completions", {
+                      const verifyResp = await trackedFetch("https://api.perplexity.ai/chat/completions", {
                         method: "POST",
                         headers: {
                           Authorization: `Bearer ${PERPLEXITY_API_KEY}`,
@@ -2618,7 +2623,7 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                   ): Promise<{ verified: boolean; padi_volume?: string; padi_part?: string; padi_page?: string; year?: string } | null> => {
                     try {
                       const fullRef = `${caseType} ${caseNumber}`;
-                      const verifyResp = await fetch("https://api.perplexity.ai/chat/completions", {
+                      const verifyResp = await trackedFetch("https://api.perplexity.ai/chat/completions", {
                         method: "POST",
                         headers: {
                           Authorization: `Bearer ${PERPLEXITY_API_KEY}`,
@@ -2816,7 +2821,7 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
             console.log(`[legislation] Searching Perplexity for: ${lawName}`);
             const legQuery = `מצא את פרטי הפרסום הרשמי של החוק הישראלי "${lawName}". חפש באיזה ספר חוקים הוא פורסם (ס"ח - ספר החוקים, ק"ת - קובץ התקנות, או נ"ח - נוסח חדש), באיזו שנה עברית ולועזית, ומה מספר העמוד הראשון. אם זה פקודה מנדטורית שפורסמה בנוסח חדש, ציין זאת.`;
 
-            const legResp = await fetch("https://api.perplexity.ai/chat/completions", {
+            const legResp = await trackedFetch("https://api.perplexity.ai/chat/completions", {
               method: "POST",
               headers: {
                 Authorization: `Bearer ${PERPLEXITY_API_KEY}`,
@@ -2901,7 +2906,7 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
             console.log(`[regulation] Searching Perplexity for: ${regName}`);
             const regQuery = `מצא את התקנון הישראלי "${regName}". ציין: 1) שם התקנון המלא, 2) התאריך הלועזי המדויק (יום.חודש.שנה) של הנוסח העדכני ביותר (תאריך התיקון האחרון, או תאריך קבלתו אם לא תוקן), 3) קיצור מקובל אם יש (למשל תקשי"ר).`;
 
-            const regResp = await fetch("https://api.perplexity.ai/chat/completions", {
+            const regResp = await trackedFetch("https://api.perplexity.ai/chat/completions", {
               method: "POST",
               headers: {
                 Authorization: `Bearer ${PERPLEXITY_API_KEY}`,
@@ -3478,7 +3483,7 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
       return m;
     });
 
-    const response = await fetch(
+    const response = await trackedFetch(
       "https://ai.gateway.lovable.dev/v1/chat/completions",
       {
         method: "POST",
@@ -3595,4 +3600,4 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   }
-});
+}));
