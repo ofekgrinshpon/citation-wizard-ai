@@ -85,8 +85,10 @@ export function setTelemetryFromBody(body: unknown, defaultFeature: CostFeature 
 type Writer = (rows: CostEvent[]) => Promise<void>;
 
 async function defaultWriter(rows: CostEvent[]): Promise<void> {
-  const url = Deno.env.get("SUPABASE_URL");
-  const key = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+  // deno-lint-ignore no-explicit-any
+  const env = (globalThis as any).Deno?.env;
+  const url = env?.get("SUPABASE_URL");
+  const key = env?.get("SUPABASE_SERVICE_ROLE_KEY");
   if (!url || !key || rows.length === 0) return;
   const r = await fetch(`${url}/rest/v1/ai_cost_events?on_conflict=id`, {
     method: "POST",
