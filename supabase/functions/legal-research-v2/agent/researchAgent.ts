@@ -23,7 +23,7 @@ import type {
 } from "../types.ts";
 import { EvidenceStore, type EvidenceStoreJson } from "../evidence/evidenceStore.ts";
 import type { SupabaseClient } from "../shared/primitives.ts";
-import { chat, type ChatMessage, parseJsonLoose, reasoningReplayEnabled, type ToolSpec, type UsageLedger } from "../shared/model.ts";
+import { chat, type ChatMessage, enforceReplayBudget, parseJsonLoose, reasoningReplayEnabled, type ToolSpec, type UsageLedger } from "../shared/model.ts";
 import { runSearch } from "../tools/search.ts";
 import { rawQueryKey, runRawWebSearch } from "../tools/rawWebSearch.ts";
 import type { RecoverySearchFn } from "../tools/exactAuthorityRecovery.ts";
@@ -268,6 +268,8 @@ export interface AgentContextStats
   /** Metadata-only counts of opaque reasoning items captured/replayed. */
   reasoning_items_captured: number;
   reasoning_items_forwarded: number;
+  reasoning_items_dropped: number;
+  reasoning_replay_fallback_turns: number;
   context_chars_saved: number;
   /** Named-authority acquisition (v2_named_authority_acquisition_v1). */
   lookup_candidates_registered: number;
@@ -320,6 +322,8 @@ export function newAgentStats(): AgentContextStats {
     context_compactions: 0,
     reasoning_items_captured: 0,
     reasoning_items_forwarded: 0,
+    reasoning_items_dropped: 0,
+    reasoning_replay_fallback_turns: 0,
     context_chars_saved: 0,
     lookup_candidates_registered: 0,
     acquisition_targets_opened: 0,
@@ -623,6 +627,10 @@ export async function runResearchAgent(opts: {
     // Research capacity is reserved: once the research phase closes, the memo
     // tool is the ONLY tool the agent can still call.
     const forceMemo = policy.researchExhausted();
+    if (replayReasoning) {
+      const { dropped_items } = enforceReplayBudget(messages);
+      if (dropped_items) stats.reasoning_items_dropped = (stats.reasoning_items_dropped ?? 0) + dropped_items;
+    }
     const contextChars = messages.reduce((n, m) => n + (m.content?.length ?? 0), 0);
     const modelStarted = Date.now();
     const res = await chat({
@@ -638,7 +646,10 @@ export async function runResearchAgent(opts: {
     const modelMs = Date.now() - modelStarted;
     stats.reasoning_items_forwarded = (stats.reasoning_items_forwarded ?? 0) + (res.reasoning_items_forwarded ?? 0);
     stats.reasoning_items_captured = (stats.reasoning_items_captured ?? 0) + (res.reasoning_items?.length ?? 0);
-    const reasoningField = res.reasoning_items?.length ? { reasoning_items: res.reasoning_items } : {};
+    if (res.replay_fallback) stats.reasoning_replay_fallback_turns = (stats.reasoning_replay_fallback_turns ?? 0) + 1;
+    const reasoningField = res.reasoning_items?.length
+      ? { reasoning_items: res.reasoning_items, replay_seq: res.replay_seq }
+      : {};
     timer.add("agent_model", modelMs);
     await opts.heartbeat?.();
     if (!res.ok) {
@@ -1370,6 +1381,10 @@ export async function runResearchAgent(opts: {
     if (memo) break;
     if (awaitingUser) break;
 
+    if (replayReasoning) {
+      const { dropped_items } = enforceReplayBudget(messages);
+      if (dropped_items) stats.reasoning_items_dropped = (stats.reasoning_items_dropped ?? 0) + dropped_items;
+    }
     if (opts.checkpoint) {
       const snapshot: AgentRunResult = {
         memo: null,

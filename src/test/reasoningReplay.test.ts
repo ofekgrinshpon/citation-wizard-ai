@@ -29,6 +29,14 @@ function mockFetch(events: unknown[]) {
 const base = [{ role: "system" as const, content: "s" }, { role: "user" as const, content: "q" }];
 
 describe("reasoning capture", () => {
+  it("captures a valid encrypted item without its summary", async () => {
+    mockFetch([done(reasoningItem), done({ type: "function_call", call_id: "c1", name: "search", arguments: "{}" }), completed]);
+    const res: any = await m.chat({ model: "openai/gpt-6-astra", messages: base, replayReasoning: true });
+    expect(res.reasoning_items).toEqual([{ type: "reasoning", id: "rs_1", encrypted_content: ENC }]);
+    expect(res.replay_seq).toEqual(["r", "c:c1"]);
+    expect(JSON.stringify(res)).not.toContain("PLAINTEXT-SUMMARY");
+  });
+
   it("captures only valid encrypted items, drops plaintext summary, adds include", async () => {
     const bodies = mockFetch([
       done(reasoningItem),
@@ -39,7 +47,9 @@ describe("reasoning capture", () => {
     ]);
     const res = await m.chat({ model: "openai/gpt-6-astra", messages: base, replayReasoning: true });
     expect(bodies[0].include).toEqual(["reasoning.encrypted_content"]);
-    expect(res.reasoning_items).toEqual([{ type: "reasoning", id: "rs_1", encrypted_content: ENC }]);
+    // A malformed reasoning item makes the turn's order unsafe => no replay state kept.
+    expect(res.reasoning_items).toEqual([]);
+    expect(res.replay_fallback).toBe(true);
     expect(JSON.stringify(res)).not.toContain("PLAINTEXT-SUMMARY");
     expect(res.tool_calls).toHaveLength(1);
   });
@@ -68,11 +78,11 @@ describe("reasoning capture", () => {
 describe("replay ordering", () => {
   const conv = (): any[] => [
     ...base,
-    { role: "assistant", content: "", reasoning_items: [{ type: "reasoning", id: "rs_1", encrypted_content: "E1" }],
+    { role: "assistant", content: "", reasoning_items: [{ type: "reasoning", id: "rs_1", encrypted_content: "E1" }], replay_seq: ["r", "c:a", "c:b"],
       tool_calls: [{ id: "a", type: "function", function: { name: "t", arguments: "{}" } }, { id: "b", type: "function", function: { name: "t", arguments: "{}" } }] },
     { role: "tool", tool_call_id: "a", content: "ra" },
     { role: "tool", tool_call_id: "b", content: "rb" },
-    { role: "assistant", content: "", reasoning_items: [{ type: "reasoning", encrypted_content: "E2" }, { type: "reasoning", encrypted_content: "" }],
+    { role: "assistant", content: "", reasoning_items: [{ type: "reasoning", encrypted_content: "E2" }], replay_seq: ["r", "c:c"],
       tool_calls: [{ id: "c", type: "function", function: { name: "t", arguments: "{}" } }] },
     { role: "tool", tool_call_id: "c", content: "rc" },
   ];
@@ -127,6 +137,73 @@ describe("replay ordering", () => {
   });
 });
 
+describe("interleaving, fallback and budget", () => {
+  it("preserves interleaved provider order r1,a,r2,b and text position", async () => {
+    mockFetch([
+      done({ type: "reasoning", id: "r1", encrypted_content: "X1" }),
+      done({ type: "message" }),
+      { type: "response.output_text.delta", delta: "hi" },
+      done({ type: "function_call", call_id: "a", name: "t", arguments: '{"q":1}' }),
+      done({ type: "reasoning", id: "r2", encrypted_content: "X2" }),
+      done({ type: "function_call", call_id: "b", name: "t", arguments: '{"q":2}' }),
+      completed,
+    ]);
+    const res: any = await m.chat({ model: "openai/gpt-6-astra", messages: base, replayReasoning: true });
+    expect(res.replay_seq).toEqual(["r", "t", "c:a", "r", "c:b"]);
+    const turn: any = { role: "assistant", content: res.content, reasoning_items: res.reasoning_items, replay_seq: res.replay_seq,
+      tool_calls: res.tool_calls.map((c: any) => ({ id: c.id, type: "function", function: { name: c.name, arguments: c.arguments } })) };
+    const hist: any[] = [...base, turn, { role: "tool", tool_call_id: "a", content: "ra" }, { role: "tool", tool_call_id: "b", content: "rb" }];
+    const items = m.toResponsesInput(JSON.parse(JSON.stringify(hist)), true) as any[];
+    expect(items.slice(2).map((i) => i.type === "reasoning" ? i.id : i.type === "function_call" ? `${i.call_id}${i.arguments}` : i.role ?? i.call_id))
+      .toEqual(["r1", "assistant", 'a{"q":1}', "r2", 'b{"q":2}', "a", "b"]);
+    expect(items.filter((i) => i.type === "function_call")).toHaveLength(2);
+  });
+
+  it("malformed reasoning mid-turn => no replay for that turn (fallback flagged), visible output intact", async () => {
+    mockFetch([done({ type: "reasoning", encrypted_content: "X1" }), done({ type: "reasoning", summary: [] }),
+      done({ type: "function_call", call_id: "a", name: "t", arguments: "{}" }), completed]);
+    const res: any = await m.chat({ model: "openai/gpt-6-astra", messages: base, replayReasoning: true });
+    expect(res.replay_fallback).toBe(true);
+    expect(res.reasoning_items).toEqual([]);
+    expect(res.tool_calls).toHaveLength(1);
+  });
+
+  it("inconsistent or legacy (no seq) turn replays without reasoning in original order", () => {
+    const t: any = { role: "assistant", content: "", reasoning_items: [{ type: "reasoning", encrypted_content: "E" }],
+      tool_calls: [{ id: "a", type: "function", function: { name: "t", arguments: "{}" } }] };
+    const off = m.toResponsesInput([t], false);
+    expect(m.toResponsesInput([t], true)).toEqual(off);
+    expect(m.toResponsesInput([{ ...t, replay_seq: ["r", "c:zzz"] }], true)).toEqual(off);
+    expect(m.toResponsesInput([{ ...t, replay_seq: ["r", "c:a", "c:a"] }], true)).toEqual(off);
+  });
+
+  it("total budget drops oldest turns' replay whole, never truncates, keeps tool pairs", () => {
+    const big = "Z".repeat(500_000);
+    const hist: any[] = [];
+    for (let i = 0; i < 6; i++) {
+      hist.push({ role: "assistant", content: "", reasoning_items: [{ type: "reasoning", encrypted_content: big }], replay_seq: ["r", `c:k${i}`],
+        tool_calls: [{ id: `k${i}`, type: "function", function: { name: "t", arguments: "{}" } }] });
+      hist.push({ role: "tool", tool_call_id: `k${i}`, content: "r" });
+    }
+    const { dropped_items } = m.enforceReplayBudget(hist);
+    expect(dropped_items).toBe(2);
+    const kept = hist.filter((h) => h.reasoning_items);
+    expect(kept).toHaveLength(4);
+    expect(hist[0].reasoning_items).toBeUndefined();
+    expect(hist[0].replay_seq).toBeUndefined();
+    expect(kept.every((h) => h.reasoning_items[0].encrypted_content.length === 500_000)).toBe(true);
+    expect(hist.filter((h) => h.tool_calls)).toHaveLength(6);
+    expect(hist.filter((h) => h.role === "tool")).toHaveLength(6);
+  });
+
+  it("one provider attempt per call — no fallback retry", async () => {
+    const f = vi.spyOn(globalThis, "fetch").mockImplementation(async () => new Response("bad", { status: 400 }));
+    const res = await m.chat({ model: "openai/gpt-6-astra", messages: base, replayReasoning: true });
+    expect(res.ok).toBe(false);
+    expect(f).toHaveBeenCalledTimes(1);
+  });
+});
+
 describe("switch, privacy and call sites", () => {
   it("V2_REASONING_REPLAY=off disables; default on", () => {
     expect(m.reasoningReplayEnabled()).toBe(true);
@@ -138,7 +215,7 @@ describe("switch, privacy and call sites", () => {
     const files = ["legal-research-v2/beta/modelRouter.ts", "legal-research-v2/verification/supportVerifier.ts", "legal-research-v2/drafting/draft.ts", "legal-research-v2/verification/temporalValidity.ts", "_shared/costTelemetry.ts", "legal-research-v2/index.ts"];
     for (const f of files) {
       const s = readFileSync(`${fns}/${f}`, "utf8");
-      expect(s).not.toMatch(/replayReasoning|encrypted_content|reasoning_items\b/);
+      expect(s).not.toMatch(/replayReasoning|encrypted_content|reasoning_items\b|replay_seq/);
     }
     expect(readFileSync(`${fns}/legal-research-v2/agent/researchAgent.ts`, "utf8")).toMatch(/replayReasoning: true/);
   });
