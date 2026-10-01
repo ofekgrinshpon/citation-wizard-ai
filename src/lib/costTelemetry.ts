@@ -29,3 +29,24 @@ export function telemetryBody(t?: CostTelemetry | null): Record<string, string> 
     telemetryRequestId: t.telemetryRequestId,
   };
 }
+
+export type ZeroWorkLayer = "client_verified_store" | "local_foreign_formatter" | "footnote_import";
+
+/**
+ * Fire-and-forget metadata-only event for zero-provider work (cache /
+ * deterministic). Never blocks, never throws, never alters results/billing.
+ * Without telemetry the event is skipped (attribution unknown).
+ */
+export function reportZeroWork(
+  t: CostTelemetry | null | undefined,
+  layer: ZeroWorkLayer,
+  kind: "cache_hit" | "deterministic" = "cache_hit",
+): void {
+  if (!t) return;
+  try {
+    const event = { id: crypto.randomUUID(), layer, kind, ...telemetryBody(t) };
+    void import("@/integrations/supabase/client")
+      .then(({ supabase }) => supabase.functions.invoke("cost-telemetry-event", { body: { events: [event] } }))
+      .catch(() => {});
+  } catch { /* never affects the UI */ }
+}

@@ -1,4 +1,4 @@
-import { telemetryBody, type CostTelemetry } from "@/lib/costTelemetry";
+import { telemetryBody, reportZeroWork, type CostTelemetry } from "@/lib/costTelemetry";
 import {
   normalizeAbbreviations,
   SOURCE_TYPE_LABELS,
@@ -203,6 +203,8 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
       reRendered && reRendered.missing.length === 0
         ? reRendered.citation
         : verifiedMatch.full_citation;
+    // Classifier cost (if any) stays attached to the same telemetryRequestId.
+    reportZeroWork(opts.telemetry, "client_verified_store", "cache_hit");
     return {
       telemetry: opts.telemetry,
       reply: citation,
@@ -219,6 +221,7 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
   if (!isPinpoint && isForeignSourceType(sourceType)) {
     const rendered = renderForeignCitation(normalized);
     if (rendered && rendered.missing.length === 0) {
+      reportZeroWork(opts.telemetry, "local_foreign_formatter", "deterministic");
       return {
         telemetry: opts.telemetry,
         reply: rendered.citation,
