@@ -1640,7 +1640,7 @@ serve((req) => withCostTelemetry("citation-chat", async () => {
       requestId: clientReqId,
       batchId: clientBatchId,
       foreignLookup: foreignLookupRequest,
-    } = await req.json().then((b: Record<string, unknown>) => {
+    } = await req.json().then((b: any) => { // deno-lint-ignore no-explicit-any
       // Telemetry ids are separate from the billing batchId (never mixed).
       setTelemetryFromBody(b, "uniform_citation");
       return b;
