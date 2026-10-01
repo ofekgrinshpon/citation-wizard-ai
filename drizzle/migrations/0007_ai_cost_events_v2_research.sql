@@ -1,5 +1,3 @@
--- Allow legal-research-v2 per-attempt metadata events (Responses endpoint,
--- stream/abort/incomplete outcomes). Access unchanged: service role only.
 ALTER TABLE public.ai_cost_events DROP CONSTRAINT ai_cost_events_function_name_check;
 ALTER TABLE public.ai_cost_events ADD CONSTRAINT ai_cost_events_function_name_check
   CHECK (function_name IN ('citation-chat','classify-source','verify-source','citation-refill','cost-telemetry-event','legal-research-v2'));

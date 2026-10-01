@@ -50,6 +50,13 @@
       "when": 1790834930154,
       "tag": "0006_ai_cost_events_v2",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1790861292800,
+      "tag": "0007_ai_cost_events_v2_research",
+      "breakpoints": true
     }
   ]
 }

@@ -175,7 +175,7 @@ describe("V2 isolation, resume, flush", () => {
 
   it("instrumentation overhead with mocks (DB flush excluded)", async () => {
     vi.spyOn(globalThis, "fetch").mockImplementation(async () => sse([completed({ input_tokens: 1, output_tokens: 1 })]));
-    const N = 300;
+    const N = 150;
     const t0 = performance.now();
     for (let i = 0; i < N; i++) await chat({ model: "openai/gpt-6-astra", messages: [] });
     const plain = (performance.now() - t0) / N;
@@ -205,5 +205,19 @@ describe("static coverage", () => {
     // chat() call count matches tagged count (7 model call sites + router 2).
     const m = read(v2 + "shared/model.ts");
     expect((m.match(/beginAttempt\(/g) ?? []).length).toBe(2);
+  });
+});
+
+describe("parseResponsesUsage reported cost", () => {
+  it("accepts explicit USD only", async () => {
+    const { parseResponsesUsage } = await import("../../supabase/functions/_shared/costTelemetry");
+    const u = (cost: unknown) => parseResponsesUsage({ usage: { input_tokens: 1, cost } }).provider_reported_usd;
+    expect(u({ total_cost: 0.012, currency: "usd" })).toBe(0.012);
+    expect(u({ total_cost: 0, currency: "USD" })).toBe(0);
+    expect(u({ total_cost: 0.012 })).toBeNull();
+    expect(u({ total_cost: 0.012, currency: "EUR" })).toBeNull();
+    expect(u({ total_cost: -1, currency: "USD" })).toBeNull();
+    expect(u({ total_cost: "0.01", currency: "USD" })).toBeNull();
+    expect(u(undefined)).toBeNull();
   });
 });

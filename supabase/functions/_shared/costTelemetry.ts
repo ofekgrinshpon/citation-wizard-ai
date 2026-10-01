@@ -613,7 +613,20 @@ export function parseResponsesUsage(resp: unknown): ParsedUsage {
     total_tokens: int(u.total_tokens),
     cached_input_tokens: int(o(u.input_tokens_details).cached_tokens),
     reasoning_tokens: int(o(u.output_tokens_details).reasoning_tokens),
+    provider_reported_usd: responsesReportedUsd(o(u.cost)),
   };
+}
+
+/**
+ * Responses usage.cost: accepted ONLY with an explicit USD currency
+ * (case-normalized) and a finite nonnegative number. Missing currency,
+ * non-USD, or invalid amount => null. Never inferred or converted.
+ */
+function responsesReportedUsd(c: Record<string, unknown>): number | null {
+  const cur = c.currency;
+  if (typeof cur !== "string" || cur.length > 8 || cur.trim().toUpperCase() !== "USD") return null;
+  const v = c.total_cost;
+  return typeof v === "number" && Number.isFinite(v) && v >= 0 ? v : null;
 }
 
 export function isAbortError(e: unknown): boolean {
