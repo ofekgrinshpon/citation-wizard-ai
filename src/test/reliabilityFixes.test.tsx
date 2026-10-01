@@ -91,47 +91,104 @@ describe("durable per-attempt telemetry", () => {
   });
 });
 
-describe("provider-pending liveness", () => {
-  it("beats while a long call is active, only for its own run, and stops on done", async () => {
+describe("provider-pending liveness (heartbeat-only)", () => {
+  const L = { KEEPALIVE_MS: 30, RENEWAL_WINDOW_MS: 300 };
+  it("one beat per cadence, own run only, never aborts a long silent call", async () => {
     vi.useFakeTimers();
     const a = vi.fn(), b = vi.fn();
-    const limits = { KEEPALIVE_MS: 30, INACTIVITY_MS: 1000, ABSOLUTE_MS: 5000 };
-    let ga: ReturnType<typeof guardProviderCall> | null = null;
-    await withProviderLiveness(a, async () => { ga = guardProviderCall(undefined, limits); });
-    await withProviderLiveness(b, async () => { /* other run idle */ });
-    for (let i = 0; i < 5; i++) { vi.advanceTimersByTime(30); ga!.touch(); }
+    const caller = new AbortController();
+    let g: ReturnType<typeof guardProviderCall> | null = null;
+    await withProviderLiveness(a, async () => { g = guardProviderCall(caller.signal); }, L);
+    await withProviderLiveness(b, async () => {}, L);
+    vi.advanceTimersByTime(150);
     expect(a.mock.calls.length).toBe(5);
     expect(b).not.toHaveBeenCalled();
-    ga!.done();
-    vi.advanceTimersByTime(300);
-    expect(a.mock.calls.length).toBe(5);
+    expect(caller.signal.aborted).toBe(false);
+    expect(g).not.toHaveProperty("signal");
+    g!.done();
   });
 
-  it("a stuck call aborts on inactivity and stops renewing", async () => {
+  it("deadline is per invocation and not reset by a new attempt; renewal stops without abort", async () => {
     vi.useFakeTimers();
     const beat = vi.fn();
-    let g: ReturnType<typeof guardProviderCall> | null = null;
-    await withProviderLiveness(beat, async () => { g = guardProviderCall(undefined, { KEEPALIVE_MS: 10, INACTIVITY_MS: 50, ABSOLUTE_MS: 1000 }); });
-    vi.advanceTimersByTime(60);
-    expect(g!.signal.aborted).toBe(true);
-    const n = beat.mock.calls.length;
-    vi.advanceTimersByTime(500);
-    expect(beat.mock.calls.length).toBe(n);
+    await withProviderLiveness(beat, async () => {
+      const g1 = guardProviderCall();
+      vi.advanceTimersByTime(200);
+      g1.done();
+      const g2 = guardProviderCall();
+      vi.advanceTimersByTime(500);
+      g2.done();
+    }, L);
+    expect(beat.mock.calls.length).toBe(9); // 6 + 3 (until t=300), none after
   });
 
-  it("absolute cap ends even an active stream", async () => {
+  it("caller abort and done() clear the timer", async () => {
     vi.useFakeTimers();
-    const g = guardProviderCall(undefined, { KEEPALIVE_MS: 10, INACTIVITY_MS: 50, ABSOLUTE_MS: 200 });
-    for (let i = 0; i < 30; i++) { vi.advanceTimersByTime(10); g.touch(); }
-    expect(g.signal.aborted).toBe(true);
+    const beat = vi.fn();
+    const c = new AbortController();
+    await withProviderLiveness(beat, async () => { guardProviderCall(c.signal); }, L);
+    vi.advanceTimersByTime(30);
+    c.abort();
+    vi.advanceTimersByTime(200);
+    expect(beat.mock.calls.length).toBe(1);
   });
 
-  it("propagates outer abort", () => {
-    const c = new AbortController();
-    const g = guardProviderCall(c.signal);
-    c.abort();
-    expect(g.signal.aborted).toBe(true);
-    g.done();
+  it("active SSE through chat() is not cancelled by new code", async () => {
+    const { chat } = await import("../../supabase/functions/legal-research-v2/shared/model");
+    // deno-lint-ignore no-explicit-any
+    (globalThis as any).Deno = { env: { get: (k: string) => (k === "LOVABLE_API_KEY" ? "k" : undefined) } };
+    let seen: AbortSignal | undefined | null = null;
+    const enc = new TextEncoder();
+    const orig = globalThis.fetch;
+    globalThis.fetch = (async (_u: unknown, init?: RequestInit) => {
+      seen = init?.signal;
+      const body = new ReadableStream({ async start(c) {
+        for (let i = 0; i < 3; i++) { await tick(20); c.enqueue(enc.encode(`data: {"type":"response.output_text.delta","delta":"x"}\n\n`)); }
+        c.enqueue(enc.encode(`data: {"type":"response.completed","response":{"usage":{"input_tokens":1,"output_tokens":1}}}\n\n`));
+        c.close();
+      } });
+      return new Response(body, { status: 200 });
+    }) as typeof fetch;
+    try {
+      const r = await withProviderLiveness(() => {}, () => chat({ model: "openai/gpt-6-astra", messages: [{ role: "user", content: "q" }] }), { KEEPALIVE_MS: 5, RENEWAL_WINDOW_MS: 10 });
+      expect(r.ok).toBe(true);
+      expect(r.content).toBe("xxx");
+      expect(seen).toBeUndefined(); // no injected signal
+    } finally { globalThis.fetch = orig; }
+  });
+});
+
+describe("trackedFetch pre-header start", () => {
+  it("start row persists before headers; final reuses the same id", async () => {
+    const { trackedFetch } = await import("../../supabase/functions/_shared/costTelemetry");
+    const s = store();
+    __setDurableWriter(s.w);
+    let release!: () => void;
+    const orig = globalThis.fetch;
+    globalThis.fetch = (() => new Promise<Response>((res) => { release = () => res(new Response("{}", { status: 200, headers: { "content-type": "application/json" } })); })) as typeof fetch;
+    try {
+      await withCostTelemetry("x", async () => {
+        const p = trackedFetch("https://api.perplexity.ai/search", { method: "POST", body: "{}" }, { stage: "v2_sonar_search" });
+        await tick(5);
+        expect(s.rows.size).toBe(1);
+        expect([...s.rows.values()][0].capture_status).toBe("flush_deadline");
+        release();
+        await p;
+        await tick(20);
+      }, { onFlush: () => {} });
+    } finally { globalThis.fetch = orig; }
+    expect(s.rows.size).toBe(1);
+    const ids = new Set(s.log.map((l) => l.id));
+    expect(ids.size).toBe(1);
+    expect([...s.rows.values()][0].capture_status).toBe("complete");
+  });
+});
+
+describe("completion focus", () => {
+  it("uses preventScroll", async () => {
+    const { readFileSync } = await import("node:fs");
+    expect(readFileSync("src/components/research-chat/ResearchConversationPanel.tsx", "utf8")).toContain("focus({ preventScroll: true })");
+    expect(readFileSync("src/components/research-chat/ConversationComposer.tsx", "utf8")).toContain("taRef.current?.focus(opts)");
   });
 });
 
