@@ -257,7 +257,7 @@ describe("zero-work / cache attribution", () => {
 
   it("client endpoint validator: strict allowlist, never provider attempts", async () => {
     vi.stubGlobal("Deno", { serve: () => {}, env: { get: () => undefined } });
-    const { buildClientEvents } = await import("../../supabase/functions/cost-telemetry-event/index");
+    const { buildClientEvents } = await import("../../supabase/functions/cost-telemetry-event/validate");
     const ok = buildClientEvents({ events: [{ id: RID, layer: "client_verified_store", kind: "cache_hit", telemetryFeature: "footnotes", telemetryRequestId: RID }] });
     expect(ok![0]).toMatchObject({ origin: "client_reported", provider: "none", event_kind: "cache_hit", estimated_usd: 0, function_name: "cost-telemetry-event" });
     expect(buildClientEvents({ events: [{ id: RID, layer: "server_verified_store", kind: "cache_hit" }] })).toBeNull();
