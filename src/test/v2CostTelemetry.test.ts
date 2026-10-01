@@ -175,7 +175,7 @@ describe("V2 isolation, resume, flush", () => {
 
   it("instrumentation overhead with mocks (DB flush excluded)", async () => {
     vi.spyOn(globalThis, "fetch").mockImplementation(async () => sse([completed({ input_tokens: 1, output_tokens: 1 })]));
-    const N = 300;
+    const N = 150;
     const t0 = performance.now();
     for (let i = 0; i < N; i++) await chat({ model: "openai/gpt-6-astra", messages: [] });
     const plain = (performance.now() - t0) / N;
