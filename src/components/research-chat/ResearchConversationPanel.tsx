@@ -122,7 +122,7 @@ export function ResearchConversationPanel() {
       if (!ACTIVE_JOB_STATUSES.includes(j.status)) {
         stopPoll();
         await settle(cid, j);
-        setTimeout(() => composerRef.current?.focus(), 0);
+        setTimeout(() => composerRef.current?.focus({ preventScroll: true }), 0);
       }
     }, POLL_MS);
   }, [settle]);
