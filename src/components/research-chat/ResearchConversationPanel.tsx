@@ -36,6 +36,24 @@ const EXAMPLES = [
 ];
 
 /** A job's reply has landed when the thread ends with its assistant message. */
+/**
+ * Autoscroll policy. A NEW research answer brings its start into view, but
+ * only when the reader is still following along (near the bottom); a reader
+ * who scrolled up is left alone. Already-seen messages (history load,
+ * navigation back) never trigger the answer-start jump.
+ */
+export function decideAutoScroll(a: {
+  seenLastId: string | null;
+  last: { id: string; role: string; kind?: string | null } | null;
+  atBottom: boolean;
+}): "answer_start" | "bottom" | "none" {
+  if (!a.atBottom) return "none";
+  if (a.last && a.last.id !== a.seenLastId && a.last.role === "assistant" && a.last.kind === "research_answer") {
+    return "answer_start";
+  }
+  return "bottom";
+}
+
 export function replyLanded(messages: MessageRow[], job: JobState): boolean {
   const last = messages[messages.length - 1];
   if (!last || last.role !== "assistant" || last.job_id !== job.id) return false;
@@ -59,6 +77,7 @@ export function ResearchConversationPanel() {
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const atBottomRef = useRef(true);
+  const seenLastIdRef = useRef<string | null>(null);
   const composerRef = useRef<ComposerHandle>(null);
   const pollRef = useRef<number | null>(null);
   const convIdRef = useRef<string | null>(null);
@@ -142,6 +161,8 @@ export function ResearchConversationPanel() {
       setConversation(c);
       setMessages(msgs);
       setJob(latestJob);
+      // History load: never treat already-present answers as "new".
+      seenLastIdRef.current = msgs.length ? msgs[msgs.length - 1].id : null;
       atBottomRef.current = true;
       scrollToBottom(true);
       trackConversationEvent("conversation_resumed", { conversation_id: c.id, conversation_messages_count: msgs.length });
@@ -153,7 +174,21 @@ export function ResearchConversationPanel() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [conversationId]);
 
-  useEffect(() => { scrollToBottom(); }, [messages.length, isActive]);
+  useEffect(() => {
+    const last = messages.length ? messages[messages.length - 1] : null;
+    const action = decideAutoScroll({ seenLastId: seenLastIdRef.current, last, atBottom: atBottomRef.current });
+    if (last) seenLastIdRef.current = last.id;
+    if (action === "answer_start") {
+      const el = scrollRef.current?.querySelector<HTMLElement>(`[data-msg-id="${last!.id}"]`);
+      if (el) {
+        requestAnimationFrame(() => el.scrollIntoView({ block: "start" }));
+        atBottomRef.current = false; // don't yank to the footer afterwards
+        return;
+      }
+    }
+    if (action !== "none") scrollToBottom();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [messages.length, isActive]);
 
   const handleSend = async (text: string, files: File[]): Promise<boolean> => {
     if (!text && files.length === 0) return false;
@@ -291,12 +326,13 @@ export function ResearchConversationPanel() {
         )}
 
         {messages.map((m) => (
-          <ResearchChatMessage
-            key={m.id}
-            message={m}
-            optionsEnabled={awaitingReply && !sending && m.id === lastMessage?.id}
-            onOptionClick={(o) => void handleSend(o, [])}
-          />
+          <div key={m.id} data-msg-id={m.id}>
+            <ResearchChatMessage
+              message={m}
+              optionsEnabled={awaitingReply && !sending && m.id === lastMessage?.id}
+              onOptionClick={(o) => void handleSend(o, [])}
+            />
+          </div>
         ))}
 
         {isActive && (
