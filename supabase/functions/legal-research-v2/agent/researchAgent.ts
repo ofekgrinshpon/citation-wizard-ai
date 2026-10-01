@@ -265,6 +265,9 @@ export interface AgentContextStats
   authority_bindings_created: number;
   authority_bindings_withheld: number;
   context_compactions: number;
+  /** Metadata-only counts of opaque reasoning items captured/replayed. */
+  reasoning_items_captured: number;
+  reasoning_items_forwarded: number;
   context_chars_saved: number;
   /** Named-authority acquisition (v2_named_authority_acquisition_v1). */
   lookup_candidates_registered: number;
@@ -315,6 +318,8 @@ export function newAgentStats(): AgentContextStats {
     authority_bindings_created: 0,
     authority_bindings_withheld: 0,
     context_compactions: 0,
+    reasoning_items_captured: 0,
+    reasoning_items_forwarded: 0,
     context_chars_saved: 0,
     lookup_candidates_registered: 0,
     acquisition_targets_opened: 0,
@@ -526,6 +531,7 @@ export async function runResearchAgent(opts: {
   const toolSpecs: ToolSpec[] = askUserAllowed ? [...baseSpecs, ASK_USER_TOOL as ToolSpec] : baseSpecs;
   let awaitingUser: AskUserRequest | null = null;
 
+  const replayReasoning = reasoningReplayEnabled();
   const messages: ChatMessage[] = opts.priorMessages
     ? [...opts.priorMessages]
     : [
@@ -626,9 +632,13 @@ export async function runResearchAgent(opts: {
       toolChoice: forceMemo ? { name: memoTool.name } : "auto",
       usage: opts.usage,
       costStage: "v2_research_agent",
+      ...(replayReasoning ? { replayReasoning: true } : {}),
       ...(opts.intake.agent_reasoning_effort === "high" ? { reasoningEffort: "high" as const } : {}),
     });
     const modelMs = Date.now() - modelStarted;
+    stats.reasoning_items_forwarded += res.reasoning_items_forwarded ?? 0;
+    stats.reasoning_items_captured += res.reasoning_items?.length ?? 0;
+    const reasoningField = res.reasoning_items?.length ? { reasoning_items: res.reasoning_items } : {};
     timer.add("agent_model", modelMs);
     await opts.heartbeat?.();
     if (!res.ok) {
@@ -637,7 +647,7 @@ export async function runResearchAgent(opts: {
     }
     if (!res.tool_calls.length) {
       // No tool call: nudge once towards the memo, then stop.
-      messages.push({ role: "assistant", content: res.content });
+      messages.push({ role: "assistant", content: res.content, ...reasoningField });
       messages.push({
         role: "user",
         content: "סיים כעת: קרא ל-submit_research_memo עם התזכיר המובנה.",
@@ -671,6 +681,7 @@ export async function runResearchAgent(opts: {
         type: "function" as const,
         function: { name: c.name, arguments: c.arguments },
       })),
+      ...reasoningField,
     });
 
     const readableBefore = opts.store.readable().length;

@@ -66,6 +66,38 @@ export interface ChatMessage {
    * the active context. Never sent to a model provider.
    */
   digest?: string;
+  /**
+   * Opaque provider-returned encrypted reasoning items for this assistant turn
+   * (Responses API only). Never decoded, logged, or sent to chat-completions.
+   */
+  reasoning_items?: ReasoningItem[];
+}
+
+/** Minimal opaque reasoning item kept for stateless replay (no summary text). */
+export interface ReasoningItem {
+  type: "reasoning";
+  id?: string;
+  encrypted_content: string;
+}
+
+const MAX_ENCRYPTED_CHARS = 1_000_000;
+
+/**
+ * Accept a provider output item only if it is a reasoning item carrying a
+ * non-empty encrypted_content string. Plaintext summary is intentionally dropped.
+ */
+export function toReasoningItem(item: Record<string, unknown>): ReasoningItem | null {
+  if (item?.type !== "reasoning") return null;
+  const enc = item.encrypted_content;
+  if (typeof enc !== "string" || !enc || enc.length > MAX_ENCRYPTED_CHARS) return null;
+  const out: ReasoningItem = { type: "reasoning", encrypted_content: enc };
+  if (typeof item.id === "string" && item.id.length > 0 && item.id.length <= 256) out.id = item.id;
+  return out;
+}
+
+/** Internal switch for research-agent replay. Default ON; V2_REASONING_REPLAY=off disables. */
+export function reasoningReplayEnabled(): boolean {
+  try { return (Deno.env.get("V2_REASONING_REPLAY") ?? "").toLowerCase() !== "off"; } catch { return true; }
 }
 
 /** Strip local-only fields before a message reaches a provider. */
@@ -89,6 +121,10 @@ export interface ChatResult {
   finish_reason: string | null;
   prompt_tokens: number;
   completion_tokens: number;
+  /** Valid encrypted reasoning items returned on this call (replay enabled only). */
+  reasoning_items?: ReasoningItem[];
+  /** Count of reasoning items replayed in this request (metadata only). */
+  reasoning_items_forwarded?: number;
 }
 
 export interface UsageLedger {
@@ -123,12 +159,23 @@ function usesResponsesApi(model: string): boolean {
 }
 
 /** Translate the chat-shaped conversation into Responses `input[]` items. */
-function toResponsesInput(messages: ChatMessage[]): Array<Record<string, unknown>> {
+export function toResponsesInput(messages: ChatMessage[], replayReasoning = false): Array<Record<string, unknown>> {
   const input: Array<Record<string, unknown>> = [];
   for (const m of messages) {
     if (m.role === "system" || m.role === "user") {
       input.push({ role: m.role, content: [{ type: "input_text", text: m.content ?? "" }] });
     } else if (m.role === "assistant") {
+      // Reasoning precedes the turn's output text/function calls, matching the
+      // provider's output order, so it lands before the matching tool outputs.
+      if (replayReasoning) {
+        for (const r of m.reasoning_items ?? []) {
+          const ok = toReasoningItem(r as unknown as Record<string, unknown>);
+          if (!ok) continue;
+          input.push(ok.id
+            ? { type: "reasoning", id: ok.id, encrypted_content: ok.encrypted_content, summary: [] }
+            : { type: "reasoning", encrypted_content: ok.encrypted_content, summary: [] });
+        }
+      }
       if (m.content) {
         input.push({ role: "assistant", content: [{ type: "output_text", text: m.content }] });
       }
@@ -162,14 +209,19 @@ async function responsesChatGuarded(opts: {
   fail: (status: number, error: string, terminal?: boolean) => ChatResult;
   reasoningEffort?: "medium" | "high";
   costStage?: CostStage;
+  replayReasoning?: boolean;
 }): Promise<ChatResult> {
+  const replay = !!opts.replayReasoning;
+  const input = toResponsesInput(opts.messages, replay);
+  const reasoning_items_forwarded = replay ? input.filter((i) => i.type === "reasoning").length : 0;
   const body: Record<string, unknown> = {
     model: opts.model,
-    input: toResponsesInput(opts.messages),
+    input,
     stream: true,
     store: false,
     reasoning: { effort: opts.reasoningEffort ?? "medium", summary: "auto" },
   };
+  if (replay) body.include = ["reasoning.encrypted_content"];
   if (opts.tools?.length) {
     body.tools = opts.tools.map((t) => ({
       type: "function",
@@ -217,6 +269,7 @@ async function responsesChatGuarded(opts: {
   let buf = "";
   let text = "";
   const tool_calls: ChatToolCall[] = [];
+  const reasoning_items: ReasoningItem[] = [];
   let prompt_tokens = 0;
   let completion_tokens = 0;
   let finish_reason: string | null = null;
@@ -230,7 +283,10 @@ async function responsesChatGuarded(opts: {
       text += String(evt.delta ?? "");
     } else if (type === "response.output_item.done") {
       const item = (evt.item ?? {}) as Record<string, unknown>;
-      if (item.type === "function_call") {
+      if (replay && item.type === "reasoning") {
+        const r = toReasoningItem(item);
+        if (r) reasoning_items.push(r);
+      } else if (item.type === "function_call") {
         tool_calls.push({
           id: String(item.call_id ?? item.id ?? `call_${tool_calls.length}`),
           name: String(item.name ?? ""),
@@ -310,6 +366,7 @@ async function responsesChatGuarded(opts: {
     finish_reason,
     prompt_tokens,
     completion_tokens,
+    ...(replay ? { reasoning_items, reasoning_items_forwarded } : {}),
   };
 }
 
@@ -331,6 +388,8 @@ async function chatGuarded(opts: {
   reasoningEffort?: "medium" | "high";
   /** Telemetry-only role tag; never sent to the provider. */
   costStage?: CostStage;
+  /** Responses API only: request + replay opaque encrypted reasoning. Ignored elsewhere. */
+  replayReasoning?: boolean;
 }): Promise<ChatResult> {
   const apiKey = Deno.env.get("LOVABLE_API_KEY");
   const fail = (status: number, error: string, terminal = true): ChatResult => ({
