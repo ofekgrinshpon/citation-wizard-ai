@@ -221,6 +221,14 @@ export interface ResumeState {
   timing?: RunTimingJson;
   /** When the previous chunk stopped — the next chunk measures the gap. */
   paused_at?: number;
+  /**
+   * What `paused_at` means. "handoff": the chunk stopped voluntarily at a step
+   * boundary, so the gap is pure hand-off idle time. "checkpoint": a mid-chunk
+   * checkpoint written before further provider work — a resume from it means
+   * the worker died, and the gap includes unfinished execution + stale
+   * detection. Absent on rows written before this field existed.
+   */
+  pause_kind?: "handoff" | "checkpoint";
   /** Set while/after the run waited for the user's clarification reply. */
   awaiting_since?: number;
 }
@@ -253,7 +261,17 @@ async function runPipeline(
   const timer = RunTimer.fromJSON(resume?.timing);
   // Time spent between a paused chunk and the worker that picks it up is
   // orchestration cost, not research cost — measure it explicitly.
-  if (resume?.paused_at) timer.add("resume_gap", Date.now() - resume.paused_at);
+  if (resume?.paused_at) {
+    const gap = Date.now() - resume.paused_at;
+    timer.add(
+      resume.pause_kind === "handoff"
+        ? "resume_gap"
+        : resume.pause_kind === "checkpoint"
+        ? "recovered_mid_call_elapsed"
+        : "resume_gap_unclassified",
+      gap,
+    );
+  }
   // Resuming after an ask_user reply: the wait is user time, never research
   // time and never a stall. Budgets, evidence and usage continue unchanged.
   if (resume?.awaiting_since && prior) {
@@ -331,6 +349,7 @@ async function runPipeline(
               started_at: started,
               timing: timer.toJSON(),
               paused_at: Date.now(),
+              pause_kind: "checkpoint",
             },
             intake,
             // Without these a mid-chunk recovery would lose the user's job.
@@ -374,6 +393,7 @@ async function runPipeline(
         started_at: started,
         timing: timer.toJSON(),
         paused_at: Date.now(),
+        pause_kind: "handoff",
       },
     };
   }
@@ -1273,8 +1293,26 @@ async function runPipeline(
 }
 
 /** Kick a fresh worker to continue a paused run. */
-async function selfInvokeResume(run_id: string, supabaseUrl: string, serviceKey: string) {
-  await fetch(`${supabaseUrl}/functions/v1/legal-research-v2`, {
+export interface ResumeHandoffAck {
+  ok: boolean;
+  status: number | null;
+  error: "http" | "network" | null;
+  at: string;
+}
+
+/**
+ * Observe the hand-off acknowledgment. Never retries (no ownership fencing
+ * exists); a failed hand-off is left to the existing watchdog, but is now
+ * explicit. Network errors are recorded and rethrown, as before.
+ */
+async function selfInvokeResume(
+  run_id: string,
+  supabaseUrl: string,
+  serviceKey: string,
+): Promise<ResumeHandoffAck> {
+  let res: Response;
+  try {
+    res = await fetch(`${supabaseUrl}/functions/v1/legal-research-v2`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${serviceKey}`,
@@ -1283,6 +1321,21 @@ async function selfInvokeResume(run_id: string, supabaseUrl: string, serviceKey:
     },
     body: JSON.stringify({ resume_run_id: run_id }),
   });
+  } catch (e) {
+    console.error(JSON.stringify({ event: "v2_resume_handoff_failed", run_id, error: "network" }));
+    throw e;
+  }
+  try { await res.body?.cancel(); } catch { /* ignore */ }
+  const ack: ResumeHandoffAck = {
+    ok: res.ok,
+    status: res.status,
+    error: res.ok ? null : "http",
+    at: new Date().toISOString(),
+  };
+  if (!res.ok) {
+    console.error(JSON.stringify({ event: "v2_resume_handoff_failed", run_id, status: res.status }));
+  }
+  return ack;
 }
 
 /**
@@ -1408,7 +1461,21 @@ async function driveRunInner(
         agent_state: { resume: out.resume, intake, job, stage: progress.current() },
         last_beat_at: new Date().toISOString(),
       }).eq("run_id", intake.run_id);
-      await selfInvokeResume(intake.run_id, supabaseUrl, serviceKey);
+      const ack = await selfInvokeResume(intake.run_id, supabaseUrl, serviceKey);
+      if (!ack.ok) {
+        // Explicit, bounded metadata only; recovery stays with the watchdog.
+        try {
+          await admin.from("v2_eval_runs").update({
+            agent_state: {
+              resume: out.resume,
+              intake,
+              job,
+              stage: progress.current(),
+              handoff: ack,
+            },
+          }).eq("run_id", intake.run_id);
+        } catch { /* telemetry must never fail the run */ }
+      }
       return;
     }
     // The user-facing job row is finalized FIRST: an edge worker can be shut

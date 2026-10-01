@@ -102,6 +102,16 @@ export function extractSection(locator: string): string {
   return m ? m[1] : "";
 }
 
+/**
+ * The section token only when the locator is EXACTLY one provision
+ * ("סעיף 54", "ס' 56(א)"). Plural, ranges, chapters or multiple provisions
+ * return "" so callers render the complete locator instead of truncating it.
+ */
+export function simpleSection(locator: string): string {
+  const m = (locator ?? "").trim().match(/^(?:סעיף|ס['״])\s*(\d{1,4}[א-ת]?(?:\([א-ת0-9]{1,3}\))*)\.?$/u);
+  return m ? m[1] : "";
+}
+
 export interface CitationOccurrence {
   source_id: string;
   /** Fully formatted first-appearance citation (already deterministic). */
@@ -174,6 +184,8 @@ export function buildCompoundFootnotes(
   }>();
   /** Previous point's single source id, or null when it was compound/empty. */
   let prevSoloSourceId: string | null = null;
+  /** Locator of the most recent occurrence of each source. */
+  const lastLocator = new Map<string, string>();
 
   return groups.map((group, i) => {
     const index = offset + i + 1;
@@ -189,6 +201,7 @@ export function buildCompoundFootnotes(
         const lawName = (occ.law_name ?? "").trim() ||
           (isLegislation ? extractLawName(occ.full_citation) : "");
         first.set(occ.source_id, { index, full: occ.full_citation, label, isLegislation, lawName, locator });
+        lastLocator.set(occ.source_id, locator);
         return {
           source_id: occ.source_id,
           citation: occ.full_citation,
@@ -202,33 +215,42 @@ export function buildCompoundFootnotes(
 
       // `שם` requires both points to be single-source and the same authority.
       const adjacent = solo && prevSoloSourceId === occ.source_id;
-      const newLocator = locator && locator !== prior.locator ? locator : "";
+      // Compare against the IMMEDIATELY PRECEDING occurrence of this source,
+      // never the first-ever one (A54 → A56 → A54 must keep 54).
+      const prevLocator = lastLocator.get(occ.source_id) ?? "";
       let citation: string;
       let repeat_kind: RepeatKind;
 
       if (prior.isLegislation) {
         // Rule 37.5 — legislation never uses לעיל ה"ש with a case-law label.
-        const section = extractSection(locator) || extractSection(prior.locator);
+        // The current locator is rendered COMPLETE (plural, ranges, multiple
+        // provisions). Never fall back to another occurrence's locator.
         if (adjacent) {
           repeat_kind = "ibid";
-          citation = newLocator && section ? `שם, בס' ${section}.` : "שם.";
+          citation = locator && locator !== prevLocator
+            ? `שם, ${withBetPrefix(locator)}.`
+            : "שם.";
         } else {
           repeat_kind = "supra";
-          citation = section && prior.lawName
-            ? `ס' ${section} ל${prior.lawName}.`
+          const simple = locator ? simpleSection(locator) : "";
+          citation = simple && prior.lawName
+            ? `ס' ${simple} ל${prior.lawName}.`
+            : locator && prior.lawName
+            ? `${prior.lawName}, לעיל ה"ש ${prior.index}, ${withBetPrefix(locator)}.`
             : prior.lawName
             ? `${prior.lawName}, לעיל ה"ש ${prior.index}.`
             : "שם.";
         }
       } else if (adjacent) {
         repeat_kind = "ibid";
-        const suffix = newLocator ? withBetPrefix(newLocator) : "";
+        const suffix = locator && locator !== prevLocator ? withBetPrefix(locator) : "";
         citation = suffix ? `שם, ${suffix}.` : "שם.";
       } else {
         repeat_kind = "supra";
-        const suffix = newLocator ? `, ${withBetPrefix(newLocator)}` : "";
+        const suffix = locator ? `, ${withBetPrefix(locator)}` : "";
         citation = `${prior.label}, לעיל ה"ש ${prior.index}${suffix}.`;
       }
+      lastLocator.set(occ.source_id, locator);
 
       return {
         source_id: occ.source_id,
