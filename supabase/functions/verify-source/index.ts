@@ -120,7 +120,7 @@ serve((req) => withCostTelemetry("verify-source", async () => {
           ],
           response_format: { type: "json_object" },
         }),
-      }
+      },
       { stage: "verify_source" },
     );
 
