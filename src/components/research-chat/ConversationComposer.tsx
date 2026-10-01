@@ -7,7 +7,7 @@ const MAX_FILES = 5;
 const MAX_FILE_BYTES = 8 * 1024 * 1024;
 const ACCEPT_EXT = /\.(pdf|docx)$/i;
 
-export type ComposerHandle = { focus: () => void; setText: (t: string) => void };
+export type ComposerHandle = { focus: (opts?: FocusOptions) => void; setText: (t: string) => void };
 
 export const ConversationComposer = forwardRef<ComposerHandle, {
   disabled?: boolean;
@@ -22,7 +22,7 @@ export const ConversationComposer = forwardRef<ComposerHandle, {
   const fileRef = useRef<HTMLInputElement>(null);
 
   useImperativeHandle(ref, () => ({
-    focus: () => taRef.current?.focus(),
+    focus: (opts?: FocusOptions) => taRef.current?.focus(opts),
     setText: (t: string) => { setText(t); setTimeout(() => taRef.current?.focus(), 0); },
   }));
 
