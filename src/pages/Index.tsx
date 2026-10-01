@@ -19,7 +19,7 @@ import { useActivityLog } from "@/hooks/useActivityLog";
 import { normalizeAbbreviations, detectSourceType, SOURCE_TYPE_LABELS, type SourceType, RULE_REFERENCES } from "@/data/abbreviations";
 import { validateAIResponse, buildEnginePromptHint, getEngineRuleReference, getMissingFieldsSummary } from "@/lib/citationValidation";
 import { resolveSourceType } from "@/lib/sourceTypeClassifier";
-import { newTelemetryBatch, sourceTelemetry, telemetryBody, type CostTelemetry } from "@/lib/costTelemetry";
+import { newTelemetryBatch, sourceTelemetry, telemetryBody, reportZeroWork, type CostTelemetry } from "@/lib/costTelemetry";
 import { VerifiedAutocomplete } from "@/components/VerifiedAutocomplete";
 import { toast } from "sonner";
 import {
@@ -55,6 +55,7 @@ interface PendingVerification {
   fullCitation: string;
   sourceType: string | null;
   reply: string;
+  telemetry?: CostTelemetry;
 }
 
 /**
@@ -101,7 +102,7 @@ const Index = () => {
 
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
-  const telemetryRef = useRef<CostTelemetry | null>(null);
+  // Telemetry is carried immutably per action — never a shared latest-submission ref.
   const [loading, setLoading] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState<string | null>(null);
   const [mode, setMode] = useState<AppMode>("legalqa");
@@ -117,6 +118,7 @@ const Index = () => {
     normalized: string;
     sourceType: SourceType;
     sourceLabel: string;
+    telemetry?: CostTelemetry;
   } | null>(null);
   // Pending bill type selection — when a bill is detected but user didn't specify הכנסת/הממשלה
   const [pendingBillType, setPendingBillType] = useState<{
@@ -125,6 +127,7 @@ const Index = () => {
     sourceType: SourceType;
     sourceLabel: string;
     newMessages: Message[];
+    telemetry?: CostTelemetry;
   } | null>(null);
   // Pending treaty type selection — multilateral or bilateral
   const [pendingTreatyType, setPendingTreatyType] = useState<{
@@ -133,6 +136,7 @@ const Index = () => {
     sourceType: SourceType;
     sourceLabel: string;
     newMessages: Message[];
+    telemetry?: CostTelemetry;
   } | null>(null);
   const [citationRefreshKey, setCitationRefreshKey] = useState(0);
   const [qaRefreshKey, setQaRefreshKey] = useState(0);
@@ -222,7 +226,7 @@ const Index = () => {
     );
   }
 
-  const callAPI = async (userMessage: string, history: Message[]) => {
+  const callAPI = async (userMessage: string, history: Message[], telemetry?: CostTelemetry) => {
     const requestId = crypto.randomUUID();
     const { data, errorInfo } = await invokeFunction<{ content?: string } & Record<string, unknown>>(
       "citation-chat",
@@ -232,7 +236,7 @@ const Index = () => {
           { role: "user", content: userMessage },
         ],
         requestId,
-        ...telemetryBody(telemetryRef.current),
+        ...telemetryBody(telemetry),
       },
       { projectId },
     );
@@ -263,7 +267,8 @@ const Index = () => {
     rawInput: string,
     fullCitation: string,
     sourceType: string | null,
-    yearPrefs?: YearPreferences
+    yearPrefs?: YearPreferences,
+    telemetry?: CostTelemetry,
   ) => {
     try {
       const result = await ensureVerifiedSources(
@@ -274,7 +279,7 @@ const Index = () => {
           verifiedBy: user?.id,
           autoVerified: true,
           yearPreferences: yearPrefs,
-          telemetry: telemetryRef.current ?? undefined,
+          telemetry,
         }],
       );
       if (result.invalid > 0) {
@@ -289,9 +294,9 @@ const Index = () => {
 
   const handleIntegrityConfirm = async (prefs: YearPreferences) => {
     if (!pendingVerification) return;
-    const { rawInput, fullCitation, sourceType, reply } = pendingVerification;
+    const { rawInput, fullCitation, sourceType, reply, telemetry } = pendingVerification;
     const adjustedCitation = applyYearPreferences(fullCitation, prefs);
-    await saveVerifiedSource(rawInput, adjustedCitation, sourceType, prefs);
+    await saveVerifiedSource(rawInput, adjustedCitation, sourceType, prefs, telemetry);
 
     // Update the displayed message to reflect the adjusted citation
     const adjustedReply = applyYearPreferences(reply, prefs);
@@ -313,14 +318,14 @@ const Index = () => {
   const handleIntegrityCancel = async () => {
     if (!pendingVerification) return;
     // Save with defaults (both years present)
-    const { rawInput, fullCitation, sourceType } = pendingVerification;
-    await saveVerifiedSource(rawInput, fullCitation, sourceType, { hasHebrewYear: true, hasGregorianYear: true });
+    const { rawInput, fullCitation, sourceType, telemetry } = pendingVerification;
+    await saveVerifiedSource(rawInput, fullCitation, sourceType, { hasHebrewYear: true, hasGregorianYear: true }, telemetry);
     setPendingVerification(null);
   };
 
   const handleBillTypeSelect = async (billType: BillPublicationType) => {
     if (!pendingBillType) return;
-    const { rawText, normalized, sourceType, sourceLabel, newMessages } = pendingBillType;
+    const { rawText, normalized, sourceType, sourceLabel, newMessages, telemetry } = pendingBillType;
     setPendingBillType(null);
     setLoading(true);
 
@@ -363,7 +368,7 @@ const Index = () => {
         }
       }
 
-      const reply = await callAPI(prompt, messages);
+      const reply = await callAPI(prompt, messages, telemetry);
       const assistantIndex = newMessages.length;
 
       const validation = validateAIResponse(reply, sourceType as SourceType);
@@ -392,7 +397,7 @@ const Index = () => {
       const isVerifiedClean = !/\[חסר:/.test(reply) && !/⚠️/.test(reply);
       const isFragment = !extractedCitation || extractedCitation.length < 10;
       if (isVerifiedClean && !isFragment) {
-        await saveVerifiedSource(fullRawInput, extractedCitation, sourceType !== "unknown" ? sourceLabel : null);
+        await saveVerifiedSource(fullRawInput, extractedCitation, sourceType !== "unknown" ? sourceLabel : null, undefined, telemetry);
       }
     } catch {
       setMessages([...newMessages, { role: "assistant", content: "שגיאה בחיבור לשרת. אנא נסה שנית." }]);
@@ -403,7 +408,7 @@ const Index = () => {
 
   const handleTreatyTypeSelect = async (treatyType: TreatySigningType) => {
     if (!pendingTreatyType) return;
-    const { rawText, normalized, sourceType, sourceLabel, newMessages } = pendingTreatyType;
+    const { rawText, normalized, sourceType, sourceLabel, newMessages, telemetry } = pendingTreatyType;
     setPendingTreatyType(null);
     setLoading(true);
 
@@ -419,7 +424,7 @@ const Index = () => {
       }
 
       const fullRawInput = buildFullRawInput(rawText, messages);
-      const reply = await callAPI(prompt, messages);
+      const reply = await callAPI(prompt, messages, telemetry);
       const assistantIndex = newMessages.length;
 
       const validation = validateAIResponse(reply, sourceType as SourceType);
@@ -448,7 +453,7 @@ const Index = () => {
       const isVerifiedClean = !/\[חסר:/.test(reply) && !/⚠️/.test(reply);
       const isFragment = !extractedCitation || extractedCitation.length < 10;
       if (isVerifiedClean && !isFragment) {
-        await saveVerifiedSource(fullRawInput, extractedCitation, sourceType !== "unknown" ? sourceLabel : null);
+        await saveVerifiedSource(fullRawInput, extractedCitation, sourceType !== "unknown" ? sourceLabel : null, undefined, telemetry);
       }
     } catch {
       setMessages([...newMessages, { role: "assistant", content: "שגיאה בחיבור לשרת. אנא נסה שנית." }]);
@@ -459,7 +464,8 @@ const Index = () => {
 
   const handleSuggestionAccept = () => {
     if (!pendingSuggestion) return;
-    const { suggestion, rawInput } = pendingSuggestion;
+    const { suggestion, rawInput, telemetry } = pendingSuggestion;
+    reportZeroWork(telemetry, "client_verified_store");
     const verifiedReply = suggestion.full_citation;
     const verifiedCategory = getVerifiedCategoryLabel(
       classifyVerifiedSource({
@@ -487,7 +493,7 @@ const Index = () => {
 
   const handleSuggestionReject = async () => {
     if (!pendingSuggestion) return;
-    const { rawInput, normalized, sourceType, sourceLabel } = pendingSuggestion;
+    const { rawInput, normalized, sourceType, sourceLabel, telemetry } = pendingSuggestion;
     setPendingSuggestion(null);
     setLoading(true);
     try {
@@ -496,7 +502,7 @@ const Index = () => {
         const engineHint = buildEnginePromptHint(sourceType as SourceType);
         prompt = `[סיווג אוטומטי: ${sourceLabel}]\n${engineHint}${normalized}`;
       }
-      const reply = await callAPI(prompt, messages);
+      const reply = await callAPI(prompt, messages, telemetry);
       const assistantIndex = messages.length;
       setMessages((prev) => [...prev, { role: "assistant", content: reply }]);
       setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: sourceType }));
@@ -515,7 +521,7 @@ const Index = () => {
       const isVerifiedClean = !/\[חסר:/.test(reply) && !/⚠️/.test(reply);
       const isFragment = !extractedCitation || extractedCitation.length < 10 || /^\d+\.?$/.test(extractedCitation.trim());
       if (isVerifiedClean && !isFragment) {
-        await saveVerifiedSource(rawInput, extractedCitation, sourceType !== "unknown" ? sourceLabel : null);
+        await saveVerifiedSource(rawInput, extractedCitation, sourceType !== "unknown" ? sourceLabel : null, undefined, telemetry);
       }
     } catch {
       setMessages((prev) => [...prev, { role: "assistant", content: "שגיאה בחיבור לשרת. אנא נסה שנית." }]);
@@ -561,8 +567,8 @@ const Index = () => {
 
     // Step 2: Detect source type — hybrid regex + Gemini classifier
     // One telemetry action per wizard submission (attribution only).
-    telemetryRef.current = sourceTelemetry(newTelemetryBatch("uniform_citation"));
-    const resolved = await resolveSourceType(normalized, telemetryRef.current);
+    const tel = sourceTelemetry(newTelemetryBatch("uniform_citation"));
+    const resolved = await resolveSourceType(normalized, tel);
     const sourceType = resolved.sourceType;
     const sourceLabel = SOURCE_TYPE_LABELS[sourceType];
     if (resolved.source === "llm" && resolved.llm) {
@@ -582,7 +588,7 @@ const Index = () => {
     if (isBillSource && !hasExplicitBillType) {
       setLoading(false);
       setLoadingMessage(null);
-      setPendingBillType({ rawText, normalized, sourceType: sourceType as SourceType, sourceLabel, newMessages });
+      setPendingBillType({ rawText, normalized, sourceType: sourceType as SourceType, sourceLabel, newMessages, telemetry: tel });
       return;
     }
 
@@ -592,7 +598,7 @@ const Index = () => {
     if (isTreatySource && !hasExplicitTreatyType) {
       setLoading(false);
       setLoadingMessage(null);
-      setPendingTreatyType({ rawText, normalized, sourceType: sourceType as SourceType, sourceLabel, newMessages });
+      setPendingTreatyType({ rawText, normalized, sourceType: sourceType as SourceType, sourceLabel, newMessages, telemetry: tel });
       return;
     }
 
@@ -629,6 +635,7 @@ const Index = () => {
             ...newMessages,
             { role: "assistant", content: `✓ מקור מאומת\n🏷️ ${verifiedCategory}\n${verifiedReply}` },
           ]);
+          reportZeroWork(tel, "client_verified_store");
           await subscription.incrementCount();
 
           supabase.from("citation_history").insert([{
@@ -653,6 +660,7 @@ const Index = () => {
             normalized,
             sourceType: sourceType as SourceType,
             sourceLabel,
+            telemetry: tel,
           });
           setLoading(false);
           return;
@@ -671,7 +679,7 @@ const Index = () => {
         prompt = `${prompt}\n\n══ מקור מאומת (${verifiedCategory}) ══\nהשתמש בפרטים הבאים מהמקור המאומת כדי להשלים את האזכור:\nשם: ${verifiedMatch.source_name}\nאזכור מלא: ${verifiedMatch.full_citation}\n══════════════════════════════════`;
       }
 
-      const reply = await callAPI(prompt, messages);
+      const reply = await callAPI(prompt, messages, tel);
       const assistantIndex = newMessages.length;
 
       // Re-classify source type based on AI output (e.g., database → published if פ"ד found)
@@ -740,7 +748,7 @@ const Index = () => {
               hasGregorianYear: (existingMeta?.hasGregorianYear as boolean) ?? true,
             };
             const adjustedCitation = applyYearPreferences(extractedCitation, prefs);
-            await saveVerifiedSource(fullRawInput, adjustedCitation, citationPayload.source_type, prefs);
+            await saveVerifiedSource(fullRawInput, adjustedCitation, citationPayload.source_type, prefs, tel);
           } else if (existingMeta && ("hasHebrewYear" in existingMeta)) {
             // Has year preferences but not fully verified — still use silently
             const prefs: YearPreferences = {
@@ -748,7 +756,7 @@ const Index = () => {
               hasGregorianYear: existingMeta.hasGregorianYear as boolean ?? true,
             };
             const adjustedCitation = applyYearPreferences(extractedCitation, prefs);
-            await saveVerifiedSource(fullRawInput, adjustedCitation, citationPayload.source_type, prefs);
+            await saveVerifiedSource(fullRawInput, adjustedCitation, citationPayload.source_type, prefs, tel);
           } else {
             // New law — show the Publication Integrity Card
             setPendingVerification({
@@ -757,11 +765,12 @@ const Index = () => {
               fullCitation: extractedCitation,
               sourceType: citationPayload.source_type,
               reply,
+              telemetry: tel,
             });
           }
         } else {
           // Non-legislation: verify directly
-          await saveVerifiedSource(fullRawInput, extractedCitation, citationPayload.source_type);
+          await saveVerifiedSource(fullRawInput, extractedCitation, citationPayload.source_type, undefined, tel);
         }
       }
     } catch (err) {
@@ -1011,6 +1020,7 @@ const Index = () => {
                           setMessages(updatedMessages);
                           setLoading(true);
                           try {
+                            const editTel = sourceTelemetry(newTelemetryBatch("uniform_citation"));
                             const normalized = normalizeAbbreviations(newContent);
                             const sourceType = detectSourceType(normalized);
                             const sourceLabel = SOURCE_TYPE_LABELS[sourceType];
@@ -1041,6 +1051,7 @@ const Index = () => {
                                   ...updatedMessages,
                                   { role: "assistant", content: `✓ מקור מאומת\n🏷️ ${verifiedCategory}\n${verifiedReply}` },
                                 ]);
+                                reportZeroWork(editTel, "client_verified_store");
                               } else {
                                 setPendingSuggestion({
                                   suggestion: verifiedMatch,
@@ -1048,10 +1059,11 @@ const Index = () => {
                                   normalized,
                                   sourceType: sourceType as SourceType,
                                   sourceLabel,
+                                  telemetry: editTel,
                                 });
                               }
                             } else {
-                              const reply = await callAPI(prompt, updatedMessages.slice(0, i));
+                              const reply = await callAPI(prompt, updatedMessages.slice(0, i), editTel);
                               const assistantIndex = updatedMessages.length;
                               setMessages([...updatedMessages, { role: "assistant", content: reply }]);
                               setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: sourceType as SourceType }));
@@ -1061,7 +1073,7 @@ const Index = () => {
                               const isVerifiedClean = !/\[חסר:/.test(reply) && !/⚠️/.test(reply);
                               const isFragment = !extractedCitation || extractedCitation.length < 10;
                               if (isVerifiedClean && !isFragment) {
-                                await saveVerifiedSource(newContent, extractedCitation, sourceType !== "unknown" ? sourceLabel : null);
+                                await saveVerifiedSource(newContent, extractedCitation, sourceType !== "unknown" ? sourceLabel : null, undefined, editTel);
                               }
                             }
                           } catch {
@@ -1084,7 +1096,7 @@ const Index = () => {
                             const engineHint = buildEnginePromptHint(newType);
                             // IMPORTANT: include [סיווג אוטומטי: ...] so the backend routes to the right Perplexity branch
                             const reclassifiedPrompt = `[סיווג אוטומטי: ${newLabel}]\n[תיקון סיווג: המשתמש ציין שמדובר ב${newLabel}]\n${engineHint}[כלל רלוונטי: ${getEngineRuleReference(newType)}]\n${rawInput}`;
-                            const reply = await callAPI(reclassifiedPrompt, messages.slice(0, i));
+                            const reply = await callAPI(reclassifiedPrompt, messages.slice(0, i), sourceTelemetry(newTelemetryBatch("uniform_citation")));
                             setMessages((prev) => {
                               const updated = [...prev];
                               updated[i] = { role: "assistant", content: reply };
