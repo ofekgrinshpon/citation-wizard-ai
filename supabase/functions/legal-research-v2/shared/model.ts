@@ -71,6 +71,12 @@ export interface ChatMessage {
    * (Responses API only). Never decoded, logged, or sent to chat-completions.
    */
   reasoning_items?: ReasoningItem[];
+  /**
+   * Provider output order for this turn: "r" = next reasoning item, "t" = the
+   * assistant text message, "c:<call_id>" = that function call. Replay uses it
+   * verbatim; if missing or inconsistent, reasoning is omitted for the turn.
+   */
+  replay_seq?: string[];
 }
 
 /** Minimal opaque reasoning item kept for stateless replay (no summary text). */
@@ -80,7 +86,48 @@ export interface ReasoningItem {
   encrypted_content: string;
 }
 
-const MAX_ENCRYPTED_CHARS = 1_000_000;
+/** Per-item cap; larger items are skipped whole (never truncated). */
+const MAX_ENCRYPTED_CHARS = 512_000;
+/**
+ * Whole-history replay budget: at most 2,000,000 encrypted chars and 64 items
+ * carried across all assistant turns. Older turns lose their (optional) replay
+ * state first; visible text, tool calls and tool results are never touched.
+ */
+export const REPLAY_BUDGET = { maxChars: 2_000_000, maxItems: 64 } as const;
+
+export function enforceReplayBudget(messages: ChatMessage[]): { dropped_items: number } {
+  let chars = 0, items = 0, dropped = 0;
+  for (let i = messages.length - 1; i >= 0; i--) {
+    const m = messages[i];
+    if (!m.reasoning_items?.length) continue;
+    const c = m.reasoning_items.reduce((n, r) => n + (r.encrypted_content?.length ?? 0), 0);
+    if (chars + c > REPLAY_BUDGET.maxChars || items + m.reasoning_items.length > REPLAY_BUDGET.maxItems) {
+      dropped += m.reasoning_items.length;
+      const { reasoning_items: _r, replay_seq: _s, ...rest } = m;
+      messages[i] = rest;
+    } else { chars += c; items += m.reasoning_items.length; }
+  }
+  return { dropped_items: dropped };
+}
+
+/** Validate a turn's sequence against its stored items, text and calls. */
+function validSeq(m: ChatMessage): boolean {
+  const seq = m.replay_seq;
+  if (!Array.isArray(seq) || !m.reasoning_items?.length) return false;
+  const calls = (m.tool_calls ?? []).map((c) => c.id);
+  const seen = new Set<string>();
+  let r = 0, t = 0;
+  for (const tok of seq) {
+    if (tok === "r") r++;
+    else if (tok === "t") t++;
+    else if (typeof tok === "string" && tok.startsWith("c:")) {
+      const id = tok.slice(2);
+      if (!calls.includes(id) || seen.has(id)) return false;
+      seen.add(id);
+    } else return false;
+  }
+  return r === m.reasoning_items.length && seen.size === calls.length && t === (m.content ? 1 : 0);
+}
 
 /**
  * Accept a provider output item only if it is a reasoning item carrying a
@@ -125,6 +172,10 @@ export interface ChatResult {
   reasoning_items?: ReasoningItem[];
   /** Count of reasoning items replayed in this request (metadata only). */
   reasoning_items_forwarded?: number;
+  /** Provider output order for this call (see ChatMessage.replay_seq). */
+  replay_seq?: string[];
+  /** True when returned reasoning could not be kept in a safe order. */
+  replay_fallback?: boolean;
 }
 
 export interface UsageLedger {
@@ -167,15 +218,28 @@ export function toResponsesInput(messages: ChatMessage[], replayReasoning = fals
     } else if (m.role === "assistant") {
       // Reasoning precedes the turn's output text/function calls, matching the
       // provider's output order, so it lands before the matching tool outputs.
-      if (replayReasoning) {
-        for (const r of m.reasoning_items ?? []) {
-          const ok = toReasoningItem(r as unknown as Record<string, unknown>);
-          if (!ok) continue;
-          input.push(ok.id
-            ? { type: "reasoning", id: ok.id, encrypted_content: ok.encrypted_content, summary: [] }
-            : { type: "reasoning", encrypted_content: ok.encrypted_content, summary: [] });
+      const items = replayReasoning && validSeq(m)
+        ? m.reasoning_items!.map((r) => toReasoningItem(r as unknown as Record<string, unknown>))
+        : null;
+      if (items && items.every(Boolean)) {
+        // Replay in the exact provider order recorded for this turn.
+        let ri = 0;
+        for (const tok of m.replay_seq!) {
+          if (tok === "r") {
+            const ok = items[ri++]!;
+            input.push(ok.id
+              ? { type: "reasoning", id: ok.id, encrypted_content: ok.encrypted_content, summary: [] }
+              : { type: "reasoning", encrypted_content: ok.encrypted_content, summary: [] });
+          } else if (tok === "t") {
+            input.push({ role: "assistant", content: [{ type: "output_text", text: m.content }] });
+          } else {
+            const c = m.tool_calls!.find((x) => x.id === tok.slice(2))!;
+            input.push({ type: "function_call", call_id: c.id, name: c.function.name, arguments: c.function.arguments });
+          }
         }
+        continue;
       }
+      // No valid replay state: original transport order, no reasoning.
       if (m.content) {
         input.push({ role: "assistant", content: [{ type: "output_text", text: m.content }] });
       }
@@ -270,6 +334,8 @@ async function responsesChatGuarded(opts: {
   let text = "";
   const tool_calls: ChatToolCall[] = [];
   const reasoning_items: ReasoningItem[] = [];
+  const replay_seq: string[] = [];
+  let seqBroken = false;
   let prompt_tokens = 0;
   let completion_tokens = 0;
   let finish_reason: string | null = null;
@@ -285,8 +351,13 @@ async function responsesChatGuarded(opts: {
       const item = (evt.item ?? {}) as Record<string, unknown>;
       if (replay && item.type === "reasoning") {
         const r = toReasoningItem(item);
-        if (r) reasoning_items.push(r);
+        if (r) { reasoning_items.push(r); replay_seq.push("r"); }
+        else seqBroken = true; // unusable item: replaying around it would alter order
+      } else if (replay && item.type === "message") {
+        if (replay_seq.includes("t")) seqBroken = true; // text is merged; can't split
+        else replay_seq.push("t");
       } else if (item.type === "function_call") {
+        if (replay) replay_seq.push(`c:${String(item.call_id ?? item.id ?? `call_${tool_calls.length}`)}`);
         tool_calls.push({
           id: String(item.call_id ?? item.id ?? `call_${tool_calls.length}`),
           name: String(item.name ?? ""),
@@ -366,7 +437,11 @@ async function responsesChatGuarded(opts: {
     finish_reason,
     prompt_tokens,
     completion_tokens,
-    ...(replay ? { reasoning_items, reasoning_items_forwarded } : {}),
+    ...(replay
+      ? seqBroken
+        ? { reasoning_items: [], reasoning_items_forwarded, replay_fallback: true }
+        : { reasoning_items, replay_seq, reasoning_items_forwarded }
+      : {}),
   };
 }
 
