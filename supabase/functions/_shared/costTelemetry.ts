@@ -20,7 +20,7 @@
  */
 import { AsyncLocalStorage } from "node:async_hooks";
 
-export const COST_FEATURES = ["uniform_citation", "footnotes", "bibliography", "refill", "unknown"] as const;
+export const COST_FEATURES = ["uniform_citation", "footnotes", "bibliography", "refill", "legal_research", "unknown"] as const;
 export type CostFeature = (typeof COST_FEATURES)[number];
 
 /**
@@ -63,6 +63,9 @@ export const COST_STAGES = [
   "author_check", "biblio_fallback",
   "foreign_search_tier1", "foreign_search_tier2",
   "refill_tier1", "refill_tier2",
+  // legal-research-v2 (explicit at each call site)
+  "v2_router", "v2_direct_chat", "v2_research_agent", "v2_support_verifier", "v2_temporal_validity",
+  "v2_drafter", "v2_drafter_repair", "v2_academic_drafter", "v2_sonar_search", "v2_raw_web_search",
   // zero-work layers
   "client_verified_store", "server_verified_store", "local_foreign_formatter", "footnote_import",
   "unspecified",
@@ -73,7 +76,7 @@ export type ZeroWorkLayer = (typeof ZERO_WORK_LAYERS)[number];
 
 export type CaptureStatus =
   | "complete" | "body_byte_cap" | "body_time_cap" | "parse_error" | "read_error"
-  | "error_body_unread" | "stream_unread" | "flush_deadline" | "not_applicable";
+  | "error_body_unread" | "stream_unread" | "flush_deadline" | "not_applicable" | "aborted";
 
 export interface CostEvent {
   id: string;
@@ -86,11 +89,12 @@ export interface CostEvent {
   event_kind: "provider_attempt" | "cache_hit" | "deterministic";
   origin: "server_observed" | "client_reported";
   provider: "perplexity" | "lovable_gateway" | "none";
-  endpoint: "chat_completions" | "search" | "none";
+  endpoint: "chat_completions" | "responses" | "search" | "none";
   model: string | null;
   requested_model: string | null;
   response_model: string | null;
-  outcome: "ok" | "http_error" | "network_error" | "parse_error" | "capture_incomplete";
+  outcome: "ok" | "http_error" | "network_error" | "parse_error" | "capture_incomplete"
+    | "stream_error" | "aborted" | "incomplete";
   http_status: number | null;
   /** Time to response headers (legacy column; kept NOT NULL). */
   latency_ms: number;
@@ -264,9 +268,17 @@ function schedule(p: Promise<void>) {
 export async function withCostTelemetry<T>(
   functionName: string,
   fn: () => Promise<T>,
-  opts?: { onFlush?: (p: Promise<void>) => void },
+  opts?: {
+    onFlush?: (p: Promise<void>) => void;
+    /** Server-side correlation (e.g. V2 run UUID + per-invocation UUID). Never a billing batchId. */
+    init?: { feature?: CostFeature; requestId?: unknown; batchId?: unknown };
+  },
 ): Promise<T> {
-  const ctx: Ctx = { functionName, feature: "unknown", requestId: null, batchId: null, seq: 0, pending: [], dropped: 0 };
+  const ctx: Ctx = {
+    functionName, feature: opts?.init?.feature ?? "unknown",
+    requestId: sanitizeUuid(opts?.init?.requestId), batchId: sanitizeUuid(opts?.init?.batchId),
+    seq: 0, pending: [], dropped: 0,
+  };
   try {
     return await als.run(ctx, fn);
   } finally {
@@ -574,4 +586,106 @@ export async function trackedFetch(
     pushPending(ctx, { fallback, promise });
   } catch { /* telemetry never affects the response */ }
   return resp;
+}
+
+/** Set server-side correlation ids on the current context (no-op outside one). */
+export function setCostCorrelation(c: { requestId?: unknown; batchId?: unknown }): void {
+  try {
+    const ctx = als.getStore();
+    if (!ctx) return;
+    if (c.requestId !== undefined) ctx.requestId = sanitizeUuid(c.requestId);
+    if (c.batchId !== undefined) ctx.batchId = sanitizeUuid(c.batchId);
+  } catch { /* ignore */ }
+}
+
+/** Usage from an OpenAI Responses object (terminal SSE event). Missing → null. */
+export function parseResponsesUsage(resp: unknown): ParsedUsage {
+  const o = (v: unknown) => (v && typeof v === "object" ? v : {}) as Record<string, unknown>;
+  const r = o(resp);
+  const u = o(r.usage);
+  const id = r.id;
+  return {
+    ...EMPTY_USAGE,
+    provider_request_id: typeof id === "string" && PROVIDER_REQ_ID_RE.test(id) ? id : null,
+    response_model: safeModel(r.model),
+    input_tokens: int(u.input_tokens),
+    output_tokens: int(u.output_tokens), // already includes reasoning
+    total_tokens: int(u.total_tokens),
+    cached_input_tokens: int(o(u.input_tokens_details).cached_tokens),
+    reasoning_tokens: int(o(u.output_tokens_details).reasoning_tokens),
+  };
+}
+
+export function isAbortError(e: unknown): boolean {
+  return !!e && typeof e === "object" && (e as { name?: unknown }).name === "AbortError";
+}
+
+export interface AttemptRecorder {
+  headers(status: number, h: Headers | null): void;
+  finish(f: { outcome: CostEvent["outcome"]; capture_status: CaptureStatus; usage?: ParsedUsage; complete?: boolean }): void;
+}
+
+/**
+ * Explicit per-attempt recorder for callers that read the provider response
+ * themselves (e.g. Responses SSE). Observes only; never reads/clones the body.
+ * Returns null outside a telemetry context. Never throws.
+ */
+export function beginAttempt(a: {
+  provider: "lovable_gateway" | "perplexity";
+  endpoint: "chat_completions" | "responses" | "search";
+  requestedModel: string | null;
+  stage: unknown;
+}): AttemptRecorder | null {
+  try {
+    const ctx = als.getStore();
+    if (!ctx) return null;
+    const started = Date.now();
+    const model = safeModel(a.requestedModel);
+    const base: CostEvent = {
+      id: crypto.randomUUID(), function_name: ctx.functionName, feature: ctx.feature,
+      telemetry_request_id: ctx.requestId, telemetry_batch_id: ctx.batchId,
+      attempt_seq: Math.min(++ctx.seq, 1000), stage: sanitizeStage(a.stage), event_kind: "provider_attempt",
+      origin: "server_observed", provider: a.provider, endpoint: a.endpoint,
+      model, requested_model: model, outcome: "capture_incomplete", http_status: null,
+      latency_ms: 0, header_latency_ms: null, completion_latency_ms: null, latency_complete: false,
+      capture_status: "read_error", ...EMPTY_USAGE, request_count: null, price_version: PRICE_VERSION,
+      estimated_usd: null, estimate_complete: false,
+    };
+    let resolve!: (e: CostEvent) => void;
+    const promise = new Promise<CostEvent | null>((r) => { resolve = r; });
+    pushPending(ctx, { fallback: base, promise });
+    let done = false;
+    return {
+      headers(status, h) {
+        try {
+          const ms = Date.now() - started;
+          base.http_status = status >= 100 && status <= 599 ? status : null;
+          base.latency_ms = ms;
+          base.header_latency_ms = ms;
+          const x = h?.get("x-request-id");
+          if (x && PROVIDER_REQ_ID_RE.test(x)) base.provider_request_id = x;
+        } catch { /* ignore */ }
+      },
+      finish(f) {
+        if (done) return;
+        done = true;
+        try {
+          const ms = Date.now() - started;
+          const u = f.usage ?? EMPTY_USAGE;
+          const ev: CostEvent = {
+            ...base, ...u,
+            provider_request_id: u.provider_request_id ?? base.provider_request_id,
+            outcome: f.outcome, capture_status: f.capture_status,
+            latency_ms: base.header_latency_ms ?? ms,
+            completion_latency_ms: f.complete ? ms : null,
+            latency_complete: !!f.complete,
+          };
+          Object.assign(ev, estimateUsd(a.provider, a.endpoint === "responses" ? "chat_completions" : a.endpoint, model, u, f.outcome === "ok"));
+          resolve(ev);
+        } catch { resolve(base); }
+      },
+    };
+  } catch {
+    return null;
+  }
 }
