@@ -29,6 +29,14 @@ function mockFetch(events: unknown[]) {
 const base = [{ role: "system" as const, content: "s" }, { role: "user" as const, content: "q" }];
 
 describe("reasoning capture", () => {
+  it("captures a valid encrypted item without its summary", async () => {
+    mockFetch([done(reasoningItem), done({ type: "function_call", call_id: "c1", name: "search", arguments: "{}" }), completed]);
+    const res: any = await m.chat({ model: "openai/gpt-6-astra", messages: base, replayReasoning: true });
+    expect(res.reasoning_items).toEqual([{ type: "reasoning", id: "rs_1", encrypted_content: ENC }]);
+    expect(res.replay_seq).toEqual(["r", "c:c1"]);
+    expect(JSON.stringify(res)).not.toContain("PLAINTEXT-SUMMARY");
+  });
+
   it("captures only valid encrypted items, drops plaintext summary, adds include", async () => {
     const bodies = mockFetch([
       done(reasoningItem),
@@ -39,7 +47,9 @@ describe("reasoning capture", () => {
     ]);
     const res = await m.chat({ model: "openai/gpt-6-astra", messages: base, replayReasoning: true });
     expect(bodies[0].include).toEqual(["reasoning.encrypted_content"]);
-    expect(res.reasoning_items).toEqual([{ type: "reasoning", id: "rs_1", encrypted_content: ENC }]);
+    // A malformed reasoning item makes the turn's order unsafe => no replay state kept.
+    expect(res.reasoning_items).toEqual([]);
+    expect(res.replay_fallback).toBe(true);
     expect(JSON.stringify(res)).not.toContain("PLAINTEXT-SUMMARY");
     expect(res.tool_calls).toHaveLength(1);
   });
@@ -145,7 +155,7 @@ describe("interleaving, fallback and budget", () => {
     const hist: any[] = [...base, turn, { role: "tool", tool_call_id: "a", content: "ra" }, { role: "tool", tool_call_id: "b", content: "rb" }];
     const items = m.toResponsesInput(JSON.parse(JSON.stringify(hist)), true) as any[];
     expect(items.slice(2).map((i) => i.type === "reasoning" ? i.id : i.type === "function_call" ? `${i.call_id}${i.arguments}` : i.role ?? i.call_id))
-      .toEqual(["r1", "assistant", 'a{"q":1}', "r2", 'b{"q":2}', "function_call_output", "function_call_output"]);
+      .toEqual(["r1", "assistant", 'a{"q":1}', "r2", 'b{"q":2}', "a", "b"]);
     expect(items.filter((i) => i.type === "function_call")).toHaveLength(2);
   });
 
