@@ -13,3 +13,7 @@
 ## Status (handoff track)
 - [x] Parts 1-11 implemented; 1196 tests + typecheck pass; legal-research-v2 deployed.
 - [ ] Part 12 acceptance run — BLOCKED: run fb436e14 stopped with AI credits 402 (agent + drafter). Re-run once credits are topped up.
+
+## Cost telemetry (citation/footnotes/bibliography)
+- [x] Per-attempt provider cost events, mock tests, deployed
+- [ ] Live 3+3+3 experiment (max US$5) — BLOCKED: waits for independent code review
