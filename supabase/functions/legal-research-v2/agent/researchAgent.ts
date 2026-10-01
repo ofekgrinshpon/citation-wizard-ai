@@ -636,8 +636,8 @@ export async function runResearchAgent(opts: {
       ...(opts.intake.agent_reasoning_effort === "high" ? { reasoningEffort: "high" as const } : {}),
     });
     const modelMs = Date.now() - modelStarted;
-    stats.reasoning_items_forwarded = (stats.reasoning_items_forwarded ?? 0) + res.reasoning_items_forwarded ?? 0;
-    stats.reasoning_items_captured = (stats.reasoning_items_captured ?? 0) + res.reasoning_items?.length ?? 0;
+    stats.reasoning_items_forwarded = (stats.reasoning_items_forwarded ?? 0) + (res.reasoning_items_forwarded ?? 0);
+    stats.reasoning_items_captured = (stats.reasoning_items_captured ?? 0) + (res.reasoning_items?.length ?? 0);
     const reasoningField = res.reasoning_items?.length ? { reasoning_items: res.reasoning_items } : {};
     timer.add("agent_model", modelMs);
     await opts.heartbeat?.();
