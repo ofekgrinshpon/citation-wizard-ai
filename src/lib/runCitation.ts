@@ -204,6 +204,7 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
         ? reRendered.citation
         : verifiedMatch.full_citation;
     return {
+      telemetry: opts.telemetry,
       reply: citation,
       citation,
       sourceType,
@@ -219,6 +220,7 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
     const rendered = renderForeignCitation(normalized);
     if (rendered && rendered.missing.length === 0) {
       return {
+        telemetry: opts.telemetry,
         reply: rendered.citation,
         citation: rendered.citation,
         sourceType: rendered.detection.sourceType,
@@ -306,6 +308,7 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
     );
     const reply = `נמצאו כמה פסקי דין אפשריים בשם זה. כדי לא לנחש, בחרו את הנכון והוסיפו את הערכאה או השנה:\n${lines.join("\n")}`;
     return {
+      telemetry: opts.telemetry,
       reply,
       citation: "",
       sourceType,
@@ -349,6 +352,7 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
           ? `${rendered.citation}\n⚠️ ${warningBits.join(" ") || missingSummary}`
           : rendered.citation;
         return {
+          telemetry: opts.telemetry,
           reply,
           citation: rendered.citation,
           sourceType: effectiveType,
@@ -401,6 +405,7 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
   const hasMarker = /\[חסר:/.test(finalReply) || /⚠️/.test(finalReply);
 
   return {
+    telemetry: opts.telemetry,
     reply: finalReply,
     citation,
     sourceType: effectiveSourceType,

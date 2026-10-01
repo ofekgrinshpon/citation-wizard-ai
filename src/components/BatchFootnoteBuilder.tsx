@@ -1,3 +1,4 @@
+import { newTelemetryBatch, sourceTelemetry, type CostTelemetry } from "@/lib/costTelemetry";
 import { useState, useCallback, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { normalizeAbbreviations, detectSourceType, SOURCE_TYPE_LABELS, type SourceType } from "@/data/abbreviations";
@@ -28,6 +29,8 @@ interface FootnoteCell {
   approved?: boolean;
   sourceTypeOverride?: SourceType;
   detectedType?: SourceType;
+  /** Cost-telemetry ids kept until later verify-source. */
+  telemetry?: CostTelemetry;
 }
 
 interface PendingIntegrity {
@@ -178,13 +181,15 @@ export function BatchFootnoteBuilder({}: BatchProps) {
   // citation wizard uses). Respects sourceTypeOverride if set.
   const runSingleCitation = async (
     input: string,
-    overrideType?: SourceType
+    overrideType?: SourceType,
+    telemetryBatch = newTelemetryBatch("footnotes"),
   ): Promise<RunCitationResult> =>
-    runCitation({ rawInput: input, overrideType, projectId, useVerifiedStore: true });
+    runCitation({ rawInput: input, overrideType, projectId, useVerifiedStore: true, telemetry: sourceTelemetry(telemetryBatch) });
 
   const applyResultToCell = (c: FootnoteCell, res: RunCitationResult): FootnoteCell => ({
     ...c,
     output: res.reply,
+    telemetry: res.telemetry,
     status: res.status,
     warningMsg: res.status === "warning" ? res.warningMsg : undefined,
     errorMsg: undefined,
@@ -218,9 +223,10 @@ export function BatchFootnoteBuilder({}: BatchProps) {
 
     // Bounded concurrency: each citation-chat call does grounded web lookups,
     // so firing every row at once gets the batch rate-limited.
+    const telemetryBatch = newTelemetryBatch("footnotes");
     const results = await runPool(
       activeCells,
-      (cell) => runSingleCitation(cell.input, cell.sourceTypeOverride),
+      (cell) => runSingleCitation(cell.input, cell.sourceTypeOverride, telemetryBatch),
       {
         concurrency: 2,
         retries: 1,

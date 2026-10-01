@@ -1,3 +1,4 @@
+import { newTelemetryBatch, sourceTelemetry, } from "@/lib/costTelemetry";
 import { useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useBibliography, CATEGORY_LABELS, classifyCitation, type BibSourceCategory } from "@/hooks/useBibliography";
@@ -120,6 +121,7 @@ export function BibliographyGenerator() {
   const lookupOne = async (
     rawInput: string,
     sourceTypeHint?: BibSourceCategory,
+    telemetryBatch = newTelemetryBatch("bibliography"),
   ): Promise<Omit<ReviewItem, "id" | "isEditing" | "editValue">> => {
     const overrideType =
       sourceTypeHint && sourceTypeHint !== "unknown"
@@ -130,6 +132,7 @@ export function BibliographyGenerator() {
       rawInput,
       overrideType,
       useVerifiedStore: true,
+      telemetry: sourceTelemetry(telemetryBatch),
     });
 
     const citation = cleanCitation(result.citation);
@@ -197,9 +200,10 @@ export function BibliographyGenerator() {
 
     try {
       let done = 0;
+      const telemetryBatch = newTelemetryBatch("bibliography");
       const results = await runPool(
         lines,
-        (line) => lookupOne(line),
+        (line) => lookupOne(line, undefined, telemetryBatch),
         {
           concurrency: CONCURRENCY,
           retries: 1,
