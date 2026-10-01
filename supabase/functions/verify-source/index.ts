@@ -1,3 +1,4 @@
+import { trackedFetch, withCostTelemetry, setTelemetryFromBody } from "../_shared/costTelemetry.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
@@ -51,7 +52,7 @@ const SYSTEM_PROMPT = `אתה מערכת אימות מקורות משפטיים 
 
 *** לעולם אל תחזיר status=verified אם יש חוסר עקביות, רכיב חסר, או פרגמנט ***`;
 
-serve(async (req) => {
+serve((req) => withCostTelemetry("verify-source", async () => {
   if (req.method === "OPTIONS")
     return new Response(null, { headers: corsHeaders });
 
@@ -81,7 +82,9 @@ serve(async (req) => {
   // ── End auth gate ──
 
   try {
-    const { rawInput, fullCitation, sourceType } = await req.json();
+    const reqBody = await req.json();
+    setTelemetryFromBody(reqBody);
+    const { rawInput, fullCitation, sourceType } = reqBody;
 
     if (!rawInput || !fullCitation) {
       return new Response(
@@ -101,7 +104,7 @@ serve(async (req) => {
 
 בצע בדיקת עקביות ותקינות והחזר JSON בלבד.`;
 
-    const response = await fetch(
+    const response = await trackedFetch(
       "https://ai.gateway.lovable.dev/v1/chat/completions",
       {
         method: "POST",
@@ -155,4 +158,4 @@ serve(async (req) => {
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
-});
+}));

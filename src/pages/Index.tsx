@@ -19,6 +19,7 @@ import { useActivityLog } from "@/hooks/useActivityLog";
 import { normalizeAbbreviations, detectSourceType, SOURCE_TYPE_LABELS, type SourceType, RULE_REFERENCES } from "@/data/abbreviations";
 import { validateAIResponse, buildEnginePromptHint, getEngineRuleReference, getMissingFieldsSummary } from "@/lib/citationValidation";
 import { resolveSourceType } from "@/lib/sourceTypeClassifier";
+import { newTelemetryBatch, sourceTelemetry, telemetryBody, type CostTelemetry } from "@/lib/costTelemetry";
 import { VerifiedAutocomplete } from "@/components/VerifiedAutocomplete";
 import { toast } from "sonner";
 import {
@@ -100,6 +101,7 @@ const Index = () => {
 
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
+  const telemetryRef = useRef<CostTelemetry | null>(null);
   const [loading, setLoading] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState<string | null>(null);
   const [mode, setMode] = useState<AppMode>("legalqa");
@@ -230,6 +232,7 @@ const Index = () => {
           { role: "user", content: userMessage },
         ],
         requestId,
+        ...telemetryBody(telemetryRef.current),
       },
       { projectId },
     );
@@ -271,6 +274,7 @@ const Index = () => {
           verifiedBy: user?.id,
           autoVerified: true,
           yearPreferences: yearPrefs,
+          telemetry: telemetryRef.current ?? undefined,
         }],
       );
       if (result.invalid > 0) {
@@ -556,7 +560,9 @@ const Index = () => {
     setLoading(true);
 
     // Step 2: Detect source type — hybrid regex + Gemini classifier
-    const resolved = await resolveSourceType(normalized);
+    // One telemetry action per wizard submission (attribution only).
+    telemetryRef.current = sourceTelemetry(newTelemetryBatch("uniform_citation"));
+    const resolved = await resolveSourceType(normalized, telemetryRef.current);
     const sourceType = resolved.sourceType;
     const sourceLabel = SOURCE_TYPE_LABELS[sourceType];
     if (resolved.source === "llm" && resolved.llm) {

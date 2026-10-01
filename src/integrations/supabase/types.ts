@@ -153,6 +153,96 @@ export type Database = {
           },
         ]
       }
+      ai_cost_events: {
+        Row: {
+          attempt_seq: number
+          cached_input_tokens: number | null
+          citation_tokens: number | null
+          created_at: string
+          endpoint: string
+          estimate_complete: boolean
+          estimated_usd: number | null
+          feature: string
+          function_name: string
+          http_status: number | null
+          id: string
+          input_tokens: number | null
+          latency_ms: number
+          model: string | null
+          outcome: string
+          output_tokens: number | null
+          price_version: string
+          provider: string
+          provider_reported_usd: number | null
+          provider_request_id: string | null
+          reasoning_tokens: number | null
+          search_context_size: string | null
+          search_queries: number | null
+          stage: string
+          telemetry_batch_id: string | null
+          telemetry_request_id: string | null
+          total_tokens: number | null
+        }
+        Insert: {
+          attempt_seq: number
+          cached_input_tokens?: number | null
+          citation_tokens?: number | null
+          created_at?: string
+          endpoint: string
+          estimate_complete?: boolean
+          estimated_usd?: number | null
+          feature: string
+          function_name: string
+          http_status?: number | null
+          id: string
+          input_tokens?: number | null
+          latency_ms: number
+          model?: string | null
+          outcome: string
+          output_tokens?: number | null
+          price_version: string
+          provider: string
+          provider_reported_usd?: number | null
+          provider_request_id?: string | null
+          reasoning_tokens?: number | null
+          search_context_size?: string | null
+          search_queries?: number | null
+          stage: string
+          telemetry_batch_id?: string | null
+          telemetry_request_id?: string | null
+          total_tokens?: number | null
+        }
+        Update: {
+          attempt_seq?: number
+          cached_input_tokens?: number | null
+          citation_tokens?: number | null
+          created_at?: string
+          endpoint?: string
+          estimate_complete?: boolean
+          estimated_usd?: number | null
+          feature?: string
+          function_name?: string
+          http_status?: number | null
+          id?: string
+          input_tokens?: number | null
+          latency_ms?: number
+          model?: string | null
+          outcome?: string
+          output_tokens?: number | null
+          price_version?: string
+          provider?: string
+          provider_reported_usd?: number | null
+          provider_request_id?: string | null
+          reasoning_tokens?: number | null
+          search_context_size?: string | null
+          search_queries?: number | null
+          stage?: string
+          telemetry_batch_id?: string | null
+          telemetry_request_id?: string | null
+          total_tokens?: number | null
+        }
+        Relationships: []
+      }
       citation_history: {
         Row: {
           created_at: string

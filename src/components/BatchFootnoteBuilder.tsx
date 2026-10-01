@@ -1,3 +1,4 @@
+import { newTelemetryBatch, sourceTelemetry, type CostTelemetry } from "@/lib/costTelemetry";
 import { useState, useCallback, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { normalizeAbbreviations, detectSourceType, SOURCE_TYPE_LABELS, type SourceType } from "@/data/abbreviations";
@@ -28,6 +29,8 @@ interface FootnoteCell {
   approved?: boolean;
   sourceTypeOverride?: SourceType;
   detectedType?: SourceType;
+  /** Cost-telemetry ids kept until later verify-source. */
+  telemetry?: CostTelemetry;
 }
 
 interface PendingIntegrity {
@@ -36,6 +39,7 @@ interface PendingIntegrity {
   rawInput: string;
   fullCitation: string;
   sourceType: string | null;
+  telemetry?: CostTelemetry;
 }
 
 type Phase = "input" | "review" | "final";
@@ -178,13 +182,15 @@ export function BatchFootnoteBuilder({}: BatchProps) {
   // citation wizard uses). Respects sourceTypeOverride if set.
   const runSingleCitation = async (
     input: string,
-    overrideType?: SourceType
+    overrideType?: SourceType,
+    telemetryBatch = newTelemetryBatch("footnotes"),
   ): Promise<RunCitationResult> =>
-    runCitation({ rawInput: input, overrideType, projectId, useVerifiedStore: true });
+    runCitation({ rawInput: input, overrideType, projectId, useVerifiedStore: true, telemetry: sourceTelemetry(telemetryBatch) });
 
   const applyResultToCell = (c: FootnoteCell, res: RunCitationResult): FootnoteCell => ({
     ...c,
     output: res.reply,
+    telemetry: res.telemetry,
     status: res.status,
     warningMsg: res.status === "warning" ? res.warningMsg : undefined,
     errorMsg: undefined,
@@ -218,9 +224,10 @@ export function BatchFootnoteBuilder({}: BatchProps) {
 
     // Bounded concurrency: each citation-chat call does grounded web lookups,
     // so firing every row at once gets the batch rate-limited.
+    const telemetryBatch = newTelemetryBatch("footnotes");
     const results = await runPool(
       activeCells,
-      (cell) => runSingleCitation(cell.input, cell.sourceTypeOverride),
+      (cell) => runSingleCitation(cell.input, cell.sourceTypeOverride, telemetryBatch),
       {
         concurrency: 2,
         retries: 1,
@@ -344,7 +351,7 @@ export function BatchFootnoteBuilder({}: BatchProps) {
 
       setCells(normalized.map((cell) => updatedCells.find((u) => u.id === cell.id) ?? cell));
 
-      const verifiedCandidates: { rawInput: string; fullCitation: string; sourceType: string | null; yearPreferences?: YearPreferences }[] = [];
+      const verifiedCandidates: { rawInput: string; fullCitation: string; sourceType: string | null; yearPreferences?: YearPreferences; telemetry?: CostTelemetry }[] = [];
       const integrityQueue: PendingIntegrity[] = [];
 
       for (const cell of updatedCells) {
@@ -384,6 +391,7 @@ export function BatchFootnoteBuilder({}: BatchProps) {
               fullCitation,
               sourceType: label !== "לא ידוע" ? label : null,
               yearPreferences: prefs,
+              telemetry: cell.telemetry,
             });
           } else {
             integrityQueue.push({
@@ -392,6 +400,7 @@ export function BatchFootnoteBuilder({}: BatchProps) {
               rawInput: cell.input,
               fullCitation,
               sourceType: label !== "לא ידוע" ? label : null,
+              telemetry: cell.telemetry,
             });
           }
         } else if (isVerified) {
@@ -399,6 +408,7 @@ export function BatchFootnoteBuilder({}: BatchProps) {
             rawInput: cell.input,
             fullCitation,
             sourceType: label !== "לא ידוע" ? label : null,
+            telemetry: cell.telemetry,
           });
         }
 
@@ -514,6 +524,7 @@ export function BatchFootnoteBuilder({}: BatchProps) {
       sourceType,
       autoVerified: true,
       yearPreferences: prefs,
+      telemetry: currentIntegrity.telemetry,
     }]).catch(() => {});
 
     // Move to next
@@ -531,6 +542,7 @@ export function BatchFootnoteBuilder({}: BatchProps) {
       sourceType,
       autoVerified: true,
       yearPreferences: { hasHebrewYear: true, hasGregorianYear: true },
+      telemetry: currentIntegrity.telemetry,
     }]).catch(() => {});
 
     setPendingIntegrity(prev => prev.slice(1));

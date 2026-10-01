@@ -1,3 +1,4 @@
+import { telemetryBody, type CostTelemetry } from "@/lib/costTelemetry";
 import { supabase } from "@/integrations/supabase/client";
 
 export type VerifiedSourceCategory = "caselaw" | "legislation_primary" | "legislation_secondary" | "literature" | "other";
@@ -13,6 +14,7 @@ interface EnsureVerifiedSourceInput extends SourceClassificationInput {
   verifiedBy?: string | null;
   autoVerified?: boolean;
   yearPreferences?: { hasHebrewYear: boolean; hasGregorianYear: boolean };
+  telemetry?: CostTelemetry;
 }
 
 interface VerifySourceResult {
@@ -379,11 +381,12 @@ function buildStorageShape(item: EnsureVerifiedSourceInput) {
 async function verifySourceWithAI(
   rawInput: string,
   fullCitation: string,
-  sourceType: string | null
+  sourceType: string | null,
+  telemetry?: CostTelemetry
 ): Promise<VerifySourceResult> {
   try {
     const { data, error } = await supabase.functions.invoke("verify-source", {
-      body: { rawInput, fullCitation, sourceType },
+      body: { rawInput, fullCitation, sourceType, ...telemetryBody(telemetry) },
     });
 
     if (error) {
@@ -512,7 +515,7 @@ export async function ensureVerifiedSources(
     // Admins bypass this via the ALL policy.
     let aiVerificationStatus: VerificationStatus = "pending";
     if (!options?.skipAIVerification) {
-      const result = await verifySourceWithAI(item.rawInput, storage.storedCitation, item.sourceType ?? null);
+      const result = await verifySourceWithAI(item.rawInput, storage.storedCitation, item.sourceType ?? null, item.telemetry);
       aiVerificationStatus = result.status as VerificationStatus;
       if (aiVerificationStatus === "invalid") {
         invalid++;

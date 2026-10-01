@@ -1,3 +1,4 @@
+import { telemetryBody, type CostTelemetry } from "@/lib/costTelemetry";
 import { supabase } from "@/integrations/supabase/client";
 import {
   detectSourceType,
@@ -68,10 +69,10 @@ export function shouldUseLLMClassifier(rawText: string, regexType: SourceType): 
 /**
  * Call the classify-source edge function. Fails soft: returns null on error.
  */
-export async function classifySourceWithLLM(rawText: string): Promise<ClassifyResult | null> {
+export async function classifySourceWithLLM(rawText: string, telemetry?: CostTelemetry): Promise<ClassifyResult | null> {
   try {
     const { data, error } = await supabase.functions.invoke("classify-source", {
-      body: { rawText },
+      body: { rawText, ...telemetryBody(telemetry) },
     });
     if (error) {
       console.warn("[classifySource] edge error", error);
@@ -95,7 +96,7 @@ export async function classifySourceWithLLM(rawText: string): Promise<ClassifyRe
  * confidence is high enough (>= 0.6) and the regex result was unknown or
  * the literature family (book/article/article_in_book).
  */
-export async function resolveSourceType(rawText: string): Promise<{
+export async function resolveSourceType(rawText: string, telemetry?: CostTelemetry): Promise<{
   sourceType: SourceType;
   source: "regex" | "llm";
   llm?: ClassifyResult;
@@ -104,7 +105,7 @@ export async function resolveSourceType(rawText: string): Promise<{
   if (!shouldUseLLMClassifier(rawText, regexType)) {
     return { sourceType: regexType, source: "regex" };
   }
-  const llm = await classifySourceWithLLM(rawText);
+  const llm = await classifySourceWithLLM(rawText, telemetry);
   if (!llm) return { sourceType: regexType, source: "regex" };
 
   const ambiguous =

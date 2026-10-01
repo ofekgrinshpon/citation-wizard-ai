@@ -1,3 +1,4 @@
+import { trackedFetch, withCostTelemetry, setTelemetryFromBody } from "../_shared/costTelemetry.ts";
 // citation-refill: Given an existing citation that has [חסר: ...] placeholders
 // or visibly missing fields, ask Perplexity (sonar-pro) to find ONLY the
 // missing fields and return a single corrected citation string. Used by the
@@ -81,7 +82,9 @@ function urlContainsDocket(url: string, docket: { num: string; year: string }): 
   return patterns.some((p) => u.includes(p));
 }
 
-Deno.serve(async (req) => {
+Deno.serve((req) => withCostTelemetry("citation-refill", () => handleRefill(req)));
+
+async function handleRefill(req: Request): Promise<Response> {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
@@ -106,6 +109,7 @@ Deno.serve(async (req) => {
     let body: RefillBody;
     try {
       body = (await req.json()) as RefillBody;
+      setTelemetryFromBody(body, "refill");
     } catch {
       return json({ error: "invalid_json" }, 400);
     }
@@ -173,7 +177,7 @@ Deno.serve(async (req) => {
         max_tokens: 400,
       };
       if (useAllowlist) reqBody.search_domain_filter = ALLOWED_DOMAINS;
-      const r = await fetch("https://api.perplexity.ai/chat/completions", {
+      const r = await trackedFetch("https://api.perplexity.ai/chat/completions", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${pplxKey}`,
@@ -312,7 +316,7 @@ Deno.serve(async (req) => {
   } catch (err) {
     return json({ error: "exception", message: (err as Error).message }, 500);
   }
-});
+}
 
 function json(payload: unknown, status: number): Response {
   return new Response(JSON.stringify(payload), {
