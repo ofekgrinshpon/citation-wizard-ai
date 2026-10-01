@@ -105,13 +105,16 @@ describe("cost telemetry", () => {
   it("concurrent requests never mix context", async () => {
     vi.stubGlobal("fetch", vi.fn(async () => { await new Promise((r) => setTimeout(r, Math.random() * 10)); return jsonResp({}); }));
     const ids = Array.from({ length: 6 }, (_, i) => `3333333${i}-3333-4333-8333-333333333333`);
-    const all = await Promise.all(ids.map((id) => run({ telemetryRequestId: id }, async () => {
+    const rows: CostEvent[] = [];
+    __setCostWriter(async (r) => { rows.push(...r); });
+    const flushes: Promise<void>[] = [];
+    await Promise.all(ids.map((id) => withCostTelemetry("citation-chat", async () => {
+      setTelemetryFromBody({ telemetryRequestId: id });
       await Promise.all([1, 2].map(() => trackedFetch("https://api.perplexity.ai/chat/completions", { body: "{}" })));
-    })));
-    all.forEach((rows, i) => {
-      expect(rows).toHaveLength(2);
-      rows.forEach((r) => expect(r.telemetry_request_id).toBe(ids[i]));
-    });
+    }, { onFlush: (p) => { flushes.push(p); } })));
+    await Promise.all(flushes);
+    expect(rows).toHaveLength(12);
+    for (const id of ids) expect(rows.filter((r) => r.telemetry_request_id === id).map((r) => r.attempt_seq).sort()).toEqual([1, 2]);
   });
 
   it("outside a context trackedFetch is plain fetch (no events)", async () => {
