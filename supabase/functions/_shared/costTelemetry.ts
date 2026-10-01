@@ -565,14 +565,24 @@ export async function trackedFetch(
     };
   } catch { base = null; }
 
+  // ONE stable id per attempt; the durable start row is enqueued BEFORE the
+  // fetch so a worker that dies while waiting for headers still leaves a row.
+  // The same id is finalized below (success, HTTP error or network failure).
+  const id = crypto.randomUUID();
+  let settle: (e: CostEvent) => void = () => {};
+  if (base) {
+    try {
+      const startRow = { id, ...base } as CostEvent;
+      const promise = new Promise<CostEvent | null>((res) => { settle = res; });
+      pushPending(ctx, { fallback: startRow, promise });
+    } catch { base = null; }
+  }
+
   let resp: Response;
   try {
     resp = await fetch(input, init);
   } catch (e) {
-    if (base) {
-      const ev = { id: crypto.randomUUID(), ...base, outcome: "network_error", latency_ms: Date.now() - started, capture_status: "not_applicable" } as CostEvent;
-      pushPending(ctx, { fallback: ev, promise: Promise.resolve(ev) });
-    }
+    if (base) settle({ id, ...base, outcome: "network_error", latency_ms: Date.now() - started, capture_status: "not_applicable" } as CostEvent);
     throw e;
   }
   if (!base) return resp;
@@ -581,20 +591,19 @@ export async function trackedFetch(
     const headerLatency = Date.now() - started;
     const hdrId = resp.headers.get("x-request-id");
     const headerReqId = hdrId && PROVIDER_REQ_ID_RE.test(hdrId) ? hdrId : null;
-    const id = crypto.randomUUID();
     const b = { ...base, http_status: resp.status, latency_ms: headerLatency, header_latency_ms: headerLatency, provider_request_id: headerReqId };
 
     if (!resp.ok) {
       // Never read error bodies. Not billed → request_count 0 for search.
       const ev = { id, ...b, outcome: "http_error", capture_status: "error_body_unread", request_count: kind.endpoint === "search" ? 0 : null } as CostEvent;
-      pushPending(ctx, { fallback: ev, promise: Promise.resolve(ev) });
+      settle(ev);
       return resp;
     }
 
     const fallback = { id, ...b } as CostEvent;
     const isStream = (resp.headers.get("content-type") ?? "").includes("text/event-stream");
     if (isStream) {
-      pushPending(ctx, { fallback, promise: Promise.resolve({ ...fallback, outcome: "ok", capture_status: "stream_unread" } as CostEvent) });
+      settle({ ...fallback, outcome: "ok", capture_status: "stream_unread" } as CostEvent);
       return resp;
     }
     let clone: Response | null = null;
@@ -622,8 +631,11 @@ export async function trackedFetch(
         ...est,
       } as CostEvent;
     })().catch(() => fallback);
-    pushPending(ctx, { fallback, promise });
-  } catch { /* telemetry never affects the response */ }
+    void promise.then(settle);
+  } catch {
+    // telemetry never affects the response; still finalize the started attempt
+    settle({ id, ...base, http_status: resp.status } as CostEvent);
+  }
   return resp;
 }
 
