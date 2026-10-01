@@ -1,3 +1,4 @@
+import { telemetryBody, type CostTelemetry } from "@/lib/costTelemetry";
 import {
   normalizeAbbreviations,
   SOURCE_TYPE_LABELS,
@@ -110,6 +111,8 @@ export interface RunCitationOptions {
    * match is returned as-is (no engine call, no credit charge).
    */
   useVerifiedStore?: boolean;
+  /** Cost-telemetry attribution (never billing). */
+  telemetry?: CostTelemetry;
 }
 
 export interface RunCitationResult {
@@ -123,6 +126,8 @@ export interface RunCitationResult {
   fromVerifiedStore: boolean;
   status: "valid" | "warning" | "verified";
   warningMsg?: string;
+  /** Carried so later verify-source calls keep attribution. */
+  telemetry?: CostTelemetry;
 }
 
 const MIN_CITATION_LENGTH = 10;
@@ -169,7 +174,7 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
   if (opts.overrideType) {
     sourceType = opts.overrideType;
   } else {
-    const resolved = await resolveSourceType(normalized);
+    const resolved = await resolveSourceType(normalized, opts.telemetry);
     sourceType = resolved.sourceType;
   }
   const sourceLabel = SOURCE_TYPE_LABELS[sourceType];
@@ -274,6 +279,7 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
     {
       messages: [{ role: "user", content: prompt }],
       requestId: crypto.randomUUID(),
+      ...telemetryBody(opts.telemetry),
       ...(foreignLookupRequest ? { foreignLookup: foreignLookupRequest } : {}),
     },
     { projectId: opts.projectId ?? null }
