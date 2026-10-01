@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { trackedFetch, withCostTelemetry, setTelemetryFromBody } from "../_shared/costTelemetry.ts";
+import { trackedFetch, withCostTelemetry, setTelemetryFromBody, recordZeroWork, type CostStage } from "../_shared/costTelemetry.ts";
 import { USAGE_BATCH_GROUP } from "../_shared/usageWeights.ts";
 
 // ── Canonical database-name mapping (Rule 19.1 + extended sources) ──
@@ -106,6 +106,17 @@ interface PplxRunResult {
  * adjacent-case contamination (e.g. neighboring docket 5819/24 hijacking a
  * search for 4769/24).
  */
+/** Bounded stage base for the tiered helper, derived from its fixed log-tag prefix. */
+function pplxStageBase(logTag: string): string {
+  const p = logTag.split(":")[0];
+  return p === "case-number" ? "case_retrieval"
+    : p === "party" ? "case_party_retrieval"
+    : p === "book" ? "book_retrieval"
+    : p === "article" ? "article_retrieval"
+    : p === "decision" ? "decision_retrieval"
+    : "unspecified_x";
+}
+
 async function perplexityWithFallback(
   apiKey: string,
   tier1Body: Record<string, unknown>,
@@ -123,11 +134,12 @@ async function perplexityWithFallback(
     docket_anchor_via: "none",
   };
 
+  const stageBase = pplxStageBase(logTag);
   const t1 = await trackedFetch("https://api.perplexity.ai/chat/completions", {
     method: "POST",
     headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
     body: JSON.stringify(tier1Body),
-  });
+  }, { stage: `${stageBase}_tier1` as CostStage });
   result.resp = t1;
 
   const fallbackEnabled = OPENWEB_FALLBACK_ON || opts?.forceOpenWebFallback === true;
@@ -186,7 +198,7 @@ async function perplexityWithFallback(
     method: "POST",
     headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
     body: JSON.stringify(t2Body),
-  });
+  }, { stage: `${stageBase}_tier2` as CostStage });
   if (!t2.ok) {
     console.log(`[pplx-fallback:${logTag}] tier2 http ${t2.status} → keeping tier1`);
     return result;
@@ -345,7 +357,7 @@ async function verifyDecisionDate(
           },
         ],
       }),
-    });
+    }, { stage: "case_date_check" });
     if (!resp.ok) return null;
     const data = await resp.json();
     const content = data.choices?.[0]?.message?.content || "";
@@ -462,7 +474,7 @@ async function retryOldSupremeDocket(
       method: "POST",
       headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify(body),
-    });
+    }, { stage: "old_docket_retry" });
     if (!resp.ok) {
       console.log(`[case-law:old-retry] http ${resp.status}`);
       return null;
@@ -801,7 +813,7 @@ async function verifyBiblioAuthor(
           },
         ],
       }),
-    });
+    }, { stage: "author_check" });
     if (!resp.ok) return null;
     const data = await resp.json();
     const content = data.choices?.[0]?.message?.content || "";
@@ -850,7 +862,7 @@ async function fallbackBiblioSearch(
           },
         ],
       }),
-    });
+    }, { stage: "biblio_fallback" });
     if (!resp.ok) return null;
     const data = await resp.json();
     const text = data.choices?.[0]?.message?.content || "";
@@ -2218,7 +2230,7 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                             },
                           ],
                         }),
-                      });
+                      }, { stage: "case_publication_check" });
                       if (verifyResp.ok) {
                         const vData = await verifyResp.json();
                         const vContent = vData.choices?.[0]?.message?.content || "";
@@ -2643,7 +2655,7 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                             },
                           ],
                         }),
-                      });
+                      }, { stage: "case_publication_check" });
                       if (!verifyResp.ok) return null;
                       const vData = await verifyResp.json();
                       const vContent = vData.choices?.[0]?.message?.content || "";
@@ -2848,7 +2860,7 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
                   { role: "user", content: legQuery },
                 ],
               }),
-            });
+            }, { stage: "legislation_retrieval" });
 
             if (legResp.ok) {
               const legData = await legResp.json();
@@ -2927,7 +2939,7 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
                   { role: "user", content: regQuery },
                 ],
               }),
-            });
+            }, { stage: "regulation_retrieval" });
 
             if (regResp.ok) {
               const regData = await regResp.json();
@@ -3499,6 +3511,7 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
           ],
         }),
       },
+      { stage: "formatter" },
     );
 
     if (!response.ok) {

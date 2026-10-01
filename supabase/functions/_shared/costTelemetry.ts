@@ -547,7 +547,8 @@ export async function trackedFetch(
       let parsed = true;
       try { usage = parseUsage(JSON.parse(read.text)); } catch { parsed = false; }
       if (!usage.provider_request_id && headerReqId) usage = { ...usage, provider_request_id: headerReqId };
-      const est = estimateUsd(k.provider, k.endpoint, b.requested_model, usage, parsed);
+      // Search billing depends on HTTP success, not on our ability to parse.
+      const est = estimateUsd(k.provider, k.endpoint, b.requested_model, usage, k.endpoint === "search" ? true : parsed);
       return {
         ...fallback, ...usage,
         outcome: parsed ? "ok" : "parse_error",
