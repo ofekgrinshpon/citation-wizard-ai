@@ -316,7 +316,7 @@ async function handleRefill(req: Request): Promise<Response> {
   } catch (err) {
     return json({ error: "exception", message: (err as Error).message }, 500);
   }
-});
+}
 
 function json(payload: unknown, status: number): Response {
   return new Response(JSON.stringify(payload), {
