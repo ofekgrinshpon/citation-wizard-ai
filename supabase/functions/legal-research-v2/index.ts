@@ -1531,7 +1531,7 @@ async function sweepStalledRuns(
   return { examined: rows.length, decisions };
 }
 
-serve((req) =>
+serve(async (req) =>
   withCostTelemetry("legal-research-v2", () => handleRequest(req), {
     init: { feature: "legal_research", batchId: crypto.randomUUID() },
   })
