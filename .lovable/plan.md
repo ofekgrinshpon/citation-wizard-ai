@@ -1,42 +1,74 @@
-# Milestone 2B — Foreign Source Lookup (fill in missing details)
+# Real AI costs for אזכור אחיד, הערות שוליים and ביבליוגרפיה
 
-## Goal
-A partial foreign citation (for example "Capitol Records, LLC v. ReDigi Inc. (2d Cir. 2018)") is completed through a web lookup, confirmed against real sources, then built by the same fixed Bluebook formatter. Unconfirmed details stay [חסר: …]. Nothing is guessed.
+This is a read-only answer. Nothing was changed.
 
-## Core principle — search broadly, accept narrowly
-The preferred-domain lists are **Tier 1 discovery hints, not an allowlist**. Foreign legal and academic material lives across thousands of courts, publishers, journals, repositories, DOI pages and archives — a closed filter would create false negatives.
+## Confirmed facts (from current code and aggregate queries)
 
-```text
-local parser → Tier 1 (preferred domains) → at most one Tier 2 open-web retry
-→ strict identity + field-level grounding → accepted fields only → deterministic formatter
-```
+- **Shared engine.** `src/lib/runCitation.ts` calls `citation-chat` with `requestId: crypto.randomUUID()` and no `batchId`. Both `BatchFootnoteBuilder.tsx:183` (footnotes) and `BibliographyGenerator.tsx:129` (raw bibliography entries) call `runCitation` once per source. `src/pages/Index.tsx:224` (the wizard) also sends a `requestId`.
+- **Batch pricing exists but is never used.** `citation-chat/index.ts:1644` accepts a client `batchId`, and line ~1740 calls `consume_usage_batch` (1 unit per 5 items) when it is present. Since no caller sends one, every source falls back to `consume_credits(_amount: 1, "citation-chat")`. The verified-source shortcut before that point (`verified_sources`, ~line 1693) is free.
+- **Paid calls inside `citation-chat`:**
+  - Perplexity `chat/completions` with `sonar-pro`. This covers case law, party search, verify passes, books, `perplexityWithFallback` (2 attempts) and the helpers at lines 330/460/785/831.
+  - Perplexity `sonar` for statutes and regulations (lines ~2826 and ~2911).
+  - Perplexity `/search` in `foreignLookup.ts:78`.
+  - One Lovable AI Gateway call with `google/gemini-2.5-flash` (line ~3482–3490). It refunds on 429 or when the service is unavailable.
+  - Which calls run depends on the source type and on earlier results, so the number of calls per source varies.
+- **Optional classification.** `src/lib/sourceTypeClassifier.ts:73` calls `classify-source`, which uses `gemini-3-flash` through the gateway.
+- **Not confirmed in this pass:** a separate Gemini 2.5 Flash "verifier". I found only one gateway call in `citation-chat`. Treat that earlier observation as unverified.
+- **Legacy and side paths.** `bibliography-lookup` (Perplexity `sonar`) has charges only through 2026-08-12. `citation-refill` calls Perplexity `sonar-pro`.
+- **Ledger, aggregate only:**
+  - `citation-chat` consume: 608 rows, 2026-04-20 to 2026-09-30, 432 units. The gap between rows and units fits zero-charge admin rows.
+  - `bibliography-lookup` consume: 166 rows / 162 units.
+  - 16 refunds.
+  - The ledger has no columns for model, tokens, cost, feature or batch. `reason` is the only attribution, so `useUserUsage.tsx:191` cannot tell wizard, footnote and bibliography usage apart.
 
-## Scope (existing families only)
-- US cases: volume, reporter, first page, court, year; or Westlaw/Lexis identifier + docket + date.
-- UK cases: neutral citation and/or law report (year, series, page, court).
-- Foreign journal articles: authors, title, volume, journal, first page, year.
-- Foreign books and book chapters: authors, title, edition, year; chapters also editors, book title, first page.
-- US statutes and the US Constitution stay local only.
+## (1) Where real billed dollars come from
 
-Out of scope: C.F.R., legislative materials, EU/international sources, Word Add-in work, new source families, Israeli citation changes.
+| Source | What it measures | Authoritative for |
+|---|---|---|
+| Lovable development-message credits | My work in the editor | Not app runtime. Unrelated. |
+| Lovable Cloud + AI balance (Settings → Plans & credits; the project's AI Gateway request logs) | Gemini calls through the gateway, plus Cloud functions and database | Gateway model spend. Logs are per request, but not grouped by feature. |
+| Perplexity account billing / usage dashboard | `sonar` / `sonar-pro` / search calls made with your own `PERPLEXITY_API_KEY` | The Perplexity dollars. This is outside Lovable and I cannot see it. |
+| App usage units (`credit_ledger`) | Your internal pricing to users | Not a cost. It is not dollars. |
+| Per-request telemetry | Does not exist yet for these features | — |
 
-## Behaviour rules
-- The local fast path always runs first; the lookup runs only when the local formatter declines.
-- The lookup returns **structured candidate fields only** — never a formatted citation. The renderer in `src/data/bluebook/` owns all punctuation, italics and small caps.
-- **Tier 2** fires once when Tier 1 cannot ground enough fields — no domain filter. It exists to discover legitimate sources (journal sites, university repositories, publishers, DOI pages, official court domains) not on the initial list. No ever-expanding hard-coded domain lists.
-- **Trust is an acceptance rule, not just a hostname rule.** Strong evidence: official court source, recognized legal database, publisher/journal page, institutional repository, bibliographic metadata page identifying the same work. A random secondary page aids discovery but cannot alone ground a field.
-- **Identity matching is mandatory.** Cases: normalized party names must match; user-supplied court/year must not conflict; docket/reporter used as anchor when available. Works: strong title identity, authors corroborate; DOI is a strong anchor when independently returned. No inherited or manufactured identity fields. A conflict discards the lookup (not just a field).
-- **Field-level grounding:** each field is independently accepted or rejected; grounded fields render, ungrounded fields stay [חסר]. Not all-or-nothing.
-- **Grounding evidence:** may come from the result title, snippet, URL identity, structured metadata, or one bounded fetch of a promising identity-matched result. The full citation string (e.g. "910 F.3d 649") is NOT required to appear literally in a snippet.
-- **Bounded:** parser → Tier 1 → ≤1 Tier 2 → ≤1 inspection of the best match → grounding → formatter. No recursive loops.
-- Repeat citations keep Rule 37; verified sources keep priority; the credit cost stays at one citation.
+What I could not access or verify: Perplexity invoices or usage, the workspace's actual billed AI totals, and how long gateway logs are kept. I did not open the AI Gateway logs, because the privacy boundary rules out per-request content.
 
-## Technical details
-- **citation-chat:** new `foreign_lookup` branch, taken when the classified type is `foreign_*` and the request asks for a lookup. Perplexity sonar-pro with a JSON-schema response per family. Tier 1 `search_domain_filter` per family (US cases: courtlistener.com, law.cornell.edu, justia.com, supremecourt.gov, uscourts.gov, govinfo.gov; UK cases: bailii.org, supremecourt.uk, nationalarchives.gov.uk; works: publisher/SSRN/JSTOR/HeinOnline/university/Google Books). Reuse the existing tier-2 open-web fallback (no filter). Optional: one bounded fetch of the best identity-matched result URL for field extraction.
-- **Response:** `{ foreignLookup: { kind, jurisdiction, fields, grounded: Record<field, boolean>, sources[] } }` alongside today's `content`.
-- **runCitation.ts:** after `renderForeignCitation` declines on a foreign type, call citation-chat with `foreignLookup: true`; merge user fields with grounded fields (user identity wins; conflict → discard); call `renderForeignDetection`; missing grounded fields render as [חסר: field] with the existing כלל 36.4 warning; lookup failure → today's behaviour.
-- **No second formatter** on the Deno side — extraction only.
-- **Tests (bluebookM2B.test.ts, mocked Perplexity):** partial US case completes and renders; ungrounded field stays [חסר]; party mismatch discards; court/year conflict discards; UK neutral filled; article journal abbreviation only from the table; book edition/year filled; complete input never calls the lookup; Tier 2 fires when Tier 1 is empty and a legitimate off-list source can still ground fields; regression: Rule 37, parity, Israeli citations, small caps.
-- **Live acceptance (at least 20 records):** 6 US cases (incl. ReDigi), 4 UK cases, 4 articles, 3 books, 2 chapters, 1 nonexistent case (negative). Per record save: input, family, Tier 1 queried, Tier 1 candidate sources, Tier 2 fired, Tier 2 candidate sources, identity anchors, candidate fields, accepted grounded fields, rejected fields, conflicts, final citation, warnings. Totals: tier1_completed, tier2_fired, tier2_rescued, identity_mismatch_rejected, fields_grounded, fields_left_missing — diagnostic only; no optimizing for Tier 1 hit rate.
-- **Success invariant:** legitimate sources outside the initial domain list are still discovered; a source being off-list is never a rejection reason; ungrounded details remain missing.
-- **Report:** `reports/final-acceptance/bluebook22-foreign-citation-engine-m2b/REPORT.md` + ACCEPTANCE_RECORDS.txt, SHIP / PARTIAL / HOLD verdict.
+## (2) Can past costs be reconstructed?
+
+Not exactly. They can only be estimated, roughly.
+- Perplexity bills at account level, and its calls carry no request ID linking them to a ledger row or a feature.
+- Gateway logs, while they last, can give Gemini spend per call. They have no feature or batch tag, though, and the timestamp links to ledger rows are fuzzy.
+- The ledger has no record of which paid calls ran per source, of retries or fallbacks, or of whether a call came from the wizard, footnotes or bibliography.
+- At best: total Perplexity spend for a period ÷ ledger rows in that period, which gives a blended average. Even that is distorted by legal-research and other functions using the same Perplexity key.
+
+## (3) Smallest prospective measurement plan (proposal, not implemented)
+
+1. **Attribution from the client.** `runCitation` gets an optional `feature` (`wizard|footnotes|bibliography|refill`) and a `batchId`, one per footnote or bibliography run. Callers pass them through.
+2. **One cost-event table.** `ai_cost_events(id, created_at, user_id, feature, batch_id, request_id, function, stage, provider, model, attempt, outcome, cache_hit, input_tokens, output_tokens, search_requests, est_usd, billed_usd null)`. Admin-only reads, inserted by the service role. Store no prompts or answers.
+3. **A single wrapper** around every Perplexity and gateway `fetch` in `citation-chat`, `classify-source` and `citation-refill`:
+   - Write one row per HTTP attempt, retries and fallback tiers included, with `attempt` and `outcome`.
+   - Take token and search counts from the provider's `usage` field.
+   - Write one `cache_hit` row (with zero cost) for the verified-source shortcut.
+4. **Avoid double counting.**
+   - `est_usd` is calculated from a versioned price table, per attempt.
+   - Rows are summed by request and by batch; the ledger is never added on top.
+   - Once a month, reconcile the totals against the Perplexity invoice and the Lovable AI balance, and keep the result as `billed_usd` at the aggregate level.
+5. **Admin view.** Cost per source and per batch for each feature, with the p50/p90 number of calls.
+
+## (4) Local vs paid, and the "mostly Perplexity, therefore cheaper" claim
+
+- **Local or free:**
+  - Verified-source hits.
+  - Prompt building and engine hints in `runCitation`.
+  - Rule formatting and normalization (Hebrew number ranges, editor placement, Knesset terms, trusted-host checks).
+  - Importing already-resolved footnotes into the bibliography.
+- **Paid:**
+  - The Perplexity calls listed above (often several per source, with fallbacks).
+  - One Gemini 2.5 Flash call to the gateway.
+  - Optional classification with Gemini 3 Flash.
+- **"Mostly Perplexity":** partly supported, by call count only. Most paid call sites are Perplexity, but a Gemini formatting call still runs, so "code formats the output" is only partly true.
+- **"Cheaper than the legal assistant":** not supported. There is no measured cost per source for citations, and no comparable measured cost for the assistant. The earlier assistant figure was an estimate. A footnote batch of N sources makes N or more engine runs. Do not state a relative cost until step 3 produces data.
+
+## Change and cost confirmation
+
+Nothing was changed: no code, configuration or data. I ran only read-only queries that return totals. No paid model calls. I can't see the credits charged for this response; the standard plan-mode price is 1 credit.
