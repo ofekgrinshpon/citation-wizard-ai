@@ -121,7 +121,7 @@ export async function routeModel(
       { role: "system", content: ROUTER_SYSTEM },
       { role: "user", content: buildRouterUserMessage(input) },
     ];
-    const res = await call({ model: ROUTER_MODEL, messages });
+    const res = await call({ model: ROUTER_MODEL, messages, costStage: "v2_router" });
     const ms = Date.now() - t0;
     const tokens = { router_prompt_tokens: res.prompt_tokens ?? 0, router_completion_tokens: res.completion_tokens ?? 0 };
     if (!res.ok) {
@@ -184,7 +184,7 @@ export async function answerDirectChat(
       { role: "system", content: DIRECT_CHAT_SYSTEM },
       { role: "user", content: [ctx ? `הקשר השיחה:\n${ctx}` : "", `ההודעה של המשתמש:\n${input.question}`].filter(Boolean).join("\n\n") },
     ];
-    const res = await call({ model: model_id, messages });
+    const res = await call({ model: model_id, messages, costStage: "v2_direct_chat" });
     const content = (res.content ?? "").trim();
     return {
       ok: !!res.ok && !!content,

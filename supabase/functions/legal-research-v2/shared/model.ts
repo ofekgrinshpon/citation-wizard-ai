@@ -8,6 +8,11 @@
 
 declare const Deno: { env: { get(key: string): string | undefined } };
 
+import {
+  beginAttempt, isAbortError, parseUsage, parseResponsesUsage,
+  type AttemptRecorder, type CostStage, type ParsedUsage,
+} from "../../_shared/costTelemetry.ts";
+
 const GATEWAY_URL = "https://ai.gateway.lovable.dev/v1/chat/completions";
 
 export interface ModelConfig {
@@ -155,6 +160,7 @@ async function responsesChat(opts: {
   signal?: AbortSignal;
   fail: (status: number, error: string, terminal?: boolean) => ChatResult;
   reasoningEffort?: "medium" | "high";
+  costStage?: CostStage;
 }): Promise<ChatResult> {
   const body: Record<string, unknown> = {
     model: opts.model,
@@ -179,6 +185,10 @@ async function responsesChat(opts: {
     } else body.tool_choice = "auto";
   }
 
+  // Metadata-only telemetry; never alters the request or the stream handling.
+  const rec: AttemptRecorder | null = beginAttempt({
+    provider: "lovable_gateway", endpoint: "responses", requestedModel: opts.model, stage: opts.costStage,
+  });
   let resp: Response;
   try {
     resp = await fetch(RESPONSES_URL, {
@@ -191,9 +201,12 @@ async function responsesChat(opts: {
       ...(opts.signal ? { signal: opts.signal } : {}),
     });
   } catch (e) {
+    finishFetchError(rec, e);
     return opts.fail(0, `network_error: ${e instanceof Error ? e.message : String(e)}`, false);
   }
+  rec?.headers(resp.status, resp.headers);
   if (!resp.ok || !resp.body) {
+    rec?.finish({ outcome: "http_error", capture_status: "error_body_unread" });
     const txt = await resp.text().catch(() => "");
     return opts.fail(resp.status, txt.slice(0, 600), resp.status < 429);
   }
@@ -207,6 +220,8 @@ async function responsesChat(opts: {
   let completion_tokens = 0;
   let finish_reason: string | null = null;
   let streamError: string | null = null;
+  let terminalUsage: ParsedUsage | undefined;
+  let terminalType: string | null = null;
 
   const handle = (evt: Record<string, unknown>) => {
     const type = String(evt.type ?? "");
@@ -224,6 +239,8 @@ async function responsesChat(opts: {
     } else if (type === "response.completed" || type === "response.incomplete") {
       const r = (evt.response ?? {}) as Record<string, unknown>;
       const usage = (r.usage ?? {}) as Record<string, unknown>;
+      terminalType = type;
+      try { terminalUsage = parseResponsesUsage(r); } catch { /* telemetry only */ }
       prompt_tokens = Number(usage.input_tokens ?? 0) || 0;
       completion_tokens = Number(usage.output_tokens ?? 0) || 0;
       finish_reason = type === "response.completed"
@@ -231,12 +248,25 @@ async function responsesChat(opts: {
         : "length";
     } else if (type === "error" || type === "response.failed") {
       const r = (evt.response ?? evt) as Record<string, unknown>;
+      if (type === "response.failed") {
+        try { terminalUsage = parseResponsesUsage(r); } catch { /* telemetry only */ }
+      }
       streamError = JSON.stringify(r).slice(0, 600);
     }
   };
 
   while (true) {
-    const { done, value } = await reader.read();
+    let chunk: ReadableStreamReadResult<Uint8Array>;
+    try {
+      chunk = await reader.read();
+    } catch (e) {
+      rec?.finish({
+        outcome: isAbortError(e) ? "aborted" : "stream_error",
+        capture_status: isAbortError(e) ? "aborted" : "read_error", usage: terminalUsage,
+      });
+      throw e;
+    }
+    const { done, value } = chunk;
     if (done) break;
     buf += decoder.decode(value, { stream: true });
     const lines = buf.split("\n");
@@ -251,6 +281,11 @@ async function responsesChat(opts: {
       } catch { /* ignore partial/non-JSON frames */ }
     }
   }
+
+  if (streamError) rec?.finish({ outcome: "stream_error", capture_status: "complete", usage: terminalUsage, complete: true });
+  else if (terminalType === "response.completed") rec?.finish({ outcome: "ok", capture_status: "complete", usage: terminalUsage, complete: true });
+  else if (terminalType === "response.incomplete") rec?.finish({ outcome: "incomplete", capture_status: "complete", usage: terminalUsage, complete: true });
+  else rec?.finish({ outcome: "capture_incomplete", capture_status: "read_error" });
 
   if (streamError) return opts.fail(502, `responses_stream_error: ${streamError}`, false);
 
@@ -286,6 +321,8 @@ export async function chat(opts: {
   signal?: AbortSignal;
   /** Evaluation-only; Responses API calls only. Default "medium". */
   reasoningEffort?: "medium" | "high";
+  /** Telemetry-only role tag; never sent to the provider. */
+  costStage?: CostStage;
 }): Promise<ChatResult> {
   const apiKey = Deno.env.get("LOVABLE_API_KEY");
   const fail = (status: number, error: string, terminal = true): ChatResult => ({
@@ -320,6 +357,9 @@ export async function chat(opts: {
     } else body.tool_choice = "auto";
   }
 
+  const rec: AttemptRecorder | null = beginAttempt({
+    provider: "lovable_gateway", endpoint: "chat_completions", requestedModel: opts.model, stage: opts.costStage,
+  });
   let resp: Response;
   try {
     resp = await fetch(GATEWAY_URL, {
@@ -329,10 +369,13 @@ export async function chat(opts: {
       ...(opts.signal ? { signal: opts.signal } : {}),
     });
   } catch (e) {
+    finishFetchError(rec, e);
     return fail(0, `network_error: ${e instanceof Error ? e.message : String(e)}`, false);
   }
 
+  rec?.headers(resp.status, resp.headers);
   if (!resp.ok) {
+    rec?.finish({ outcome: "http_error", capture_status: "error_body_unread" });
     const txt = await resp.text().catch(() => "");
     // Only 429/5xx are retryable; 400/401/402/403 are terminal.
     const terminal = resp.status < 429;
@@ -340,6 +383,11 @@ export async function chat(opts: {
   }
 
   const json = await resp.json().catch(() => null) as Record<string, unknown> | null;
+  if (json) {
+    let u: ParsedUsage | undefined;
+    try { u = parseUsage(json); } catch { /* telemetry only */ }
+    rec?.finish({ outcome: "ok", capture_status: "complete", usage: u, complete: true });
+  } else rec?.finish({ outcome: "parse_error", capture_status: "parse_error", complete: true });
   const choice = (json?.choices as Array<Record<string, unknown>> | undefined)?.[0];
   const message = (choice?.message ?? {}) as Record<string, unknown>;
   const usage = (json?.usage ?? {}) as Record<string, unknown>;
@@ -375,6 +423,11 @@ export async function chat(opts: {
     prompt_tokens,
     completion_tokens,
   };
+}
+
+function finishFetchError(rec: AttemptRecorder | null, e: unknown) {
+  const aborted = isAbortError(e);
+  rec?.finish({ outcome: aborted ? "aborted" : "network_error", capture_status: aborted ? "aborted" : "not_applicable" });
 }
 
 /** Parse a JSON object out of a model message (tool args or fenced content). */
