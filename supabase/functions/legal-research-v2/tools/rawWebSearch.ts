@@ -14,6 +14,7 @@ import type { SearchResult } from "../types.ts";
 import { detectDockets } from "../shared/primitives.ts";
 import { nextResultId } from "./resultIds.ts";
 import { isSafeFetchUrl } from "../shared/urlSafety.ts";
+import { trackedFetch } from "../../_shared/costTelemetry.ts";
 
 const PPLX_SEARCH_URL = "https://api.perplexity.ai/search";
 
@@ -88,7 +89,8 @@ export async function runRawWebSearch(
     .filter(Boolean)
     .slice(0, RAW_WEB_SEARCH_LIMITS.MAX_DOMAIN_FILTERS);
 
-  const doFetch = deps?.fetchImpl ?? fetch;
+  const doFetch: typeof fetch = deps?.fetchImpl ??
+    ((u, i) => trackedFetch(u as string, i, { stage: "v2_raw_web_search" }));
   let r: Response;
   try {
     r = await doFetch(PPLX_SEARCH_URL, {

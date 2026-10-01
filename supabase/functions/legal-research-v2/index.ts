@@ -9,6 +9,7 @@
 // (internal / smoke) and carries no production traffic.
 // =========================================================================
 
+import { withCostTelemetry, setCostCorrelation } from "../_shared/costTelemetry.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
 
@@ -1309,7 +1310,18 @@ function createRunBeat(admin: SupabaseClient, run_id: string) {
 const CHAT_FAILURE_HE =
   "לא הצלחתי להשלים את המחקר הפעם בגלל תקלה. אם נוצל שימוש, הוא הוחזר. אפשר לנסות לשלוח את ההודעה שוב.";
 
-async function driveRun(
+/**
+ * Background run wrapper: one isolated cost-telemetry context per run chunk
+ * (request id = run UUID, batch id = fresh invocation UUID). Events are
+ * flushed via waitUntil AFTER the chunk's work, never on handler return.
+ */
+function driveRun(...args: Parameters<typeof driveRunInner>): Promise<void> {
+  return withCostTelemetry("legal-research-v2", () => driveRunInner(...args), {
+    init: { feature: "legal_research", requestId: args[1]?.run_id, batchId: crypto.randomUUID() },
+  });
+}
+
+async function driveRunInner(
   admin: SupabaseClient,
   intake: Intake,
   resume: ResumeState | null,
@@ -1519,7 +1531,13 @@ async function sweepStalledRuns(
   return { examined: rows.length, decisions };
 }
 
-serve(async (req) => {
+serve(async (req) =>
+  withCostTelemetry("legal-research-v2", () => handleRequest(req), {
+    init: { feature: "legal_research", batchId: crypto.randomUUID() },
+  })
+);
+
+async function handleRequest(req: Request): Promise<Response> {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
   if (req.method !== "POST") return json({ error: "method_not_allowed" }, 405);
 
@@ -1697,6 +1715,8 @@ serve(async (req) => {
     const clientRequestId = typeof body.client_request_id === "string" && body.client_request_id
       ? body.client_request_id
       : crypto.randomUUID();
+    // Router/direct-chat attempts correlate via the job's client_request_id.
+    setCostCorrelation({ requestId: clientRequestId });
 
     // Idempotency: a retried submit reattaches to the same job, never charges twice.
     const { data: existing } = await admin
@@ -2006,5 +2026,4 @@ serve(async (req) => {
       500,
     );
   }
-});
-
+}

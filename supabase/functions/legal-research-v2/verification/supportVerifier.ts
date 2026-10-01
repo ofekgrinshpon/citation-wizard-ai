@@ -76,6 +76,7 @@ export async function verifySupport(
     tools: [TOOL],
     toolChoice: { name: TOOL.name },
     usage: opts.usage,
+    costStage: "v2_support_verifier",
   });
   if (!res.ok) return { verdicts: [], error: `verifier_error_${res.http_status}` };
 

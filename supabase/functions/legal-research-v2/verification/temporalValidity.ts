@@ -218,6 +218,7 @@ export async function assessTemporalValidity(opts: {
     tools: [TOOL],
     toolChoice: { name: TOOL.name },
     usage: opts.usage,
+    costStage: "v2_temporal_validity",
   });
 
   const parsed = res.ok
