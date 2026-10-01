@@ -1361,7 +1361,7 @@ async function driveRunInner(
   };
   await beat(true);
   try {
-    const out = await runPipeline(admin, intake, {
+    const out = await withProviderLiveness(() => liveProgress.heartbeat(), () => runPipeline(admin, intake, {
       resume,
       chunked: true,
       progress: liveProgress,
