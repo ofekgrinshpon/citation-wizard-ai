@@ -78,6 +78,14 @@ import {
   unusedReadSources,
 } from "./coverageCheck.ts";
 import {
+  checkConfirm,
+  CONFIRM_MEMO_TOOL_NAME,
+  coverageFingerprint,
+  createPendingCoverage,
+  parsePendingCoverage,
+  type PendingCoverage,
+} from "./coverageCheck.ts";
+import {
   emptyQuoteResolutionStats,
   type QuoteResolutionStats,
   resolveMemoQuoteRefs,
@@ -118,6 +126,22 @@ export function minimalAlreadyReadPayload(
       : `אין ראיה חדשה: ${source_id} כבר נקרא בריצה זו והתוכן שמור בצד השרת. השתמש במה שכבר יש, או בקש קטע אחר: fetch({source_id:"${source_id}", query:"..."}).`,
   };
 }
+
+/**
+ * Present from the first turn so the tools array never changes mid-run; only
+ * honoured while a coverage reflection is pending (coverage_confirm_existing_v1).
+ */
+const CONFIRM_MEMO_TOOL: ToolSpec = {
+  name: CONFIRM_MEMO_TOOL_NAME,
+  description:
+    "רק אחרי בדיקת כיסוי: אישור שהתזכיר שכבר הוגש נשאר ללא שינוי, באמצעות ה-handle שהתקבל. אינו מאמת דבר; התזכיר עובר את אותה בדיקה. לא לשלב עם קריאות אחרות.",
+  parameters: {
+    type: "object",
+    additionalProperties: false,
+    properties: { handle: { type: "string" } },
+    required: ["handle"],
+  },
+} as ToolSpec;
 
 const TOOL_SPECS: ToolSpec[] = [
   {
@@ -351,6 +375,8 @@ export interface AgentStateJson {
   trace: AgentTraceEntry[];
   stats: AgentContextStats;
   memo: ResearchMemo | null;
+  /** Pending coverage reflection (absent in older checkpoints). */
+  pending_coverage?: PendingCoverage | null;
 }
 
 export interface AgentRunResult {
@@ -367,6 +393,7 @@ export interface AgentRunResult {
   commit: CommitTracker;
   ledger: AcquisitionLedger;
   stats: AgentContextStats;
+  pending_coverage?: PendingCoverage | null;
 }
 
 export function normalizeMemo(raw: unknown): ResearchMemo | null {
@@ -510,6 +537,8 @@ export async function runResearchAgent(opts: {
   heartbeat?: () => Promise<void> | void;
   /** False for repair re-entries: a repair turn never parks for the user. */
   allowAskUser?: boolean;
+  /** Resumed chunk of the SAME run only; repairs never pass it. */
+  pendingCoverage?: PendingCoverage | null;
 }): Promise<AgentRunResult> {
   const policy = opts.policy ?? new StopPolicy(opts.intake.budgets);
   const discovered = opts.discovered ?? new Map<string, SearchResult>();
@@ -530,8 +559,8 @@ export async function runResearchAgent(opts: {
   const memoTool = opts.intake.agent_authored_answer ? AGENT_ANSWER_MEMO_TOOL : MEMO_TOOL;
   const askUserAllowed = !!opts.intake.ask_user_enabled && opts.allowAskUser !== false;
   const baseSpecs: ToolSpec[] = opts.intake.agent_authored_answer
-    ? TOOL_SPECS.map((t) => (t === MEMO_TOOL ? memoTool : t)) as ToolSpec[]
-    : TOOL_SPECS;
+    ? [...TOOL_SPECS.map((t) => (t === MEMO_TOOL ? memoTool : t)), CONFIRM_MEMO_TOOL] as ToolSpec[]
+    : [...TOOL_SPECS, CONFIRM_MEMO_TOOL];
   const toolSpecs: ToolSpec[] = askUserAllowed ? [...baseSpecs, ASK_USER_TOOL as ToolSpec] : baseSpecs;
   let awaitingUser: AskUserRequest | null = null;
 
@@ -558,6 +587,22 @@ export async function runResearchAgent(opts: {
   let coverageToolCallsAtCheck = 0;
   const researchToolCallsMade = () =>
     policy.totalSearchCalls + policy.fetch_calls + policy.lookup_calls + policy.raw_search_calls;
+  const currentFingerprint = () =>
+    coverageFingerprint({
+      readableIds: opts.store.readable().map((s) => s.source_id),
+      researchCalls: researchToolCallsMade(),
+      quoteCount: opts.store.servedQuotes().length,
+    });
+  // Restore a pending reflection only for the same run; a new user message
+  // (clarification) keeps the honest diagnostics but ends confirmability.
+  let pending: PendingCoverage | null = parsePendingCoverage(opts.pendingCoverage);
+  if (pending && pending.run_id !== opts.intake.run_id) pending = null;
+  if (pending) {
+    if (opts.extraUserMessage) pending.confirmable = false;
+    coverageBefore = JSON.parse(pending.memo_json) as ResearchMemo;
+    coverageReadIds = new Set(pending.read_ids);
+    coverageToolCallsAtCheck = pending.research_calls_at_check;
+  }
   let stepsThisChunk = 0;
 
   let pendingDirective: string | undefined;
@@ -638,7 +683,11 @@ export async function runResearchAgent(opts: {
       messages,
       // Same tools array every turn (stable cache prefix); forcing is by toolChoice.
       tools: toolSpecs,
-      toolChoice: forceMemo ? { name: memoTool.name } : "auto",
+      // A pending confirmable reflection widens the forced choice to memo OR
+      // confirm (validated below); it never forces confirmation.
+      toolChoice: forceMemo
+        ? (pending?.confirmable ? "required" : { name: memoTool.name })
+        : "auto",
       usage: opts.usage,
       costStage: "v2_research_agent",
       ...(replayReasoning ? { replayReasoning: true } : {}),
@@ -685,7 +734,10 @@ export async function runResearchAgent(opts: {
       continue;
     }
 
-    if (forceMemo && !forcedMemoCallsValid(res.tool_calls, memoTool.name)) {
+    if (
+      forceMemo &&
+      !forcedTurnCallsValid(res.tool_calls, memoTool.name, !!pending?.confirmable)
+    ) {
       error = "agent_forced_memo_violation";
       break;
     }
@@ -700,6 +752,21 @@ export async function runResearchAgent(opts: {
       })),
       ...reasoningField,
     });
+
+    // A confirmation must be the sole call of its turn: refuse every call of a
+    // mixed/duplicate turn before any sibling side effect runs.
+    if (res.tool_calls.length > 1 && res.tool_calls.some((c) => c.name === CONFIRM_MEMO_TOOL_NAME)) {
+      stats.memo_coverage_confirm_rejected = (stats.memo_coverage_confirm_rejected ?? 0) + 1;
+      for (const call of res.tool_calls) {
+        messages.push({
+          role: "tool",
+          tool_call_id: call.id,
+          content: JSON.stringify({ error: "confirm_must_be_sole_call", executed: false }),
+        });
+      }
+      trace.push({ step: policy.steps, tool: CONFIRM_MEMO_TOOL_NAME, input: {}, summary: "rejected_mixed" });
+      continue;
+    }
 
     const readableBefore = opts.store.readable().length;
     let toolMs = 0;
@@ -735,7 +802,53 @@ export async function runResearchAgent(opts: {
         });
         continue;
       }
+      if (call.name === CONFIRM_MEMO_TOOL_NAME) {
+        const chk = checkConfirm({
+          pending,
+          args: parseJsonLoose<unknown>(call.arguments),
+          run_id: opts.intake.run_id,
+          fingerprint: currentFingerprint(),
+        });
+        if (!chk.ok) {
+          if (chk.invalidate && pending) pending.confirmable = false;
+          stats.memo_coverage_confirm_rejected = (stats.memo_coverage_confirm_rejected ?? 0) + 1;
+          trace.push({ step: policy.steps, tool: CONFIRM_MEMO_TOOL_NAME, input: {}, summary: `rejected_${chk.reason}` });
+          messages.push({
+            role: "tool",
+            tool_call_id: call.id,
+            content: JSON.stringify({
+              error: chk.reason,
+              advice: "הגש את התזכיר המלא ב-submit_research_memo.",
+            }),
+          });
+          continue;
+        }
+        // Same accepted-memo path as a full resubmission; verification and
+        // every downstream gate run unchanged on this exact candidate.
+        stats.memo_coverage_confirmed_existing = (stats.memo_coverage_confirmed_existing ?? 0) + 1;
+        if (coverageBefore) {
+          noteCoverageOutcome(stats, {
+            before: coverageBefore,
+            after: chk.memo,
+            readAtCheck: coverageReadIds,
+            researchCallsAfterCheck: researchToolCallsMade() - coverageToolCallsAtCheck,
+          });
+          coverageBefore = null;
+        }
+        pending = null;
+        memo = chk.memo;
+        trace.push({
+          step: policy.steps,
+          tool: CONFIRM_MEMO_TOOL_NAME,
+          input: {},
+          summary: `claims=${memo.claims.length}`,
+        });
+        messages.push({ role: "tool", tool_call_id: call.id, content: JSON.stringify({ received: true }) });
+        break;
+      }
       if (call.name === MEMO_TOOL.name) {
+        // Any full submission supersedes a held candidate.
+        if (pending) pending.confirmable = false;
         // Durable quote references are resolved against the evidence store
         // BEFORE anything else looks at the memo: a quote_id becomes the exact
         // stored text, an unknown or foreign id is refused, and verification
@@ -818,6 +931,13 @@ export async function runResearchAgent(opts: {
           coverageBefore = candidateMemo;
           coverageReadIds = new Set(readable.map((s) => s.source_id));
           coverageToolCallsAtCheck = researchToolCallsMade();
+          pending = createPendingCoverage({
+            run_id: opts.intake.run_id,
+            memo: candidateMemo!,
+            read_ids: [...coverageReadIds],
+            research_calls_at_check: coverageToolCallsAtCheck,
+            fingerprint: currentFingerprint(),
+          });
           trace.push({
             step: policy.steps,
             tool: "memo_coverage_check",
@@ -841,8 +961,14 @@ export async function runResearchAgent(opts: {
                   quote_count: opts.store.servedQuotes(s.source_id).length,
                 })),
               ),
+              confirm_existing_memo: {
+                handle: pending.handle,
+                note:
+                  "אם לאחר הבדיקה התזכיר נשאר ללא שינוי, אפשר לקרוא ל-confirm_existing_memo עם handle זה (לבד, ללא קריאות אחרות) במקום להגישו שוב. אפשר גם להגיש תזכיר מתוקן או להמשיך במחקר; כל שינוי במחקר מבטל את ה-handle.",
+              },
             }),
-            digest: JSON.stringify({ tool: "memo_coverage_check" }),
+            // The handle survives compaction so a confirmation stays possible.
+            digest: JSON.stringify({ tool: "memo_coverage_check", confirm_existing_memo: { handle: pending.handle } }),
           });
 
           continue;
@@ -868,6 +994,7 @@ export async function runResearchAgent(opts: {
           });
           coverageBefore = null;
         }
+        pending = null;
         memo = acceptedMemo;
         trace.push({
           step: policy.steps,
@@ -1402,6 +1529,7 @@ export async function runResearchAgent(opts: {
         commit,
         ledger,
         stats,
+        pending_coverage: pending,
       };
       await opts.checkpoint(serializeAgentState({ result: snapshot, store: opts.store }));
     }
@@ -1432,6 +1560,7 @@ export async function runResearchAgent(opts: {
   if (!memo && !error && !paused && !awaitingUser) error = "agent_step_budget_exhausted_without_memo";
   return {
     memo, error, paused, trace, policy, discovered, messages, commit, ledger, stats,
+    pending_coverage: memo ? null : pending,
     ...(awaitingUser ? { awaiting_user: awaitingUser } : {}),
   };
 }
@@ -1440,6 +1569,16 @@ export async function runResearchAgent(opts: {
 /** Forced-memo turn: every returned call must be the memo tool, else reject all. */
 export function forcedMemoCallsValid(calls: { name: string }[], memoName: string): boolean {
   return calls.every((c) => c.name === memoName);
+}
+
+/** Forced turn: memo-only, or (pending reflection only) one sole confirmation. */
+export function forcedTurnCallsValid(
+  calls: { name: string }[],
+  memoName: string,
+  allowConfirm: boolean,
+): boolean {
+  if (allowConfirm && calls.length === 1 && calls[0].name === CONFIRM_MEMO_TOOL_NAME) return true;
+  return forcedMemoCallsValid(calls, memoName);
 }
 
 export function serializeAgentState(input: {
@@ -1456,6 +1595,7 @@ export function serializeAgentState(input: {
     trace: input.result.trace,
     stats: input.result.stats,
     memo: input.result.memo,
+    ...(input.result.pending_coverage ? { pending_coverage: input.result.pending_coverage } : {}),
   };
 }
 
@@ -1473,5 +1613,6 @@ export function deserializeAgentState(intake: Intake, json: AgentStateJson) {
     trace: json.trace ?? [],
     stats: json.stats,
     memo: json.memo,
+    pending_coverage: parsePendingCoverage(json.pending_coverage),
   };
 }

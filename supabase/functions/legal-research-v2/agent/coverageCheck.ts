@@ -38,6 +38,10 @@ export interface CoverageCheckStats {
   memo_coverage_gap_left_explicit: number;
   /** The resubmission came back empty, so the pre-check memo was kept. */
   memo_coverage_reverted_to_pre_check: number;
+  /** The agent confirmed the exact server-held candidate via confirm_existing_memo. */
+  memo_coverage_confirmed_existing?: number;
+  /** confirm_existing_memo calls refused (bad/stale handle, mixed call, no pending). */
+  memo_coverage_confirm_rejected?: number;
 }
 
 export function emptyCoverageCheckStats(): CoverageCheckStats {
@@ -49,6 +53,8 @@ export function emptyCoverageCheckStats(): CoverageCheckStats {
     memo_coverage_claims_added: 0,
     memo_coverage_gap_left_explicit: 0,
     memo_coverage_reverted_to_pre_check: 0,
+    memo_coverage_confirmed_existing: 0,
+    memo_coverage_confirm_rejected: 0,
   };
 }
 
@@ -196,4 +202,100 @@ export function noteCoverageOutcome(
   ) {
     stats.memo_coverage_gap_left_explicit += 1;
   }
+}
+
+// ── confirm_existing_memo (coverage_confirm_existing_v1) ─────────────────────
+// During the one coverage reflection the agent may confirm the exact candidate
+// the server already holds instead of re-sending it. The candidate is kept as a
+// JSON string (immutable by construction), bound to the run by an opaque
+// server-generated handle and to the evidence state by a fingerprint. A
+// confirmation only hands that candidate to the SAME downstream verification;
+// it never marks anything verified.
+
+export const CONFIRM_MEMO_TOOL_NAME = "confirm_existing_memo";
+
+export interface PendingCoverage {
+  v: 1;
+  handle: string;
+  run_id: string;
+  /** Exact candidate at reflection time, serialized once. */
+  memo_json: string;
+  read_ids: string[];
+  research_calls_at_check: number;
+  fingerprint: string;
+  /** False once evidence/research state or the candidate changed. */
+  confirmable: boolean;
+}
+
+/** Evidence/research state a confirmation is bound to. */
+export function coverageFingerprint(input: {
+  readableIds: string[];
+  researchCalls: number;
+  quoteCount: number;
+}): string {
+  return `${input.researchCalls}|${input.quoteCount}|${[...input.readableIds].sort().join(",")}`;
+}
+
+export function createPendingCoverage(input: {
+  run_id: string;
+  memo: ResearchMemo;
+  read_ids: string[];
+  research_calls_at_check: number;
+  fingerprint: string;
+  handle?: string;
+}): PendingCoverage {
+  return {
+    v: 1,
+    handle: input.handle ?? `cov_${crypto.randomUUID()}`,
+    run_id: input.run_id,
+    memo_json: JSON.stringify(input.memo),
+    read_ids: [...input.read_ids],
+    research_calls_at_check: input.research_calls_at_check,
+    fingerprint: input.fingerprint,
+    confirmable: true,
+  };
+}
+
+/** Restores a persisted pending reflection; anything malformed is dropped (fail closed). */
+export function parsePendingCoverage(raw: unknown): PendingCoverage | null {
+  const r = raw as Partial<PendingCoverage> | null;
+  if (!r || typeof r !== "object" || r.v !== 1) return null;
+  if (typeof r.handle !== "string" || !/^cov_[0-9a-f-]{36}$/.test(r.handle)) return null;
+  if (typeof r.run_id !== "string" || !r.run_id) return null;
+  if (typeof r.memo_json !== "string" || typeof r.fingerprint !== "string") return null;
+  if (!Array.isArray(r.read_ids) || !r.read_ids.every((x) => typeof x === "string")) return null;
+  if (typeof r.research_calls_at_check !== "number" || typeof r.confirmable !== "boolean") return null;
+  try {
+    const m = JSON.parse(r.memo_json);
+    if (!m || !Array.isArray(m.claims)) return null;
+  } catch {
+    return null;
+  }
+  return { ...r, read_ids: [...r.read_ids] } as PendingCoverage;
+}
+
+export type ConfirmCheck =
+  | { ok: true; memo: ResearchMemo }
+  | { ok: false; reason: string; invalidate: boolean };
+
+/** Validates one confirm call. Returns a fresh copy of the held candidate on success. */
+export function checkConfirm(input: {
+  pending: PendingCoverage | null;
+  args: unknown;
+  run_id: string;
+  fingerprint: string;
+}): ConfirmCheck {
+  const p = input.pending;
+  if (!p) return { ok: false, reason: "no_pending_memo", invalidate: false };
+  const a = input.args as Record<string, unknown> | null;
+  if (!a || typeof a !== "object" || Object.keys(a).some((k) => k !== "handle")) {
+    return { ok: false, reason: "only_handle_allowed", invalidate: false };
+  }
+  if (typeof a.handle !== "string" || a.handle !== p.handle) {
+    return { ok: false, reason: "invalid_handle", invalidate: false };
+  }
+  if (p.run_id !== input.run_id) return { ok: false, reason: "wrong_run", invalidate: true };
+  if (!p.confirmable) return { ok: false, reason: "stale_handle", invalidate: true };
+  if (p.fingerprint !== input.fingerprint) return { ok: false, reason: "evidence_changed", invalidate: true };
+  return { ok: true, memo: JSON.parse(p.memo_json) as ResearchMemo };
 }

@@ -212,7 +212,7 @@ describe("ask_user pause / resume", () => {
   });
 
   it("T16 a normal question can finish without ask_user (never forced)", () => {
-    expect(agentSrc).toMatch(/toolChoice: forceMemo \? \{ name: memoTool\.name \} : "auto"/);
+    expect(agentSrc).toMatch(/toolChoice: forceMemo\s*\? \(pending\?\.confirmable \? "required" : \{ name: memoTool\.name \}\)\s*: "auto"/);
     expect(agentSrc).not.toMatch(/name: "ask_user" \}/);
   });
 
