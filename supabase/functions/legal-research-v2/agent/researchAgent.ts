@@ -589,13 +589,13 @@ export async function runResearchAgent(opts: {
     policy.totalSearchCalls + policy.fetch_calls + policy.lookup_calls + policy.raw_search_calls;
   const currentFingerprint = () =>
     coverageFingerprint({
-      readableIds: opts.store.readable().map((s) => s.source_id),
+      readable: opts.store.readable(),
+      quotes: opts.store.servedQuotes(),
       researchCalls: researchToolCallsMade(),
-      quoteCount: opts.store.servedQuotes().length,
     });
   // Restore a pending reflection only for the same run; a new user message
   // (clarification) keeps the honest diagnostics but ends confirmability.
-  let pending: PendingCoverage | null = parsePendingCoverage(opts.pendingCoverage);
+  let pending: PendingCoverage | null = opts.pendingCoverage ? parsePendingCoverage(opts.pendingCoverage) : null;
   if (pending && pending.run_id !== opts.intake.run_id) pending = null;
   if (pending) {
     if (opts.extraUserMessage) pending.confirmable = false;

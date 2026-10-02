@@ -20,6 +20,18 @@ vi.mock("../../supabase/functions/legal-research-v2/shared/model.ts", async (ori
   };
 });
 
+const searchCalls: unknown[] = [];
+vi.mock("../../supabase/functions/legal-research-v2/tools/search.ts", async (orig) => {
+  const real = await orig<Record<string, unknown>>();
+  return {
+    ...real,
+    runSearch: vi.fn(async (_a: unknown, input: { scope?: string }) => {
+      searchCalls.push(input);
+      return { scope: input.scope ?? "web", results: [] };
+    }),
+  };
+});
+
 import {
   deserializeAgentState,
   forcedTurnCallsValid,
@@ -85,7 +97,7 @@ async function run(o: Record<string, unknown> = {}) {
   };
 }
 
-beforeEach(() => { script.length = 0; requests.length = 0; });
+beforeEach(() => { script.length = 0; requests.length = 0; searchCalls.length = 0; });
 
 describe("agent loop", () => {
   it("unchanged confirmation hands the exact candidate to downstream, once", async () => {
@@ -182,16 +194,50 @@ describe("agent loop", () => {
     script.push(calls(["submit_research_memo", memoArgs(["S1"])]));
     script.push((req) => { h = lastHandle(req.messages as never)!; return calls(["search", { query: "x", scope: "corpus" }])(); });
     script.push(() => calls(["confirm_existing_memo", { handle: h }])());
-    script.push(calls(["submit_research_memo", memoArgs(["S1"])]));
-    const policy = new StopPolicy(budgets as never);
-    policy.note("search"); // keep the stub search a no-op on the network side
-    const res = await runResearchAgent({
-      admin: { from: () => { throw new Error("offline"); }, rpc: () => { throw new Error("offline"); } } as never,
-      intake: intake(), store: mkStore(), model: "m", usage: usage(), policy,
-    } as never).catch((e) => ({ thrown: String(e) }));
-    if ("thrown" in res) return; // search tool needs network in this env; stale path covered by helper test
-    expect(res.stats.memo_coverage_confirm_rejected).toBeGreaterThanOrEqual(1);
+    script.push(calls(["submit_research_memo", memoArgs(["S1", "S2"])]));
+    const { res } = await run();
+    expect(searchCalls).toHaveLength(1);
+    expect(res.trace.map((t) => t.summary)).toContain("rejected_evidence_changed");
+    expect(res.stats.memo_coverage_confirm_rejected).toBe(1);
     expect(res.stats.memo_coverage_confirmed_existing).toBe(0);
+    expect(res.stats.memo_coverage_continued_research).toBe(1);
+    expect(res.memo?.claims).toHaveLength(2);
+  });
+
+  it.each([
+    ["source body", (st: EvidenceStore) => { (st.get("S2") as { extracted_text: string }).extracted_text += " שונה"; }],
+    ["source identity", (st: EvidenceStore) => { (st.get("S3") as { identity_fields: { dockets: string[] } }).identity_fields.dockets.push("1/23"); }],
+    ["source url", (st: EvidenceStore) => { (st.get("S1") as { url: string }).url = "https://ex.test/other"; }],
+    ["served quote", (st: EvidenceStore) => { (st.servedQuotes()[0] as { text: string }).text = "ציטוט אחר"; }],
+  ])("in-place %s mutation (same ids/counts) makes the handle stale; full revision still works", async (_n, mutate) => {
+    const store = EvidenceStore.fromJSON({
+      seq: 3,
+      sources: [src("S1", "מקור א"), src("S2", "מקור ב"), src("S3", "מקור ג")],
+      quotes: [{ quote_id: "Q1", source_id: "S1", text: "טקסט מקור לדוגמה" }],
+    } as never);
+    script.push(calls(["submit_research_memo", memoArgs(["S1"])]));
+    script.push((req) => { mutate(store); return calls(["confirm_existing_memo", { handle: lastHandle(req.messages as never) }])(); });
+    script.push(calls(["submit_research_memo", memoArgs(["S1", "S3"])]));
+    const { res } = await run({ store });
+    expect(res.trace.map((t) => t.summary)).toContain("rejected_evidence_changed");
+    expect(res.stats.memo_coverage_confirmed_existing).toBe(0);
+    expect(res.memo?.claims).toHaveLength(2);
+  });
+
+  it("valid confirmation under already-exhausted research budget is accepted", async () => {
+    const policy = new StopPolicy(budgets as never);
+    script.push(calls(["submit_research_memo", memoArgs(["S1"])]));
+    script.push((req) => {
+      policy.steps = budgets.max_agent_steps - 2;
+      return calls(["confirm_existing_memo", { handle: "cov_00000000-0000-4000-8000-000000000000" }])();
+    });
+    script.push((req) => calls(["confirm_existing_memo", { handle: lastHandle(req.messages as never) }])());
+    const { res } = await run({ policy });
+    expect(requests[2].toolChoice).toBe("required");
+    expect(res.error).toBeUndefined();
+    expect(res.stats.memo_coverage_confirmed_existing).toBe(1);
+    expect(res.memo?.claims.map((c) => c.evidence[0].source_id)).toEqual(["S1"]);
+    expect(searchCalls).toHaveLength(0);
   });
 
   it("exhausted research: confirm allowed via 'required', research calls fail closed", async () => {
@@ -266,9 +312,9 @@ describe("agent loop", () => {
 });
 
 describe("helpers", () => {
-  const memo = { issue_summary: "", claims: [], unresolved_questions: [], research_complete: true } as never;
+  const memo = { issue_summary: "", claims: [{ claim_id: "C1", proposition: "א", evidence: [{ source_id: "S1", quoted_span: "q" }] }], unresolved_questions: [], research_complete: true } as never;
   it("candidate is immutable: mutating the source object or the returned copy changes nothing", () => {
-    const m = { claims: [{ proposition: "א" }] } as never as { claims: { proposition: string }[] };
+    const m = { issue_summary: "", unresolved_questions: [], claims: [{ claim_id: "C1", proposition: "א", evidence: [] }] } as never as { claims: { proposition: string }[] };
     const p = createPendingCoverage({ run_id: RUN, memo: m as never, read_ids: ["S1"], research_calls_at_check: 0, fingerprint: "f" });
     m.claims[0].proposition = "ב";
     const r = checkConfirm({ pending: p, args: { handle: p.handle }, run_id: RUN, fingerprint: "f" });
@@ -285,6 +331,20 @@ describe("helpers", () => {
     expect(parsePendingCoverage({ ...p, handle: "bad" })).toBeNull();
     expect(parsePendingCoverage({ ...p, memo_json: "{" })).toBeNull();
     expect(parsePendingCoverage(undefined)).toBeNull();
+    expect(parsePendingCoverage(JSON.parse(JSON.stringify(p)))).not.toBeNull();
+  });
+  it("malformed persisted candidates yield no confirmable state", () => {
+    const p = createPendingCoverage({ run_id: RUN, memo, read_ids: [], research_calls_at_check: 0, fingerprint: "f" });
+    const sub = (m: unknown) => createPendingCoverage({ run_id: RUN, memo: m as never, read_ids: [], research_calls_at_check: 0, fingerprint: "f" });
+    expect(parsePendingCoverage(sub({ claims: [] }))).toBeNull();
+    expect(parsePendingCoverage(sub({ issue_summary: "", claims: [{ claim_id: "C1", proposition: "א", evidence: [] }] }))).toBeNull();
+    expect(parsePendingCoverage(sub({ issue_summary: "", unresolved_questions: [], claims: [{ claim_id: "C1", proposition: "א", evidence: [{}] }] }))).toBeNull();
+    for (const n of [-1, 1.5, Number.NaN, Infinity]) expect(parsePendingCoverage({ ...p, research_calls_at_check: n })).toBeNull();
+    // substituted valid-looking candidate cannot reuse the handle
+    const other = JSON.stringify({ ...JSON.parse(p.memo_json), issue_summary: "אחר" });
+    expect(parsePendingCoverage({ ...p, memo_json: other })).toBeNull();
+    expect(checkConfirm({ pending: { ...p, memo_json: other }, args: { handle: p.handle }, run_id: RUN, fingerprint: "f" }))
+      .toMatchObject({ ok: false, reason: "candidate_integrity" });
   });
   it("forced turn: memo or one sole confirm only when pending", () => {
     expect(forcedTurnCallsValid([{ name: "confirm_existing_memo" }], "submit_research_memo", true)).toBe(true);

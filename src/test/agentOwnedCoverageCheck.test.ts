@@ -57,7 +57,9 @@ describe("C1 — no forced source use", () => {
   it("the reflection names no source and allows submitting as-is", () => {
     const text = buildCoverageReflection({ question: QUESTION, researchBudgetLeft: true });
     expect(text).not.toMatch(/\bS\d+\b/);
-    expect(text).toMatch(/הגש את התזכיר כפי שהוא/);
+    expect(text).toMatch(/confirm_existing_memo/);
+    expect(text).toMatch(/התזכיר המתוקן המלא ב-submit_research_memo/);
+    expect(text).not.toMatch(/הגש את התזכיר כפי שהוא|לאחר מכן קרא שוב ל-submit_research_memo/);
     expect(text).toMatch(/אין מכסת מקורות/);
     expect(text).toMatch(/אל תייצר מחלוקת שאינה קיימת/);
   });

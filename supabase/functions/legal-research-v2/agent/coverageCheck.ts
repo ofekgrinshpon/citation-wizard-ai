@@ -138,14 +138,14 @@ export function buildCoverageReflection(input: {
     "",
     "שאל את עצמך שאלה אחת: האם התזכיר מטפל בפועל בממדים שהמשתמש ביקש — לדוגמה גישות ואסכולות, מחלוקת, התפתחות היסטורית, השוואה בין שיטות משפט, הסברים מתחרים או התפתחות דוקטרינרית — ככל שאלה אכן נדרשו בבקשה הזו.",
     "",
-    "אם כן — הגש את התזכיר כפי שהוא. אין צורך לשנות דבר.",
+    "אם כן — אין צורך לשנות דבר: אשר את התזכיר הקיים כפי שהוא באמצעות confirm_existing_memo עם ה-handle שסופק (קריאה יחידה, ללא קריאות אחרות).",
     "אם ממד מהותי שהתבקש חסר:",
     "1. בדוק תחילה את החומר שכבר נקרא בריצה זו — ייתכן שהוא תומך באותו ממד.",
     `2. ${continuation}`,
     "3. אם אין ביסוס — שמר את הפער במפורש ב-unresolved_questions. תשובה חלקית וכנה עדיפה על סקירה שנראית שלמה.",
     "",
     "אין מכסת מקורות ואין חובה להשתמש בכל מה שנקרא: מקור חוזר, כפול, שולי או שנקודתו כבר מכוסה טוב יותר — אינו צריך להיכנס לתזכיר. אל תייצר מחלוקת שאינה קיימת ואל תוסיף מקורות לשם גיוון.",
-    "לאחר מכן קרא שוב ל-submit_research_memo. זו הבדיקה היחידה מסוגה בריצה.",
+    "הבחירה שלך: לאשר את התזכיר הקיים ללא שינוי ב-confirm_existing_memo, או להגיש את התזכיר המתוקן המלא ב-submit_research_memo (לאחר מחקר נוסף, רק אם התקציב מאפשר). זו הבדיקה היחידה מסוגה בריצה.",
   ].join("\n");
 }
 
@@ -212,6 +212,10 @@ export function noteCoverageOutcome(
 // confirmation only hands that candidate to the SAME downstream verification;
 // it never marks anything verified.
 
+import { createHash } from "node:crypto";
+
+const sha256 = (s: string) => createHash("sha256").update(s).digest("hex");
+
 export const CONFIRM_MEMO_TOOL_NAME = "confirm_existing_memo";
 
 export interface PendingCoverage {
@@ -220,6 +224,8 @@ export interface PendingCoverage {
   run_id: string;
   /** Exact candidate at reflection time, serialized once. */
   memo_json: string;
+  /** sha256 of memo_json: a substituted candidate cannot reuse the handle. */
+  memo_digest: string;
   read_ids: string[];
   research_calls_at_check: number;
   fingerprint: string;
@@ -227,13 +233,22 @@ export interface PendingCoverage {
   confirmable: boolean;
 }
 
-/** Evidence/research state a confirmation is bound to. */
+/**
+ * Evidence/research state a confirmation is bound to: every readable source
+ * (body, title, URL, identity and bibliographic fields — the whole stored
+ * record) and every served quote, plus the research-call count. Computed only
+ * when a candidate is held and again when a confirmation is validated, so any
+ * in-place mutation of an existing record (same id, same count) is caught.
+ */
 export function coverageFingerprint(input: {
-  readableIds: string[];
+  readable: unknown[];
+  quotes: unknown[];
   researchCalls: number;
-  quoteCount: number;
 }): string {
-  return `${input.researchCalls}|${input.quoteCount}|${[...input.readableIds].sort().join(",")}`;
+  const readable = [...input.readable].sort((a, b) =>
+    String((a as { source_id?: string }).source_id).localeCompare(String((b as { source_id?: string }).source_id))
+  );
+  return sha256(JSON.stringify([input.researchCalls, readable, input.quotes]));
 }
 
 export function createPendingCoverage(input: {
@@ -249,6 +264,7 @@ export function createPendingCoverage(input: {
     handle: input.handle ?? `cov_${crypto.randomUUID()}`,
     run_id: input.run_id,
     memo_json: JSON.stringify(input.memo),
+    memo_digest: sha256(JSON.stringify(input.memo)),
     read_ids: [...input.read_ids],
     research_calls_at_check: input.research_calls_at_check,
     fingerprint: input.fingerprint,
@@ -256,22 +272,45 @@ export function createPendingCoverage(input: {
   };
 }
 
+const isStr = (x: unknown): x is string => typeof x === "string";
+const isCount = (x: unknown) => typeof x === "number" && Number.isInteger(x) && x >= 0;
+
+/** Required normalized memo shape for a confirmable candidate (pending state only). */
+function validCandidate(m: unknown): boolean {
+  const r = m as Record<string, unknown> | null;
+  if (!r || typeof r !== "object" || !isStr(r.issue_summary)) return false;
+  if (!Array.isArray(r.unresolved_questions) || !r.unresolved_questions.every(isStr)) return false;
+  if (!Array.isArray(r.claims) || r.claims.length === 0) return false;
+  return r.claims.every((c) => {
+    const k = c as Record<string, unknown> | null;
+    return !!k && isStr(k.claim_id) && isStr(k.proposition) && k.proposition.trim() !== "" &&
+      Array.isArray(k.evidence) && k.evidence.every((e) => {
+        const v = e as Record<string, unknown> | null;
+        return !!v && isStr(v.source_id) && isStr(v.quoted_span);
+      });
+  });
+}
+
 /** Restores a persisted pending reflection; anything malformed is dropped (fail closed). */
 export function parsePendingCoverage(raw: unknown): PendingCoverage | null {
   const r = raw as Partial<PendingCoverage> | null;
   if (!r || typeof r !== "object" || r.v !== 1) return null;
-  if (typeof r.handle !== "string" || !/^cov_[0-9a-f-]{36}$/.test(r.handle)) return null;
-  if (typeof r.run_id !== "string" || !r.run_id) return null;
-  if (typeof r.memo_json !== "string" || typeof r.fingerprint !== "string") return null;
-  if (!Array.isArray(r.read_ids) || !r.read_ids.every((x) => typeof x === "string")) return null;
-  if (typeof r.research_calls_at_check !== "number" || typeof r.confirmable !== "boolean") return null;
+  if (!isStr(r.handle) || !/^cov_[0-9a-f-]{36}$/.test(r.handle)) return null;
+  if (!isStr(r.run_id) || !r.run_id || r.run_id.length > 200) return null;
+  if (!isStr(r.memo_json) || !isStr(r.memo_digest) || !isStr(r.fingerprint)) return null;
+  if (sha256(r.memo_json) !== r.memo_digest) return null;
+  if (!Array.isArray(r.read_ids) || r.read_ids.length > 10_000 || !r.read_ids.every(isStr)) return null;
+  if (!isCount(r.research_calls_at_check) || typeof r.confirmable !== "boolean") return null;
   try {
-    const m = JSON.parse(r.memo_json);
-    if (!m || !Array.isArray(m.claims)) return null;
+    if (!validCandidate(JSON.parse(r.memo_json))) return null;
   } catch {
     return null;
   }
-  return { ...r, read_ids: [...r.read_ids] } as PendingCoverage;
+  return {
+    v: 1, handle: r.handle, run_id: r.run_id, memo_json: r.memo_json, memo_digest: r.memo_digest,
+    read_ids: [...r.read_ids], research_calls_at_check: r.research_calls_at_check as number,
+    fingerprint: r.fingerprint, confirmable: r.confirmable,
+  };
 }
 
 export type ConfirmCheck =
@@ -297,5 +336,15 @@ export function checkConfirm(input: {
   if (p.run_id !== input.run_id) return { ok: false, reason: "wrong_run", invalidate: true };
   if (!p.confirmable) return { ok: false, reason: "stale_handle", invalidate: true };
   if (p.fingerprint !== input.fingerprint) return { ok: false, reason: "evidence_changed", invalidate: true };
-  return { ok: true, memo: JSON.parse(p.memo_json) as ResearchMemo };
+  if (!isStr(p.memo_json) || sha256(p.memo_json) !== p.memo_digest) {
+    return { ok: false, reason: "candidate_integrity", invalidate: true };
+  }
+  let memo: unknown;
+  try {
+    memo = JSON.parse(p.memo_json);
+  } catch {
+    return { ok: false, reason: "candidate_integrity", invalidate: true };
+  }
+  if (!validCandidate(memo)) return { ok: false, reason: "candidate_invalid", invalidate: true };
+  return { ok: true, memo: memo as ResearchMemo };
 }
