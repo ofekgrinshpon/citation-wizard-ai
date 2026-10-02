@@ -265,6 +265,8 @@ export interface FetchOutput {
   fetch_budget_accounted?: boolean;
   /** Base acquisition plus its possible 504 retry; excludes existing landing follow-ups. */
   http_attempts?: number;
+  /** Extra 504 attempts charged to the independent run retry allowance. */
+  http_retry_attempts?: number;
   source_id?: string;
   title?: string;
   summary?: string;
@@ -476,8 +478,10 @@ export function resolveExpectedIdentity(
 
 export interface FetchOptions {
   admin?: SupabaseClient | null;
-  /** Caller owns the existing run budget; no callback means no auto retry. */
+  /** Caller owns the unchanged base acquisition budget. */
   reserveHttpAttempt?: () => boolean;
+  /** Caller owns a separate bounded retry allowance; no callback means no retry. */
+  reserveHttpRetry?: () => boolean;
   deadlineAt?: number;
   signal?: AbortSignal;
 }
@@ -491,6 +495,7 @@ export async function runFetch(
 ): Promise<FetchOutput> {
   let checked = false;
   let attempts = 0;
+  let retries = 0;
   const guardedOpts = opts?.reserveHttpAttempt ? {
     ...opts,
     reserveHttpAttempt: () => {
@@ -499,9 +504,17 @@ export async function runFetch(
       attempts += 1;
       return true;
     },
+    reserveHttpRetry: opts.reserveHttpRetry ? () => {
+      if (!opts.reserveHttpRetry!()) return false;
+      attempts += 1;
+      retries += 1;
+      return true;
+    } : undefined,
   } : opts;
   const out = await runFetchBody(store, discovered, input, ledger, guardedOpts);
-  return checked ? { ...out, fetch_budget_accounted: true, http_attempts: attempts } : out;
+  return checked
+    ? { ...out, fetch_budget_accounted: true, http_attempts: attempts, http_retry_attempts: retries }
+    : out;
 }
 
 async function runFetchBody(
@@ -852,6 +865,7 @@ async function runFetchBody(
       fetchOnce: officialFetch,
       isSafeUrl: (target) => checkUrlSafety(target).safe,
       reserveAttempt: opts?.reserveHttpAttempt,
+      reserveRetry: opts?.reserveHttpRetry,
       // Do not stack a new retry on the court transport's own retry/relay
       // policy, or grant another automatic retry to an explicit cached refetch.
       allowRetry: !/(^|\.)court\.gov\.il$/i.test(new URL(url).hostname) && !store.findByUrl(url),

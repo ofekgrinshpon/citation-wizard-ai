@@ -361,6 +361,7 @@ async function runPipeline(
     ledger: prior?.ledger,
     trace: prior?.trace,
     stats: prior?.stats,
+    pendingToolTurn: prior?.pending_tool_turn,
     // A clarification reply changes the conversation: keep diagnostics, end confirmability.
     pendingCoverage: prior?.pending_coverage && resume?.awaiting_since
       ? { ...prior.pending_coverage, confirmable: false }
@@ -373,7 +374,7 @@ async function runPipeline(
     deadlineAt: opts.chunked ? Date.now() + CHUNK.MAX_MS : undefined,
     checkpoint: opts.chunked
       ? async (state) => {
-        await admin.from("v2_eval_runs").update({
+        const { error } = await admin.from("v2_eval_runs").update({
           agent_state: {
             resume: {
               agent_state: state,
@@ -392,6 +393,8 @@ async function runPipeline(
           chunk_index,
           last_beat_at: new Date().toISOString(),
         }).eq("run_id", intake.run_id);
+        if (error) console.warn(JSON.stringify({ event: "v2_agent_checkpoint_save_failed", run_id: intake.run_id }));
+        return !error;
       }
       : undefined,
   });
@@ -572,6 +575,7 @@ async function runPipeline(
       agent_steps: agent.policy.steps,
       search_calls: agent.policy.search_calls,
       fetch_calls: agent.policy.fetch_calls,
+      fetch_retry_calls: agent.policy.fetch_retry_calls,
       lookup_calls: agent.policy.lookup_calls,
       documents_fetched: store.all().length,
       successful_body_reads: store.readable().length,
@@ -1068,6 +1072,7 @@ async function runPipeline(
     agent_steps: agent.policy.steps,
     search_calls: agent.policy.search_calls,
     fetch_calls: agent.policy.fetch_calls,
+    fetch_retry_calls: agent.policy.fetch_retry_calls,
     lookup_calls: agent.policy.lookup_calls,
     documents_fetched: store.all().length,
     successful_body_reads: store.readable().length,
@@ -1457,11 +1462,17 @@ async function driveRunInner(
       return;
     }
     if ("paused" in out && out.paused) {
-      await admin.from("v2_eval_runs").update({
+      const { error: pauseSaveError } = await admin.from("v2_eval_runs").update({
         status: "paused",
         agent_state: { resume: out.resume, intake, job, stage: progress.current() },
         last_beat_at: new Date().toISOString(),
       }).eq("run_id", intake.run_id);
+      // Never hand off a turn that was not durably saved. Existing watchdog
+      // recovery remains bounded by its normal retry policy.
+      if (pauseSaveError) {
+        console.warn(JSON.stringify({ event: "v2_pause_checkpoint_save_failed", run_id: intake.run_id }));
+        return;
+      }
       const ack = await selfInvokeResume(intake.run_id, supabaseUrl, serviceKey);
       // Failures are logged inside selfInvokeResume; run state is never
       // rewritten here (no fencing) — the watchdog owns recovery.
