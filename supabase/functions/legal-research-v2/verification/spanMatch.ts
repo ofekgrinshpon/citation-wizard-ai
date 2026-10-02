@@ -42,23 +42,63 @@ export interface SpanMatchResult {
   detail: string;
 }
 
+/**
+ * A body prepared for repeated span checks. The normalized and dense forms are
+ * computed lazily, at most once each; the dense form derives from the cached
+ * normalized form (denseForm(x) === normalized(x) stripped of non-letters, and
+ * normalizeForMatch is idempotent on its own output's letter/digit content).
+ */
+export interface PreparedBody {
+  readonly text: string;
+  normalized(): string;
+  dense(): string;
+}
+
+const stripDense = (normalized: string) => normalized.replace(/[^\p{L}\p{N}]/gu, "");
+
+export function prepareBody(body: string): PreparedBody {
+  const text = body ?? "";
+  let n: string | null = null;
+  let d: string | null = null;
+  return {
+    text,
+    normalized: () => (n ??= normalizeForMatch(text)),
+    dense: () => (d ??= stripDense(n ??= normalizeForMatch(text))),
+  };
+}
+
+/**
+ * Pass-scoped cache: keyed by the actual source text string, so changed text
+ * can never reuse stale forms. Create one per verification pass; never persist.
+ */
+export function createSpanMatcher(): (body: string, span: string) => SpanMatchResult {
+  const cache = new Map<string, PreparedBody>();
+  return (body, span) => {
+    const key = body ?? "";
+    let p = cache.get(key);
+    if (!p) { p = prepareBody(key); cache.set(key, p); }
+    return matchPrepared(p, span);
+  };
+}
+
 export function matchSpan(body: string, span: string): SpanMatchResult {
+  return matchPrepared(prepareBody(body), span);
+}
+
+export function matchPrepared(body: PreparedBody, span: string): SpanMatchResult {
   const raw = (span ?? "").trim();
-  if (normalizeForMatch(raw).length < MIN_SPAN_CHARS) {
+  const nSpan = normalizeForMatch(raw);
+  if (nSpan.length < MIN_SPAN_CHARS) {
     return { status: "too_short", matched: false, verified_span: raw, detail: `span shorter than ${MIN_SPAN_CHARS} normalized chars` };
   }
-  const text = body ?? "";
-  if (text.includes(raw)) {
+  if (body.text.includes(raw)) {
     return { status: "exact", matched: true, verified_span: raw, detail: "exact substring" };
   }
-  const nBody = normalizeForMatch(text);
-  const nSpan = normalizeForMatch(raw);
-  if (nBody.includes(nSpan)) {
+  if (body.normalized().includes(nSpan)) {
     return { status: "normalized", matched: true, verified_span: raw, detail: "matched after unicode/whitespace normalization" };
   }
-  const dBody = denseForm(text);
-  const dSpan = denseForm(raw);
-  if (dSpan.length >= MIN_SPAN_CHARS && dBody.includes(dSpan)) {
+  const dSpan = stripDense(nSpan);
+  if (dSpan.length >= MIN_SPAN_CHARS && body.dense().includes(dSpan)) {
     return { status: "dense", matched: true, verified_span: raw, detail: "matched after punctuation-insensitive comparison (extraction noise)" };
   }
   return { status: "not_found", matched: false, verified_span: raw, detail: "span not present in the fetched body" };
