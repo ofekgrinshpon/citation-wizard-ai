@@ -32,6 +32,7 @@ import {
   type FetchFailureClass,
   isRecoverableFailure,
 } from "../shared/fetchDiagnostics.ts";
+import { fetchWithBoundedRetry } from "../shared/boundedFetchRetry.ts";
 import { normalizeMalformedUrl } from "../shared/urlNormalize.ts";
 import type { EvidenceStore } from "../evidence/evidenceStore.ts";
 import { excerptWindows } from "../evidence/evidenceStore.ts";
@@ -260,6 +261,10 @@ export interface FetchInput {
 
 export interface FetchOutput {
   ok: boolean;
+  /** Internal accounting: HTTP budget was checked/debited inside this call. */
+  fetch_budget_accounted?: boolean;
+  /** Base acquisition plus its possible 504 retry; excludes existing landing follow-ups. */
+  http_attempts?: number;
   source_id?: string;
   title?: string;
   summary?: string;
@@ -469,12 +474,42 @@ export function resolveExpectedIdentity(
   };
 }
 
+export interface FetchOptions {
+  admin?: SupabaseClient | null;
+  /** Caller owns the existing run budget; no callback means no auto retry. */
+  reserveHttpAttempt?: () => boolean;
+  deadlineAt?: number;
+  signal?: AbortSignal;
+}
+
 export async function runFetch(
   store: EvidenceStore,
   discovered: Map<string, SearchResult>,
   input: FetchInput,
   ledger?: AcquisitionLedger,
-  opts?: { admin?: SupabaseClient | null },
+  opts?: FetchOptions,
+): Promise<FetchOutput> {
+  let checked = false;
+  let attempts = 0;
+  const guardedOpts = opts?.reserveHttpAttempt ? {
+    ...opts,
+    reserveHttpAttempt: () => {
+      checked = true;
+      if (!opts.reserveHttpAttempt!()) return false;
+      attempts += 1;
+      return true;
+    },
+  } : opts;
+  const out = await runFetchBody(store, discovered, input, ledger, guardedOpts);
+  return checked ? { ...out, fetch_budget_accounted: true, http_attempts: attempts } : out;
+}
+
+async function runFetchBody(
+  store: EvidenceStore,
+  discovered: Map<string, SearchResult>,
+  input: FetchInput,
+  ledger?: AcquisitionLedger,
+  opts?: FetchOptions,
 ): Promise<FetchOutput> {
   // ── Targeted re-read of an already-stored body (no HTTP, no budget) ──────
   if (input.source_id && !input.url && !input.result_id) {
@@ -791,7 +826,14 @@ export async function runFetch(
   const origin = discovery?.origin ?? "direct_url";
 
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), FETCH_LIMITS.TIMEOUT_MS);
+  const deadlineAt = Math.min(Date.now() + FETCH_LIMITS.TIMEOUT_MS, opts?.deadlineAt ?? Infinity);
+  // An exhausted deadline/cancellation starts no HTTP work and consumes no slot.
+  if (opts?.signal?.aborted || Date.now() >= deadlineAt) {
+    return { ok: false, error: "fetch_deadline_exhausted", fetch_budget_accounted: true, http_attempts: 0 };
+  }
+  const abort = () => controller.abort();
+  opts?.signal?.addEventListener("abort", abort, { once: true });
+  const timer = setTimeout(abort, Math.max(0, deadlineAt - Date.now()));
   let entry: EvidenceSource;
   let decodeMeta: DecodeTelemetry | undefined;
   let repositoryPdfFollowed = false;
@@ -804,7 +846,16 @@ export async function runFetch(
     }
   };
   try {
-    const res = await officialFetch(url, { signal: controller.signal });
+    const res = await fetchWithBoundedRetry(url, {
+      signal: controller.signal,
+      deadlineAt,
+      fetchOnce: officialFetch,
+      isSafeUrl: (target) => checkUrlSafety(target).safe,
+      reserveAttempt: opts?.reserveHttpAttempt,
+      // Do not stack a new retry on the court transport's own retry/relay
+      // policy, or grant another automatic retry to an explicit cached refetch.
+      allowRetry: !/(^|\.)court\.gov\.il$/i.test(new URL(url).hostname) && !store.findByUrl(url),
+    });
     // A redirect must not land anywhere the original URL could not go.
     const finalUrl = typeof res.url === "string" && res.url ? res.url : url;
     if (finalUrl !== url && !checkUrlSafety(finalUrl).safe) {
@@ -874,6 +925,7 @@ export async function runFetch(
       if (repository_pdf_followed) break;
       const pdfUrl = normalizeMalformedUrl(link);
       if (!checkUrlSafety(pdfUrl).safe) continue;
+      if (controller.signal.aborted || Date.now() >= deadlineAt) break;
       landingDocumentAttempted += 1;
       try {
         const pdfRes = await officialFetch(pdfUrl, { signal: controller.signal });
@@ -951,6 +1003,11 @@ export async function runFetch(
     }
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
+    // A gate that prevented the FIRST request is not evidence of URL failure.
+    // Do not poison the cache/authority ledger when no request was started.
+    if (msg === "fetch_budget_exhausted" || msg === "fetch_deadline_exhausted") {
+      return { ok: false, error: msg, fetch_budget_accounted: true, http_attempts: 0 };
+    }
     entry = await store.append({
       url,
       title,
@@ -973,6 +1030,7 @@ export async function runFetch(
     });
   } finally {
     clearTimeout(timer);
+    opts?.signal?.removeEventListener("abort", abort);
   }
 
   return {
