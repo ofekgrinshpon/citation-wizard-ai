@@ -401,38 +401,42 @@ async function responsesChatGuarded(opts: {
   const isTerminal = () => !!streamError || terminalType !== null;
 
   let sawEof = false;
-  while (!isTerminal()) {
-    let chunk: ReadableStreamReadResult<Uint8Array>;
-    try {
-      chunk = await reader.read();
-    } catch (e) {
-      rec?.finish({
-        outcome: isAbortError(e) ? "aborted" : "stream_error",
-        capture_status: isAbortError(e) ? "aborted" : "read_error", usage: terminalUsage,
-      });
-      throw e;
+  try {
+    while (!isTerminal()) {
+      let chunk: ReadableStreamReadResult<Uint8Array>;
+      try {
+        chunk = await reader.read();
+      } catch (e) {
+        rec?.finish({
+          outcome: isAbortError(e) ? "aborted" : "stream_error",
+          capture_status: isAbortError(e) ? "aborted" : "read_error", usage: terminalUsage,
+        });
+        throw e;
+      }
+      const { done, value } = chunk;
+      if (done) {
+        buf += decoder.decode();
+        if (buf) { feedLine(buf); buf = ""; }
+        dispatch();
+        sawEof = true;
+        break;
+      }
+      buf += decoder.decode(value, { stream: true });
+      const lines = buf.split("\n");
+      buf = lines.pop() ?? "";
+      for (const line of lines) {
+        feedLine(line);
+        if (isTerminal()) break;
+      }
     }
-    const { done, value } = chunk;
-    if (done) {
-      buf += decoder.decode();
-      if (buf) { feedLine(buf); buf = ""; }
-      dispatch();
-      sawEof = true;
-      break;
+  } finally {
+    // Cleanup never blocks result settlement and never masks the original
+    // error: cancel is fire-and-forget with its rejection swallowed.
+    if (!sawEof) {
+      try { Promise.resolve(reader.cancel()).catch(() => {}); } catch { /* ignore */ }
     }
-    buf += decoder.decode(value, { stream: true });
-    const lines = buf.split("\n");
-    buf = lines.pop() ?? "";
-    for (const line of lines) {
-      feedLine(line);
-      if (isTerminal()) break;
-    }
+    try { reader.releaseLock(); } catch { /* ignore */ }
   }
-  // A terminal event finalizes the response; do not wait for network EOF.
-  if (!sawEof) {
-    try { await reader.cancel(); } catch { /* ignore */ }
-  }
-  try { reader.releaseLock(); } catch { /* ignore */ }
 
   if (streamError) rec?.finish({ outcome: "stream_error", capture_status: "complete", usage: terminalUsage, complete: true });
   else if (terminalType === "response.completed") rec?.finish({ outcome: "ok", capture_status: "complete", usage: terminalUsage, complete: true });
@@ -443,6 +447,25 @@ async function responsesChatGuarded(opts: {
   // EOF without a terminal event: never report success or expose partial
   // tool calls for execution.
   if (terminalType === null) return opts.fail(502, "responses_stream_incomplete: eof_without_terminal_event", false);
+  // response.incomplete: billed tokens are real, but the output is truncated.
+  // Not a success; no executable tool calls and no usable partial answer.
+  if (terminalType === "response.incomplete") {
+    if (opts.usage) {
+      opts.usage.model_calls += 1;
+      opts.usage.prompt_tokens += prompt_tokens;
+      opts.usage.completion_tokens += completion_tokens;
+      opts.usage.prompt_tokens_per_call.push(prompt_tokens);
+      opts.usage.max_prompt_tokens_single_call = Math.max(opts.usage.max_prompt_tokens_single_call, prompt_tokens);
+    }
+    return {
+      ...opts.fail(502, "responses_incomplete: truncated_output", true),
+      content: "",
+      tool_calls: [],
+      finish_reason: "length",
+      prompt_tokens,
+      completion_tokens,
+    };
+  }
 
   if (opts.usage) {
     opts.usage.model_calls += 1;
