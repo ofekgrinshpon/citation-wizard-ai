@@ -17,3 +17,7 @@
 ## Cost telemetry (citation/footnotes/bibliography)
 - [x] Per-attempt provider cost events, mock tests, deployed
 - [ ] Live 3+3+3 experiment (max US$5) — BLOCKED: waits for independent code review
+
+- [x] V2 Responses SSE lifecycle fix (terminal-before-EOF, premature EOF fails, split frames)
+- [ ] Deferred: checkpoint completed memo before verification + resume consumption
+- [ ] Deferred: lease/fencing for common resume before any handoff retry
