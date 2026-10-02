@@ -28,7 +28,7 @@ import {
   normalizeDocketText,
 } from "../shared/primitives.ts";
 import { bodyIdentityOf } from "../evidence/evidenceStore.ts";
-import { matchSpan } from "./spanMatch.ts";
+import { createSpanMatcher } from "./spanMatch.ts";
 import { verifySupport, type SupportInput } from "./supportVerifier.ts";
 import {
   isLegalPropositionClaim,
@@ -190,6 +190,8 @@ export async function verifyMemo(opts: {
   }
   const survivors: Survivor[] = [];
 
+  // Pass-scoped: normalized/dense body forms reused across spans, keyed by text.
+  const spanMatcher = createSpanMatcher();
   for (const claim of opts.memo.claims) {
     for (const ev of claim.evidence) {
       counters.total_evidence_pairs += 1;
@@ -262,7 +264,7 @@ export async function verifyMemo(opts: {
       }
 
       // CHECK 3 — verbatim span.
-      const span = matchSpan(source.extracted_text, ev.quoted_span);
+      const span = spanMatcher(source.extracted_text, ev.quoted_span);
       if (!span.matched) {
         const reason = span.status === "too_short" ? "span_too_short" : "span_not_found";
         rejected.push({

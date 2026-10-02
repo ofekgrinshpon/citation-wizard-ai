@@ -330,7 +330,7 @@ async function responsesChatGuarded(opts: {
 
   const reader = resp.body.getReader();
   const decoder = new TextDecoder();
-  let buf = "";
+  const pending: string[] = [];
   let text = "";
   const tool_calls: ChatToolCall[] = [];
   const reasoning_items: ReasoningItem[] = [];
@@ -415,19 +415,29 @@ async function responsesChatGuarded(opts: {
       }
       const { done, value } = chunk;
       if (done) {
-        buf += decoder.decode();
-        if (buf) { feedLine(buf); buf = ""; }
+        pending.push(decoder.decode());
+        const tail = pending.join("");
+        pending.length = 0;
+        if (tail) feedLine(tail);
         dispatch();
         sawEof = true;
         break;
       }
-      buf += decoder.decode(value, { stream: true });
-      const lines = buf.split("\n");
-      buf = lines.pop() ?? "";
-      for (const line of lines) {
+      // Incremental framing: scan only the new chunk; an unfinished line is kept
+      // as fragments and joined once at its newline (linear in received data).
+      const piece = decoder.decode(value, { stream: true });
+      let start = 0;
+      let nl = piece.indexOf("\n");
+      while (nl !== -1) {
+        pending.push(piece.slice(start, nl));
+        const line = pending.length === 1 ? pending[0] : pending.join("");
+        pending.length = 0;
         feedLine(line);
         if (isTerminal()) break;
+        start = nl + 1;
+        nl = piece.indexOf("\n", start);
       }
+      if (!isTerminal() && start < piece.length) pending.push(piece.slice(start));
     }
   } finally {
     // Cleanup never blocks result settlement and never masks the original

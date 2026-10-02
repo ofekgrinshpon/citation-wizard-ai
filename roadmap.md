@@ -7,6 +7,9 @@
 - [ ] 8. Academic quality without `academic_context` (brief-driven)
 - [ ] 9. Chapter role passed through (introduction/conclusion/abstract/body)
 - [ ] 10. Telemetry (quotes, source utilization, brief, draft result)
+- [x] CPU: pass-scoped span-normalization reuse in verifyMemo
+- [x] CPU: incremental linear SSE framing in model.ts
+- [ ] Budget-reservation feasibility (read-only answer delivered; not implemented)
 - [ ] 11. Regression tests T1–T12
 - [ ] 12. Acceptance run (Astra, same question) vs baseline 9d8998c1
 
