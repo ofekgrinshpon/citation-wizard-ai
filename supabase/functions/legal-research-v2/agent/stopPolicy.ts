@@ -11,6 +11,9 @@
 
 import type { SearchScope, ToolBudgets } from "../types.ts";
 
+/** Extra 504 attempts per run, separate from the base acquisition ceiling. */
+export const MAX_FETCH_RETRY_CALLS = 2;
+
 /** Steps held back from the research phase for synthesis / memo submission. */
 export function reservedMemoSteps(maxAgentSteps: number): number {
   return Math.min(6, Math.max(2, Math.ceil(maxAgentSteps * 0.2)));
@@ -20,6 +23,8 @@ export interface StopPolicyJson {
   steps: number;
   search_calls: Record<SearchScope, number>;
   fetch_calls: number;
+  /** Optional only to restore checkpoints created before separate retry accounting. */
+  fetch_retry_calls?: number;
   lookup_calls: number;
   raw_search_calls?: number;
 }
@@ -28,6 +33,7 @@ export class StopPolicy {
   steps = 0;
   search_calls: Record<SearchScope, number> = { web: 0, corpus: 0, official: 0, academic: 0 };
   fetch_calls = 0;
+  fetch_retry_calls = 0;
   lookup_calls = 0;
   raw_search_calls = 0;
 
@@ -89,6 +95,13 @@ export class StopPolicy {
     else if (name === "raw_web_search") this.raw_search_calls += 1;
   }
 
+  /** Synchronous check + debit so concurrent fetches share one bounded allowance. */
+  reserveFetchRetry(): boolean {
+    if (this.fetch_retry_calls >= MAX_FETCH_RETRY_CALLS) return false;
+    this.fetch_retry_calls += 1;
+    return true;
+  }
+
   /** True when every tool budget is spent: the agent must finalize now. */
   allExhausted(): boolean {
     return this.researchExhausted() ||
@@ -102,6 +115,7 @@ export class StopPolicy {
       steps: this.steps,
       search_calls: { ...this.search_calls },
       fetch_calls: this.fetch_calls,
+      fetch_retry_calls: this.fetch_retry_calls,
       lookup_calls: this.lookup_calls,
       raw_search_calls: this.raw_search_calls,
     };
@@ -118,6 +132,12 @@ export class StopPolicy {
         academic: json.search_calls?.academic ?? 0,
       };
       p.fetch_calls = json.fetch_calls ?? 0;
+      // A legacy checkpoint may already have spent retries inside fetch_calls.
+      // Never renew that unknown allowance on resume; a pristine run is safe.
+      const retries = json.fetch_retry_calls;
+      p.fetch_retry_calls = retries === undefined
+        ? (p.fetch_calls > 0 ? MAX_FETCH_RETRY_CALLS : 0)
+        : (Number.isSafeInteger(retries) && retries >= 0 ? retries : MAX_FETCH_RETRY_CALLS);
       p.lookup_calls = json.lookup_calls ?? 0;
       p.raw_search_calls = json.raw_search_calls ?? 0;
     }

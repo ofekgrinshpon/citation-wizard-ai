@@ -658,6 +658,8 @@ export interface V2Telemetry {
   agent_steps: number;
   search_calls: Record<SearchScope, number>;
   fetch_calls: number;
+  /** Optional 504 retries, separate from base fetch_calls (absent in older runs). */
+  fetch_retry_calls?: number;
   lookup_calls: number;
   documents_fetched: number;
   successful_body_reads: number;

@@ -25,8 +25,10 @@ export async function fetchWithBoundedRetry(
     deadlineAt: number;
     fetchOnce: (url: string, opts: { signal: AbortSignal }) => Promise<Response>;
     isSafeUrl: (url: string) => boolean;
-    /** Atomic budget check + debit, immediately before each HTTP attempt. */
+    /** Atomic base-acquisition budget check + debit, before the first attempt. */
     reserveAttempt?: () => boolean;
+    /** Independent atomic retry allowance check + debit; never falls back to base. */
+    reserveRetry?: () => boolean;
     /** Disabled for pre-existing entries and callers without budget wiring. */
     allowRetry: boolean;
   },
@@ -41,7 +43,7 @@ export async function fetchWithBoundedRetry(
   // machinery alone. Even a 504 carrying Retry-After is left to its origin's
   // requested pacing rather than being retried early or extending our budget.
   if (
-    first.status !== 504 || !opts.allowRetry || !opts.reserveAttempt ||
+    first.status !== 504 || !opts.allowRetry || !opts.reserveAttempt || !opts.reserveRetry ||
     !opts.isSafeUrl(finalUrl) || first.headers.has("retry-after") ||
     !canStart() ||
     opts.deadlineAt - Date.now() <= FETCH_RETRY_DELAY_MS + FETCH_RETRY_MIN_REMAINING_MS
@@ -49,7 +51,7 @@ export async function fetchWithBoundedRetry(
 
   await waitForRetry(opts.signal);
   if (!canStart() || opts.deadlineAt - Date.now() < FETCH_RETRY_MIN_REMAINING_MS) return first;
-  if (!opts.reserveAttempt()) return first;
+  if (!opts.reserveRetry()) return first;
   // Do not read an error body or await an unbounded stream cancellation.
   void first.body?.cancel().catch(() => {});
   return await dispatch();
