@@ -34,6 +34,7 @@ import type { ModelRoute } from "./beta/modelRouter.ts";
 import { clarificationMessageText, loadOwnedConversationContext, postAssistantMessage } from "./beta/conversation.ts";
 import { AWAITING_USER_STATUS, applyUserReply, type AskUserRequest, normalizeReply } from "./beta/clarification.ts";
 import { EvidenceStore } from "./evidence/evidenceStore.ts";
+import { freezeForCheckpoint, isValidMemoReady, MEMO_READY_VERSION, restoreMemoReadyResult } from "./beta/memoCheckpoint.ts";
 import { buildAcademicYield } from "./evidence/academicYield.ts";
 import {
   EMPTY_ATTACHMENT_TELEMETRY,
@@ -233,10 +234,39 @@ export interface ResumeState {
   pause_kind?: "handoff" | "checkpoint";
   /** Set while/after the run waited for the user's clarification reply. */
   awaiting_since?: number;
+  /** Versioned marker: initial research memo is complete (see beta/memoCheckpoint.ts). */
+  pipeline_phase?: "memo_ready";
+  pipeline_phase_version?: typeof MEMO_READY_VERSION;
 }
 
 async function selfInvokeResume(run_id: string, supabaseUrl: string, serviceKey: string) {
   return await invokeResumeHandoff(run_id, supabaseUrl, serviceKey);
+}
+
+/** Best-effort durability: a failed save is logged, never retried, never handed off. */
+export async function saveMemoReadyCheckpoint(
+  admin: SupabaseClient,
+  intake: Intake,
+  resume: ResumeState,
+  job: BetaJob | null,
+  stage: unknown,
+  chunk_index: number,
+): Promise<boolean> {
+  try {
+    const { error } = await admin.from("v2_eval_runs").update({
+      agent_state: { resume, intake, job, stage },
+      chunk_index,
+      last_beat_at: new Date().toISOString(),
+    }).eq("run_id", intake.run_id);
+    if (error) {
+      console.warn(JSON.stringify({ event: "v2_memo_ready_save_failed", run_id: intake.run_id }));
+      return false;
+    }
+    return true;
+  } catch {
+    console.warn(JSON.stringify({ event: "v2_memo_ready_save_failed", run_id: intake.run_id }));
+    return false;
+  }
 }
 
 async function runPipeline(
@@ -315,7 +345,10 @@ async function runPipeline(
   if (!resume) resetEgressStateForRun();
 
   // ── Research (one bounded chunk when chunked execution is requested) ─────
-  let agent = await runResearchAgent({
+  // A valid memo_ready marker means the initial research call already
+  // completed: reuse its memo, run every downstream gate unchanged.
+  const memoReady = !!prior && isValidMemoReady(resume);
+  let agent = memoReady ? restoreMemoReadyResult(prior!) : await runResearchAgent({
     admin,
     intake,
     store,
@@ -392,6 +425,20 @@ async function runPipeline(
         pause_kind: "handoff",
       },
     };
+  }
+
+  if (opts.chunked && !memoReady && agent.memo) {
+    await saveMemoReadyCheckpoint(admin, intake, {
+      agent_state: freezeForCheckpoint(serializeAgentState({ result: agent, store })),
+      chunk_index: chunk_index - 1,
+      usage: freezeForCheckpoint(usage),
+      started_at: started,
+      timing: timer.toJSON(),
+      paused_at: Date.now(),
+      pause_kind: "checkpoint",
+      pipeline_phase: "memo_ready",
+      pipeline_phase_version: MEMO_READY_VERSION,
+    }, opts.job ?? null, opts.progress?.current() ?? null, chunk_index);
   }
 
   await opts.progress?.advance("verifying");

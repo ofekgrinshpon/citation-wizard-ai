@@ -636,7 +636,8 @@ export async function runResearchAgent(opts: {
     const res = await chat({
       model: opts.model,
       messages,
-      tools: forceMemo ? [memoTool] : toolSpecs,
+      // Same tools array every turn (stable cache prefix); forcing is by toolChoice.
+      tools: toolSpecs,
       toolChoice: forceMemo ? { name: memoTool.name } : "auto",
       usage: opts.usage,
       costStage: "v2_research_agent",
@@ -682,6 +683,11 @@ export async function runResearchAgent(opts: {
       }
       trace.push({ step: policy.steps, tool: "no_tool_nudge", input: {}, summary: "no tool call" });
       continue;
+    }
+
+    if (forceMemo && !forcedMemoCallsValid(res.tool_calls, memoTool.name)) {
+      error = "agent_forced_memo_violation";
+      break;
     }
 
     messages.push({
@@ -1431,6 +1437,11 @@ export async function runResearchAgent(opts: {
 }
 
 /** Serialize everything a later invocation needs to resume this run. */
+/** Forced-memo turn: every returned call must be the memo tool, else reject all. */
+export function forcedMemoCallsValid(calls: { name: string }[], memoName: string): boolean {
+  return calls.every((c) => c.name === memoName);
+}
+
 export function serializeAgentState(input: {
   result: AgentRunResult;
   store: EvidenceStore;

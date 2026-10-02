@@ -4,7 +4,6 @@
 // research call is bypassed; every verification/repair/render gate still runs.
 // Not a fencing / exactly-once mechanism: downstream verification may repeat.
 import type { AgentRunResult } from "../agent/researchAgent.ts";
-import type { EvidenceStore } from "../evidence/store.ts";
 
 export const MEMO_READY_VERSION = 1 as const;
 
@@ -52,5 +51,3 @@ export function restoreMemoReadyResult(prior: {
 export function freezeForCheckpoint<T>(v: T): T {
   return JSON.parse(JSON.stringify(v)) as T;
 }
-
-export type { EvidenceStore };
