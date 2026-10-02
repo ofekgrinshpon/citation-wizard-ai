@@ -104,7 +104,7 @@ describe("V2 Responses SSE telemetry", () => {
       }
     });
     // Original behavior preserved (stream read error still throws as before).
-    expect(outs).toEqual(["ok", "fail502", "threw", "fail0", "fail0", "fail503"]);
+    expect(outs).toEqual(["fail502", "fail502", "threw", "fail0", "fail0", "fail503"]);
     expect(rows.map((r) => r.outcome)).toEqual(["incomplete", "stream_error", "stream_error", "aborted", "network_error", "http_error"]);
     expect(rows[0]).toMatchObject({ input_tokens: 5, output_tokens: 9 });
     expect(new Set(rows.map((r) => r.id)).size).toBe(6);

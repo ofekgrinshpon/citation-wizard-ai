@@ -59,12 +59,66 @@ describe("Responses SSE lifecycle", () => {
     expect(res.tool_calls ?? []).toEqual([]);
   });
 
-  it("response.incomplete returns finish_reason length", async () => {
-    stream([frame({ type: "response.output_text.delta", delta: "x" }), frame({ type: "response.incomplete", response: { usage: { input_tokens: 5, output_tokens: 1 } } })], false);
-    const res = await m.chat({ model: "openai/gpt-6-astra", messages: base });
-    expect(res.ok).toBe(true);
+  it("response.incomplete is non-success with no executable tool calls but truthful usage", async () => {
+    stream([frame(call("a")), frame({ type: "response.output_text.delta", delta: "x" }), frame({ type: "response.incomplete", response: { usage: { input_tokens: 5, output_tokens: 1 } } })], false);
+    const usage: any = { model_calls: 0, prompt_tokens: 0, completion_tokens: 0, prompt_tokens_per_call: [], max_prompt_tokens_single_call: 0 };
+    const res = await m.chat({ model: "openai/gpt-6-astra", messages: base, usage });
+    expect(res.ok).toBe(false);
+    expect(res.tool_calls).toEqual([]);
+    expect(res.content).toBe("");
     expect(res.finish_reason).toBe("length");
     expect(res.prompt_tokens).toBe(5);
+    expect(usage.model_calls).toBe(1);
+    expect(usage.completion_tokens).toBe(1);
+  });
+
+  function lockedBody(chunks: string[], opts: { cancel?: () => Promise<void>; readError?: Error }) {
+    const st = { released: false };
+    const reader: any = {
+      i: 0,
+      read: async () => {
+        if (opts.readError) throw opts.readError;
+        return reader.i < chunks.length ? { done: false, value: enc.encode(chunks[reader.i++]) } : new Promise(() => {});
+      },
+      cancel: opts.cancel ?? (async () => {}),
+      releaseLock: () => { st.released = true; },
+    };
+    const resp: any = { ok: true, status: 200, headers: new Headers(), body: { getReader: () => reader } };
+    vi.spyOn(globalThis, "fetch").mockImplementation(async () => resp);
+    return st;
+  }
+
+  it("never-settling cancel does not block a successful terminal result", async () => {
+    const st = lockedBody([frame(completed)], { cancel: () => new Promise(() => {}) });
+    const res = await m.chat({ model: "openai/gpt-6-astra", messages: base });
+    expect(res.ok).toBe(true);
+    expect(st.released).toBe(true);
+  });
+
+  it("rejected cancel is swallowed without unhandled rejection", async () => {
+    const unhandled = vi.fn();
+    process.on("unhandledRejection", unhandled);
+    const st = lockedBody([frame(completed)], { cancel: () => Promise.reject(new Error("cancel boom")) });
+    const res = await m.chat({ model: "openai/gpt-6-astra", messages: base });
+    await new Promise((r) => setTimeout(r, 10));
+    process.off("unhandledRejection", unhandled);
+    expect(res.ok).toBe(true);
+    expect(st.released).toBe(true);
+    expect(unhandled).not.toHaveBeenCalled();
+  });
+
+  it("read error rethrows original error and releases the lock", async () => {
+    const err = new Error("read boom");
+    const st = lockedBody([], { readError: err, cancel: () => Promise.reject(new Error("cleanup")) });
+    await expect(m.chat({ model: "openai/gpt-6-astra", messages: base })).rejects.toBe(err);
+    expect(st.released).toBe(true);
+  });
+
+  it("abort during read rethrows AbortError and releases the lock", async () => {
+    const err = new DOMException("aborted", "AbortError");
+    const st = lockedBody([], { readError: err as any });
+    await expect(m.chat({ model: "openai/gpt-6-astra", messages: base })).rejects.toBe(err);
+    expect(st.released).toBe(true);
   });
 
   it("parses frames split across chunks, CRLF and multi-line data", async () => {
