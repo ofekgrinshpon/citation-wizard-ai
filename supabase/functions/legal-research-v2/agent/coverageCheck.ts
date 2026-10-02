@@ -216,6 +216,46 @@ import { createHash } from "node:crypto";
 
 const sha256 = (s: string) => createHash("sha256").update(s).digest("hex");
 
+/** JSONB preserves values and array order, but not object key order. */
+function canonicalEvidenceJson(value: unknown, ancestors = new Set<object>()): string {
+  if (value === null || typeof value === "string" || typeof value === "boolean") {
+    return JSON.stringify(value);
+  }
+  if (typeof value === "number" && Number.isFinite(value)) return JSON.stringify(value);
+  if (typeof value !== "object" || !value || ancestors.has(value)) {
+    throw new TypeError("Invalid coverage evidence");
+  }
+  if (Object.getOwnPropertySymbols(value).length) throw new TypeError("Invalid coverage evidence");
+  ancestors.add(value);
+  try {
+    if (Array.isArray(value)) {
+      // No holes/undefined/non-JSON array properties may silently become null.
+      if (Object.keys(value).length !== value.length) throw new TypeError("Invalid coverage evidence");
+      const entries: string[] = [];
+      for (let i = 0; i < value.length; i++) {
+        const item = Object.getOwnPropertyDescriptor(value, String(i));
+        if (!item || !("value" in item)) throw new TypeError("Invalid coverage evidence");
+        entries.push(canonicalEvidenceJson(item.value, ancestors));
+      }
+      return `[${entries.join(",")}]`;
+    }
+    const prototype = Object.getPrototypeOf(value);
+    if (prototype !== Object.prototype && prototype !== null) throw new TypeError("Invalid coverage evidence");
+    const entries: string[] = [];
+    for (const key of Object.keys(value).sort()) {
+      const item = Object.getOwnPropertyDescriptor(value, key)!;
+      if (!("value" in item)) throw new TypeError("Invalid coverage evidence");
+      // EvidenceStore has optional undefined fields; JSON checkpoints omit them.
+      if (item.value !== undefined) {
+        entries.push(`${JSON.stringify(key)}:${canonicalEvidenceJson(item.value, ancestors)}`);
+      }
+    }
+    return `{${entries.join(",")}}`;
+  } finally {
+    ancestors.delete(value);
+  }
+}
+
 export const CONFIRM_MEMO_TOOL_NAME = "confirm_existing_memo";
 
 export interface PendingCoverage {
@@ -245,10 +285,17 @@ export function coverageFingerprint(input: {
   quotes: unknown[];
   researchCalls: number;
 }): string {
-  const readable = [...input.readable].sort((a, b) =>
-    String((a as { source_id?: string }).source_id).localeCompare(String((b as { source_id?: string }).source_id))
-  );
-  return sha256(JSON.stringify([input.researchCalls, readable, input.quotes]));
+  try {
+    if (!Array.isArray(input.readable) || !Array.isArray(input.quotes)) return "";
+    if (!Number.isSafeInteger(input.researchCalls) || input.researchCalls < 0) return "";
+    const readable = [...input.readable].sort((a, b) =>
+      String((a as { source_id?: string }).source_id).localeCompare(String((b as { source_id?: string }).source_id))
+    );
+    return sha256(canonicalEvidenceJson([input.researchCalls, readable, input.quotes]));
+  } catch {
+    // An unrepresentable state is never confirmable, even if seen twice.
+    return "";
+  }
 }
 
 export function createPendingCoverage(input: {
@@ -268,7 +315,7 @@ export function createPendingCoverage(input: {
     read_ids: [...input.read_ids],
     research_calls_at_check: input.research_calls_at_check,
     fingerprint: input.fingerprint,
-    confirmable: true,
+    confirmable: input.fingerprint !== "",
   };
 }
 
@@ -335,7 +382,9 @@ export function checkConfirm(input: {
   }
   if (p.run_id !== input.run_id) return { ok: false, reason: "wrong_run", invalidate: true };
   if (!p.confirmable) return { ok: false, reason: "stale_handle", invalidate: true };
-  if (p.fingerprint !== input.fingerprint) return { ok: false, reason: "evidence_changed", invalidate: true };
+  if (!p.fingerprint || !input.fingerprint || p.fingerprint !== input.fingerprint) {
+    return { ok: false, reason: "evidence_changed", invalidate: true };
+  }
   if (!isStr(p.memo_json) || sha256(p.memo_json) !== p.memo_digest) {
     return { ok: false, reason: "candidate_integrity", invalidate: true };
   }
