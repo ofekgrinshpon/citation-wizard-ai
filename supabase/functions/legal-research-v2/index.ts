@@ -361,6 +361,10 @@ async function runPipeline(
     ledger: prior?.ledger,
     trace: prior?.trace,
     stats: prior?.stats,
+    // A clarification reply changes the conversation: keep diagnostics, end confirmability.
+    pendingCoverage: prior?.pending_coverage && resume?.awaiting_since
+      ? { ...prior.pending_coverage, confirmable: false }
+      : prior?.pending_coverage,
     timer,
     chunkIndex: chunk_index,
     heartbeat,

@@ -61,15 +61,15 @@ describe("forced memo tool prefix", () => {
   it("same tools array always; forcing via named toolChoice", () => {
     expect(agentSrc).toContain("tools: toolSpecs,");
     expect(agentSrc).not.toContain("forceMemo ? [memoTool] : toolSpecs");
-    expect(agentSrc).toContain('toolChoice: forceMemo ? { name: memoTool.name } : "auto"');
+    expect(agentSrc).toMatch(/toolChoice: forceMemo\s*\? \(pending\?\.confirmable \? "required" : \{ name: memoTool\.name \}\)\s*: "auto"/);
   });
   it("rejects non-memo, mixed and ask_user calls before dispatch", () => {
     expect(forcedMemoCallsValid([{ name: "submit_research_memo" }], "submit_research_memo")).toBe(true);
     expect(forcedMemoCallsValid([{ name: "search" }], "submit_research_memo")).toBe(false);
     expect(forcedMemoCallsValid([{ name: "submit_research_memo" }, { name: "read" }], "submit_research_memo")).toBe(false);
     expect(forcedMemoCallsValid([{ name: "ask_user" }], "submit_research_memo")).toBe(false);
-    const check = agentSrc.indexOf("forcedMemoCallsValid(res.tool_calls");
+    const check = agentSrc.indexOf("forcedTurnCallsValid(res.tool_calls");
     expect(check).toBeLessThan(agentSrc.indexOf("tool_calls: res.tool_calls.map", check));
-    expect(agentSrc.slice(check, check + 160)).toContain("break;");
+    expect(agentSrc.slice(check, check + 200)).toContain("break;");
   });
 });
