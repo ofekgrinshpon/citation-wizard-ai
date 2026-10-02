@@ -809,7 +809,7 @@ export async function runResearchAgent(opts: {
           run_id: opts.intake.run_id,
           fingerprint: currentFingerprint(),
         });
-        if (!chk.ok) {
+        if (chk.ok === false) {
           if (chk.invalidate && pending) pending.confirmable = false;
           stats.memo_coverage_confirm_rejected = (stats.memo_coverage_confirm_rejected ?? 0) + 1;
           trace.push({ step: policy.steps, tool: CONFIRM_MEMO_TOOL_NAME, input: {}, summary: `rejected_${chk.reason}` });
