@@ -555,6 +555,13 @@ export async function runResearchAgent(opts: {
   const timer = opts.timer ?? new RunTimer();
   const chunkCap = opts.maxStepsThisChunk ?? Number.POSITIVE_INFINITY;
   const deadlineAt = opts.deadlineAt ?? Number.POSITIVE_INFINITY;
+  // Atomic attempt reservation; runFetch calls this only for real HTTP work.
+  // The initial request and its one possible retry share the same hard cap.
+  const reserveHttpAttempt = () => {
+    if (Date.now() >= deadlineAt || policy.checkTool("fetch") !== null) return false;
+    policy.note("fetch");
+    return true;
+  };
   // Evaluation only: the experiment swaps in the memo tool with answer_blocks.
   const memoTool = opts.intake.agent_authored_answer ? AGENT_ANSWER_MEMO_TOOL : MEMO_TOOL;
   const askUserAllowed = !!opts.intake.ask_user_enabled && opts.allowAskUser !== false;
@@ -1244,7 +1251,7 @@ export async function runResearchAgent(opts: {
             refetch_reason: typeof args.refetch_reason === "string" ? args.refetch_reason : undefined,
           },
           ledger,
-          { admin: opts.admin },
+          { admin: opts.admin, deadlineAt, reserveHttpAttempt },
         );
         timer.add("fetch", Date.now() - toolStarted);
         if (out.acquisition_transport === "local_corpus" && !out.already_read) {
@@ -1252,7 +1259,7 @@ export async function runResearchAgent(opts: {
           if (out.authority_binding_created) stats.local_corpus_bindings += 1;
         }
         // A cached / targeted read costs no fetch budget.
-        if (!out.already_read) policy.note("fetch");
+        if (!out.already_read && !out.fetch_budget_accounted) policy.note("fetch");
         stats.landing_document_candidates += out.landing_document_candidates ?? 0;
         stats.landing_document_attempted += out.landing_document_attempted ?? 0;
 
@@ -1380,9 +1387,9 @@ export async function runResearchAgent(opts: {
                     find: Array.isArray(args.find) ? args.find.map((f) => String(f)) : undefined,
                   },
                   ledger,
-                  { admin: opts.admin },
+                  { admin: opts.admin, deadlineAt, reserveHttpAttempt },
                 );
-                if (!retry.already_read) policy.note("fetch");
+                if (!retry.already_read && !retry.fetch_budget_accounted) policy.note("fetch");
                 lastRetry = retry;
                 const ok = retry.ok && retry.is_actual_document === true && !retry.alternative_copy_worth_trying;
                 return { ok, failure_class: ok ? undefined : (retry.failure_class ?? retry.error ?? "unusable_body") };
