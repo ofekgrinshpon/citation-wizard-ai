@@ -383,7 +383,25 @@ async function responsesChatGuarded(opts: {
     }
   };
 
-  while (true) {
+  // SSE framing: an event is one or more `data:` lines ended by a blank line.
+  // Frames may be split across network chunks and may use CRLF.
+  let dataLines: string[] = [];
+  const dispatch = () => {
+    if (!dataLines.length) return;
+    const payload = dataLines.join("\n").trim();
+    dataLines = [];
+    if (!payload || payload === "[DONE]") return;
+    try { handle(JSON.parse(payload) as Record<string, unknown>); } catch { /* non-JSON frame */ }
+  };
+  const feedLine = (raw: string) => {
+    const line = raw.endsWith("\r") ? raw.slice(0, -1) : raw;
+    if (line === "") { dispatch(); return; }
+    if (line.startsWith("data:")) dataLines.push(line.slice(5).replace(/^ /, ""));
+  };
+  const isTerminal = () => !!streamError || terminalType !== null;
+
+  let sawEof = false;
+  while (!isTerminal()) {
     let chunk: ReadableStreamReadResult<Uint8Array>;
     try {
       chunk = await reader.read();
@@ -395,20 +413,26 @@ async function responsesChatGuarded(opts: {
       throw e;
     }
     const { done, value } = chunk;
-    if (done) break;
+    if (done) {
+      buf += decoder.decode();
+      if (buf) { feedLine(buf); buf = ""; }
+      dispatch();
+      sawEof = true;
+      break;
+    }
     buf += decoder.decode(value, { stream: true });
     const lines = buf.split("\n");
     buf = lines.pop() ?? "";
     for (const line of lines) {
-      const trimmed = line.trim();
-      if (!trimmed.startsWith("data:")) continue;
-      const payload = trimmed.slice(5).trim();
-      if (!payload || payload === "[DONE]") continue;
-      try {
-        handle(JSON.parse(payload) as Record<string, unknown>);
-      } catch { /* ignore partial/non-JSON frames */ }
+      feedLine(line);
+      if (isTerminal()) break;
     }
   }
+  // A terminal event finalizes the response; do not wait for network EOF.
+  if (!sawEof) {
+    try { await reader.cancel(); } catch { /* ignore */ }
+  }
+  try { reader.releaseLock(); } catch { /* ignore */ }
 
   if (streamError) rec?.finish({ outcome: "stream_error", capture_status: "complete", usage: terminalUsage, complete: true });
   else if (terminalType === "response.completed") rec?.finish({ outcome: "ok", capture_status: "complete", usage: terminalUsage, complete: true });
@@ -416,6 +440,9 @@ async function responsesChatGuarded(opts: {
   else rec?.finish({ outcome: "capture_incomplete", capture_status: "read_error" });
 
   if (streamError) return opts.fail(502, `responses_stream_error: ${streamError}`, false);
+  // EOF without a terminal event: never report success or expose partial
+  // tool calls for execution.
+  if (terminalType === null) return opts.fail(502, "responses_stream_incomplete: eof_without_terminal_event", false);
 
   if (opts.usage) {
     opts.usage.model_calls += 1;
