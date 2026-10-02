@@ -284,6 +284,59 @@ describe("agent loop", () => {
     expect(other.memo?.claims[0].evidence[0].source_id).toBe("S2");
   });
 
+  it.each(["unchanged", "body changed", "quote changed"])(
+    "JSONB-style checkpoint round trip: %s",
+    async (change) => {
+      const reverseKeys = (value: unknown): unknown => Array.isArray(value)
+        ? value.map(reverseKeys)
+        : value && typeof value === "object"
+          ? Object.fromEntries(Object.keys(value).reverse().map((key) =>
+            [key, reverseKeys((value as Record<string, unknown>)[key])]))
+          : value;
+      const store = EvidenceStore.fromJSON({
+        seq: 3,
+        sources: [src("S1", "מקור א"), src("S2", "מקור ב"), src("S3", "מקור ג")],
+        quotes: [{ quote_id: "S1-q1", source_id: "S1", text: "טקסט מקור לדוגמה", issue: undefined }],
+      } as never);
+      let saved: ReturnType<typeof serializeAgentState> | null = null;
+      script.push(calls(["submit_research_memo", memoArgs(["S1"])]));
+      const first = await run({ store, maxStepsThisChunk: 1, checkpoint: async (s: never) => {
+        saved = reverseKeys(JSON.parse(JSON.stringify(s))) as typeof saved;
+      } });
+      expect(first.res.paused).toBe(true);
+      const prior = deserializeAgentState(intake(), saved!);
+      const candidate = JSON.parse(prior.pending_coverage!.memo_json);
+      if (change === "body changed") {
+        prior.store.get("S1")!.extracted_text += " שינוי אמיתי";
+      } else if (change === "quote changed") {
+        prior.store.servedQuotes()[0].text += " שינוי אמיתי";
+      }
+      script.push(calls(["confirm_existing_memo", { handle: prior.pending_coverage!.handle }]));
+      if (change !== "unchanged") script.push(calls(["submit_research_memo", memoArgs(["S1", "S2"])]));
+      const resumed = await runResearchAgent({
+        admin: {} as never, intake: intake(), store: prior.store, model: "m", usage: usage(),
+        priorMessages: prior.messages, policy: prior.policy, discovered: prior.discovered,
+        commit: prior.commit, ledger: prior.ledger, stats: prior.stats, trace: prior.trace,
+        pendingCoverage: prior.pending_coverage,
+      } as never);
+      expect(resumed.error).toBeUndefined();
+      expect(resumed.stats.memo_coverage_check_triggered).toBe(1);
+      expect(resumed.pending_coverage).toBeNull();
+      if (change === "unchanged") {
+        expect(resumed.memo).toEqual(candidate);
+        expect(resumed.stats.memo_coverage_confirmed_existing).toBe(1);
+        expect(resumed.stats.memo_coverage_confirm_rejected).toBe(0);
+        expect(requests).toHaveLength(2);
+      } else {
+        expect(resumed.stats.memo_coverage_confirmed_existing).toBe(0);
+        expect(resumed.stats.memo_coverage_confirm_rejected).toBe(1);
+        expect(resumed.trace.map((t) => t.summary)).toContain("rejected_evidence_changed");
+        expect(resumed.memo?.claims).toHaveLength(2);
+      }
+    },
+  );
+
+
   it("old checkpoint with no pending handle resumes normally and invents none", async () => {
     script.push(calls(["submit_research_memo", memoArgs(["S1"])]));
     let saved: Record<string, unknown> | null = null;
