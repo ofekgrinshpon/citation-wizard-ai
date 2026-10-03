@@ -91,7 +91,7 @@ export interface Intake {
   /** Sol/Astra router decision for this turn (telemetry + model choice). */
   model_route?: import("./beta/modelRouter.ts").ModelRoute | null;
   /** EVALUATION ONLY: Research Agent reasoning effort (Responses API). Absent = "medium". */
-  agent_reasoning_effort?: "medium" | "high";
+  agent_reasoning_effort?: import("./shared/evaluationReasoning.ts").EvaluationReasoningEffort;
   /**
    * Production answer path: the Research Agent writes the final answer blocks
    * itself and the separate drafter is never called. False only for source

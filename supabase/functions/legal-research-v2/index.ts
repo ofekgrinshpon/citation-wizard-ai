@@ -136,6 +136,8 @@ import { buildChapterMemory } from "./academic/chapterMemory.ts";
 import { SOURCE_SCOUTING_CONTRACT, SOURCE_SEARCH_BUDGETS } from "./sources/contract.ts";
 import { buildSourcePack } from "./sources/sourcePack.ts";
 
+import { parseEvaluationReasoningEffort, type EvaluationReasoningEffort } from "./shared/evaluationReasoning.ts";
+
 export function buildIntake(input: {
   run_id: string;
   question: string;
@@ -147,7 +149,7 @@ export function buildIntake(input: {
   /** Evaluation-only Research Agent override. */
   agent_model?: string | null;
   /** Evaluation-only Research Agent reasoning effort override. */
-  agent_reasoning_effort?: "medium" | "high";
+  agent_reasoning_effort?: EvaluationReasoningEffort;
   /** Academic Writing body chapter only — framing context, never evidence. */
   academic_context?: AcademicProjectContext | null;
   footnote_offset?: number;
@@ -192,7 +194,7 @@ export function buildIntake(input: {
     ...(input.output_mode !== "sources" && !separateDrafterEnabled()
       ? { agent_authored_answer: true, ask_user_enabled: true }
       : {}),
-    ...(input.agent_reasoning_effort === "high" ? { agent_reasoning_effort: "high" as const } : {}),
+    ...(input.agent_reasoning_effort !== undefined ? { agent_reasoning_effort: input.agent_reasoning_effort } : {}),
     academic_context: input.academic_context ?? null,
     footnote_offset: Math.max(0, Math.floor(input.footnote_offset ?? 0)),
     research_contract: input.output_mode === "sources"
@@ -287,6 +289,9 @@ async function runPipeline(
   const resume = opts.resume ?? null;
   const started = resume?.started_at ?? Date.now();
   const usage = resume?.usage ?? newUsageLedger();
+  if (intake.agent_reasoning_effort === "max" && (usage.reasoning_max_mismatch_calls ?? 0) > 0) {
+    throw new Error("max_reasoning_experiment_failed:restored_effort_mismatch");
+  }
   const models = modelConfig();
   // Evaluation-only: the Research Agent model may be overridden per run.
   // Verifier and drafter are always the configured defaults.
@@ -572,6 +577,11 @@ async function runPipeline(
     const sourcesTelemetry = {
       run_id: intake.run_id,
       output_mode: "sources",
+      reasoning_effort: intake.agent_reasoning_effort ?? "medium",
+      reasoning_max_requested_calls: usage.reasoning_max_requested_calls ?? 0,
+      reasoning_max_confirmed_calls: usage.reasoning_max_confirmed_calls ?? 0,
+      reasoning_max_unreported_calls: usage.reasoning_max_unreported_calls ?? 0,
+      reasoning_max_mismatch_calls: usage.reasoning_max_mismatch_calls ?? 0,
       agent_steps: agent.policy.steps,
       search_calls: agent.policy.search_calls,
       fetch_calls: agent.policy.fetch_calls,
@@ -1291,6 +1301,10 @@ async function runPipeline(
     model_router_error: intake.model_route?.router_error ?? null,
     agent_authored_answer: !!intake.agent_authored_answer,
     reasoning_effort: intake.agent_reasoning_effort ?? "medium",
+    reasoning_max_requested_calls: usage.reasoning_max_requested_calls ?? 0,
+    reasoning_max_confirmed_calls: usage.reasoning_max_confirmed_calls ?? 0,
+    reasoning_max_unreported_calls: usage.reasoning_max_unreported_calls ?? 0,
+    reasoning_max_mismatch_calls: usage.reasoning_max_mismatch_calls ?? 0,
     ask_user_enabled: !!intake.ask_user_enabled,
     ask_user_calls: agent.stats.ask_user_calls ?? 0,
     awaiting_user_entered: (agent.stats.ask_user_calls ?? 0) > 0,
@@ -1644,6 +1658,13 @@ async function handleRequest(req: Request): Promise<Response> {
   const isSmoke = req.headers.get("x-smoke-mode") === "1" &&
     (authHeader === `Bearer ${serviceKey}` ||
       (!!presented && smokeTokens.includes(presented)));
+
+  const evaluationReasoning = parseEvaluationReasoningEffort({
+    isSmoke,
+    model: (typeof body.agent_model === "string" ? body.agent_model.trim() : "") || modelConfig().agent,
+    value: body.agent_reasoning_effort,
+  });
+  if (!evaluationReasoning.ok) return json({ error: evaluationReasoning.error }, 400);
 
   const admin = createClient(supabaseUrl, serviceKey) as unknown as SupabaseClient;
 
@@ -2060,7 +2081,7 @@ async function handleRequest(req: Request): Promise<Response> {
     attachment_owner_id: typeof body.smoke_user_id === "string" ? body.smoke_user_id : null,
     budgets: (body.budgets ?? undefined) as Partial<ToolBudgets> | undefined,
     agent_model: typeof body.agent_model === "string" ? body.agent_model : null,
-    agent_reasoning_effort: body.agent_reasoning_effort === "high" ? "high" : undefined,
+    agent_reasoning_effort: evaluationReasoning.effort,
     // Evaluation-only: the internal entry point may run an Academic Writing
     // body chapter with a deliverable-level research contract.
     academic_context: body.academic_context ? parseProjectContext(body.academic_context) : null,

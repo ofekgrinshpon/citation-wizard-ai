@@ -13,6 +13,7 @@ import {
   type AttemptRecorder, type CostStage, type ParsedUsage,
 } from "../../_shared/costTelemetry.ts";
 import { guardProviderCall } from "./providerLiveness.ts";
+import { reasoningEffortError, type EvaluationReasoningEffort } from "./evaluationReasoning.ts";
 
 const GATEWAY_URL = "https://ai.gateway.lovable.dev/v1/chat/completions";
 
@@ -176,9 +177,18 @@ export interface ChatResult {
   replay_seq?: string[];
   /** True when returned reasoning could not be kept in a safe order. */
   replay_fallback?: boolean;
+  /** Metadata only; absence is never proof that the provider used the request. */
+  reasoning_effort_requested?: EvaluationReasoningEffort;
+  reasoning_effort_returned?: string | null;
+  reasoning_effort_status?: "matched" | "not_reported" | "mismatch";
 }
 
 export interface UsageLedger {
+  /** Evaluation-only transport audit, preserved across all chunks and repairs. */
+  reasoning_max_requested_calls?: number;
+  reasoning_max_confirmed_calls?: number;
+  reasoning_max_unreported_calls?: number;
+  reasoning_max_mismatch_calls?: number;
   model_calls: number;
   prompt_tokens: number;
   completion_tokens: number;
@@ -271,10 +281,36 @@ async function responsesChatGuarded(opts: {
   usage?: UsageLedger;
   signal?: AbortSignal;
   fail: (status: number, error: string, terminal?: boolean) => ChatResult;
-  reasoningEffort?: "medium" | "high";
+  reasoningEffort?: EvaluationReasoningEffort;
   costStage?: CostStage;
   replayReasoning?: boolean;
 }): Promise<ChatResult> {
+  const requestedEffort = opts.reasoningEffort ?? "medium";
+  let returnedEffort: string | null = null;
+  const effortMetadata = () => ({
+    reasoning_effort_requested: requestedEffort,
+    reasoning_effort_returned: returnedEffort,
+    reasoning_effort_status: returnedEffort === null ? "not_reported" as const
+      : returnedEffort === requestedEffort ? "matched" as const : "mismatch" as const,
+  });
+  let effortResultRecorded = false;
+  const logEffort = (httpStatus: number, status: string) => {
+    if (requestedEffort !== "max") return;
+    if (opts.usage) {
+      if (status === "requested") {
+        opts.usage.reasoning_max_requested_calls = (opts.usage.reasoning_max_requested_calls ?? 0) + 1;
+      } else if (!effortResultRecorded) {
+        effortResultRecorded = true;
+        const key = returnedEffort === null ? "reasoning_max_unreported_calls"
+          : returnedEffort === requestedEffort ? "reasoning_max_confirmed_calls" : "reasoning_max_mismatch_calls";
+        opts.usage[key] = (opts.usage[key] ?? 0) + 1;
+      }
+    }
+    console.info(JSON.stringify({
+      event: "v2_reasoning_effort", stage: opts.costStage ?? null,
+      model: opts.model, http_status: httpStatus, status, ...effortMetadata(),
+    }));
+  };
   const replay = !!opts.replayReasoning;
   const input = toResponsesInput(opts.messages, replay);
   const reasoning_items_forwarded = replay ? input.filter((i) => i.type === "reasoning").length : 0;
@@ -283,7 +319,7 @@ async function responsesChatGuarded(opts: {
     input,
     stream: true,
     store: false,
-    reasoning: { effort: opts.reasoningEffort ?? "medium", summary: "auto" },
+    reasoning: { effort: requestedEffort, summary: "auto" },
   };
   if (replay) body.include = ["reasoning.encrypted_content"];
   if (opts.tools?.length) {
@@ -306,6 +342,7 @@ async function responsesChatGuarded(opts: {
   const rec: AttemptRecorder | null = beginAttempt({
     provider: "lovable_gateway", endpoint: "responses", requestedModel: opts.model, stage: opts.costStage,
   });
+  logEffort(0, "requested");
   let resp: Response;
   try {
     resp = await fetch(RESPONSES_URL, {
@@ -319,12 +356,14 @@ async function responsesChatGuarded(opts: {
     });
   } catch (e) {
     finishFetchError(rec, e);
+    logEffort(0, "network_error");
     return opts.fail(0, `network_error: ${e instanceof Error ? e.message : String(e)}`, false);
   }
   rec?.headers(resp.status, resp.headers);
   if (!resp.ok || !resp.body) {
     rec?.finish({ outcome: "http_error", capture_status: "error_body_unread" });
     const txt = await resp.text().catch(() => "");
+    logEffort(resp.status, "http_error");
     return opts.fail(resp.status, txt.slice(0, 600), resp.status < 429);
   }
 
@@ -345,6 +384,16 @@ async function responsesChatGuarded(opts: {
 
   const handle = (evt: Record<string, unknown>) => {
     const type = String(evt.type ?? "");
+    if (["response.completed", "response.incomplete", "response.failed"].includes(type)) {
+      const r = (evt.response ?? {}) as Record<string, unknown>;
+      const providerEffort = (r.reasoning as Record<string, unknown> | undefined)?.effort;
+      // A bounded enum avoids logging arbitrary provider content.
+      if (providerEffort !== undefined && providerEffort !== null) {
+        returnedEffort = typeof providerEffort === "string" &&
+          ["none", "minimal", "low", "medium", "high", "xhigh", "max"].includes(providerEffort)
+          ? providerEffort : "unrecognized";
+      }
+    }
     if (type === "response.output_text.delta") {
       text += String(evt.delta ?? "");
     } else if (type === "response.output_item.done") {
@@ -407,6 +456,7 @@ async function responsesChatGuarded(opts: {
       try {
         chunk = await reader.read();
       } catch (e) {
+        logEffort(resp.status, "read_error");
         rec?.finish({
           outcome: isAbortError(e) ? "aborted" : "stream_error",
           capture_status: isAbortError(e) ? "aborted" : "read_error", usage: terminalUsage,
@@ -453,6 +503,7 @@ async function responsesChatGuarded(opts: {
   else if (terminalType === "response.incomplete") rec?.finish({ outcome: "incomplete", capture_status: "complete", usage: terminalUsage, complete: true });
   else rec?.finish({ outcome: "capture_incomplete", capture_status: "read_error" });
 
+  logEffort(resp.status, streamError ? "stream_error" : terminalType ?? "eof_without_terminal_event");
   if (streamError) return opts.fail(502, `responses_stream_error: ${streamError}`, false);
   // EOF without a terminal event: never report success or expose partial
   // tool calls for execution.
@@ -469,6 +520,7 @@ async function responsesChatGuarded(opts: {
     }
     return {
       ...opts.fail(502, "responses_incomplete: truncated_output", true),
+      ...(requestedEffort === "max" ? effortMetadata() : {}),
       content: "",
       tool_calls: [],
       finish_reason: "length",
@@ -488,8 +540,16 @@ async function responsesChatGuarded(opts: {
     );
   }
 
+  if (requestedEffort === "max" && returnedEffort !== null && returnedEffort !== "max") {
+    return {
+      ...opts.fail(502, "reasoning_effort_mismatch", true),
+      prompt_tokens, completion_tokens, ...effortMetadata(),
+    };
+  }
+
   return {
     ok: true,
+    ...(requestedEffort === "max" ? effortMetadata() : {}),
     http_status: resp.status,
     terminal: false,
     content: text,
@@ -520,7 +580,7 @@ async function chatGuarded(opts: {
   usage?: UsageLedger;
   signal?: AbortSignal;
   /** Evaluation-only; Responses API calls only. Default "medium". */
-  reasoningEffort?: "medium" | "high";
+  reasoningEffort?: EvaluationReasoningEffort;
   /** Telemetry-only role tag; never sent to the provider. */
   costStage?: CostStage;
   /** Responses API only: request + replay opaque encrypted reasoning. Ignored elsewhere. */
@@ -538,6 +598,10 @@ async function chatGuarded(opts: {
     prompt_tokens: 0,
     completion_tokens: 0,
   });
+  // Defense in depth for restored checkpoints and direct internal callers.
+  // Never downgrade an invalid or incompatible max request to medium.
+  const effortError = reasoningEffortError(opts.model, opts.reasoningEffort);
+  if (effortError) return fail(400, effortError);
   if (!apiKey) return fail(401, "LOVABLE_API_KEY missing");
 
   if (usesResponsesApi(opts.model)) {

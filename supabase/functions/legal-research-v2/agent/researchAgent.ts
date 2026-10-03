@@ -738,7 +738,7 @@ export async function runResearchAgent(opts: {
         usage: opts.usage,
         costStage: "v2_research_agent",
         ...(replayReasoning ? { replayReasoning: true } : {}),
-        ...(opts.intake.agent_reasoning_effort === "high" ? { reasoningEffort: "high" as const } : {}),
+        ...(opts.intake.agent_reasoning_effort !== undefined ? { reasoningEffort: opts.intake.agent_reasoning_effort } : {}),
       });
       modelMs = Date.now() - modelStarted;
       stats.reasoning_items_forwarded = (stats.reasoning_items_forwarded ?? 0) + (res.reasoning_items_forwarded ?? 0);
@@ -751,6 +751,12 @@ export async function runResearchAgent(opts: {
       await opts.heartbeat?.();
       if (!res.ok) {
         error = `agent_model_error_${res.http_status}: ${res.error ?? ""}`.slice(0, 300);
+        // Evaluation failures must not be hidden by a repair retaining its old memo.
+        if (opts.intake.agent_reasoning_effort === "max") {
+          throw new Error(res.error === "reasoning_effort_mismatch"
+            ? "max_reasoning_experiment_failed:reasoning_effort_mismatch"
+            : `max_reasoning_experiment_failed:http_${res.http_status}`);
+        }
         break;
       }
       if (!res.tool_calls.length) {
