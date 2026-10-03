@@ -1,5 +1,5 @@
 import { PDF_BOUNDARY, hasPdfHeader, readBoundedBody, validPdfBounds, type PdfBounds } from "../_shared/pdfExtractionProtocol.ts";
-import type { ChunkedPdfOptions, ChunkedPdfResult } from "../legal-research-v2/vendor/largePdfChunkedExtract.ts";
+import type { ChunkedPdfOptions, ChunkedPdfResult } from "../_shared/largePdfChunkedExtract.ts";
 
 type Parser = (bytes: Uint8Array, options: ChunkedPdfOptions) => Promise<ChunkedPdfResult>;
 export function createPdfHandler(parse: Parser, serviceKey: string | undefined) {
