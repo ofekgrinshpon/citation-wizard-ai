@@ -310,3 +310,74 @@ describe("single approved pilot identity", () => {
     for (const state of [null, {}, { direct_pause_id: "" }, { direct_pause_id: 12 }]) assert.equal(policy.directPilotPauseId(state), null);
   });
 });
+
+function jsonbKeyOrder(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(jsonbKeyOrder);
+  if (!value || typeof value !== "object") return value;
+  return Object.fromEntries(Object.entries(value).sort(([a], [b]) => a.length - b.length || (a < b ? -1 : a > b ? 1 : 0))
+    .map(([key, item]) => [key, jsonbKeyOrder(item)]));
+}
+const jsonbTools = [{ name: "fetch", description: "Synthetic nested arguments", parameters: {
+  type: "object", properties: { scope: { type: "string" }, query: { type: "string" }, filters: { type: "object" } },
+  required: ["scope", "query", "filters"], additionalProperties: false,
+} }];
+async function eightTurnCheckpoint() {
+  let checkpoint: { messages: m.ChatMessage[]; usage: m.UsageLedger } = { messages: structuredClone(messages), usage: m.newUsageLedger() };
+  for (let i = 0; i < 8; i++) {
+    const blocks: FixtureEvent[] = [{ type: "thinking", thinking: "", signature: `opaque-${i}` },
+      { type: "tool_use", id: `toolu_roundtrip_${i}`, name: "fetch", input: {
+        scope: "official", query: "fixture", filters: { kinds: ["first", "second"], nested: { zebra: 1, a: "1" } },
+      } }];
+    mock(aEvents(blocks));
+    const result = await m.chat(opts({ ...checkpoint, tools: jsonbTools, allowedToolNames: ["fetch"] }));
+    assert.equal(result.ok, true);
+    checkpoint.messages.push({ role: "assistant", content: result.content,
+      tool_calls: result.tool_calls.map(c => ({ id: c.id, type: "function", function: { name: c.name, arguments: c.arguments } })),
+      native_replay: result.native_replay });
+    checkpoint.messages.push({ role: "tool", tool_call_id: result.tool_calls[0].id, content: `Synthetic result ${i}` });
+    if (i === 3) checkpoint = jsonbKeyOrder(JSON.parse(JSON.stringify(checkpoint))) as typeof checkpoint;
+  }
+  return jsonbKeyOrder(JSON.parse(JSON.stringify(checkpoint))) as typeof checkpoint;
+}
+function checkpointBody(checkpoint: { messages: m.ChatMessage[]; usage: m.UsageLedger }) {
+  return direct.anthropicBody({ ...checkpoint, config: config(), model: "claude-opus-5-5", tools: jsonbTools,
+    responsesInput: m.toResponsesInput });
+}
+describe("JSONB-safe native replay", () => {
+  for (const [label, invalid] of [["undefined", undefined], ["NaN", NaN], ["infinity", Infinity],
+    ["non-JSON object", new Date(0)], ["sparse array", new Array(1)]] as const) {
+    it(`rejects invalid canonical JSON: ${label}`, async () => {
+      await assert.rejects(() => direct.anthropicBody({ config: config(), model: "claude-opus-5-5", messages,
+        tools: [{ name: "fixture", description: "fixture", parameters: { invalid } }], responsesInput: m.toResponsesInput }),
+      /direct_invalid_json/);
+      assert.equal(requests.length, 0);
+    });
+  }
+  it("keeps eight turns and both argument and prefix checks across whole-checkpoint key reordering", async () => {
+    const checkpoint = await eightTurnCheckpoint();
+    await checkpointBody(checkpoint);
+    assert.equal(checkpoint.usage.direct_provider_attempts?.length, 8);
+    assert.equal(checkpoint.messages.filter(message => message.native_replay).length, 8);
+    assert.equal(requests.length, 8);
+  });
+  const mutations: Array<{ name: string; change: (history: m.ChatMessage[]) => void }> = [
+    { name: "user text", change: h => { h[1].content += " changed"; } },
+    { name: "tool result text", change: h => { h[3].content += " changed"; } },
+    { name: "argument value", change: h => { h[2].tool_calls![0].function.arguments = '{"scope":"changed"}'; } },
+    { name: "invalid argument JSON", change: h => { h[2].tool_calls![0].function.arguments = "{"; } },
+    { name: "tool name", change: h => { h[2].tool_calls![0].function.name = "changed"; } },
+    { name: "tool identity", change: h => { h[2].tool_calls![0].id = "changed"; h[3].tool_call_id = "changed"; } },
+    { name: "model identity", change: h => { h[2].native_replay!.model = "changed" as typeof policy.DIRECT_MODELS.anthropic; } },
+    { name: "thinking signature", change: h => { h[2].native_replay!.blocks[0].signature = "changed"; } },
+    { name: "native block order", change: h => { h[2].native_replay!.blocks.reverse(); } },
+    { name: "nested array order", change: h => {
+      const args = JSON.parse(h[2].tool_calls![0].function.arguments) as { filters: { kinds: string[] } };
+      args.filters.kinds.reverse(); h[2].tool_calls![0].function.arguments = JSON.stringify(args);
+    } },
+  ];
+  for (const { name, change } of mutations) it(`still rejects actual ${name} mutation`, async () => {
+    const checkpoint = await eightTurnCheckpoint(); change(checkpoint.messages);
+    await assert.rejects(() => checkpointBody(checkpoint), /direct_/);
+    assert.equal(requests.length, 8, "mutation validation must not dispatch another request");
+  });
+});
