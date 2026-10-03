@@ -1609,13 +1609,28 @@ async function sweepStalledRuns(
     .limit(RESUME_WATCHDOG.BATCH);
 
   const rows = (data ?? []) as WatchdogRow[];
+  // The approved pilot stays pinned even beyond the ordinary recovery age
+  // window. Inspect that ONE row separately, read-only, so an older uncertain
+  // paid run remains visible without reviving historical rows or consuming
+  // the public recovery batch. Invalid/unconfigured pins trigger no query.
+  const pinnedRunId = Deno.env.get("V2_DIRECT_PROVIDER_PILOT_RUN_ID");
+  if (!directPilotRunError(pinnedRunId, pinnedRunId) && !rows.some((r) => r.run_id === pinnedRunId)) {
+    const { data: pinned } = await admin.from("v2_eval_runs")
+      .select("run_id, status, agent_state, last_beat_at, created_at, auto_resume_count, watchdog_claimed_at")
+      .eq("id", pinnedRunId).in("status", ["running", "paused"]).maybeSingle();
+    if (pinned && isDirectPilotState(pinned.agent_state)) rows.push(pinned as WatchdogRow);
+  }
   const decisions: ResumeDecision[] = [];
 
   for (const row of rows) {
     // Direct pilots never take over a crashed or uncertain worker. Normal
     // acknowledged chunk handoffs use the separate paused-state CAS below.
-    if (isDirectPilotState(row.agent_state)) continue;
     const decision = decideAutoResume(row, now);
+    if (decision.automatic_resume_reason === "direct_pilot_requires_review") {
+      // Report the interruption without rewriting state, replaying paid work,
+      // releasing the approved-run pin or claiming that stale means finished.
+      console.warn(JSON.stringify({ event: "direct_pilot_requires_review", ...decision }));
+    }
     if (!decision.automatic_resume_triggered) {
       decisions.push(decision);
       continue;

@@ -19,7 +19,7 @@ export {
 export { classifyJudgmentUrl } from "../vendor/judgmentUrlEligibility.ts";
 
 // ── Document extraction ────────────────────────────────────────────────────
-export { extractPdfPagesBounded } from "../vendor/largePdfChunkedExtract.ts";
+export { extractPdfPagesBounded } from "./pdfExtractionBoundary.ts";
 export { extractDocumentText } from "../vendor/attachments.ts";
 
 // ── Israeli legal identity normalization ───────────────────────────────────

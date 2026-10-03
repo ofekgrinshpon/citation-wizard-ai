@@ -47,3 +47,5 @@ project_id = "ioktiqcffungtlsmlkcv"
     verify_jwt = false
   [functions.submit-contact-message]
     verify_jwt = false
+  [functions.research-pdf-extract]
+    verify_jwt = true
