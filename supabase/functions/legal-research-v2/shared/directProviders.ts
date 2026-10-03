@@ -38,8 +38,22 @@ function requireString(value: unknown, code = "direct_invalid_output"): string {
   if (typeof value !== "string") bad(code);
   return value as string;
 }
+/** JSONB may reorder object keys. Preserve every array position and scalar. */
+function canonicalJson(value: unknown): string {
+  if (value === null) return "null";
+  if (typeof value === "string" || typeof value === "boolean") return JSON.stringify(value);
+  if (typeof value === "number" && Number.isFinite(value)) return JSON.stringify(value);
+  if (Array.isArray(value)) return `[${Array.from(value, canonicalJson).join(",")}]`;
+  if (value && typeof value === "object") {
+    const prototype = Object.getPrototypeOf(value);
+    if (prototype !== Object.prototype && prototype !== null) return bad("direct_invalid_json");
+    return `{${Object.keys(value).sort().map(key =>
+      `${JSON.stringify(key)}:${canonicalJson((value as Json)[key])}`).join(",")}}`;
+  }
+  return bad("direct_invalid_json");
+}
 async function digest(value: unknown): Promise<string> {
-  const result = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(JSON.stringify(value)));
+  const result = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(canonicalJson(value)));
   return [...new Uint8Array(result)].map(x => x.toString(16).padStart(2, "0")).join("");
 }
 
@@ -154,7 +168,7 @@ function callsEqual(a: ChatToolCall[], m: ChatMessage): boolean {
   const b = m.tool_calls ?? [];
   return a.length === b.length && a.every((c, i) => {
     let args: unknown; try { args = JSON.parse(b[i].function.arguments); } catch { return false; }
-    return c.id === b[i].id && c.name === b[i].function.name && JSON.stringify(JSON.parse(c.arguments)) === JSON.stringify(args);
+    return c.id === b[i].id && c.name === b[i].function.name && canonicalJson(JSON.parse(c.arguments)) === canonicalJson(args);
   });
 }
 export async function anthropicBody(opts: DirectOptions): Promise<{ body: Json; prefixHash: string }> {
