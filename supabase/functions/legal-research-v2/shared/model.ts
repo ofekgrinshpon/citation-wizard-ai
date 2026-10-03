@@ -1,6 +1,7 @@
 /**
- * legal-research-v2 — minimal Lovable AI Gateway chat client.
+ * legal-research-v2 — public gateway client plus explicit internal native pilots.
  *
+ * Public gateway behavior is unchanged. Direct pilots are opt-in and isolated.
  * One client for all three model roles (agent / verifier / drafter). Model ids
  * are configuration, never architecture: every role reads an env override and
  * falls back to a documented default.
@@ -14,6 +15,10 @@ import {
 } from "../../_shared/costTelemetry.ts";
 import { guardProviderCall } from "./providerLiveness.ts";
 import { reasoningEffortError, type EvaluationReasoningEffort } from "./evaluationReasoning.ts";
+
+import { directChat, type NativeReplay } from "./directProviders.ts";
+import type { DirectProviderConfig } from "./directProviderPolicy.ts";
+import type { DirectAttempt } from "./directProviderUsage.ts";
 
 const GATEWAY_URL = "https://ai.gateway.lovable.dev/v1/chat/completions";
 
@@ -58,6 +63,8 @@ export interface ChatToolCall {
 }
 
 export interface ChatMessage {
+  /** Internal native Anthropic checkpoint data; never sent to another provider. */
+  native_replay?: NativeReplay;
   role: "system" | "user" | "assistant" | "tool";
   content: string;
   tool_calls?: Array<{ id: string; type: "function"; function: { name: string; arguments: string } }>;
@@ -159,6 +166,8 @@ export function wireMessages(messages: ChatMessage[]): Array<Record<string, unkn
 }
 
 export interface ChatResult {
+  native_replay?: NativeReplay;
+  direct_attempt?: DirectAttempt;
   ok: boolean;
   http_status: number;
   error?: string;
@@ -184,6 +193,10 @@ export interface ChatResult {
 }
 
 export interface UsageLedger {
+  /** Native pilot costs, checkpointed per attempt. No content or secrets. */
+  direct_provider_attempts?: DirectAttempt[];
+  /** A failed pilot never resumes or falls back without explicit reconciliation. */
+  direct_provider_failed?: boolean;
   /** Evaluation-only transport audit, preserved across all chunks and repairs. */
   reasoning_max_requested_calls?: number;
   reasoning_max_confirmed_calls?: number;
@@ -573,6 +586,10 @@ export async function chat(opts: Parameters<typeof chatGuarded>[0]): Promise<Cha
 }
 
 async function chatGuarded(opts: {
+  /** Set only by the authenticated internal pilot intake. */
+  directProvider?: DirectProviderConfig;
+  allowedToolNames?: string[];
+  beforeDirectDispatch?: () => Promise<boolean>;
   model: string;
   messages: ChatMessage[];
   tools?: ToolSpec[];
@@ -586,7 +603,6 @@ async function chatGuarded(opts: {
   /** Responses API only: request + replay opaque encrypted reasoning. Ignored elsewhere. */
   replayReasoning?: boolean;
 }): Promise<ChatResult> {
-  const apiKey = Deno.env.get("LOVABLE_API_KEY");
   const fail = (status: number, error: string, terminal = true): ChatResult => ({
     ok: false,
     http_status: status,
@@ -598,6 +614,13 @@ async function chatGuarded(opts: {
     prompt_tokens: 0,
     completion_tokens: 0,
   });
+  if (opts.directProvider) return await directChat({ ...opts, config: opts.directProvider, responsesInput: toResponsesInput });
+  // A checkpoint cannot switch provider by simply omitting its route.
+  if (opts.messages.some(m => m.native_replay) ||
+    (opts.costStage === "v2_research_agent" && opts.usage?.direct_provider_attempts?.length)) {
+    return fail(400, "direct_provider_route_missing");
+  }
+  const apiKey = Deno.env.get("LOVABLE_API_KEY");
   // Defense in depth for restored checkpoints and direct internal callers.
   // Never downgrade an invalid or incompatible max request to medium.
   const effortError = reasoningEffortError(opts.model, opts.reasoningEffort);

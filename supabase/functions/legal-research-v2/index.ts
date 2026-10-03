@@ -137,6 +137,7 @@ import { SOURCE_SCOUTING_CONTRACT, SOURCE_SEARCH_BUDGETS } from "./sources/contr
 import { buildSourcePack } from "./sources/sourcePack.ts";
 
 import { parseEvaluationReasoningEffort, type EvaluationReasoningEffort } from "./shared/evaluationReasoning.ts";
+import { parseDirectProvider, directProviderConfigError, directPilotRunError, isDirectPilotState, directPilotPauseId, type DirectProviderConfig } from "./shared/directProviderPolicy.ts";
 
 export function buildIntake(input: {
   run_id: string;
@@ -148,6 +149,7 @@ export function buildIntake(input: {
   budgets?: Partial<ToolBudgets>;
   /** Evaluation-only Research Agent override. */
   agent_model?: string | null;
+  agent_direct_provider?: DirectProviderConfig;
   /** Evaluation-only Research Agent reasoning effort override. */
   agent_reasoning_effort?: EvaluationReasoningEffort;
   /** Academic Writing body chapter only — framing context, never evidence. */
@@ -188,6 +190,7 @@ export function buildIntake(input: {
       ...(input.budgets ?? {}),
     },
     agent_model: input.agent_model?.trim() || input.model_route?.model_id || null,
+    ...(input.agent_direct_provider ? { agent_direct_provider: input.agent_direct_provider } : {}),
     model_route: input.model_route ?? null,
     // Production answer path: the agent writes the answer. Only the emergency
     // env rollback (V2_USE_SEPARATE_DRAFTER=true) restores the separate drafter.
@@ -234,6 +237,8 @@ export interface ResumeState {
    * detection. Absent on rows written before this field existed.
    */
   pause_kind?: "handoff" | "checkpoint";
+  /** Direct pilot repair crash: preserve data, require review instead of replaying the wrong pipeline phase. */
+  direct_repair_checkpoint?: boolean;
   /** Set while/after the run waited for the user's clarification reply. */
   awaiting_since?: number;
   /** Versioned marker: initial research memo is complete (see beta/memoCheckpoint.ts). */
@@ -259,7 +264,7 @@ export async function saveMemoReadyCheckpoint(
       agent_state: { resume, intake, job, stage },
       chunk_index,
       last_beat_at: new Date().toISOString(),
-    }).eq("run_id", intake.run_id);
+    }).eq(intake.agent_direct_provider ? "id" : "run_id", intake.run_id);
     if (error) {
       console.warn(JSON.stringify({ event: "v2_memo_ready_save_failed", run_id: intake.run_id }));
       return false;
@@ -289,13 +294,30 @@ async function runPipeline(
   const resume = opts.resume ?? null;
   const started = resume?.started_at ?? Date.now();
   const usage = resume?.usage ?? newUsageLedger();
+  if (isDirectPilotState({ intake }) && !intake.agent_direct_provider) {
+    throw new Error("invalid_direct_provider");
+  }
   if (intake.agent_reasoning_effort === "max" && (usage.reasoning_max_mismatch_calls ?? 0) > 0) {
     throw new Error("max_reasoning_experiment_failed:restored_effort_mismatch");
+  }
+  if (intake.agent_direct_provider && usage.direct_provider_failed) {
+    throw new Error("direct_pilot_already_failed");
+  }
+  if (intake.agent_direct_provider && resume?.direct_repair_checkpoint) {
+    throw new Error("direct_repair_resume_requires_review");
   }
   const models = modelConfig();
   // Evaluation-only: the Research Agent model may be overridden per run.
   // Verifier and drafter are always the configured defaults.
   const agentModel = intake.agent_model || models.agent;
+  if (intake.agent_direct_provider) {
+    const runError = directPilotRunError(intake.run_id, Deno.env.get("V2_DIRECT_PROVIDER_PILOT_RUN_ID"));
+    if (runError) throw new Error(runError);
+    const error = directProviderConfigError(intake.agent_direct_provider, agentModel, intake.agent_reasoning_effort);
+    if (error || Deno.env.get("V2_DIRECT_PROVIDER_PILOT") !== intake.agent_direct_provider.provider) {
+      throw new Error(error ?? "direct_provider_pilot_disabled");
+    }
+  }
   const prior = resume ? deserializeAgentState(intake, resume.agent_state) : null;
   const store = prior?.store ?? new EvidenceStore();
   const chunk_index = (resume?.chunk_index ?? 0) + 1;
@@ -349,6 +371,33 @@ async function runPipeline(
   // Caps, backoff and the relay host allowlist are untouched.
   if (!resume) resetEgressStateForRun();
 
+  const saveCheckpoint = async (state: AgentStateJson, directRepair = false): Promise<boolean> => {
+    const query = admin.from("v2_eval_runs").update({
+      agent_state: {
+        resume: {
+          agent_state: state,
+          chunk_index: chunk_index - 1,
+          usage,
+          started_at: started,
+          timing: timer.toJSON(),
+          paused_at: Date.now(),
+          pause_kind: "checkpoint",
+          ...(directRepair ? { direct_repair_checkpoint: true } : {}),
+        },
+        intake,
+        // Without these a mid-chunk recovery would lose the user's job.
+        job: opts.job ?? null,
+        stage: opts.progress?.current() ?? null,
+      },
+      chunk_index,
+      last_beat_at: new Date().toISOString(),
+    }).eq(intake.agent_direct_provider ? "id" : "run_id", intake.run_id);
+    const saved = intake.agent_direct_provider ? await query.select("run_id").maybeSingle() : await query;
+    const error = saved.error || (intake.agent_direct_provider && !saved.data);
+    if (error) console.warn(JSON.stringify({ event: "v2_agent_checkpoint_save_failed", run_id: intake.run_id }));
+    return !error;
+  };
+
   // ── Research (one bounded chunk when chunked execution is requested) ─────
   // A valid memo_ready marker means the initial research call already
   // completed: reuse its memo, run every downstream gate unchanged.
@@ -377,31 +426,7 @@ async function runPipeline(
     onActivity: (kind) => { void opts.progress?.advance(kind); },
     maxStepsThisChunk: opts.chunked ? CHUNK.MAX_STEPS : undefined,
     deadlineAt: opts.chunked ? Date.now() + CHUNK.MAX_MS : undefined,
-    checkpoint: opts.chunked
-      ? async (state) => {
-        const { error } = await admin.from("v2_eval_runs").update({
-          agent_state: {
-            resume: {
-              agent_state: state,
-              chunk_index: chunk_index - 1,
-              usage,
-              started_at: started,
-              timing: timer.toJSON(),
-              paused_at: Date.now(),
-              pause_kind: "checkpoint",
-            },
-            intake,
-            // Without these a mid-chunk recovery would lose the user's job.
-            job: opts.job ?? null,
-            stage: opts.progress?.current() ?? null,
-          },
-          chunk_index,
-          last_beat_at: new Date().toISOString(),
-        }).eq("run_id", intake.run_id);
-        if (error) console.warn(JSON.stringify({ event: "v2_agent_checkpoint_save_failed", run_id: intake.run_id }));
-        return !error;
-      }
-      : undefined,
+    checkpoint: opts.chunked ? saveCheckpoint : undefined,
   });
 
   // ask_user: park the run with the full checkpoint. Not a final answer.
@@ -504,6 +529,7 @@ async function runPipeline(
     repair_cycles = 1;
     const repaired = await runResearchAgent({
       allowAskUser: false,
+      ...(intake.agent_direct_provider ? { checkpoint: (state: AgentStateJson) => saveCheckpoint(state, true) } : {}),
       admin,
       intake,
       store,
@@ -577,6 +603,7 @@ async function runPipeline(
     const sourcesTelemetry = {
       run_id: intake.run_id,
       output_mode: "sources",
+      ...(intake.agent_direct_provider ? { agent_provider: intake.agent_direct_provider.provider, direct_provider_attempts: usage.direct_provider_attempts ?? [] } : {}),
       reasoning_effort: intake.agent_reasoning_effort ?? "medium",
       reasoning_max_requested_calls: usage.reasoning_max_requested_calls ?? 0,
       reasoning_max_confirmed_calls: usage.reasoning_max_confirmed_calls ?? 0,
@@ -658,6 +685,7 @@ async function runPipeline(
       temporalCounters.temporal_repairs = 1;
       const repaired = await runResearchAgent({
       allowAskUser: false,
+      ...(intake.agent_direct_provider ? { checkpoint: (state: AgentStateJson) => saveCheckpoint(state, true) } : {}),
         admin,
         intake,
         store,
@@ -717,6 +745,7 @@ async function runPipeline(
     const missing = gapReport.unreadable.filter((d) => !gapReport.derivative.includes(d));
     const fallback = await runResearchAgent({
       allowAskUser: false,
+      ...(intake.agent_direct_provider ? { checkpoint: (state: AgentStateJson) => saveCheckpoint(state, true) } : {}),
       admin,
       intake,
       store,
@@ -863,6 +892,7 @@ async function runPipeline(
       const callsBefore = agent.policy.search_calls + agent.policy.fetch_calls + agent.policy.lookup_calls;
       const repaired = await runResearchAgent({
       allowAskUser: false,
+      ...(intake.agent_direct_provider ? { checkpoint: (state: AgentStateJson) => saveCheckpoint(state, true) } : {}),
         admin,
         intake,
         store,
@@ -1287,6 +1317,7 @@ async function runPipeline(
     /** Architecture + answer verification. */
     ...agentAnswerTelemetry,
     agent_model: agentModel,
+    ...(intake.agent_direct_provider ? { agent_provider: intake.agent_direct_provider.provider, direct_provider_attempts: usage.direct_provider_attempts ?? [] } : {}),
     router_action: intake.model_route?.action ?? null,
     router_model_choice: intake.model_route?.model ?? null,
     router_reason: intake.model_route?.reason ?? null,
@@ -1363,7 +1394,7 @@ async function runPipeline(
  * so an actively working worker can never be resumed underneath itself.
  * Throttled, best-effort, and never allowed to fail a run.
  */
-function createRunBeat(admin: SupabaseClient, run_id: string) {
+function createRunBeat(admin: SupabaseClient, run_id: string, directPilot = false) {
   let last = 0;
   return async (force = false) => {
     if (!force && Date.now() - last < RESUME_WATCHDOG.BEAT_MIN_INTERVAL_MS) return;
@@ -1371,7 +1402,7 @@ function createRunBeat(admin: SupabaseClient, run_id: string) {
     try {
       await admin.from("v2_eval_runs")
         .update({ last_beat_at: new Date().toISOString() })
-        .eq("run_id", run_id);
+        .eq(directPilot ? "id" : "run_id", run_id);
     } catch {/* liveness is best-effort */}
   };
 }
@@ -1420,7 +1451,7 @@ async function driveRunInner(
       : null,
   );
   // Every progress beat also proves to the watchdog that this worker is alive.
-  const beat = createRunBeat(admin, intake.run_id);
+  const beat = createRunBeat(admin, intake.run_id, !!intake.agent_direct_provider);
   const liveProgress: ProgressSink = {
     current: () => progress.current(),
     advance: async (s) => {
@@ -1434,6 +1465,7 @@ async function driveRunInner(
     finish: () => progress.finish(),
   };
   await beat(true);
+  let directPausePublicationStarted = false;
   try {
     const out = await withProviderLiveness(() => liveProgress.heartbeat(), () => runPipeline(admin, intake, {
       resume,
@@ -1445,6 +1477,7 @@ async function driveRunInner(
       // Parked for the user: full checkpoint kept, no self-invoke, no charge.
       // The watchdog and the stale-job reaper only look at running/paused/
       // queued rows, so this state is never resumed or timed out on its own.
+      directPausePublicationStarted = !!intake.agent_direct_provider;
       await admin.from("v2_eval_runs").update({
         status: AWAITING_USER_STATUS,
         agent_state: {
@@ -1453,9 +1486,10 @@ async function driveRunInner(
           job,
           stage: progress.current(),
           awaiting_user: out.awaiting_user,
+          ...(intake.agent_direct_provider ? { direct_pause_id: crypto.randomUUID() } : {}),
         },
         last_beat_at: new Date().toISOString(),
-      }).eq("run_id", intake.run_id);
+      }).eq(intake.agent_direct_provider ? "id" : "run_id", intake.run_id);
       if (job) {
         await admin.from("legal_research_jobs").update({
           status: AWAITING_USER_STATUS,
@@ -1476,15 +1510,24 @@ async function driveRunInner(
       return;
     }
     if ("paused" in out && out.paused) {
+      directPausePublicationStarted = !!intake.agent_direct_provider;
       const { error: pauseSaveError } = await admin.from("v2_eval_runs").update({
         status: "paused",
-        agent_state: { resume: out.resume, intake, job, stage: progress.current() },
+        agent_state: { resume: out.resume, intake, job, stage: progress.current(),
+          ...(intake.agent_direct_provider ? { direct_pause_id: crypto.randomUUID() } : {}) },
         last_beat_at: new Date().toISOString(),
-      }).eq("run_id", intake.run_id);
+      }).eq(intake.agent_direct_provider ? "id" : "run_id", intake.run_id);
       // Never hand off a turn that was not durably saved. Existing watchdog
       // recovery remains bounded by its normal retry policy.
       if (pauseSaveError) {
         console.warn(JSON.stringify({ event: "v2_pause_checkpoint_save_failed", run_id: intake.run_id }));
+        return;
+      }
+      if (intake.agent_direct_provider) {
+        // An ambiguous handoff may already have started the successor. Never
+        // let this old invocation mark its row failed, or send a second handoff.
+        try { await selfInvokeResume(intake.run_id, supabaseUrl, serviceKey); }
+        catch { console.warn(JSON.stringify({ event: "direct_handoff_requires_review", run_id: intake.run_id })); }
         return;
       }
       const ack = await selfInvokeResume(intake.run_id, supabaseUrl, serviceKey);
@@ -1518,8 +1561,14 @@ async function driveRunInner(
       result: out,
       agent_state: null,
       finished_at: new Date().toISOString(),
-    }).eq("run_id", intake.run_id);
+    }).eq(intake.agent_direct_provider ? "id" : "run_id", intake.run_id);
   } catch (e) {
+    if (directPausePublicationStarted) {
+      // Even the pause-save response can be lost after another worker claimed
+      // it. This old invocation must not overwrite its successor's status.
+      console.warn(JSON.stringify({ event: "direct_pause_requires_review", run_id: intake.run_id }));
+      return;
+    }
     const message = e instanceof Error ? e.message : String(e);
     if (job) {
       await finishJobError(admin, job, message);
@@ -1529,7 +1578,7 @@ async function driveRunInner(
       status: "error",
       error: message,
       finished_at: new Date().toISOString(),
-    }).eq("run_id", intake.run_id);
+    }).eq(intake.agent_direct_provider ? "id" : "run_id", intake.run_id);
   }
 }
 
@@ -1563,6 +1612,9 @@ async function sweepStalledRuns(
   const decisions: ResumeDecision[] = [];
 
   for (const row of rows) {
+    // Direct pilots never take over a crashed or uncertain worker. Normal
+    // acknowledged chunk handoffs use the separate paused-state CAS below.
+    if (isDirectPilotState(row.agent_state)) continue;
     const decision = decideAutoResume(row, now);
     if (!decision.automatic_resume_triggered) {
       decisions.push(decision);
@@ -1659,9 +1711,32 @@ async function handleRequest(req: Request): Promise<Response> {
     (authHeader === `Bearer ${serviceKey}` ||
       (!!presented && smokeTokens.includes(presented)));
 
+  const directProvider = parseDirectProvider({
+    isSmoke, provider: body.agent_provider, model: body.agent_model,
+    maxOutputTokens: body.agent_max_output_tokens,
+  });
+  if (!directProvider.ok) return json({ error: directProvider.error }, 400);
+  if (isSmoke && !directProvider.config && !resumeRunId && !watchdogTick && !clarificationReply &&
+    !directPilotRunError(body.run_id, Deno.env.get("V2_DIRECT_PROVIDER_PILOT_RUN_ID"))) {
+    return json({ error: "direct_pilot_id_reserved" }, 403);
+  }
+  if (directProvider.config) {
+    if (body.background !== true && !resumeRunId && !watchdogTick && !clarificationReply) {
+      return json({ error: "direct_pilot_requires_background" }, 400);
+    }
+    const error = directProviderConfigError(directProvider.config, directProvider.model!, body.agent_reasoning_effort);
+    if (error) return json({ error }, 400);
+    if (Deno.env.get("V2_DIRECT_PROVIDER_PILOT") !== directProvider.config.provider) {
+      return json({ error: "direct_provider_pilot_disabled" }, 403);
+    }
+    if (!resumeRunId && !watchdogTick && !clarificationReply) {
+      const runError = directPilotRunError(body.run_id, Deno.env.get("V2_DIRECT_PROVIDER_PILOT_RUN_ID"));
+      if (runError) return json({ error: runError }, 403);
+    }
+  }
   const evaluationReasoning = parseEvaluationReasoningEffort({
     isSmoke,
-    model: (typeof body.agent_model === "string" ? body.agent_model.trim() : "") || modelConfig().agent,
+    model: directProvider.model ?? ((typeof body.agent_model === "string" ? body.agent_model.trim() : "") || modelConfig().agent),
     value: body.agent_reasoning_effort,
   });
   if (!evaluationReasoning.ok) return json({ error: evaluationReasoning.error }, 400);
@@ -1714,7 +1789,14 @@ async function handleRequest(req: Request): Promise<Response> {
     }
     if (!runId) return json({ error: "run_not_found" }, 404);
     const { data: row } = await admin.from("v2_eval_runs")
-      .select("run_id, status, agent_state").eq("run_id", runId).maybeSingle();
+      .select("id, run_id, status, agent_state").eq("run_id", runId).maybeSingle();
+    const directReply = isDirectPilotState(row?.agent_state);
+    const pauseId = directReply ? directPilotPauseId(row?.agent_state) : null;
+    if (directReply && (!isSmoke || row?.id !== runId || !pauseId ||
+      (row?.agent_state as { intake?: Intake } | null)?.intake?.run_id !== runId ||
+      directPilotRunError(runId, Deno.env.get("V2_DIRECT_PROVIDER_PILOT_RUN_ID")))) {
+      return json({ error: "direct_pilot_reply_requires_review" }, 409);
+    }
     const decision = applyUserReply({
       row: row as { status?: string; agent_state?: unknown } | null,
       reply: normalizeReply(body.user_message),
@@ -1722,13 +1804,19 @@ async function handleRequest(req: Request): Promise<Response> {
       now: Date.now(),
     });
     if (!decision.ok) return json({ error: decision.error }, decision.status);
+    if (directReply && directProviderConfigError(decision.agent_state.intake.agent_direct_provider!,
+      decision.agent_state.intake.agent_model ?? "", decision.agent_state.intake.agent_reasoning_effort)) {
+      return json({ error: "invalid_direct_provider" }, 409);
+    }
     // Atomic claim: only one reply can move the run out of awaiting_user.
-    const { data: claimed } = await admin.from("v2_eval_runs").update({
+    let claimQuery = admin.from("v2_eval_runs").update({
       status: "running",
       agent_state: decision.agent_state,
       last_beat_at: new Date().toISOString(),
       watchdog_claimed_at: null,
-    }).eq("run_id", runId).eq("status", AWAITING_USER_STATUS).select("run_id");
+    }).eq(directReply ? "id" : "run_id", runId).eq("status", AWAITING_USER_STATUS);
+    if (directReply) claimQuery = claimQuery.eq("agent_state->>direct_pause_id", pauseId!);
+    const { data: claimed } = await claimQuery.select("run_id");
     if (!claimed?.length) return json({ error: "not_awaiting_user" }, 409);
     const saved = decision.agent_state;
     const job = (saved.job ?? null) as BetaJob | null;
@@ -2039,23 +2127,49 @@ async function handleRequest(req: Request): Promise<Response> {
   if (resumeRunId) {
     const { data: row } = await admin
       .from("v2_eval_runs")
-      .select("run_id, status, agent_state")
+      .select("id, run_id, status, agent_state")
       .eq("run_id", resumeRunId)
       .maybeSingle();
-    const saved = (row?.agent_state ?? null) as
+    let saved = (row?.agent_state ?? null) as
       | { resume: ResumeState; intake: Intake; job?: BetaJob | null; stage?: ProgressStage | null }
       | null;
     if (!row || !saved) return json({ error: "resume_state_not_found" }, 404);
-    // A run killed mid-chunk (CPU-time) stays "running" but has a checkpoint;
-    // it is resumable from the last completed step.
-    if (row.status !== "paused" && row.status !== "running") {
-      return json({ error: `not_resumable:${row.status}` }, 409);
+    if (isDirectPilotState(saved)) {
+      if (directProviderConfigError(saved.intake.agent_direct_provider!, saved.intake.agent_model ?? "", saved.intake.agent_reasoning_effort)) {
+        return json({ error: "invalid_direct_provider" }, 409);
+      }
+      const runError = directPilotRunError(resumeRunId, Deno.env.get("V2_DIRECT_PROVIDER_PILOT_RUN_ID"));
+      const pauseId = directPilotPauseId(saved);
+      if (runError || row.id !== resumeRunId || saved.intake.run_id !== resumeRunId || !pauseId) {
+        return json({ error: runError ?? "direct_pilot_resume_requires_review" }, 409);
+      }
+      if (row.status !== "paused") return json({ error: "direct_pilot_running_resume_forbidden" }, 409);
+      const { data: claimed, error: claimError } = await admin.from("v2_eval_runs").update({
+        status: "running", last_beat_at: new Date().toISOString(), watchdog_claimed_at: null,
+      }).eq("id", resumeRunId).eq("status", "paused")
+        .eq("agent_state->>direct_pause_id", pauseId)
+        .select("id, run_id, agent_state").maybeSingle();
+      if (claimError || !claimed) return json({ error: "direct_pilot_resume_not_claimed" }, 409);
+      // Execute the atomically claimed checkpoint, never the earlier snapshot.
+      saved = claimed.agent_state as typeof saved;
+      if (!saved || !isDirectPilotState(saved) || claimed.id !== resumeRunId ||
+        claimed.run_id !== resumeRunId || saved.intake.run_id !== resumeRunId) {
+        return json({ error: "direct_pilot_resume_requires_review" }, 409);
+      }
+      if (directProviderConfigError(saved.intake.agent_direct_provider!, saved.intake.agent_model ?? "", saved.intake.agent_reasoning_effort)) {
+        return json({ error: "invalid_direct_provider" }, 409);
+      }
+    } else {
+      // Legacy/public recovery semantics are unchanged.
+      if (row.status !== "paused" && row.status !== "running") {
+        return json({ error: `not_resumable:${row.status}` }, 409);
+      }
+      await admin.from("v2_eval_runs").update({
+        status: "running",
+        last_beat_at: new Date().toISOString(),
+        watchdog_claimed_at: null,
+      }).eq("run_id", resumeRunId);
     }
-    await admin.from("v2_eval_runs").update({
-      status: "running",
-      last_beat_at: new Date().toISOString(),
-      watchdog_claimed_at: null,
-    }).eq("run_id", resumeRunId);
     const task = driveRun(
       admin,
       saved.intake,
@@ -2080,7 +2194,8 @@ async function handleRequest(req: Request): Promise<Response> {
       : [],
     attachment_owner_id: typeof body.smoke_user_id === "string" ? body.smoke_user_id : null,
     budgets: (body.budgets ?? undefined) as Partial<ToolBudgets> | undefined,
-    agent_model: typeof body.agent_model === "string" ? body.agent_model : null,
+    agent_model: directProvider.model ?? (typeof body.agent_model === "string" ? body.agent_model : null),
+    agent_direct_provider: directProvider.config,
     agent_reasoning_effort: evaluationReasoning.effort,
     // Evaluation-only: the internal entry point may run an Academic Writing
     // body chapter with a deliverable-level research contract.
@@ -2095,12 +2210,21 @@ async function handleRequest(req: Request): Promise<Response> {
   // Background execution: evaluation runs routinely exceed the synchronous
   // request limit, so the result is persisted and polled instead.
   if (body.background === true) {
-    await admin.from("v2_eval_runs").insert({
+    if (intake.agent_direct_provider) {
+      // run_id is not unique in the existing schema. Refuse any older row
+      // collision; the pinned primary-key insert below then fences racers.
+      const { data: collisions, error: collisionError } = await admin.from("v2_eval_runs")
+        .select("id").eq("run_id", intake.run_id).limit(1);
+      if (collisionError || collisions?.length) return json({ error: "direct_checkpoint_setup_failed" }, 503);
+    }
+    const { error: runInsertError } = await admin.from("v2_eval_runs").insert({
+      ...(intake.agent_direct_provider ? { id: intake.run_id } : {}),
       run_id: intake.run_id,
       label: typeof body.label === "string" ? body.label : null,
       question: intake.question,
       status: "running",
     });
+    if (intake.agent_direct_provider && runInsertError) return json({ error: "direct_checkpoint_setup_failed" }, 503);
     const task = driveRun(admin, intake, null, supabaseUrl, serviceKey);
     if (typeof EdgeRuntime !== "undefined" && EdgeRuntime?.waitUntil) {
       EdgeRuntime.waitUntil(task);

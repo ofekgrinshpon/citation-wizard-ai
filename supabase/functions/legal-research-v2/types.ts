@@ -88,6 +88,8 @@ export interface Intake {
    * never overridable.
    */
   agent_model?: string | null;
+  /** Authenticated internal pilot only. Public requests never populate this. */
+  agent_direct_provider?: import("./shared/directProviderPolicy.ts").DirectProviderConfig;
   /** Sol/Astra router decision for this turn (telemetry + model choice). */
   model_route?: import("./beta/modelRouter.ts").ModelRoute | null;
   /** EVALUATION ONLY: Research Agent reasoning effort (Responses API). Absent = "medium". */
