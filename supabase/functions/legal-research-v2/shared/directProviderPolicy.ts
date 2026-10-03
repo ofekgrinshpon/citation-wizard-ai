@@ -9,6 +9,8 @@ export const DIRECT_MODELS = {
   anthropic: "claude-opus-5-5",
   openai: "openai/gpt-6-astra",
 } as const;
+export const DIRECT_OPENAI_MODELS = [DIRECT_MODELS.openai, "openai/gpt-6.1-sol"] as const;
+export const SOL61_PILOT_NATIVE_BUDGET_USD = 2;
 export const DIRECT_LIMITS = {
   maxOutputTokens: 128_000,
   maxRequestBytes: 4_000_000,
@@ -19,7 +21,9 @@ export const DIRECT_LIMITS = {
 
 export function directProviderConfigError(config: DirectProviderConfig, model: string, effort?: unknown): string | null {
   if (!config || !["anthropic", "openai"].includes(config.provider)) return "invalid_direct_provider";
-  if (model !== DIRECT_MODELS[config.provider]) return "direct_provider_model_mismatch";
+  if (config.provider === "openai"
+    ? !(DIRECT_OPENAI_MODELS as readonly string[]).includes(model)
+    : model !== DIRECT_MODELS.anthropic) return "direct_provider_model_mismatch";
   if (!Number.isSafeInteger(config.max_output_tokens) || config.max_output_tokens < 1024 ||
     config.max_output_tokens > DIRECT_LIMITS.maxOutputTokens) return "direct_output_limit_required";
   // First pilot is a medium-effort transport comparison. No silent remapping.

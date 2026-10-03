@@ -381,3 +381,122 @@ describe("JSONB-safe native replay", () => {
     assert.equal(requests.length, 8, "mutation validation must not dispatch another request");
   });
 });
+
+
+describe("Sol 6.1 isolated native budget", () => {
+  const solOpts = (overrides: Overrides = {}) => opts({ model: "openai/gpt-6.1-sol", ...overrides });
+  const solMock = (count: unknown = 100, events = oEvents({ model: "gpt-6.1-sol" })) => {
+    enabled = "openai";
+    globalThis.fetch = async (url, request) => {
+      const body = JSON.parse(String(request!.body));
+      requests.push({ url: String(url), body, headers: request!.headers });
+      if (String(url).endsWith("/input_tokens")) return Response.json({ object: "response.input_tokens", input_tokens: count });
+      return response(events);
+    };
+  };
+  it("allowlists 6.1 without changing either default", () => {
+    assert.equal(policy.directProviderConfigError(config("openai"), "openai/gpt-6.1-sol", "medium"), null);
+    assert.equal(policy.DIRECT_MODELS.openai, "openai/gpt-6-astra");
+    assert.equal(m.DEFAULT_AGENT_MODEL, "openai/gpt-6-astra");
+    assert.equal(policy.directProviderConfigError(config("openai"), "openai/unknown", "medium"), "direct_provider_model_mismatch");
+  });
+  it("counts exact input-affecting fields before durable reservation then generation", async () => {
+    solMock(); const o = solOpts(); let saved = m.newUsageLedger();
+    o.beforeDirectDispatch = async () => { assert.equal(requests.length, 1); saved = structuredClone(o.usage); return true; };
+    const r = await m.chat(o);
+    assert.equal(r.ok, true); assert.equal(requests.length, 2);
+    assert.equal(requests[0].url, "https://api.openai.com/v1/responses/input_tokens");
+    assert.equal(requests[1].url, "https://api.openai.com/v1/responses");
+    for (const key of ["model", "input", "tools", "tool_choice", "reasoning"]) assert.deepEqual(requests[0].body[key], requests[1].body[key]);
+    for (const key of ["stream", "store", "max_output_tokens", "include", "service_tier"]) assert.equal(requests[0].body[key], undefined);
+    assert.equal(requests[1].body.model, "gpt-6.1-sol");
+    assert.equal(requests[1].body.max_output_tokens, 16384);
+    assert.equal(saved!.direct_provider_attempts![0].outcome, "pending");
+    assert.equal(saved!.direct_provider_attempts![0].reserved_usd, 0.180499);
+    assert.equal(r.direct_attempt!.settled_upper_usd, 0.000495);
+    assert.equal(r.direct_attempt!.estimated_usd, 0.000353);
+    assert.equal(r.direct_attempt!.price_version, "sol61-standard-2026-10-03");
+  });
+  it("counts encrypted replay unchanged across a checkpoint", async () => {
+    solMock(); const a = solOpts(); const r = await m.chat(a);
+    const history = [...a.messages, { role: "assistant", content: r.content, reasoning_items: r.reasoning_items,
+      replay_seq: r.replay_seq, tool_calls: r.tool_calls.map(c => ({ id: c.id, type: "function", function: { name: c.name, arguments: c.arguments } })) },
+      { role: "tool", content: "synthetic", tool_call_id: "call_1" }];
+    const b = solOpts({ messages: jsonbKeyOrder(history), usage: jsonbKeyOrder(a.usage) as m.UsageLedger });
+    assert.equal((await m.chat(b)).ok, true);
+    assert.deepEqual(requests[2].body.input, requests[3].body.input);
+    assert(requests[2].body.input!.some(x => x.encrypted_content === "opaque-encrypted-not-logged"));
+  });
+  for (const count of [null, -1, 1.1, "100"]) it(`rejects invalid exact count ${String(count)} without generation`, async () => {
+    solMock(count); const r = await m.chat(solOpts());
+    assert.equal(r.error, "direct_input_count_invalid"); assert.equal(requests.length, 1);
+  });
+  it("rejects long context before generation", async () => {
+    solMock(272001); const r = await m.chat(solOpts()); assert.equal(r.error, "direct_input_count_limit"); assert.equal(requests.length, 1);
+  });
+  it("counts cache writes and output cap in worst case including long-context helper", () => {
+    assert.equal(direct.sol61UpperUsd(272000, 16384), 0.928224);
+    assert.equal(direct.sol61UpperUsd(272001, 16384), 1.7663415);
+  });
+  it("refuses to reserve beyond remaining two-dollar native allowance", async () => {
+    solMock(); const ledger = m.newUsageLedger();
+    ledger.direct_provider_attempts = [{ ...usage.emptyDirectUsage(), provider: "openai", requested_model: "gpt-6.1-sol", outcome: "ok", reserved_usd: 1.99, settled_upper_usd: 1.99 } as usage.DirectAttempt];
+    const r = await m.chat(solOpts({ usage: ledger }));
+    assert.equal(r.error, "direct_native_budget_exhausted"); assert.equal(requests.length, 1);
+  });
+  it("checkpoint failure never dispatches generation", async () => {
+    solMock(); const r = await m.chat(solOpts({ beforeDirectDispatch: async () => false }));
+    assert.equal(r.error, "direct_checkpoint_failed"); assert.equal(requests.length, 1);
+  });
+  it("count endpoint failure has no generation fallback", async () => {
+    enabled = "openai"; globalThis.fetch = async (u) => { requests.push({ url: String(u), body: {} }); return new Response("not read", { status: 404 }); };
+    assert.equal((await m.chat(solOpts())).error, "direct_input_count_unavailable"); assert.equal(requests.length, 1);
+  });
+  it("fails closed if receipt exceeds exact preflight", async () => {
+    solMock(99); const o = solOpts(); const r = await m.chat(o);
+    assert.equal(r.error, "direct_budget_receipt_mismatch"); assert.equal(r.direct_attempt!.settled_upper_usd, undefined);
+    assert.equal(direct.sol61ReservedUsage(o.usage.direct_provider_attempts!), null);
+  });
+  it("unknown stream retains full reservation and blocks another count or generation", async () => {
+    solMock(100, []); const o = solOpts(); const r = await m.chat(o);
+    assert.equal(r.ok, false); assert.equal(r.direct_attempt!.reserved_usd, 0.180499);
+    assert.equal((await m.chat(o)).error, "direct_attempt_reconciliation_required"); assert.equal(requests.length, 2);
+  });
+  it("cannot change direct OpenAI model across calls", async () => {
+    solMock(); const o = solOpts(); assert.equal((await m.chat(o)).ok, true);
+    assert.equal((await m.chat(opts({ usage: o.usage }))).error, "direct_provider_route_changed"); assert.equal(requests.length, 2);
+  });
+  it("unknown cache categories preserve a conservative bound without inventing exact price", async () => {
+    solMock(100, oEvents({ model: "gpt-6.1-sol", usage: { input_tokens: 100, output_tokens: 20 } }));
+    const r = await m.chat(solOpts()); assert.equal(r.ok, true); assert.equal(r.direct_attempt!.estimated_usd, null);
+    assert.equal(r.direct_attempt!.settled_upper_usd, 0.000495);
+  });
+  it("concurrent count completions cannot both reserve a shared ledger", async () => {
+    solMock(); const ledger = m.newUsageLedger(); let release: () => void = () => {};
+    const wait = new Promise<void>(resolve => { release = resolve; });
+    const a = m.chat(solOpts({ usage: ledger, beforeDirectDispatch: async () => { await wait; return true; } }));
+    while (!ledger.direct_provider_attempts?.length) await Promise.resolve();
+    const b = await m.chat(solOpts({ usage: ledger }));
+    assert.equal(b.error, "direct_attempt_reconciliation_required"); release(); assert.equal((await a).ok, true);
+    assert.equal(requests.length, 2);
+  });
+});
+
+
+describe("Sol 6.1 price receipt fences", () => {
+  for (const receipt of [{ service_tier: "priority" }, { inference_geo: "us" }, { service_tier: null }]) {
+    it(`retains reservation and stops on incompatible price receipt ${JSON.stringify(receipt)}`, async () => {
+      enabled = "openai";
+      globalThis.fetch = async (u, req) => {
+        requests.push({ url: String(u), body: JSON.parse(String(req!.body)) });
+        return String(u).endsWith("/input_tokens") ? Response.json({ object: "response.input_tokens", input_tokens: 100 }) :
+          response(oEvents({ model: "gpt-6.1-sol", ...receipt }));
+      };
+      const o = opts({ model: "openai/gpt-6.1-sol" }); const r = await m.chat(o);
+      assert.equal(r.error, "direct_price_tier_or_geo_mismatch");
+      assert.equal(r.direct_attempt!.settled_upper_usd, undefined);
+      assert.equal(r.direct_attempt!.reserved_usd, 0.180499);
+      assert.equal(direct.sol61ReservedUsage(o.usage.direct_provider_attempts!), null);
+    });
+  }
+});
