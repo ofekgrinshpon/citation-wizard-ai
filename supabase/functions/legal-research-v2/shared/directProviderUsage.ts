@@ -25,7 +25,11 @@ export interface DirectAttempt extends DirectUsage {
   duration_ms: number;
   outcome: "pending" | "not_sent" | "ok" | "http_error" | "network_unknown" | "stream_unknown" | "aborted_unknown" |
     "incomplete" | "refusal" | "invalid_output" | "model_mismatch" | "usage_missing";
-  price_version: "direct-standard-2026-10-03";
+  /** Sol 6.1 pre-dispatch reservation; unknown attempts retain the whole amount. */
+  counted_input_tokens?: number;
+  reserved_usd?: number;
+  settled_upper_usd?: number;
+  price_version: "direct-standard-2026-10-03" | "sol61-standard-2026-10-03";
   effort: "medium";
   usage_complete: boolean;
 }
@@ -41,8 +45,11 @@ export const tokenCount = (value: unknown): number | null =>
 export const safeProviderId = (value: unknown): string | null =>
   typeof value === "string" && /^[a-zA-Z0-9][a-zA-Z0-9_-]{0,199}$/.test(value) ? value : null;
 
+export const safeProviderModelId = (value: unknown): string | null =>
+  typeof value === "string" && /^[a-zA-Z0-9][a-zA-Z0-9_.-]{0,199}$/.test(value) ? value : null;
+
 /** List-price estimate, never an invoice, balance, or spend authorization. */
-export function nativeUsage(provider: DirectProvider, raw: unknown): DirectUsage {
+export function nativeUsage(provider: DirectProvider, raw: unknown, model = "gpt-6-astra"): DirectUsage {
   const u = object(raw), out = emptyDirectUsage();
   out.output_tokens = tokenCount(u.output_tokens);
   if (provider === "anthropic") {
@@ -77,8 +84,9 @@ export function nativeUsage(provider: DirectProvider, raw: unknown): DirectUsage
       out.uncached_input_tokens = out.input_tokens - out.cache_read_input_tokens - out.cache_write_input_tokens;
       if (out.output_tokens !== null) {
         const long = out.input_tokens > 272_000;
-        out.estimated_usd = ((out.uncached_input_tokens * 10 + out.cache_read_input_tokens * 1 + out.cache_write_input_tokens * 12.5) *
-          (long ? 2 : 1) + out.output_tokens * 50 * (long ? 1.5 : 1)) / 1_000_000;
+        const prices = model === "gpt-6.1-sol" ? [2, 0.1, 2.5, 10] : model === "gpt-6-astra" ? [10, 1, 12.5, 50] : null;
+        if (prices) out.estimated_usd = ((out.uncached_input_tokens * prices[0] + out.cache_read_input_tokens * prices[1] + out.cache_write_input_tokens * prices[2]) *
+          (long ? 2 : 1) + out.output_tokens * prices[3] * (long ? 1.5 : 1)) / 1_000_000;
       }
     }
   }

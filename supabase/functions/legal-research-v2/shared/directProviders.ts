@@ -1,7 +1,7 @@
 /** Native, internal-only provider boundary. No retry, fallback, or content logging. */
 import type { ChatMessage, ChatResult, ChatToolCall, ToolSpec, UsageLedger } from "./model.ts";
-import { DIRECT_LIMITS, DIRECT_MODELS, directProviderConfigError, type DirectProviderConfig } from "./directProviderPolicy.ts";
-import { emptyDirectUsage, nativeUsage, object, safeProviderId, type DirectAttempt } from "./directProviderUsage.ts";
+import { DIRECT_LIMITS, DIRECT_MODELS, SOL61_PILOT_NATIVE_BUDGET_USD, directProviderConfigError, type DirectProviderConfig } from "./directProviderPolicy.ts";
+import { emptyDirectUsage, nativeUsage, object, safeProviderId, safeProviderModelId, tokenCount, type DirectAttempt } from "./directProviderUsage.ts";
 
 declare const Deno: { env: { get(key: string): string | undefined } };
 type Json = Record<string, unknown>;
@@ -251,8 +251,30 @@ async function readEvents(body: ReadableStream<Uint8Array>, signal: AbortSignal,
   }
 }
 
+/** Cache-write worst case plus 10% regional contingency; output includes hidden reasoning. */
+export function sol61UpperUsd(input: number, output: number): number {
+  const long = input > 272_000;
+  return Math.ceil((input * (long ? 5 : 2.5) + output * (long ? 15 : 10)) * 110) / 100_000_000;
+}
+export function sol61ReservedUsage(attempts: DirectAttempt[]): number | null {
+  let total = 0;
+  for (const a of attempts) {
+    if (a.requested_model !== "gpt-6.1-sol" || a.provider !== "openai") return null;
+    if (a.outcome === "not_sent") continue;
+    // Fail closed on uncertain/failed history, even if the reservation remains held.
+    if (a.outcome !== "ok" || typeof a.settled_upper_usd !== "number" || !Number.isFinite(a.settled_upper_usd) ||
+      a.settled_upper_usd < 0 || typeof a.reserved_usd !== "number" || !Number.isFinite(a.reserved_usd) ||
+      a.reserved_usd < 0 || a.settled_upper_usd > a.reserved_usd + 1e-10) return null;
+    total += a.settled_upper_usd;
+  }
+  return total;
+}
+
 export async function directChat(opts: DirectOptions): Promise<ChatResult> {
   const { provider } = opts.config;
+  const wireModel = provider === "anthropic" ? DIRECT_MODELS.anthropic : opts.model.replace(/^openai\//, "");
+  const sol61 = provider === "openai" && wireModel === "gpt-6.1-sol";
+  const outputLimit = opts.config.max_output_tokens;
   const configError = directProviderConfigError(opts.config, opts.model, opts.reasoningEffort);
   if (configError) return fail(400, configError);
   // This gate remains unset in production. Enabling it requires separate rollout/budget approval.
@@ -263,7 +285,7 @@ export async function directChat(opts: DirectOptions): Promise<ChatResult> {
   if (opts.usage.direct_provider_attempts?.some(a => ["pending", "network_unknown", "stream_unknown", "aborted_unknown"].includes(a.outcome))) {
     return fail(409, "direct_attempt_reconciliation_required");
   }
-  if (opts.usage.direct_provider_attempts?.some(a => a.provider !== provider)) return fail(400, "direct_provider_route_changed");
+  if (opts.usage.direct_provider_attempts?.some(a => a.provider !== provider || a.requested_model !== wireModel)) return fail(400, "direct_provider_route_changed");
   if ((opts.usage.direct_provider_attempts?.length ?? 0) >= DIRECT_LIMITS.maxAttempts) return fail(400, "direct_attempt_limit");
   let body: Json, prefixHash = "";
   try {
@@ -273,9 +295,9 @@ export async function directChat(opts: DirectOptions): Promise<ChatResult> {
       if (opts.messages.some(m => m.native_replay)) bad("direct_cross_provider_replay");
       const input = directResponsesInput(opts.messages, opts.responsesInput);
       body = {
-        model: "gpt-6-astra", input, stream: true, store: false,
+        model: wireModel, input, stream: true, store: false,
         include: ["reasoning.encrypted_content"], reasoning: { effort: "medium", summary: "auto" },
-        max_output_tokens: opts.config.max_output_tokens, service_tier: "default",
+        max_output_tokens: outputLimit, service_tier: "default",
         ...(opts.tools?.length ? {
           tools: opts.tools.map(t => ({ type: "function", name: t.name, description: t.description, parameters: t.parameters, strict: false })),
           tool_choice: typeof opts.toolChoice === "object" ? { type: "function", name: opts.toolChoice.name } : (opts.toolChoice ?? "auto"),
@@ -289,11 +311,45 @@ export async function directChat(opts: DirectOptions): Promise<ChatResult> {
   const apiKey = Deno.env.get(keyName);
   if (!apiKey) return fail(401, "direct_provider_key_missing");
   if (opts.signal?.aborted) return fail(499, "direct_aborted_before_dispatch");
-  const wireModel = provider === "anthropic" ? DIRECT_MODELS.anthropic : "gpt-6-astra";
+  let countedInput: number | undefined, reservation: number | undefined;
+  if (sol61) {
+    // No local byte/token heuristic for opaque encrypted reasoning or tool schemas.
+    // Count the exact input items, tool definitions and choice used by generation.
+    const controller = new AbortController();
+    const abort = () => controller.abort();
+    opts.signal?.addEventListener("abort", abort, { once: true });
+    const timer = setTimeout(abort, 30_000);
+    try {
+      const countResponse = await fetch("https://api.openai.com/v1/responses/input_tokens", {
+        method: "POST", headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+        body: JSON.stringify({ model: body.model, input: body.input, reasoning: body.reasoning,
+          ...(body.tools ? { tools: body.tools, tool_choice: body.tool_choice } : {}), truncation: "disabled" }),
+        signal: controller.signal,
+      });
+      if (!countResponse.ok) { try { await countResponse.body?.cancel(); } catch { /* cleanup */ }
+        return fail(countResponse.status, "direct_input_count_unavailable"); }
+      const text = await countResponse.text();
+      if (text.length > 16_384) return fail(502, "direct_input_count_invalid");
+      const count = object(JSON.parse(text));
+      const n = tokenCount(count.input_tokens);
+      if (count.object !== "response.input_tokens" || n === null) return fail(502, "direct_input_count_invalid");
+      countedInput = n;
+      // Preserve short-context comparison; do not silently pay the long-context tariff.
+      if (n > 272_000) return fail(400, "direct_input_count_limit");
+      reservation = sol61UpperUsd(n, outputLimit);
+      const spent = sol61ReservedUsage(opts.usage.direct_provider_attempts ?? []);
+      if (spent === null || spent + reservation > SOL61_PILOT_NATIVE_BUDGET_USD + 1e-10) {
+        return fail(402, "direct_native_budget_exhausted");
+      }
+    } catch { return fail(502, "direct_input_count_unavailable"); }
+    finally { clearTimeout(timer); opts.signal?.removeEventListener("abort", abort); }
+    if (opts.signal?.aborted) return fail(499, "direct_aborted_before_dispatch");
+  }
   const attempt: DirectAttempt = {
     ...emptyDirectUsage(), attempt_id: crypto.randomUUID(), provider, endpoint: provider === "anthropic" ? "messages" : "responses",
     requested_model: wireModel, response_model: null, provider_request_id: null, provider_response_id: null,
-    http_status: 0, duration_ms: 0, outcome: "pending", price_version: "direct-standard-2026-10-03", effort: "medium", usage_complete: false,
+    http_status: 0, duration_ms: 0, outcome: "pending", price_version: sol61 ? "sol61-standard-2026-10-03" : "direct-standard-2026-10-03",
+    ...(sol61 ? { counted_input_tokens: countedInput, reserved_usd: reservation } : {}), effort: "medium", usage_complete: false,
   };
   (opts.usage.direct_provider_attempts ??= []).push(attempt);
   let checkpointed = false;
@@ -307,8 +363,9 @@ export async function directChat(opts: DirectOptions): Promise<ChatResult> {
   const timeout = setTimeout(() => controller.abort(), DIRECT_LIMITS.timeoutMs);
   let result = fail(502, "direct_unknown_failure");
   let responseStarted = false;
+  let priceReceiptCompatible = true;
   const recordUsage = (usage: unknown) => {
-    Object.assign(attempt, nativeUsage(provider, usage));
+    Object.assign(attempt, nativeUsage(provider, usage, wireModel));
     attempt.usage_complete = attempt.input_tokens !== null && attempt.output_tokens !== null;
   };
   try {
@@ -335,7 +392,7 @@ export async function directChat(opts: DirectOptions): Promise<ChatResult> {
         if (event.type === "message_start") {
           if (seenStart) bad("direct_invalid_stream_order");
           seenStart = true; const m = object(event.message);
-          attempt.response_model = safeProviderId(m.model);
+          attempt.response_model = safeProviderModelId(m.model);
           if (m.model !== wireModel) { attempt.outcome = "model_mismatch"; bad("direct_model_mismatch"); }
           attempt.provider_response_id = safeProviderId(m.id);
           rawUsage = object(m.usage);
@@ -389,9 +446,12 @@ export async function directChat(opts: DirectOptions): Promise<ChatResult> {
         if (event.type === "error") bad("direct_provider_stream_error");
         return false;
       });
-      attempt.response_model = safeProviderId(terminal.model);
+      attempt.response_model = safeProviderModelId(terminal.model);
       attempt.provider_response_id = safeProviderId(terminal.id);
-      recordUsage({ ...object(terminal.usage), ...(terminal.service_tier ? { service_tier: terminal.service_tier } : {}) });
+      recordUsage({ ...object(terminal.usage), ...(terminal.service_tier ? { service_tier: terminal.service_tier } : {}),
+        ...(terminal.inference_geo ? { inference_geo: terminal.inference_geo } : {}) });
+      priceReceiptCompatible = ["default", "standard"].includes(String(terminal.service_tier)) &&
+        (terminal.inference_geo === undefined || terminal.inference_geo === "global");
       if (terminal.model !== wireModel) { attempt.outcome = "model_mismatch"; result = fail(502, "direct_model_mismatch"); }
       else if (terminalType !== "response.completed" || terminal.status !== "completed") {
         attempt.outcome = terminalType === "response.incomplete" ? "incomplete" : "invalid_output";
@@ -427,6 +487,16 @@ export async function directChat(opts: DirectOptions): Promise<ChatResult> {
           reasoning_items_forwarded: (body!.input as Json[]).filter(x => x.type === "reasoning").length,
         };
       }
+    }
+    if (sol61 && !priceReceiptCompatible) {
+      result = fail(502, "direct_price_tier_or_geo_mismatch"); attempt.outcome = "invalid_output";
+    }
+    if (sol61 && attempt.input_tokens !== null && attempt.output_tokens !== null) {
+      const upper = sol61UpperUsd(attempt.input_tokens, attempt.output_tokens);
+      if (attempt.input_tokens > (countedInput ?? -1) || attempt.output_tokens > outputLimit ||
+        upper > (reservation ?? -1) + 1e-10) {
+        result = fail(502, "direct_budget_receipt_mismatch"); attempt.outcome = "invalid_output";
+      } else if (result.ok && attempt.response_model === wireModel) attempt.settled_upper_usd = upper;
     }
     if (result.ok && !attempt.usage_complete) { attempt.outcome = "usage_missing"; result = fail(502, "direct_usage_missing"); }
   } catch (e) {
