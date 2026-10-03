@@ -577,7 +577,10 @@ export async function runResearchAgent(opts: {
   const baseSpecs: ToolSpec[] = opts.intake.agent_authored_answer
     ? [...TOOL_SPECS.map((t) => (t === MEMO_TOOL ? memoTool : t)), CONFIRM_MEMO_TOOL] as ToolSpec[]
     : [...TOOL_SPECS, CONFIRM_MEMO_TOOL];
-  const toolSpecs: ToolSpec[] = askUserAllowed ? [...baseSpecs, ASK_USER_TOOL as ToolSpec] : baseSpecs;
+  // Native signed thinking binds tool definitions even during repairs. Keep
+  // the declaration stable; the per-turn local allowlist enforces repair policy.
+  const keepAskDeclaration = opts.intake.agent_direct_provider?.provider === "anthropic" && !!opts.intake.ask_user_enabled;
+  const toolSpecs: ToolSpec[] = askUserAllowed || keepAskDeclaration ? [...baseSpecs, ASK_USER_TOOL as ToolSpec] : baseSpecs;
   let awaitingUser: AskUserRequest | null = null;
 
   const replayReasoning = reasoningReplayEnabled();
@@ -699,7 +702,12 @@ export async function runResearchAgent(opts: {
       // Stale tool payloads are replaced by their digests and a single rolling
       // research-state message carries what the next decision needs. The full
       // bodies never left the evidence store in the first place.
-      const compaction = compactAgentMessages(dropPriorStateMessages(messages));
+      // Opus 5.5 signatures bind the entire prior prefix. Rewriting an old
+      // state/tool/text message invalidates them. Pilot stays append-only;
+      // request-size overflow fails closed in the native adapter, never truncates.
+      const compaction = opts.intake.agent_direct_provider?.provider === "anthropic"
+        ? { messages: [...messages], compacted: 0, chars_saved: 0 }
+        : compactAgentMessages(dropPriorStateMessages(messages));
       if (compaction.compacted) {
         stats.context_compactions += compaction.compacted;
         stats.context_chars_saved += compaction.chars_saved;
@@ -719,14 +727,25 @@ export async function runResearchAgent(opts: {
       // Research capacity is reserved: once the research phase closes, the memo
       // tool is the ONLY tool the agent can still call.
       const forceMemo = policy.researchExhausted();
-      if (replayReasoning) {
+      if (replayReasoning && !opts.intake.agent_direct_provider) {
         const { dropped_items } = enforceReplayBudget(messages);
         if (dropped_items) stats.reasoning_items_dropped = (stats.reasoning_items_dropped ?? 0) + dropped_items;
+      }
+      if (forceMemo && opts.intake.agent_direct_provider?.provider === "anthropic") {
+        messages.push({ role: "user", content: pending?.confirmable
+          ? `Research is closed. Call ${memoTool.name}, or confirm_existing_memo alone if the existing reflection permits it. Do not call research tools.`
+          : `Research is closed. Call ${memoTool.name} now with the complete structured memo. Do not call another tool.` });
       }
       contextChars = messages.reduce((n, m) => n + (m.content?.length ?? 0), 0);
       const modelStarted = Date.now();
       res = await chat({
         model: opts.model,
+        ...(opts.intake.agent_direct_provider ? {
+          directProvider: opts.intake.agent_direct_provider,
+          allowedToolNames: forceMemo ? (pending?.confirmable ? [memoTool.name, CONFIRM_MEMO_TOOL_NAME] : [memoTool.name])
+            : toolSpecs.filter(t => askUserAllowed || t.name !== ASK_USER_TOOL.name).map(t => t.name),
+          beforeDirectDispatch: opts.checkpoint ? checkpointToolTurn : undefined,
+        } : {}),
         messages,
         // Same tools array every turn (stable cache prefix); forcing is by toolChoice.
         tools: toolSpecs,
@@ -744,14 +763,21 @@ export async function runResearchAgent(opts: {
       stats.reasoning_items_forwarded = (stats.reasoning_items_forwarded ?? 0) + (res.reasoning_items_forwarded ?? 0);
       stats.reasoning_items_captured = (stats.reasoning_items_captured ?? 0) + (res.reasoning_items?.length ?? 0);
       if (res.replay_fallback) stats.reasoning_replay_fallback_turns = (stats.reasoning_replay_fallback_turns ?? 0) + 1;
-      const reasoningField = res.reasoning_items?.length
-        ? { reasoning_items: res.reasoning_items, replay_seq: res.replay_seq }
-        : {};
+      const reasoningField = {
+        ...((res.reasoning_items?.length || opts.intake.agent_direct_provider?.provider === "openai")
+          ? { reasoning_items: res.reasoning_items ?? [], replay_seq: res.replay_seq } : {}),
+        ...(res.native_replay ? { native_replay: res.native_replay } : {}),
+      };
       timer.add("agent_model", modelMs);
       await opts.heartbeat?.();
       if (!res.ok) {
         error = `agent_model_error_${res.http_status}: ${res.error ?? ""}`.slice(0, 300);
         // Evaluation failures must not be hidden by a repair retaining its old memo.
+        if (opts.intake.agent_direct_provider) {
+          opts.usage.direct_provider_failed = true;
+          await checkpointToolTurn();
+          throw new Error(`direct_provider_experiment_failed:${res.error ?? "model_error"}`);
+        }
         if (opts.intake.agent_reasoning_effort === "max") {
           throw new Error(res.error === "reasoning_effort_mismatch"
             ? "max_reasoning_experiment_failed:reasoning_effort_mismatch"
@@ -784,6 +810,7 @@ export async function runResearchAgent(opts: {
           break;
         }
         trace.push({ step: policy.steps, tool: "no_tool_nudge", input: {}, summary: "no tool call" });
+        if (opts.intake.agent_direct_provider && !await checkpointToolTurn()) { paused = true; break; }
         continue;
       }
 
@@ -823,6 +850,7 @@ export async function runResearchAgent(opts: {
           });
         }
         trace.push({ step: policy.steps, tool: CONFIRM_MEMO_TOOL_NAME, input: {}, summary: "rejected_mixed" });
+        if (opts.intake.agent_direct_provider && !await checkpointToolTurn()) { paused = true; break; }
         continue;
       }
 
@@ -1634,7 +1662,7 @@ export async function runResearchAgent(opts: {
     if (memo) break;
     if (awaitingUser) break;
 
-    if (replayReasoning) {
+    if (replayReasoning && !opts.intake.agent_direct_provider) {
       const { dropped_items } = enforceReplayBudget(messages);
       if (dropped_items) stats.reasoning_items_dropped = (stats.reasoning_items_dropped ?? 0) + dropped_items;
     }
@@ -1666,6 +1694,11 @@ export async function runResearchAgent(opts: {
   }
 
   if (!memo && !error && !paused && !awaitingUser) error = "agent_step_budget_exhausted_without_memo";
+  if (opts.intake.agent_direct_provider && error) {
+    opts.usage.direct_provider_failed = true;
+    await checkpointToolTurn();
+    throw new Error(`direct_provider_experiment_failed:${error}`);
+  }
   return {
     memo, error, paused, trace, policy, discovered, messages, commit, ledger, stats,
     pending_coverage: memo ? null : pending,
