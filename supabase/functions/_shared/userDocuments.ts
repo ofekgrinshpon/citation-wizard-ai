@@ -9,7 +9,6 @@
  * Used by legal-research-v2 (production) and available to V1 during rollback.
  */
 
-import { extractText, getDocumentProxy } from "npm:unpdf@0.12.1";
 import mammoth from "npm:mammoth@1.8.0";
 
 import {
@@ -44,6 +43,7 @@ function withTimeout<T>(p: Promise<T>, ms: number, label: string): Promise<T> {
 }
 
 async function extractPdfPages(bytes: Uint8Array): Promise<string[]> {
+  const { extractText, getDocumentProxy } = await import("npm:unpdf@0.12.1");
   const pdf = await getDocumentProxy(bytes);
   const { text } = await extractText(pdf, { mergePages: false });
   const pages = Array.isArray(text) ? text : [String(text ?? "")];
@@ -65,6 +65,9 @@ async function extractDocxText(bytes: Uint8Array): Promise<string> {
 }
 
 export interface ExtractDeps {
+  /** V2 supplies an isolated parser; failure must never fall back to inline work. */
+  extractPdfPages?: (bytes: Uint8Array, deadlineAt: number) => Promise<{ pages: string[]; truncated: boolean }>;
+
   /** Canonical docket detector of the calling runtime. */
   detectDockets?: (text: string) => Array<{ docket_id: string; number: string }>;
   /** Dockets named in the question — these files get the expanded limits. */
@@ -134,12 +137,19 @@ export async function extractUserDocuments(
       const bytes = new Uint8Array(arrBuf);
 
       let rawPages: string[];
+      let extractionTruncated = false;
       if (base.kind === "pdf") {
-        rawPages = await withTimeout(
-          extractPdfPages(bytes),
-          ATTACHMENT_LIMITS.PER_FILE_TIMEOUT_MS,
-          "pdf",
-        );
+        if (deps.extractPdfPages) {
+          const parsed = await deps.extractPdfPages(bytes, Math.min(
+            t0 + ATTACHMENT_LIMITS.TOTAL_TIMEOUT_MS,
+            Date.now() + ATTACHMENT_LIMITS.PER_FILE_TIMEOUT_MS,
+          ));
+          rawPages = parsed.pages;
+          extractionTruncated = parsed.truncated;
+        } else {
+          // Compatibility for V1 callers only; V2 always injects isolation.
+          rawPages = await withTimeout(extractPdfPages(bytes), ATTACHMENT_LIMITS.PER_FILE_TIMEOUT_MS, "pdf");
+        }
       } else {
         const raw = await withTimeout(
           extractDocxText(bytes),
@@ -169,8 +179,9 @@ export async function extractUserDocuments(
         matched_dockets: [...new Set(matched)],
         remaining_global_chars: ATTACHMENT_LIMITS.MAX_CHARS_TOTAL - totalChars,
       });
+      doc.truncated = doc.truncated || extractionTruncated;
       totalChars += doc.total_chars;
-      if (doc.truncated) globalTruncated = globalTruncated || false;
+      if (doc.truncated) globalTruncated = true;
       documents.push(doc);
       continue;
     } catch (e) {

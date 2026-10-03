@@ -9,7 +9,7 @@
 
 import type { EvidenceStore } from "./evidenceStore.ts";
 import type { EvidenceSource, Intake } from "../types.ts";
-import { detectDockets, type SupabaseClient } from "../shared/primitives.ts";
+import { extractPdfPagesBounded, detectDockets, type SupabaseClient } from "../shared/primitives.ts";
 import {
   type AttachmentManifestEntry,
   buildAttachmentManifest,
@@ -133,7 +133,19 @@ export async function preloadUserDocuments(
     admin as unknown as Parameters<typeof extractUserDocuments>[0],
     ownerId,
     attachments,
-    { detectDockets, priorityDocketNumbers: priority },
+    {
+      detectDockets, priorityDocketNumbers: priority,
+      extractPdfPages: async (bytes, deadlineAt) => {
+        const result = await extractPdfPagesBounded(bytes, {
+          maxPages: 24, maxChars: 200_000, deadlineMs: 12_000, deadlineAt,
+        });
+        if (!result.text) throw new Error(`pdf_empty_extraction:${result.stopped_reason}`);
+        // Empty/error pages retain their physical index. Partial acquisition
+        // is explicitly marked in the existing attachment manifest/telemetry.
+        const pages = result.pages.map((page) => result.text.slice(page.start, page.end));
+        return { pages, truncated: result.stopped_reason !== "document_end" || result.pages.some((p) => p.status === "error") };
+      },
+    },
   );
   const { manifest, telemetry } = await preloadExtractedDocuments(
     store,

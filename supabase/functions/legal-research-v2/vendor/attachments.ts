@@ -6,7 +6,6 @@
 // (2) optionally injecting per-chunk citable "user_document" sources into
 // the drafter.
 
-import { extractText, getDocumentProxy } from "npm:unpdf@0.12.1";
 import mammoth from "npm:mammoth@1.8.0";
 import type { SupabaseClient } from "./supabaseClientType.ts";
 import { detectDockets } from "./docketDetection.ts";
@@ -110,6 +109,7 @@ function chunkText(raw: string, chunkSize: number, maxChunks: number): string[] 
 }
 
 async function extractPdf(bytes: Uint8Array): Promise<string[]> {
+  const { extractText, getDocumentProxy } = await import("npm:unpdf@0.12.1");
   // unpdf returns either { text: string } or { text: string[] } depending
   // on options. We use mergePages: false to get per-page strings.
   const pdf = await getDocumentProxy(bytes);

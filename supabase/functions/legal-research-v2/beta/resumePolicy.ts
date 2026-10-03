@@ -16,6 +16,8 @@
  * worker, and refuses to do so more than a fixed number of times.
  */
 
+import { isDirectPilotState } from "../shared/directProviderPolicy.ts";
+
 export const RESUME_WATCHDOG = {
   /** No liveness beat for this long ⇒ no executor owns the run. */
   STALE_MS: 180_000,
@@ -36,6 +38,7 @@ export const RESUME_WATCHDOG = {
 } as const;
 
 export type StallClass =
+  | "direct_pilot_requires_review"
   | "recoverable_no_executor"
   | "still_alive"
   | "terminal_status"
@@ -48,7 +51,7 @@ export interface WatchdogRow {
   run_id: string;
   status: string | null;
   /** The persisted checkpoint envelope: `{ resume, intake, job?, stage? }`. */
-  agent_state: { resume?: unknown; stage?: string | null } | null;
+  agent_state: { resume?: unknown; stage?: string | null; intake?: unknown } | null;
   last_beat_at: string | null;
   created_at: string | null;
   auto_resume_count: number | null;
@@ -86,6 +89,10 @@ export function classifyStall(row: WatchdogRow, now: number): StallClass {
   if (now - beat < RESUME_WATCHDOG.STALE_MS) return "still_alive";
   const claimed = ms(row.watchdog_claimed_at);
   if (claimed !== null && now - claimed < RESUME_WATCHDOG.CLAIM_TTL_MS) return "claimed_by_other";
+  // Staleness is not proof that a paid request did not finish. A direct pilot
+  // remains pinned and its checkpoint/cost ledger must be reconciled before
+  // any operator authorizes another run. This decision performs no takeover.
+  if (isDirectPilotState(row.agent_state)) return "direct_pilot_requires_review";
   if (!row.agent_state?.resume) return "no_checkpoint";
   const created = ms(row.created_at);
   if (created !== null && now - created > RESUME_WATCHDOG.MAX_RUN_AGE_MS) {
@@ -112,8 +119,8 @@ export function decideAutoResume(row: WatchdogRow, now: number): ResumeDecision 
     automatic_resume_terminal_failure: reason === "resume_budget_exhausted" ||
       reason === "abandoned_too_old",
     manual_resume_required: reason === "resume_budget_exhausted" ||
-      reason === "no_checkpoint" || reason === "abandoned_too_old",
-    duplicate_resume_prevented: reason === "claimed_by_other",
+      reason === "no_checkpoint" || reason === "abandoned_too_old" || reason === "direct_pilot_requires_review",
+    duplicate_resume_prevented: reason === "claimed_by_other" || reason === "direct_pilot_requires_review",
   };
 }
 

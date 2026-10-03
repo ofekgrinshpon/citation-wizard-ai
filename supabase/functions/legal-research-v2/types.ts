@@ -23,6 +23,12 @@ export type AcquisitionStatus =
 
 /** Bounded PDF extraction observability for one source. */
 export interface PdfExtractionMeta {
+  /** Actual acquired document URL (can differ from its repository landing URL). */
+  document_url?: string;
+  /** Exact binary identity prevents appending later pages from a changed PDF. */
+  sha256?: string;
+  /** Physical pages read/empty/failed. No offsets into canonicalized evidence are inferred. */
+  pages?: Array<{ page: number; status: "read" | "empty" | "error" }>;
   total_pages?: number;
   pages_attempted?: number;
   pages_extracted?: number;
@@ -32,6 +38,8 @@ export interface PdfExtractionMeta {
   stop_reason?: string;
   /** Pages already read by a bounded continuation read. */
   continued_through_page?: number;
+  /** False means the final extracted page was cut mid-text; never claim fully read. */
+  last_page_complete?: boolean;
 }
 
 // ─── Intake ─────────────────────────────────────────────────────────────────

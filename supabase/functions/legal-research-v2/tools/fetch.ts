@@ -14,6 +14,12 @@
  */
 
 import type { EvidenceSource, PdfExtractionMeta, SearchResult } from "../types.ts";
+import { readBoundedBody } from "../../_shared/pdfExtractionProtocol.ts";
+
+async function pdfByteHash(bytes: Uint8Array): Promise<string> {
+  const digest = await crypto.subtle.digest("SHA-256", bytes as unknown as BufferSource);
+  return Array.from(new Uint8Array(digest), (b) => b.toString(16).padStart(2, "0")).join("");
+}
 import {
   type BibliographicMetadata,
   bibliographicFromSearch,
@@ -147,6 +153,7 @@ export async function extractByContentType(
   url: string,
   contentType: string,
   bytes: Uint8Array,
+  execution?: { signal?: AbortSignal; deadlineAt?: number },
 ): Promise<ExtractResult> {
   const ct = contentType.toLowerCase();
   const isPdf = ct.includes("pdf") || /\.pdf(\?|$)/i.test(url) ||
@@ -158,10 +165,15 @@ export async function extractByContentType(
         maxChars: FETCH_LIMITS.MAX_TEXT_CHARS,
         deadlineMs: FETCH_LIMITS.PDF_DEADLINE_MS,
         enoughChars: FETCH_LIMITS.PDF_ENOUGH_CHARS,
+        signal: execution?.signal,
+        deadlineAt: execution?.deadlineAt,
       });
       return {
         text: res.text,
         pdf: {
+          document_url: url,
+          sha256: await pdfByteHash(bytes),
+          pages: res.pages.map(({ page, status }) => ({ page, status })),
           total_pages: res.total_pages,
           pages_attempted: res.pages_attempted,
           pages_extracted: res.pages_extracted,
@@ -170,6 +182,7 @@ export async function extractByContentType(
           chars_extracted: res.chars_extracted,
           stop_reason: res.stopped_reason,
           continued_through_page: res.last_page_extracted ?? undefined,
+          last_page_complete: !res.pages.find((p) => p.page === res.last_page_extracted)?.truncated,
         },
         bibliographic: parsePdfInfoMetadata(res.info),
       };
@@ -544,7 +557,7 @@ async function runFetchBody(
     // PDF already acquired in this run — append-only, hard ceilings intact,
     // never the whole journal issue.
     if (input.want === "pdf_page_range" || input.want === "later_pages") {
-      const cont = await continuePdfRead(store, src, input);
+      const cont = await continuePdfRead(store, src, input, opts);
       if (cont) return clampFetchOutput(cont);
     }
 
@@ -901,7 +914,7 @@ async function runFetchBody(
         acquisition_note: authorityKey ? ledger?.advice(authorityKey) : undefined,
       });
     }
-    const buf = new Uint8Array(await res.arrayBuffer());
+    const buf = await readBoundedBody(res.body, FETCH_LIMITS.MAX_BYTES, controller.signal);
     if (buf.length > FETCH_LIMITS.MAX_BYTES) {
       entry = await store.append({
         url,
@@ -917,7 +930,7 @@ async function runFetchBody(
       return clampFetchOutput({ ok: false, source_id: entry.source_id, error: "document_too_large" });
     }
     const contentType = res.headers.get("content-type") ?? "";
-    let extracted = await extractByContentType(url, contentType, buf);
+    let extracted = await extractByContentType(finalUrl, contentType, buf, { signal: controller.signal, deadlineAt });
     let bodyContentType = contentType;
 
     // ── Repository landing page → the article itself ────────────────────
@@ -940,15 +953,16 @@ async function runFetchBody(
       const pdfUrl = normalizeMalformedUrl(link);
       if (!checkUrlSafety(pdfUrl).safe) continue;
       if (controller.signal.aborted || Date.now() >= deadlineAt) break;
+      if (opts?.reserveHttpAttempt && !opts.reserveHttpAttempt()) break;
       landingDocumentAttempted += 1;
       try {
         const pdfRes = await officialFetch(pdfUrl, { signal: controller.signal });
         const finalPdfUrl = typeof pdfRes.url === "string" && pdfRes.url ? pdfRes.url : pdfUrl;
         if (!pdfRes.ok || !checkUrlSafety(finalPdfUrl).safe) continue;
-        const pdfBuf = new Uint8Array(await pdfRes.arrayBuffer());
+        const pdfBuf = await readBoundedBody(pdfRes.body, FETCH_LIMITS.MAX_BYTES, controller.signal);
         if (pdfBuf.length > FETCH_LIMITS.MAX_BYTES) continue;
         const pdfCt = pdfRes.headers.get("content-type") ?? "application/pdf";
-        const body = await extractByContentType(pdfUrl, pdfCt, pdfBuf);
+        const body = await extractByContentType(finalPdfUrl, pdfCt, pdfBuf, { signal: controller.signal, deadlineAt });
         if (!body.error && body.text.trim().length > landingText) {
           repository_pdf_followed = true;
           bodyContentType = pdfCt;
@@ -1016,7 +1030,8 @@ async function runFetchBody(
       });
     }
   } catch (e) {
-    const msg = e instanceof Error ? e.message : String(e);
+    const rawMessage = e instanceof Error ? e.message : String(e);
+    const msg = rawMessage === "pdf_boundary_body_too_large" ? "document_too_large" : rawMessage;
     // A gate that prevented the FIRST request is not evidence of URL failure.
     // Do not poison the cache/authority ledger when no request was started.
     if (msg === "fetch_budget_exhausted" || msg === "fetch_deadline_exhausted") {
@@ -1032,6 +1047,10 @@ async function runFetchBody(
       is_actual_document: false,
       not_document_reason: "fetch_exception",
     });
+    if (msg === "document_too_large") {
+      noteFailure(msg);
+      return clampFetchOutput({ ok: false, source_id: entry.source_id, error: msg });
+    }
     const cls = classifyFetchException(msg);
     noteFailure(`${cls}:${msg.slice(0, 100)}`);
     return clampFetchOutput({
@@ -1321,11 +1340,18 @@ async function continuePdfRead(
   store: EvidenceStore,
   src: EvidenceSource,
   input: FetchInput,
+  opts?: FetchOptions,
 ): Promise<FetchOutput | null> {
   const meta = src.pdf_extraction;
-  const url = src.url;
+  const url = meta?.document_url ?? src.url;
   if (!url || !meta?.total_pages) return null;
+  if (!checkUrlSafety(url).safe) return { ok: false, source_id: src.source_id, error: "unsafe_url_blocked" };
+  if (!meta.sha256) return { ok: false, source_id: src.source_id, error: "pdf_continuation_requires_refetch" };
   const readThrough = meta.continued_through_page ?? meta.last_page ?? 0;
+  if (meta.last_page_complete === false) {
+    return { ok: false, source_id: src.source_id, error: "pdf_partial_page_requires_refetch",
+      instruction: "העמוד האחרון נקרא חלקית בגלל מגבלת תווים. אין לטעון שהמסמך נקרא במלואו; נסה עותק אחר או ציין את מגבלת המקור." };
+  }
   if (readThrough <= 0 || readThrough >= meta.total_pages) {
     return {
       ok: false,
@@ -1335,29 +1361,43 @@ async function continuePdfRead(
     };
   }
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), FETCH_LIMITS.TIMEOUT_MS);
+  const deadlineAt = Math.min(Date.now() + FETCH_LIMITS.TIMEOUT_MS, opts?.deadlineAt ?? Infinity);
+  if (opts?.signal?.aborted || Date.now() >= deadlineAt) return { ok: false, error: "fetch_deadline_exhausted", fetch_budget_accounted: true, http_attempts: 0 };
+  const abort = () => controller.abort();
+  opts?.signal?.addEventListener("abort", abort, { once: true });
+  const timer = setTimeout(abort, Math.max(0, deadlineAt - Date.now()));
   try {
-    const res = await officialFetch(url, { signal: controller.signal });
+    const res = await fetchWithBoundedRetry(url, {
+      signal: controller.signal, deadlineAt, fetchOnce: officialFetch,
+      isSafeUrl: (target) => checkUrlSafety(target).safe,
+      reserveAttempt: opts?.reserveHttpAttempt, allowRetry: false,
+    });
+    if (res.url && !checkUrlSafety(res.url).safe) return { ok: false, source_id: src.source_id, error: "unsafe_url_blocked" };
     if (!res.ok) return { ok: false, source_id: src.source_id, error: `http_${res.status}` };
-    const buf = new Uint8Array(await res.arrayBuffer());
+    const buf = await readBoundedBody(res.body, FETCH_LIMITS.MAX_BYTES, controller.signal);
     if (buf.length > FETCH_LIMITS.MAX_BYTES) {
       return { ok: false, source_id: src.source_id, error: "document_too_large" };
     }
+    if (await pdfByteHash(buf) !== meta.sha256) return { ok: false, source_id: src.source_id, error: "pdf_document_changed" };
     const cont = await extractPdfPagesBounded(buf, {
       startPage: readThrough + 1,
       maxPages: FETCH_LIMITS.PDF_CONTINUATION_PAGES,
       maxChars: FETCH_LIMITS.PDF_CONTINUATION_CHARS,
       deadlineMs: FETCH_LIMITS.PDF_DEADLINE_MS,
       enoughChars: FETCH_LIMITS.PDF_CONTINUATION_CHARS,
+      signal: controller.signal,
+      deadlineAt,
     });
     if (!cont.text.trim()) {
       return { ok: false, source_id: src.source_id, error: "pdf_continuation_empty" };
     }
-    const lastRead = cont.last_page_extracted ?? (readThrough + cont.pages_attempted);
+    const lastRead = cont.last_page_extracted!;
     const added = await store.extendBody(src.source_id, cont.text, {
       total_pages: cont.total_pages,
+      pages: [...(meta.pages ?? []).filter((p) => p.page <= readThrough), ...cont.pages.map(({ page, status }) => ({ page, status }))],
       last_page: lastRead,
       continued_through_page: lastRead,
+      last_page_complete: !cont.pages.find((p) => p.page === lastRead)?.truncated,
       stop_reason: cont.stopped_reason,
     });
     const excerpt = store.excerpt(src.source_id, {
@@ -1379,12 +1419,15 @@ async function continuePdfRead(
       new_quote_count: quotes.new_count,
     };
   } catch (e) {
+    const message = e instanceof Error ? e.message : String(e);
     return {
       ok: false,
       source_id: src.source_id,
-      error: `pdf_continuation_failed: ${e instanceof Error ? e.message : String(e)}`,
+      error: message === "pdf_boundary_body_too_large" ? "document_too_large" :
+        ["fetch_budget_exhausted", "fetch_deadline_exhausted"].includes(message) ? message : `pdf_continuation_failed: ${message}`,
     };
   } finally {
     clearTimeout(timer);
+    opts?.signal?.removeEventListener("abort", abort);
   }
 }
