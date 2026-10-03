@@ -5,7 +5,7 @@
  * This isolates CPU failure; it does not raise the extraction worker's CPU cap.
  */
 import { PDF_BOUNDARY, hasPdfHeader, readBoundedBody, validPdfBounds, type PdfBounds } from "../../_shared/pdfExtractionProtocol.ts";
-import type { ChunkedPdfResult } from "../vendor/largePdfChunkedExtract.ts";
+import type { ChunkedPdfResult } from "../../_shared/largePdfChunkedExtract.ts";
 declare const Deno: { env: { get(key: string): string | undefined } };
 
 export interface IsolatedPdfOptions extends PdfBounds {

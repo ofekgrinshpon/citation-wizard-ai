@@ -11,6 +11,7 @@
 
 import { withCostTelemetry, setCostCorrelation } from "../_shared/costTelemetry.ts";
 import { invokeResumeHandoff } from "./beta/resumeHandoff.ts";
+import { runPdfBoundaryCheck } from "./shared/pdfBoundaryCheck.ts";
 import { resumeGapPhase } from "./shared/timing.ts";
 import { withProviderLiveness } from "./shared/providerLiveness.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
@@ -1701,8 +1702,9 @@ async function handleRequest(req: Request): Promise<Response> {
   const resumeRunId = typeof body.resume_run_id === "string" ? body.resume_run_id : null;
   const watchdogTick = body.action === "resume_watchdog";
   const clarificationReply = body.action === "answer_clarification";
+  const pdfBoundaryCheck = body.action === "pdf_boundary_check";
   const question = String(body.question ?? "").trim();
-  if (!question && !resumeRunId && !watchdogTick && !clarificationReply) {
+  if (!question && !resumeRunId && !watchdogTick && !clarificationReply && !pdfBoundaryCheck) {
     return json({ error: "question_required" }, 400);
   }
 
@@ -1725,6 +1727,18 @@ async function handleRequest(req: Request): Promise<Response> {
   const isSmoke = req.headers.get("x-smoke-mode") === "1" &&
     (authHeader === `Bearer ${serviceKey}` ||
       (!!presented && smokeTokens.includes(presented)));
+
+  // Fixed synthetic check for the existing internal launcher only. It cannot
+  // accept URLs/PDFs/settings, read user data, create a run or reach a model.
+  // Runtime-bound service credentials remain entirely within this project.
+  if (pdfBoundaryCheck) {
+    if (!isSmoke) return json({ error: "unauthorized" }, 401);
+    if (Object.keys(body).some((key) => key !== "action")) {
+      return json({ error: "pdf_boundary_check_fixed_fixture_only" }, 400);
+    }
+    const result = await runPdfBoundaryCheck();
+    return json(result, result.ok ? 200 : 502);
+  }
 
   const directProvider = parseDirectProvider({
     isSmoke, provider: body.agent_provider, model: body.agent_model,
