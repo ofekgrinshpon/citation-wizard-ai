@@ -102,6 +102,7 @@ import {
 } from "./drafting/draft.ts";
 import { RunTimer, type RunTimingJson } from "./shared/timing.ts";
 import { decideRepairAcceptance, decideResearchRepair } from "./verification/repairPolicy.ts";
+import { assessAnswerCompleteness, PARTIAL_ANSWER_NOTICE } from "./verification/completeness.ts";
 import {
   buildVerificationForensics,
   type ForensicEvidenceRow,
@@ -855,6 +856,7 @@ async function runPipeline(
     agent_reasoning_effort: intake.agent_reasoning_effort ?? "medium",
   };
   let draft: Awaited<ReturnType<typeof runDrafter>>;
+  let answerValidationIncomplete = false;
   if (intake.agent_authored_answer) {
     const initialBlocks = agent.memo?.answer_blocks ?? [];
     const claimGate = gateAnswerBlocks(
@@ -866,6 +868,7 @@ async function runPipeline(
     const coverage = await timer.time("verification_model", () =>
       checkAnswerBlockCoverage({ gate: claimGate, pack, model: models.verifier, usage }));
     const initialGate = applyBlockCoverage(claimGate, coverage.verdicts);
+    answerValidationIncomplete = !!coverage.error;
     const coverageCounts = {
       covered: coverage.verdicts.filter((v) => v.coverage === "covered").length,
       overclaims: coverage.verdicts.filter((v) => v.coverage === "overclaims").length,
@@ -941,6 +944,7 @@ async function runPipeline(
         const reCoverage = await timer.time("verification_model", () =>
           checkAnswerBlockCoverage({ gate: reClaimGate, pack: reVerified.pack, model: models.verifier, usage }));
         const reGate = applyBlockCoverage(reClaimGate, reCoverage.verdicts);
+        answerValidationIncomplete = !!reCoverage.error;
         repairCoverageOverclaims = reCoverage.verdicts.filter((v) =>
           v.coverage === "overclaims" || v.coverage === "substantive"
         ).length;
@@ -1032,6 +1036,25 @@ async function runPipeline(
   });
   timer.add("rendering", Date.now() - renderStarted);
 
+
+  // Assess the final pack after accepted repairs and all evidence gates. This
+  // is pure bookkeeping: it cannot reopen research or create evidence.
+  const finalCoverage = verification ? decideResearchRepair({ ...verification, pack }, {
+    question: intake.question,
+    issue_summary: agent.memo?.issue_summary,
+    assess_empty_core_sufficiency: true,
+  }).coverage : undefined;
+  const completeness = assessAnswerCompleteness({
+    memo: agent.memo,
+    pack,
+    coverage: finalCoverage,
+    reflectionCompleted: agent.stats.memo_coverage_check_triggered > 0,
+    hasCitedAnswer: rendered.footnotes.length > 0 && draft.blocks.some((b) =>
+      !!b.text?.trim() && b.source_ids.length > 0),
+    answerGaps: answerValidationIncomplete || !!draft.error ||
+      draft.dropped_source_ids.length > 0 ||
+      Number(agentAnswerTelemetry.blocks_dropped_unverified ?? 0) > 0,
+  });
 
   // ── Telemetry ───────────────────────────────────────────────────────────
   const citedSet = new Set(rendered.cited_source_ids);
@@ -1177,16 +1200,16 @@ async function runPipeline(
     unresolved_authorities: unresolvedAuthorities,
     repair_skip_reason,
     repair_acceptance_reason,
-    sufficiency_assessed: !!coverage?.assessed,
-    surviving_core_claims: coverage?.surviving_core_claim_ids ?? [],
-    unsupported_core_claims: coverage?.unsupported_core_claim_ids ?? [],
+    sufficiency_assessed: !!finalCoverage?.assessed,
+    surviving_core_claims: finalCoverage?.surviving_core_claim_ids ?? [],
+    unsupported_core_claims: finalCoverage?.unsupported_core_claim_ids ?? [],
     // An answer-mode run that ends with zero verified claims has covered
     // nothing, whether or not a coverage assessment object exists.
-    central_issue_covered: pack.claims.length === 0
-      ? false
-      : (coverage ? coverage.central_issue_covered : true),
-    central_coverage_ratio: pack.claims.length === 0 ? 0 : coverage?.coverage_ratio,
-    central_coverage_gap_terms: coverage?.lost_central_terms ?? [],
+    central_issue_covered: completeness.central_issue_covered,
+    research_complete: completeness.research_complete,
+    completeness_status: completeness.completeness_status,
+    central_coverage_ratio: pack.claims.length === 0 ? 0 : finalCoverage?.coverage_ratio,
+    central_coverage_gap_terms: finalCoverage?.lost_central_terms ?? [],
     repair_due_to_central_insufficiency,
     /** Evaluation-only forensic verification chain (never user-facing). */
     verification_forensics: forensics_pre_repair,
@@ -1360,7 +1383,10 @@ async function runPipeline(
   return {
     ok: true,
     run_id: intake.run_id,
-    answer_markdown: rendered.answer_markdown,
+    answer_markdown: completeness.completeness_status === "partial"
+      ? `${PARTIAL_ANSWER_NOTICE}\n\n${rendered.answer_markdown}`
+      : rendered.answer_markdown,
+    ...completeness,
     footnotes: rendered.footnotes,
     invariant_errors: rendered.invariant_errors,
     unresolved_questions: agent.memo?.unresolved_questions ?? [],

@@ -169,7 +169,9 @@ describe("F/G — boundedness and budgets", () => {
     expect(src).toMatch(/repair_cycles = 1;/);
     expect(/while\s*\(.*repair/i.test(src)).toBe(false);
     expect(/for\s*\(.*repair/i.test(src)).toBe(false);
-    expect(src.match(/decideResearchRepair\(/g)).toHaveLength(1);
+    // One repair decision plus one post-render bookkeeping read of `.coverage`.
+    expect(src.match(/decideResearchRepair\(/g)).toHaveLength(2);
+    expect(src).toMatch(/const finalCoverage = verification \? decideResearchRepair\([\s\S]{0,200}?\}\)\.coverage : undefined;/);
   });
 
   it("G. exhausted research capacity is never revived by insufficiency", () => {

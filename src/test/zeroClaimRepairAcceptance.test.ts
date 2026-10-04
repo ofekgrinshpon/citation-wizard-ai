@@ -97,12 +97,17 @@ describe("central coverage telemetry for an empty verified pack", () => {
   const src = readFileSync("supabase/functions/legal-research-v2/index.ts", "utf8");
 
   it("reports zero coverage in answer mode when nothing verified", () => {
-    expect(src).toContain("central_issue_covered: pack.claims.length === 0");
+    expect(src).toContain("central_issue_covered: completeness.central_issue_covered");
+    expect(readFileSync("supabase/functions/legal-research-v2/verification/completeness.ts", "utf8"))
+      .toContain("const central = !input.pack.claims.length ? false");
     expect(src).toContain("central_coverage_ratio: pack.claims.length === 0 ? 0 :");
   });
 
   it("preserves existing coverage semantics for a non-empty pack", () => {
-    expect(src).toContain("(coverage ? coverage.central_issue_covered : true)");
+    // completeness_fix: an unassessed non-empty pack is unknown (null), not covered.
+    expect(src).toContain("const finalCoverage = verification ? decideResearchRepair(");
+    expect(readFileSync("supabase/functions/legal-research-v2/verification/completeness.ts", "utf8"))
+      .toContain("input.coverage?.assessed ? input.coverage.central_issue_covered : null");
   });
 
   it("does not touch the source-mode telemetry block", () => {

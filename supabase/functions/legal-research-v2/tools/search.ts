@@ -6,8 +6,8 @@
  *
  * Scopes are backends/hints, not research modes:
  *   web       → Perplexity (lowest useful primitive: query in, sources out)
- *   official  → Perplexity, biased to official Israeli sources
- *   academic  → Perplexity, biased to Israeli legal scholarship
+ *   official  → Perplexity, restricted to official sources in the requested jurisdiction
+ *   academic  → Perplexity, biased to scholarship relevant to the requested jurisdiction/topic
  *   corpus    → local lexical retrieval (`search_legal_chunks_text`)
  *
  * No admission logic, no candidate shaping, no roles, no ranking, no caps,
@@ -22,12 +22,20 @@ const PPLX_URL = "https://api.perplexity.ai/chat/completions";
 
 const SCOPE_INSTRUCTION: Record<Exclude<SearchScope, "corpus">, string> = {
   web:
-    "אתר מקורות משפטיים ישראליים רלוונטיים (פסיקה, חקיקה, כתיבה משפטית). החזר קישורים ישירים בלבד.",
+    "אתר מקורות משפטיים רלוונטיים לנושא ולשיטת המשפט שבשאילתה (פסיקה, חקיקה, כתיבה משפטית). החזר קישורים ישירים בלבד.",
   official:
-    "התמקד אך ורק במקורות רשמיים ישראליים: אתר בתי המשפט (court.gov.il), ספר החוקים ואתר הכנסת (knesset.gov.il), gov.il, נבו. החזר קישורים ישירים למסמך עצמו, לא לדפי חיפוש.",
+    "התמקד אך ורק במקורות רשמיים של שיטת המשפט שבשאילתה: חקיקה, בתי משפט ורשויות מוסמכות. לדין ישראלי השתמש באתר הכנסת, gov.il ובתי המשפט; לדין האיחוד האירופי ב-EUR-Lex ובבתי המשפט של האיחוד, ולהנחיות הגנת מידע ב-EDPB. לשיטות משפט אחרות השתמש ברשות הרשמית המתאימה. החזר קישורים ישירים למסמך עצמו, לא לדפי חיפוש או פרשנות פרטית.",
   academic:
-    "התמקד בכתיבה אקדמית משפטית ישראלית: כתבי עת משפטיים, מאמרים אקדמיים, ספרות משפטית. החזר קישורים ישירים למאמר עצמו (PDF או עמוד המאמר).",
+    "התמקד בכתיבה אקדמית משפטית רלוונטית לנושא ולשיטת המשפט שבשאילתה: כתבי עת משפטיים, מאמרים אקדמיים וספרות משפטית. החזר קישורים ישירים למאמר עצמו (PDF או עמוד המאמר).",
 };
+
+/** Discovery follows the query; Hebrew wording alone does not imply Israel. */
+function buildSearchInstruction(
+  scope: Exclude<SearchScope, "corpus">,
+  limit: number,
+): string {
+  return `${SCOPE_INSTRUCTION[scope]} פעל לפי הנושא, שיטת המשפט והדין שנקובים בשאילתה; אל תניח שדין ישראל חל רק משום ששפת השאילתה עברית. בשאילתה השוואתית שמור על ההבחנה בין שיטות המשפט. החזר עד ${limit} מקורות. אל תמציא קישורים.`;
+}
 
 interface PplxSource {
   title?: string;
@@ -52,7 +60,7 @@ async function perplexitySearch(
 ): Promise<{ results: SearchResult[]; error?: string }> {
   const key = Deno.env.get("PERPLEXITY_API_KEY");
   if (!key) return { results: [], error: "missing_perplexity_credentials" };
-  const sys = `${SCOPE_INSTRUCTION[scope]} החזר עד ${limit} מקורות. אל תמציא קישורים.`;
+  const sys = buildSearchInstruction(scope, limit);
   let r: Response;
   try {
     r = await trackedFetch(PPLX_URL, {

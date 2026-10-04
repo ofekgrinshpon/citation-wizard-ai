@@ -16,6 +16,7 @@
 
 import type {
   Intake,
+  EvidenceSource,
   MemoClaim,
   ResearchMemo,
   SearchResult,
@@ -453,6 +454,18 @@ export function normalizeMemo(raw: unknown): ResearchMemo | null {
   };
 }
 
+
+/** Stored text only: PDF continuation and refetches still require acquisition budget. */
+export function isStoredTextRead(
+  args: Record<string, unknown>,
+  source: EvidenceSource | null | undefined,
+): boolean {
+  return typeof args.source_id === "string" && !!args.source_id &&
+    !args.url && !args.result_id && !args.refetch_reason &&
+    args.want !== "later_pages" && args.want !== "pdf_page_range" &&
+    source?.fetch_status === "ok" && source.is_actual_document === true &&
+    !!source.extracted_text?.trim();
+}
 
 /** Deterministic key used for repeated-call detection. */
 export function toolCallKey(name: string, args: Record<string, unknown>): string {
@@ -1033,6 +1046,7 @@ export async function runResearchAgent(opts: {
               memo: candidateMemo,
               readable: opts.store.readable(),
               alreadyUsed: stats.memo_coverage_check_triggered > 0,
+              submissionCapacityLeft: !policy.stepExhausted(),
             })
           ) {
             const readable = opts.store.readable();
@@ -1094,7 +1108,15 @@ export async function runResearchAgent(opts: {
              * the agent wrote it, including one with fewer claims.
              */
             if (!acceptedMemo?.claims.length && coverageBefore.claims.length) {
-              acceptedMemo = coverageBefore;
+              acceptedMemo = {
+                ...coverageBefore,
+                // Retain useful claims, but never erase gaps admitted during the check.
+                research_complete: coverageBefore.research_complete && acceptedMemo?.research_complete === true,
+                unresolved_questions: [...new Set([
+                  ...coverageBefore.unresolved_questions,
+                  ...(acceptedMemo?.unresolved_questions ?? []),
+                ])],
+              };
               stats.memo_coverage_reverted_to_pre_check += 1;
             }
             noteCoverageOutcome(stats, {
@@ -1119,7 +1141,13 @@ export async function runResearchAgent(opts: {
 
 
         const scope = typeof args.scope === "string" ? args.scope as SearchScope : undefined;
-        const blocked = policy.checkTool(call.name, scope);
+        const policyBlock = policy.checkTool(call.name, scope);
+        // A targeted excerpt is local work. Only the fetch-count ceiling is
+        // waived; research/step limits, repetition and HTTP reservations remain.
+        const cachedRead = call.name === "fetch" &&
+          isStoredTextRead(args, opts.store.get(String(args.source_id ?? "")));
+        const blocked = cachedRead && policyBlock?.startsWith("budget_exhausted:fetch ")
+          ? null : policyBlock;
         if (blocked) {
           trace.push({ step: policy.steps, tool: call.name, input: args, summary: blocked });
           messages.push({

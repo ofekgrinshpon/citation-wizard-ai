@@ -60,31 +60,101 @@ export function isTemporallySensitive(
   return claim.current_state_claim === true || isCurrentStateProposition(claim.proposition);
 }
 
-const LEGISLATION_HOST_HINTS = [
+// Keep the established Israeli source policy, including Nevo as an accepted
+// legal-text publisher. Do not turn this into a general web/europa.eu allowlist.
+const ISRAEL_LEGISLATION_HOSTS = [
   "knesset.gov.il",
-  "main.knesset.gov.il",
-  "fs.knesset.gov.il",
   "gov.il",
-  "justice.gov.il",
   "nevo.co.il",
   "court.gov.il",
 ];
 
+const EU_CUES = /האיחוד האירופי|הדין האירופי|\b(?:EU|European Union|GDPR|EDPB|EUR[ -]?Lex|CJEU)\b|2016\/679/iu;
+const ISRAEL_CUES = /ישראל|\bIsrael(?:i)?\b/iu;
+// Foreign regimes outside the bounded policy must not inherit the Israel
+// default. Unknown unqualified claims retain the existing Israel default;
+// qualifying a claim's jurisdiction is the research agent's responsibility.
+const OTHER_JURISDICTION_CUES = /ארצות הברית|ארה[״"]ב|בריטניה|אנגליה|קנדה|אוסטרליה|גרמניה|צרפת|הודו|\b(?:US|USA|U\.S\.|United States|American|UK|U\.K\.|United Kingdom|British|English law|Canada|Canadian|Australia|Australian|Germany|German|France|French|India|Indian|ECHR|ECtHR)\b/iu;
+const DATA_PROTECTION_CUES = /הגנת (?:ה)?(?:מידע|נתונים|פרטיות)|פרטיות|\b(?:GDPR|data protection|personal data|privacy)\b/iu;
+
+type ClaimJurisdiction = "israel" | "eu" | "unsupported_or_mixed";
+
+/** Use the individual proposition, NEVER the whole mixed-jurisdiction run. */
+function claimJurisdiction(proposition: string): ClaimJurisdiction {
+  const eu = EU_CUES.test(proposition);
+  const israel = ISRAEL_CUES.test(proposition);
+  if (OTHER_JURISDICTION_CUES.test(proposition) || (eu && israel)) {
+    // A composite proposition cannot be cleared by one jurisdiction's text.
+    // It needs separate claims before either can receive a current-law verdict.
+    return "unsupported_or_mixed";
+  }
+  return eu ? "eu" : "israel";
+}
+
+function isHost(host: string, expected: string): boolean {
+  return host === expected || host.endsWith(`.${expected}`);
+}
+
+/** Only direct EUR-Lex document bodies, never summaries/search/landing pages. */
+function isEurLexDocumentUrl(url: string): boolean {
+  try {
+    const parsed = new URL(url);
+    return /^\/legal-content\/[a-z]{2}\/TXT(?:\/(?:PDF|HTML))?\/?$/i.test(parsed.pathname) &&
+      /^CELEX:[0-9][0-9a-z()._/-]+$/i.test(parsed.searchParams.get("uri") ?? "");
+  } catch {
+    return false;
+  }
+}
+
+/** Bounded current/legacy EDPB publication routes and named guidance PDFs. */
+function isEdpbDocumentUrl(url: string): boolean {
+  try {
+    const path = new URL(url).pathname;
+    return /^\/(?:system\/files|sites\/default\/files)\//i.test(path) &&
+      /\/edpb[^/]*(?:guidelines?|recommendations?|opinions?|decisions?)[^/]*\.pdf$/i.test(path) &&
+      !/(?:summary|news|announcement|press[-_]?release)/i.test(path);
+  } catch {
+    return false;
+  }
+}
+
 /**
- * Can this document establish PRESENT legal status? Official legislation /
- * legislative material / official judgment text can; a research paper, blog or
- * summary cannot, regardless of its date.
+ * Is this a candidate official/legal text for THIS claim's jurisdiction/topic?
+ * Eligibility is not a current-law verdict: dates, amendments, commencement,
+ * supersession and the limited legal effect of guidance still need the temporal
+ * check below. In particular a fetched-at timestamp never establishes currency.
  */
-export function isCurrentLawCapable(source: EvidenceSource): boolean {
+export function isCurrentLawCapable(
+  source: EvidenceSource,
+  claim?: Pick<VerifiedClaim, "proposition">,
+): boolean {
   if (source.fetch_status !== "ok" || !source.is_actual_document) return false;
-  const host = source.url ? hostOf(source.url) : "";
-  const officialHost = LEGISLATION_HOST_HINTS.some((h) => host.endsWith(h));
-  if (!officialHost) return false;
+  const host = source.url ? hostOf(source.url).toLowerCase() : "";
+  const jurisdiction = claimJurisdiction(claim?.proposition ?? "");
   const text = `${source.title}\n${source.extracted_text.slice(0, 4_000)}`;
-  const carriesLawText = /חוק|פקודת|תקנות|תיקון מס|ספר החוקים|נוסח משולב/u.test(text) ||
-    source.identity_fields.statutes.length > 0 ||
-    source.identity_fields.dockets.length > 0;
-  return carriesLawText;
+
+  if (jurisdiction === "israel") {
+    if (!ISRAEL_LEGISLATION_HOSTS.some((h) => isHost(host, h))) return false;
+    return /חוק|פקודת|תקנות|תיקון מס|ספר החוקים|נוסח משולב/u.test(text) ||
+      source.identity_fields.statutes.length > 0 ||
+      source.identity_fields.dockets.length > 0;
+  }
+  if (jurisdiction !== "eu") return false;
+
+  // EUR-Lex publishes primary EU law. No other europa.eu website inherits this.
+  if (isHost(host, "eur-lex.europa.eu")) {
+    return isEurLexDocumentUrl(source.url ?? "") &&
+      /\b(?:regulation|directive|decision|treaty|judgment|official journal)\b|תקנה|דירקטיבה|החלטה|אמנה|פסק דין/iu.test(text);
+  }
+  // EDPB is relevant to EU data-protection guidance, not every EU legal topic.
+  // Guidance is official evidence, not itself proof of a statute's legal status.
+  if (isHost(host, "edpb.europa.eu")) {
+    return isEdpbDocumentUrl(source.url ?? "") &&
+      DATA_PROTECTION_CUES.test(claim?.proposition ?? "") &&
+      DATA_PROTECTION_CUES.test(text) &&
+      /\b(?:guidelines?|recommendations?|opinions?|decisions?)\b|הנחיות|המלצות|חוות דעת|החלטה/iu.test(text);
+  }
+  return false;
 }
 
 export interface TemporalAssessment {
@@ -120,6 +190,7 @@ const SYSTEM =
 "current_verified" — קיים במקורות טקסט רשמי המבסס את המצב הנוכחי כפי שנטען.
 "contradicted" — הטקסט הרשמי סותר את הטענה (למשל נחקקה הוראה שהטענה מכחישה את קיומה).
 "unresolved" — אין במקורות בסיס רשמי לקבוע את המצב הנוכחי.
+בדוק תחולה בזמן, מועד כניסה לתוקף, תיקונים וביטול לפי הטקסט שסופק; תאריך שליפה אינו ראיה לעדכניות. הנחיות רגולטוריות אינן כשלעצמן חקיקה ואינן מוכיחות כניסה לתוקף או תיקון של חוק.
 אל תסתמך על ידע חיצוני ואל תנחש. היעדר ראיה עדכנית הוא "unresolved" ולא "current_verified". נמק בקצרה בעברית.`;
 
 const TOOL = {

@@ -13,9 +13,8 @@
  *   • not source utilization — read sources may always stay unused
  *   • not a loop — at most one reflection per run, never recursive
  *
- * The only deterministic thing here is WHEN the question is asked: it is worth
- * asking only when the run still holds read material that the memo did not
- * use, and that material is not simply another copy of a work already memoed.
+ * The deterministic trigger is the first non-empty memo with one submission
+ * step left. Using every read source does not establish requested coverage.
  * Everything substantive — which dimensions were requested, whether they are
  * covered, whether an unused source genuinely helps — stays with the agent.
  */
@@ -104,18 +103,18 @@ export function unusedReadSources(
 }
 
 /**
- * The reflection is worth handing over only when the run holds unused,
- * non-duplicate read material. A narrow question whose few sources are all
- * memoed therefore never triggers it — structurally, not by keyword.
+ * Every non-empty memo receives one check when submission capacity remains.
+ * Unused sources are an optional aid, never a prerequisite or a quota.
  */
 export function shouldRunCoverageCheck(input: {
   memo: ResearchMemo | null;
   readable: EvidenceSource[];
   alreadyUsed: boolean;
+  /** Never withhold the last usable memo when no resubmission step remains. */
+  submissionCapacityLeft?: boolean;
 }): boolean {
-  if (input.alreadyUsed) return false;
-  if (!input.memo?.claims.length) return false;
-  return unusedReadSources(input.memo, input.readable).length > 0;
+  if (input.alreadyUsed || input.submissionCapacityLeft === false) return false;
+  return !!input.memo?.claims.length;
 }
 
 /**
@@ -142,7 +141,7 @@ export function buildCoverageReflection(input: {
     "אם ממד מהותי שהתבקש חסר:",
     "1. בדוק תחילה את החומר שכבר נקרא בריצה זו — ייתכן שהוא תומך באותו ממד.",
     `2. ${continuation}`,
-    "3. אם אין ביסוס — שמר את הפער במפורש ב-unresolved_questions. תשובה חלקית וכנה עדיפה על סקירה שנראית שלמה.",
+    "3. אם אין ביסוס — שמר את הפער במפורש ב-unresolved_questions וסמן research_complete=false. תשובה חלקית וכנה עדיפה על סקירה שנראית שלמה.",
     "",
     "אין מכסת מקורות ואין חובה להשתמש בכל מה שנקרא: מקור חוזר, כפול, שולי או שנקודתו כבר מכוסה טוב יותר — אינו צריך להיכנס לתזכיר. אל תייצר מחלוקת שאינה קיימת ואל תוסיף מקורות לשם גיוון.",
     "הבחירה שלך: לאשר את התזכיר הקיים ללא שינוי ב-confirm_existing_memo, או להגיש את התזכיר המתוקן המלא ב-submit_research_memo (לאחר מחקר נוסף, רק אם התקציב מאפשר). זו הבדיקה היחידה מסוגה בריצה.",

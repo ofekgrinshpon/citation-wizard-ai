@@ -78,6 +78,9 @@ export interface BetaResultShape {
   output_mode?: "answer" | "sources";
   /** Present only for source-search runs. */
   source_pack?: Record<string, unknown> | null;
+  /** Answer quality only; job status remains the execution lifecycle. */
+  research_complete?: boolean | null;
+  completeness_status?: "complete" | "partial" | "unknown" | "insufficient";
   debug: Record<string, unknown>;
 }
 
@@ -125,6 +128,9 @@ export function toBetaResult(out: Record<string, unknown>): BetaResultShape {
       };
     }),
     used_sources,
+    research_complete: typeof out.research_complete === "boolean" ? out.research_complete : null,
+    completeness_status: ["complete", "partial", "unknown", "insufficient"].includes(String(out.completeness_status))
+      ? out.completeness_status as BetaResultShape["completeness_status"] : "unknown",
     pipeline_version: "v2",
     run_id: String(out.run_id ?? ""),
     academic: (out.academic as Record<string, unknown> | undefined) ?? null,
