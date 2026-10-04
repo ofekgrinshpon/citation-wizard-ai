@@ -64,10 +64,13 @@ describe("C1 — no forced source use", () => {
     expect(text).toMatch(/אל תייצר מחלוקת שאינה קיימת/);
   });
 
-  it("does not fire when the memo already used every read source", () => {
+  it("fires once even when the memo already used every read source (completeness_fix)", () => {
     const readable = [src("S1", "א"), src("S2", "ב")];
     expect(
       shouldRunCoverageCheck({ memo: memoWith(["S1", "S2"]), readable, alreadyUsed: false }),
+    ).toBe(true);
+    expect(
+      shouldRunCoverageCheck({ memo: memoWith(["S1", "S2"]), readable, alreadyUsed: true }),
     ).toBe(false);
   });
 });
@@ -78,8 +81,9 @@ describe("C2 — duplicate copies are not missing diversity", () => {
     const landing = src("S2", "Agency Costs of Controlling Shareholders", "https://x.edu/a.html");
     const readable = [pdf, landing];
     expect(unusedReadSources(memoWith(["S1"]), readable)).toEqual([]);
+    // Unused material is no longer the trigger; the duplicate is still not "unused".
     expect(shouldRunCoverageCheck({ memo: memoWith(["S1"]), readable, alreadyUsed: false })).toBe(
-      false,
+      true,
     );
   });
 });
@@ -140,11 +144,14 @@ describe("C5 — no evidence available leaves an explicit gap", () => {
 });
 
 describe("C6 — narrow queries are unaffected", () => {
-  it("a single read statute source that is memoed never triggers the check", () => {
+  it("a narrow memo gets one check only while a resubmission step remains", () => {
     const readable = [src("S1", "חוק החוזים (חלק כללי)")];
     expect(shouldRunCoverageCheck({ memo: memoWith(["S1"]), readable, alreadyUsed: false })).toBe(
-      false,
+      true,
     );
+    expect(shouldRunCoverageCheck({
+      memo: memoWith(["S1"]), readable, alreadyUsed: false, submissionCapacityLeft: false,
+    })).toBe(false);
   });
 });
 
@@ -172,7 +179,7 @@ describe("C8 — the reflection can never cost the run its answer", () => {
       "utf8",
     );
     expect(loop).toMatch(
-      /if \(!acceptedMemo\?\.claims\.length && coverageBefore\.claims\.length\) \{\s*acceptedMemo = coverageBefore;/,
+      /if \(!acceptedMemo\?\.claims\.length && coverageBefore\.claims\.length\) \{\s*acceptedMemo = \{\s*\.\.\.coverageBefore,/,
     );
     expect(loop).toMatch(/memo_coverage_reverted_to_pre_check \+= 1/);
     expect(emptyCoverageCheckStats().memo_coverage_reverted_to_pre_check).toBe(0);

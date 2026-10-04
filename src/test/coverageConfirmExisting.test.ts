@@ -134,9 +134,11 @@ describe("agent loop", () => {
   it("no eligibility: confirm before any reflection is refused", async () => {
     script.push(calls(["confirm_existing_memo", { handle: "cov_00000000-0000-4000-8000-000000000000" }]));
     script.push(calls(["submit_research_memo", memoArgs(["S1", "S2", "S3"])]));
+    // completeness_fix: every non-empty memo now gets one reflection.
+    script.push((req) => calls(["confirm_existing_memo", { handle: lastHandle(req.messages as never) }])());
     const { res } = await run();
     expect(res.stats.memo_coverage_confirm_rejected).toBe(1);
-    expect(res.stats.memo_coverage_check_triggered).toBe(0);
+    expect(res.stats.memo_coverage_check_triggered).toBe(1);
     expect(res.memo?.claims).toHaveLength(3);
   });
 
@@ -358,6 +360,7 @@ describe("agent loop", () => {
   it("repair re-entry (no pendingCoverage forwarded) cannot replay a handle", async () => {
     script.push(calls(["confirm_existing_memo", { handle: "cov_00000000-0000-4000-8000-000000000000" }]));
     script.push(calls(["submit_research_memo", memoArgs(["S1", "S2", "S3"])]));
+    script.push((req) => calls(["confirm_existing_memo", { handle: lastHandle(req.messages as never) }])());
     const { res } = await run({ extraUserMessage: "תיקון" });
     expect(res.stats.memo_coverage_confirm_rejected).toBe(1);
     expect(res.memo?.claims).toHaveLength(3);
