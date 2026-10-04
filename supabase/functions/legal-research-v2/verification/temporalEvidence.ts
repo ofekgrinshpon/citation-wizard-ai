@@ -101,7 +101,8 @@ export function prefixExcerpt(source: EvidenceSource): TemporalExcerpt {
 /**
  * Build the bounded temporal evidence packet for ONE claim, from the sources
  * that actually supported it. Returns an empty packet when the claim has no
- * current-law-capable supporting source — the caller then falls back.
+ * current-law-capable supporting source for its jurisdiction/topic — the caller
+ * then marks that claim unresolved.
  */
 export function buildClaimTemporalEvidence(
   claim: VerifiedClaim,
@@ -118,7 +119,7 @@ export function buildClaimTemporalEvidence(
   const capableOwn: EvidenceSource[] = [];
   for (const ref of refs) {
     const source = store.get(ref.source_id);
-    if (!source || !isCurrentLawCapable(source)) continue;
+    if (!source || !isCurrentLawCapable(source, claim)) continue;
     capableOwn.push(source);
 
     const local: TemporalExcerpt[] = [];

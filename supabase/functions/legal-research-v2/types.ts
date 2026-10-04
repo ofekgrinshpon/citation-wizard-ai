@@ -738,7 +738,9 @@ export interface V2Telemetry {
   sufficiency_assessed?: boolean;
   surviving_core_claims?: string[];
   unsupported_core_claims?: string[];
-  central_issue_covered?: boolean;
+  central_issue_covered?: boolean | null;
+  research_complete?: boolean | null;
+  completeness_status?: "complete" | "partial" | "unknown" | "insufficient";
   central_coverage_ratio?: number;
   central_coverage_gap_terms?: string[];
   repair_due_to_central_insufficiency?: boolean;
