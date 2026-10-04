@@ -14,6 +14,7 @@ import { invokeResumeHandoff } from "./beta/resumeHandoff.ts";
 import { runPdfBoundaryCheck } from "./shared/pdfBoundaryCheck.ts";
 import { resumeGapPhase } from "./shared/timing.ts";
 import { withProviderLiveness } from "./shared/providerLiveness.ts";
+import { withRuntimeDiagnostics, runtimeDiagnostic, runtimeDiagnosticsActive, runtimeCheckpoint } from "./shared/runtimeDiagnostics.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
 
@@ -374,6 +375,11 @@ async function runPipeline(
   if (!resume) resetEgressStateForRun();
 
   const saveCheckpoint = async (state: AgentStateJson, directRepair = false): Promise<boolean> => {
+    const observed = runtimeDiagnosticsActive(), checkpointStarted = observed ? performance.now() : 0;
+    // Counts/lengths only. Never encode the full checkpoint a second time for diagnostics.
+    if (observed) runtimeCheckpoint(state);
+    let checkpointOk = false;
+    try {
     const query = admin.from("v2_eval_runs").update({
       agent_state: {
         resume: {
@@ -397,7 +403,11 @@ async function runPipeline(
     const saved = intake.agent_direct_provider ? await query.select("run_id").maybeSingle() : await query;
     const error = saved.error || (intake.agent_direct_provider && !saved.data);
     if (error) console.warn(JSON.stringify({ event: "v2_agent_checkpoint_save_failed", run_id: intake.run_id }));
-    return !error;
+    checkpointOk = !error;
+    return checkpointOk;
+    } finally {
+      if (observed) runtimeDiagnostic("checkpoint_end", { ok: Number(checkpointOk), elapsed_ms: performance.now() - checkpointStarted });
+    }
   };
 
   // ── Research (one bounded chunk when chunked execution is requested) ─────
@@ -1448,7 +1458,15 @@ const CHAT_FAILURE_HE =
  * flushed via waitUntil AFTER the chunk's work, never on handler return.
  */
 function driveRun(...args: Parameters<typeof driveRunInner>): Promise<void> {
-  return withCostTelemetry("legal-research-v2", () => driveRunInner(...args), {
+  const intake = args[1], direct = intake.agent_direct_provider;
+  // Mirror existing authorization gates; no public request toggle or new environment setting.
+  const diagnostics = !!direct &&
+    !directProviderConfigError(direct, intake.agent_model ?? "", intake.agent_reasoning_effort) &&
+    !directPilotRunError(intake.run_id, Deno.env.get("V2_DIRECT_PROVIDER_PILOT_RUN_ID")) &&
+    Deno.env.get("V2_DIRECT_PROVIDER_PILOT") === direct.provider;
+  return withCostTelemetry("legal-research-v2", () => withRuntimeDiagnostics(
+    diagnostics, (args[2]?.chunk_index ?? 0) + 1, () => driveRunInner(...args),
+  ), {
     init: { feature: "legal_research", requestId: args[1]?.run_id, batchId: crypto.randomUUID() },
   });
 }

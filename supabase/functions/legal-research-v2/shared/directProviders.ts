@@ -1,3 +1,4 @@
+import { runtimeDiagnostic, runtimeDiagnosticsActive } from "./runtimeDiagnostics.ts";
 /** Native, internal-only provider boundary. No retry, fallback, or content logging. */
 import type { ChatMessage, ChatResult, ChatToolCall, ToolSpec, UsageLedger } from "./model.ts";
 import { DIRECT_LIMITS, DIRECT_MODELS, SOL61_PILOT_NATIVE_BUDGET_USD, directProviderConfigError, type DirectProviderConfig } from "./directProviderPolicy.ts";
@@ -217,16 +218,22 @@ export async function anthropicBody(opts: DirectOptions): Promise<{ body: Json; 
 async function readEvents(body: ReadableStream<Uint8Array>, signal: AbortSignal, handle: (event: Json) => boolean): Promise<void> {
   const reader = body.getReader(), decoder = new TextDecoder();
   let buffer = "", lines: string[] = [], bytes = 0, terminal = false;
+  const observed = runtimeDiagnosticsActive(), streamStarted = observed ? performance.now() : 0;
+  let chunks = 0, events = 0, maxBufferChars = 0, maxLineChars = 0, syncElapsed = 0, milestone = 0;
+  const milestones = [65_536, 262_144, 1_048_576, 4_194_304];
+  if (observed) runtimeDiagnostic("sse_begin");
   const onAbort = () => { try { void reader.cancel().catch(() => {}); } catch { /* cleanup only */ } };
   signal.addEventListener("abort", onAbort, { once: true });
   const dispatch = () => {
     if (!lines.length) return;
     const payload = lines.join("\n"); lines = [];
     if (payload === "[DONE]") return;
+    if (observed) events += 1;
     let event: unknown; try { event = JSON.parse(payload); } catch { bad("direct_malformed_sse"); }
     terminal = handle(object(event));
   };
   const line = (raw: string) => {
+    if (observed) maxLineChars = Math.max(maxLineChars, raw.length);
     raw = raw.replace(/\r$/, "");
     if (raw === "") dispatch();
     else if (raw.startsWith("data:")) lines.push(raw.slice(5).replace(/^ /, ""));
@@ -236,15 +243,33 @@ async function readEvents(body: ReadableStream<Uint8Array>, signal: AbortSignal,
       if (signal.aborted) bad("direct_aborted");
       const next = await reader.read();
       if (signal.aborted) bad("direct_aborted");
-      if (next.done) { buffer += decoder.decode(); if (buffer) line(buffer); dispatch(); break; }
-      bytes += next.value.byteLength;
-      if (bytes > DIRECT_LIMITS.maxResponseBytes) bad("direct_response_limit");
-      buffer += decoder.decode(next.value, { stream: true });
-      let nl: number;
-      while (!terminal && (nl = buffer.indexOf("\n")) !== -1) { line(buffer.slice(0, nl)); buffer = buffer.slice(nl + 1); }
+      if (!next.done) {
+        bytes += next.value.byteLength;
+        if (observed) {
+          chunks += 1;
+          if (milestone < milestones.length && bytes >= milestones[milestone]) {
+            while (milestone < milestones.length && bytes >= milestones[milestone]) milestone += 1;
+            // Before decode/whole-buffer scan/JSON.parse, so a kill in those phases can leave a size bracket.
+            runtimeDiagnostic("sse_progress", { response_bytes: bytes, chunks, events, pending_line_chars: buffer.length,
+              max_buffer_chars: maxBufferChars, max_line_chars: maxLineChars, sync_elapsed_ms: syncElapsed });
+          }
+        }
+      }
+      const syncStarted = observed ? performance.now() : 0;
+      try {
+        if (next.done) { buffer += decoder.decode(); if (buffer) line(buffer); dispatch(); break; }
+        if (bytes > DIRECT_LIMITS.maxResponseBytes) bad("direct_response_limit");
+        buffer += decoder.decode(next.value, { stream: true });
+        if (observed) maxBufferChars = Math.max(maxBufferChars, buffer.length);
+        let nl: number;
+        while (!terminal && (nl = buffer.indexOf("\n")) !== -1) { line(buffer.slice(0, nl)); buffer = buffer.slice(nl + 1); }
+      } finally { if (observed) syncElapsed += performance.now() - syncStarted; }
     }
     if (!terminal) bad("direct_eof_without_terminal");
   } finally {
+    if (observed) runtimeDiagnostic("sse_end", { response_bytes: bytes, chunks, events, terminal: Number(terminal),
+      pending_line_chars: buffer.length, max_buffer_chars: maxBufferChars, max_line_chars: maxLineChars,
+      sync_elapsed_ms: syncElapsed, elapsed_ms: performance.now() - streamStarted });
     signal.removeEventListener("abort", onAbort);
     try { void reader.cancel().catch(() => {}); } catch { /* cleanup only */ }
     try { reader.releaseLock(); } catch { /* cleanup only */ }
@@ -287,6 +312,8 @@ export async function directChat(opts: DirectOptions): Promise<ChatResult> {
   }
   if (opts.usage.direct_provider_attempts?.some(a => a.provider !== provider || a.requested_model !== wireModel)) return fail(400, "direct_provider_route_changed");
   if ((opts.usage.direct_provider_attempts?.length ?? 0) >= DIRECT_LIMITS.maxAttempts) return fail(400, "direct_attempt_limit");
+  const observed = runtimeDiagnosticsActive(), requestStarted = observed ? performance.now() : 0;
+  if (observed) runtimeDiagnostic("request_begin", { message_count: opts.messages.length, attempt: (opts.usage.direct_provider_attempts?.length ?? 0) + 1 });
   let body: Json, prefixHash = "";
   try {
     validateToolHistory(opts.messages);
@@ -306,7 +333,9 @@ export async function directChat(opts: DirectOptions): Promise<ChatResult> {
     }
   } catch (e) { return fail(400, safeError(e)); }
   const payload = JSON.stringify(body!);
-  if (new TextEncoder().encode(payload).length > DIRECT_LIMITS.maxRequestBytes) return fail(400, "direct_request_limit");
+  const requestBytes = new TextEncoder().encode(payload).length;
+  if (observed) runtimeDiagnostic("request_prepared", { request_bytes: requestBytes, elapsed_ms: performance.now() - requestStarted });
+  if (requestBytes > DIRECT_LIMITS.maxRequestBytes) return fail(400, "direct_request_limit");
   const keyName = provider === "anthropic" ? "ANTHROPIC_API_KEY" : "OPENAI_API_KEY";
   const apiKey = Deno.env.get(keyName);
   if (!apiKey) return fail(401, "direct_provider_key_missing");
@@ -319,6 +348,8 @@ export async function directChat(opts: DirectOptions): Promise<ChatResult> {
     const abort = () => controller.abort();
     opts.signal?.addEventListener("abort", abort, { once: true });
     const timer = setTimeout(abort, 30_000);
+    const countStarted = observed ? performance.now() : 0;
+    if (observed) runtimeDiagnostic("input_count_begin");
     try {
       const countResponse = await fetch("https://api.openai.com/v1/responses/input_tokens", {
         method: "POST", headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
@@ -342,7 +373,10 @@ export async function directChat(opts: DirectOptions): Promise<ChatResult> {
         return fail(402, "direct_native_budget_exhausted");
       }
     } catch { return fail(502, "direct_input_count_unavailable"); }
-    finally { clearTimeout(timer); opts.signal?.removeEventListener("abort", abort); }
+    finally {
+      if (observed) runtimeDiagnostic("input_count_end", { ok: Number(countedInput !== undefined), input_tokens: countedInput, elapsed_ms: performance.now() - countStarted });
+      clearTimeout(timer); opts.signal?.removeEventListener("abort", abort);
+    }
     if (opts.signal?.aborted) return fail(499, "direct_aborted_before_dispatch");
   }
   const attempt: DirectAttempt = {
@@ -363,12 +397,14 @@ export async function directChat(opts: DirectOptions): Promise<ChatResult> {
   const timeout = setTimeout(() => controller.abort(), DIRECT_LIMITS.timeoutMs);
   let result = fail(502, "direct_unknown_failure");
   let responseStarted = false;
+  let validationStarted: number | undefined;
   let priceReceiptCompatible = true;
   const recordUsage = (usage: unknown) => {
     Object.assign(attempt, nativeUsage(provider, usage, wireModel));
     attempt.usage_complete = attempt.input_tokens !== null && attempt.output_tokens !== null;
   };
   try {
+    if (observed) runtimeDiagnostic("dispatch_begin", { request_bytes: requestBytes });
     const resp = await fetch(provider === "anthropic" ? "https://api.anthropic.com/v1/messages" : "https://api.openai.com/v1/responses", {
       method: "POST", headers: provider === "anthropic" ? {
         "x-api-key": apiKey, "anthropic-version": "2023-06-01", "Content-Type": "application/json",
@@ -376,6 +412,7 @@ export async function directChat(opts: DirectOptions): Promise<ChatResult> {
       body: payload, signal: controller.signal,
     });
     responseStarted = true;
+    if (observed) runtimeDiagnostic("response_headers", { http_status: resp.status, elapsed_ms: Date.now() - started });
     attempt.http_status = resp.status;
     attempt.provider_request_id = safeProviderId(resp.headers.get(provider === "anthropic" ? "request-id" : "x-request-id"));
     if (!resp.ok || !resp.body) {
@@ -423,6 +460,7 @@ export async function directChat(opts: DirectOptions): Promise<ChatResult> {
         } else bad("direct_unsupported_event");
         return false;
       });
+      if (observed) { validationStarted = performance.now(); runtimeDiagnostic("response_validate_begin"); }
       if (stop === "max_tokens") { attempt.outcome = "incomplete"; result = fail(502, "direct_truncated_output"); }
       else if (stop === "refusal") { attempt.outcome = "refusal"; result = fail(422, "direct_provider_refusal"); }
       else if (stop !== "tool_use" && stop !== "end_turn") { attempt.outcome = "invalid_output"; result = fail(502, "direct_unsupported_stop"); }
@@ -446,6 +484,7 @@ export async function directChat(opts: DirectOptions): Promise<ChatResult> {
         if (event.type === "error") bad("direct_provider_stream_error");
         return false;
       });
+      if (observed) { validationStarted = performance.now(); runtimeDiagnostic("response_validate_begin"); }
       attempt.response_model = safeProviderModelId(terminal.model);
       attempt.provider_response_id = safeProviderId(terminal.id);
       recordUsage({ ...object(terminal.usage), ...(terminal.service_tier ? { service_tier: terminal.service_tier } : {}),
@@ -503,6 +542,8 @@ export async function directChat(opts: DirectOptions): Promise<ChatResult> {
     if (attempt.outcome === "pending") attempt.outcome = controller.signal.aborted ? "aborted_unknown" : responseStarted ? "stream_unknown" : "network_unknown";
     result = fail(controller.signal.aborted ? 499 : 502, controller.signal.aborted ? "direct_aborted" : safeError(e));
   } finally {
+    if (validationStarted !== undefined) runtimeDiagnostic("response_validate_end", { ok: Number(result.ok), sync_elapsed_ms: performance.now() - validationStarted });
+    if (observed) runtimeDiagnostic("attempt_end", { ok: Number(result.ok), elapsed_ms: Date.now() - started });
     clearTimeout(timeout); opts.signal?.removeEventListener("abort", onAbort);
     attempt.duration_ms = Math.max(0, Date.now() - started);
     if (attempt.response_model !== wireModel) {
