@@ -1,3 +1,4 @@
+import { runtimeDiagnostic, runtimeDiagnosticsActive } from "../shared/runtimeDiagnostics.ts";
 /**
  * legal-research-v2 — `fetch` tool.
  *
@@ -155,6 +156,25 @@ export async function extractByContentType(
   bytes: Uint8Array,
   execution?: { signal?: AbortSignal; deadlineAt?: number },
 ): Promise<ExtractResult> {
+  if (!runtimeDiagnosticsActive()) return extractByContentTypeInner(url, contentType, bytes, execution);
+  const started = performance.now();
+  runtimeDiagnostic("source_extract_begin", { input_bytes: bytes.length });
+  let ok = false, outputChars = 0;
+  try {
+    const result = await extractByContentTypeInner(url, contentType, bytes, execution);
+    ok = !result.error; outputChars = result.text.length;
+    return result;
+  } finally {
+    runtimeDiagnostic("source_extract_end", { ok: Number(ok), output_chars: outputChars, elapsed_ms: performance.now() - started });
+  }
+}
+
+async function extractByContentTypeInner(
+  url: string,
+  contentType: string,
+  bytes: Uint8Array,
+  execution?: { signal?: AbortSignal; deadlineAt?: number },
+): Promise<ExtractResult> {
   const ct = contentType.toLowerCase();
   const isPdf = ct.includes("pdf") || /\.pdf(\?|$)/i.test(url) ||
     (bytes.length > 4 && bytes[0] === 0x25 && bytes[1] === 0x50);
@@ -199,6 +219,9 @@ export async function extractByContentType(
   }
   // Charset-aware decode BEFORE any HTML stripping, so a windows-1255 page is
   // never stripped as mojibake.
+  const observed = runtimeDiagnosticsActive(), textStarted = observed ? performance.now() : 0;
+  if (observed) runtimeDiagnostic("text_process_begin", { input_bytes: bytes.length });
+  try {
   const decoded = decodeResponseText(bytes, contentType);
   const raw = decoded.text;
   const decode = {
@@ -219,14 +242,23 @@ export async function extractByContentType(
     };
   }
   return { text: raw.trim(), decode };
+  } finally {
+    if (observed) runtimeDiagnostic("text_process_end", { sync_elapsed_ms: performance.now() - textStarted });
+  }
 }
 
 /** Return reading windows around the agent's search terms (verbatim slices). */
 export function readingWindows(text: string, find: string[]): string[] {
+  const observed = runtimeDiagnosticsActive(), started = observed ? performance.now() : 0;
+  if (observed) runtimeDiagnostic("source_read_begin", { source_body_chars: text.length, term_count: find.length });
+  try {
   return excerptWindows(text, find, {
     window: FETCH_LIMITS.WINDOW_CHARS,
     max: FETCH_LIMITS.MAX_WINDOWS,
   });
+  } finally {
+    if (observed) runtimeDiagnostic("source_read_end", { sync_elapsed_ms: performance.now() - started });
+  }
 }
 
 /** Register windows as literal quotable text and shape them for the response. */

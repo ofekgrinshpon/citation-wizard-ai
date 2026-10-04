@@ -1,3 +1,4 @@
+import { runtimeDiagnostic, setRuntimeDiagnosticStep } from "../shared/runtimeDiagnostics.ts";
 /**
  * legal-research-v2 — the single research agent.
  *
@@ -694,6 +695,7 @@ export async function runResearchAgent(opts: {
     let modelMs: number;
     let contextChars: number;
     if (toolTurn) {
+      setRuntimeDiagnosticStep(policy.steps);
       // No compaction, rolling-state insertion, new model call, or extra step
       // while an accepted tool turn is incomplete. IDs are scoped to this turn.
       try {
@@ -710,6 +712,7 @@ export async function runResearchAgent(opts: {
       contextChars = toolTurn.context_chars;
     } else {
       policy.steps += 1;
+      setRuntimeDiagnosticStep(policy.steps);
 
       // ── Context discipline ────────────────────────────────────────────────
       // Stale tool payloads are replaced by their digests and a single rolling
@@ -1051,6 +1054,7 @@ export async function runResearchAgent(opts: {
           ) {
             const readable = opts.store.readable();
             const unused = unusedReadSources(candidateMemo, readable);
+            runtimeDiagnostic("coverage_reflection", { readable_count: readable.length, unused_count: unused.length });
             stats.memo_coverage_check_triggered += 1;
             stats.memo_coverage_unused_read_sources = unused.length;
             coverageBefore = candidateMemo;
