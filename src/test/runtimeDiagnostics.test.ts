@@ -53,7 +53,7 @@ describe("bounded native pilot runtime phase observations", () => {
   it("fails open on malformed checkpoint and throwing metric getter", async () => {
     await withRuntimeDiagnostics(true, 1, async () => {
       runtimeCheckpoint(null as unknown as Parameters<typeof runtimeCheckpoint>[0]);
-      runtimeDiagnostic("sse_progress", { get response_bytes() { throw Error("private"); } });
+      runtimeDiagnostic("sse_progress", { get response_bytes(): number { throw Error("private"); } });
     });
     assert.equal(logs.length, 2);
   });
