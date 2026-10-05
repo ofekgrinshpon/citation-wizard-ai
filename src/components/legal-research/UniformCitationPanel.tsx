@@ -5,6 +5,7 @@ import { runCitation, CitationRunError, type RunCitationResult } from "@/lib/run
 import { runPool, isTransientError } from "@/lib/concurrency";
 import { applyRepeatCitationRules, extractCitationOnly, stripPresentationWarnings } from "@/lib/footnoteRepeatRules";
 import { CREDIT_COSTS } from "@/lib/creditCosts";
+import { newTelemetryBatch, sourceTelemetry, type CostTelemetry } from "@/lib/costTelemetry";
 import { copyCitationRich, copyCitationsRich } from "@/lib/citationRichText";
 import { insertCitationAsFootnote } from "@/lib/wordInsertion";
 import { useOffice } from "@/hooks/useOffice";
@@ -88,15 +89,24 @@ export function UniformCitationPanel({ footnotes }: Props) {
     setCells(initial);
     setProgress({ done: 0, total: initial.length });
 
+    // Create ids once, outside the pool task, so automatic retries stay
+    // attributed to the same source. These ids never affect billing.
+    let sourceAttribution: Array<CostTelemetry | undefined> = [];
+    try {
+      const batch = newTelemetryBatch("uniform_citation");
+      sourceAttribution = initial.map(() => sourceTelemetry(batch));
+    } catch { /* Attribution must never prevent citation generation. */ }
+
     let done = 0;
     await runPool(
       initial,
-      (cell) =>
+      (cell, index) =>
         runCitation({
           rawInput: cell.input,
           overrideType: cell.sourceTypeOverride,
           projectId,
           useVerifiedStore: true,
+          telemetry: sourceAttribution[index],
         }),
       {
         concurrency: 2,
@@ -132,6 +142,10 @@ export function UniformCitationPanel({ footnotes }: Props) {
   const regenerateOne = async (id: number) => {
     const cell = cells.find((c) => c.id === id);
     if (!cell || !cell.input.trim()) return;
+    let telemetry: CostTelemetry | undefined;
+    try {
+      telemetry = sourceTelemetry(newTelemetryBatch("uniform_citation"));
+    } catch { /* A new user action must still work without attribution. */ }
     setCells((prev) =>
       prev.map((c) =>
         c.id === id ? { ...c, status: "loading", output: null, errorMsg: undefined, approved: false } : c,
@@ -143,6 +157,7 @@ export function UniformCitationPanel({ footnotes }: Props) {
         overrideType: cell.sourceTypeOverride,
         projectId,
         useVerifiedStore: true,
+        telemetry,
       });
       setCells((prev) =>
         applyRepeatCitationRules(prev.map((c) => (c.id === id ? applyResult(c, res) : c))),
