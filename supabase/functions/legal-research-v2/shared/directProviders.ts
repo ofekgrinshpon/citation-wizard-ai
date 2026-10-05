@@ -302,6 +302,7 @@ export async function directChat(opts: DirectOptions): Promise<ChatResult> {
   const outputLimit = opts.config.max_output_tokens;
   const configError = directProviderConfigError(opts.config, opts.model, opts.reasoningEffort);
   if (configError) return fail(400, configError);
+  const requestedEffort = opts.reasoningEffort === "high" ? "high" : "medium";
   // This gate remains unset in production. Enabling it requires separate rollout/budget approval.
   if (Deno.env.get("V2_DIRECT_PROVIDER_PILOT") !== provider) return fail(403, "direct_provider_pilot_disabled");
   if (!opts.usage) return fail(400, "direct_usage_ledger_required");
@@ -311,6 +312,12 @@ export async function directChat(opts: DirectOptions): Promise<ChatResult> {
     return fail(409, "direct_attempt_reconciliation_required");
   }
   if (opts.usage.direct_provider_attempts?.some(a => a.provider !== provider || a.requested_model !== wireModel)) return fail(400, "direct_provider_route_changed");
+  // Missing effort belongs only to legacy medium history, never a high trial.
+  if (opts.usage.direct_provider_attempts?.some(a => (a.effort ?? "medium") !== requestedEffort)) return fail(400, "direct_reasoning_effort_changed");
+  if (requestedEffort === "high" && opts.usage.direct_provider_attempts?.some(a => a.outcome !== "not_sent" &&
+    (a.effort_status !== "matched" || a.effort_returned !== "high"))) {
+    return fail(409, "direct_reasoning_effort_unconfirmed");
+  }
   if ((opts.usage.direct_provider_attempts?.length ?? 0) >= DIRECT_LIMITS.maxAttempts) return fail(400, "direct_attempt_limit");
   const observed = runtimeDiagnosticsActive(), requestStarted = observed ? performance.now() : 0;
   if (observed) runtimeDiagnostic("request_begin", { message_count: opts.messages.length, attempt: (opts.usage.direct_provider_attempts?.length ?? 0) + 1 });
@@ -323,7 +330,7 @@ export async function directChat(opts: DirectOptions): Promise<ChatResult> {
       const input = directResponsesInput(opts.messages, opts.responsesInput);
       body = {
         model: wireModel, input, stream: true, store: false,
-        include: ["reasoning.encrypted_content"], reasoning: { effort: "medium", summary: "auto" },
+        include: ["reasoning.encrypted_content"], reasoning: { effort: requestedEffort, summary: "auto" },
         max_output_tokens: outputLimit, service_tier: "default",
         ...(opts.tools?.length ? {
           tools: opts.tools.map(t => ({ type: "function", name: t.name, description: t.description, parameters: t.parameters, strict: false })),
@@ -340,7 +347,7 @@ export async function directChat(opts: DirectOptions): Promise<ChatResult> {
   const apiKey = Deno.env.get(keyName);
   if (!apiKey) return fail(401, "direct_provider_key_missing");
   if (opts.signal?.aborted) return fail(499, "direct_aborted_before_dispatch");
-  let countedInput: number | undefined, reservation: number | undefined;
+  let countedInput: number | undefined, reservation: number | undefined, inputCountMs: number | undefined;
   if (sol61) {
     // No local byte/token heuristic for opaque encrypted reasoning or tool schemas.
     // Count the exact input items, tool definitions and choice used by generation.
@@ -348,7 +355,7 @@ export async function directChat(opts: DirectOptions): Promise<ChatResult> {
     const abort = () => controller.abort();
     opts.signal?.addEventListener("abort", abort, { once: true });
     const timer = setTimeout(abort, 30_000);
-    const countStarted = observed ? performance.now() : 0;
+    const countStarted = performance.now();
     if (observed) runtimeDiagnostic("input_count_begin");
     try {
       const countResponse = await fetch("https://api.openai.com/v1/responses/input_tokens", {
@@ -365,6 +372,11 @@ export async function directChat(opts: DirectOptions): Promise<ChatResult> {
       const n = tokenCount(count.input_tokens);
       if (count.object !== "response.input_tokens" || n === null) return fail(502, "direct_input_count_invalid");
       countedInput = n;
+      // Counting awaits the network: another caller may have settled this ledger
+      // since admission. Recheck effort before reserving or dispatching anything.
+      if (opts.usage.direct_provider_attempts?.some(a => (a.effort ?? "medium") !== requestedEffort)) return fail(400, "direct_reasoning_effort_changed");
+      if (requestedEffort === "high" && opts.usage.direct_provider_attempts?.some(a => a.outcome !== "not_sent" &&
+        (a.effort_status !== "matched" || a.effort_returned !== "high"))) return fail(409, "direct_reasoning_effort_unconfirmed");
       // Preserve short-context comparison; do not silently pay the long-context tariff.
       if (n > 272_000) return fail(400, "direct_input_count_limit");
       reservation = sol61UpperUsd(n, outputLimit);
@@ -374,6 +386,7 @@ export async function directChat(opts: DirectOptions): Promise<ChatResult> {
       }
     } catch { return fail(502, "direct_input_count_unavailable"); }
     finally {
+      inputCountMs = Math.max(0, Math.round(performance.now() - countStarted));
       if (observed) runtimeDiagnostic("input_count_end", { ok: Number(countedInput !== undefined), input_tokens: countedInput, elapsed_ms: performance.now() - countStarted });
       clearTimeout(timer); opts.signal?.removeEventListener("abort", abort);
     }
@@ -383,11 +396,13 @@ export async function directChat(opts: DirectOptions): Promise<ChatResult> {
     ...emptyDirectUsage(), attempt_id: crypto.randomUUID(), provider, endpoint: provider === "anthropic" ? "messages" : "responses",
     requested_model: wireModel, response_model: null, provider_request_id: null, provider_response_id: null,
     http_status: 0, duration_ms: 0, outcome: "pending", price_version: sol61 ? "sol61-standard-2026-10-03" : "direct-standard-2026-10-03",
-    ...(sol61 ? { counted_input_tokens: countedInput, reserved_usd: reservation } : {}), effort: "medium", usage_complete: false,
+    ...(sol61 ? { counted_input_tokens: countedInput, reserved_usd: reservation, input_count_ms: inputCountMs } : {}), effort: requestedEffort, usage_complete: false,
   };
   (opts.usage.direct_provider_attempts ??= []).push(attempt);
   let checkpointed = false;
+  const checkpointStarted = sol61 ? performance.now() : 0;
   try { checkpointed = await opts.beforeDirectDispatch(); } catch { /* fail before dispatch */ }
+  finally { if (sol61) attempt.checkpoint_ms = Math.max(0, Math.round(performance.now() - checkpointStarted)); }
   if (!checkpointed) { attempt.outcome = "not_sent"; return fail(503, "direct_checkpoint_failed"); }
   if (opts.signal?.aborted) { attempt.outcome = "not_sent"; return fail(499, "direct_aborted_before_dispatch"); }
   opts.usage.model_calls += 1;
@@ -489,12 +504,20 @@ export async function directChat(opts: DirectOptions): Promise<ChatResult> {
       attempt.provider_response_id = safeProviderId(terminal.id);
       recordUsage({ ...object(terminal.usage), ...(terminal.service_tier ? { service_tier: terminal.service_tier } : {}),
         ...(terminal.inference_geo ? { inference_geo: terminal.inference_geo } : {}) });
+      const returnedEffort = object(terminal.reasoning).effort;
+      if (requestedEffort === "high") {
+        attempt.effort_returned = returnedEffort === undefined ? null : returnedEffort === "medium" || returnedEffort === "high" ? returnedEffort : "other";
+        attempt.effort_status = returnedEffort === undefined ? "not_reported" : returnedEffort === requestedEffort ? "matched" : "mismatch";
+      }
       priceReceiptCompatible = ["default", "standard"].includes(String(terminal.service_tier)) &&
         (terminal.inference_geo === undefined || terminal.inference_geo === "global");
       if (terminal.model !== wireModel) { attempt.outcome = "model_mismatch"; result = fail(502, "direct_model_mismatch"); }
       else if (terminalType !== "response.completed" || terminal.status !== "completed") {
         attempt.outcome = terminalType === "response.incomplete" ? "incomplete" : "invalid_output";
         result = fail(502, "direct_incomplete_response");
+      } else if (requestedEffort === "high" && attempt.effort_status !== "matched") {
+        attempt.outcome = "invalid_output";
+        result = fail(502, returnedEffort === undefined ? "direct_reasoning_effort_unreported" : "direct_reasoning_effort_mismatch");
       } else {
         if (!Array.isArray(terminal.output)) bad("direct_invalid_output");
         const calls: ChatToolCall[] = [], reasoning: NonNullable<ChatResult["reasoning_items"]> = [], seq: string[] = [];
@@ -517,8 +540,7 @@ export async function directChat(opts: DirectOptions): Promise<ChatResult> {
             if (text) seq.push("t");
           } else bad("direct_unsupported_block");
         }
-        const effort = object(terminal.reasoning).effort;
-        if (effort !== undefined && effort !== "medium") bad("direct_reasoning_effort_mismatch");
+        if (returnedEffort !== undefined && returnedEffort !== requestedEffort) bad("direct_reasoning_effort_mismatch");
         validateCalls(calls, opts); attempt.outcome = "ok";
         result = { ok: true, http_status: resp.status, terminal: false, content: text, tool_calls: calls,
           finish_reason: calls.length ? "tool_calls" : "stop", prompt_tokens: attempt.input_tokens ?? 0,
