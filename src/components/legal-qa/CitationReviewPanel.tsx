@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { CitationReviewCard, type ReviewCellState } from "./CitationReviewCard";
 import { rerenderAnswer, type EditableFootnote } from "@/lib/legalQa/footnoteRerender";
+import { newTelemetryBatch, sourceTelemetry, telemetryBody } from "@/lib/costTelemetry";
 import type { SourceType } from "@/data/abbreviations";
 
 interface InputFootnote {
@@ -45,12 +46,17 @@ export function CitationReviewPanel({ answer, footnotes, onApply, onCancel }: Pr
     const cell = cells.find((c) => c.id === id);
     if (!cell) return;
     update(id, { refilling: true, refillError: undefined, refillNote: undefined });
+    let telemetry: Record<string, string> = {};
+    try {
+      telemetry = telemetryBody(sourceTelemetry(newTelemetryBatch("refill")));
+    } catch { /* Attribution must never prevent refilling a citation. */ }
     try {
       const { data, error } = await supabase.functions.invoke("citation-refill", {
         body: {
           current_citation: cell.citation,
           source_type: cell.sourceType,
           missing_fields: [],
+          ...telemetry,
         },
       });
       if (error) throw error;
