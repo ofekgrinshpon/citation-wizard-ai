@@ -2,7 +2,7 @@
 // the legacy `batchId` body field switches citation-chat to batch billing
 // (consume_usage_batch), so telemetry ids must never be sent under it.
 
-export type CostFeature = "uniform_citation" | "footnotes" | "bibliography";
+export type CostFeature = "uniform_citation" | "footnotes" | "bibliography" | "refill";
 
 export interface CostTelemetry {
   feature: CostFeature;

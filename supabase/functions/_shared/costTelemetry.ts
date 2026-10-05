@@ -39,6 +39,8 @@ export type CostFeature = (typeof COST_FEATURES)[number];
  *   equivalence is unproven → always estimate_complete = false.
  */
 export const PRICE_VERSION = "list-2026-10-01-v2";
+/** Standard-tier token estimate only; NOT an upper bound on gateway billing. */
+export const FOLLOWUP_PRICE_VERSION = "openai-standard-2026-10-05-nonread-as-write-v1";
 const MAX_EVENTS_PER_REQUEST = 200;
 export const BODY_BYTE_CAP = 4 * 1024 * 1024;
 export const BODY_TIME_CAP_MS = 120_000;
@@ -352,12 +354,46 @@ function int(v: unknown): number | null {
   return n === null ? null : Math.round(n);
 }
 
+/** Invalid supplied token counts must not become a plausible cost estimate. */
+function malformedTokenUsage(input: unknown, output: unknown, total: unknown, details: Record<string, unknown>, reasoning: unknown): boolean {
+  const counts = [input, output, total, details.cached_tokens, details.cache_write_tokens, reasoning];
+  if (counts.some((v) => v != null && (num(v) === null || !Number.isInteger(v)))) return true;
+  if (typeof input === "number" && typeof details.cached_tokens === "number" &&
+      details.cached_tokens + (typeof details.cache_write_tokens === "number" ? details.cache_write_tokens : 0) > input) return true;
+  return false;
+}
+
 /** Google list prices (USD per 1M tokens). Output INCLUDES thinking tokens. */
 const GEMINI_PRICES: Record<string, { inPerM: number; outPerM: number; cachedPerM: number }> = {
   "google/gemini-2.5-flash": { inPerM: 0.30, outPerM: 2.50, cachedPerM: 0.03 },
   "google/gemini-3-flash-preview": { inPerM: 0.50, outPerM: 3.00, cachedPerM: 0.05 },
 };
 const SEARCH_USD_PER_REQUEST = 0.005;
+
+/**
+ * Exact application-configured aliases, verified against official model pages
+ * on 2026-10-05. Do not alias Sol 6.1 or guess a snapshot/sibling model.
+ * https://developers.openai.com/api/docs/models/gpt-6-luna
+ * https://developers.openai.com/api/docs/models/gpt-6-sol
+ * https://developers.openai.com/api/docs/guides/prompt-caching
+ *
+ * Cache writes REPLACE ordinary input pricing. This schema does not retain
+ * cache-write counts, so conservatively price ALL non-read input as writes.
+ * Cached-read usage must be known. This is only the high Standard-tier token
+ * scenario for that missing split, not actual cost or a gateway bill ceiling:
+ * tier, regional uplifts, gateway conversion and other fees are unverified.
+ * Output already includes reasoning. Over 272K input, the whole request uses
+ * input/cache x2 and output x1.5. Only router/direct-chat stages opt in.
+ */
+const FOLLOWUP_PRICES: Record<string, { providerModel: string; writePerM: number; cachedPerM: number; outPerM: number }> = {
+  "openai/gpt-6-luna": { providerModel: "gpt-6-luna", writePerM: 0.125, cachedPerM: 0.01, outPerM: 0.50 },
+  "openai/gpt-6-sol": { providerModel: "gpt-6-sol", writePerM: 2.50, cachedPerM: 0.20, outPerM: 10.00 },
+};
+
+function followupPriceVersion(provider: CostEvent["provider"], model: string | null, stage: unknown): string {
+  return provider === "lovable_gateway" && model && Object.prototype.hasOwnProperty.call(FOLLOWUP_PRICES, model) &&
+    (stage === "v2_router" || stage === "v2_direct_chat") ? FOLLOWUP_PRICE_VERSION : PRICE_VERSION;
+}
 
 export interface ParsedUsage {
   provider_request_id: string | null;
@@ -390,7 +426,7 @@ export function parseUsage(json: unknown): ParsedUsage {
   return {
     provider_request_id: typeof id === "string" && PROVIDER_REQ_ID_RE.test(id) ? id : null,
     response_model: safeModel(j.model),
-    input_tokens: int(u.prompt_tokens),
+    input_tokens: (j.model != null && safeModel(j.model) === null) || malformedTokenUsage(u.prompt_tokens, u.completion_tokens, u.total_tokens, ptd, ctd.reasoning_tokens ?? u.reasoning_tokens) ? null : int(u.prompt_tokens),
     output_tokens: int(u.completion_tokens),
     total_tokens: int(u.total_tokens),
     cached_input_tokens: int(ptd.cached_tokens),
@@ -421,6 +457,7 @@ export function estimateUsd(
   model: string | null,
   u: ParsedUsage,
   ok: boolean,
+  stage?: CostStage,
 ): { estimated_usd: number | null; estimate_complete: boolean } {
   const none = { estimated_usd: null, estimate_complete: false };
   if (!ok) return none;
@@ -428,12 +465,27 @@ export function estimateUsd(
     // Request-priced; independent of reported query count.
     return { estimated_usd: SEARCH_USD_PER_REQUEST, estimate_complete: true };
   }
-  if (provider === "lovable_gateway" && model && GEMINI_PRICES[model]) {
+  if (provider === "lovable_gateway" && model && Object.prototype.hasOwnProperty.call(GEMINI_PRICES, model)) {
     const p = GEMINI_PRICES[model];
     if (u.input_tokens === null || u.output_tokens === null) return none;
     // completion_tokens already include reasoning — never add reasoning again.
     const cached = u.cached_input_tokens !== null ? Math.min(u.cached_input_tokens, u.input_tokens) : 0;
     const usd = ((u.input_tokens - cached) * p.inPerM + cached * p.cachedPerM + u.output_tokens * p.outPerM) / 1_000_000;
+    return { estimated_usd: Math.round(usd * 1e8) / 1e8, estimate_complete: false };
+  }
+  if (provider === "lovable_gateway" && model && Object.prototype.hasOwnProperty.call(FOLLOWUP_PRICES, model) &&
+      (stage === "v2_router" || stage === "v2_direct_chat") &&
+      (endpoint === "responses" || endpoint === "chat_completions")) {
+    const p = FOLLOWUP_PRICES[model];
+    // Missing response identity may use the exact requested alias, still
+    // incomplete. A different/unknown returned model is never priced as it.
+    if (u.response_model !== null && u.response_model !== model && u.response_model !== p.providerModel) return none;
+    const i = u.input_tokens, o = u.output_tokens, r = u.cached_input_tokens;
+    if ([i, o, r].some((v) => v === null || num(v) === null || !Number.isInteger(v))) return none;
+    if (r! > i! || (u.total_tokens !== null && u.total_tokens !== i! + o!) ||
+        (u.reasoning_tokens !== null && (num(u.reasoning_tokens) === null || !Number.isInteger(u.reasoning_tokens) || u.reasoning_tokens > o!))) return none;
+    const long = i! > 272_000;
+    const usd = (((i! - r!) * p.writePerM + r! * p.cachedPerM) * (long ? 2 : 1) + o! * p.outPerM * (long ? 1.5 : 1)) / 1_000_000;
     return { estimated_usd: Math.round(usd * 1e8) / 1e8, estimate_complete: false };
   }
   // Perplexity Sonar chat and anything else: unverified current billing.
@@ -560,7 +612,7 @@ export async function trackedFetch(
       model: requested, requested_model: requested,
       outcome: "capture_incomplete", http_status: null, latency_ms: 0, header_latency_ms: null,
       completion_latency_ms: null, latency_complete: false, capture_status: "read_error",
-      ...EMPTY_USAGE, request_count: null, price_version: PRICE_VERSION,
+      ...EMPTY_USAGE, request_count: null, price_version: followupPriceVersion(kind.provider, requested, opts?.stage),
       estimated_usd: null, estimate_complete: false,
     };
   } catch { base = null; }
@@ -621,7 +673,7 @@ export async function trackedFetch(
       try { usage = parseUsage(JSON.parse(read.text)); } catch { parsed = false; }
       if (!usage.provider_request_id && headerReqId) usage = { ...usage, provider_request_id: headerReqId };
       // Search billing depends on HTTP success, not on our ability to parse.
-      const est = estimateUsd(k.provider, k.endpoint, b.requested_model, usage, k.endpoint === "search" ? true : parsed);
+      const est = estimateUsd(k.provider, k.endpoint, b.requested_model, usage, k.endpoint === "search" ? true : parsed, b.stage);
       return {
         ...fallback, ...usage,
         outcome: parsed ? "ok" : "parse_error",
@@ -654,12 +706,13 @@ export function parseResponsesUsage(resp: unknown): ParsedUsage {
   const o = (v: unknown) => (v && typeof v === "object" ? v : {}) as Record<string, unknown>;
   const r = o(resp);
   const u = o(r.usage);
+  const details = o(u.input_tokens_details), outputDetails = o(u.output_tokens_details);
   const id = r.id;
   return {
     ...EMPTY_USAGE,
     provider_request_id: typeof id === "string" && PROVIDER_REQ_ID_RE.test(id) ? id : null,
     response_model: safeModel(r.model),
-    input_tokens: int(u.input_tokens),
+    input_tokens: (r.model != null && safeModel(r.model) === null) || malformedTokenUsage(u.input_tokens, u.output_tokens, u.total_tokens, details, outputDetails.reasoning_tokens) ? null : int(u.input_tokens),
     output_tokens: int(u.output_tokens), // already includes reasoning
     total_tokens: int(u.total_tokens),
     cached_input_tokens: int(o(u.input_tokens_details).cached_tokens),
@@ -712,7 +765,7 @@ export function beginAttempt(a: {
       origin: "server_observed", provider: a.provider, endpoint: a.endpoint,
       model, requested_model: model, outcome: "capture_incomplete", http_status: null,
       latency_ms: 0, header_latency_ms: null, completion_latency_ms: null, latency_complete: false,
-      capture_status: "read_error", ...EMPTY_USAGE, request_count: null, price_version: PRICE_VERSION,
+      capture_status: "read_error", ...EMPTY_USAGE, request_count: null, price_version: followupPriceVersion(a.provider, model, a.stage),
       estimated_usd: null, estimate_complete: false,
     };
     let resolve!: (e: CostEvent) => void;
@@ -744,7 +797,7 @@ export function beginAttempt(a: {
             completion_latency_ms: f.complete ? ms : null,
             latency_complete: !!f.complete,
           };
-          Object.assign(ev, estimateUsd(a.provider, a.endpoint === "responses" ? "chat_completions" : a.endpoint, model, u, f.outcome === "ok"));
+          Object.assign(ev, estimateUsd(a.provider, a.endpoint, model, u, f.outcome === "ok", base.stage));
           resolve(ev);
         } catch { resolve(base); }
       },
