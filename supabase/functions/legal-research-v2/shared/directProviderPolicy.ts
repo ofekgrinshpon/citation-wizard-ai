@@ -26,8 +26,12 @@ export function directProviderConfigError(config: DirectProviderConfig, model: s
     : model !== DIRECT_MODELS.anthropic) return "direct_provider_model_mismatch";
   if (!Number.isSafeInteger(config.max_output_tokens) || config.max_output_tokens < 1024 ||
     config.max_output_tokens > DIRECT_LIMITS.maxOutputTokens) return "direct_output_limit_required";
-  // First pilot is a medium-effort transport comparison. No silent remapping.
-  if (effort !== undefined && effort !== "medium") return "direct_pilot_requires_medium_effort";
+  // Only the isolated Sol 6.1 pilot may request high. No public/default change,
+  // max effort, other model expansion, or silent remapping is permitted.
+  if (effort !== undefined && effort !== "medium" &&
+    !(effort === "high" && config.provider === "openai" && model === "openai/gpt-6.1-sol")) {
+    return "direct_pilot_requires_medium_effort";
+  }
   return null;
 }
 

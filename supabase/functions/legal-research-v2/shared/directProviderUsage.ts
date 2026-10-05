@@ -29,8 +29,14 @@ export interface DirectAttempt extends DirectUsage {
   counted_input_tokens?: number;
   reserved_usd?: number;
   settled_upper_usd?: number;
+  /** Sol 6.1 wrapper wall time, before duration_ms starts; no content retained. */
+  input_count_ms?: number;
+  checkpoint_ms?: number;
   price_version: "direct-standard-2026-10-03" | "sol61-standard-2026-10-03";
-  effort: "medium";
+  effort: "medium" | "high";
+  /** Closed scalar-only receipt audit for high; old medium receipts are unchanged. */
+  effort_returned?: "medium" | "high" | "other" | null;
+  effort_status?: "matched" | "not_reported" | "mismatch";
   usage_complete: boolean;
 }
 export const emptyDirectUsage = (): DirectUsage => ({
