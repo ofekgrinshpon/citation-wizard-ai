@@ -644,9 +644,7 @@ async function runPipeline(
     attachment_chars_loaded: attachments.attachment_chars_loaded,
     attachment_extract_errors: attachments.attachment_extract_errors,
     attachment_sources_preloaded: attachments.attachment_sources_preloaded,
-    attachment_sources_cited: rendered.cited_source_ids.filter((id) =>
-      store.get(id)?.origin === "user_document"
-    ),
+    attachment_sources_cited: [],
     attachment_authority_rejections: (verification?.rejected ?? []).filter((r) =>
       r.reason === "user_document_not_legal_authority"
     ).length,
