@@ -48,6 +48,7 @@ import { invokeFunction } from "@/lib/functionError";
 
 import { validateCitationInput } from "@/lib/citationInputValidation";
 import { handleRefundResponse } from "@/lib/refundResponse";
+import { articleRequestFields, compatibleArticleCache, renderForeignArticleLookup, type ForeignArticleLookupResponse } from "@/lib/foreignArticleAdapter";
 
 interface PendingVerification {
   lawName: string;
@@ -226,8 +227,9 @@ const Index = () => {
     );
   }
 
-  const callAPI = async (userMessage: string, history: Message[], telemetry?: CostTelemetry) => {
+  const callAPI = async (userMessage: string, history: Message[], telemetry?: CostTelemetry, article?: { sourceType: SourceType; rawInput: string }) => {
     const requestId = crypto.randomUUID();
+    const articleFields = articleRequestFields(article?.sourceType, article?.rawInput);
     const { data, errorInfo } = await invokeFunction<{ content?: string } & Record<string, unknown>>(
       "citation-chat",
       {
@@ -237,6 +239,7 @@ const Index = () => {
         ],
         requestId,
         ...telemetryBody(telemetry),
+        ...articleFields,
       },
       { projectId },
     );
@@ -259,6 +262,11 @@ const Index = () => {
     // Server signaled it auto-refunded the credit (e.g. AI returned a refusal).
     handleRefundResponse(data);
 
+    if (articleFields.foreignLookup) {
+      const rendered = renderForeignArticleLookup(articleFields.foreignLookup, data?.foreignLookup as ForeignArticleLookupResponse | undefined)
+        ?? renderForeignArticleLookup(articleFields.foreignLookup, { fields: {}, articleResolution: "incomplete" });
+      if (rendered) return rendered.reply;
+    }
     return (data?.content as string) || "אירעה שגיאה בעיבוד הבקשה.";
   };
 
@@ -368,7 +376,7 @@ const Index = () => {
         }
       }
 
-      const reply = await callAPI(prompt, messages, telemetry);
+      const reply = await callAPI(prompt, messages, telemetry, { sourceType, rawInput: normalized });
       const assistantIndex = newMessages.length;
 
       const validation = validateAIResponse(reply, sourceType as SourceType);
@@ -424,7 +432,7 @@ const Index = () => {
       }
 
       const fullRawInput = buildFullRawInput(rawText, messages);
-      const reply = await callAPI(prompt, messages, telemetry);
+      const reply = await callAPI(prompt, messages, telemetry, { sourceType, rawInput: normalized });
       const assistantIndex = newMessages.length;
 
       const validation = validateAIResponse(reply, sourceType as SourceType);
@@ -502,7 +510,7 @@ const Index = () => {
         const engineHint = buildEnginePromptHint(sourceType as SourceType);
         prompt = `[סיווג אוטומטי: ${sourceLabel}]\n${engineHint}${normalized}`;
       }
-      const reply = await callAPI(prompt, messages, telemetry);
+      const reply = await callAPI(prompt, messages, telemetry, { sourceType, rawInput: normalized });
       const assistantIndex = messages.length;
       setMessages((prev) => [...prev, { role: "assistant", content: reply }]);
       setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: sourceType }));
@@ -613,14 +621,15 @@ const Index = () => {
     try {
       const fullRawInput = buildFullRawInput(rawText, messages);
       const isPinpoint = PINPOINT_RE.test(rawText);
-      const verifiedMatch = await findVerifiedSourceMatch(normalized);
+      const verifiedMatch = compatibleArticleCache(sourceType, normalized, await findVerifiedSourceMatch(normalized));
 
       // Short-circuit only for direct/canonical verified matches — aliases go through suggestion UI
       if (verifiedMatch && !isPinpoint) {
         const normalizedSourceName = normalizeAbbreviations(verifiedMatch.source_name).toLowerCase();
-        const isDirectVerifiedMatch = normalizedSourceName.includes(normalized) ||
-          normalizedSourceName === normalized ||
-          normalized.includes(normalizedSourceName);
+        const comparableInput = sourceType === "foreign_journal_article" ? normalized.toLowerCase() : normalized;
+        const isDirectVerifiedMatch = normalizedSourceName.includes(comparableInput) ||
+          normalizedSourceName === comparableInput ||
+          comparableInput.includes(normalizedSourceName);
 
         if (isDirectVerifiedMatch) {
           const verifiedCategory = getVerifiedCategoryLabel(
@@ -652,7 +661,7 @@ const Index = () => {
 
       // Check for similar (fuzzy) verified source match
       if (!isPinpoint) {
-        const similarMatch = verifiedMatch ?? await findSimilarVerifiedSource(normalized);
+        const similarMatch = compatibleArticleCache(sourceType, normalized, verifiedMatch ?? await findSimilarVerifiedSource(normalized));
         if (similarMatch) {
           setPendingSuggestion({
             suggestion: similarMatch,
@@ -679,7 +688,7 @@ const Index = () => {
         prompt = `${prompt}\n\n══ מקור מאומת (${verifiedCategory}) ══\nהשתמש בפרטים הבאים מהמקור המאומת כדי להשלים את האזכור:\nשם: ${verifiedMatch.source_name}\nאזכור מלא: ${verifiedMatch.full_citation}\n══════════════════════════════════`;
       }
 
-      const reply = await callAPI(prompt, messages, tel);
+      const reply = await callAPI(prompt, messages, tel, { sourceType, rawInput: normalized });
       const assistantIndex = newMessages.length;
 
       // Re-classify source type based on AI output (e.g., database → published if פ"ד found)
@@ -689,12 +698,16 @@ const Index = () => {
       }
 
       // Post-response validation using the citation engine
-      const validation = validateAIResponse(reply, effectiveSourceType);
       let finalReply = reply;
-      if (!validation.isComplete && validation.missingFields.length > 0) {
-        const summary = getMissingFieldsSummary(validation.effectiveSourceType ?? effectiveSourceType, validation.missingFields);
-        if (summary && !/⚠️/.test(reply)) {
-          finalReply = `${reply}\n⚠️ ${summary}`;
+      // The article adapter already validates structured fields. Re-parsing its
+      // display markers as generic model text would report false missing fields.
+      if (effectiveSourceType !== "foreign_journal_article") {
+        const validation = validateAIResponse(reply, effectiveSourceType);
+        if (!validation.isComplete && validation.missingFields.length > 0) {
+          const summary = getMissingFieldsSummary(validation.effectiveSourceType ?? effectiveSourceType, validation.missingFields);
+          if (summary && !/⚠️/.test(reply)) {
+            finalReply = `${reply}\n⚠️ ${summary}`;
+          }
         }
       }
 
@@ -1031,12 +1044,13 @@ const Index = () => {
                             }
 
                             // Check verified sources first
-                            const verifiedMatch = await findVerifiedSourceMatch(normalized);
+                            const verifiedMatch = compatibleArticleCache(sourceType, normalized, await findVerifiedSourceMatch(normalized));
                             if (verifiedMatch) {
                               const normalizedSourceName = normalizeAbbreviations(verifiedMatch.source_name).toLowerCase();
-                              const isDirectVerifiedMatch = normalizedSourceName.includes(normalized) ||
-                                normalizedSourceName === normalized ||
-                                normalized.includes(normalizedSourceName);
+                              const comparableInput = sourceType === "foreign_journal_article" ? normalized.toLowerCase() : normalized;
+                              const isDirectVerifiedMatch = normalizedSourceName.includes(comparableInput) ||
+                                normalizedSourceName === comparableInput ||
+                                comparableInput.includes(normalizedSourceName);
 
                               if (isDirectVerifiedMatch) {
                                 const verifiedCategory = getVerifiedCategoryLabel(
@@ -1063,7 +1077,7 @@ const Index = () => {
                                 });
                               }
                             } else {
-                              const reply = await callAPI(prompt, updatedMessages.slice(0, i), editTel);
+                              const reply = await callAPI(prompt, updatedMessages.slice(0, i), editTel, { sourceType, rawInput: normalized });
                               const assistantIndex = updatedMessages.length;
                               setMessages([...updatedMessages, { role: "assistant", content: reply }]);
                               setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: sourceType as SourceType }));
@@ -1096,7 +1110,7 @@ const Index = () => {
                             const engineHint = buildEnginePromptHint(newType);
                             // IMPORTANT: include [סיווג אוטומטי: ...] so the backend routes to the right Perplexity branch
                             const reclassifiedPrompt = `[סיווג אוטומטי: ${newLabel}]\n[תיקון סיווג: המשתמש ציין שמדובר ב${newLabel}]\n${engineHint}[כלל רלוונטי: ${getEngineRuleReference(newType)}]\n${rawInput}`;
-                            const reply = await callAPI(reclassifiedPrompt, messages.slice(0, i), sourceTelemetry(newTelemetryBatch("uniform_citation")));
+                            const reply = await callAPI(reclassifiedPrompt, messages.slice(0, i), sourceTelemetry(newTelemetryBatch("uniform_citation")), { sourceType: newType, rawInput: normalizeAbbreviations(rawInput) });
                             setMessages((prev) => {
                               const updated = [...prev];
                               updated[i] = { role: "assistant", content: reply };

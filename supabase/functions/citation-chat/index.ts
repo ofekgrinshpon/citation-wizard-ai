@@ -60,8 +60,14 @@ import {
   type DocketAnchorVia,
 } from "../_shared/trustedHosts.ts";
 import { normalizeHebrewNumberRanges } from "../_shared/hebrewNumberRange.ts";
-import { runForeignLookup, type ForeignLookupResult } from "./foreignLookup.ts";
+import { runForeignLookup, articleLookupFallback, type ForeignLookupResult } from "./foreignLookup.ts";
 import { normalizeEditorPlacement } from "../_shared/articleCitationValidator.ts";
+import {
+  articleRawInput, createHebrewArticleRequest, collectHebrewArticleEvidence,
+  resolveHebrewArticle, renderHebrewArticle, isCompleteHebrewArticle,
+  cachedHebrewArticleEvidence,
+  type ArticleEvidence,
+} from "../_shared/hebrewArticleEvidence.ts";
 import {
   isProvisionalCouncilDate,
   knessetLabel,
@@ -839,7 +845,7 @@ async function fallbackBiblioSearch(
   apiKey: string,
   query: string,
   preferKind: "book" | "article",
-): Promise<{ hint: string; kind: string } | null> {
+): Promise<{ hint: string; kind: string; proposed: Record<string, unknown>; searchResults: unknown } | null> {
   try {
     const resp = await trackedFetch("https://api.perplexity.ai/chat/completions", {
       method: "POST",
@@ -911,7 +917,7 @@ async function fallbackBiblioSearch(
       if (p.hebrewYear && !p.year) details += `שנה עברית: ${p.hebrewYear}\n`;
       details += `══ עיצוב אזכור לפי כלל 24. סמן [חסר:...] לשדות חסרים. אל תמציא. ══`;
     }
-    return { hint: details, kind };
+    return { hint: details, kind, proposed: p, searchResults: data.search_results };
   } catch (e) {
     console.error("[fallback] biblio search error:", e);
     return null;
@@ -1652,6 +1658,7 @@ serve((req) => withCostTelemetry("citation-chat", async () => {
       requestId: clientReqId,
       batchId: clientBatchId,
       foreignLookup: foreignLookupRequest,
+      rawInput,
     } = await req.json().then((b: any) => { // deno-lint-ignore no-explicit-any
       // Telemetry ids are separate from the billing batchId (never mixed).
       setTelemetryFromBody(b, "uniform_citation");
@@ -1670,6 +1677,15 @@ serve((req) => withCostTelemetry("citation-chat", async () => {
 
     const lastUserMessage = [...messages].reverse().find((m: { role: string }) => m.role === "user");
     const userInput = lastUserMessage?.content || "";
+    const articleClass = userInput.match(/\[סיווג אוטומטי:\s*([^\]]+)\]/)?.[1] || "";
+    const articleRequest = /מאמר/.test(articleClass) && !/לועז|אנגלי|זר|ספר/.test(articleClass) &&
+      !/בתוך|בספר/.test(articleRawInput(userInput, rawInput)) && !foreignLookupRequest
+      ? createHebrewArticleRequest(articleRawInput(userInput, rawInput))
+      : null;
+    const articleEvidence: ArticleEvidence[] = [];
+    const articleContent = () => ensureCitationTrailingPeriod(normalizeHebrewNumberRanges(
+      normalizeArticleYearByRule2492(fixHebrewYearPrefix(renderHebrewArticle(resolveHebrewArticle(articleRequest!, articleEvidence)))),
+    ));
 
     // ── Pre-consume validation: reject gibberish/empty input BEFORE charging credits ──
     if (!isValidCitationInputServer(userInput)) {
@@ -1684,10 +1700,10 @@ serve((req) => withCostTelemetry("citation-chat", async () => {
     const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
     const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 
-    if (SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY && userInput.length >= 2) {
+    if (SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY && userInput.length >= 2 && foreignLookupRequest?.kind !== "journal_article") {
       try {
         const sb = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
-        const searchTerm = userInput
+        const searchTerm = articleRequest?.raw || userInput
           .replace(/\[סיווג אוטומטי:.*?\]\n?/, "")
           .replace(/══[\s\S]*══+\s*/g, "")
           .trim();
@@ -1717,35 +1733,42 @@ serve((req) => withCostTelemetry("citation-chat", async () => {
             const rankedMatches = verified
               .map((candidate) => ({
                 candidate,
-                score: scoreVerifiedMatch(searchTerm, candidate as { source_name: string; full_citation: string }),
+                score: articleRequest
+                  ? (cachedHebrewArticleEvidence(articleRequest, candidate.full_citation, candidate.source_name).length ? 200 : -1)
+                  : scoreVerifiedMatch(searchTerm, candidate as { source_name: string; full_citation: string }),
               }))
               .filter((item) => item.score >= 0)
               .sort((a, b) => b.score - a.score);
 
+            if (articleRequest) {
+              for (const { candidate } of rankedMatches) {
+                articleEvidence.push(...cachedHebrewArticleEvidence(articleRequest, candidate.full_citation, candidate.source_name));
+              }
+            }
             if (rankedMatches.length > 0) {
-              hasVerifiedCandidates = true;
+              hasVerifiedCandidates = !articleRequest || isCompleteHebrewArticle(resolveHebrewArticle(articleRequest, articleEvidence));
             }
             console.log(`[verified] raw=${verified.length}, ranked=${rankedMatches.length}, hasVerifiedCandidates=${rankedMatches.length > 0}`);
 
             const bestMatch = rankedMatches[0]?.candidate as { full_citation: string } | undefined;
-            const hasPinpoint = PINPOINT_REGEX.test(userInput);
-            if (bestMatch && !hasPinpoint) {
+            const hasPinpoint = articleRequest ? !!articleRequest.pinpoint : PINPOINT_REGEX.test(userInput);
+            if (bestMatch && !hasPinpoint && (!articleRequest || (hasVerifiedCandidates && resolveHebrewArticle(articleRequest, articleEvidence).conflicts.length === 0))) {
               console.log(
                 `[credit] free_path=verified_source_hit user=${userId ?? "unknown"} request_id=${creditRequestId} amount=0`,
               );
               recordZeroWork("server_verified_store", "cache_hit");
-              return new Response(JSON.stringify({ content: bestMatch.full_citation }), {
+              return new Response(JSON.stringify({ content: articleRequest ? articleContent() : bestMatch.full_citation }), {
                 headers: { ...corsHeaders, "Content-Type": "application/json" },
               });
             }
-            if (bestMatch && hasPinpoint) {
+            if (!articleRequest && bestMatch && hasPinpoint) {
               verifiedHint = `\n\n══ מקור מאומת (הפניה נקודתית) ══\nהמקור המאומת: ${bestMatch.full_citation}\n══ המשתמש מבקש הפניה נקודתית (pinpoint). שלב את ההפניה הנקודתית עם המקור המאומת לפי כללי האזכור האחיד. אל תשנה את הנתונים מהמקור המאומת. ══`;
             }
 
-            const sources = verified.map((v: Record<string, unknown>) =>
+            const sources = (articleRequest ? [] : verified).map((v: Record<string, unknown>) =>
               `[מקור מאומת] ${v.source_name}: ${v.full_citation}`,
             ).join("\n");
-            verifiedHint = `\n\n══ מקורות מאומתים שנמצאו במאגר ══\n${sources}\n══ השתמש בציטוטים המאומתים הללו כבסיס לתשובתך. אל תשנה אותם אלא אם הם סותרים את כללי האזכור. ══`;
+            if (!articleRequest) verifiedHint = `\n\n══ מקורות מאומתים שנמצאו במאגר ══\n${sources}\n══ השתמש בציטוטים המאומתים הללו כבסיס לתשובתך. אל תשנה אותם אלא אם הם סותרים את כללי האזכור. ══`;
           }
         }
       } catch (e) {
@@ -1820,7 +1843,7 @@ serve((req) => withCostTelemetry("citation-chat", async () => {
         flRaw.trim()
       ) {
         const pplxKey = Deno.env.get("PERPLEXITY_API_KEY");
-        if (pplxKey) {
+        if (pplxKey || flKind === "journal_article") {
           try {
             foreignLookupResult = await runForeignLookup(
               { kind: flKind, jurisdiction: flJur, rawInput: flRaw, parsedFields: flParsed },
@@ -1828,14 +1851,25 @@ serve((req) => withCostTelemetry("citation-chat", async () => {
             );
           } catch (flErr) {
             console.error("foreign lookup error:", flErr);
-            foreignLookupResult = null;
+            foreignLookupResult = flKind === "journal_article"
+              ? articleLookupFallback({ kind: flKind, jurisdiction: flJur, rawInput: flRaw, parsedFields: flParsed }, "lookup_failed")
+              : null;
           }
           // Identity matched + at least one grounded new field → the client
           // renders deterministically; no model call needed for this request.
           if (
+            !!foreignLookupResult?.articleResolution ||
             (foreignLookupResult?.identity.matched && Object.keys(foreignLookupResult.fields).length > 0) ||
             (foreignLookupResult?.disambiguation && foreignLookupResult.disambiguation.length > 1)
           ) {
+            // Older clients merge article fields without the new identity and
+            // pinpoint contract. Do not let them consume a partial typed result.
+            // Preserve their input with an existing warning marker instead.
+            if (foreignLookupResult?.articleResolution && foreignLookupRequest.articleResponseVersion !== 1) {
+              return new Response(JSON.stringify({
+                content: `${flRaw}\n⚠️ נשמר רק האזכור שסיפקתם. פרטי פרסום חסרים או סותרים דורשים בדיקה.`,
+              }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+            }
             return new Response(JSON.stringify({ content: "", foreignLookup: foreignLookupResult }), {
               headers: { ...corsHeaders, "Content-Type": "application/json" },
             });
@@ -2987,7 +3021,7 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
       /^[\u0590-\u05FF]/.test(cleanedForBookCheck.replace(/['׳"״`]/g, '')) && 
       cleanedForBookCheck.split(/\s+/).length >= 4 &&
       !/נ['']|נגד|חוק |פקודת |תקנות|הצעת חוק|אמנ|ד["״]כ/.test(cleanedForBookCheck);
-    if ((isBook || looksLikeBook) && !hasVerifiedCandidates) {
+    if (!articleRequest && (isBook || looksLikeBook) && !hasVerifiedCandidates) {
       try {
         const PERPLEXITY_API_KEY = Deno.env.get("PERPLEXITY_API_KEY");
         if (PERPLEXITY_API_KEY) {
@@ -3158,6 +3192,56 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
       }
     }
 
+    // Article facts are resolved before formatting. Neither cache hints nor
+    // the generic free-form formatter may supply or overwrite these fields.
+    if (articleRequest) {
+      const PERPLEXITY_API_KEY = Deno.env.get("PERPLEXITY_API_KEY");
+      if (!hasVerifiedCandidates && PERPLEXITY_API_KEY) {
+        try {
+          const artRun = await perplexityWithFallback(PERPLEXITY_API_KEY, {
+            model: "sonar-pro",
+            messages: [
+              { role: "system", content: `אתה עוזר מחקר משפטי ישראלי. אתר את המאמר המבוקש, גם כשהבקשה מתארת אותו בשפה טבעית. החזר JSON בלבד:
+{"found":true,"type":"journal"|"article_in_book","author":"שם המחבר/ים","articleTitle":"שם המאמר","journalName":"","bookTitle":"","bookAuthor":"","volume":"","notebook":"","firstPage":"","year":0,"hebrewYear":"","editor":""}
+הסתמך על רשומה ביבליוגרפית של אותו מאמר או על העמוד הראשון שלו. אל תשתמש בפרטי מאמר אחר שמצטט אותו. הפרד בין עמוד תחילת המאמר לבין העמודים שהמשתמש מבקש. שנה היא שנת הדפוס המופיעה במאמר; תאריך העלאה או עדכון של דף אינטרנט אינו שנת פרסום. אם מופיעה רק שנה עברית, שמור אותה ללא המרה. אל תנחש שדות חסרים. אם אין זיהוי, החזר {"found":false}.` },
+              { role: "user", content: articleRequest.raw },
+            ],
+          }, "article");
+          const artData = artRun.resp?.ok ? await artRun.resp.json() : null;
+          const json = artData?.choices?.[0]?.message?.content?.match(/\{[\s\S]*\}/)?.[0];
+          let proposed: Record<string, unknown> = {};
+          if (json) {
+            try { proposed = JSON.parse(json.replace(/([\u0590-\u05FF])"([\u0590-\u05FF])/g, "$1\u05F4$2")); } catch { /* Keep supplied fields on malformed provider output. */ }
+          }
+          articleEvidence.push(...collectHebrewArticleEvidence(articleRequest, proposed, artData?.search_results));
+          const initial = resolveHebrewArticle(articleRequest, articleEvidence);
+          if (initial.matched && proposed.author && proposed.articleTitle) {
+            // Reuse the existing author-check call; its source records are
+            // subject to the same identity/field gate as the first retrieval.
+            const verify = await verifyBiblioAuthor(PERPLEXITY_API_KEY, "article", String(proposed.articleTitle));
+            if (verify) articleEvidence.push(...collectHebrewArticleEvidence(articleRequest, {
+              articleTitle: proposed.articleTitle, author: verify.author,
+            }, verify.search_results));
+          }
+          if (!initial.matched) {
+            const fallback = await fallbackBiblioSearch(PERPLEXITY_API_KEY, articleRequest.raw, "article");
+            if (fallback && fallback.kind !== "book") articleEvidence.push(...collectHebrewArticleEvidence(
+              articleRequest, fallback.proposed, fallback.searchResults,
+            ));
+          }
+        } catch (e) {
+          console.error("[article] grounded retrieval failed:", e);
+        }
+      }
+      // Same Rule 24 template and shared normalizers; zero formatter provider
+      // calls on this path. The existing usage reservation above is unchanged.
+      return new Response(JSON.stringify({ content: articleContent() }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Non-journal article families retain the baseline orchestration below.
+    // Journal articles already returned through the typed boundary above.
     // ── Article (מאמר) search via Perplexity ──
     let articleHint = "";
     const isArticle = classMatch && /מאמר/.test(classMatch[1]);

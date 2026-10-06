@@ -68,6 +68,8 @@ export interface ForeignLookupResult {
   disambiguation?: Array<{ jurisdiction: "US" | "UK"; label: string; url: string }>;
   diagnostics: { tier1Queried: boolean; tier2Fired: boolean; jurisdictionResolvedBy?: string };
   error?: string;
+  /** Article lookup outcome, not a verification claim. Partial fields stay missing. */
+  articleResolution?: "resolved" | "incomplete" | "conflict";
 }
 
 export interface LookupDeps {
@@ -76,6 +78,10 @@ export interface LookupDeps {
 }
 
 import { trackedFetch, type CostStage } from "../_shared/costTelemetry.ts";
+import {
+  parseForeignArticleInput, articleRecordsFromSnippet, articleRecordFromHtml,
+  articleHeadingMatches, articleFieldMatches, enrichArticleAuthors, type ArticleRecord,
+} from "../_shared/foreignArticle.ts";
 const PPLX_SEARCH_URL = "https://api.perplexity.ai/search";
 const TIMEOUT_MS = 20_000;
 const MAX_RESULTS = 8;
@@ -535,6 +541,122 @@ async function searchOnce(
 }
 
 // ── Main entry ─────────────────────────────────────────────────────────────
+/** Fail honestly at article infrastructure boundaries; never replace supplied identity. */
+export function articleLookupFallback(input: ForeignLookupInput, error?: string): ForeignLookupResult {
+  const fields = parseForeignArticleInput(input.rawInput);
+  const title = typeof input.parsedFields?.articleTitle === "string" ? input.parsedFields.articleTitle : fields.articleTitle;
+  return {
+    kind: input.kind, jurisdiction: input.jurisdiction, fields: {}, grounded: {}, provenance: {}, sources: [],
+    identity: { matched: false, anchors: title ? [`title:${title}`] : [], conflicts: [] },
+    diagnostics: { tier1Queried: false, tier2Fired: false },
+    ...(input.kind === "journal_article" && title ? { articleResolution: "incomplete" as const } : {}),
+    ...(error ? { error } : {}),
+  };
+}
+
+/** Article evidence is retained as whole work records, never field-count votes. */
+async function lookupArticle(
+  input: ForeignLookupInput,
+  result: ForeignLookupResult,
+  doFetch: typeof fetch,
+  apiKey: string,
+): Promise<ForeignLookupResult> {
+  const supplied = { ...parseForeignArticleInput(input.rawInput), ...Object.fromEntries(
+    Object.entries(input.parsedFields ?? {}).filter(([, value]) => typeof value === "string" && value.trim()),
+  ) };
+  if (!supplied.articleTitle) return result;
+  result.articleResolution = "incomplete";
+  result.identity.anchors = [`title:${supplied.articleTitle}`, ...(supplied.authors ? [`author:${supplied.authors}`] : [])];
+  const records: Array<ArticleRecord & { donor: LookupSource; inspected: boolean }> = [];
+  const sources: LookupSource[] = [];
+  const conflicts = new Set<string>();
+  const addRecord = (record: ArticleRecord, donor: LookupSource, inspected: boolean) => {
+    const disagreed = Object.entries(record.fields).filter(([field, value]) =>
+      supplied[field] && field !== "pinpoint" && !articleFieldMatches(field, supplied[field], value));
+    if (disagreed.length) {
+      for (const [field, value] of disagreed) conflicts.add(`${field}:${supplied[field]} vs ${value}`);
+      return;
+    }
+    records.push({ ...record, donor, inspected });
+  };
+  const discover = async (tier: "tier1" | "tier2") => {
+    if (tier === "tier1") result.diagnostics.tier1Queried = true;
+    else result.diagnostics.tier2Fired = true;
+    const found = await searchOnce(buildQuery(input), tier === "tier1" ? tier1Hints(input.kind, input.jurisdiction) : null, doFetch, apiKey,
+      tier === "tier1" ? "foreign_search_tier1" : "foreign_search_tier2");
+    for (const item of found) {
+      if (!item.url) continue;
+      const source: LookupSource = { ...item, url: item.url, tier, strong: classifySource(item.url) !== "weak" };
+      if (!sources.some((known) => known.url === source.url)) {
+        sources.push(source);
+        result.sources.push({ url: source.url, title: source.title, tier });
+      }
+      // The open-web retry can return richer evidence for an existing URL.
+      // Deduplicate source listing, not that newly returned work record.
+      if (source.strong) for (const record of articleRecordsFromSnippet(source, supplied)) addRecord(record, source, false);
+    }
+  };
+  let inspected = false;
+  const inspect = async () => {
+    if (inspected || records.length) return;
+    // A page that merely discusses the target is not an inspection candidate.
+    const source = sources.find((candidate) => candidate.strong && articleHeadingMatches(candidate.title ?? "", supplied.articleTitle));
+    if (!source) return;
+    inspected = true;
+    const page = await fetchPageText(source.url, doFetch);
+    if (!page) return;
+    // Only self-identifying citation_* metadata is authoritative on a full page.
+    // Stripped body text can contain arbitrary references to different works.
+    const record = articleRecordFromHtml(page, supplied);
+    if (record) addRecord(record, source, true);
+  };
+  await discover("tier1");
+  await inspect();
+  // An irrelevant strong host or a conflicting record no longer blocks rescue.
+  if (!records.length) {
+    await discover("tier2");
+    await inspect();
+  }
+  result.identity.conflicts = [...conflicts];
+  result.identity.matched = records.length > 0;
+  // All accepted fields must describe compatible records. Duplicate URLs or
+  // plentiful snippets cannot vote away a disagreement about the cited work.
+  const fields = [...new Set(records.flatMap((record) => Object.keys(record.fields)))];
+  const recordConflicts = fields.filter((field) => {
+    const values = records.map((record) => record.fields[field]).filter(Boolean);
+    // A shared initial can match two contradictory full names; compare every
+    // author record so abbreviated evidence cannot conceal that disagreement.
+    if (field === "authors") return values.some((value, i) => values.slice(i + 1).some((other) => !articleFieldMatches(field, value, other)));
+    return values.some((value) => !articleFieldMatches(field, values[0], value));
+  });
+  if (recordConflicts.length) {
+    result.identity.conflicts.push(...recordConflicts.map((field) => `conflicting_article_${field}`));
+    result.articleResolution = "conflict";
+    return result;
+  }
+  for (const field of fields) {
+    if (supplied[field] && field !== "authors") continue;
+    let chosen = records.find((record) => record.structured && record.fields[field]) ?? records.find((record) => record.fields[field]);
+    if (!chosen) continue;
+    if (field === "authors") {
+      for (const record of records) {
+        if (enrichArticleAuthors(chosen.fields.authors, record.fields.authors) !== chosen.fields.authors) chosen = record;
+      }
+      if (supplied.authors && enrichArticleAuthors(supplied.authors, chosen.fields.authors) === supplied.authors) continue;
+    }
+    result.fields[field] = chosen.fields[field];
+    result.grounded[field] = true;
+    result.provenance[field] = {
+      value: chosen.fields[field], sourceUrl: chosen.donor.url, sourceTitle: chosen.donor.title,
+      basis: chosen.structured ? "structured_metadata" : "search_result_explicit",
+    };
+  }
+  const combined = { ...result.fields, ...supplied };
+  result.articleResolution = ["authors", "articleTitle", "journal", "volume", "firstPage", "year"].every((field) => combined[field])
+    && records.length ? "resolved" : (conflicts.size ? "conflict" : "incomplete");
+  return result;
+}
+
 export function _dbgFieldsForSource(text: string, jurisdiction: ForeignLookupJurisdiction, kind: ForeignLookupKind, title?: string) {
   return extractCaseFromEvidence(text, jurisdiction) ?? extractWorkFromEvidence(text, kind, title);
 }
@@ -554,8 +676,11 @@ export async function runForeignLookup(
     diagnostics: { tier1Queried: false, tier2Fired: false },
   };
   const apiKey = deps?.apiKey ?? null;
-  if (!apiKey) return { ...empty, error: "missing_perplexity_credentials" };
+  if (!apiKey) return input.kind === "journal_article"
+    ? articleLookupFallback(input, "missing_perplexity_credentials")
+    : { ...empty, error: "missing_perplexity_credentials" };
   const doFetch = deps?.fetchImpl ?? trackedFetch;
+  if (input.kind === "journal_article") return lookupArticle(input, empty, doFetch, apiKey);
   const query = buildQuery(input);
 
   // Tier 1 — preferred-domain discovery hints.
