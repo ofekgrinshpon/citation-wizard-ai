@@ -1,11 +1,11 @@
-// @vitest-environment node
 // Handler-contract tests: execute the real TSX component functions with a tiny
 // hook/element harness. No DOM or provider is involved. runPool, telemetry ids,
 // repeat rules and answer re-rendering use the production implementations.
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { transformSync } from "esbuild";
+import { createRequire } from "node:module";
+import { execFileSync } from "node:child_process";
 import * as telemetry from "@/lib/costTelemetry";
 import * as concurrency from "@/lib/concurrency";
 import * as repeatRules from "@/lib/footnoteRepeatRules";
@@ -16,6 +16,28 @@ const root = process.env.CITATION_PANEL_BASELINE_ROOT || resolve(__dirname, "../
 const describeAttribution = process.env.CITATION_PANEL_BASELINE_ROOT ? describe.skip : describe;
 const refillPath = "src/components/legal-qa/CitationReviewPanel.tsx";
 const uniformPath = "src/components/legal-research/UniformCitationPanel.tsx";
+
+// jsdom replaces Uint8Array, which breaks esbuild's native TextEncoder invariant.
+// Compile the real TSX with the exact installed compiler in a fresh Node realm,
+// then execute the same handler harness below. No shell, browser-global patch,
+// config change or test stub for the compiler; source travels only over stdin.
+const compilerPath = createRequire(import.meta.url).resolve("esbuild");
+const compileScript = `const fs = require("node:fs");
+const { transformSync } = require(${JSON.stringify(compilerPath)});
+process.stdout.write(transformSync(fs.readFileSync(0, "utf8"), {
+  loader: "tsx", format: "cjs", target: "es2022", jsxFactory: "element",
+}).code);`;
+const compiledSources = new Map<string, string>();
+function compileComponent(source: string): string {
+  const existing = compiledSources.get(source);
+  if (existing !== undefined) return existing;
+  const code = execFileSync(process.execPath, ["-e", compileScript], {
+    input: source, encoding: "utf8", cwd: root, timeout: 5000, maxBuffer: 2 * 1024 * 1024,
+  });
+  compiledSources.set(source, code);
+  return code;
+}
+
 
 type Element = { type: unknown; props: Record<string, unknown>; children: unknown[] };
 type Setter = (next: unknown | ((previous: unknown) => unknown)) => void;
@@ -51,9 +73,7 @@ function mount(path: string, name: string, props: Record<string, unknown>, overr
     "@/lib/wordInsertion": { insertCitationAsFootnote: vi.fn() },
     ...overrides,
   };
-  const code = transformSync(readFileSync(resolve(root, path), "utf8"), {
-    loader: "tsx", format: "cjs", target: "es2022", jsxFactory: "element",
-  }).code;
+  const code = compileComponent(readFileSync(resolve(root, path), "utf8"));
   const module = { exports: {} as Record<string, (props: Record<string, unknown>) => Element> };
   // Only the known local component source is evaluated; imports must be mocked
   // explicitly so accidental provider, database or browser work fails closed.

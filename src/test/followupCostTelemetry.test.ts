@@ -1,9 +1,8 @@
-// @vitest-environment node
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import * as telemetry from '../../supabase/functions/_shared/costTelemetry.ts';
 import * as model from '../../supabase/functions/legal-research-v2/shared/model.ts';
 import * as router from '../../supabase/functions/legal-research-v2/beta/modelRouter.ts';
-import type { CostEvent, ParsedUsage } from '../../supabase/functions/_shared/costTelemetry.ts';
+import type { CostEvent, CostStage, ParsedUsage } from '../../supabase/functions/_shared/costTelemetry.ts';
 
 const RID = '11111111-1111-4111-8111-111111111111';
 const RID2 = '22222222-2222-4222-8222-222222222222';
@@ -14,8 +13,12 @@ let unexpectedNetwork = 0;
 const usage = (extra: Record<string, unknown> = {}) => ({ input_tokens: 1000, output_tokens: 100, total_tokens: 1100,
   input_tokens_details: { cached_tokens: 200 }, output_tokens_details: { reasoning_tokens: 40 }, ...extra });
 const parsed = (extra: Record<string, unknown> = {}) => telemetry.parseResponsesUsage({ model: MODEL, usage: usage(extra) });
-const price = (u: ParsedUsage = parsed(), m = MODEL, stage: any = 'v2_direct_chat', ok = true) =>
+const price = (u: ParsedUsage = parsed(), m = MODEL, stage: CostStage | undefined = 'v2_direct_chat', ok = true) =>
   telemetry.estimateUsd('lovable_gateway', 'responses', m, u, ok, stage);
+const wireBody = (init?: RequestInit): string => {
+  if (typeof init?.body !== 'string') throw new Error('Expected JSON request body');
+  return init.body;
+};
 const sse = (m = MODEL, text = PRIVATE, u: Record<string, unknown> | undefined = usage(), type = 'response.completed') => new Response(
   `data: ${JSON.stringify({ type: 'response.output_text.delta', delta: text })}\n\n` +
   `data: ${JSON.stringify({ type, response: { id: 'resp_fixture', model: m, ...(u ? { usage: u } : {}) } })}\n\n`,
@@ -84,7 +87,7 @@ describe('follow-up pricing: explicit conservative Standard token scenario', () 
     expect(price(p).estimated_usd).toBeNull();
   });
   it.each(['v2_research_agent', 'v2_support_verifier', 'formatter', undefined])('does not expand pricing outside follow-ups: %s', (stage) => {
-    expect(telemetry.estimateUsd('lovable_gateway', 'responses', MODEL, parsed(), true, stage as any).estimated_usd).toBeNull();
+    expect(telemetry.estimateUsd('lovable_gateway', 'responses', MODEL, parsed(), true, stage as CostStage | undefined).estimated_usd).toBeNull();
   });
   it('non-ok attempts retain unknown cost rather than a false zero', () => {
     expect(price(parsed(), MODEL, 'v2_direct_chat', false)).toEqual({ estimated_usd: null, estimate_complete: false });
@@ -117,9 +120,9 @@ describe('follow-up pricing: explicit conservative Standard token scenario', () 
 describe('actual router/model boundary, zero external calls', () => {
   it('router + direct answer preserve wire shape, replies and model choice', async () => {
     const wires: string[] = [];
-    vi.stubGlobal('fetch', async (_url: unknown, init: any) => {
-      wires.push(init.body);
-      const m = JSON.parse(init.body).model;
+    vi.stubGlobal('fetch', async (_url: unknown, init?: RequestInit) => {
+      wires.push(wireBody(init));
+      const m = JSON.parse(wireBody(init)).model;
       return sse(m, m.endsWith('luna') ? '{"action":"chat","model":"sol","reason":"fixture"}' : PRIVATE);
     });
     const execute = async (r: typeof router) => {
@@ -166,7 +169,7 @@ describe('actual router/model boundary, zero external calls', () => {
     release(); await flush;
   });
   it('concurrent actions preserve correlation and stable per-attempt identities', async () => {
-    vi.stubGlobal('fetch', async (_u: unknown, init: any) => { await Promise.resolve(); return sse(JSON.parse(init.body).model); });
+    vi.stubGlobal('fetch', async (_u: unknown, init?: RequestInit) => { await Promise.resolve(); return sse(JSON.parse(wireBody(init)).model); });
     const all: CostEvent[] = [];
     telemetry.__setCostWriter(async rows => { all.push(...rows); });
     const flushes: Promise<void>[] = [];
