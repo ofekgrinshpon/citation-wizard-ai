@@ -193,7 +193,7 @@ export function renderJournalArticle(f: ForeignArticleFields): RenderResult {
   const title = f.articleTitle || miss("שם המאמר");
   const journal = normalizeJournalName(f.journal) || miss("כתב עת");
   const vol = f.volume || miss("כרך");
-  const pages = f.firstPage ? pageSpan(f.firstPage, f.pinpoint) : miss("עמוד");
+  const pages = f.firstPage ? pageSpan(f.firstPage, f.pinpoint) : [miss("עמוד"), f.pinpoint].filter(Boolean).join(", ");
   const year = f.year || miss("שנה");
   return finish(`${authors}, ${it(title)}, ${vol} ${sc(journal)} ${pages} (${year})`, warnings, missing);
 }

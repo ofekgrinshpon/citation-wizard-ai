@@ -304,7 +304,8 @@ describe("source identity and wizard attribution", () => {
     expect(s).toMatch(/interface PendingVerification \{[^}]*telemetry\?: CostTelemetry;/);
     expect(s).toMatch(/telemetry: tel,\n/);
     expect(s).toMatch(/const \{ rawInput, fullCitation, sourceType, reply, telemetry \} = pendingVerification;/);
-    expect(s).toMatch(/callAPI = async \(userMessage: string, history: Message\[\], telemetry\?: CostTelemetry\)/);
+    // Article context is additive; telemetry remains the per-call third argument.
+    expect(s).toMatch(/callAPI = async \(userMessage: string, history: Message\[\], telemetry\?: CostTelemetry(?:, article\?: \{ sourceType: SourceType; rawInput: string \})?\)/);
   });
 
   it("delayed verify of A after submission B keeps A (closure semantics)", () => {

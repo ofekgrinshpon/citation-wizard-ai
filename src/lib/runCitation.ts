@@ -31,10 +31,13 @@ import {
   type ForeignSourceKind,
 } from "@/data/bluebook/types";
 import type { ForeignDetection } from "@/data/bluebook/extract";
+import { parseForeignArticleInput } from "../../supabase/functions/_shared/foreignArticle";
+import { buildForeignArticleRequest, mergeForeignArticleCache, renderForeignArticleLookup } from "@/lib/foreignArticleAdapter";
 
 interface ForeignLookupResponse {
-  identity?: { matched?: boolean; jurisdiction?: "US" | "UK" };
+  identity?: { matched?: boolean; jurisdiction?: "US" | "UK"; conflicts?: string[] };
   fields?: Record<string, string>;
+  articleResolution?: "resolved" | "incomplete" | "conflict";
   disambiguation?: Array<{ jurisdiction: "US" | "UK"; label: string; url: string }>;
 }
 
@@ -178,6 +181,8 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
     sourceType = resolved.sourceType;
   }
   const sourceLabel = SOURCE_TYPE_LABELS[sourceType];
+  const isHebrewArticle = sourceType === "article";
+  const suppliedArticle = sourceType === "foreign_journal_article" ? parseForeignArticleInput(normalized) : null;
 
   let prompt = normalized;
   if (sourceType !== "unknown") {
@@ -194,15 +199,18 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
     }
   }
 
-  if (verifiedMatch && !isPinpoint && isDirectVerifiedMatch(verifiedMatch, normalized)) {
+  const cachedArticleCitation = verifiedMatch && suppliedArticle
+    ? mergeForeignArticleCache(normalized, verifiedMatch.full_citation) : null;
+  if (verifiedMatch && !isHebrewArticle && !isPinpoint && isDirectVerifiedMatch(verifiedMatch, normalized) &&
+      (!suppliedArticle || cachedArticleCitation)) {
     // Verified identity is always kept. Formatting may be deterministically
     // re-rendered when the stored citation carries enough structured fields;
     // otherwise the stored text is preserved as-is (never guessed).
     const reRendered = renderForeignCitation(verifiedMatch.full_citation);
-    const citation =
+    const citation = cachedArticleCitation ?? (
       reRendered && reRendered.missing.length === 0
         ? reRendered.citation
-        : verifiedMatch.full_citation;
+        : verifiedMatch.full_citation);
     // Classifier cost (if any) stays attached to the same telemetryRequestId.
     reportZeroWork(opts.telemetry, "client_verified_store", "cache_hit");
     return {
@@ -246,7 +254,7 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
   if (!isPinpoint && isForeignSourceType(sourceType)) {
     const plan = planForeignLookup(sourceType, normalized, foreignDetection);
     if (plan) {
-      const parsedFields: Record<string, string> = {};
+      const parsedFields: Record<string, string> = plan.kind === "journal_article" ? parseForeignArticleInput(normalized) : {};
       if (foreignDetection) {
         for (const [k, v] of Object.entries(foreignDetection.fields as Record<string, unknown>)) {
           if (typeof v === "string" && v.trim()) parsedFields[k] = v.trim();
@@ -256,7 +264,7 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
         const name = extractForeignCaseName(normalized);
         if (name) parsedFields.caseName = name;
       }
-      foreignLookupRequest = {
+      foreignLookupRequest = plan.kind === "journal_article" ? { ...buildForeignArticleRequest(normalized) } : {
         enabled: true,
         kind: plan.kind,
         jurisdiction: plan.jurisdiction,
@@ -267,7 +275,7 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
   }
 
   // 2) Pinpoint + known master source → feed the verified details as a hint.
-  if (verifiedMatch && isPinpoint) {
+  if (verifiedMatch && !isHebrewArticle && isPinpoint) {
     const category = getVerifiedCategoryLabel(
       classifyVerifiedSource({
         rawInput: verifiedMatch.source_name,
@@ -283,6 +291,7 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
     "citation-chat",
     {
       messages: [{ role: "user", content: prompt }],
+      ...(isHebrewArticle ? { rawInput: normalized } : {}),
       requestId: crypto.randomUUID(),
       ...telemetryBody(opts.telemetry),
       ...(foreignLookupRequest ? { foreignLookup: foreignLookupRequest } : {}),
@@ -321,12 +330,16 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
       warningMsg: "נדרשת בחירה בין כמה פסקי דין",
     };
   }
-  if (foreignLookupRequest && fl?.identity?.matched && fl.fields && Object.keys(fl.fields).length > 0) {
+  if (foreignLookupRequest?.kind === "journal_article") {
+    const article = renderForeignArticleLookup(foreignLookupRequest as { parsedFields: Record<string, string> }, fl);
+    if (article) return { ...article, telemetry: opts.telemetry, sourceType, sourceLabel: SOURCE_TYPE_LABELS[sourceType], fromVerifiedStore: false };
+  }
+  if (foreignLookupRequest && fl?.fields && fl.identity?.matched && Object.keys(fl.fields).length > 0) {
     const req = foreignLookupRequest as { kind: ForeignSourceKind; jurisdiction: string; parsedFields: Record<string, string> };
     // Jurisdiction comes from the verified record when the input did not state it.
     const resolvedJur: ForeignJurisdiction | null =
       req.kind === "case"
-        ? (fl.identity.jurisdiction ?? (req.jurisdiction === "US" || req.jurisdiction === "UK" ? req.jurisdiction : null))
+        ? (fl.identity?.jurisdiction ?? (req.jurisdiction === "US" || req.jurisdiction === "UK" ? req.jurisdiction : null))
         : ((req.jurisdiction as ForeignJurisdiction) ?? "OTHER");
     if (resolvedJur) {
       const effectiveType = req.kind === "case" ? toSourceType("case", resolvedJur) : sourceType;
