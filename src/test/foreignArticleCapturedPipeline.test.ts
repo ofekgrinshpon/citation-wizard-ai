@@ -75,7 +75,7 @@ describe("captured English search to complete citation", () => {
     expect(found.articleResolution).toBe("resolved");
     expect(found.fields).toMatchObject({ journal: "Harvard Law Review", volume: "4", firstPage: "193", year: "1890" });
     const rendered = renderForeignArticleLookup(buildForeignArticleRequest(rawInput), found);
-    expect(rendered?.citation).toContain("193, 213–214 (1890)");
+    expect(rendered?.citation).toBe("Samuel D. Warren and Louis D. Brandeis, ##The Right to Privacy##, 4 ^^Harv. L. Rev.^^ 193, 213–214 (1890).");
     expect(rendered?.status).toBe("valid");
     expect(test.calls).toHaveLength(1);
   });
@@ -91,6 +91,15 @@ describe("captured English search to complete citation", () => {
     expect(rendered?.citation).toContain("213–214");
     expect(rendered?.citation).not.toMatch(/Catholic|703|1990/);
     expect(rendered?.status).toBe("warning");
+  });
+
+  it.each([" and ", " & ", "; "])("preserves complete supplied author separators %s when normalizing publisher metadata", async (separator) => {
+    const authors = `Samuel D. Warren${separator}Louis D. Brandeis`;
+    const parsedFields = { ...capture.input.parsedFields, authors };
+    const found = await replay([[capture.searches[1].results[7]]]).lookup({ ...capture.input, kind: "journal_article", jurisdiction: "OTHER", parsedFields });
+    const rendered = renderForeignArticleLookup({ parsedFields }, found);
+    expect(rendered?.status).toBe("valid");
+    expect(rendered?.citation).toBe(`${authors}, ##The Right to Privacy##, 4 ^^Harv. L. Rev.^^ 193, 213–214 (1890).`);
   });
 
   it("does not salvage the captured truncated Crossref JSON or confuse its indexed date with publication", async () => {

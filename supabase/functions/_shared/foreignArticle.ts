@@ -297,7 +297,9 @@ function publisherRecord(lines: string[], heading: string, target: string, suppl
   }
   const fields = publicationAtStart(lines.slice(bylineAt + 1, bylineAt + 5).join("\n"));
   return fields && !/(?:\.{3}|…)/.test(fields.journal)
-    ? { fields: { ...fields, articleTitle: target, authors }, structured: false } : null;
+    // Semicolons delimit publisher metadata names, not citation authors.
+    // Normalize only this evidence; supplied author strings still win on merge.
+    ? { fields: { ...fields, articleTitle: target, authors: authors.replace(/\s*;\s*/g, " and ") }, structured: false } : null;
 }
 
 function publisherRecords(text: string, heading: string, anchors: ArticleFields): ArticleRecord[] {
