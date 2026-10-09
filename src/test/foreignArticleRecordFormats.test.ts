@@ -138,22 +138,23 @@ describe("adjacent publisher article records", () => {
 
   it("binds a standalone snippet title, byline and publication line", () => {
     expect(record(`${title}\n${semicolonAuthors}\n${publication}`, "Unrelated search heading")[0]?.fields)
-      .toEqual({ ...canonical, authors: semicolonAuthors });
+      .toEqual(canonical);
   });
 
   it("binds a decorated heading only when the same complete byline leads the snippet", () => {
     expect(record(`${semicolonAuthors}\n${publication}`, `${title} ${semicolonAuthors} ...`)[0]?.fields)
-      .toEqual({ ...canonical, authors: semicolonAuthors });
+      .toEqual(canonical);
   });
 
   it("retains title-only discovery from an echoed complete multi-author heading", () => {
     expect(record(`${semicolonAuthors}\n${publication}`, `${title} ${semicolonAuthors} ...`, { articleTitle: title })[0]?.fields)
-      .toEqual({ ...canonical, authors: semicolonAuthors });
+      .toEqual(canonical);
   });
 
-  it.each([" and ", " & ", "; "])("accepts an adjacent %s byline", (separator) => {
+  it.each([[" and ", " and "], [" & ", " & "], ["; ", " and "]])("accepts an adjacent %s byline", (separator, renderedSeparator) => {
     const byline = `Samuel D. Warren${separator}Louis D. Brandeis`;
-    expect(record(`${title}\nBy ${byline}\n${publication}`)[0]?.fields.authors).toBe(byline);
+    expect(record(`${title}\nBy ${byline}\n${publication}`)[0]?.fields.authors)
+      .toBe(`Samuel D. Warren${renderedSeparator}Louis D. Brandeis`);
   });
 
   it.each([
