@@ -1,0 +1,129 @@
+{
+  "provenance": {
+    "captured": "2026-10-08",
+    "sourceCommit": "e9c17db6eb969a641b193ac517720fc25094d6dd",
+    "captureSha256": "533060e71ebb195213e86f386871c1113faddec3b3f57beb84affd00712dcb10",
+    "purpose": "Public synthetic fixture; exact ordered Search request bodies and URL/title/snippet values from the approved isolated helper experiment. No live requests in tests."
+  },
+  "input": {
+    "kind": "journal_article",
+    "jurisdiction": "OTHER",
+    "rawInput": "Warren & Brandeis, The Right to Privacy, pp. 213–214.",
+    "parsedFields": {
+      "pinpoint": "213–214",
+      "authors": "Warren & Brandeis",
+      "articleTitle": "The Right to Privacy"
+    }
+  },
+  "searches": [
+    {
+      "body": {
+        "query": "Warren & Brandeis, The Right to Privacy, pp. 213–214. journal volume page year citation",
+        "max_results": 8,
+        "search_domain_filter": [
+          "ssrn.com",
+          "jstor.org",
+          "heinonline.org",
+          "books.google.com",
+          "doi.org",
+          "crossref.org",
+          "cambridge.org",
+          "oup.com",
+          "springer.com",
+          "wiley.com",
+          "yalelawjournal.org"
+        ]
+      },
+      "results": [
+        {
+          "url": "https://doi.org/10.2307/1321160",
+          "title": "1321160",
+          "snippet": "{\"indexed\":{\"date-parts\":[[2026,9,18]],\"date-time\":\"2026-09-18T13:36:54Z\",\"timestamp\":1789738614705,\"version\":\"4.0.1\"},\"reference-count\":0,\"publisher\":\"JSTOR\",\"issue\":\"5\",\"content-domain\":{\"domain\":[],\"crossmark-restriction\":false},\"published-print\":{\"date-parts\":[[1890,12,15]]},\"DOI\":\"10.2307\\/1321160\",\"type\":\"journal-article\",\"created\":{\"date-parts\":[[2007,3,26]],\"date-time\":\"2007-03-26T15:40:25Z\",\"timestamp\":1174923625000},\"page\":\"193\",\"source\":\"Crossref\",\"is-referenced-by-count\":2612,\"title\":\"The Right \nto Privacy\",\"prefix\":\"10.2307\",\"volume\":\"4\",\"author\":[{\"given\":\"Samuel D.\",\"family\":\"Warren\",\"sequence\":\"first\",\"affiliation\":[],\"role\":[{\"vocabulary\":\"crossref\",\"role\":\"author\"}]},{\"given\":\"Louis D.\",\"family\":\"Brandeis\",\"sequence\":\"additional\",\"affiliation\":[],\"role\":[{\"vocabulary\":\"crossref\",\"role\":\"author\"}]}],\"member\":\"1121\",\"container-title\":\"Harvard Law Review\",\"original-title\":[],\"deposited\":{\"date-parts\":[[2018,5,8]],\"date-time\":\"2018-05-08T12:08:27Z\",\"timestamp\":1525781307000},\"score\":1,\"resource\":"
+        },
+        {
+          "url": "https://www.cambridge.org/core/books/philosophical-dimensions-of-privacy/0261E242C29A3A7B4942AD083A41A671",
+          "title": "Philosophical Dimensions of Privacy",
+          "snippet": "- **DOI:**\nhttps://doi.org/10.1017/CBO9780511625138\n...\n- **Weight & Pages:**\n...\n- **Weight & Pages:**\n...\nSelect 4 - The right to privacy [the implicit made explicit]\n- ##### 4 - The right to privacy [the implicit made explicit] pp 75-103\n- - By\nSamuel D. Warren, Louis D. Brandeis\n- - Export citation\n...\nSelect 8 - Privacy, freedom, and respect for persons\n- ##### 8 - Privacy, freedom, and respect for persons pp 223-244\n...\nSelect 11 - The right to privacy\n- ##### 11 - The right to privacy pp 272-289"
+        },
+        {
+          "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1334296",
+          "title": "Brandeis & Warren's 'The Right to Privacy and the Birth of the Right to Privacy'",
+          "snippet": "# Brandeis & Warren's 'The Right to Privacy and the Birth of the Right to Privacy'\n29 Pages Posted: 1 Feb 2009\n...\nPrivacy law and conceptions of a right to privacy have, of course, evolved considerably since 1890 when future Supreme Court Justice Louis Brandeis and Boston attorney Samuel Warren penned their now ageless article, The Right to Privacy, 4 Harv.\nL. Rev.\n193, in which they argued the law should recognize such a right and impose liability in tort for intrusions on it."
+        },
+        {
+          "url": "https://www.cambridge.org/core/journals/philosophy/article/abs/privacy-and-the-right-to-privacy/D7295EE09C9BBB045B1C3D880C455C3C",
+          "title": "Privacy and the Right to Privacy | Philosophy | Cambridge Core",
+          "snippet": "Philosophy , Volume 55 , Issue 211 , January 1980 , pp. 17 - 38\n...\n## References\n...\n^2^ Warren, S. D. and Brandeis, L. D., ‘The Right to Privacy’, Harvard Law Review IV, No. 5 (12 1890–1991), 193–220.CrossRefGoogle Scholar"
+        },
+        {
+          "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4421290",
+          "title": "The Right to Data Privacy: Revisiting Warren & Brandeis",
+          "snippet": "Warren and Brandeis in their famous 1890 article The Right to Privacy found privacy as an implicit right within existing law."
+        },
+        {
+          "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5242040",
+          "title": "The Birth of Privacy Law: A Century Since Warren and Brandeis, 39 Catholic U. L. Rev. 703 (1990)",
+          "snippet": "*The Right to Privacy* in the *Harvard Law Review*, their article remains one of the most influential—and perhaps misunderstood—pieces of legal scholarship in American history."
+        },
+        {
+          "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2155320",
+          "title": "Saving Privacy from History",
+          "snippet": "We have been panicking about privacy for over a hundred years now, since at least 1890, when Warren and Brandeis wrote their famous article, “The Right to Privacy,” the foundational text of the tort law of privacy."
+        },
+        {
+          "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2977472",
+          "title": "Privacy Before 'the Right to Privacy': Truthful Libel and the Earliest Underpinnings of Privacy in the United States",
+          "snippet": "The Right to Privacy, written in 1890, is perhaps the most famous law review article ever published in the United States.\nIn twenty-seven pages, Samuel Warren and William Brandeis argued that the time was ripe for new legal protection in the form of a privacy tort, one that would protect people from the prying ways of increasingly intrusive, technologically savvy journalists."
+        }
+      ]
+    },
+    {
+      "body": {
+        "query": "Warren & Brandeis, The Right to Privacy, pp. 213–214. journal volume page year citation",
+        "max_results": 8
+      },
+      "results": [
+        {
+          "url": "https://journals.library.brandeis.edu/index.php/blj/article/download/556/169/2034",
+          "title": "Brandeis University Law Journal",
+          "snippet": "Fall 2021, Volume 9, Issue 1\n...\nBrandeis and Warren’s “The Right to Privacy” was published in the \nHarvard Law Review in 1890.\n...\n\"The Right to Privacy.\"\nHarvard Law Review 4. no.\n5. (1890): 193;201;213."
+        },
+        {
+          "url": "https://doi.org/10.2307/1321160",
+          "title": "1321160",
+          "snippet": "{\"indexed\":{\"date-parts\":[[2026,9,18]],\"date-time\":\"2026-09-18T13:36:54Z\",\"timestamp\":1789738614705,\"version\":\"4.0.1\"},\"reference-count\":0,\"publisher\":\"JSTOR\",\"issue\":\"5\",\"content-domain\":{\"domain\":[],\"crossmark-restriction\":false},\"published-print\":{\"date-parts\":[[1890,12,15]]},\"DOI\":\"10.2307\\/1321160\",\"type\":\"journal-article\",\"created\":{\"date-parts\":[[2007,3,26]],\"date-time\":\"2007-03-26T15:40:25Z\",\"timestamp\":1174923625000},\"page\":\"193\",\"source\":\"Crossref\",\"is-referenced-by-count\":2612,\"title\":\"The Right \nto Privacy\",\"prefix\":\"10.2307\",\"volume\":\"4\",\"author\":[{\"given\":\"Samuel D.\",\"family\":\"Warren\",\"sequence\":\"first\",\"affiliation\":[],\"role\":[{\"vocabulary\":\"crossref\",\"role\":\"author\"}]},{\"given\":\"Louis D.\",\"family\":\"Brandeis\",\"sequence\":\"additional\",\"affiliation\":[],\"role\":[{\"vocabulary\":\"crossref\",\"role\":\"author\"}]}],\"member\":\"1121\",\"container-title\":\"Harvard Law Review\",\"original-title\":[],\"deposited\":{\"date-parts\":[[2018,5,8]],\"date-time\":\"2018-05-08T12:08:27Z\",\"timestamp\":1525781307000},\"score\":1,\"resource\":"
+        },
+        {
+          "url": "https://www.tandfonline.com/doi/full/10.1080/10811680.2020.1805984",
+          "title": "Warren, Samuel & Louis Brandeis. The Right to Privacy, 4 Harv. L. Rev. 193 ...",
+          "snippet": "## Notes\n1 Samuel Warren & Louis Brandeis, *The Right to Privacy*, 4 Harv.\nL. Rev.\n193 (1890).\n...\nTo His Own Reputation*, Scribners, July 1890, at 58.\n7 *See* Warren & Brandeis, *supra* note 1, at 214."
+        },
+        {
+          "url": "https://www.brandeis.edu/library/archives/exhibits/ldb-100/images/law-journal/brandeis-law-journal-special-volume.pdf",
+          "title": "[PDF] brandeis law journal",
+          "snippet": "In the year 1890, Samuel D. Warren and Louis D. Brandeis, both Boston-based lawyers, co-authored an article titled \"The Right to Privacy.\"\n...\n1 Warren, Samuel D., and Louis D. Brandeis.\n“The Right to Privacy”.\nHarvard Law Review 4.5 (1890): 193–220.\nWeb...Written by Louis D. Brandeis and Samuel D. Warren, and Published \nin the Harvard Law Review in 1890, The Right to Privacy famously referred to Justice Thomas"
+        },
+        {
+          "url": "https://www.semanticscholar.org/paper/The-Right-to-Privacy-Warren-Brandeis/5b16d4f08ff873ce2362b2f4570841823d66cdbe",
+          "title": "The Right to Privacy | Semantic Scholar",
+          "snippet": "The Right to Privacy\n@article{Warren1890TheRT, title={The Right to Privacy}, author={Samuel D. Warren and Louis D. Brandeis}, journal={Harvard Law Review}, year={1890}, volume={4}, pages={193}, url={https://api.semanticscholar.org/CorpusID:148685002} }"
+        },
+        {
+          "url": "https://journals.akademicka.pl/adamericam/article/download/3223/2905",
+          "title": "[PDF] “The Right to Privacy” by S. Warren and L. Brandeis",
+          "snippet": "It can be traced back to “The Right to \nPrivacy,” a scientific article published by Samuel Warren and Louis Brandeis in 1890 in the Harvard Law Review3.\n...\nIt was defined therein as the \n“right to be left alone.”\n...\n3 \nS. Warren, L. Brandeis, “The Right to Privacy”, Harvard Law Review, Vol. IV, No. 5, De-\ncember 1890, p. 194 et seq."
+        },
+        {
+          "url": "https://journals.library.brandeis.edu/index.php/blj/article/download/537/159/",
+          "title": "Microsoft Word - LAW JOURNAL ISSUE 7_Final.docx",
+          "snippet": "In the year 1890, Samuel D. Warren and Louis D. Brandeis, both Boston-based lawyers, co-authored an article titled \"The Right to Privacy.\"2 This was, perhaps, the first time in the history of the common law that such a right was being formalised with an accompanied legal rationalisation.\n...\n*Undergraduate at Brandeis University, Class of 2018 \n...\n2 Warren, Samuel D., and Louis D. Brandeis.\n“The Right to Privacy”.\nHarvard Law Review 4.5 (1890): 193–220.\nWeb.\n3 Letter from Roscoe Pound to William Chilton (1916), quoted in A.\n...\n4 “The Right to Privacy”."
+        },
+        {
+          "url": "https://www.cs.cornell.edu/~shmat/courses/cs5436/warren-brandeis.pdf",
+          "title": "The Right to Privacy Samuel D. Warren; Louis D. Brandeis ...",
+          "snippet": "Samuel D. Warren; Louis D. Brandeis\nHarvard Law Review, Vol. 4, No. 5. (Dec. 15, 1890), pp. 193-220.\n...\nhttp://links.jstor.org/sici?sici=0017-811X%2818901215%294%3A5%3C193%3ATRTP%3E2.0.CO%3B2-C"
+        }
+      ]
+    }
+  ]
+}

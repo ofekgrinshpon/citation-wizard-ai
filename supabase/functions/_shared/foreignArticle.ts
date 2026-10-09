@@ -125,9 +125,194 @@ function publicationAtStart(text: string): ArticleFields | null {
   const start = text.replace(/^[\s,;.:"”'’—–|*-]+/, "");
   const tuple = start.match(TUPLE);
   if (tuple && plausibleJournal(tuple[2])) return { volume: tuple[1], journal: tuple[2].trim(), firstPage: tuple[3], year: tuple[5] };
-  const publisher = start.match(/^([A-Z][A-Za-z.&'’ -]+?),?\s+Vol(?:ume)?\.?\s+([IVXLCDM]+|\d+)(?:,?\s+Issue\s+\d+)?,?\s*(?:[A-Za-z]+\s+)?((?:1[6-9]|20)\d{2}),?\s+(?:pp?\.?|Pages)\s*(\d+)/i);
-  if (publisher && plausibleJournal(publisher[1])) return { journal: publisher[1].trim(), volume: romanNumber(publisher[2]), year: publisher[3], firstPage: publisher[4] };
+  // Date and issue belong to this immediately adjacent publication line.
+  // Do not search later prose for a year (e.g. deposited/indexed metadata).
+  const month = "(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\\.?";
+  const season = "(?:Spring|Summer|Autumn|Fall|Winter)";
+  const year = "(?:1[6-9]|20)\\d{2}";
+  const day = "(?:0?[1-9]|[12]\\d|3[01])";
+  const date = `(?:(?:${month}(?:\\s+${day},?)?|${day}\\s+${month}|${season})\\s+)?${year}(?:[-/](?:0?[1-9]|1[0-2])[-/]${day})?`;
+  const publisher = start.match(new RegExp(`^([A-Z][A-Za-z.&'’ -]{1,159}?),?\\s+Vol(?:ume)?\\.?\\s+([IVXLCDM]+|\\d{1,4})(?:,?\\s+(?:No\\.?|Issue)\\s+\\d{1,4}\\.?)?[,\\s]+(?:\\((${date})\\)|(${date})),?\\s+(?:pp?\\.?|Pages)\\s*(\\d{1,5})(?:\\s*(?:--?|[–—])\\s*(\\d{1,5}))?(?=$|[\\s.,;])`, "i"));
+  if (publisher && plausibleJournal(publisher[1]) && !/(?:\.{3}|…)/.test(publisher[1])
+    && (!publisher[6] || Number(publisher[6]) >= Number(publisher[5]))) {
+    return { journal: publisher[1].trim(), volume: romanNumber(publisher[2]), year: (publisher[3] ?? publisher[4]).match(YEAR)![0], firstPage: publisher[5] };
+  }
   return null;
+}
+
+const MAX_RECORD_TEXT = 16_384;
+const MAX_BIBTEX_ENTRY = 8_192;
+const MAX_BIBTEX_DEPTH = 16;
+
+/** Find a whole BibTeX entry before interpreting any of its fields. */
+function bibtexEnd(text: string, start: number): number | null {
+  const braced = text[start] === "{";
+  const base = braced ? 1 : 0;
+  let depth = base, quoted = false;
+  for (let i = start + 1; i < Math.min(text.length, start + MAX_BIBTEX_ENTRY); i++) {
+    const char = text[i];
+    if (char === "\\") { i++; continue; }
+    if (char === '"' && depth === base) quoted = !quoted;
+    else if (char === "{") { if (++depth > MAX_BIBTEX_DEPTH) return null; }
+    else if (char === "}") {
+      if (braced && depth === base && !quoted) return i + 1;
+      if (--depth < base) return null;
+    } else if (char === ")" && !braced && depth === 0 && !quoted) return i + 1;
+  }
+  return null;
+}
+
+function bibtexLiteral(raw: string): string | null {
+  let value = "";
+  for (let i = 0; i < raw.length; i++) {
+    const char = raw[i];
+    if (char === "\\") {
+      const escaped = raw[++i];
+      // Unknown macros/TeX commands are not facts we can safely reconstruct.
+      if (!escaped || !/[{}&%_$#"\\]/.test(escaped)) return null;
+      value += escaped;
+    } else if (char !== "{" && char !== "}") value += char === "~" ? " " : char;
+  }
+  return value.replace(/\s+/g, " ").trim();
+}
+
+function bibtexFields(body: string): Map<string, string> | null {
+  const key = body.match(/^\s*[\w:.+/-]{1,160}\s*,\s*/);
+  if (!key) return null;
+  const fields = new Map<string, string>();
+  let cursor = key[0].length;
+  while (cursor < body.length) {
+    const field = body.slice(cursor).match(/^([A-Za-z][\w-]{0,63})\s*=\s*/);
+    if (!field || fields.size >= 32) return null;
+    const name = field[1].toLowerCase();
+    if (fields.has(name)) return null; // Even identical duplicates are ambiguous input.
+    cursor += field[0].length;
+    const start = cursor;
+    let raw: string;
+    if (body[cursor] === "{" || body[cursor] === '"') {
+      const close = body[cursor] === "{" ? "}" : '"';
+      let depth = 0;
+      cursor++;
+      for (; cursor < body.length; cursor++) {
+        if (body[cursor] === "\\") { cursor++; continue; }
+        if (body[cursor] === close && depth === 0) break;
+        if (body[cursor] === "{" && ++depth > MAX_BIBTEX_DEPTH) return null;
+        if (body[cursor] === "}" && --depth < 0) return null;
+      }
+      if (cursor >= body.length || depth !== 0) return null;
+      raw = body.slice(start + 1, cursor++);
+    } else {
+      const number = body.slice(cursor).match(/^\d{1,8}(?=\s*(?:,|$))/);
+      if (!number) return null; // No macros, concatenation, or bare prose values.
+      raw = number[0];
+      cursor += raw.length;
+    }
+    const value = bibtexLiteral(raw);
+    if (value === null) return null;
+    fields.set(name, value);
+    const delimiter = body.slice(cursor).match(/^\s*(?:,\s*|$)/);
+    if (!delimiter) return null;
+    cursor += delimiter[0].length;
+  }
+  return fields;
+}
+
+function bibtexAuthors(value: string): string | null {
+  const names = value.split(/\s+and\s+/i);
+  if (!names.length || names.length > 16) return null;
+  const normalized: string[] = [];
+  for (const name of names) {
+    const parts = name.split(",").map((part) => part.trim());
+    const direct = parts.length === 1 ? parts[0]
+      : parts.length === 2 ? `${parts[1]} ${parts[0]}`
+      : parts.length === 3 && /^(?:Jr\.?|Sr\.?|II|III|IV)$/.test(parts[1]) ? `${parts[2]} ${parts[0]} ${parts[1]}` : "";
+    if (!direct || !NAME.test(direct) || /\bet al\b|[;&]/i.test(direct)) return null;
+    normalized.push(direct);
+  }
+  return normalized.join(" and ");
+}
+
+function bibtexRecords(text: string, target: string): { records: ArticleRecord[]; prose: string } {
+  const records: ArticleRecord[] = [];
+  const marker = /@[A-Za-z]+\s*[{(]/g;
+  let prose = "", copied = 0, count = 0;
+  for (let match = marker.exec(text); match; match = marker.exec(text)) {
+    // Mask every entry, including non-articles, so a note/reference inside one
+    // cannot be reinterpreted by the prose parser as the entry's own metadata.
+    prose += text.slice(copied, match.index) + "\n[BibTeX entry]\n";
+    const end = ++count <= 16 ? bibtexEnd(text, marker.lastIndex - 1) : null;
+    if (end === null) return { records, prose };
+    copied = marker.lastIndex = end;
+    if (!/^@article\s*[{(]$/i.test(match[0])) continue;
+    const fields = bibtexFields(text.slice(match.index + match[0].length, end - 1));
+    if (!fields) continue;
+    const title = fields.get("title") ?? "", journal = fields.get("journal") ?? "";
+    const authors = bibtexAuthors(fields.get("author") ?? "");
+    const year = fields.get("year") ?? "", volume = fields.get("volume") ?? "";
+    const pages = (fields.get("pages") ?? "").match(/^(\d{1,5})(?:\s*(?:--?|[–—])\s*(\d{1,5}))?$/);
+    if (articleKey(title) !== articleKey(target) || title.length > 240 || !authors
+      || !journal || journal.length > 160 || !plausibleJournal(journal)
+      || /(?:\.{3}|…)/.test(title + journal + authors)
+      || !/^(?:1[6-9]|20)\d{2}$/.test(year) || !/^[1-9]\d{0,3}$/.test(volume)
+      || !pages || (pages[2] && Number(pages[2]) < Number(pages[1]))) continue;
+    records.push({ fields: { articleTitle: title, authors, journal, year, volume, firstPage: pages[1] }, structured: false });
+  }
+  return { records, prose: prose + text.slice(copied) };
+}
+
+function publisherByline(value: string): string | null {
+  const byline = value.replace(/^(?:by|authors?:)\s+/i, "").trim();
+  const names = byline.split(/\s*;\s*|\s+(?:and|&)\s+|,\s*/);
+  return byline.length <= 300 && names.length <= 16 && names.every((name) => NAME.test(name))
+    && !/\bet al\b|\.{3}|…/i.test(byline) ? byline : null;
+}
+
+function publisherRecord(lines: string[], heading: string, target: string, suppliedAuthors?: string): ArticleRecord | null {
+  if (/(?:\.{3}|…)/.test(lines[0] ?? "")) return null;
+  const hasTitle = articleKey(lines[0] ?? "") === articleKey(target);
+  const bylineAt = hasTitle ? 1 : 0;
+  const authors = publisherByline(lines[bylineAt] ?? "");
+  if (!authors) return null;
+  if (!hasTitle) {
+    // Search headings sometimes concatenate a title, its byline and an ellipsis.
+    // Accept only that complete shape and verify the SAME byline starts the body.
+    const title = titlePattern(target).exec(heading);
+    if (!title || title.index !== 0) return null;
+    const remainder = heading.slice(title[0].length);
+    if (/^\s*:/.test(remainder)) return null; // A colon extends the work's title.
+    const after = remainder.replace(/^\s*[—–|-]?\s*/, "").replace(/\s*(?:\.{3}|…)\s*$/, "");
+    if (!after && /(?:\.{3}|…)/.test(remainder)) return null;
+    if (after) {
+      const headingAuthors = publisherByline(after);
+      if (!headingAuthors || !articleFieldMatches("authors", headingAuthors, authors)) return null;
+      if (suppliedAuthors) {
+        if (!articleFieldMatches("authors", authors, suppliedAuthors)) return null;
+      } else {
+        // Without author anchors, a single capitalized phrase could be a
+        // subtitle. Require an explicit multi-author byline for concatenation.
+        const names = authors.split(/\s*;\s*|\s+(?:and|&)\s+|,\s*/);
+        if (names.length < 2 || names.some((name) => articleKey(name).split(" ").length < 2)) return null;
+      }
+    }
+  }
+  const fields = publicationAtStart(lines.slice(bylineAt + 1, bylineAt + 5).join("\n"));
+  return fields && !/(?:\.{3}|…)/.test(fields.journal)
+    ? { fields: { ...fields, articleTitle: target, authors }, structured: false } : null;
+}
+
+function publisherRecords(text: string, heading: string, anchors: ArticleFields): ArticleRecord[] {
+  const lines = text.trim().split(/\r?\n/);
+  const records: ArticleRecord[] = [];
+  let blocks = 0;
+  for (let i = 0; i < lines.length && blocks < 16; i++) {
+    // Every later block must independently repeat the complete target title;
+    // never reuse the first block's title/byline to fill another publication.
+    if (i > 0 && articleKey(lines[i]) !== articleKey(anchors.articleTitle)) continue;
+    blocks++;
+    const record = publisherRecord(lines.slice(i, i + 6), i === 0 ? heading : "", anchors.articleTitle, anchors.authors);
+    if (record) records.push(record);
+  }
+  return records;
 }
 
 function trailingAuthors(prefix: string): string | undefined {
@@ -144,9 +329,13 @@ export function articleRecordsFromSnippet(source: { title?: string; snippet?: st
   const target = anchors.articleTitle;
   if (!target) return [];
   const records: ArticleRecord[] = [];
+  const titleText = bibtexRecords((source.title ?? "").slice(0, MAX_RECORD_TEXT), target);
+  const snippetText = bibtexRecords((source.snippet ?? "").slice(0, MAX_RECORD_TEXT), target);
+  records.push(...titleText.records, ...snippetText.records);
+  records.push(...publisherRecords(snippetText.prose, titleText.prose, anchors));
   // Search each text separately: concatenating a heading and unrelated body
   // would create a citation relationship that the evidence never asserted.
-  for (const text of [source.title ?? "", source.snippet ?? ""]) {
+  for (const text of [titleText.prose, snippetText.prose]) {
     for (const match of text.matchAll(titlePattern(target))) {
       const suffix = text.slice((match.index ?? 0) + match[0].length);
       // A prose mention ending a sentence must not borrow the next sentence's
@@ -161,17 +350,17 @@ export function articleRecordsFromSnippet(source: { title?: string; snippet?: st
     }
   }
   // A record heading plus a leading publication line is also explicit metadata.
-  if (!records.length && articleHeadingMatches(source.title ?? "", target)) {
-    const snippet = (source.snippet ?? "").trim();
+  if (!records.length && !/(?:\.{3}|…)/.test(titleText.prose) && articleHeadingMatches(titleText.prose, target)) {
+    const snippet = snippetText.prose.trim();
     let fields = publicationAtStart(snippet);
-    let authors = (source.title ?? "").split(/\s+[—–|]\s+|\s+-\s+/)
+    let authors = titleText.prose.split(/\s+[—–|]\s+|\s+-\s+/)
       .map((part) => part.replace(/^by\s+/i, "").trim())
       .find((part) => articleKey(part) !== articleKey(target) && isAuthorList(part)
         && !/\b(?:Journal|Review|Press|University|Repository|Archive|Library|Law)\b/i.test(part)
         && (!!anchors.authors || part.includes(" ")));
     if (!fields) {
       const leading = snippet.match(/^(.{2,150}?)(?:\n|\s+[—|]\s+|\.\s+(?=\d)|,\s*(?=\d))/);
-      if (leading && isAuthorList(leading[1].trim())) {
+      if (leading && !/(?:\.{3}|…)/.test(leading[1]) && isAuthorList(leading[1].trim())) {
         authors = leading[1].trim();
         fields = publicationAtStart(snippet.slice(leading[0].length));
       }
