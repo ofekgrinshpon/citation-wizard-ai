@@ -17,6 +17,8 @@ import { applyYearPreferences, isLegislationInput, extractLawNameFromInput, type
 import { runCitation, CitationRunError, type RunCitationResult } from "@/lib/runCitation";
 import { runPool, isTransientError } from "@/lib/concurrency";
 import { applyRepeatCitationRules, extractCitationOnly } from "@/lib/footnoteRepeatRules";
+import { useAuth } from "@/hooks/useAuth";
+import { activeCitationDiagnostic, citationDiagnosticCandidate, prepareCitationDiagnostic } from "@/lib/citationDiagnostic";
 
 interface FootnoteCell {
   id: number;
@@ -88,6 +90,7 @@ function loadPhase(projectId: string | undefined): Phase {
 
 
 export function BatchFootnoteBuilder({}: BatchProps) {
+  const { isAdmin, isAdminResolved } = useAuth();
   const { currentProject } = useProjects();
   const { isOfficeAddin, hasDocumentAccess } = useOffice();
   const projectId = currentProject?.id;
@@ -100,6 +103,13 @@ export function BatchFootnoteBuilder({}: BatchProps) {
   const [phase, setPhase] = useState<Phase>(() => loadPhase(projectId));
   const [finalizing, setFinalizing] = useState(false);
   const bibliography = useBibliography();
+
+  useEffect(() => {
+    const populated = cells.filter((cell) => cell.input.trim());
+    if (!isAdminResolved || populated.length !== 1) return;
+    const tag = citationDiagnosticCandidate(populated[0].input, isAdmin, window.location.search);
+    if (tag) void prepareCitationDiagnostic(tag);
+  }, [cells, isAdmin, isAdminResolved]);
 
   // Reload when project changes
   useEffect(() => {
@@ -185,7 +195,8 @@ export function BatchFootnoteBuilder({}: BatchProps) {
     overrideType?: SourceType,
     telemetry: CostTelemetry = sourceTelemetry(newTelemetryBatch("footnotes")),
   ): Promise<RunCitationResult> =>
-    runCitation({ rawInput: input, overrideType, projectId, useVerifiedStore: true, telemetry });
+    runCitation({ rawInput: input, overrideType, projectId, useVerifiedStore: true, telemetry,
+      diagnostic: activeCitationDiagnostic(input, isAdminResolved && isAdmin, window.location.search) });
 
   const applyResultToCell = (c: FootnoteCell, res: RunCitationResult): FootnoteCell => ({
     ...c,

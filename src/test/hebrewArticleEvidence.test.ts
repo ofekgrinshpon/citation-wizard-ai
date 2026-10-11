@@ -10,7 +10,10 @@ import * as ranges from "../../supabase/functions/_shared/hebrewNumberRange";
 import * as editors from "../../supabase/functions/_shared/articleCitationValidator";
 import * as knesset from "../../supabase/functions/_shared/knessetTerms";
 import * as usage from "../../supabase/functions/_shared/usageWeights";
-import { articleLookupFallback } from "../../supabase/functions/citation-chat/foreignLookup";
+import * as diagnostic from "../../supabase/functions/_shared/citationDiagnostic";
+import * as diagnosticGate from "../../supabase/functions/_shared/citationDiagnosticGate";
+import { buildForeignArticleRequest } from "@/lib/foreignArticleAdapter";
+import { articleLookupFallback, runForeignLookup as actualForeignLookup, type ForeignLookupInput, type LookupDeps } from "../../supabase/functions/citation-chat/foreignLookup";
 import { buildEnginePromptHint } from "@/lib/citationValidation";
 import { CITATION_RULES } from "@/data/citationEngine";
 
@@ -185,14 +188,19 @@ describe("Hebrew article evidence records", () => {
 const source = readFileSync(resolve(__dirname, "../../supabase/functions/citation-chat/index.ts"), "utf8");
 const compileEntrypoint = (input: string) => ts.transpileModule(input, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText;
 const compiled = compileEntrypoint(source);
-async function runHandler(options: { raw?: string; records?: unknown[]; candidate?: Record<string, unknown>; cached?: Array<Record<string, unknown>>; fail?: boolean; fallback?: boolean; label?: string; noPplx?: boolean; foreign?: Record<string, unknown>; foreignResult?: Record<string, unknown>; foreignThrows?: boolean; formatterReply?: string; compiledEntrypoint?: string } = {}) {
+async function runHandler(options: { raw?: string; records?: unknown[]; candidate?: Record<string, unknown>; cached?: Array<Record<string, unknown>>; fail?: boolean; fallback?: boolean; label?: string; noPplx?: boolean; foreign?: Record<string, unknown>; foreignResult?: Record<string, unknown>; foreignThrows?: boolean; formatterReply?: string; compiledEntrypoint?: string; diagnostic?: unknown; admin?: boolean; roleFails?: boolean; preflightOnly?: boolean; realForeign?: boolean } = {}) {
   const calls: Array<{ stage: string; body: Record<string, unknown> }> = [];
   const rpc = vi.fn(async (_name: string, _args: unknown) => ({ data: { ok: true }, error: null }));
   const zero = vi.fn();
+  const roleRead = vi.fn(async () => options.roleFails ? { data: null, error: { message: "fixture-only" } } : { data: options.admin ? { role: "admin" } : null, error: null });
   const client = {
     auth: { getClaims: async () => ({ data: { claims: { sub: "test-user" } }, error: null }) },
     rpc,
-    from: () => ({ select: () => ({ eq: () => ({ or: () => ({ limit: async () => ({ data: options.cached || [] }) }) }) }) }),
+    from: () => {
+      const chain = { select: () => chain, eq: () => chain, or: () => chain, abortSignal: () => chain,
+        limit: async () => ({ data: options.cached || [] }), maybeSingle: roleRead };
+      return chain;
+    },
   };
   let handler: (req: Request) => Promise<Response>;
   const fetchProvider = async (_url: string, init: RequestInit, meta: { stage: string }) => {
@@ -215,7 +223,16 @@ async function runHandler(options: { raw?: string; records?: unknown[]; candidat
     "../_shared/articleCitationValidator.ts": editors,
     "../_shared/knessetTerms.ts": knesset,
     "../_shared/usageWeights.ts": usage,
-    "./foreignLookup.ts": { runForeignLookup: async () => { if (options.foreignThrows) throw new Error("Mock lookup boundary failed"); return options.foreignResult; }, articleLookupFallback },
+    "../_shared/citationDiagnostic.ts": diagnostic,
+    "../_shared/citationDiagnosticGate.ts": diagnosticGate,
+    "./foreignLookup.ts": { runForeignLookup: async (input: ForeignLookupInput, deps: LookupDeps) => {
+      if (options.foreignThrows) throw new Error("Mock lookup boundary failed");
+      if (!options.realForeign) return options.foreignResult;
+      return actualForeignLookup(input, { ...deps, fetchImpl: (async (_url: unknown, init?: RequestInit, meta?: { stage?: string }) => {
+        calls.push({ stage: meta?.stage || "foreign_page", body: init?.body ? JSON.parse(String(init.body)) : {} });
+        return new Response(JSON.stringify({ results: [] }), { status: 200 });
+      }) as typeof fetch });
+    }, articleLookupFallback },
   };
   runInContext(options.compiledEntrypoint || compiled, createContext({ exports: {}, require: (name: string) => {
     if (!(name in modules)) throw new Error(`Unexpected real module boundary: ${name}`);
@@ -227,11 +244,87 @@ async function runHandler(options: { raw?: string; records?: unknown[]; candidat
   const raw = options.raw || natural;
   const label = options.label || "מאמר";
   const message = `[סיווג אוטומטי: ${label}]\n${label === "מאמר" ? buildEnginePromptHint("article") : ""}${raw}`;
-  const response = await handler!(new Request("https://local.test/citation-chat", { method: "POST", headers: { Authorization: "Bearer mock-token", "Content-Type": "application/json" }, body: JSON.stringify({ messages: [{ role: "user", content: message }], rawInput: raw, ...(options.foreign ? { foreignLookup: options.foreign } : {}) }) }));
-  return { body: await response.json(), status: response.status, calls, rpc, zero };
+  const response = await handler!(new Request("https://local.test/citation-chat", { method: "POST", headers: { Authorization: "Bearer mock-token", "Content-Type": "application/json" }, body: JSON.stringify({ ...(options.preflightOnly ? {} : { messages: [{ role: "user", content: message }], rawInput: raw }), ...(options.foreign ? { foreignLookup: options.foreign } : {}), ...(options.diagnostic ? { citationDiagnostic: options.diagnostic } : {}) }) }));
+  return { body: await response.json(), status: response.status, calls, rpc, zero, roleRead };
 }
 
 describe("article boundary through the real edge handler", () => {
+  it("passes authorized observation through the real handler and lookup without changing requests, output or credit calls", async () => {
+    const clock = vi.spyOn(Date, "now").mockReturnValue(Date.parse("2026-10-11T10:00:00Z"));
+    try {
+      const foreign = { ...buildForeignArticleRequest(diagnosticGate.CITATION_DIAGNOSTIC_FIXTURE) };
+      const normal = await runHandler({ foreign, realForeign: true });
+      const observed = await runHandler({ foreign, realForeign: true, admin: true,
+        diagnostic: { tag: "relex-en-20261011-0123456789abcdef" } });
+      const { citationDiagnostic: trace, ...body } = observed.body;
+      expect(body).toEqual(normal.body);
+      expect(observed.calls).toEqual(normal.calls);
+      expect(observed.calls.map((call) => call.stage)).toEqual(["foreign_search_tier1", "foreign_search_tier2"]);
+      expect(observed.rpc.mock.calls.map(([name, args]) => [name, { ...(args as object), _request_id: "normalized-generated-id" }]))
+        .toEqual(normal.rpc.mock.calls.map(([name, args]) => [name, { ...(args as object), _request_id: "normalized-generated-id" }]));
+      expect(trace).toMatchObject({ phase: "lookup_complete", build: diagnosticGate.CITATION_DIAGNOSTIC_BUILD,
+        trace: { searches: { tier1: { status: "ok", httpStatus: 200, resultCount: 0 }, tier2: { status: "ok", httpStatus: 200, resultCount: 0 } },
+          stopReason: "tier2_exhausted", final: { resolution: "incomplete", identityMatched: false,
+            missingFields: ["journal", "volume", "firstPage", "year"] } } });
+      expect(normal.body.citationDiagnostic).toBeUndefined();
+    } finally { clock.mockRestore(); }
+  });
+
+  it("serves diagnostic readiness only after current admin authorization, before any credit/provider work", async () => {
+    const clock = vi.spyOn(Date, "now").mockReturnValue(Date.parse("2026-10-11T10:00:00Z"));
+    try {
+      const r = await runHandler({ admin: true, preflightOnly: true,
+        diagnostic: { tag: "relex-en-20261011-0123456789abcdef", preflight: true },
+        foreign: { ...buildForeignArticleRequest(diagnosticGate.CITATION_DIAGNOSTIC_FIXTURE) } });
+      expect(r.status).toBe(200);
+      expect(r.body.citationDiagnostic).toMatchObject({ phase: "ready", build: diagnosticGate.CITATION_DIAGNOSTIC_BUILD });
+      expect(r.roleRead).toHaveBeenCalledTimes(1);
+      expect(r.rpc).not.toHaveBeenCalled();
+      expect(r.calls).toHaveLength(0);
+    } finally { clock.mockRestore(); }
+  });
+
+  it.each([{ admin: false }, { admin: true, roleFails: true }])("refuses diagnostic preflight without verified current admin role %#", async (role) => {
+    const clock = vi.spyOn(Date, "now").mockReturnValue(Date.parse("2026-10-11T10:00:00Z"));
+    try {
+      const r = await runHandler({ ...role, preflightOnly: true,
+        diagnostic: { tag: "relex-en-20261011-0123456789abcdef", preflight: true },
+        foreign: { ...buildForeignArticleRequest(diagnosticGate.CITATION_DIAGNOSTIC_FIXTURE) } });
+      expect(r.status).toBe(403);
+      expect(r.body).toEqual({ error: "DIAGNOSTIC_NOT_AVAILABLE" });
+      expect(r.rpc).not.toHaveBeenCalled();
+      expect(r.calls).toHaveLength(0);
+    } finally { clock.mockRestore(); }
+  });
+
+  it("does not authorize or charge an expired diagnostic readiness request", async () => {
+    const clock = vi.spyOn(Date, "now").mockReturnValue(diagnosticGate.CITATION_DIAGNOSTIC_EXPIRES);
+    try {
+      const r = await runHandler({ admin: true, preflightOnly: true,
+        diagnostic: { tag: "relex-en-20261011-0123456789abcdef", preflight: true },
+        foreign: { ...buildForeignArticleRequest(diagnosticGate.CITATION_DIAGNOSTIC_FIXTURE) } });
+      expect(r.status).toBe(403);
+      expect(r.roleRead).not.toHaveBeenCalled();
+      expect(r.rpc).not.toHaveBeenCalled();
+      expect(r.calls).toHaveLength(0);
+    } finally { clock.mockRestore(); }
+  });
+
+  it("preserves normal foreign citation output and credit behavior when diagnostic authorization fails", async () => {
+    const clock = vi.spyOn(Date, "now").mockReturnValue(Date.parse("2026-10-11T10:00:00Z"));
+    try {
+      const foreign = { ...buildForeignArticleRequest(diagnosticGate.CITATION_DIAGNOSTIC_FIXTURE) };
+      const foreignResult = { identity: { matched: false }, fields: {}, articleResolution: "incomplete" };
+      const normal = await runHandler({ foreign, foreignResult });
+      const denied = await runHandler({ foreign, foreignResult, diagnostic: { tag: "relex-en-20261011-0123456789abcdef" } });
+      expect(denied.body).toEqual(normal.body);
+      expect(denied.rpc.mock.calls.map(([name]) => name)).toEqual(normal.rpc.mock.calls.map(([name]) => name));
+      expect(normal.roleRead).not.toHaveBeenCalled();
+      expect(denied.roleRead).toHaveBeenCalledTimes(1);
+      expect(normal.calls).toEqual(denied.calls);
+    } finally { clock.mockRestore(); }
+  });
+
   it("renders grounded facts with the supplied pinpoint and makes no formatter call", async () => {
     const r = await runHandler();
     expect(r.status).toBe(200);

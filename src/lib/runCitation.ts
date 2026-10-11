@@ -33,6 +33,7 @@ import {
 import type { ForeignDetection } from "@/data/bluebook/extract";
 import { parseForeignArticleInput } from "../../supabase/functions/_shared/foreignArticle";
 import { buildForeignArticleRequest, mergeForeignArticleCache, renderForeignArticleLookup } from "@/lib/foreignArticleAdapter";
+import { citationDiagnosticBody, observeCitationDiagnostic, type CitationDiagnosticActivation } from "@/lib/citationDiagnostic";
 
 interface ForeignLookupResponse {
   identity?: { matched?: boolean; jurisdiction?: "US" | "UK"; conflicts?: string[] };
@@ -116,6 +117,8 @@ export interface RunCitationOptions {
   useVerifiedStore?: boolean;
   /** Cost-telemetry attribution (never billing). */
   telemetry?: CostTelemetry;
+  /** Temporary admin-only observer activation, prepared by the diagnostic readiness check. */
+  diagnostic?: CitationDiagnosticActivation;
 }
 
 export interface RunCitationResult {
@@ -213,6 +216,7 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
         : verifiedMatch.full_citation);
     // Classifier cost (if any) stays attached to the same telemetryRequestId.
     reportZeroWork(opts.telemetry, "client_verified_store", "cache_hit");
+    observeCitationDiagnostic(opts.diagnostic, rawInput, "cache_hit");
     return {
       telemetry: opts.telemetry,
       reply: citation,
@@ -230,6 +234,7 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
     const rendered = renderForeignCitation(normalized);
     if (rendered && rendered.missing.length === 0) {
       reportZeroWork(opts.telemetry, "local_foreign_formatter", "deterministic");
+      observeCitationDiagnostic(opts.diagnostic, rawInput, "deterministic");
       return {
         telemetry: opts.telemetry,
         reply: rendered.citation,
@@ -286,6 +291,7 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
     prompt = `${prompt}\n\n══ מקור מאומת (${category}) ══\nהשתמש בפרטים הבאים מהמקור המאומת כדי להשלים את האזכור:\nשם: ${verifiedMatch.source_name}\nאזכור מלא: ${verifiedMatch.full_citation}\n══════════════════════════════════`;
   }
 
+  observeCitationDiagnostic(opts.diagnostic, rawInput, "client_route", { articleRoute: foreignLookupRequest?.kind === "journal_article" });
   // 3) Engine call.
   const { data, errorInfo } = await invokeFunction<{ content?: string } & Record<string, unknown>>(
     "citation-chat",
@@ -295,10 +301,15 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
       requestId: crypto.randomUUID(),
       ...telemetryBody(opts.telemetry),
       ...(foreignLookupRequest ? { foreignLookup: foreignLookupRequest } : {}),
+      ...citationDiagnosticBody(opts.diagnostic, rawInput),
     },
     { projectId: opts.projectId ?? null }
   );
 
+  observeCitationDiagnostic(opts.diagnostic, rawInput, errorInfo ? "client_error" : "response", {
+    server: errorInfo ? errorInfo.body?.citationDiagnostic : data?.citationDiagnostic,
+    httpStatus: errorInfo?.status ?? (data ? 200 : null),
+  });
   if (errorInfo) {
     throw new CitationRunError({
       code: errorInfo.code || `HTTP_${errorInfo.status ?? "ERR"}`,
