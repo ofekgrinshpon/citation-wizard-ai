@@ -61,6 +61,8 @@ import {
 } from "../_shared/trustedHosts.ts";
 import { normalizeHebrewNumberRanges } from "../_shared/hebrewNumberRange.ts";
 import { runForeignLookup, articleLookupFallback, type ForeignLookupResult } from "./foreignLookup.ts";
+import { createCitationDiagnosticCollector } from "../_shared/citationDiagnostic.ts";
+import { authorizeCitationDiagnostic, isCitationDiagnosticPreflight, CITATION_DIAGNOSTIC_BUILD, CITATION_DIAGNOSTIC_PARSER } from "../_shared/citationDiagnosticGate.ts";
 import { normalizeEditorPlacement } from "../_shared/articleCitationValidator.ts";
 import {
   articleRawInput, createHebrewArticleRequest, collectHebrewArticleEvidence,
@@ -1640,6 +1642,11 @@ serve((req) => withCostTelemetry("citation-chat", async () => {
   });
 
   let creditRequestId: string | null = null;
+  let diagnostic: { tag: string; collector: ReturnType<typeof createCitationDiagnosticCollector> } | null = null;
+  const diagnosticEnvelope = (phase: "ready" | "lookup_complete" | "lookup_failed" | "server_exception") => diagnostic ? {
+    citationDiagnostic: { version: 1, tag: diagnostic.tag, build: CITATION_DIAGNOSTIC_BUILD,
+      parser: CITATION_DIAGNOSTIC_PARSER, phase, trace: diagnostic.collector.snapshot() },
+  } : {};
   const refundIfCharged = async (reason: string) => {
     if (!creditRequestId) return;
     try {
@@ -1658,12 +1665,26 @@ serve((req) => withCostTelemetry("citation-chat", async () => {
       requestId: clientReqId,
       batchId: clientBatchId,
       foreignLookup: foreignLookupRequest,
+      citationDiagnostic: diagnosticRequest,
       rawInput,
     } = await req.json().then((b: any) => { // deno-lint-ignore no-explicit-any
       // Telemetry ids are separate from the billing batchId (never mixed).
       setTelemetryFromBody(b, "uniform_citation");
       return b;
     });
+    // Temporary observation is opt-in, expiring, current-admin-only and bound to one exact public fixture.
+    const diagnosticTag = diagnosticRequest ? await authorizeCitationDiagnostic(diagnosticRequest, foreignLookupRequest, async (signal) => {
+      if (!userId) return false;
+      const { data, error } = await userClient.from("user_roles").select("role")
+        .eq("user_id", userId).eq("role", "admin").abortSignal(signal).maybeSingle();
+      return !error && data?.role === "admin";
+    }) : null;
+    if (diagnosticTag) diagnostic = { tag: diagnosticTag, collector: createCitationDiagnosticCollector() };
+    if (isCitationDiagnosticPreflight(diagnosticRequest)) {
+      return new Response(JSON.stringify(diagnostic ? diagnosticEnvelope("ready") : { error: "DIAGNOSTIC_NOT_AVAILABLE" }), {
+        status: diagnostic ? 200 : 403, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
     // Batch-priced usage: one internal unit per up to 5 processed citations.
     const usageBatchId = typeof clientBatchId === "string" && clientBatchId.length >= 8
       ? clientBatchId
@@ -1847,7 +1868,7 @@ serve((req) => withCostTelemetry("citation-chat", async () => {
           try {
             foreignLookupResult = await runForeignLookup(
               { kind: flKind, jurisdiction: flJur, rawInput: flRaw, parsedFields: flParsed },
-              { apiKey: pplxKey },
+              { apiKey: pplxKey, ...(diagnostic ? { diagnosticObserver: diagnostic.collector.observe } : {}) },
             );
           } catch (flErr) {
             console.error("foreign lookup error:", flErr);
@@ -1870,7 +1891,8 @@ serve((req) => withCostTelemetry("citation-chat", async () => {
                 content: `${flRaw}\n⚠️ נשמר רק האזכור שסיפקתם. פרטי פרסום חסרים או סותרים דורשים בדיקה.`,
               }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
             }
-            return new Response(JSON.stringify({ content: "", foreignLookup: foreignLookupResult }), {
+            return new Response(JSON.stringify({ content: "", foreignLookup: foreignLookupResult,
+              ...diagnosticEnvelope(foreignLookupResult?.error === "lookup_failed" ? "lookup_failed" : "lookup_complete") }), {
               headers: { ...corsHeaders, "Content-Type": "application/json" },
             });
           }
@@ -3694,7 +3716,8 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
     console.error("chat error:", e);
     await refundIfCharged("citation-chat exception");
     return new Response(
-      JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error", refunded: !!creditRequestId, refundReason: "טעות טכנית" }),
+      JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error", refunded: !!creditRequestId, refundReason: "טעות טכנית",
+        ...diagnosticEnvelope("server_exception") }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   }

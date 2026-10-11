@@ -17,6 +17,8 @@ import { applyYearPreferences, isLegislationInput, extractLawNameFromInput, type
 import { runCitation, CitationRunError, type RunCitationResult } from "@/lib/runCitation";
 import { runPool, isTransientError } from "@/lib/concurrency";
 import { applyRepeatCitationRules, extractCitationOnly } from "@/lib/footnoteRepeatRules";
+import { useAuth } from "@/hooks/useAuth";
+import { activeCitationDiagnostic, citationDiagnosticCandidate, prepareCitationDiagnostic } from "@/lib/citationDiagnostic";
 
 interface FootnoteCell {
   id: number;
@@ -185,7 +187,8 @@ export function BatchFootnoteBuilder({}: BatchProps) {
     overrideType?: SourceType,
     telemetry: CostTelemetry = sourceTelemetry(newTelemetryBatch("footnotes")),
   ): Promise<RunCitationResult> =>
-    runCitation({ rawInput: input, overrideType, projectId, useVerifiedStore: true, telemetry });
+    runCitation({ rawInput: input, overrideType, projectId, useVerifiedStore: true, telemetry,
+      diagnostic: activeCitationDiagnostic(input, isAdminResolved && isAdmin, window.location.search) });
 
   const applyResultToCell = (c: FootnoteCell, res: RunCitationResult): FootnoteCell => ({
     ...c,
