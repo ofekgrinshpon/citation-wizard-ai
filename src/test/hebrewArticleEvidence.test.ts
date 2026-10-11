@@ -249,6 +249,82 @@ async function runHandler(options: { raw?: string; records?: unknown[]; candidat
 }
 
 describe("article boundary through the real edge handler", () => {
+  it("passes authorized observation through the real handler and lookup without changing requests, output or credit calls", async () => {
+    const clock = vi.spyOn(Date, "now").mockReturnValue(Date.parse("2026-10-11T10:00:00Z"));
+    try {
+      const foreign = { ...buildForeignArticleRequest(diagnosticGate.CITATION_DIAGNOSTIC_FIXTURE) };
+      const normal = await runHandler({ foreign, realForeign: true });
+      const observed = await runHandler({ foreign, realForeign: true, admin: true,
+        diagnostic: { tag: "relex-en-20261011-0123456789abcdef" } });
+      const { citationDiagnostic: trace, ...body } = observed.body;
+      expect(body).toEqual(normal.body);
+      expect(observed.calls).toEqual(normal.calls);
+      expect(observed.calls.map((call) => call.stage)).toEqual(["foreign_search_tier1", "foreign_search_tier2"]);
+      expect(observed.rpc.mock.calls.map(([name, args]) => [name, { ...(args as object), _request_id: "normalized-generated-id" }]))
+        .toEqual(normal.rpc.mock.calls.map(([name, args]) => [name, { ...(args as object), _request_id: "normalized-generated-id" }]));
+      expect(trace).toMatchObject({ phase: "lookup_complete", build: diagnosticGate.CITATION_DIAGNOSTIC_BUILD,
+        trace: { searches: { tier1: { status: "ok", httpStatus: 200, resultCount: 0 }, tier2: { status: "ok", httpStatus: 200, resultCount: 0 } },
+          stopReason: "tier2_exhausted", final: { resolution: "incomplete", identityMatched: false,
+            missingFields: ["journal", "volume", "firstPage", "year"] } } });
+      expect(normal.body.citationDiagnostic).toBeUndefined();
+    } finally { clock.mockRestore(); }
+  });
+
+  it("serves diagnostic readiness only after current admin authorization, before any credit/provider work", async () => {
+    const clock = vi.spyOn(Date, "now").mockReturnValue(Date.parse("2026-10-11T10:00:00Z"));
+    try {
+      const r = await runHandler({ admin: true, preflightOnly: true,
+        diagnostic: { tag: "relex-en-20261011-0123456789abcdef", preflight: true },
+        foreign: { ...buildForeignArticleRequest(diagnosticGate.CITATION_DIAGNOSTIC_FIXTURE) } });
+      expect(r.status).toBe(200);
+      expect(r.body.citationDiagnostic).toMatchObject({ phase: "ready", build: diagnosticGate.CITATION_DIAGNOSTIC_BUILD });
+      expect(r.roleRead).toHaveBeenCalledTimes(1);
+      expect(r.rpc).not.toHaveBeenCalled();
+      expect(r.calls).toHaveLength(0);
+    } finally { clock.mockRestore(); }
+  });
+
+  it.each([{ admin: false }, { admin: true, roleFails: true }])("refuses diagnostic preflight without verified current admin role %#", async (role) => {
+    const clock = vi.spyOn(Date, "now").mockReturnValue(Date.parse("2026-10-11T10:00:00Z"));
+    try {
+      const r = await runHandler({ ...role, preflightOnly: true,
+        diagnostic: { tag: "relex-en-20261011-0123456789abcdef", preflight: true },
+        foreign: { ...buildForeignArticleRequest(diagnosticGate.CITATION_DIAGNOSTIC_FIXTURE) } });
+      expect(r.status).toBe(403);
+      expect(r.body).toEqual({ error: "DIAGNOSTIC_NOT_AVAILABLE" });
+      expect(r.rpc).not.toHaveBeenCalled();
+      expect(r.calls).toHaveLength(0);
+    } finally { clock.mockRestore(); }
+  });
+
+  it("does not authorize or charge an expired diagnostic readiness request", async () => {
+    const clock = vi.spyOn(Date, "now").mockReturnValue(diagnosticGate.CITATION_DIAGNOSTIC_EXPIRES);
+    try {
+      const r = await runHandler({ admin: true, preflightOnly: true,
+        diagnostic: { tag: "relex-en-20261011-0123456789abcdef", preflight: true },
+        foreign: { ...buildForeignArticleRequest(diagnosticGate.CITATION_DIAGNOSTIC_FIXTURE) } });
+      expect(r.status).toBe(403);
+      expect(r.roleRead).not.toHaveBeenCalled();
+      expect(r.rpc).not.toHaveBeenCalled();
+      expect(r.calls).toHaveLength(0);
+    } finally { clock.mockRestore(); }
+  });
+
+  it("preserves normal foreign citation output and credit behavior when diagnostic authorization fails", async () => {
+    const clock = vi.spyOn(Date, "now").mockReturnValue(Date.parse("2026-10-11T10:00:00Z"));
+    try {
+      const foreign = { ...buildForeignArticleRequest(diagnosticGate.CITATION_DIAGNOSTIC_FIXTURE) };
+      const foreignResult = { identity: { matched: false }, fields: {}, articleResolution: "incomplete" };
+      const normal = await runHandler({ foreign, foreignResult });
+      const denied = await runHandler({ foreign, foreignResult, diagnostic: { tag: "relex-en-20261011-0123456789abcdef" } });
+      expect(denied.body).toEqual(normal.body);
+      expect(denied.rpc.mock.calls.map(([name]) => name)).toEqual(normal.rpc.mock.calls.map(([name]) => name));
+      expect(normal.roleRead).not.toHaveBeenCalled();
+      expect(denied.roleRead).toHaveBeenCalledTimes(1);
+      expect(normal.calls).toEqual(denied.calls);
+    } finally { clock.mockRestore(); }
+  });
+
   it("renders grounded facts with the supplied pinpoint and makes no formatter call", async () => {
     const r = await runHandler();
     expect(r.status).toBe(200);
