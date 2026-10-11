@@ -75,9 +75,15 @@ export interface ForeignLookupResult {
 export interface LookupDeps {
   fetchImpl?: typeof fetch;
   apiKey?: string | null;
+  /** Optional per-invocation observation only; never serialized into lookup results. */
+  diagnosticObserver?: CitationDiagnosticObserver;
 }
 
 import { trackedFetch, type CostStage } from "../_shared/costTelemetry.ts";
+import {
+  CITATION_DIAGNOSTIC_FIELDS, citationDiagnosticPresentFields, safeObserveCitationDiagnostic,
+  type CitationDiagnosticObserver, type CitationDiagnosticTier,
+} from "../_shared/citationDiagnostic.ts";
 import {
   parseForeignArticleInput, articleRecordsFromSnippet, articleRecordFromHtml,
   articleHeadingMatches, articleFieldMatches, enrichArticleAuthors, type ArticleRecord,
@@ -463,18 +469,34 @@ const PRIVATE_HOST_RE =
 async function fetchPageText(
   url: string,
   doFetch: typeof fetch,
+  observer?: CitationDiagnosticObserver,
+  tier: CitationDiagnosticTier = "tier1",
 ): Promise<string | null> {
+  let status: number | null = null;
+  let reading = false;
+  let timedOut = false;
   try {
     const u = new URL(url);
-    if (!/^https?:$/.test(u.protocol)) return null;
-    if (PRIVATE_HOST_RE.test(u.hostname)) return null;
+    if (!/^https?:$/.test(u.protocol) || PRIVATE_HOST_RE.test(u.hostname)) {
+      safeObserveCitationDiagnostic(observer, { type: "page", tier, status: "blocked_url" });
+      return null;
+    }
     const ctrl = new AbortController();
-    const timer = setTimeout(() => ctrl.abort(), 10_000);
+    const timer = setTimeout(() => { timedOut = true; ctrl.abort(); }, 10_000);
     try {
       const resp = await doFetch(url, { signal: ctrl.signal });
-      if (!resp.ok) return null;
+      if (observer) status = resp.status;
+      if (!resp.ok) {
+        safeObserveCitationDiagnostic(observer, { type: "page", tier, status: "http_error", httpStatus: status });
+        return null;
+      }
+      reading = true;
       const reader = resp.body?.getReader();
-      if (!reader) return (await resp.text()).slice(0, MAX_PAGE_BYTES);
+      if (!reader) {
+        const text = (await resp.text()).slice(0, MAX_PAGE_BYTES);
+        safeObserveCitationDiagnostic(observer, { type: "page", tier, status: text ? "no_record" : "empty", httpStatus: status });
+        return text;
+      }
       const chunks: Uint8Array[] = [];
       let size = 0;
       for (;;) {
@@ -493,11 +515,14 @@ async function fetchPageText(
         merged.set(c, off);
         off += c.length;
       }
-      return new TextDecoder().decode(merged);
+      const text = new TextDecoder().decode(merged);
+      safeObserveCitationDiagnostic(observer, { type: "page", tier, status: text ? "no_record" : "empty", httpStatus: status });
+      return text;
     } finally {
       clearTimeout(timer);
     }
   } catch {
+    safeObserveCitationDiagnostic(observer, { type: "page", tier, status: timedOut ? "timeout" : reading ? "read_error" : "fetch_error", httpStatus: status });
     return null;
   }
 }
@@ -515,9 +540,12 @@ async function searchOnce(
   doFetch: typeof fetch,
   apiKey: string,
   stage: CostStage = "unspecified",
+  observer?: CitationDiagnosticObserver,
+  tier: CitationDiagnosticTier = "tier1",
 ): Promise<RawResult[]> {
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), TIMEOUT_MS);
+  let status: number | null = null;
   try {
     const fetch3 = doFetch as (u: string, i: RequestInit, o?: { stage?: CostStage }) => Promise<Response>;
     const resp = await fetch3(PPLX_SEARCH_URL, {
@@ -530,10 +558,18 @@ async function searchOnce(
       }),
       signal: ctrl.signal,
     }, { stage });
-    if (!resp.ok) return [];
-    const json = (await resp.json().catch(() => null)) as { results?: RawResult[] } | null;
-    return Array.isArray(json?.results) ? json!.results! : [];
+    if (observer) status = resp.status;
+    if (!resp.ok) {
+      safeObserveCitationDiagnostic(observer, { type: "search", tier, status: "http_error", httpStatus: status, resultCount: 0 });
+      return [];
+    }
+    let jsonFailed = false;
+    const json = (await resp.json().catch(() => { jsonFailed = true; return null; })) as { results?: RawResult[] } | null;
+    const results = Array.isArray(json?.results) ? json!.results! : [];
+    safeObserveCitationDiagnostic(observer, { type: "search", tier, status: jsonFailed ? (ctrl.signal.aborted ? "timeout" : "json_error") : Array.isArray(json?.results) ? "ok" : "invalid_shape", httpStatus: status, resultCount: results.length });
+    return results;
   } catch {
+    safeObserveCitationDiagnostic(observer, { type: "search", tier, status: ctrl.signal.aborted ? "timeout" : "fetch_error", httpStatus: status, resultCount: 0 });
     return [];
   } finally {
     clearTimeout(timer);
@@ -560,63 +596,101 @@ async function lookupArticle(
   result: ForeignLookupResult,
   doFetch: typeof fetch,
   apiKey: string,
+  observer?: CitationDiagnosticObserver,
 ): Promise<ForeignLookupResult> {
   const supplied = { ...parseForeignArticleInput(input.rawInput), ...Object.fromEntries(
     Object.entries(input.parsedFields ?? {}).filter(([, value]) => typeof value === "string" && value.trim()),
   ) };
-  if (!supplied.articleTitle) return result;
+  safeObserveCitationDiagnostic(observer, { type: "input", fields: citationDiagnosticPresentFields(supplied) });
+  const finish = (conflictFields: string[] = []) => {
+    const presentFields = citationDiagnosticPresentFields({ ...result.fields, ...supplied });
+    safeObserveCitationDiagnostic(observer, {
+      type: "final", resolution: result.articleResolution ?? "unavailable", identityMatched: result.identity.matched,
+      presentFields, missingFields: CITATION_DIAGNOSTIC_FIELDS.filter((field) => field !== "pinpoint" && !presentFields.includes(field)),
+      conflictFields: CITATION_DIAGNOSTIC_FIELDS.filter((field) => conflictFields.includes(field)),
+    });
+    return result;
+  };
+  if (!supplied.articleTitle) {
+    safeObserveCitationDiagnostic(observer, { type: "stop", reason: "missing_title" });
+    return finish();
+  }
   result.articleResolution = "incomplete";
   result.identity.anchors = [`title:${supplied.articleTitle}`, ...(supplied.authors ? [`author:${supplied.authors}`] : [])];
   const records: Array<ArticleRecord & { donor: LookupSource; inspected: boolean }> = [];
   const sources: LookupSource[] = [];
   const conflicts = new Set<string>();
-  const addRecord = (record: ArticleRecord, donor: LookupSource, inspected: boolean) => {
+  const addRecord = (record: ArticleRecord, donor: LookupSource, inspected: boolean, tier: CitationDiagnosticTier) => {
     const disagreed = Object.entries(record.fields).filter(([field, value]) =>
       supplied[field] && field !== "pinpoint" && !articleFieldMatches(field, supplied[field], value));
+    safeObserveCitationDiagnostic(observer, {
+      type: "record", tier, origin: inspected ? "page" : "snippet", accepted: disagreed.length === 0,
+      fields: citationDiagnosticPresentFields(record.fields),
+      conflicts: CITATION_DIAGNOSTIC_FIELDS.filter((field) => disagreed.some(([name]) => name === field)),
+    });
     if (disagreed.length) {
       for (const [field, value] of disagreed) conflicts.add(`${field}:${supplied[field]} vs ${value}`);
-      return;
+      return false;
     }
     records.push({ ...record, donor, inspected });
+    return true;
   };
   const discover = async (tier: "tier1" | "tier2") => {
     if (tier === "tier1") result.diagnostics.tier1Queried = true;
     else result.diagnostics.tier2Fired = true;
     const found = await searchOnce(buildQuery(input), tier === "tier1" ? tier1Hints(input.kind, input.jurisdiction) : null, doFetch, apiKey,
-      tier === "tier1" ? "foreign_search_tier1" : "foreign_search_tier2");
+      tier === "tier1" ? "foreign_search_tier1" : "foreign_search_tier2", observer, tier);
+    let strongHostCount = 0, weakHostCount = 0, missingUrlCount = 0, noRecordCount = 0;
     for (const item of found) {
-      if (!item.url) continue;
+      if (!item.url) { missingUrlCount++; continue; }
       const source: LookupSource = { ...item, url: item.url, tier, strong: classifySource(item.url) !== "weak" };
+      if (source.strong) strongHostCount++; else weakHostCount++;
       if (!sources.some((known) => known.url === source.url)) {
         sources.push(source);
         result.sources.push({ url: source.url, title: source.title, tier });
       }
       // The open-web retry can return richer evidence for an existing URL.
       // Deduplicate source listing, not that newly returned work record.
-      if (source.strong) for (const record of articleRecordsFromSnippet(source, supplied)) addRecord(record, source, false);
+      if (source.strong) {
+        const parsed = articleRecordsFromSnippet(source, supplied);
+        if (!parsed.length) noRecordCount++;
+        for (const record of parsed) addRecord(record, source, false, tier);
+      }
     }
+    safeObserveCitationDiagnostic(observer, { type: "sources", tier, strongHostCount, weakHostCount, missingUrlCount, noRecordCount });
   };
   let inspected = false;
-  const inspect = async () => {
-    if (inspected || records.length) return;
+  const inspect = async (tier: CitationDiagnosticTier) => {
+    if (inspected) return;
+    if (records.length) {
+      safeObserveCitationDiagnostic(observer, { type: "page", tier, status: "skipped_records_present" });
+      return;
+    }
     // A page that merely discusses the target is not an inspection candidate.
     const source = sources.find((candidate) => candidate.strong && articleHeadingMatches(candidate.title ?? "", supplied.articleTitle));
-    if (!source) return;
+    if (!source) {
+      safeObserveCitationDiagnostic(observer, { type: "page", tier, status: "no_candidate" });
+      return;
+    }
     inspected = true;
-    const page = await fetchPageText(source.url, doFetch);
+    const page = await fetchPageText(source.url, doFetch, observer, tier);
     if (!page) return;
     // Only self-identifying citation_* metadata is authoritative on a full page.
     // Stripped body text can contain arbitrary references to different works.
     const record = articleRecordFromHtml(page, supplied);
-    if (record) addRecord(record, source, true);
+    if (record) {
+      const accepted = addRecord(record, source, true, tier);
+      safeObserveCitationDiagnostic(observer, { type: "page", tier, status: accepted ? "record_accepted" : "record_rejected" });
+    }
   };
   await discover("tier1");
-  await inspect();
+  await inspect("tier1");
   // An irrelevant strong host or a conflicting record no longer blocks rescue.
   if (!records.length) {
     await discover("tier2");
-    await inspect();
-  }
+    await inspect("tier2");
+    safeObserveCitationDiagnostic(observer, { type: "stop", reason: "tier2_exhausted" });
+  } else safeObserveCitationDiagnostic(observer, { type: "stop", reason: "tier1_records_present" });
   result.identity.conflicts = [...conflicts];
   result.identity.matched = records.length > 0;
   // All accepted fields must describe compatible records. Duplicate URLs or
@@ -632,7 +706,7 @@ async function lookupArticle(
   if (recordConflicts.length) {
     result.identity.conflicts.push(...recordConflicts.map((field) => `conflicting_article_${field}`));
     result.articleResolution = "conflict";
-    return result;
+    return finish(recordConflicts);
   }
   for (const field of fields) {
     if (supplied[field] && field !== "authors") continue;
@@ -654,7 +728,7 @@ async function lookupArticle(
   const combined = { ...result.fields, ...supplied };
   result.articleResolution = ["authors", "articleTitle", "journal", "volume", "firstPage", "year"].every((field) => combined[field])
     && records.length ? "resolved" : (conflicts.size ? "conflict" : "incomplete");
-  return result;
+  return finish();
 }
 
 export function _dbgFieldsForSource(text: string, jurisdiction: ForeignLookupJurisdiction, kind: ForeignLookupKind, title?: string) {
@@ -676,11 +750,26 @@ export async function runForeignLookup(
     diagnostics: { tier1Queried: false, tier2Fired: false },
   };
   const apiKey = deps?.apiKey ?? null;
-  if (!apiKey) return input.kind === "journal_article"
-    ? articleLookupFallback(input, "missing_perplexity_credentials")
-    : { ...empty, error: "missing_perplexity_credentials" };
+  if (!apiKey) {
+    const result = input.kind === "journal_article"
+      ? articleLookupFallback(input, "missing_perplexity_credentials")
+      : { ...empty, error: "missing_perplexity_credentials" };
+    if (input.kind === "journal_article" && deps?.diagnosticObserver) {
+      const supplied = { ...parseForeignArticleInput(input.rawInput), ...Object.fromEntries(
+        Object.entries(input.parsedFields ?? {}).filter(([, value]) => typeof value === "string" && value.trim()),
+      ) };
+      const presentFields = citationDiagnosticPresentFields(supplied);
+      safeObserveCitationDiagnostic(deps.diagnosticObserver, { type: "input", fields: presentFields });
+      safeObserveCitationDiagnostic(deps.diagnosticObserver, { type: "stop", reason: "missing_credentials" });
+      safeObserveCitationDiagnostic(deps.diagnosticObserver, {
+        type: "final", resolution: result.articleResolution ?? "unavailable", identityMatched: false, presentFields,
+        missingFields: CITATION_DIAGNOSTIC_FIELDS.filter((field) => field !== "pinpoint" && !presentFields.includes(field)), conflictFields: [],
+      });
+    }
+    return result;
+  }
   const doFetch = deps?.fetchImpl ?? trackedFetch;
-  if (input.kind === "journal_article") return lookupArticle(input, empty, doFetch, apiKey);
+  if (input.kind === "journal_article") return lookupArticle(input, empty, doFetch, apiKey, deps?.diagnosticObserver);
   const query = buildQuery(input);
 
   // Tier 1 — preferred-domain discovery hints.
