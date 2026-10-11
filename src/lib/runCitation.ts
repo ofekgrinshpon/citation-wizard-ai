@@ -291,6 +291,7 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
     prompt = `${prompt}\n\n══ מקור מאומת (${category}) ══\nהשתמש בפרטים הבאים מהמקור המאומת כדי להשלים את האזכור:\nשם: ${verifiedMatch.source_name}\nאזכור מלא: ${verifiedMatch.full_citation}\n══════════════════════════════════`;
   }
 
+  observeCitationDiagnostic(opts.diagnostic, rawInput, "client_route", { articleRoute: foreignLookupRequest?.kind === "journal_article" });
   // 3) Engine call.
   const { data, errorInfo } = await invokeFunction<{ content?: string } & Record<string, unknown>>(
     "citation-chat",
@@ -304,6 +305,10 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
     },
     { projectId: opts.projectId ?? null }
   );
+  observeCitationDiagnostic(opts.diagnostic, rawInput, errorInfo ? "client_error" : "response", {
+    server: errorInfo ? errorInfo.body?.citationDiagnostic : data?.citationDiagnostic,
+    httpStatus: errorInfo?.status ?? (data ? 200 : null),
+  });
 
   if (errorInfo) {
     throw new CitationRunError({

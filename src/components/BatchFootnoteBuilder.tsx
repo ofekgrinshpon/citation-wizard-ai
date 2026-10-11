@@ -90,6 +90,7 @@ function loadPhase(projectId: string | undefined): Phase {
 
 
 export function BatchFootnoteBuilder({}: BatchProps) {
+  const { isAdmin, isAdminResolved } = useAuth();
   const { currentProject } = useProjects();
   const { isOfficeAddin, hasDocumentAccess } = useOffice();
   const projectId = currentProject?.id;
@@ -102,6 +103,13 @@ export function BatchFootnoteBuilder({}: BatchProps) {
   const [phase, setPhase] = useState<Phase>(() => loadPhase(projectId));
   const [finalizing, setFinalizing] = useState(false);
   const bibliography = useBibliography();
+
+  useEffect(() => {
+    const populated = cells.filter((cell) => cell.input.trim());
+    if (!isAdminResolved || populated.length !== 1) return;
+    const tag = citationDiagnosticCandidate(populated[0].input, isAdmin, window.location.search);
+    if (tag) void prepareCitationDiagnostic(tag);
+  }, [cells, isAdmin, isAdminResolved]);
 
   // Reload when project changes
   useEffect(() => {
