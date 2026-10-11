@@ -10,7 +10,10 @@ import * as ranges from "../../supabase/functions/_shared/hebrewNumberRange";
 import * as editors from "../../supabase/functions/_shared/articleCitationValidator";
 import * as knesset from "../../supabase/functions/_shared/knessetTerms";
 import * as usage from "../../supabase/functions/_shared/usageWeights";
-import { articleLookupFallback } from "../../supabase/functions/citation-chat/foreignLookup";
+import * as diagnostic from "../../supabase/functions/_shared/citationDiagnostic";
+import * as diagnosticGate from "../../supabase/functions/_shared/citationDiagnosticGate";
+import { buildForeignArticleRequest } from "@/lib/foreignArticleAdapter";
+import { articleLookupFallback, runForeignLookup as actualForeignLookup, type ForeignLookupInput, type LookupDeps } from "../../supabase/functions/citation-chat/foreignLookup";
 import { buildEnginePromptHint } from "@/lib/citationValidation";
 import { CITATION_RULES } from "@/data/citationEngine";
 
@@ -185,14 +188,19 @@ describe("Hebrew article evidence records", () => {
 const source = readFileSync(resolve(__dirname, "../../supabase/functions/citation-chat/index.ts"), "utf8");
 const compileEntrypoint = (input: string) => ts.transpileModule(input, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText;
 const compiled = compileEntrypoint(source);
-async function runHandler(options: { raw?: string; records?: unknown[]; candidate?: Record<string, unknown>; cached?: Array<Record<string, unknown>>; fail?: boolean; fallback?: boolean; label?: string; noPplx?: boolean; foreign?: Record<string, unknown>; foreignResult?: Record<string, unknown>; foreignThrows?: boolean; formatterReply?: string; compiledEntrypoint?: string } = {}) {
+async function runHandler(options: { raw?: string; records?: unknown[]; candidate?: Record<string, unknown>; cached?: Array<Record<string, unknown>>; fail?: boolean; fallback?: boolean; label?: string; noPplx?: boolean; foreign?: Record<string, unknown>; foreignResult?: Record<string, unknown>; foreignThrows?: boolean; formatterReply?: string; compiledEntrypoint?: string; diagnostic?: unknown; admin?: boolean; roleFails?: boolean; preflightOnly?: boolean; realForeign?: boolean } = {}) {
   const calls: Array<{ stage: string; body: Record<string, unknown> }> = [];
   const rpc = vi.fn(async (_name: string, _args: unknown) => ({ data: { ok: true }, error: null }));
   const zero = vi.fn();
+  const roleRead = vi.fn(async () => options.roleFails ? { data: null, error: { message: "fixture-only" } } : { data: options.admin ? { role: "admin" } : null, error: null });
   const client = {
     auth: { getClaims: async () => ({ data: { claims: { sub: "test-user" } }, error: null }) },
     rpc,
-    from: () => ({ select: () => ({ eq: () => ({ or: () => ({ limit: async () => ({ data: options.cached || [] }) }) }) }) }),
+    from: () => {
+      const chain = { select: () => chain, eq: () => chain, or: () => chain, abortSignal: () => chain,
+        limit: async () => ({ data: options.cached || [] }), maybeSingle: roleRead };
+      return chain;
+    },
   };
   let handler: (req: Request) => Promise<Response>;
   const fetchProvider = async (_url: string, init: RequestInit, meta: { stage: string }) => {
@@ -215,7 +223,16 @@ async function runHandler(options: { raw?: string; records?: unknown[]; candidat
     "../_shared/articleCitationValidator.ts": editors,
     "../_shared/knessetTerms.ts": knesset,
     "../_shared/usageWeights.ts": usage,
-    "./foreignLookup.ts": { runForeignLookup: async () => { if (options.foreignThrows) throw new Error("Mock lookup boundary failed"); return options.foreignResult; }, articleLookupFallback },
+    "../_shared/citationDiagnostic.ts": diagnostic,
+    "../_shared/citationDiagnosticGate.ts": diagnosticGate,
+    "./foreignLookup.ts": { runForeignLookup: async (input: ForeignLookupInput, deps: LookupDeps) => {
+      if (options.foreignThrows) throw new Error("Mock lookup boundary failed");
+      if (!options.realForeign) return options.foreignResult;
+      return actualForeignLookup(input, { ...deps, fetchImpl: (async (_url: unknown, init?: RequestInit, meta?: { stage?: string }) => {
+        calls.push({ stage: meta?.stage || "foreign_page", body: init?.body ? JSON.parse(String(init.body)) : {} });
+        return new Response(JSON.stringify({ results: [] }), { status: 200 });
+      }) as typeof fetch });
+    }, articleLookupFallback },
   };
   runInContext(options.compiledEntrypoint || compiled, createContext({ exports: {}, require: (name: string) => {
     if (!(name in modules)) throw new Error(`Unexpected real module boundary: ${name}`);
@@ -227,8 +244,8 @@ async function runHandler(options: { raw?: string; records?: unknown[]; candidat
   const raw = options.raw || natural;
   const label = options.label || "מאמר";
   const message = `[סיווג אוטומטי: ${label}]\n${label === "מאמר" ? buildEnginePromptHint("article") : ""}${raw}`;
-  const response = await handler!(new Request("https://local.test/citation-chat", { method: "POST", headers: { Authorization: "Bearer mock-token", "Content-Type": "application/json" }, body: JSON.stringify({ messages: [{ role: "user", content: message }], rawInput: raw, ...(options.foreign ? { foreignLookup: options.foreign } : {}) }) }));
-  return { body: await response.json(), status: response.status, calls, rpc, zero };
+  const response = await handler!(new Request("https://local.test/citation-chat", { method: "POST", headers: { Authorization: "Bearer mock-token", "Content-Type": "application/json" }, body: JSON.stringify({ ...(options.preflightOnly ? {} : { messages: [{ role: "user", content: message }], rawInput: raw }), ...(options.foreign ? { foreignLookup: options.foreign } : {}), ...(options.diagnostic ? { citationDiagnostic: options.diagnostic } : {}) }) }));
+  return { body: await response.json(), status: response.status, calls, rpc, zero, roleRead };
 }
 
 describe("article boundary through the real edge handler", () => {

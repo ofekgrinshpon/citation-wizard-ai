@@ -310,7 +310,6 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
     server: errorInfo ? errorInfo.body?.citationDiagnostic : data?.citationDiagnostic,
     httpStatus: errorInfo?.status ?? (data ? 200 : null),
   });
-
   if (errorInfo) {
     throw new CitationRunError({
       code: errorInfo.code || `HTTP_${errorInfo.status ?? "ERR"}`,
