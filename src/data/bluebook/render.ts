@@ -154,9 +154,8 @@ export function renderUsStatute(
   const missing: string[] = [];
   if (!f.titleNumber) missing.push("titleNumber");
   if (!f.code) missing.push("code");
-  if (!f.section) missing.push("section");
-
   const sections = f.sections?.length ? f.sections.join(", ") : f.section || "";
+  if (!sections) missing.push("section");
   const multi = !!f.multi || (f.sections?.length ?? 0) > 1 || /[–]/.test(sections);
   const sign = multi ? "§§" : "§";
   const sectionText = sections

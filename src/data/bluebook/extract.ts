@@ -31,6 +31,7 @@ import {
   type ForeignArticleFields,
   type ForeignBookFields,
   type ForeignChapterFields,
+  type ForeignStatuteFields,
 } from "./types";
 
 export interface ForeignDetection {
@@ -124,20 +125,41 @@ export function extractUkCase(text: string) {
   };
 }
 
-export function extractUsStatute(text: string) {
+// A hyphen in an alphanumeric identifier (2000e-2) belongs to the section;
+// numeric ranges and subsection ranges have their own separator below.
+const US_SECTION_SRC = String.raw`\d+(?:[A-Za-z]+(?:-\d+[A-Za-z]*)?)?(?:\.\d+[A-Za-z]*)*(?:\([A-Za-z0-9]+\))*`;
+const US_SECTION_ITEM_RE = new RegExp(
+  String.raw`^(?<start>${US_SECTION_SRC})(?:\s*(?:–|-|\bto\b)\s*(?<end>${US_SECTION_SRC}|(?:\([A-Za-z0-9]+\))+))?$`,
+);
+
+/** Decline unless the entire section list and optional publication year parse. */
+export function extractUsStatute(text: string): (ForeignStatuteFields & { multi: boolean }) | null {
   const m = text.match(
-    /(?<title>\d+)\s+(?<code>U\.\s?S\.\s?C\.(?:A\.)?)\s*(?<sign>§{1,2})\s*(?<sec>[\w.\-–()]+(?:\s*(?:to|[-–])\s*[\w.()\-]+)?)(?:\s*\((?<year>(?:19|20)\d{2})\))?/,
+    /(?<title>\d+)\s+(?<code>U\.\s?S\.\s?C\.(?:A\.)?)\s*(?<sign>§{1,2})\s*(?<tail>[\s\S]*)$/,
   );
   if (!m?.groups) return null;
   const g = m.groups;
+  let tail = g.tail.trim().replace(/\.$/, "").trim();
+  // Whitespace distinguishes the publication year from an attached subsection.
+  const year = tail.match(/\s+\(((?:19|20)\d{2})\)$/);
+  if (year) tail = tail.slice(0, year.index).trim();
+  const sections: string[] = [];
+  let hasRange = false;
+  for (const item of tail.split(",")) {
+    const parsed = US_SECTION_ITEM_RE.exec(item.trim())?.groups;
+    if (!parsed || (parsed.end?.startsWith("(") && !parsed.start.includes("("))) return null;
+    sections.push(parsed.end ? `${parsed.start}–${parsed.end}` : parsed.start);
+    hasRange ||= !!parsed.end;
+  }
   const before = text.slice(0, m.index).trim().replace(/,\s*$/, "");
   return {
     statuteName: before && /[A-Za-z]{3}/.test(before) ? before : undefined,
     titleNumber: g.title,
     code: g.code.replace(/\s+/g, ""),
-    section: g.sec.replace(/\s*(?:to|-)\s*/, "–").trim(),
-    multi: g.sign === "§§" || /[–]/.test(g.sec),
-    year: g.year,
+    section: sections.length === 1 ? sections[0] : undefined,
+    sections: sections.length > 1 ? sections : undefined,
+    multi: g.sign === "§§" || sections.length > 1 || hasRange,
+    year: year?.[1],
   };
 }
 
@@ -163,10 +185,11 @@ export function extractUsConstitution(text: string) {
 }
 
 export function extractUkStatute(text: string) {
+  // Unsupported section lists/ranges or trailing text must not disappear.
   const m = text
     .trim()
     .match(
-      /^(?<name>[A-Z][A-Za-z'’\s(),.\-]{3,120}?(?:Act|Bill|Measure|Order))\s+(?<year>(?:1[6-9]|20)\d{2})(?:,\s*c\.\s*(?<chapter>[\w]+))?(?:,\s*(?:§|s\.)\s*(?<section>[\w().]+))?/,
+      /^(?<name>[A-Z][A-Za-z'’\s(),.\-]{3,120}?(?:Act|Bill|Measure|Order))\s+(?<year>(?:1[6-9]|20)\d{2})(?:,\s*c\.\s*(?<chapter>[\w]+))?(?:,\s*(?:§|s\.)\s*(?<section>[\w().]+))?\.?$/,
     );
   if (!m?.groups) return null;
   const g = m.groups;
@@ -440,7 +463,7 @@ export function detectForeignSource(raw: string): ForeignDetection | null {
   // 2. U.S.C. / U.S.C.A.
   if (USC_SIGNAL.test(text)) {
     const f = extractUsStatute(text);
-    if (f) return build("statute", "US", f);
+    return f ? build("statute", "US", f) : null;
   }
 
   // 3. UK neutral citation

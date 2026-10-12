@@ -32,6 +32,7 @@ import {
 } from "@/data/bluebook/types";
 import type { ForeignDetection } from "@/data/bluebook/extract";
 import { parseForeignArticleInput } from "../../supabase/functions/_shared/foreignArticle";
+import { extractWorkIdentifiers } from "../../supabase/functions/_shared/workIdentifiers";
 import { buildForeignArticleRequest, mergeForeignArticleCache, renderForeignArticleLookup } from "@/lib/foreignArticleAdapter";
 import { citationDiagnosticBody, observeCitationDiagnostic, type CitationDiagnosticActivation } from "@/lib/citationDiagnostic";
 
@@ -231,19 +232,28 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
   // 1b) Deterministic Bluebook rendering for a clearly identified foreign
   // source (Israeli Rule 35.1). No model call, no fabricated fields.
   if (!isPinpoint && isForeignSourceType(sourceType)) {
-    const rendered = renderForeignCitation(normalized);
+    const identifiers = suppliedArticle ? extractWorkIdentifiers(normalized) : null;
+    const hasIdentifier = !!(identifiers?.doi || identifiers?.sourceUrl || identifiers?.conflicts.length);
+    const rendered = renderForeignCitation(hasIdentifier ? identifiers!.text : normalized);
     if (rendered && rendered.missing.length === 0) {
       reportZeroWork(opts.telemetry, "local_foreign_formatter", "deterministic");
       observeCitationDiagnostic(opts.diagnostic, rawInput, "deterministic");
+      // Formatting complete supplied fields stays local. An explicit identifier
+      // is not verified by rendering, and must not silently cause a billed lookup.
+      const identifierWarning = hasIdentifier
+        ? identifiers!.conflicts.length
+          ? "נמצאו מזהים סותרים או קישור שאינו נתמך; לא אומתה התאמתם לפרטי המאמר שסיפקתם."
+          : "לא אומתה התאמת ה־DOI או הקישור לפרטי המאמר שסיפקתם."
+        : undefined;
       return {
         telemetry: opts.telemetry,
-        reply: rendered.citation,
+        reply: identifierWarning ? `${rendered.citation}\n⚠️ ${[identifierWarning, ...rendered.warnings].join(" ")}` : rendered.citation,
         citation: rendered.citation,
         sourceType: rendered.detection.sourceType,
         sourceLabel: SOURCE_TYPE_LABELS[rendered.detection.sourceType],
         fromVerifiedStore: false,
-        status: rendered.warnings.length ? "warning" : "valid",
-        warningMsg: rendered.warnings[0],
+        status: identifierWarning || rendered.warnings.length ? "warning" : "valid",
+        warningMsg: identifierWarning ?? rendered.warnings[0],
       };
     }
   }

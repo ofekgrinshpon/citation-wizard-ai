@@ -85,9 +85,10 @@ import {
   type CitationDiagnosticObserver, type CitationDiagnosticTier,
 } from "../_shared/citationDiagnostic.ts";
 import {
-  parseForeignArticleInput, articleRecordsFromSnippet, articleRecordFromHtml,
+  parseForeignArticleInput, articleRecordsFromSnippet, articleRecordFromPage,
   articleHeadingMatches, articleFieldMatches, enrichArticleAuthors, type ArticleRecord,
 } from "../_shared/foreignArticle.ts";
+import { extractWorkIdentifiers, normalizeDoi, normalizeWorkUrl } from "../_shared/workIdentifiers.ts";
 const PPLX_SEARCH_URL = "https://api.perplexity.ai/search";
 const TIMEOUT_MS = 20_000;
 const MAX_RESULTS = 8;
@@ -580,14 +581,21 @@ async function searchOnce(
 /** Fail honestly at article infrastructure boundaries; never replace supplied identity. */
 export function articleLookupFallback(input: ForeignLookupInput, error?: string): ForeignLookupResult {
   const fields = parseForeignArticleInput(input.rawInput);
+  const identifiers = extractWorkIdentifiers(input.rawInput);
   const title = typeof input.parsedFields?.articleTitle === "string" ? input.parsedFields.articleTitle : fields.articleTitle;
   return {
     kind: input.kind, jurisdiction: input.jurisdiction, fields: {}, grounded: {}, provenance: {}, sources: [],
-    identity: { matched: false, anchors: title ? [`title:${title}`] : [], conflicts: [] },
+    identity: { matched: false, anchors: articleIdentityAnchors(fields.doi || fields.sourceUrl || identifiers.conflicts.length ? fields : { ...fields, articleTitle: title }), conflicts: identifiers.conflicts },
     diagnostics: { tier1Queried: false, tier2Fired: false },
-    ...(input.kind === "journal_article" && title ? { articleResolution: "incomplete" as const } : {}),
+    ...(input.kind === "journal_article" && (title || fields.doi || fields.sourceUrl || identifiers.conflicts.length)
+      ? { articleResolution: identifiers.conflicts.length ? "conflict" as const : "incomplete" as const } : {}),
     ...(error ? { error } : {}),
   };
+}
+
+function articleIdentityAnchors(fields: Record<string, string>): string[] {
+  return ["articleTitle", "authors", "doi", "sourceUrl"].filter((field) => fields[field])
+    .map((field) => `${field === "articleTitle" ? "title" : field === "authors" ? "author" : field}:${fields[field]}`);
 }
 
 /** Article evidence is retained as whole work records, never field-count votes. */
@@ -598,9 +606,21 @@ async function lookupArticle(
   apiKey: string,
   observer?: CitationDiagnosticObserver,
 ): Promise<ForeignLookupResult> {
-  const supplied = { ...parseForeignArticleInput(input.rawInput), ...Object.fromEntries(
+  const rawFields = parseForeignArticleInput(input.rawInput);
+  const supplied = { ...rawFields, ...Object.fromEntries(
     Object.entries(input.parsedFields ?? {}).filter(([, value]) => typeof value === "string" && value.trim()),
   ) };
+  const identifiers = extractWorkIdentifiers(input.rawInput);
+  const hasIdentifier = !!(rawFields.doi || rawFields.sourceUrl || identifiers.conflicts.length);
+  if (hasIdentifier) {
+    // Identity is what the user wrote, not a legacy client's DOI-as-title echo.
+    // The parser may supplement publication fields, but cannot invent an
+    // identifier-led title/byline or replace the explicit raw anchors.
+    for (const field of ["articleTitle", "authors", "doi", "sourceUrl", "pinpoint"]) {
+      if (rawFields[field]) supplied[field] = rawFields[field];
+      else delete supplied[field];
+    }
+  }
   safeObserveCitationDiagnostic(observer, { type: "input", fields: citationDiagnosticPresentFields(supplied) });
   const finish = (conflictFields: string[] = []) => {
     const presentFields = citationDiagnosticPresentFields({ ...result.fields, ...supplied });
@@ -611,16 +631,36 @@ async function lookupArticle(
     });
     return result;
   };
-  if (!supplied.articleTitle) {
+  if (!supplied.articleTitle && !hasIdentifier) {
     safeObserveCitationDiagnostic(observer, { type: "stop", reason: "missing_title" });
     return finish();
   }
   result.articleResolution = "incomplete";
-  result.identity.anchors = [`title:${supplied.articleTitle}`, ...(supplied.authors ? [`author:${supplied.authors}`] : [])];
+  result.identity.anchors = articleIdentityAnchors(supplied);
+  if (identifiers.conflicts.length) {
+    result.identity.conflicts = identifiers.conflicts;
+    result.articleResolution = "conflict";
+    return finish();
+  }
   const records: Array<ArticleRecord & { donor: LookupSource; inspected: boolean }> = [];
   const sources: LookupSource[] = [];
   const conflicts = new Set<string>();
+  let identifierConflict = false;
   const addRecord = (record: ArticleRecord, donor: LookupSource, inspected: boolean, tier: CitationDiagnosticTier) => {
+    if (supplied.sourceUrl && inspected) record = { ...record, fields: { ...record.fields, sourceUrl: normalizeWorkUrl(donor.url) ?? donor.url } };
+    // Both supplied identifiers must be evidenced on this same complete work.
+    // A title-only donor must not silently discard a conflicting DOI or URL.
+    if (["doi", "sourceUrl"].some((field) => supplied[field] && !record.fields[field])) return false;
+    const identifierFields = ["doi", "sourceUrl"].filter((field) => supplied[field]);
+    const mismatchedIdentifiers = identifierFields.filter((field) => !articleFieldMatches(field, supplied[field], record.fields[field]));
+    // The same work can have alternate landing URLs. That does not verify the
+    // supplied URL, and is not proof that it conflicts with a matching DOI.
+    if (mismatchedIdentifiers.includes("sourceUrl")) return false;
+    // Same-title search hits can be distinct works. A different identifier is
+    // not an input contradiction unless this record is independently bound to
+    // another requested identifier (or the inspected DOI resolver page itself).
+    if (mismatchedIdentifiers.length && !identifierFields.some((field) => articleFieldMatches(field, supplied[field], record.fields[field]))
+      && !(inspected && supplied.doi && normalizeDoi(donor.url) === supplied.doi)) return false;
     const disagreed = Object.entries(record.fields).filter(([field, value]) =>
       supplied[field] && field !== "pinpoint" && !articleFieldMatches(field, supplied[field], value));
     safeObserveCitationDiagnostic(observer, {
@@ -630,6 +670,7 @@ async function lookupArticle(
     });
     if (disagreed.length) {
       for (const [field, value] of disagreed) conflicts.add(`${field}:${supplied[field]} vs ${value}`);
+      if (hasIdentifier) identifierConflict = true;
       return false;
     }
     records.push({ ...record, donor, inspected });
@@ -667,7 +708,11 @@ async function lookupArticle(
       return;
     }
     // A page that merely discusses the target is not an inspection candidate.
-    const source = sources.find((candidate) => candidate.strong && articleHeadingMatches(candidate.title ?? "", supplied.articleTitle));
+    const source = sources.find((candidate) => candidate.strong && (
+      (supplied.doi && normalizeDoi(candidate.url) === supplied.doi)
+      || (supplied.sourceUrl && normalizeWorkUrl(candidate.url) === supplied.sourceUrl)
+      || (supplied.articleTitle && articleHeadingMatches(candidate.title ?? "", supplied.articleTitle))
+    ));
     if (!source) {
       safeObserveCitationDiagnostic(observer, { type: "page", tier, status: "no_candidate" });
       return;
@@ -675,9 +720,9 @@ async function lookupArticle(
     inspected = true;
     const page = await fetchPageText(source.url, doFetch, observer, tier);
     if (!page) return;
-    // Only self-identifying citation_* metadata is authoritative on a full page.
-    // Stripped body text can contain arbitrary references to different works.
-    const record = articleRecordFromHtml(page, supplied);
+    // Self-identifying HTML metadata or one complete exported article record;
+    // never strip and scan page bodies containing references to other works.
+    const record = articleRecordFromPage(page, supplied);
     if (record) {
       const accepted = addRecord(record, source, true, tier);
       safeObserveCitationDiagnostic(observer, { type: "page", tier, status: accepted ? "record_accepted" : "record_rejected" });
@@ -693,9 +738,17 @@ async function lookupArticle(
   } else safeObserveCitationDiagnostic(observer, { type: "stop", reason: "tier1_records_present" });
   result.identity.conflicts = [...conflicts];
   result.identity.matched = records.length > 0;
+  if (identifierConflict) {
+    result.identity.matched = false;
+    result.articleResolution = "conflict";
+    return finish();
+  }
   // All accepted fields must describe compatible records. Duplicate URLs or
   // plentiful snippets cannot vote away a disagreement about the cited work.
-  const fields = [...new Set(records.flatMap((record) => Object.keys(record.fields)))];
+  // Alternate landing URLs for one DOI are not contradictory publication
+  // metadata. Compare/return a URL only when the request supplied that anchor.
+  const fields = [...new Set(records.flatMap((record) => Object.keys(record.fields)))]
+    .filter((field) => field !== "sourceUrl" || supplied.sourceUrl);
   const recordConflicts = fields.filter((field) => {
     const values = records.map((record) => record.fields[field]).filter(Boolean);
     // A shared initial can match two contradictory full names; compare every
@@ -709,7 +762,7 @@ async function lookupArticle(
     return finish(recordConflicts);
   }
   for (const field of fields) {
-    if (supplied[field] && field !== "authors") continue;
+    if (supplied[field] && !["authors", "doi", "sourceUrl"].includes(field)) continue;
     let chosen = records.find((record) => record.structured && record.fields[field]) ?? records.find((record) => record.fields[field]);
     if (!chosen) continue;
     if (field === "authors") {

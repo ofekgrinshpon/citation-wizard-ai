@@ -891,13 +891,13 @@ export const CITATION_RULES: Record<string, CitationRuleSet> = {
   foreign: {
     primaryRule: "36",
     ruleTitle: "כלל 36 – מקורות לועזיים (Bluebook)",
-    template: "לפי כללי ה-Bluebook (מהדורה 21).",
+    template: "לפי כללי ה-Bluebook (מהדורה 22).",
     example: "Jack M. Balkin, ##Living Originalism## 45 (2011).",
     components: [
       { field: "citation", rule: "36", description: "אזכור מלא לפי כללי ה-Bluebook", required: true, format: "italic" },
     ],
     notes: [
-      "כלל 36: מקורות לועזיים מאוזכרים לפי כללי ה-Bluebook (מהדורה 21).",
+      "כלל 36: מקורות לועזיים מאוזכרים לפי כללי ה-Bluebook (מהדורה 22).",
       "שמות ספרים וכתבי עת בהטייה (italic), סומנים ב-##...##.",
     ],
   },

@@ -4,6 +4,7 @@ import { resolve } from "node:path";
 import { renderForeignCitation, detectForeignSource, stripMarkers } from "@/data/bluebook";
 import { applyRepeatCitationRules } from "@/lib/footnoteRepeatRules";
 import { citationToHtml, citationToPlain } from "@/lib/citationRichText";
+import { buildEnginePromptHint, getRuleSet } from "@/lib/citationValidation";
 
 const plain = (s: string) => stripMarkers(s);
 const det = (s: string) => {
@@ -12,6 +13,15 @@ const det = (s: string) => {
 };
 
 describe("M2A — active Bluebook edition", () => {
+  it("the generic foreign frontend template and injected fallback prompt agree on edition 22", () => {
+    const ruleSet = getRuleSet("foreign")!;
+    expect(ruleSet.template).toContain("Bluebook (מהדורה 22)");
+    expect(ruleSet.notes?.join("\n")).toContain("Bluebook (מהדורה 22)");
+    const prompt = buildEnginePromptHint("foreign");
+    expect(prompt.match(/Bluebook \(מהדורה 22\)/g)).toHaveLength(2);
+    expect(prompt).not.toMatch(/מהדורה 21\b/);
+  });
+
   it("citation-chat foreign instructions reference Bluebook 22, never 21", () => {
     const src = readFileSync(resolve(__dirname, "../../supabase/functions/citation-chat/index.ts"), "utf8");
     expect(src).not.toMatch(/(?:Bluebook|בלובוק)[^\n]{0,20}(?:מהדורה|edition|ed\.)\s*21/i);
@@ -91,6 +101,12 @@ describe("M2A — traditional UK Law Reports", () => {
 });
 
 describe("M2A — books and chapters", () => {
+  it("preserves an actual source's 21st edition independently of the active citation rules", () => {
+    expect(plain(det("Jane Doe, Legal Writing (21st ed. 2020)")!.citation)).toBe(
+      "Jane Doe, Legal Writing (21st ed. 2020).",
+    );
+  });
+
   it("B1 complete book", () => {
     const d = detectForeignSource("Aharon Barak, Proportionality (2012)")!;
     expect(d.kind).toBe("book");
