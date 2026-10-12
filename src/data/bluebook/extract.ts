@@ -185,10 +185,11 @@ export function extractUsConstitution(text: string) {
 }
 
 export function extractUkStatute(text: string) {
+  // Unsupported section lists/ranges or trailing text must not disappear.
   const m = text
     .trim()
     .match(
-      /^(?<name>[A-Z][A-Za-z'’\s(),.\-]{3,120}?(?:Act|Bill|Measure|Order))\s+(?<year>(?:1[6-9]|20)\d{2})(?:,\s*c\.\s*(?<chapter>[\w]+))?(?:,\s*(?:§|s\.)\s*(?<section>[\w().]+))?/,
+      /^(?<name>[A-Z][A-Za-z'’\s(),.\-]{3,120}?(?:Act|Bill|Measure|Order))\s+(?<year>(?:1[6-9]|20)\d{2})(?:,\s*c\.\s*(?<chapter>[\w]+))?(?:,\s*(?:§|s\.)\s*(?<section>[\w().]+))?\.?$/,
     );
   if (!m?.groups) return null;
   const g = m.groups;
@@ -462,7 +463,7 @@ export function detectForeignSource(raw: string): ForeignDetection | null {
   // 2. U.S.C. / U.S.C.A.
   if (USC_SIGNAL.test(text)) {
     const f = extractUsStatute(text);
-    if (f) return build("statute", "US", f);
+    return f ? build("statute", "US", f) : null;
   }
 
   // 3. UK neutral citation
