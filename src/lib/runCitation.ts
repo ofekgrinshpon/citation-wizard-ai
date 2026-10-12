@@ -32,6 +32,7 @@ import {
 } from "@/data/bluebook/types";
 import type { ForeignDetection } from "@/data/bluebook/extract";
 import { parseForeignArticleInput } from "../../supabase/functions/_shared/foreignArticle";
+import { extractWorkIdentifiers } from "../../supabase/functions/_shared/workIdentifiers";
 import { buildForeignArticleRequest, mergeForeignArticleCache, renderForeignArticleLookup } from "@/lib/foreignArticleAdapter";
 import { citationDiagnosticBody, observeCitationDiagnostic, type CitationDiagnosticActivation } from "@/lib/citationDiagnostic";
 
