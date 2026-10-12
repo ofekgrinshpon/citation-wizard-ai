@@ -599,6 +599,7 @@ function articleIdentityAnchors(fields: Record<string, string>): string[] {
 }
 
 
+
 /** Article evidence is retained as whole work records, never field-count votes. */
 async function lookupArticle(
   input: ForeignLookupInput,
