@@ -423,7 +423,12 @@ export function articleRecordsFromSnippet(source: { title?: string; snippet?: st
   const records: ArticleRecord[] = [];
   const titleText = bibtexRecords((source.title ?? "").slice(0, MAX_RECORD_TEXT), identifiers ? undefined : target, identifiers);
   const snippetText = bibtexRecords((source.snippet ?? "").slice(0, MAX_RECORD_TEXT), identifiers ? undefined : target, identifiers);
-  records.push(...titleText.records, ...snippetText.records);
+  records.push(...[...titleText.records, ...snippetText.records].filter((record) => !identifiers
+    || (target && articleFieldMatches("articleTitle", target, record.fields.articleTitle))
+    || (anchors.doi && anchors.doi === record.fields.doi)
+    || (anchors.sourceUrl && anchors.sourceUrl === record.fields.sourceUrl)));
+  // A DOI-led request may discover a title only from a complete article record.
+  if (!target) return records;
   records.push(...publisherRecords(snippetText.prose, titleText.prose, anchors));
   // Search each text separately: concatenating a heading and unrelated body
   // would create a citation relationship that the evidence never asserted.
@@ -461,7 +466,13 @@ export function articleRecordsFromSnippet(source: { title?: string; snippet?: st
       records.push({ fields: { ...fields, articleTitle: target, ...(authors ? { authors } : {}) }, structured: false });
     }
   }
-  return records;
+  return records.map((record) => {
+    // A primary result heading can bind its URL to this work. A reference in a
+    // differently titled result cannot borrow that result's URL as its identity.
+    if (!anchors.sourceUrl || record.fields.sourceUrl || !source.url
+      || !articleHeadingMatches(source.title ?? "", record.fields.articleTitle)) return record;
+    return { ...record, fields: { ...record.fields, sourceUrl: normalizeWorkUrl(source.url) ?? source.url } };
+  });
 }
 
 function decodeHtml(value: string): string {
@@ -484,9 +495,12 @@ export function articleRecordFromHtml(html: string, anchors: ArticleFields): Art
     if (value) meta.set(key, [...(meta.get(key) ?? []), value]);
   }
   const titles = meta.get("citation_title") ?? [];
-  if (titles.length !== 1 || articleKey(titles[0]) !== articleKey(anchors.articleTitle ?? "")) return null;
+  const identifiers = !!(anchors.doi || anchors.sourceUrl);
+  if (titles.length !== 1 || !titles[0].trim() || titles[0].length > 240
+    || (identifiers && (normalizeDoi(titles[0]) || /^https?:\/\//i.test(titles[0])))
+    || (!identifiers && articleKey(titles[0]) !== articleKey(anchors.articleTitle ?? ""))) return null;
   const authors = (meta.get("citation_author") ?? []).join(" & ");
-  if (!articleAuthorsMatch(authors, anchors.authors)) return null;
+  if (!identifiers && !articleAuthorsMatch(authors, anchors.authors)) return null;
   const fields: ArticleFields = { articleTitle: titles[0] };
   if (authors) fields.authors = authors;
   const keys: Record<string, string> = { journal: "citation_journal_title", volume: "citation_volume", firstPage: "citation_firstpage" };
@@ -499,7 +513,33 @@ export function articleRecordFromHtml(html: string, anchors: ArticleFields): Art
   const years = [...new Set(dates.map((date) => date.match(YEAR)?.[0]).filter(Boolean))];
   if (years.length > 1) return null;
   if (years[0]) fields.year = years[0];
+  if (identifiers) {
+    // citation_* is primary-work metadata, not arbitrary page text or JSON.
+    // A book's DOI must not bootstrap an article identity.
+    if (!fields.journal || meta.has("citation_book_title") || meta.has("citation_isbn")) return null;
+    const dois = [...new Set((meta.get("citation_doi") ?? []).map(normalizeDoi))];
+    if (dois.length > 1 || (dois.length && !dois[0])) return null;
+    if (dois[0]) fields.doi = dois[0];
+    if (!anchors.articleTitle && !["authors", "journal", "volume", "firstPage", "year"].every((field) => fields[field])) return null;
+  }
   return { fields, structured: true };
+}
+
+/** Full pages require self-identifying metadata, never a body/reference scan. */
+export function articleRecordFromPage(text: string, anchors: ArticleFields): ArticleRecord | null {
+  const html = articleRecordFromHtml(text, anchors);
+  if (html) return html;
+  // A single complete exported entry identifies its own work. Reuse the same
+  // field parser as Search, while rejecting wrappers, lists and partial reads.
+  const identifiers = !!(anchors.doi || anchors.sourceUrl);
+  if ((!anchors.articleTitle && !identifiers) || text.length > MAX_RECORD_TEXT) return null;
+  const entry = text.trim();
+  const marker = entry.match(/^@article\s*[{(]/i);
+  if (!marker || bibtexEnd(entry, marker[0].length - 1) !== entry.length) return null;
+  // A whole exported record identifies its own work. With explicit identifiers,
+  // keep its actual title/DOI for the lookup's distinct-anchor conflict checks.
+  const records = bibtexRecords(entry, identifiers ? undefined : anchors.articleTitle, identifiers).records;
+  return records.length === 1 ? { ...records[0], structured: true } : null;
 }
 
 function authorNames(value: string): Array<{ surname: string; given: string[]; suffix?: string }> | null {
@@ -548,6 +588,8 @@ export function enrichArticleAuthors(supplied?: string, candidate?: string): str
 /** Comparison permits ordinary journal abbreviations, but not unrelated names. */
 export function articleFieldMatches(field: string, a: string, b: string): boolean {
   if (field === "authors") return compatibleAuthorNames(a, b);
+  if (field === "doi") return !!normalizeDoi(a) && normalizeDoi(a) === normalizeDoi(b);
+  if (field === "sourceUrl") return !!normalizeWorkUrl(a) && normalizeWorkUrl(a) === normalizeWorkUrl(b);
   if (articleKey(a) === articleKey(b)) return true;
   if (field !== "journal") return false;
   const tokens = (value: string) => articleKey(value).split(" ").filter((word) => !["of", "the", "and"].includes(word));
