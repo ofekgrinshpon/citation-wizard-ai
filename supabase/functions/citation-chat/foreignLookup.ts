@@ -739,9 +739,17 @@ async function lookupArticle(
   } else safeObserveCitationDiagnostic(observer, { type: "stop", reason: "tier1_records_present" });
   result.identity.conflicts = [...conflicts];
   result.identity.matched = records.length > 0;
+  if (identifierConflict) {
+    result.identity.matched = false;
+    result.articleResolution = "conflict";
+    return finish();
+  }
   // All accepted fields must describe compatible records. Duplicate URLs or
   // plentiful snippets cannot vote away a disagreement about the cited work.
-  const fields = [...new Set(records.flatMap((record) => Object.keys(record.fields)))];
+  // Alternate landing URLs for one DOI are not contradictory publication
+  // metadata. Compare/return a URL only when the request supplied that anchor.
+  const fields = [...new Set(records.flatMap((record) => Object.keys(record.fields)))]
+    .filter((field) => field !== "sourceUrl" || supplied.sourceUrl);
   const recordConflicts = fields.filter((field) => {
     const values = records.map((record) => record.fields[field]).filter(Boolean);
     // A shared initial can match two contradictory full names; compare every
@@ -755,7 +763,7 @@ async function lookupArticle(
     return finish(recordConflicts);
   }
   for (const field of fields) {
-    if (supplied[field] && field !== "authors") continue;
+    if (supplied[field] && !["authors", "doi", "sourceUrl"].includes(field)) continue;
     let chosen = records.find((record) => record.structured && record.fields[field]) ?? records.find((record) => record.fields[field]);
     if (!chosen) continue;
     if (field === "authors") {
