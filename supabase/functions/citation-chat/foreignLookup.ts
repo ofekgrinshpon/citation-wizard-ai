@@ -598,8 +598,6 @@ function articleIdentityAnchors(fields: Record<string, string>): string[] {
     .map((field) => `${field === "articleTitle" ? "title" : field === "authors" ? "author" : field}:${fields[field]}`);
 }
 
-
-
 /** Article evidence is retained as whole work records, never field-count votes. */
 async function lookupArticle(
   input: ForeignLookupInput,
