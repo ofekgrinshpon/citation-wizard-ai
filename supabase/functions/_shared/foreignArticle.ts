@@ -1,4 +1,5 @@
 /** Pure article parsing shared by the client and edge lookup. No I/O or formatting. */
+import { extractWorkIdentifiers, normalizeDoi, normalizeWorkUrl } from "./workIdentifiers.ts";
 export type ArticleFields = Record<string, string>;
 export interface ArticleRecord {
   fields: ArticleFields;
@@ -28,8 +29,12 @@ function isAuthorList(value: string): boolean {
 
 /** Preserve explicit fields even when the complete Bluebook parser declines. */
 export function parseForeignArticleInput(raw: string): ArticleFields {
-  const fields: ArticleFields = {};
-  let text = raw.trim();
+  const identifiers = extractWorkIdentifiers(raw);
+  const fields: ArticleFields = {
+    ...(identifiers.doi ? { doi: identifiers.doi } : {}),
+    ...(identifiers.sourceUrl ? { sourceUrl: identifiers.sourceUrl } : {}),
+  };
+  let text = identifiers.text;
   const pin = text.match(/(?:,?\s+)(?:at\s+)?\b(?:pp?\.?|pages?)\s*(\d+(?:\s*[-–]\s*\d+)?)(?=\s*(?:[.,;]|\(|$))/i);
   if (pin) {
     fields.pinpoint = pin[1].replace(/\s*[-–]\s*/g, "–");
@@ -232,7 +237,7 @@ function bibtexAuthors(value: string): string | null {
   return normalized.join(" and ");
 }
 
-function bibtexRecords(text: string, target: string): { records: ArticleRecord[]; prose: string } {
+function bibtexRecords(text: string, target?: string, identifiers = false): { records: ArticleRecord[]; prose: string } {
   const records: ArticleRecord[] = [];
   const marker = /@[A-Za-z]+\s*[{(]/g;
   let prose = "", copied = 0, count = 0;
@@ -250,12 +255,20 @@ function bibtexRecords(text: string, target: string): { records: ArticleRecord[]
     const authors = bibtexAuthors(fields.get("author") ?? "");
     const year = fields.get("year") ?? "", volume = fields.get("volume") ?? "";
     const pages = (fields.get("pages") ?? "").match(/^(\d{1,5})(?:\s*(?:--?|[–—])\s*(\d{1,5}))?$/);
-    if (articleKey(title) !== articleKey(target) || title.length > 240 || !authors
-      || !journal || journal.length > 160 || !plausibleJournal(journal)
+    if ((target && articleKey(title) !== articleKey(target)) || !title || title.length > 240 || !authors
+      || (identifiers && (normalizeDoi(title) || /^https?:\/\//i.test(title)))
+      || !journal || journal.length > 160 || (!plausibleJournal(journal)
+        // A complete, explicitly typed DOI/URL article record can name a
+        // non-law journal (e.g. Nature) without a "Journal"/"Review" token.
+        && !(identifiers && /^[\p{L}][\p{L}\p{N} .&'’:-]{1,159}$/u.test(journal)))
       || /(?:\.{3}|…)/.test(title + journal + authors)
       || !/^(?:1[6-9]|20)\d{2}$/.test(year) || !/^[1-9]\d{0,3}$/.test(volume)
       || !pages || (pages[2] && Number(pages[2]) < Number(pages[1]))) continue;
-    records.push({ fields: { articleTitle: title, authors, journal, year, volume, firstPage: pages[1] }, structured: false });
+    const doi = identifiers ? normalizeDoi(fields.get("doi") ?? "") : undefined;
+    const sourceUrl = identifiers ? normalizeWorkUrl(fields.get("url") ?? "") : undefined;
+    records.push({ fields: { articleTitle: title, authors, journal, year, volume, firstPage: pages[1],
+      ...(doi ? { doi } : {}), ...(sourceUrl ? { sourceUrl } : {}),
+    }, structured: false });
   }
   return { records, prose: prose + text.slice(copied) };
 }
@@ -265,6 +278,22 @@ function publisherByline(value: string): string | null {
   const names = byline.split(/\s*;\s*|\s+(?:and|&)\s+|,\s*/);
   return byline.length <= 300 && names.length <= 16 && names.every((name) => NAME.test(name))
     && !/\bet al\b|\.{3}|…/i.test(byline) ? byline : null;
+}
+
+/** Only presentation punctuation around an exact leading title may be removed. */
+function publisherHeading(heading: string, target: string): string {
+  const text = heading.replace(/[\t\p{Zs}]+/gu, " ").trim();
+  const quote = text[0] === '"' ? '"' : text[0] === "“" ? "”" : "";
+  const body = quote ? text.slice(1) : text;
+  const title = titlePattern(target).exec(body);
+  if (!title || title.index !== 0) return text;
+  let after = body.slice(title[0].length);
+  if (quote) {
+    if (!after.startsWith(quote)) return text;
+    after = after.slice(1);
+  }
+  after = after.replace(/^\.(?=\s|$)/, "");
+  return title[0] + after;
 }
 
 function publisherRecord(lines: string[], heading: string, target: string, suppliedAuthors?: string): ArticleRecord | null {
@@ -302,6 +331,63 @@ function publisherRecord(lines: string[], heading: string, target: string, suppl
     ? { fields: { ...fields, articleTitle: target, authors: authors.replace(/\s*;\s*/g, " and ") }, structured: false } : null;
 }
 
+/** Join soft wraps only inside an already bounded publisher metadata block. */
+function normalizedPublisherRecord(lines: string[], heading: string, anchors: ArticleFields): ArticleRecord | null {
+  // New recovery must complete within one paragraph. A following paragraph
+  // may be an unrelated record/footer, so never normalize across its boundary.
+  const paragraphEnd = lines.findIndex((line) => !line.trim());
+  const block = paragraphEnd < 0 ? lines : lines.slice(0, paragraphEnd);
+  // These separators can mark distinct records/paragraphs. Body CRLF was
+  // already split into lines; only ordinary LF soft wraps are supported here.
+  // Never feed other vertical boundaries or separate heading paragraphs into
+  // the byline's whitespace matcher or collapse them into a journal name.
+  if (/[\r\v\f\u2028\u2029]|\n\s*\n/.test(heading)
+    || block.some((line) => /[\r\v\f\u2028\u2029]/.test(line))) return null;
+  const target = anchors.articleTitle;
+  const normalized = block.map((line) => line.replace(/[\t\p{Zs}]+/gu, " ").trim());
+  const normalizedHeading = publisherHeading(heading, target);
+  const direct = publisherRecord(normalized, normalizedHeading, target, anchors.authors);
+  if (direct) return direct;
+  const hasTitle = articleKey(normalized[0] ?? "") === articleKey(target);
+  const metadata = normalized.slice(hasTitle ? 1 : 0).join("\n");
+  let authors = publisherByline(normalized[hasTitle ? 1 : 0] ?? "");
+  let publication = normalized.slice(hasTitle ? 2 : 1).join("\n");
+
+  // A flattened/wrapped byline has no usable line boundary. Its exact complete
+  // spelling must be independently echoed in the heading before locating the
+  // adjacent publication. Never guess a split between names and journal words.
+  if (!authors || !publicationAtStart(publication)) {
+    const title = titlePattern(target).exec(normalizedHeading);
+    const after = title?.index === 0 ? normalizedHeading.slice(title[0].length)
+      .replace(/^\s*[—–|-]?\s*/, "").replace(/\s*(?:\.{3}|…)\s*$/, "") : "";
+    const echoed = after && publisherByline(after);
+    if (echoed) {
+      const pattern = echoed.split(/\s+/).map((part) => part.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("\\s+");
+      const prefix = metadata.match(new RegExp(`^(?:(?:by|authors?:)\\s+)?(${pattern})(?=\\s)`, "i"));
+      if (prefix && !/\n\s*\n/.test(prefix[0])) {
+        authors = prefix[1].replace(/\s+/g, " ");
+        publication = metadata.slice(prefix[0].length).trimStart();
+      }
+    }
+  }
+  if (!authors) return null;
+
+  // A journal wrap may continue with its genre suffix, not a second named
+  // publication or a separate article heading. Other line breaks retain their
+  // meaning; the existing grammar handles wraps around volume/date labels.
+  const label = publication.search(/,?\s+Vol(?:ume)?\.?\s+/i);
+  if (label >= 0) {
+    const journalLines = publication.slice(0, label).trim().split("\n");
+    const genre = /^(?:(?:Law|Legal|L\.)\s+)*(?:Review|Journal|Quarterly|Rev\.|J\.)$/i;
+    if (journalLines.length > 1 && journalLines.length <= 3
+      && !/\b(?:Review|Journal|Quarterly|Rev\.|J\.)\s*$/i.test(journalLines[0])
+      && genre.test(journalLines.slice(1).join(" "))) {
+      publication = journalLines.join(" ") + publication.slice(label);
+    }
+  }
+  return publisherRecord([...(hasTitle ? [normalized[0]] : []), authors, publication], normalizedHeading, target, anchors.authors);
+}
+
 function publisherRecords(text: string, heading: string, anchors: ArticleFields): ArticleRecord[] {
   const lines = text.trim().split(/\r?\n/);
   const records: ArticleRecord[] = [];
@@ -311,7 +397,10 @@ function publisherRecords(text: string, heading: string, anchors: ArticleFields)
     // never reuse the first block's title/byline to fill another publication.
     if (i > 0 && articleKey(lines[i]) !== articleKey(anchors.articleTitle)) continue;
     blocks++;
-    const record = publisherRecord(lines.slice(i, i + 6), i === 0 ? heading : "", anchors.articleTitle, anchors.authors);
+    const block = lines.slice(i, i + 6);
+    const blockHeading = i === 0 ? heading : "";
+    const record = publisherRecord(block, blockHeading, anchors.articleTitle, anchors.authors)
+      ?? normalizedPublisherRecord(block, blockHeading, anchors);
     if (record) records.push(record);
   }
   return records;
@@ -327,12 +416,13 @@ function trailingAuthors(prefix: string): string | undefined {
   return undefined;
 }
 
-export function articleRecordsFromSnippet(source: { title?: string; snippet?: string }, anchors: ArticleFields): ArticleRecord[] {
+export function articleRecordsFromSnippet(source: { title?: string; snippet?: string; url?: string }, anchors: ArticleFields): ArticleRecord[] {
   const target = anchors.articleTitle;
-  if (!target) return [];
+  const identifiers = !!(anchors.doi || anchors.sourceUrl);
+  if (!target && !identifiers) return [];
   const records: ArticleRecord[] = [];
-  const titleText = bibtexRecords((source.title ?? "").slice(0, MAX_RECORD_TEXT), target);
-  const snippetText = bibtexRecords((source.snippet ?? "").slice(0, MAX_RECORD_TEXT), target);
+  const titleText = bibtexRecords((source.title ?? "").slice(0, MAX_RECORD_TEXT), identifiers ? undefined : target, identifiers);
+  const snippetText = bibtexRecords((source.snippet ?? "").slice(0, MAX_RECORD_TEXT), identifiers ? undefined : target, identifiers);
   records.push(...titleText.records, ...snippetText.records);
   records.push(...publisherRecords(snippetText.prose, titleText.prose, anchors));
   // Search each text separately: concatenating a heading and unrelated body
