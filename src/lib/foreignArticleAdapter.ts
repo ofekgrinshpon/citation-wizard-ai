@@ -4,6 +4,7 @@ import { detectForeignSource } from "@/data/bluebook/extract";
 import { renderForeignDetection } from "@/data/bluebook";
 import { getMissingFieldsSummary } from "@/lib/citationValidation";
 import { articleFieldMatches, enrichArticleAuthors, parseForeignArticleInput } from "../../supabase/functions/_shared/foreignArticle";
+import { extractWorkIdentifiers } from "../../supabase/functions/_shared/workIdentifiers";
 
 export interface ForeignArticleRequest {
   enabled: true;
@@ -23,7 +24,7 @@ export interface ForeignArticleLookupResponse {
 
 export function buildForeignArticleRequest(rawInput: string): ForeignArticleRequest {
   const parsedFields = parseForeignArticleInput(rawInput);
-  const detection = detectForeignSource(rawInput);
+  const detection = detectForeignSource(extractWorkIdentifiers(rawInput).text);
   if (detection?.kind === "journal_article") {
     for (const [field, value] of Object.entries(detection.fields)) {
       if (typeof value === "string" && value.trim()) parsedFields[field] = value.trim();
@@ -59,6 +60,9 @@ export function renderForeignArticleLookup(
   const warnings = [...rendered.warnings];
   if (result.articleResolution === "conflict" || result.identity?.conflicts?.length) {
     warnings.push("נמצאו פרטי פרסום סותרים; נשמרו הפרטים שסיפקתם ורק השלמות תואמות למאמר.");
+  }
+  if ((request.parsedFields.doi || request.parsedFields.sourceUrl) && !result.identity?.matched && result.articleResolution !== "conflict") {
+    warnings.push("לא נמצא רישום מאמר תואם שמאמת את ה־DOI או הקישור שסיפקתם.");
   }
   if (rendered.missing.length) warnings.push(`חסרים פרטים: ${getMissingFieldsSummary("foreign_journal_article", rendered.missing)}`);
   return {

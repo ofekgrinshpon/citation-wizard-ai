@@ -1,5 +1,6 @@
 import { telemetryBody, type CostTelemetry } from "@/lib/costTelemetry";
 import { supabase } from "@/integrations/supabase/client";
+import { extractWorkIdentifiers } from "../../supabase/functions/_shared/workIdentifiers";
 import {
   detectSourceType,
   hasStrongStatuteSignal,
@@ -101,7 +102,14 @@ export async function resolveSourceType(rawText: string, telemetry?: CostTelemet
   source: "regex" | "llm";
   llm?: ClassifyResult;
 }> {
-  const regexType = detectSourceType(rawText);
+  const identifiers = extractWorkIdentifiers(rawText);
+  // A DOI is an identity anchor, not proof of article kind. For citation text
+  // with an appended URL, classify the text without letting the URL mask it.
+  // Ordinary URL-only requests keep their existing internet route.
+  const hasCitationText = !!identifiers.sourceUrl && /[A-Za-z]/.test(identifiers.text)
+    && !/[\u0590-\u05FF]/.test(identifiers.text);
+  const regexType = identifiers.doi || hasCitationText
+    ? detectSourceType(identifiers.text) : detectSourceType(rawText);
   if (!shouldUseLLMClassifier(rawText, regexType)) {
     return { sourceType: regexType, source: "regex" };
   }
