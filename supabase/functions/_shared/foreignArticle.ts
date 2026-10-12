@@ -587,9 +587,9 @@ export function enrichArticleAuthors(supplied?: string, candidate?: string): str
 
 /** Comparison permits ordinary journal abbreviations, but not unrelated names. */
 export function articleFieldMatches(field: string, a: string, b: string): boolean {
-  if (field === "authors") return compatibleAuthorNames(a, b);
   if (field === "doi") return !!normalizeDoi(a) && normalizeDoi(a) === normalizeDoi(b);
   if (field === "sourceUrl") return !!normalizeWorkUrl(a) && normalizeWorkUrl(a) === normalizeWorkUrl(b);
+  if (field === "authors") return compatibleAuthorNames(a, b);
   if (articleKey(a) === articleKey(b)) return true;
   if (field !== "journal") return false;
   const tokens = (value: string) => articleKey(value).split(" ").filter((word) => !["of", "the", "and"].includes(word));
