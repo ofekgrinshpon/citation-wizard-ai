@@ -177,6 +177,22 @@ describe("uncertain outcomes: no resend, no refund, liability held", () => {
 });
 
 describe("no gateway fallback and pilot isolation", () => {
+  for (const stage of ["v2_support_verifier", "v2_temporal_validity", "v2_coverage_check", "v2_drafter", "v2_drafter_repair"] as const) {
+    it(`${stage} keeps its intended gateway route with the shared ordinary ledger`, async () => {
+      script(() => sse(completed()));
+      const o = opts();
+      assert.equal((await m.chat(o)).ok, true);
+      requests.length = 0;
+      globalThis.fetch = (async (url: string | URL, init?: RequestInit) => {
+        requests.push({ url: String(url), body: JSON.parse(String(init?.body)) });
+        return new Response(JSON.stringify({ choices: [{ message: { content: "synthetic verified output" }, finish_reason: "stop" }], usage: { prompt_tokens: 10, completion_tokens: 3 } }), { status: 200 });
+      }) as typeof fetch;
+      const r = await m.chat({ model: "google/gemini-3.7-flash", messages: structuredClone(messages), usage: o.usage, costStage: stage });
+      assert.equal(r.ok, true);
+      assert.equal(requests.length, 1);
+      assert.equal(requests[0].url, "https://ai.gateway.lovable.dev/v1/chat/completions");
+    });
+  }
   it("a run with ordinary attempts cannot silently switch to the gateway", async () => {
     script(() => sse(completed()));
     const o = opts(); await m.chat(o); requests.length = 0;

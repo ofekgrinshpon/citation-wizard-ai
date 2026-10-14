@@ -632,7 +632,9 @@ async function chatGuarded(opts: {
   // Ordinary direct never reaches the gateway branch below.
   if (opts.ordinaryTransport === "openai_direct") return await ordinaryDirectChat({ ...opts, responsesInput: toResponsesInput });
   if (opts.ordinaryTransport !== undefined) return fail(400, "ordinary_transport_invalid");
-  if (opts.usage?.ordinary_direct_attempts?.length) return fail(400, "ordinary_transport_missing");
+  // The shared ledger also reaches verifier/drafter calls, which intentionally
+  // retain their gateway route. Fence transport drift only for the research agent.
+  if (opts.costStage === "v2_research_agent" && opts.usage?.ordinary_direct_attempts?.length) return fail(400, "ordinary_transport_missing");
   if (opts.directProvider) return await directChat({ ...opts, config: opts.directProvider, responsesInput: toResponsesInput });
   // A checkpoint cannot switch provider by simply omitting its route.
   if (opts.messages.some(m => m.native_replay) ||
