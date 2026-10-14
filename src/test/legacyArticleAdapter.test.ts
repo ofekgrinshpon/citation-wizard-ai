@@ -56,10 +56,11 @@ function harness(options: { rawInput?: string; sourceType?: abbreviations.Source
   const citationRetryRef = { current: null as { descriptor: unknown; run: () => Promise<string>; isCurrent: () => boolean } | null };
   const retryCitationFunction = vi.fn(async () => ({ data: { content: "Recovered exact citation from the failed request" }, errorInfo: null }));
   const setCitationRetry = vi.fn();
+  const setCitationStatus = vi.fn();
   const citationRevision = { current: 0 };
   const citationScope = { current: { accountId: "fixture-user", projectId: "project-preserved", mode: "freetext" } };
   const callAPI = handler("callAPI", { ...adapter, ...telemetry, invokeFunction, retryCitationFunction, toast, handleRefundResponse, projectId: "project-preserved", crypto: { randomUUID: () => "request-preserved" },
-    clearCitationRetry: () => { citationRevision.current += 1; citationRetryRef.current = null; }, citationRevision, citationScope, citationRetryRef, setCitationRetry, user: { id: "fixture-user" }, mode: "freetext",
+    clearCitationRetry: () => { citationRevision.current += 1; citationRetryRef.current = null; }, citationRevision, citationScope, citationRetryRef, setCitationRetry, setCitationStatus, user: { id: "fixture-user" }, mode: "freetext",
   });
   const insert = vi.fn(async (_rows: Array<Record<string, unknown>>) => ({}));
   const state = { setMessages: vi.fn(), setPendingSuggestion: vi.fn() };
@@ -84,7 +85,7 @@ function harness(options: { rawInput?: string; sourceType?: abbreviations.Source
     saveVerifiedSource: vi.fn(async () => {}), setPendingVerification: vi.fn(),
   };
   const handleSend = handler("handleSend", context);
-  return { callAPI, handleSend, context, state, insert, invokeFunction, retryCitationFunction, citationRetryRef, citationScope, citationRevision, setCitationRetry, provider, toast, handleRefundResponse, resolveSourceType, findVerifiedSourceMatch, findSimilarVerifiedSource, subscription };
+  return { callAPI, handleSend, context, state, insert, invokeFunction, retryCitationFunction, citationRetryRef, citationScope, citationRevision, setCitationRetry, setCitationStatus, provider, toast, handleRefundResponse, resolveSourceType, findVerifiedSourceMatch, findSimilarVerifiedSource, subscription };
 }
 
 beforeEach(() => vi.stubGlobal("fetch", vi.fn(() => { throw new Error("Unmocked network forbidden"); })));
@@ -273,5 +274,25 @@ describe("legacy standalone article adapter", () => {
     expect(adapter.compatibleArticleCache("article", 'מחבר "מאמר"', cached)).toBeNull();
     expect(adapter.articleRequestFields("article_in_book", 'מחבר "פרק"')).toEqual({});
     expect(adapter.compatibleArticleCache("article_in_book", 'מחבר "פרק"', cached)).toBe(cached);
+  });
+});
+
+
+describe("standalone citation request status context", () => {
+  it("offers the exact failed request without generating a new identity", async () => {
+    const h = harness({ errorInfo: { code: "REQUEST_OUTCOME_UNKNOWN", message: "Unknown", requestId: "known-request-id", status: 503 } });
+    await expect(h.callAPI("input", [])).rejects.toMatchObject({ handled: true });
+    expect(h.setCitationStatus).toHaveBeenCalledWith({ requestId: "known-request-id", isCurrent: expect.any(Function) });
+    const context = h.setCitationStatus.mock.calls[0][0];
+    expect(context.isCurrent()).toBe(true);
+    h.citationScope.current.accountId = "another-user";
+    expect(context.isCurrent()).toBe(false);
+    expect(h.invokeFunction).toHaveBeenCalledTimes(1);
+    expect(h.retryCitationFunction).not.toHaveBeenCalled();
+  });
+  it("does not offer a recovery link for rejected input", async () => {
+    const h = harness({ errorInfo: { code: "INVALID_INPUT", message: "Invalid", requestId: "known-request-id", isInvalidInput: true } });
+    await expect(h.callAPI("input", [])).rejects.toMatchObject({ handled: true });
+    expect(h.setCitationStatus).not.toHaveBeenCalled();
   });
 });

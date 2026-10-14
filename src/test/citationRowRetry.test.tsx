@@ -1,6 +1,9 @@
+import { MemoryRouter } from "react-router-dom";
 import { webcrypto } from "node:crypto";
-import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, cleanup, fireEvent, render as rtlRender, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+
+const render = (ui: React.ReactElement) => rtlRender(ui, { wrapper: MemoryRouter });
 import { BibliographyGenerator } from "@/components/BibliographyGenerator";
 import { BatchFootnoteBuilder } from "@/components/BatchFootnoteBuilder";
 import { UniformCitationPanel } from "@/components/legal-research/UniformCitationPanel";
@@ -602,4 +605,43 @@ describe("research uniform citation mounted rows", () => {
     expect(screen.queryByRole("button", { name: "ניסיון חדש" })).not.toBeInTheDocument();
     expect(boundary.invoke).toHaveBeenCalledTimes(1);
   });
+});
+
+
+describe("exact-request status links beside citation failures", () => {
+  it.each(["bibliography", "footnote", "uniform"])("links the %s failure to its existing request and adds no invocation", async (mode) => {
+    if (mode === "bibliography") bibliographyInput();
+    else if (mode === "footnote") footnoteInput();
+    else {
+      render(<UniformCitationPanel footnotes={[{ number: 1, title: rawA }]} />);
+      fireEvent.click(screen.getByRole("button", { name: "יצירת הערות שוליים לפי כללי האזכור האחיד" }));
+      fireEvent.click(screen.getByRole("button", { name: "המשך" }));
+    }
+    const link = await screen.findByRole("link", { name: "בדיקת מצב הבקשה" });
+    expect(link).toHaveAttribute("href", `/citation-recovery?requestId=${requestAt(0).requestId}`);
+    expect(boundary.invoke).toHaveBeenCalledTimes(1);
+    expect(boundary.insert).not.toHaveBeenCalled();
+    if (mode === "footnote") {
+      const saved = Object.values(localStorage).join(" ");
+      expect(saved).not.toContain(String(requestAt(0).requestId));
+    }
+  });
+});
+
+
+it("does not keep the old failed request link after a new attempt returns a choice", async () => {
+  boundary.classify.mockResolvedValue({ sourceType: "foreign_case_us" });
+  bibliographyInput("Jones v. Smith and Sons");
+  const parentLink = await screen.findByRole("link", { name: "בדיקת מצב הבקשה" });
+  expect(parentLink).toHaveAttribute("href", `/citation-recovery?requestId=${requestAt(0).requestId}`);
+  boundary.invoke.mockResolvedValueOnce({ data: { content: "", foreignLookup: { disambiguation: [
+    { jurisdiction: "US", label: "First Jones case", url: "https://example.test/one" },
+    { jurisdiction: "UK", label: "Second Jones case", url: "https://example.test/two" },
+  ] } }, error: null });
+  fireEvent.click(screen.getByRole("button", { name: "ניסיון חדש" }));
+  await waitFor(() => expect(boundary.invoke).toHaveBeenCalledTimes(2));
+  await screen.findByText(/First Jones case/);
+  expect(screen.queryByRole("link", { name: "בדיקת מצב הבקשה" })).not.toBeInTheDocument();
+  expect(requestAt(1).retryOfRequestId).toBe(requestAt(0).requestId);
+  expect(requestAt(1).requestId).not.toBe(requestAt(0).requestId);
 });

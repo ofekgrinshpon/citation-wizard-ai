@@ -33,6 +33,7 @@ interface FootnoteCell {
   status: "empty" | "loading" | "valid" | "warning" | "verified" | "error";
   warningMsg?: string;
   errorMsg?: string;
+  requestId?: string;
   verifiedCitation?: string;
   approved?: boolean;
   sourceTypeOverride?: SourceType;
@@ -81,7 +82,7 @@ function loadCells(projectId: string | undefined): FootnoteCell[] {
     const raw = localStorage.getItem(getCellsKey(projectId));
     if (raw) {
       const parsed = JSON.parse(raw) as FootnoteCell[];
-      if (Array.isArray(parsed) && parsed.length > 0) return parsed.map(c => ({ ...c, key: c.key || crypto.randomUUID(), citationRetry: undefined, recovery: undefined, status: c.status === "loading" ? "empty" : c.status }));
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed.map(c => ({ ...c, key: c.key || crypto.randomUUID(), citationRetry: undefined, requestId: undefined, recovery: undefined, status: c.status === "loading" ? "empty" : c.status }));
     }
   } catch {}
   return Array.from({ length: 5 }, (_, i) => createCell(i + 1));
@@ -132,7 +133,7 @@ export function BatchFootnoteBuilder({}: BatchProps) {
 
   useEffect(() => {
     // Retry authority and retained engine/render context must stay in memory.
-    const savedCells = cells.map(({ citationRetry: _retry, recovery: _recovery, ...cell }) => cell);
+    const savedCells = cells.map(({ citationRetry: _retry, recovery: _recovery, requestId: _requestId, ...cell }) => cell);
     localStorage.setItem(getCellsKey(projectId), JSON.stringify(savedCells));
   }, [cells, projectId]);
 
@@ -151,7 +152,7 @@ export function BatchFootnoteBuilder({}: BatchProps) {
     if (cell) rowGuard.invalidate(cell.key);
     setCells((prev) =>
       prev.map((c) =>
-        c.id === id ? { ...c, input: value, status: "empty", verifiedCitation: undefined, citationRetry: undefined, recovery: undefined } : c
+        c.id === id ? { ...c, input: value, status: "empty", verifiedCitation: undefined, citationRetry: undefined, requestId: undefined, recovery: undefined } : c
       )
     );
   }, [rowGuard]);
@@ -161,7 +162,7 @@ export function BatchFootnoteBuilder({}: BatchProps) {
     if (cell) rowGuard.invalidate(cell.key);
     setCells((prev) =>
       prev.map((c) =>
-        c.id === id ? { ...c, output: citation, status: "verified", verifiedCitation: citation, citationRetry: undefined, recovery: undefined } : c
+        c.id === id ? { ...c, output: citation, status: "verified", verifiedCitation: citation, citationRetry: undefined, requestId: undefined, recovery: undefined } : c
       )
     );
   }, [rowGuard]);
@@ -228,7 +229,7 @@ export function BatchFootnoteBuilder({}: BatchProps) {
     status: res.status,
     warningMsg: res.status === "warning" ? res.warningMsg : undefined,
     errorMsg: undefined,
-    citationRetry: undefined, recovery: undefined,
+    citationRetry: undefined, requestId: undefined, recovery: undefined,
     verifiedCitation: res.fromVerifiedStore ? res.citation : undefined,
     detectedType: res.sourceType,
     approved: false,
@@ -255,7 +256,7 @@ export function BatchFootnoteBuilder({}: BatchProps) {
     setCells((prev) =>
       prev.map((c) =>
         c.input.trim() && c.status !== "verified"
-          ? { ...c, status: "loading", output: null, errorMsg: undefined, approved: false, citationRetry: undefined }
+          ? { ...c, status: "loading", output: null, errorMsg: undefined, approved: false, citationRetry: undefined, requestId: undefined }
           : c
       )
     );
@@ -285,7 +286,8 @@ export function BatchFootnoteBuilder({}: BatchProps) {
               prev.map((c) =>
                 c.key === cellKey ? { ...c, status: "error" as const, output: null, errorMsg: message,
                   citationRetry: result.error instanceof CitationRunError ? result.error.citationRetry : undefined,
-                  recovery: result.error instanceof CitationRunError ? result.error.recovery : undefined } : c
+                  recovery: result.error instanceof CitationRunError ? result.error.recovery : undefined,
+                  requestId: result.error instanceof CitationRunError ? result.error.requestId : undefined } : c
               )
             );
           }
@@ -318,7 +320,7 @@ export function BatchFootnoteBuilder({}: BatchProps) {
     const job = rowGuard.begin(cell.key);
     if (!job) return;
     setCells((prev) => prev.map((c) => c.key === cell.key
-      ? { ...c, status: "loading", output: null, errorMsg: undefined, approved: false, citationRetry: undefined } : c));
+      ? { ...c, status: "loading", output: null, errorMsg: undefined, approved: false, citationRetry: undefined, requestId: undefined } : c));
     try {
       const res = await runSingleCitation(cell.input, cell.sourceTypeOverride, undefined, job.isCurrent, explicitRetry ?? cell.recovery);
       if (!job.isCurrent()) return;
@@ -329,7 +331,8 @@ export function BatchFootnoteBuilder({}: BatchProps) {
       setCells((prev) => prev.map((c) => c.key === cell.key
         ? { ...c, status: "error", output: null, errorMsg: message,
           citationRetry: e instanceof CitationRunError ? e.citationRetry : undefined,
-          recovery: e instanceof CitationRunError ? e.recovery : undefined } : c));
+          recovery: e instanceof CitationRunError ? e.recovery : undefined,
+                  requestId: e instanceof CitationRunError ? e.requestId : undefined } : c));
       toast.error(`הפקה מחדש של הערה ${id} נכשלה`, { description: message });
     } finally { job.finish(); }
   };
@@ -340,7 +343,7 @@ export function BatchFootnoteBuilder({}: BatchProps) {
     const cell = cellsRef.current.find((c) => c.id === id);
     if (cell) rowGuard.invalidate(cell.key);
     setCells((prev) => {
-      const updated = prev.map((c) => (c.id === id ? { ...c, output: value, approved: false, citationRetry: undefined, recovery: undefined } : c));
+      const updated = prev.map((c) => (c.id === id ? { ...c, output: value, approved: false, citationRetry: undefined, requestId: undefined, recovery: undefined } : c));
       return applyRepeatCitationRules(updated);
     });
   }, [rowGuard]);
@@ -349,7 +352,7 @@ export function BatchFootnoteBuilder({}: BatchProps) {
     const cell = cellsRef.current.find((c) => c.id === id);
     if (cell) rowGuard.invalidate(cell.key);
     setCells((prev) =>
-      prev.map((c) => (c.id === id ? { ...c, sourceTypeOverride: t, approved: false, citationRetry: undefined, recovery: undefined } : c))
+      prev.map((c) => (c.id === id ? { ...c, sourceTypeOverride: t, approved: false, citationRetry: undefined, requestId: undefined, recovery: undefined } : c))
     );
   }, [rowGuard]);
 
@@ -734,7 +737,7 @@ export function BatchFootnoteBuilder({}: BatchProps) {
                   onClick={() => {
                     rowGuard.invalidate();
                     setGlobalLoading(false);
-                    setCells((prev) => prev.map((c) => ({ ...c, citationRetry: undefined,
+                    setCells((prev) => prev.map((c) => ({ ...c, citationRetry: undefined, requestId: undefined,
                       status: c.status === "loading" ? "empty" : c.status })));
                     setPhase("input");
                   }}

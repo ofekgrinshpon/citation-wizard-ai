@@ -92,6 +92,8 @@ export class CitationRunError extends Error {
   userMessage: string;
   isInvalidInput: boolean;
   isInsufficientCredits: boolean;
+  /** Existing request identity for read-only status navigation. */
+  requestId?: string;
   /** Explicit, server-confirmed failure recovery. Never used by generic retries. */
   citationRetry?: CitationRunRetry;
   recovery?: CitationRunRecovery;
@@ -100,6 +102,7 @@ export class CitationRunError extends Error {
     userMessage: string;
     isInvalidInput?: boolean;
     isInsufficientCredits?: boolean;
+    requestId?: string;
     citationRetry?: CitationRunRetry;
     recovery?: CitationRunRecovery;
   }) {
@@ -109,6 +112,7 @@ export class CitationRunError extends Error {
     this.userMessage = opts.userMessage;
     this.isInvalidInput = !!opts.isInvalidInput;
     this.isInsufficientCredits = !!opts.isInsufficientCredits;
+    this.requestId = opts.requestId;
     this.citationRetry = opts.citationRetry;
     this.recovery = opts.recovery;
   }
@@ -364,6 +368,7 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
         userMessage: errorInfo.message,
         isInvalidInput: errorInfo.isInvalidInput,
         isInsufficientCredits: errorInfo.isInsufficientCredits,
+        requestId: errorInfo.isInvalidInput ? undefined : errorInfo.requestId ?? undefined,
         recovery: Object.freeze({ retry: (isCurrent?: () => boolean) => invokePrepared(undefined, isCurrent) }),
         citationRetry: errorInfo.citationRetry ? Object.freeze({
           descriptor: errorInfo.citationRetry,

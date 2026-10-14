@@ -1,3 +1,4 @@
+import { CitationRequestStatusLink } from "@/components/CitationRequestStatusLink";
 import { useState, useEffect } from "react";
 import { SOURCE_TYPE_LABELS, type SourceType } from "@/data/abbreviations";
 import { FormattedCitation } from "./FormattedCitation";
@@ -11,6 +12,7 @@ export interface ReviewCardCell {
   status: "empty" | "loading" | "valid" | "warning" | "verified" | "error";
   warningMsg?: string;
   errorMsg?: string;
+  requestId?: string;
   approved?: boolean;
   sourceTypeOverride?: SourceType;
   detectedType?: SourceType;
@@ -246,6 +248,7 @@ export function FootnoteReviewCard({
         ) : isError ? (
           <div className="py-2 space-y-2">
             <div className="text-xs text-destructive">{cell.errorMsg || "לא ניתן להפיק. נסה שוב."}</div>
+            <CitationRequestStatusLink requestId={cell.requestId} />
             {newAttempt && <div className="space-y-2">
               <p className="text-xs text-muted-foreground">{newAttempt.disclosure}</p>
               <button type="button" onClick={newAttempt.onRetry} disabled={disabled}

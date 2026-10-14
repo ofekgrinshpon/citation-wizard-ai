@@ -72,7 +72,7 @@ export default function CitationRecovery() {
   }
   if (loading) return <main dir="rtl" className="p-8" role="status">בודקים את ההתחברות…</main>;
   if (!user) return <main dir="rtl" className="max-w-xl mx-auto p-8 space-y-4">
-    <h1 className="text-2xl font-bold">שחזור בקשות אזכור</h1>
+    <h1 className="text-2xl font-bold">מצב בקשות אזכור</h1>
     <p>יש להתחבר כדי לצפות בבקשות של החשבון שלכם.</p>
     <Link to="/auth" className="text-primary underline">להתחברות</Link>
   </main>;
@@ -346,20 +346,25 @@ function RecoveryWorkspace({ accountId, accountChanged }: { accountId: string; a
     <div className="max-w-4xl mx-auto space-y-6">
       <header className="space-y-3">
         <Link to="/app" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"><ArrowRight className="h-4 w-4" /> חזרה לאזכורים</Link>
-        <h1 className="text-2xl font-bold">שחזור בקשות אזכור</h1>
-        <p className="text-sm text-muted-foreground">בדיקת מצב ותוצאה של בקשות בחשבון שלכם, גם אחרי סגירה או רענון של העמוד.</p>
+        <h1 className="text-2xl font-bold">מצב בקשות אזכור</h1>
+        <p className="text-sm text-muted-foreground">כאן אפשר לבדוק אזכור שלא התקבל ולפתוח תוצאה שכבר מוכנה, גם אחרי רענון או סגירת העמוד.</p>
         <p className="text-sm">{HISTORY_UNCHANGED}</p>
         <p className="text-sm text-muted-foreground">בדיקה, צפייה והעתקה אינן מתחילות אזכור חדש. המצב מתעדכן רק בלחיצה על רענון.</p>
       </header>
-      <form className="rounded-xl border bg-card p-4 space-y-3" onSubmit={(event) => { event.preventDefault(); void load(requestId.trim()); }}>
-        <label htmlFor="recovery-request-id" className="block text-sm font-medium">מזהה בקשה</label>
-        <div className="flex flex-wrap gap-2">
-          <Input id="recovery-request-id" dir="ltr" value={requestId} maxLength={200} onChange={(event) => setRequestId(event.target.value)} placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" className="min-w-0 flex-1" />
-          <Button type="submit" disabled={busy || !!activeAction || !requestId.trim()}>בדיקת בקשה</Button>
-          <Button type="button" variant="outline" disabled={busy || !!activeAction} onClick={() => void load(null)}>כל הבקשות</Button>
-          <Button type="button" variant="outline" disabled={busy || !!activeAction} onClick={() => void load(lookupId)}><RefreshCw className="h-4 w-4 ml-1" /> רענון מצב</Button>
-        </div>
-      </form>
+      <div className="flex flex-wrap items-start gap-3">
+        <Button type="button" variant="outline" disabled={busy || !!activeAction} onClick={() => void load(lookupId)}><RefreshCw className="h-4 w-4 ml-1" /> רענון מצב</Button>
+        {lookupId && <Button type="button" variant="ghost" disabled={busy || !!activeAction} onClick={() => void load(null)}>כל הבקשות</Button>}
+        <details className="min-w-0 flex-1 rounded-lg border bg-card p-3">
+          <summary className="cursor-pointer text-sm text-muted-foreground">איתור בקשה לפי מזהה</summary>
+          <form className="mt-3 space-y-2" onSubmit={(event) => { event.preventDefault(); void load(requestId.trim()); }}>
+            <label htmlFor="recovery-request-id" className="block text-sm font-medium">מזהה בקשה</label>
+            <div className="flex flex-wrap gap-2">
+              <Input id="recovery-request-id" dir="ltr" value={requestId} maxLength={200} onChange={(event) => setRequestId(event.target.value)} placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" className="min-w-0 flex-1" />
+              <Button type="submit" disabled={busy || !!activeAction || !requestId.trim()}>בדיקת בקשה</Button>
+            </div>
+          </form>
+        </details>
+      </div>
       {busy && <p role="status">בודקים את מצב הבקשות…</p>}
       {authChanged && <p role="alert" className="rounded-lg border border-amber-500/40 bg-amber-500/10 p-4">החשבון השתנה או שההתחברות הסתיימה. הנתונים הקודמים הוסתרו. לחצו על רענון כדי לבדוק את החשבון הנוכחי.</p>}
       {error && <p role="alert" className="rounded-lg border border-destructive/30 p-4 text-sm">{error}</p>}
@@ -367,17 +372,6 @@ function RecoveryWorkspace({ accountId, accountChanged }: { accountId: string; a
       {!busy && loaded && !authChanged && records.length === 0 && <p role="status" className="rounded-xl border p-6">
         {lookupId ? "הבקשה לא נמצאה בחשבון הנוכחי. אין בכך אישור שלא בוצעה או שלא נוצל שימוש; בדקו את המזהה ושמרו אותו לבירור." : "לא נמצאו בקשות לשחזור בחשבון הנוכחי. ההיסטוריה השמורה לא השתנתה."}
       </p>}
-      {!authChanged && records.length > 0 && <section aria-label="יעד שמירה בהיסטוריה" className="rounded-xl border bg-card p-4 space-y-2">
-        <label htmlFor="recovery-project" className="block text-sm font-medium">פרויקט לשמירה בהיסטוריה</label>
-        <select id="recovery-project" className="w-full rounded-md border bg-background p-2 text-sm" value={projectId} disabled={projectsLoading} onChange={(event) => setProjectId(event.target.value)}>
-          <option value="">בחרו פרויקט במפורש</option>
-          {projects.map((project) => <option key={project.id} value={project.id}>{project.name}</option>)}
-        </select>
-        <p className="text-xs text-muted-foreground">השמירה תתבצע רק בלחיצה על כפתור השמירה של התוצאה. בחירה כאן אינה משנה את הפרויקט הפעיל.</p>
-        {projectError && <div className="text-sm space-y-2"><p>לא ניתן לטעון את הפרויקטים של החשבון כרגע. צפייה והעתקה עדיין זמינות.</p>
-          <Button type="button" variant="outline" disabled={!!activeAction || busy || projectsLoading} onClick={() => void loadProjects()}>רענון פרויקטים</Button></div>}
-        {!projectError && !projectsLoading && projects.length === 0 && <p className="text-sm">אין פרויקט זמין לשמירה. ניתן לחזור לעמוד האזכורים וליצור פרויקט.</p>}
-      </section>}
       {!authChanged && records.map((record) => {
         const expired = citationRecoveryExpired(record);
         const rendered = renderCitationRecovery(record);
@@ -387,12 +381,15 @@ function RecoveryWorkspace({ accountId, accountChanged }: { accountId: string; a
         return <article key={record.requestId} aria-label={`בקשה ${record.requestId}`} className="rounded-xl border bg-card p-4 md:p-6 space-y-4">
           <div className="space-y-2">
             <h2 className="font-semibold text-lg">{titleFor(record)}</h2>
-            <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+            <details className="text-xs text-muted-foreground">
+              <summary className="cursor-pointer">פרטים נוספים</summary>
+              <div className="mt-2 flex flex-wrap items-center gap-2">
               <span>מזהה בקשה: <bdi>{recoveryPlainText(record.requestId, 200)}</bdi></span>
               <Button type="button" size="sm" variant="ghost" aria-label={`העתקת מזהה ${record.requestId}`} disabled={!!activeAction} onClick={() => void copy(record.requestId, "מזהה הבקשה")}><Copy className="h-3 w-3" /></Button>
             </div>
             {record.retryOfRequestId && <p className="text-xs text-muted-foreground">ניסיון של בקשה קודמת: <bdi>{recoveryPlainText(record.retryOfRequestId, 200)}</bdi></p>}
             <p className="text-xs text-muted-foreground">נוצרה: {dateLabel(record.createdAt)} · עותק השחזור עד: {dateLabel(citationRecoveryDeadline(record) ?? NaN)}</p>
+            </details>
           </div>
           {record.status === "in_progress" && <p className="text-sm">הבקשה עדיין בטיפול. ניתן לבדוק שוב באמצעות רענון ידני. לא נפתח ניסיון נוסף.</p>}
           {record.status === "unknown" && <p className="text-sm text-amber-700 dark:text-amber-300">{UNKNOWN}</p>}
@@ -406,12 +403,25 @@ function RecoveryWorkspace({ accountId, accountChanged }: { accountId: string; a
             {recoveryInputTruncated(record) && <p className="mt-2 text-xs text-amber-700 dark:text-amber-300">הקלט ארוך ממגבלת התצוגה. מוצגת וניתנת להעתקה רק תחילתו; ניסיון חדש, אם מותר, משתמש בקלט המלא שנשמר בשרת.</p>}
             <Button type="button" size="sm" variant="ghost" disabled={!!activeAction || busy} onClick={() => void copy(inputText, "הקלט המוצג", record, false)}>{recoveryInputTruncated(record) ? "העתקת הקלט המוצג" : "העתקת הקלט"}</Button>
           </details>}
-          {rendered && <section aria-label="התוצאה ששוחזרה" className="space-y-3">
+          {rendered && <details className="space-y-3 rounded-lg border p-3">
+            <summary className="cursor-pointer font-medium text-primary">הצגת התוצאה</summary>
+            <section aria-label="התוצאה ששוחזרה" className="space-y-3">
             <p className="text-xs text-muted-foreground">זוהי התוצאה שנשמרה. היא לא אומתה מחדש ויש לבדוק את המקור והאזכור לפני שימוש.</p>
             <div dir="auto" className="rounded-lg bg-muted/40 p-4 whitespace-pre-wrap break-words max-h-96 overflow-auto" data-testid="recovered-output">
               {rendered.structured ? <FormattedCitation text={rendered.formattedOutput} enableTooltips={false} /> : rendered.formattedOutput}
             </div>
             {rendered.warning && <p className="text-sm text-amber-700 dark:text-amber-300">{rendered.warning}</p>}
+            {!rendered.truncated && !saved[record.requestId] && <section aria-label="יעד שמירה בהיסטוריה" className="rounded-xl border bg-card p-4 space-y-2">
+              <label htmlFor={`recovery-project-${record.requestId}`} className="block text-sm font-medium">פרויקט לשמירה בהיסטוריה</label>
+              <select id={`recovery-project-${record.requestId}`} className="w-full rounded-md border bg-background p-2 text-sm" value={projectId} disabled={projectsLoading} onChange={(event) => setProjectId(event.target.value)}>
+                <option value="">בחרו פרויקט במפורש</option>
+                {projects.map((project) => <option key={project.id} value={project.id}>{project.name}</option>)}
+              </select>
+              <p className="text-xs text-muted-foreground">השמירה תתבצע רק בלחיצה על כפתור השמירה של התוצאה. בחירה כאן אינה משנה את הפרויקט הפעיל.</p>
+              {projectError && <div className="text-sm space-y-2"><p>לא ניתן לטעון את הפרויקטים של החשבון כרגע. צפייה והעתקה עדיין זמינות.</p>
+                <Button type="button" variant="outline" disabled={!!activeAction || busy || projectsLoading} onClick={() => void loadProjects()}>רענון פרויקטים</Button></div>}
+              {!projectError && !projectsLoading && projects.length === 0 && <p className="text-sm">אין פרויקט זמין לשמירה. ניתן לחזור לעמוד האזכורים וליצור פרויקט.</p>}
+            </section>}
             <div className="flex flex-wrap gap-2">
               <Button type="button" variant="outline" disabled={!!activeAction || busy} onClick={() => void copy(rendered.plainText, rendered.truncated ? "החלק המוצג" : "התוצאה", record)}><Copy className="h-4 w-4 ml-1" /> {rendered.truncated ? "העתקת החלק המוצג" : "העתקת התוצאה"}</Button>
               <Button type="button" disabled={!!activeAction || busy || !projectId || projectsLoading || rendered.truncated || !!saved[record.requestId]} onClick={() => void save(record)}>
@@ -422,12 +432,13 @@ function RecoveryWorkspace({ accountId, accountChanged }: { accountId: string; a
               </Button>}
             </div>
             <p className="text-xs text-muted-foreground">העתקה, שמירה או ׳סיימתי לשחזר׳ מסמנות במכשיר הזה שהתוצאה התקבלה. עותק השחזור נשאר זמין עד מועד התפוגה.</p>
-          </section>}
+            </section>
+          </details>}
           {canRetry && <div className="rounded-lg border border-amber-500/40 p-3 space-y-3">
             <p className="text-sm">ניסיון חדש הוא בקשה נפרדת עם הקלט המקורי, ועשוי לצרוך שימוש נוסף. המכסה הנוכחית תיבדק בשרת. מצב ההחזר הקודם מוצג למעלה.</p>
-            <Button type="button" variant="outline" disabled={!!activeAction || busy} onClick={() => void retry(record)}>{activeAction === `retry:${record.requestId}` ? "בודקים ושולחים…" : "ניסיון חדש שעשוי לצרוך שימוש"}</Button>
+            <Button type="button" variant="outline" disabled={!!activeAction || busy} onClick={() => void retry(record)}>{activeAction === `retry:${record.requestId}` ? "בודקים ושולחים…" : "ניסיון חדש"}</Button>
           </div>}
-          {attemptedParents.has(record.requestId) && <p className="text-sm">כבר התבקש ניסיון המשך. בדקו את מצב הבקשה; אין לפתוח ניסיון חדש נוסף לאותו מקור.</p>}
+          {attemptedParents.has(record.requestId) && <p className="text-sm">כבר התבקש ניסיון חדש. בדקו את מצב הבקשה; אין לפתוח ניסיון חדש נוסף לאותו מקור.</p>}
         </article>;
       })}
       {!authChanged && nextCursor && <Button variant="outline" disabled={busy || !!activeAction} onClick={() => void load(null, nextCursor)}>טעינת בקשות נוספות</Button>}

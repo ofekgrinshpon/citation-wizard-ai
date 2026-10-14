@@ -84,7 +84,7 @@ export function UniformCitationPanel({ footnotes }: Props) {
     status: res.status,
     warningMsg: res.status === "warning" ? res.warningMsg : undefined,
     errorMsg: undefined,
-    citationRetry: undefined,
+    citationRetry: undefined, requestId: undefined,
     recovery: undefined,
     detectedType: res.sourceType,
     approved: false,
@@ -151,7 +151,8 @@ export function UniformCitationPanel({ footnotes }: Props) {
                 c.id === cellId
                   ? { ...c, status: "error" as const, output: null, errorMsg: message,
                     citationRetry: result.error instanceof CitationRunError ? result.error.citationRetry : undefined,
-                    recovery: result.error instanceof CitationRunError ? result.error.recovery : undefined }
+                    recovery: result.error instanceof CitationRunError ? result.error.recovery : undefined,
+                  requestId: result.error instanceof CitationRunError ? result.error.requestId : undefined }
                   : c,
               ),
             );
@@ -178,7 +179,7 @@ export function UniformCitationPanel({ footnotes }: Props) {
     try { telemetry = sourceTelemetry(newTelemetryBatch("uniform_citation")); }
     catch { /* A new user action must still work without attribution. */ }
     setCells((prev) => prev.map((c) => c.id === id
-      ? { ...c, status: "loading", output: null, errorMsg: undefined, approved: false, citationRetry: undefined } : c));
+      ? { ...c, status: "loading", output: null, errorMsg: undefined, approved: false, citationRetry: undefined, requestId: undefined } : c));
     try {
       const recovery = explicitRetry ?? cell.recovery;
       const res = recovery ? await recovery.retry(job.isCurrent) : await runCitation({
@@ -192,21 +193,22 @@ export function UniformCitationPanel({ footnotes }: Props) {
       const message = errorMessageOf(e);
       setCells((prev) => prev.map((c) => c.id === id ? { ...c, status: "error", output: null, errorMsg: message,
         citationRetry: e instanceof CitationRunError ? e.citationRetry : undefined,
-        recovery: e instanceof CitationRunError ? e.recovery : undefined } : c));
+        recovery: e instanceof CitationRunError ? e.recovery : undefined,
+                  requestId: e instanceof CitationRunError ? e.requestId : undefined } : c));
       toast.error(`יצירת אזכור אחיד להערה ${id} נכשלה`, { description: message });
     } finally { job.finish(); }
   };
 
   const handleInputChange = useCallback((id: number, value: string) => {
     rowGuard.invalidate(String(id));
-    setCells((prev) => prev.map((c) => (c.id === id ? { ...c, input: value, approved: false, citationRetry: undefined, recovery: undefined } : c)));
+    setCells((prev) => prev.map((c) => (c.id === id ? { ...c, input: value, approved: false, citationRetry: undefined, requestId: undefined, recovery: undefined } : c)));
   }, [rowGuard]);
 
   const handleOutputChange = useCallback((id: number, value: string) => {
     rowGuard.invalidate(String(id));
     setCells((prev) =>
       applyRepeatCitationRules(
-        prev.map((c) => (c.id === id ? { ...c, output: value, approved: false, citationRetry: undefined, recovery: undefined } : c)),
+        prev.map((c) => (c.id === id ? { ...c, output: value, approved: false, citationRetry: undefined, requestId: undefined, recovery: undefined } : c)),
       ),
     );
   }, [rowGuard]);
@@ -214,7 +216,7 @@ export function UniformCitationPanel({ footnotes }: Props) {
   const handleSourceTypeChange = useCallback((id: number, t: SourceType) => {
     rowGuard.invalidate(String(id));
     setCells((prev) =>
-      prev.map((c) => (c.id === id ? { ...c, sourceTypeOverride: t, approved: false, citationRetry: undefined, recovery: undefined } : c)),
+      prev.map((c) => (c.id === id ? { ...c, sourceTypeOverride: t, approved: false, citationRetry: undefined, requestId: undefined, recovery: undefined } : c)),
     );
   }, [rowGuard]);
 

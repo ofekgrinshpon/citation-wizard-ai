@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useCredits } from "@/hooks/useCredits";
 import { useCreditLedger, type LedgerRow } from "@/hooks/useCreditLedger";
@@ -417,6 +417,9 @@ const Profile = () => {
 
           <TabsContent value="history">
             <div className="space-y-4">
+              <Link to="/citation-recovery" className="inline-block text-sm text-muted-foreground underline underline-offset-2 hover:text-foreground">
+                מצב בקשות אזכור
+              </Link>
               <Input value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="חפש באזכורים..." />
               {filteredCitations.length === 0 ? (
                 <p className="text-muted-foreground text-sm text-center py-8">אין אזכורים עדיין</p>

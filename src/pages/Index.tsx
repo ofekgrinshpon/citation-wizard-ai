@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { CitationRequestStatusLink } from "@/components/CitationRequestStatusLink";
 import { MessageBubble } from "@/components/MessageBubble";
 import { LoadingDots } from "@/components/LoadingDots";
 import { BatchFootnoteBuilder } from "@/components/BatchFootnoteBuilder";
@@ -178,6 +179,7 @@ const Index = () => {
   
   const { user, isAdmin, loading: authLoading, signOut } = useAuth();
   const [citationRetry, setCitationRetry] = useState<IndexCitationRetry | null>(null);
+  const [citationStatus, setCitationStatus] = useState<{ requestId: string; isCurrent: () => boolean } | null>(null);
   const citationRetryRef = useRef<IndexCitationRetry | null>(null);
   const citationRetryBusy = useRef<object | null>(null);
   const citationRevision = useRef(0);
@@ -187,11 +189,13 @@ const Index = () => {
     citationRevision.current += 1;
     citationRetryRef.current = null;
     setCitationRetry(null);
+    setCitationStatus(null);
   };
   useEffect(() => {
     citationRevision.current += 1;
     citationRetryRef.current = null;
     setCitationRetry(null);
+    setCitationStatus(null);
     citationRetryBusy.current = null;
     setLoading(false);
     setLoadingMessage(null);
@@ -287,6 +291,9 @@ const Index = () => {
 
       if (!isCurrent()) throw Object.assign(new Error("CITATION_RETRY_STALE"), { handled: true });
       if (errorInfo) {
+        if (errorInfo.requestId && !errorInfo.isInvalidInput) {
+          setCitationStatus({ requestId: errorInfo.requestId, isCurrent });
+        }
         if (errorInfo.citationRetry && onSuccess) {
           const descriptor = errorInfo.citationRetry;
           const offer = { descriptor, run: () => execute(descriptor), isCurrent };
@@ -334,6 +341,7 @@ const Index = () => {
     citationRetryBusy.current = ticket;
     citationRetryRef.current = null;
     setCitationRetry(null);
+    setCitationStatus(null);
     setPendingBillType(null);
     setPendingTreatyType(null);
     setPendingSuggestion(null);
@@ -976,10 +984,6 @@ const Index = () => {
           </div>
 
           <div className="flex items-center gap-1.5 sm:gap-2">
-            {user && <button onClick={() => navigate("/citation-recovery")}
-              className="text-[10px] sm:text-xs text-muted-foreground hover:text-foreground px-2 py-1 rounded-lg">
-              שחזור בקשות
-            </button>}
             {!subscription.isSubscribed && (
               <span className="text-[9px] sm:text-[10px] text-muted-foreground bg-muted px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-md">
                 {subscription.remaining}/{subscription.limit} אזכורים
@@ -1137,6 +1141,7 @@ const Index = () => {
                   onEdit={
                     msg.role === "user"
                       ? async (newContent: string) => {
+                          setCitationStatus(null);
                           // Replace user message and remove the following assistant message, then re-generate
                           const updatedMessages = [...messages];
                           updatedMessages[i] = { role: "user", content: newContent };
@@ -1255,6 +1260,7 @@ const Index = () => {
                   onUpdateAssistantContent={
                     msg.role === "assistant"
                       ? (newContent: string) => {
+                          setCitationStatus(null);
                           setMessages((prev) => {
                             const updated = [...prev];
                             updated[i] = { ...updated[i], content: newContent };
@@ -1265,6 +1271,7 @@ const Index = () => {
                       : undefined
                   }
                   onSelectOption={(optionText: string) => {
+                    setCitationStatus(null);
                     // Prepend selection tag so edge function skips Perplexity search
                     const tagged = `[בחירת תוצאה] ${optionText.replace(/^\d+\.\s*/, '')}`;
                     setInput(tagged);
@@ -1312,6 +1319,9 @@ const Index = () => {
                 </div>
               )}
               <div ref={chatEndRef} />
+              {citationStatus?.isCurrent() && <div className="my-3">
+                <CitationRequestStatusLink requestId={citationStatus.requestId} />
+              </div>}
               {citationRetry && (
                 <div className="my-4 rounded-lg border border-border p-3 text-sm" role="status">
                   <p>{citationRetryDisclosure(citationRetry.descriptor)}</p>
@@ -1453,6 +1463,11 @@ const Index = () => {
           </div>
         )}
       </div>
+      {user && isOfficeAddin && <footer className="border-t border-border px-3 py-2 text-center">
+        <Link to="/profile?tab=history" className="text-xs text-muted-foreground underline underline-offset-2 hover:text-foreground">
+          היסטוריית אזכורים
+        </Link>
+      </footer>}
     </div>
   );
 };
