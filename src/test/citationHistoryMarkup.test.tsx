@@ -1,5 +1,8 @@
+import { MemoryRouter } from "react-router-dom";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+
+const render = (ui: React.ReactElement) => rtlRender(ui, { wrapper: MemoryRouter });
+import { fireEvent, render as rtlRender, screen, waitFor } from "@testing-library/react";
 import { citationHistoryHtml } from "@/lib/citationHistoryMarkup";
 import { CitationHistorySidebar } from "@/components/CitationHistorySidebar";
 

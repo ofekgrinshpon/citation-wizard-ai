@@ -1,3 +1,4 @@
+import { CitationRequestStatusLink } from "@/components/CitationRequestStatusLink";
 import { newTelemetryBatch, sourceTelemetry, type CostTelemetry } from "@/lib/costTelemetry";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -22,6 +23,7 @@ interface ReviewItem {
   isVerified: boolean;
   options: string[];
   errorMsg?: string;
+  requestId?: string;
   citationRetry?: CitationRunRetry;
   recovery?: CitationRunRecovery;
   warningMsg?: string;
@@ -199,6 +201,7 @@ export function BibliographyGenerator() {
         options: [],
         citationRetry: e instanceof CitationRunError ? e.citationRetry : undefined,
         recovery: e instanceof CitationRunError ? e.recovery : undefined,
+                  requestId: e instanceof CitationRunError ? e.requestId : undefined,
         errorMsg:
           e instanceof CitationRunError
             ? e.userMessage
@@ -258,6 +261,7 @@ export function BibliographyGenerator() {
               options: [],
               citationRetry: r.error instanceof CitationRunError ? r.error.citationRetry : undefined,
               recovery: r.error instanceof CitationRunError ? r.error.recovery : undefined,
+                  requestId: r.error instanceof CitationRunError ? r.error.requestId : undefined,
               errorMsg:
                 r.error instanceof CitationRunError
                   ? r.error.userMessage
@@ -311,7 +315,7 @@ export function BibliographyGenerator() {
   const updateItem = (id: string, patch: Partial<ReviewItem>) => {
     if ("editValue" in patch || "sourceTypeOverride" in patch) {
       rowGuard.invalidate(id);
-      patch = { ...patch, citationRetry: undefined, recovery: undefined };
+      patch = { ...patch, citationRetry: undefined, requestId: undefined, recovery: undefined };
     }
     setReviewItems((prev) => prev.map((it) => (it.id === id ? { ...it, ...patch } : it)));
   };
@@ -330,7 +334,7 @@ export function BibliographyGenerator() {
     setReviewItems((prev) =>
       prev.map((it) =>
         it.id === id
-          ? { ...it, citationRetry: undefined, isEditing: true, editValue: it.citation || it.rawInput,
+          ? { ...it, citationRetry: undefined, requestId: undefined, isEditing: true, editValue: it.citation || it.rawInput,
             status: it.status === "loading" ? "error" : it.status }
           : it,
       ),
@@ -343,7 +347,7 @@ export function BibliographyGenerator() {
         if (it.id !== id) return it;
         const v = it.editValue.trim();
         if (!v) return it;
-        return { ...it, isEditing: false, citation: v, status: "ok", isVerified: false, options: [], errorMsg: undefined, warningMsg: undefined, citationRetry: undefined, recovery: undefined };
+        return { ...it, isEditing: false, citation: v, status: "ok", isVerified: false, options: [], errorMsg: undefined, warningMsg: undefined, citationRetry: undefined, requestId: undefined, recovery: undefined };
       }),
     );
   };
@@ -362,12 +366,12 @@ export function BibliographyGenerator() {
     if (!job) return;
     const hint = hintOverride ?? item.sourceTypeOverride;
     setReviewItems((prev) => prev.map((it) => it.id === id
-      ? { ...it, status: "loading", isEditing: false, sourceTypeOverride: hint, citationRetry: undefined } : it));
+      ? { ...it, status: "loading", isEditing: false, sourceTypeOverride: hint, citationRetry: undefined, requestId: undefined } : it));
     try {
       const r = await lookupOneSafe(query, hint, job.isCurrent, explicitRetry ?? recovery);
       if (!job.isCurrent()) return;
       setReviewItems((prev) => prev.map((it) => it.id === id
-        ? { ...it, ...r, rawInput: query, isEditing: false, editValue: r.citation || query } : it));
+        ? { ...it, ...r, requestId: r.requestId, rawInput: query, isEditing: false, editValue: r.citation || query } : it));
     } finally { job.finish(); }
   };
 
@@ -386,7 +390,7 @@ export function BibliographyGenerator() {
       if (!it.isEditing) return it;
       const v = it.editValue?.trim();
       if (!v) return { ...it, isEditing: false };
-      return { ...it, isEditing: false, citation: v, status: "ok" as ReviewStatus, isVerified: false, options: [], errorMsg: undefined, warningMsg: undefined, citationRetry: undefined, recovery: undefined };
+      return { ...it, isEditing: false, citation: v, status: "ok" as ReviewStatus, isVerified: false, options: [], errorMsg: undefined, warningMsg: undefined, citationRetry: undefined, requestId: undefined, recovery: undefined };
     });
     if (flushed !== reviewItems) setReviewItems(flushed);
 
@@ -886,6 +890,7 @@ function ReviewRow({
       ) : item.status === "error" ? (
         <div className="space-y-2">
           <p className="text-sm text-destructive">{item.errorMsg || "שגיאה לא ידועה"}</p>
+          <CitationRequestStatusLink requestId={item.requestId} />
           {item.citationRetry && <>
             <p className="text-xs text-muted-foreground">{citationRetryDisclosure(item.citationRetry.descriptor)}</p>
             <button type="button" onClick={onNewAttempt} className="text-xs px-3 py-1.5 rounded-md border border-primary text-primary">

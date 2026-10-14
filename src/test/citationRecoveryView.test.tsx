@@ -53,6 +53,12 @@ function view(path = "/citation-recovery", strict = false) {
   const page = <MemoryRouter initialEntries={[path]}><CitationRecovery /></MemoryRouter>;
   return render(strict ? <StrictMode>{page}</StrictMode> : page);
 }
+async function showResult() {
+  const output = await screen.findByText(CONTENT);
+  const details = output.closest("details")!;
+  if (!details.open) fireEvent.click(details.querySelector("summary")!);
+  return output;
+}
 const ownProject = () => fireEvent.change(screen.getByLabelText("פרויקט לשמירה בהיסטוריה"), { target: { value: "project-a" } });
 const saveButton = () => screen.getByRole("button", { name: "שמירה בהיסטוריה" });
 
@@ -88,7 +94,7 @@ describe("read-only citation recovery view", () => {
 
   it("loads once, renders hostile markup as text, and performs no paid/history work", async () => {
     const { container } = view();
-    expect(await screen.findByText(CONTENT)).toBeInTheDocument();
+    expect(await showResult()).toBeInTheDocument();
     expect(container.querySelector("img")).toBeNull();
     expect(screen.getByText(/לא אומתה מחדש/)).toBeInTheDocument();
     expect(screen.getByText(/פריטים שנשמרו בהיסטוריה אינם נמחקים/)).toBeInTheDocument();
@@ -104,14 +110,14 @@ describe("read-only citation recovery view", () => {
 
   it("is safe under StrictMode's mount/cleanup/remount cycle", async () => {
     view("/citation-recovery", true);
-    await screen.findByText(CONTENT);
+    await showResult();
     expect(mocks.list).toHaveBeenCalledTimes(1);
   });
 
   it("checks an exact handle from the URL and shows the canonical child returned by the read API", async () => {
     mocks.read.mockResolvedValue(record({ requestId: CHILD, retryOfRequestId: ID }));
     view(`/citation-recovery?requestId=${ID}`);
-    await screen.findByText(CONTENT);
+    await showResult();
     expect(mocks.read).toHaveBeenCalledWith("account-a", ID, expect.any(Function));
     expect(screen.getByRole("article", { name: `בקשה ${CHILD}` })).toBeInTheDocument();
     expect(mocks.list).not.toHaveBeenCalled();
@@ -123,7 +129,7 @@ describe("read-only citation recovery view", () => {
     await screen.findByRole("heading", { name: "הבקשה בטיפול" });
     expect(mocks.list).toHaveBeenCalledTimes(1);
     fireEvent.click(screen.getByRole("button", { name: "רענון מצב" }));
-    await screen.findByText(CONTENT);
+    await showResult();
     expect(mocks.list).toHaveBeenCalledTimes(2);
     expect(mocks.retry).not.toHaveBeenCalled();
   });
@@ -131,7 +137,7 @@ describe("read-only citation recovery view", () => {
   it("paginates server records with the returned cursor, without duplicating existing entries", async () => {
     mocks.list.mockResolvedValueOnce({ requests: [record()], nextCursor: ID });
     mocks.list.mockResolvedValueOnce({ requests: [record(), record({ requestId: OTHER, result: { content: "Another citation" } })], nextCursor: null });
-    view(); await screen.findByText(CONTENT);
+    view(); await showResult();
     fireEvent.click(screen.getByRole("button", { name: "טעינת בקשות נוספות" }));
     await screen.findByText("Another citation");
     expect(mocks.list).toHaveBeenLastCalledWith("account-a", { cursor: ID, limit: 20 }, expect.any(Function));
@@ -158,7 +164,7 @@ describe("read-only citation recovery view", () => {
     mocks.list.mockResolvedValue({ requests: [record({ status: "unknown", result: null, refundReceipt: { status: "refunded", refunded: true, units_refunded: 1, request_id: ID } })], nextCursor: null });
     view(); await screen.findByRole("heading", { name: "נדרש בירור" });
     expect(screen.getByText(/החזר שימוש לא אושר/)).toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "ניסיון חדש שעשוי לצרוך שימוש" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "ניסיון חדש" })).not.toBeInTheDocument();
     expect(mocks.prepare).not.toHaveBeenCalled();
   });
 
@@ -188,7 +194,7 @@ describe("read-only citation recovery view", () => {
   });
 
   it("unmounts the old account view immediately and requires manual refresh for the new account", async () => {
-    const ui = view(); await screen.findByText(CONTENT);
+    const ui = view(); await showResult();
     mocks.user = { id: "account-b" }; mocks.sessionUser = "account-b";
     ui.rerender(<MemoryRouter><CitationRecovery /></MemoryRouter>);
     expect(screen.queryByText(CONTENT)).not.toBeInTheDocument();
@@ -235,14 +241,15 @@ describe("read-only citation recovery view", () => {
     mocks.list.mockRejectedValueOnce(new Error("CITATION_RECOVERY_UNAVAILABLE"));
     view(); await screen.findByRole("alert");
     fireEvent.click(screen.getByRole("button", { name: "רענון מצב" }));
-    await screen.findByText(CONTENT);
+    await showResult();
     expect(mocks.retry).not.toHaveBeenCalled();
   });
 });
 
 describe("explicit copy and exactly-once history save", () => {
   it("copies request ID and plain output without invoking the provider or saving", async () => {
-    view(); await screen.findByText(CONTENT);
+    view(); await showResult();
+    fireEvent.click(screen.getByText("פרטים נוספים"));
     fireEvent.click(screen.getByRole("button", { name: `העתקת מזהה ${ID}` }));
     await screen.findByText("מזהה הבקשה הועתק.");
     expect(mocks.clipboard).toHaveBeenLastCalledWith(ID);
@@ -255,7 +262,7 @@ describe("explicit copy and exactly-once history save", () => {
   it("requires selected project, blocks synchronous double clicks and uses the stable request identity", async () => {
     const pending = deferred<{ historyId: string; alreadySaved: boolean }>();
     mocks.save.mockReturnValue(pending.promise);
-    view(); await screen.findByText(CONTENT); ownProject();
+    view(); await showResult(); ownProject();
     const button = saveButton();
     act(() => { button.click(); button.click(); });
     await waitFor(() => expect(mocks.save).toHaveBeenCalledTimes(1));
@@ -268,7 +275,7 @@ describe("explicit copy and exactly-once history save", () => {
   it("honestly reports a lost save ack and retries with exactly the same key", async () => {
     mocks.save.mockRejectedValueOnce(new Error("CITATION_HISTORY_SAVE_UNCONFIRMED"))
       .mockResolvedValueOnce({ historyId: "history-a", alreadySaved: true });
-    view(); await screen.findByText(CONTENT); ownProject();
+    view(); await showResult(); ownProject();
     fireEvent.click(saveButton());
     await screen.findByText(/השמירה לא אושרה/);
     fireEvent.click(saveButton());
@@ -278,7 +285,7 @@ describe("explicit copy and exactly-once history save", () => {
   });
 
   it("changing selected destination during an auth await prevents dispatch of the old save", async () => {
-    view(); await screen.findByText(CONTENT); ownProject();
+    view(); await showResult(); ownProject();
     const gate = deferred<{ data: { session: { user: { id: string } } }; error: null }>();
     mocks.getSession.mockReturnValueOnce(gate.promise);
     fireEvent.click(saveButton());
@@ -291,7 +298,7 @@ describe("explicit copy and exactly-once history save", () => {
   it("a pending save's completion cannot surface on a new account", async () => {
     const gate = deferred<{ historyId: string; alreadySaved: boolean }>();
     mocks.save.mockReturnValueOnce(gate.promise);
-    const ui = view(); await screen.findByText(CONTENT); ownProject(); fireEvent.click(saveButton());
+    const ui = view(); await showResult(); ownProject(); fireEvent.click(saveButton());
     await waitFor(() => expect(mocks.save).toHaveBeenCalled());
     const staleFence = mocks.save.mock.calls[0][0].isResultCurrent;
     mocks.user = { id: "account-b" }; mocks.sessionUser = "account-b";
@@ -320,7 +327,7 @@ describe("explicit copy and exactly-once history save", () => {
 describe("owner-verified projects and explicit recovery acknowledgement", () => {
   it("does not expose stale provider project names, and queries only the current owner's projects", async () => {
     mocks.projectsRead.mockResolvedValueOnce({ data: [{ id: "owned-current", name: "הפרויקט המאומת" }], error: null });
-    view(); await screen.findByText(CONTENT);
+    view(); await showResult();
     expect(await screen.findByRole("option", { name: "הפרויקט המאומת" })).toBeInTheDocument();
     expect(screen.queryByRole("option", { name: "פרויקט א" })).not.toBeInTheDocument();
     expect(mocks.projectFilter).toHaveBeenCalledWith("user_id", "account-a");
@@ -330,12 +337,12 @@ describe("owner-verified projects and explicit recovery acknowledgement", () => 
   it("drops a previous owner's delayed project list after login changes", async () => {
     const pending = deferred<{ data: Array<{ id: string; name: string }>; error: null }>();
     mocks.projectsRead.mockReturnValueOnce(pending.promise).mockResolvedValueOnce({ data: [{ id: "b-owned", name: "הפרויקט של ב" }], error: null });
-    const ui = view(); await screen.findByText(CONTENT);
+    const ui = view(); await showResult();
     mocks.user = { id: "account-b" }; mocks.sessionUser = "account-b";
     ui.rerender(<MemoryRouter><CitationRecovery /></MemoryRouter>);
     await act(async () => pending.resolve({ data: [{ id: "secret-a", name: "שם פרויקט פרטי של א" }], error: null }));
     fireEvent.click(screen.getByRole("button", { name: "רענון מצב" }));
-    await screen.findByText(CONTENT);
+    await showResult();
     expect(await screen.findByRole("option", { name: "הפרויקט של ב" })).toBeInTheDocument();
     expect(screen.queryByText("שם פרויקט פרטי של א")).not.toBeInTheDocument();
     expect(mocks.projectFilter).toHaveBeenCalledWith("user_id", "account-b");
@@ -343,7 +350,7 @@ describe("owner-verified projects and explicit recovery acknowledgement", () => 
 
   it("a failed project read offers no stale destination while result copy still works", async () => {
     mocks.projectsRead.mockResolvedValueOnce({ data: null, error: new Error("unavailable") });
-    view(); await screen.findByText(CONTENT);
+    view(); await showResult();
     await screen.findByText(/לא ניתן לטעון את הפרויקטים/);
     expect(screen.queryByRole("option", { name: "פרויקט א" })).not.toBeInTheDocument();
     expect(saveButton()).toBeDisabled();
@@ -352,7 +359,7 @@ describe("owner-verified projects and explicit recovery acknowledgement", () => 
   });
 
   it("only result copy or an explicit done gesture acknowledges; input/ID copies do not", async () => {
-    view(); await screen.findByText(CONTENT);
+    view(); await showResult();
     expect(mocks.ack).not.toHaveBeenCalled();
     fireEvent.click(screen.getByText("הקלט שנשמר עם הבקשה"));
     fireEvent.click(screen.getByRole("button", { name: "העתקת הקלט" }));
@@ -368,7 +375,7 @@ describe("owner-verified projects and explicit recovery acknowledgement", () => 
 
   it("does not misreport an acknowledgement failure as failed copy or failed save", async () => {
     mocks.ack.mockRejectedValue(new Error("journal unavailable"));
-    view(); await screen.findByText(CONTENT);
+    view(); await showResult();
     fireEvent.click(screen.getByRole("button", { name: "העתקת התוצאה" }));
     await screen.findByText(/התוצאה הועתקה, אך סימון השחזור לא אושר/);
     expect(screen.getByText("התוצאה הועתקה.")).toBeInTheDocument();
@@ -385,6 +392,7 @@ describe("owner-verified projects and explicit recovery acknowledgement", () => 
       result: { foreignLookup: { fields: { authors: "Samuel D. Warren and Louis D. Brandeis", volume: "4", journal: "Harvard Law Review", firstPage: "193", year: "1890" }, identity: { matched: true }, articleResolution: "resolved" } } })], nextCursor: null });
     view();
     const output = await screen.findByTestId("recovered-output");
+    fireEvent.click(screen.getByText("הצגת התוצאה"));
     expect(output).toHaveTextContent("The Right to Privacy");
     expect(output).toHaveTextContent("193, 213–214 (1890)");
     fireEvent.click(screen.getByRole("button", { name: "העתקת התוצאה" }));
@@ -403,7 +411,7 @@ describe("explicit known-failed new attempt", () => {
     expect(screen.getByText("החזר השימוש אושר: 1 יחידות הוחזרו.")).toBeInTheDocument();
     expect(screen.getByText(/המכסה הנוכחית תיבדק בשרת/)).toBeInTheDocument();
     expect(mocks.retry).not.toHaveBeenCalled();
-    const button = screen.getByRole("button", { name: "ניסיון חדש שעשוי לצרוך שימוש" });
+    const button = screen.getByRole("button", { name: "ניסיון חדש" });
     act(() => { button.click(); button.click(); });
     await screen.findByRole("article", { name: `בקשה ${CHILD}` });
     expect(mocks.prepare).toHaveBeenCalledTimes(1); expect(mocks.retry).toHaveBeenCalledTimes(1);
@@ -422,7 +430,7 @@ describe("explicit known-failed new attempt", () => {
     mocks.list.mockResolvedValueOnce({ requests: [record({ status: "failed", result: null })], nextCursor: null });
     mocks.prepare.mockReturnValueOnce(pending.promise);
     view();
-    fireEvent.click(await screen.findByRole("button", { name: "ניסיון חדש שעשוי לצרוך שימוש" }));
+    fireEvent.click(await screen.findByRole("button", { name: "ניסיון חדש" }));
     await waitFor(() => expect(mocks.prepare).toHaveBeenCalled());
     mocks.sessionUser = "account-b";
     await act(async () => pending.resolve({ failedRequestId: ID, handle: "old-owner-handle" }));
@@ -434,10 +442,47 @@ describe("explicit known-failed new attempt", () => {
     mocks.list.mockResolvedValueOnce({ requests: [record({ status: "failed", result: null })], nextCursor: null });
     mocks.retry.mockRejectedValueOnce(new Error("Lost response"));
     view();
-    fireEvent.click(await screen.findByRole("button", { name: "ניסיון חדש שעשוי לצרוך שימוש" }));
+    fireEvent.click(await screen.findByRole("button", { name: "ניסיון חדש" }));
     const alert = await screen.findByRole("alert");
     expect(alert).toHaveTextContent("ייתכן שכבר נוצל שימוש");
     expect(alert).not.toHaveTextContent("לא הופעלה בקשת אזכור נוספת");
-    expect(screen.queryByRole("button", { name: "ניסיון חדש שעשוי לצרוך שימוש" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "ניסיון חדש" })).not.toBeInTheDocument();
+  });
+});
+
+
+describe("contextual recovery presentation", () => {
+  it("keeps identifiers, output and save choices collapsed until the user opens the result", async () => {
+    view();
+    await screen.findByRole("heading", { name: "הושלמה · התוצאה זמינה" });
+    expect(screen.getByRole("heading", { name: "מצב בקשות אזכור" })).toBeInTheDocument();
+    expect(screen.getByLabelText("מזהה בקשה")).not.toBeVisible();
+    expect(screen.getByRole("button", { name: `העתקת מזהה ${ID}` })).not.toBeVisible();
+    expect(screen.getByRole("combobox")).not.toBeVisible();
+    expect(screen.getByRole("button", { name: "שמירה בהיסטוריה" })).not.toBeVisible();
+    fireEvent.click(screen.getByText("הצגת התוצאה"));
+    expect(screen.getByRole("button", { name: "העתקת התוצאה" })).toBeVisible();
+    expect(screen.getByRole("combobox", { name: "פרויקט לשמירה בהיסטוריה" })).toBeVisible();
+    fireEvent.click(screen.getByText("הצגת התוצאה"));
+    expect(screen.getByRole("combobox")).not.toBeVisible();
+    expect(mocks.retry).not.toHaveBeenCalled(); expect(mocks.ack).not.toHaveBeenCalled(); expect(mocks.save).not.toHaveBeenCalled();
+    expect(mocks.list).toHaveBeenCalledTimes(1);
+  });
+
+  it.each(["in_progress", "failed", "unknown"] as const)("shows no save destination for %s", async (status) => {
+    mocks.list.mockResolvedValueOnce({ requests: [record({ status, result: null })], nextCursor: null });
+    view(); await screen.findByRole("article");
+    expect(screen.queryByLabelText("פרויקט לשמירה בהיסטוריה")).not.toBeInTheDocument();
+    expect(screen.queryByText("הצגת התוצאה")).not.toBeInTheDocument();
+    expect(mocks.retry).not.toHaveBeenCalled();
+  });
+
+  it("keeps manual lookup available inside the collapsed disclosure", async () => {
+    view(); await screen.findByRole("article");
+    fireEvent.click(screen.getByText("איתור בקשה לפי מזהה"));
+    fireEvent.change(screen.getByRole("textbox", { name: "מזהה בקשה" }), { target: { value: OTHER } });
+    fireEvent.click(screen.getByRole("button", { name: "בדיקת בקשה" }));
+    await waitFor(() => expect(mocks.read).toHaveBeenCalledWith("account-a", OTHER, expect.any(Function)));
+    expect(mocks.retry).not.toHaveBeenCalled();
   });
 });

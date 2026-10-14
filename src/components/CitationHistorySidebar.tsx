@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -129,6 +130,9 @@ export function CitationHistorySidebar({ projectId, refreshKey }: Props) {
         <h3 className="text-sm font-semibold text-sidebar-foreground mb-2">
           היסטוריית אזכורים
         </h3>
+        <Link to="/citation-recovery" className="mb-2 block text-xs text-muted-foreground underline underline-offset-2 hover:text-foreground">
+          מצב בקשות אזכור
+        </Link>
         <Input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
