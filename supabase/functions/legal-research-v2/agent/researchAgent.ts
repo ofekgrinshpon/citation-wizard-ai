@@ -1,3 +1,4 @@
+import { ordinaryFailureIsDefinitive } from "../shared/ordinaryDirect.ts";
 import { runtimeDiagnostic, setRuntimeDiagnosticStep } from "../shared/runtimeDiagnostics.ts";
 /**
  * legal-research-v2 — the single research agent.
