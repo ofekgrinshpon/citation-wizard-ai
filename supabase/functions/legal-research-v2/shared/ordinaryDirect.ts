@@ -33,7 +33,7 @@ export const ORDINARY_COST_EVENTS_ENABLED = false as const;
 const CAP_SANITY_MAX_USD = 1000;
 const LONG_CONTEXT_LIMIT = 272_000;
 
-const UNCERTAIN: ReadonlyArray<DirectAttempt["outcome"]> = ["pending", "network_unknown", "stream_unknown", "aborted_unknown", "http_error"];
+const UNCERTAIN: ReadonlyArray<DirectAttempt["outcome"]> = ["pending", "network_unknown", "stream_unknown", "aborted_unknown", "http_error", "model_mismatch"];
 
 /** Strict decimal string, > 0, <= sanity bound. Anything else is "unset". */
 export function parseUsdCap(raw: unknown): number | null {
@@ -305,7 +305,8 @@ export async function ordinaryDirectChat(opts: OrdinaryOptions): Promise<ChatRes
       attempt.effort_status = returnedEffort === undefined ? "not_reported" : returnedEffort === "medium" ? "matched" : "mismatch";
       priceCompatible = ["default", "standard"].includes(String(terminal.service_tier)) &&
         (terminal.inference_geo === undefined || terminal.inference_geo === "global");
-      if (terminal.model !== ORDINARY_DIRECT_WIRE_MODEL) { attempt.outcome = "model_mismatch"; result = fail(502, "ordinary_model_mismatch", "settled"); }
+      // Wrong/missing model: SOL price cannot bound it. Hold full reservation as uncertain.
+      if (terminal.model !== ORDINARY_DIRECT_WIRE_MODEL) { attempt.outcome = "model_mismatch"; result = fail(502, "ordinary_model_mismatch", "uncertain"); }
       else if (terminalType !== "response.completed" || terminal.status !== "completed") {
         attempt.outcome = terminalType === "response.incomplete" ? "incomplete" : "invalid_output";
         result = fail(502, "ordinary_incomplete_response", "settled");
@@ -358,7 +359,8 @@ export async function ordinaryDirectChat(opts: OrdinaryOptions): Promise<ChatRes
   let settleUsd: number | null = null;
   if (attempt.usage_complete && attempt.input_tokens !== null && attempt.output_tokens !== null) {
     const upper = sol61UpperUsd(attempt.input_tokens, attempt.output_tokens);
-    if (attempt.input_tokens <= counted && attempt.output_tokens <= outputLimit && upper <= reservation + 1e-10 && priceCompatible) settleUsd = upper;
+    if (attempt.input_tokens <= counted && attempt.output_tokens <= outputLimit && upper <= reservation + 1e-10 && priceCompatible &&
+      attempt.response_model === ORDINARY_DIRECT_WIRE_MODEL) settleUsd = upper;
   }
   if (result.ordinary_dispatch === "settled" && settleUsd === null) {
     // Sent, but the receipt cannot be bounded: treat as uncertain liability.

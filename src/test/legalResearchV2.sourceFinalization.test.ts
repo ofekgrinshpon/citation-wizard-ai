@@ -15,6 +15,7 @@ import { buildSourcePack, type SourcePack } from "../../supabase/functions/legal
 import { RunTimer, resumeGapPhase } from "../../supabase/functions/legal-research-v2/shared/timing";
 import { newUsageLedger } from "../../supabase/functions/legal-research-v2/shared/model";
 import { isDirectPilotState } from "../../supabase/functions/legal-research-v2/shared/directProviderPolicy";
+import { ordinaryRepairResumeError, repairCheckpointOption, repairCheckpointFields } from "../../supabase/functions/legal-research-v2/shared/ordinaryRepair";
 import { freezeForCheckpoint, isValidMemoReady, MEMO_READY_VERSION, restoreMemoReadyResult } from "../../supabase/functions/legal-research-v2/beta/memoCheckpoint";
 import { buildVerificationForensics } from "../../supabase/functions/legal-research-v2/verification/forensics";
 import { decideResearchRepair } from "../../supabase/functions/legal-research-v2/verification/repairPolicy";
@@ -126,7 +127,7 @@ function fixture({ memo = true, attachment = false }: { memo?: boolean; attachme
     EvidenceStore: function () { return store; },
     preloadUserDocuments: preload, runResearchAgent: research, verifyMemo: verify,
     modelConfig: () => ({ agent: "fixture", verifier: "fixture", drafter: "fixture" }),
-    newUsageLedger, isDirectPilotState, EMPTY_ATTACHMENT_TELEMETRY, RunTimer, resumeGapPhase,
+    newUsageLedger, isDirectPilotState, ordinaryRepairResumeError, repairCheckpointOption, repairCheckpointFields, EMPTY_ATTACHMENT_TELEMETRY, RunTimer, resumeGapPhase,
     resetEgressStateForRun: vi.fn(), runtimeDiagnosticsActive: () => false,
     serializeAgentState, deserializeAgentState, freezeForCheckpoint,
     isValidMemoReady, restoreMemoReadyResult, MEMO_READY_VERSION,

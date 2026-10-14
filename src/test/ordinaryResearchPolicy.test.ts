@@ -8,6 +8,7 @@ import { parseEvaluationReasoningEffort } from "../../supabase/functions/legal-r
 import { parseDirectProvider, directProviderConfigError, directPilotRunError, isDirectPilotState, directPilotPauseId } from "../../supabase/functions/legal-research-v2/shared/directProviderPolicy";
 import { SOURCE_SEARCH_BUDGETS } from "../../supabase/functions/legal-research-v2/sources/contract";
 import { DEFAULT_BUDGETS, type Intake } from "../../supabase/functions/legal-research-v2/types";
+import { ordinaryRepairResumeError } from "../../supabase/functions/legal-research-v2/shared/ordinaryRepair";
 
 const source = readFileSync("supabase/functions/legal-research-v2/index.ts", "utf8");
 const tree = ts.createSourceFile("index.ts", source, ts.ScriptTarget.Latest, true);
@@ -127,7 +128,7 @@ describe("actual research pipeline model selection and checkpoint stability", ()
   ])("%s uses the intended persisted or legacy model before the first provider call", async (_name, settings, model) => {
     const intake = buildIntake({ run_id: "run", question: "q", ...settings });
     const runPipeline = loadFunction<(admin: unknown, intake: Intake, opts: unknown) => Promise<unknown>>("runPipeline", {
-      ...baseDeps,
+      ...baseDeps, ordinaryRepairResumeError,
       deserializeAgentState: () => ({ store: { all: () => [] }, messages: [], stats: {} }),
       RunTimer: { fromJSON: () => ({ add: () => {} }) }, EMPTY_ATTACHMENT_TELEMETRY: {},
       isValidMemoReady: () => false, CHUNK: { MAX_STEPS: 8, MAX_MS: 90000 },
