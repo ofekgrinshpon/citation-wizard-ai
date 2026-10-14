@@ -103,7 +103,7 @@ export function matchesToolSchema(value: unknown, raw: unknown): boolean {
     (typeof s.minimum !== "number" || value >= s.minimum) && (typeof s.maximum !== "number" || value <= s.maximum);
   return type === undefined;
 }
-function validateCalls(calls: ChatToolCall[], opts: DirectOptions): void {
+export function validateCalls(calls: ChatToolCall[], opts: Pick<DirectOptions, "tools" | "toolChoice" | "allowedToolNames">): void {
   const ids = new Set<string>();
   const allowed = opts.allowedToolNames ?? (typeof opts.toolChoice === "object" ? [opts.toolChoice.name] : undefined);
   if (opts.toolChoice && opts.toolChoice !== "auto" && !calls.length) bad("direct_required_memo_missing");
@@ -215,7 +215,7 @@ export async function anthropicBody(opts: DirectOptions): Promise<{ body: Json; 
 }
 
 /** Framed SSE, bounded by bytes/time, cancels on terminal or error, never returns partial tools. */
-async function readEvents(body: ReadableStream<Uint8Array>, signal: AbortSignal, handle: (event: Json) => boolean): Promise<void> {
+export async function readEvents(body: ReadableStream<Uint8Array>, signal: AbortSignal, handle: (event: Json) => boolean): Promise<void> {
   const reader = body.getReader(), decoder = new TextDecoder();
   let buffer = "", lines: string[] = [], bytes = 0, terminal = false;
   const observed = runtimeDiagnosticsActive(), streamStarted = observed ? performance.now() : 0;

@@ -32,7 +32,7 @@ import {
   type SupabaseClient,
 } from "./shared/primitives.ts";
 import { modelConfig, newUsageLedger, separateDrafterEnabled, type UsageLedger } from "./shared/model.ts";
-import { ORDINARY_RESEARCH_SETTINGS } from "./shared/ordinaryResearchPolicy.ts";
+import { ORDINARY_RESEARCH_SETTINGS, ORDINARY_RESEARCH_MODEL, resolveOrdinaryTransport } from "./shared/ordinaryResearchPolicy.ts";
 import { routeModel, answerDirectChat, OUT_OF_SCOPE_REPLY_HE } from "./beta/modelRouter.ts";
 import type { ModelRoute } from "./beta/modelRouter.ts";
 import { clarificationMessageText, loadOwnedConversationContext, postAssistantMessage } from "./beta/conversation.ts";
@@ -156,6 +156,8 @@ export function buildIntake(input: {
   /** Persisted Research Agent choice; public runs use the server-owned policy. */
   agent_model?: string | null;
   agent_direct_provider?: DirectProviderConfig;
+  /** Server-owned ordinary transport (never from a request body). */
+  agent_transport?: "openai_direct";
   /** Persisted effort; only authenticated internal evaluations may override it. */
   agent_reasoning_effort?: EvaluationReasoningEffort;
   /** Academic Writing body chapter only — framing context, never evidence. */
@@ -169,6 +171,9 @@ export function buildIntake(input: {
   /** Action-router decision (chat answer path); retained with the run. */
   model_route?: ModelRoute | null;
 }): Intake {
+  if (input.agent_transport !== undefined && (input.agent_transport !== "openai_direct" || input.agent_direct_provider)) {
+    throw new Error("ordinary_transport_pilot_conflict");
+  }
   const question = (input.question ?? "").trim();
   const dockets = detectDockets(question).map((d) => ({
     docket_id: d.docket_id,
@@ -197,6 +202,7 @@ export function buildIntake(input: {
     },
     agent_model: input.agent_model?.trim() || input.model_route?.model_id || null,
     ...(input.agent_direct_provider ? { agent_direct_provider: input.agent_direct_provider } : {}),
+    ...(input.agent_transport === "openai_direct" ? { agent_transport: "openai_direct" as const } : {}),
     model_route: input.model_route ?? null,
     // Production answer path: the agent writes the answer. Only the emergency
     // env rollback (V2_USE_SEPARATE_DRAFTER=true) restores the separate drafter.
@@ -305,6 +311,10 @@ async function runPipeline(
   }
   if (intake.agent_reasoning_effort === "max" && (usage.reasoning_max_mismatch_calls ?? 0) > 0) {
     throw new Error("max_reasoning_experiment_failed:restored_effort_mismatch");
+  }
+  if (intake.agent_transport !== undefined && (intake.agent_transport !== "openai_direct" || intake.agent_direct_provider ||
+    intake.agent_model !== ORDINARY_RESEARCH_MODEL)) {
+    throw new Error("ordinary_transport_pilot_conflict");
   }
   if (intake.agent_direct_provider && usage.direct_provider_failed) {
     throw new Error("direct_pilot_already_failed");
@@ -1623,7 +1633,8 @@ async function driveRunInner(
     }
     const message = e instanceof Error ? e.message : String(e);
     if (job) {
-      const terminal = await finishJobError(admin, job, message);
+      // Ordinary direct: refund only a failure proven not sent with no uncertain history.
+      const terminal = await finishJobError(admin, job, message, message.startsWith("ordinary_direct_failed:definitive:"));
       if (!terminal.skipped) {
         await postAssistantMessage(admin, job.id, { kind: "text", content: CHAT_FAILURE_HE, metadata: { run_id: intake.run_id, failed: true, credits_refunded: terminal.refunded } });
       }
@@ -2138,6 +2149,7 @@ async function handleRequest(req: Request): Promise<Response> {
 
     const betaIntake = buildIntake({
       ...ORDINARY_RESEARCH_SETTINGS,
+      agent_transport: resolveOrdinaryTransport(),
       run_id: crypto.randomUUID(),
       question,
       model_route: modelRoute,

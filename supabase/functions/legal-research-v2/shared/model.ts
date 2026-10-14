@@ -17,6 +17,7 @@ import { guardProviderCall } from "./providerLiveness.ts";
 import { reasoningEffortError, type EvaluationReasoningEffort } from "./evaluationReasoning.ts";
 
 import { directChat, type NativeReplay } from "./directProviders.ts";
+import { ordinaryDirectChat, type OrdinaryDispatch } from "./ordinaryDirect.ts";
 import type { DirectProviderConfig } from "./directProviderPolicy.ts";
 import type { DirectAttempt } from "./directProviderUsage.ts";
 
@@ -172,6 +173,8 @@ export function wireMessages(messages: ChatMessage[]): Array<Record<string, unkn
 export interface ChatResult {
   native_replay?: NativeReplay;
   direct_attempt?: DirectAttempt;
+  /** Ordinary direct route only: whether the failing/settled call reached the provider. */
+  ordinary_dispatch?: OrdinaryDispatch;
   ok: boolean;
   http_status: number;
   error?: string;
@@ -201,6 +204,9 @@ export interface UsageLedger {
   direct_provider_attempts?: DirectAttempt[];
   /** A failed pilot never resumes or falls back without explicit reconciliation. */
   direct_provider_failed?: boolean;
+  /** Ordinary public direct-OpenAI attempts (separate from the pilot ledger). */
+  ordinary_direct_attempts?: DirectAttempt[];
+  ordinary_direct_failed?: boolean;
   /** Evaluation-only transport audit, preserved across all chunks and repairs. */
   reasoning_max_requested_calls?: number;
   reasoning_max_confirmed_calls?: number;
@@ -592,6 +598,10 @@ export async function chat(opts: Parameters<typeof chatGuarded>[0]): Promise<Cha
 async function chatGuarded(opts: {
   /** Set only by the authenticated internal pilot intake. */
   directProvider?: DirectProviderConfig;
+  /** Server-owned ordinary route, pinned per run at intake. Never from a request body. */
+  ordinaryTransport?: "openai_direct";
+  /** Spend owner for the ordinary route. */
+  runId?: string;
   allowedToolNames?: string[];
   beforeDirectDispatch?: () => Promise<boolean>;
   model: string;
@@ -618,6 +628,11 @@ async function chatGuarded(opts: {
     prompt_tokens: 0,
     completion_tokens: 0,
   });
+  if (opts.directProvider && opts.ordinaryTransport) return fail(400, "ordinary_transport_pilot_conflict");
+  // Ordinary direct never reaches the gateway branch below.
+  if (opts.ordinaryTransport === "openai_direct") return await ordinaryDirectChat({ ...opts, responsesInput: toResponsesInput });
+  if (opts.ordinaryTransport !== undefined) return fail(400, "ordinary_transport_invalid");
+  if (opts.usage?.ordinary_direct_attempts?.length) return fail(400, "ordinary_transport_missing");
   if (opts.directProvider) return await directChat({ ...opts, config: opts.directProvider, responsesInput: toResponsesInput });
   // A checkpoint cannot switch provider by simply omitting its route.
   if (opts.messages.some(m => m.native_replay) ||

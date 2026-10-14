@@ -1,3 +1,4 @@
+import { ordinaryFailureIsDefinitive } from "../shared/ordinaryDirect.ts";
 import { runtimeDiagnostic, setRuntimeDiagnosticStep } from "../shared/runtimeDiagnostics.ts";
 /**
  * legal-research-v2 — the single research agent.
@@ -743,7 +744,8 @@ export async function runResearchAgent(opts: {
       // Research capacity is reserved: once the research phase closes, the memo
       // tool is the ONLY tool the agent can still call.
       const forceMemo = policy.researchExhausted();
-      if (replayReasoning && !opts.intake.agent_direct_provider) {
+      // Native routes replay full valid reasoning/tool history (no blind trimming).
+      if (replayReasoning && !opts.intake.agent_direct_provider && opts.intake.agent_transport !== "openai_direct") {
         const { dropped_items } = enforceReplayBudget(messages);
         if (dropped_items) stats.reasoning_items_dropped = (stats.reasoning_items_dropped ?? 0) + dropped_items;
       }
@@ -758,6 +760,13 @@ export async function runResearchAgent(opts: {
         model: opts.model,
         ...(opts.intake.agent_direct_provider ? {
           directProvider: opts.intake.agent_direct_provider,
+          allowedToolNames: forceMemo ? (pending?.confirmable ? [memoTool.name, CONFIRM_MEMO_TOOL_NAME] : [memoTool.name])
+            : toolSpecs.filter(t => askUserAllowed || t.name !== ASK_USER_TOOL.name).map(t => t.name),
+          beforeDirectDispatch: opts.checkpoint ? checkpointToolTurn : undefined,
+        } : {}),
+        ...(opts.intake.agent_transport === "openai_direct" ? {
+          ordinaryTransport: "openai_direct" as const,
+          runId: opts.intake.run_id,
           allowedToolNames: forceMemo ? (pending?.confirmable ? [memoTool.name, CONFIRM_MEMO_TOOL_NAME] : [memoTool.name])
             : toolSpecs.filter(t => askUserAllowed || t.name !== ASK_USER_TOOL.name).map(t => t.name),
           beforeDirectDispatch: opts.checkpoint ? checkpointToolTurn : undefined,
@@ -780,7 +789,8 @@ export async function runResearchAgent(opts: {
       stats.reasoning_items_captured = (stats.reasoning_items_captured ?? 0) + (res.reasoning_items?.length ?? 0);
       if (res.replay_fallback) stats.reasoning_replay_fallback_turns = (stats.reasoning_replay_fallback_turns ?? 0) + 1;
       const reasoningField = {
-        ...((res.reasoning_items?.length || opts.intake.agent_direct_provider?.provider === "openai")
+        ...((res.reasoning_items?.length || opts.intake.agent_direct_provider?.provider === "openai" ||
+          opts.intake.agent_transport === "openai_direct")
           ? { reasoning_items: res.reasoning_items ?? [], replay_seq: res.replay_seq } : {}),
         ...(res.native_replay ? { native_replay: res.native_replay } : {}),
       };
@@ -793,6 +803,13 @@ export async function runResearchAgent(opts: {
           opts.usage.direct_provider_failed = true;
           await checkpointToolTurn();
           throw new Error(`direct_provider_experiment_failed:${res.error ?? "model_error"}`);
+        }
+        if (opts.intake.agent_transport === "openai_direct") {
+          // No resend, no gateway fallback. Refund only when proven not sent.
+          const definitive = ordinaryFailureIsDefinitive(opts.usage, res);
+          opts.usage.ordinary_direct_failed = true;
+          await checkpointToolTurn();
+          throw new Error(`ordinary_direct_failed:${definitive ? "definitive" : "uncertain"}:${res.error ?? "model_error"}`);
         }
         if (opts.intake.agent_reasoning_effort === "max") {
           throw new Error(res.error === "reasoning_effort_mismatch"
@@ -1694,7 +1711,7 @@ export async function runResearchAgent(opts: {
     if (memo) break;
     if (awaitingUser) break;
 
-    if (replayReasoning && !opts.intake.agent_direct_provider) {
+    if (replayReasoning && !opts.intake.agent_direct_provider && opts.intake.agent_transport !== "openai_direct") {
       const { dropped_items } = enforceReplayBudget(messages);
       if (dropped_items) stats.reasoning_items_dropped = (stats.reasoning_items_dropped ?? 0) + dropped_items;
     }

@@ -30,7 +30,7 @@ const baseDeps = {
   json: (body: unknown, status = 200) => new Response(JSON.stringify(body), { status }),
   parseDirectProvider, directProviderConfigError, directPilotRunError, isDirectPilotState, directPilotPauseId,
   parseEvaluationReasoningEffort, modelConfig: () => ({ agent: env.V2_AGENT_MODEL }),
-  ORDINARY_RESEARCH_SETTINGS, buildIntake,
+  ORDINARY_RESEARCH_SETTINGS, buildIntake, resolveOrdinaryTransport: () => undefined, ORDINARY_RESEARCH_MODEL,
 };
 const classifierResult = { ok: true, http_status: 200, terminal: false, content: '{"action":"research","model":"astra"}', tool_calls: [], finish_reason: "stop", prompt_tokens: 2, completion_tokens: 1 };
 function fixture(options: { conversation?: boolean; academicEnabled?: boolean; saved?: { intake: Intake; resume: unknown }; classifierFailure?: boolean } = {}) {
