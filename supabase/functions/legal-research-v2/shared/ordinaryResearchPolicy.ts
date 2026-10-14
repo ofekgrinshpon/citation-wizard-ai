@@ -12,3 +12,15 @@ export const ORDINARY_RESEARCH_SETTINGS = {
   agent_model: ORDINARY_RESEARCH_MODEL,
   agent_reasoning_effort: ORDINARY_RESEARCH_REASONING_EFFORT,
 } as const;
+
+/**
+ * Transport for NEW ordinary jobs only, read once at intake creation.
+ * Default and any unrecognized value: Lovable gateway (field omitted).
+ * Existing/resumed jobs keep whatever their checkpointed intake recorded.
+ */
+export function resolveOrdinaryTransport(
+  get: (k: string) => string | undefined = k => (typeof Deno !== "undefined" ? Deno.env.get(k) : undefined),
+): "openai_direct" | undefined {
+  return get("V2_ORDINARY_TRANSPORT") === "openai_direct" ? "openai_direct" : undefined;
+}
+declare const Deno: { env: { get(key: string): string | undefined } };

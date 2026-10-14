@@ -98,6 +98,8 @@ export interface Intake {
   agent_model?: string | null;
   /** Authenticated internal pilot only. Public requests never populate this. */
   agent_direct_provider?: import("./shared/directProviderPolicy.ts").DirectProviderConfig;
+  /** Server-owned ordinary route, set once at creation; absent = Lovable gateway. */
+  agent_transport?: "openai_direct";
   /** Action-router decision for this turn (legacy model choices remain readable). */
   model_route?: import("./beta/modelRouter.ts").ModelRoute | null;
   /** Persisted effort: ordinary research pins medium; internal evaluations may override. */
