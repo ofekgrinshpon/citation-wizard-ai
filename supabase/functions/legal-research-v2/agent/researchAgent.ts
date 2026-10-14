@@ -1711,7 +1711,7 @@ export async function runResearchAgent(opts: {
     if (memo) break;
     if (awaitingUser) break;
 
-    if (replayReasoning && !opts.intake.agent_direct_provider) {
+    if (replayReasoning && !opts.intake.agent_direct_provider && opts.intake.agent_transport !== "openai_direct") {
       const { dropped_items } = enforceReplayBudget(messages);
       if (dropped_items) stats.reasoning_items_dropped = (stats.reasoning_items_dropped ?? 0) + dropped_items;
     }
