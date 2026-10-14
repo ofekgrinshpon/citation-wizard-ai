@@ -32,6 +32,8 @@ import {
   type SupabaseClient,
 } from "./shared/primitives.ts";
 import { modelConfig, newUsageLedger, separateDrafterEnabled, type UsageLedger } from "./shared/model.ts";
+import { repairCheckpointOption, repairCheckpointFields, ordinaryRepairResumeError } from "./shared/ordinaryRepair.ts";
+import { withOrdinaryReceipts } from "./shared/ordinaryReceipts.ts";
 import { ORDINARY_RESEARCH_SETTINGS, ORDINARY_RESEARCH_MODEL, resolveOrdinaryTransport } from "./shared/ordinaryResearchPolicy.ts";
 import { routeModel, answerDirectChat, OUT_OF_SCOPE_REPLY_HE } from "./beta/modelRouter.ts";
 import type { ModelRoute } from "./beta/modelRouter.ts";
@@ -298,6 +300,8 @@ async function runPipeline(
     /** Carried into the mid-chunk checkpoint so an unattended resume can still
      * finalize the user-facing job row. */
     job?: BetaJob | null;
+    /** Live usage ledger holder so terminal writes capture current attempts. */
+    liveUsage?: { current?: UsageLedger };
   } = {},
 ): Promise<
   | ({ ok: true; paused?: false } & Record<string, unknown>)
@@ -306,6 +310,7 @@ async function runPipeline(
   const resume = opts.resume ?? null;
   const started = resume?.started_at ?? Date.now();
   const usage = resume?.usage ?? newUsageLedger();
+  if (opts.liveUsage) opts.liveUsage.current = usage;
   if (isDirectPilotState({ intake }) && !intake.agent_direct_provider) {
     throw new Error("invalid_direct_provider");
   }
@@ -322,6 +327,8 @@ async function runPipeline(
   if (intake.agent_direct_provider && resume?.direct_repair_checkpoint) {
     throw new Error("direct_repair_resume_requires_review");
   }
+  const repairResumeError = ordinaryRepairResumeError(intake, resume);
+  if (repairResumeError) throw new Error(repairResumeError);
   const models = modelConfig();
   // New public runs persist their fixed model/effort. Existing checkpoints and
   // internal evaluations keep their recorded choice (or legacy env default).
@@ -404,7 +411,7 @@ async function runPipeline(
           timing: timer.toJSON(),
           paused_at: Date.now(),
           pause_kind: "checkpoint",
-          ...(directRepair ? { direct_repair_checkpoint: true } : {}),
+          ...repairCheckpointFields(intake, directRepair),
         },
         intake,
         // Without these a mid-chunk recovery would lose the user's job.
@@ -414,8 +421,9 @@ async function runPipeline(
       chunk_index,
       last_beat_at: new Date().toISOString(),
     }).eq(intake.agent_direct_provider ? "id" : "run_id", intake.run_id);
-    const saved = intake.agent_direct_provider ? await query.select("run_id").maybeSingle() : await query;
-    const error = saved.error || (intake.agent_direct_provider && !saved.data);
+    const strictCheckpoint = !!intake.agent_direct_provider || intake.agent_transport === "openai_direct";
+    const saved = strictCheckpoint ? await query.select("run_id").maybeSingle() : await query;
+    const error = saved.error || (strictCheckpoint && !saved.data);
     if (error) console.warn(JSON.stringify({ event: "v2_agent_checkpoint_save_failed", run_id: intake.run_id }));
     checkpointOk = !error;
     return checkpointOk;
@@ -555,7 +563,7 @@ async function runPipeline(
     repair_cycles = 1;
     const repaired = await runResearchAgent({
       allowAskUser: false,
-      ...(intake.agent_direct_provider ? { checkpoint: (state: AgentStateJson) => saveCheckpoint(state, true) } : {}),
+      ...repairCheckpointOption(intake, (state: AgentStateJson) => saveCheckpoint(state, true)),
       admin,
       intake,
       store,
@@ -709,7 +717,7 @@ async function runPipeline(
       temporalCounters.temporal_repairs = 1;
       const repaired = await runResearchAgent({
       allowAskUser: false,
-      ...(intake.agent_direct_provider ? { checkpoint: (state: AgentStateJson) => saveCheckpoint(state, true) } : {}),
+      ...repairCheckpointOption(intake, (state: AgentStateJson) => saveCheckpoint(state, true)),
         admin,
         intake,
         store,
@@ -769,7 +777,7 @@ async function runPipeline(
     const missing = gapReport.unreadable.filter((d) => !gapReport.derivative.includes(d));
     const fallback = await runResearchAgent({
       allowAskUser: false,
-      ...(intake.agent_direct_provider ? { checkpoint: (state: AgentStateJson) => saveCheckpoint(state, true) } : {}),
+      ...repairCheckpointOption(intake, (state: AgentStateJson) => saveCheckpoint(state, true)),
       admin,
       intake,
       store,
@@ -918,7 +926,7 @@ async function runPipeline(
       const callsBefore = agent.policy.search_calls + agent.policy.fetch_calls + agent.policy.lookup_calls;
       const repaired = await runResearchAgent({
       allowAskUser: false,
-      ...(intake.agent_direct_provider ? { checkpoint: (state: AgentStateJson) => saveCheckpoint(state, true) } : {}),
+      ...repairCheckpointOption(intake, (state: AgentStateJson) => saveCheckpoint(state, true)),
         admin,
         intake,
         store,
@@ -1523,12 +1531,14 @@ async function driveRunInner(
   };
   await beat(true);
   let directPausePublicationStarted = false;
+  const liveUsage: { current?: UsageLedger } = {};
   try {
     const out = await withProviderLiveness(() => liveProgress.heartbeat(), () => runPipeline(admin, intake, {
       resume,
       chunked: true,
       progress: liveProgress,
       job,
+      liveUsage,
     }));
     if ("paused" in out && out.paused && out.awaiting_user) {
       // Parked for the user: full checkpoint kept, no self-invoke, no charge.
@@ -1618,12 +1628,15 @@ async function driveRunInner(
         }
       }
     }
-    await admin.from("v2_eval_runs").update({
+    // One atomic write: receipts land together with clearing agent_state; on
+    // failure the checkpoint (with its attempt ledger) stays as recovery evidence.
+    const doneWrite = await admin.from("v2_eval_runs").update({
       status: "done",
-      result: out,
+      result: withOrdinaryReceipts(out as Record<string, unknown>, liveUsage.current?.ordinary_direct_attempts),
       agent_state: null,
       finished_at: new Date().toISOString(),
     }).eq(intake.agent_direct_provider ? "id" : "run_id", intake.run_id);
+    if (doneWrite?.error) console.warn(JSON.stringify({ event: "v2_terminal_write_failed", run_id: intake.run_id, status: "done" }));
   } catch (e) {
     if (directPausePublicationStarted) {
       // Even the pause-save response can be lost after another worker claimed
@@ -1639,11 +1652,14 @@ async function driveRunInner(
         await postAssistantMessage(admin, job.id, { kind: "text", content: CHAT_FAILURE_HE, metadata: { run_id: intake.run_id, failed: true, credits_refunded: terminal.refunded } });
       }
     }
-    await admin.from("v2_eval_runs").update({
+    // agent_state is never cleared here, so a failed write keeps the checkpoint.
+    const errorWrite = await admin.from("v2_eval_runs").update({
       status: "error",
       error: message,
+      ...(liveUsage.current?.ordinary_direct_attempts?.length ? { result: withOrdinaryReceipts({}, liveUsage.current.ordinary_direct_attempts) } : {}),
       finished_at: new Date().toISOString(),
     }).eq(intake.agent_direct_provider ? "id" : "run_id", intake.run_id);
+    if (errorWrite?.error) console.warn(JSON.stringify({ event: "v2_terminal_write_failed", run_id: intake.run_id, status: "error" }));
   }
 }
 
