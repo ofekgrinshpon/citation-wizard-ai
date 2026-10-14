@@ -1,7 +1,18 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { trackedFetch, withCostTelemetry, setTelemetryFromBody, recordZeroWork, type CostStage } from "../_shared/costTelemetry.ts";
-import { USAGE_BATCH_GROUP } from "../_shared/usageWeights.ts";
+import { trackedFetch as telemetryTrackedFetch, withCostTelemetry, setTelemetryFromBody, recordZeroWork, type CostStage } from "../_shared/costTelemetry.ts";
+import { citationRecoveryInput, citationRecoveryResult } from "../_shared/citationRecovery.ts";
+import { CitationUsageGuard, citationFingerprint, citationRefundReceipt, isUnstructuredCitationRefusal, withCitationProviderOutcome, observeCitationProviderFetch, markCitationProviderUnknown } from "../_shared/citationUsageGuard.ts";
+
+// Request-scoped failure observation survives retrieval helpers that catch and
+// preserve the input. It cannot cross concurrent requests or telemetry IDs.
+const trackedFetch: typeof telemetryTrackedFetch = (...args) => {
+  const url = args[0] instanceof Request ? args[0].url : String(args[0]);
+  const contract = url.startsWith("https://api.perplexity.ai/search") ? "search"
+    : url.startsWith("https://api.perplexity.ai/chat/completions") ? "lookup"
+    : args[2]?.stage === "formatter" ? "formatter" : "none";
+  return observeCitationProviderFetch(() => telemetryTrackedFetch(...args), contract);
+};
 
 // ── Canonical database-name mapping (Rule 19.1 + extended sources) ──
 // Maps a source URL host → canonical Hebrew database name. Used to override
@@ -929,6 +940,7 @@ async function fallbackBiblioSearch(
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
+  "Access-Control-Expose-Headers": "X-Usage-Status",
   "Access-Control-Allow-Headers":
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
@@ -979,30 +991,6 @@ function isValidCitationInputServer(raw: string): boolean {
     .filter((t) => t.length >= 2);
   const distinct = new Set(tokens.map((t) => t.toLowerCase()));
   return distinct.size >= 2;
-}
-
-function isRefusalResponseServer(text: string): boolean {
-  const t = (text ?? "").trim();
-  if (!t) return true;
-  const phrases = [
-    "אינו יכול לפרש",
-    "לא ניתן לפרש",
-    "לא ניתן לעבד",
-    "לא נמצא טקסט משפטי",
-    "הקלט אינו ברור",
-    "הבקשה אינה ברורה",
-    "לא הצלחתי להבין",
-    "אין מספיק מידע",
-    "cannot interpret",
-    "unable to interpret",
-    "could not interpret",
-  ];
-  if (phrases.some((p) => t.toLowerCase().includes(p.toLowerCase()))) return true;
-  const hasCitationMarker =
-    /חוק|סעיף|פקודת|תקנות|ע["״]א|ת["״]א|בג["״]ץ|פ["״]ד|ס["״]ח|ק["״]ת|נ['׳]|https?:\/\//.test(t);
-  const hasApology = /(אינו|לא ניתן|לא נמצא|מצטער|sorry|unable)/i.test(t);
-  if (!hasCitationMarker && hasApology && t.length < 220) return true;
-  return false;
 }
 
 const normalizeSearchableText = (text: string) =>
@@ -1604,7 +1592,7 @@ const SYSTEM_PROMPT = `אתה מומחה לכללי האזכור האחיד בכ
 *** 2. רע"א 1908/94 בנק המזרחי המאוחד נ' מגדל כפר שיתופי (1995) ***
 *** לאיזה פסק דין התכוונת?" ***`;
 
-serve((req) => withCostTelemetry("citation-chat", async () => {
+serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutcome(async () => {
   if (req.method === "OPTIONS")
     return new Response(null, { headers: corsHeaders });
 
@@ -1632,7 +1620,12 @@ serve((req) => withCostTelemetry("citation-chat", async () => {
     );
   }
   // ── End auth gate ──
-  const userId = (claimsData.claims as Record<string, unknown>).sub as string | undefined;
+  const userId = (claimsData.claims as Record<string, unknown>).sub;
+  if (typeof userId !== "string" || !userId) {
+    return new Response(JSON.stringify({ error: "Unauthorized – missing user identity" }), {
+      status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
 
 
 
@@ -1647,31 +1640,54 @@ serve((req) => withCostTelemetry("citation-chat", async () => {
     citationDiagnostic: { version: 1, tag: diagnostic.tag, build: CITATION_DIAGNOSTIC_BUILD,
       parser: CITATION_DIAGNOSTIC_PARSER, phase, trace: diagnostic.collector.snapshot() },
   } : {};
+  let usageGuard: CitationUsageGuard | null = null;
   const refundIfCharged = async (reason: string) => {
-    if (!creditRequestId) return;
-    try {
-      await userClient.rpc("refund_credits", {
-        _request_id: creditRequestId,
-        _reason: reason,
-      });
-    } catch (e) {
-      console.error("refund_credits failed:", e);
+    const settlement = await usageGuard?.finish("failed", reason);
+    return { refunded: settlement?.refunded === true,
+      status: settlement?.confirmed ? "failed" as const : "unknown" as const,
+      receipt: settlement?.refundReceipt };
+  };
+  const completeResponse = async (response: Response) => {
+    const body = await response.clone().json();
+    const result = citationRecoveryResult(body);
+    const completion = await usageGuard?.finish("succeeded", "citation_delivered", result ?? undefined);
+    const recoveryAvailability = !usageGuard ? "unavailable" : completion?.confirmed ? "available" : "unconfirmed";
+    const headers = new Headers(response.headers);
+    if (usageGuard && !completion?.confirmed) {
+      // Lost/failed storage acknowledgement never re-executes or refunds. Keep
+      // the live answer usable and let read-only recovery establish durability.
+      headers.set("X-Usage-Status", "unconfirmed");
     }
+    return new Response(JSON.stringify({ ...body, requestId: creditRequestId, recoveryAvailability }), {
+      status: response.status, headers,
+    });
   };
 
   try {
+    const requestText = await req.text();
+    if (new TextEncoder().encode(requestText).byteLength > 256 * 1024) {
+      return new Response(JSON.stringify({ error: "INPUT_TOO_LARGE" }), {
+        status: 413, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    const requestBody = (() => { try { return JSON.parse(requestText); } catch { return null; } })();
+    if (!requestBody || typeof requestBody !== "object" || Array.isArray(requestBody)) {
+      return new Response(JSON.stringify({ error: "INVALID_INPUT", messageHe: INVALID_INPUT_MSG_HE }), {
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    // Observation identifiers never authorize execution or determine billing.
+    setTelemetryFromBody(requestBody, "uniform_citation");
     const {
       messages,
+      citationRequestVersion,
       requestId: clientReqId,
+      retryOfRequestId,
       batchId: clientBatchId,
       foreignLookup: foreignLookupRequest,
       citationDiagnostic: diagnosticRequest,
       rawInput,
-    } = await req.json().then((b: any) => { // deno-lint-ignore no-explicit-any
-      // Telemetry ids are separate from the billing batchId (never mixed).
-      setTelemetryFromBody(b, "uniform_citation");
-      return b;
-    });
+    } = requestBody;
     // Temporary observation is opt-in, expiring, current-admin-only and bound to one exact public fixture.
     const diagnosticTag = diagnosticRequest ? await authorizeCitationDiagnostic(diagnosticRequest, foreignLookupRequest, async (signal) => {
       if (!userId) return false;
@@ -1685,6 +1701,11 @@ serve((req) => withCostTelemetry("citation-chat", async () => {
         status: diagnostic ? 200 : 403, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+    if (citationRequestVersion !== 3) {
+      return new Response(JSON.stringify({ error: "CLIENT_UPDATE_REQUIRED" }), {
+        status: 426, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
     // Batch-priced usage: one internal unit per up to 5 processed citations.
     const usageBatchId = typeof clientBatchId === "string" && clientBatchId.length >= 8
       ? clientBatchId
@@ -1692,9 +1713,39 @@ serve((req) => withCostTelemetry("citation-chat", async () => {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
-    creditRequestId = (typeof clientReqId === "string" && clientReqId.length >= 8)
-      ? clientReqId
-      : crypto.randomUUID();
+    creditRequestId = typeof clientReqId === "string" ? clientReqId : null;
+
+    if (!Array.isArray(messages) || messages.length === 0 || messages.some((message) =>
+      !message || typeof message !== "object" || typeof message.role !== "string" || typeof message.content !== "string")) {
+      return new Response(JSON.stringify({ error: "INVALID_INPUT", messageHe: INVALID_INPUT_MSG_HE }), {
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    if (typeof clientReqId !== "string" || clientReqId.length < 8 || clientReqId.length > 200) {
+      return new Response(JSON.stringify({ error: "INVALID_REQUEST_ID" }), {
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    if (retryOfRequestId !== undefined && (typeof retryOfRequestId !== "string" ||
+        retryOfRequestId.length < 8 || retryOfRequestId.length > 200 || retryOfRequestId === clientReqId)) {
+      return new Response(JSON.stringify({ error: "INVALID_RETRY_REQUEST" }), {
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    if (clientBatchId !== undefined && clientBatchId !== null && (typeof clientBatchId !== "string" || clientBatchId.length < 8 || clientBatchId.length > 200)) {
+      return new Response(JSON.stringify({ error: "INVALID_BATCH" }), {
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const recoveryInput = citationRecoveryInput({
+      messages, rawInput: rawInput ?? null, foreignLookup: foreignLookupRequest ?? null, batchId: usageBatchId,
+    });
+    if (!recoveryInput) {
+      return new Response(JSON.stringify({ error: "INVALID_RECOVERY_INPUT" }), {
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
     const lastUserMessage = [...messages].reverse().find((m: { role: string }) => m.role === "user");
     const userInput = lastUserMessage?.content || "";
@@ -1778,9 +1829,9 @@ serve((req) => withCostTelemetry("citation-chat", async () => {
                 `[credit] free_path=verified_source_hit user=${userId ?? "unknown"} request_id=${creditRequestId} amount=0`,
               );
               recordZeroWork("server_verified_store", "cache_hit");
-              return new Response(JSON.stringify({ content: articleRequest ? articleContent() : bestMatch.full_citation }), {
+              return completeResponse(new Response(JSON.stringify({ content: articleRequest ? articleContent() : bestMatch.full_citation }), {
                 headers: { ...corsHeaders, "Content-Type": "application/json" },
-              });
+              }));
             }
             if (!articleRequest && bestMatch && hasPinpoint) {
               verifiedHint = `\n\n══ מקור מאומת (הפניה נקודתית) ══\nהמקור המאומת: ${bestMatch.full_citation}\n══ המשתמש מבקש הפניה נקודתית (pinpoint). שלב את ההפניה הנקודתית עם המקור המאומת לפי כללי האזכור האחיד. אל תשנה את הנתונים מהמקור המאומת. ══`;
@@ -1797,51 +1848,47 @@ serve((req) => withCostTelemetry("citation-chat", async () => {
       }
     }
 
-    // ── Reserve usage before invoking the AI (verified short-circuit above is free) ──
-    // Batched requests are priced at one internal unit per up to 5 citations.
-    const consumeRes = usageBatchId
-      ? await userClient.rpc("consume_usage_batch", {
-          _batch_id: usageBatchId,
-          _group_size: USAGE_BATCH_GROUP.citation,
-          _reason: "citation-chat",
-          _request_id: creditRequestId,
-        })
-      : await userClient.rpc("consume_credits", {
-          _amount: 1,
-          _reason: "citation-chat",
-          _request_id: creditRequestId,
-        });
-    const consumeData = (consumeRes.data ?? {}) as Record<string, unknown>;
-    console.log(
-      `[credit] fn=citation-chat user=${userId ?? "unknown"} request_id=${creditRequestId} amount=1 ` +
-      `ok=${consumeData.ok === true} admin=${consumeData.admin === true} replayed=${consumeData.replayed === true} ` +
-      `rpc_error=${consumeRes.error?.message ?? "none"} app_error=${(consumeData.error as string) ?? "none"} ` +
-      `remaining_included=${consumeData.remaining_included ?? "?"} remaining_topup=${consumeData.remaining_topup ?? "?"}`,
-    );
-    if (consumeRes.error || !consumeData.ok) {
-      if (consumeData.error === "INSUFFICIENT_CREDITS") {
-        return new Response(
-          JSON.stringify({
-            error: "INSUFFICIENT_CREDITS",
-            required: 1,
-            remaining_included: consumeData.remaining_included ?? 0,
-            remaining_topup: consumeData.remaining_topup ?? 0,
-          }),
-          { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } },
-        );
-      }
-      // Fail closed: never serve a paid AI call that could not be recorded.
-      console.error("[credit] consume_credits failed — refusing request", consumeRes.error, consumeData);
-      creditRequestId = null;
-      return new Response(
-        JSON.stringify({
-          error: "CREDIT_CHARGE_FAILED",
-          message: "לא ניתן היה לחייב קרדיטים כרגע. נסו שוב בעוד רגע.",
-        }),
-        { status: 503, headers: { ...corsHeaders, "Content-Type": "application/json" } },
-      );
+    // Claim execution and reserve usage in one server-owned transaction.
+    // A replay never grants a fresh execution, even after quota/plan expiry.
+    if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
+      return new Response(JSON.stringify({ error: "CREDIT_CHARGE_FAILED" }), {
+        status: 503, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
-
+    usageGuard = new CitationUsageGuard(
+      createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY), userId, clientReqId,
+    );
+    const fingerprint = await citationFingerprint(recoveryInput);
+    const claim = await usageGuard.begin(fingerprint, usageBatchId, retryOfRequestId ?? null, recoveryInput);
+    if (claim.ok !== true || claim.execute !== true) {
+      const error = typeof claim.error === "string" ? claim.error
+        : claim.ok === true ? "REQUEST_ALREADY_STARTED" : "CREDIT_CHARGE_FAILED";
+      const conflict = error === "REQUEST_ALREADY_STARTED" || error === "REQUEST_FINGERPRINT_MISMATCH" ||
+        error === "REQUEST_ID_ALREADY_USED" || error === "INVALID_RETRY_REQUEST" ||
+        error === "RETRY_PARENT_NOT_FOUND" || error === "RETRY_PARENT_NOT_FAILED" ||
+        error === "RETRY_FINGERPRINT_MISMATCH" || error === "REQUEST_ANCESTRY_MISMATCH";
+      const parsedReceipt = citationRefundReceipt(claim.refund_receipt);
+      const receipt = parsedReceipt?.refunded === (claim.refunded === true) ? parsedReceipt : undefined;
+      const parentReceipt = citationRefundReceipt(claim.retry_parent_refund_receipt);
+      return new Response(JSON.stringify({
+        error,
+        requestId: typeof claim.request_id === "string" ? claim.request_id : creditRequestId,
+        ...(typeof claim.retry_of_request_id === "string" ? { retryOfRequestId: claim.retry_of_request_id } : {}),
+        refunded: receipt?.refunded === true,
+        ...(receipt ? { refund_receipt: receipt } : {}),
+        ...(parentReceipt ? { retry_parent_refund_receipt: parentReceipt } : {}),
+        ...(claim.status ? { status: claim.status } : {}),
+        ...(error === "INSUFFICIENT_CREDITS" ? {
+          required: claim.required ?? 1,
+          block_reason: claim.block_reason,
+          remaining_included: claim.remaining_included ?? 0,
+          remaining_topup: claim.remaining_topup ?? 0,
+        } : {}),
+      }), {
+        status: error === "INSUFFICIENT_CREDITS" ? 402 : conflict ? 409 : 503,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
     // ── Milestone 2B: grounded foreign source lookup ─────────────────────
     // Structured contract (no prompt wording): the client explicitly asks for
@@ -1868,9 +1915,10 @@ serve((req) => withCostTelemetry("citation-chat", async () => {
           try {
             foreignLookupResult = await runForeignLookup(
               { kind: flKind, jurisdiction: flJur, rawInput: flRaw, parsedFields: flParsed },
-              { apiKey: pplxKey, ...(diagnostic ? { diagnosticObserver: diagnostic.collector.observe } : {}) },
+              { apiKey: pplxKey, fetchImpl: trackedFetch, ...(diagnostic ? { diagnosticObserver: diagnostic.collector.observe } : {}) },
             );
           } catch (flErr) {
+            markCitationProviderUnknown();
             console.error("foreign lookup error:", flErr);
             foreignLookupResult = flKind === "journal_article"
               ? articleLookupFallback({ kind: flKind, jurisdiction: flJur, rawInput: flRaw, parsedFields: flParsed }, "lookup_failed")
@@ -1887,14 +1935,14 @@ serve((req) => withCostTelemetry("citation-chat", async () => {
             // pinpoint contract. Do not let them consume a partial typed result.
             // Preserve their input with an existing warning marker instead.
             if (foreignLookupResult?.articleResolution && foreignLookupRequest.articleResponseVersion !== 1) {
-              return new Response(JSON.stringify({
+              return completeResponse(new Response(JSON.stringify({
                 content: `${flRaw}\n⚠️ נשמר רק האזכור שסיפקתם. פרטי פרסום חסרים או סותרים דורשים בדיקה.`,
-              }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+              }), { headers: { ...corsHeaders, "Content-Type": "application/json" } }));
             }
-            return new Response(JSON.stringify({ content: "", foreignLookup: foreignLookupResult,
+            return completeResponse(new Response(JSON.stringify({ content: "", foreignLookup: foreignLookupResult,
               ...diagnosticEnvelope(foreignLookupResult?.error === "lookup_failed" ? "lookup_failed" : "lookup_complete") }), {
               headers: { ...corsHeaders, "Content-Type": "application/json" },
-            });
+            }));
           }
         }
       }
@@ -3257,9 +3305,9 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
       }
       // Same Rule 24 template and shared normalizers; zero formatter provider
       // calls on this path. The existing usage reservation above is unchanged.
-      return new Response(JSON.stringify({ content: articleContent() }), {
+      return completeResponse(new Response(JSON.stringify({ content: articleContent() }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      }));
     }
 
     // Non-journal article families retain the baseline orchestration below.
@@ -3623,37 +3671,52 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
 
     if (!response.ok) {
       if (response.status === 429) {
-        await refundIfCharged("ai_gateway_429");
+        const { refunded, status: failureStatus, receipt: failureReceipt } = await refundIfCharged("ai_gateway_429");
         return new Response(
           JSON.stringify({
-            error: "AI_RATE_LIMITED",
-            message: "מגבלת קצב זמנית של ספק ה-AI. נסו שוב בעוד רגע.",
+            error: failureStatus === "failed" ? "AI_RATE_LIMITED" : "REQUEST_OUTCOME_UNKNOWN", refunded, status: failureStatus, requestId: creditRequestId, refund_receipt: failureReceipt,
+            message: failureStatus === "failed" ? "מגבלת קצב זמנית של ספק ה-AI. הבקשה הסתיימה בכשל." : "תוצאת הבקשה עדיין אינה ידועה. החזר שימוש לא אושר.",
           }),
           { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } },
         );
       }
       if (response.status === 402 || response.status === 403) {
-        await refundIfCharged("ai_gateway_unavailable");
+        const { refunded, status: failureStatus, receipt: failureReceipt } = await refundIfCharged("ai_gateway_unavailable");
         console.error("[ai-gateway] blocked", response.status);
         return new Response(
           JSON.stringify({
-            error: "AI_UNAVAILABLE",
-            message: "שירות ה-AI אינו זמין כרגע (מגבלת ספק). לא חויבתם — נסו שוב מאוחר יותר.",
+            error: failureStatus === "failed" ? "AI_UNAVAILABLE" : "REQUEST_OUTCOME_UNKNOWN", refunded, status: failureStatus, requestId: creditRequestId, refund_receipt: failureReceipt,
+            message: refunded
+              ? "שירות ה-AI אינו זמין כרגע. יחידות השימוש הוחזרו."
+              : "שירות ה-AI אינו זמין כרגע. מצב החיוב טרם אושר.",
           }),
           { status: 503, headers: { ...corsHeaders, "Content-Type": "application/json" } },
         );
       }
       const t = await response.text();
       console.error("AI gateway error:", response.status, t);
-      await refundIfCharged("ai_gateway_error");
+      const { refunded, status: failureStatus, receipt: failureReceipt } = await refundIfCharged("ai_gateway_error");
       return new Response(
-        JSON.stringify({ error: "AI gateway error" }),
+        JSON.stringify({ error: failureStatus === "failed" ? "AI gateway error" : "REQUEST_OUTCOME_UNKNOWN", refunded, status: failureStatus, requestId: creditRequestId, refund_receipt: failureReceipt }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
     }
 
     const data = await response.json();
-    const rawContent = data.choices?.[0]?.message?.content || "אירעה שגיאה.";
+    const providerMessage = data.choices?.[0]?.message;
+    const rawContent = providerMessage?.content;
+    // Provider-structured refusal is a terminal rejection only when no content
+    // was delivered. A phrase inside a citation title is never refund evidence.
+    if (typeof providerMessage?.refusal === "string" && providerMessage.refusal.trim() &&
+        (rawContent == null || (typeof rawContent === "string" && !rawContent.trim()))) {
+      const { refunded, status: failureStatus, receipt: failureReceipt } = await refundIfCharged("provider_refusal");
+      return new Response(JSON.stringify({ error: failureStatus === "failed" ? "AI_REFUSED" : "REQUEST_OUTCOME_UNKNOWN", refunded, status: failureStatus, requestId: creditRequestId, refund_receipt: failureReceipt }), {
+        status: 422, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    if (typeof rawContent !== "string" || !rawContent.trim()) {
+      throw new Error("AI_RESPONSE_OUTCOME_UNKNOWN");
+    }
     let content = sanitizeHallucinatedPublicationData(rawContent, {
       hasVerifiedCandidates,
       hasTrustedLegislationPage,
@@ -3692,33 +3755,30 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
       "",
     );
 
-    // Post-response safety net: if the AI returned a refusal/non-meaningful answer,
-    // automatically refund the credit so the user isn't charged for an unusable result.
-    if (isRefusalResponseServer(content)) {
-      await refundIfCharged("invalid_input_refusal");
-      return new Response(
-        JSON.stringify({
-          content,
-          refunded: true,
-          refundReason: "הקלט לא היה ברור דיו לעיבוד",
-        }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } },
-      );
+    if (isUnstructuredCitationRefusal(content)) {
+      // This is not reliable proof of a refundable failure or useful delivery.
+      // Preserve the claim for review without granting another execution.
+      await usageGuard?.finish("unknown", "unstructured_refusal_requires_review");
+      return new Response(JSON.stringify({
+        error: "AI_RESPONSE_UNVERIFIED", status: "unknown", requestId: creditRequestId, refunded: false,
+      }), { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
-    return new Response(
+    return completeResponse(new Response(
       JSON.stringify(foreignLookupResult ? { content, foreignLookup: foreignLookupResult } : { content }),
       {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       },
-    );
+    ));
   } catch (e) {
     console.error("chat error:", e);
-    await refundIfCharged("citation-chat exception");
+    // Transport failures, timeout and unexpected exceptions cannot establish
+    // whether paid work completed. Never turn that uncertainty into a refund.
+    await usageGuard?.finish("unknown", "citation_outcome_unknown");
     return new Response(
-      JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error", refunded: !!creditRequestId, refundReason: "טעות טכנית",
+      JSON.stringify({ error: "REQUEST_OUTCOME_UNKNOWN", status: "unknown", requestId: creditRequestId, refunded: false,
         ...diagnosticEnvelope("server_exception") }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   }
-}));
+})));

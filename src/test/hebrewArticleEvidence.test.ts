@@ -1,3 +1,6 @@
+import { AsyncLocalStorage } from "node:async_hooks";
+import { webcrypto } from "node:crypto";
+import { TextEncoder } from "node:util";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { createContext, runInContext } from "node:vm";
@@ -11,6 +14,7 @@ import * as editors from "../../supabase/functions/_shared/articleCitationValida
 import * as knesset from "../../supabase/functions/_shared/knessetTerms";
 import * as usage from "../../supabase/functions/_shared/usageWeights";
 import * as diagnostic from "../../supabase/functions/_shared/citationDiagnostic";
+import * as recovery from "../../supabase/functions/_shared/citationRecovery";
 import * as diagnosticGate from "../../supabase/functions/_shared/citationDiagnosticGate";
 import { buildForeignArticleRequest } from "@/lib/foreignArticleAdapter";
 import { articleLookupFallback, runForeignLookup as actualForeignLookup, type ForeignLookupInput, type LookupDeps } from "../../supabase/functions/citation-chat/foreignLookup";
@@ -188,9 +192,20 @@ describe("Hebrew article evidence records", () => {
 const source = readFileSync(resolve(__dirname, "../../supabase/functions/citation-chat/index.ts"), "utf8");
 const compileEntrypoint = (input: string) => ts.transpileModule(input, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText;
 const compiled = compileEntrypoint(source);
-async function runHandler(options: { raw?: string; records?: unknown[]; candidate?: Record<string, unknown>; cached?: Array<Record<string, unknown>>; fail?: boolean; fallback?: boolean; label?: string; noPplx?: boolean; foreign?: Record<string, unknown>; foreignResult?: Record<string, unknown>; foreignThrows?: boolean; formatterReply?: string; compiledEntrypoint?: string; diagnostic?: unknown; admin?: boolean; roleFails?: boolean; preflightOnly?: boolean; realForeign?: boolean } = {}) {
+const guardContext = createContext({ exports: {}, crypto: webcrypto, TextEncoder, Uint8Array,
+  require: (name: string) => { if (name === "node:async_hooks") return { AsyncLocalStorage }; if (name === "./citationRecovery.ts") return recovery; throw new Error(name); },
+});
+runInContext(compileEntrypoint(readFileSync(resolve(__dirname, "../../supabase/functions/_shared/citationUsageGuard.ts"), "utf8")), guardContext);
+const guardModule = guardContext.exports;
+type RpcResult = { data: Record<string, unknown> | null; error: { message: string } | null };
+type TestRpc = (name: string, args: Record<string, unknown>) => Promise<RpcResult>;
+async function runHandler(options: { raw?: string; rawInputNull?: boolean; records?: unknown[]; candidate?: Record<string, unknown>; cached?: Array<Record<string, unknown>>; fail?: boolean; fallback?: boolean; label?: string; noPplx?: boolean; foreign?: Record<string, unknown>; foreignResult?: Record<string, unknown>; foreignThrows?: boolean; formatterReply?: string; compiledEntrypoint?: string; baselineGuard?: unknown; diagnostic?: unknown; admin?: boolean; roleFails?: boolean; preflightOnly?: boolean; realForeign?: boolean; requestId?: string | null; retryOfRequestId?: unknown; batchId?: string | null; rpcImpl?: TestRpc; providerStatus?: number; providerThrows?: boolean; failStage?: string; malformedStage?: string; providerJson?: unknown; onProvider?: () => void; providerGate?: Promise<void>; serviceUnavailable?: boolean; version?: number | null; providerJsonStage?: string; stageJson?: unknown; statusStage?: { stage: string; status: number } } = {}) {
   const calls: Array<{ stage: string; body: Record<string, unknown> }> = [];
-  const rpc = vi.fn(async (_name: string, _args: unknown) => ({ data: { ok: true }, error: null }));
+  const claimClients: Array<{ key: string; options?: unknown }> = [];
+  const rpc = vi.fn(options.rpcImpl || (async (name: string, args: Record<string, unknown>) => ({ data: name === "begin_citation_request"
+    ? { ok: true, execute: true, status: "in_progress", request_id: args._request_id, retry_of_request_id: args._retry_of_request_id, attempt_token: "fixture-attempt-token" }
+    : name === "finish_citation_request" ? { ok: true, status: args._outcome, result_stored: args._outcome === "succeeded", refunded: args._outcome === "failed", refund_receipt: fixtureReceipt(String(args._request_id), args._outcome === "failed") }
+    : { ok: true }, error: null })));
   const zero = vi.fn();
   const roleRead = vi.fn(async () => options.roleFails ? { data: null, error: { message: "fixture-only" } } : { data: options.admin ? { role: "admin" } : null, error: null });
   const client = {
@@ -206,6 +221,15 @@ async function runHandler(options: { raw?: string; records?: unknown[]; candidat
   const fetchProvider = async (_url: string, init: RequestInit, meta: { stage: string }) => {
     const body = JSON.parse(String(init.body));
     calls.push({ stage: meta.stage, body });
+    options.onProvider?.();
+    if (options.providerGate) await options.providerGate;
+    if (options.statusStage?.stage === meta.stage) return new Response("Ambiguous gateway failure", { status: options.statusStage.status });
+    if (options.failStage === meta.stage) throw new Error("Ambiguous upstream provider outcome");
+    if (options.malformedStage === meta.stage) return new Response("{invalid-json");
+    if (options.providerJsonStage === meta.stage) return new Response(JSON.stringify(options.stageJson));
+    if (options.providerThrows) throw new Error("Ambiguous provider transport outcome");
+    if (options.providerStatus) return new Response("Provider rejection", { status: options.providerStatus });
+    if (options.providerJson !== undefined) return new Response(JSON.stringify(options.providerJson));
     if (meta.stage === "formatter") return new Response(JSON.stringify({ choices: [{ message: { content: options.formatterReply || wrong } }] }));
     if (options.fail) return new Response("offline test failure", { status: 503 });
     const isFallback = meta.stage === "biblio_fallback";
@@ -214,7 +238,13 @@ async function runHandler(options: { raw?: string; records?: unknown[]; candidat
   };
   const modules: Record<string, unknown> = {
     "https://deno.land/std@0.168.0/http/server.ts": { serve: (f: typeof handler) => { handler = f; } },
-    "https://esm.sh/@supabase/supabase-js@2": { createClient: () => client },
+    "https://esm.sh/@supabase/supabase-js@2": { createClient: (_url: string, key: string, configuration?: unknown) => ({
+      ...client,
+      rpc: (name: string, args: Record<string, unknown>) => {
+        if (name === "begin_citation_request" || name === "finish_citation_request") claimClients.push({ key, options: configuration });
+        return rpc(name, args);
+      },
+    }) },
     "../_shared/costTelemetry.ts": { trackedFetch: fetchProvider, withCostTelemetry: (_name: string, fn: () => unknown) => fn(), setTelemetryFromBody: () => {}, recordZeroWork: zero },
     "../_shared/hebrewArticleEvidence.ts": articles,
     "../_shared/caseTypePrefixes.ts": dockets,
@@ -223,6 +253,8 @@ async function runHandler(options: { raw?: string; records?: unknown[]; candidat
     "../_shared/articleCitationValidator.ts": editors,
     "../_shared/knessetTerms.ts": knesset,
     "../_shared/usageWeights.ts": usage,
+    "../_shared/citationUsageGuard.ts": options.baselineGuard ?? guardModule,
+    "../_shared/citationRecovery.ts": recovery,
     "../_shared/citationDiagnostic.ts": diagnostic,
     "../_shared/citationDiagnosticGate.ts": diagnosticGate,
     "./foreignLookup.ts": { runForeignLookup: async (input: ForeignLookupInput, deps: LookupDeps) => {
@@ -237,15 +269,15 @@ async function runHandler(options: { raw?: string; records?: unknown[]; candidat
   runInContext(options.compiledEntrypoint || compiled, createContext({ exports: {}, require: (name: string) => {
     if (!(name in modules)) throw new Error(`Unexpected real module boundary: ${name}`);
     return modules[name];
-  }, console: { log: () => {}, error: () => {}, warn: () => {} }, URL, Request, Response, crypto,
-  Deno: { env: { get: (name: string) => name === "CITATION_CHAT_OPENWEB_FALLBACK" ? "off" : name === "PERPLEXITY_API_KEY" && options.noPplx ? undefined : "mock-only" } },
+  }, console: { log: () => {}, error: () => {}, warn: () => {} }, URL, Request, Response, Headers, crypto, TextEncoder,
+  Deno: { env: { get: (name: string) => name === "SUPABASE_SERVICE_ROLE_KEY" && options.serviceUnavailable ? undefined : name === "SUPABASE_SERVICE_ROLE_KEY" ? "fixture-service" : name === "SUPABASE_ANON_KEY" ? "fixture-anon" : name === "CITATION_CHAT_OPENWEB_FALLBACK" ? "off" : name === "PERPLEXITY_API_KEY" && options.noPplx ? undefined : "mock-only" } },
   fetch: () => { throw new Error("Unmocked network is prohibited"); },
   }));
   const raw = options.raw || natural;
   const label = options.label || "מאמר";
   const message = `[סיווג אוטומטי: ${label}]\n${label === "מאמר" ? buildEnginePromptHint("article") : ""}${raw}`;
-  const response = await handler!(new Request("https://local.test/citation-chat", { method: "POST", headers: { Authorization: "Bearer mock-token", "Content-Type": "application/json" }, body: JSON.stringify({ ...(options.preflightOnly ? {} : { messages: [{ role: "user", content: message }], rawInput: raw }), ...(options.foreign ? { foreignLookup: options.foreign } : {}), ...(options.diagnostic ? { citationDiagnostic: options.diagnostic } : {}) }) }));
-  return { body: await response.json(), status: response.status, calls, rpc, zero, roleRead };
+  const response = await handler!(new Request("https://local.test/citation-chat", { method: "POST", headers: { Authorization: "Bearer mock-token", "Content-Type": "application/json" }, body: JSON.stringify({ citationRequestVersion: options.version === null ? undefined : options.version ?? 3, requestId: options.requestId === null ? undefined : options.requestId ?? "fixture-request-0001", ...(options.batchId !== undefined ? { batchId: options.batchId } : {}), ...(options.retryOfRequestId !== undefined ? { retryOfRequestId: options.retryOfRequestId } : {}), ...(options.preflightOnly ? {} : { messages: [{ role: "user", content: message }], rawInput: options.rawInputNull ? null : raw }), ...(options.foreign ? { foreignLookup: options.foreign } : {}), ...(options.diagnostic ? { citationDiagnostic: options.diagnostic } : {}) }) }));
+  return { body: await response.json(), status: response.status, usageStatus: response.headers.get("X-Usage-Status"), calls, rpc, zero, roleRead, claimClients };
 }
 
 describe("article boundary through the real edge handler", () => {
@@ -332,7 +364,8 @@ describe("article boundary through the real edge handler", () => {
     expect(r.body.content).not.toContain("2018");
     expect(r.calls.map(c => c.stage)).toEqual(["article_retrieval_tier1", "author_check"]);
     expect(r.calls.every(c => c.body.model === "sonar-pro")).toBe(true);
-    expect(r.rpc.mock.calls.filter(c => c[0] === "consume_credits")).toHaveLength(1);
+    expect(r.rpc.mock.calls.filter(c => c[0] === "begin_citation_request")).toHaveLength(1);
+    expect(r.rpc.mock.calls.at(-1)).toMatchObject(["finish_citation_request", { _outcome: "succeeded" }]);
   });
 
   it("ignores unranked and wrong-work cache records", async () => {
@@ -456,7 +489,15 @@ describe("chapter routing remains outside the journal article correction", () =>
   // the source export. Ordinary CI still runs the fixed chapter contract above.
   const baselinePath = process.env.RELEX_CITATION_BASELINE;
   it.skipIf(!baselinePath)("matches complete/incomplete/cache/failure chapter behavior against the real baseline", async () => {
-    const baseline = compileEntrypoint(readFileSync(baselinePath!, "utf8"));
+    const baselineSource = readFileSync(baselinePath!, "utf8");
+    const baseline = compileEntrypoint(baselineSource);
+    const baselineGuardContext = createContext({ exports: {}, crypto: webcrypto, TextEncoder, Uint8Array,
+      require: (name: string) => { if (name === "node:async_hooks") return { AsyncLocalStorage }; throw new Error(name); },
+    });
+    const baselineGuardPath = resolve(baselinePath!, "../../_shared/citationUsageGuard.ts");
+    if (baselineSource.includes("new CitationUsageGuard(")) {
+      runInContext(compileEntrypoint(readFileSync(baselineGuardPath, "utf8")), baselineGuardContext);
+    }
     const cases = [
       { ...chapterOptions, raw: complete },
       { ...chapterOptions, raw: incomplete },
@@ -468,14 +509,381 @@ describe("chapter routing remains outside the journal article correction", () =>
       { label: "מאמר לועזי", raw: 'Samuel Warren and Louis Brandeis "The Right to Privacy"', candidate: { found: true, type: "journal", author: "Samuel Warren and Louis Brandeis", articleTitle: "The Right to Privacy", journalName: "Harvard Law Review", volume: "4", firstPage: "193", year: 1890 }, records: [{ title: "The Right to Privacy", url: "https://www.jstor.org/stable/example", snippet: 'Samuel Warren and Louis Brandeis "The Right to Privacy" Harvard Law Review 4 193 (1890)' }], formatterReply: 'Warren & Brandeis, The Right to Privacy, 4 Harv. L. Rev. 193 (1890).' },
     ];
     for (const input of cases) {
-      const before = await runHandler({ ...input, compiledEntrypoint: baseline });
+      const before = await runHandler({ ...input, compiledEntrypoint: baseline, baselineGuard: baselineGuardContext.exports, version: 2 });
       const after = await runHandler(input);
       expect(after.status).toBe(before.status);
-      expect(after.body).toEqual(before.body);
+      const { requestId: _requestId, recoveryAvailability: _recovery, ...afterComparable } = after.body;
+      const { requestId: _beforeId, recoveryAvailability: _beforeRecovery, ...beforeComparable } = before.body;
+      expect(afterComparable).toEqual(beforeComparable);
       expect(after.calls).toEqual(before.calls);
-      expect(after.rpc.mock.calls.map(([name, args]) => [name, { ...(args as object), _request_id: "comparison" }]))
-        .toEqual(before.rpc.mock.calls.map(([name, args]) => [name, { ...(args as object), _request_id: "comparison" }]));
+      // The security repair intentionally replaces billing RPCs. Keep the
+      // retrieval, formatter, citation output and free-path parity assertions.
+      expect(after.rpc.mock.calls.filter(([name]) => name === "begin_citation_request").length)
+        .toBe(before.rpc.mock.calls.filter(([name]) => name === (baselineSource.includes("new CitationUsageGuard(") ? "begin_citation_request" : "consume_credits")).length);
       expect(after.zero.mock.calls).toEqual(before.zero.mock.calls);
     }
+  });
+});
+
+// In-memory transaction-boundary double, not evidence that the SQL migration
+// was run. It deliberately distinguishes an execution claim from a charge.
+function fixtureReceipt(requestId: string, refunded: boolean) {
+  return { status: refunded ? "refunded" : "not_applicable", refunded, units_refunded: refunded ? 1 : 0, request_id: requestId };
+}
+function usageFixture() {
+  const rows = new Map<string, { fingerprint: unknown; status: string; token: string; retryOf: string | null }>();
+  let consumed = 0, refunded = 0;
+  const rpc: TestRpc = async (name, args) => {
+    const key = String(args._request_id);
+    const row = rows.get(key);
+    if (name === "begin_citation_request") {
+      const retryOf = typeof args._retry_of_request_id === "string" ? args._retry_of_request_id : null;
+      const parent = retryOf ? rows.get(retryOf) : undefined;
+      const denial = (error: string) => ({ data: { ok: false, error }, error: null });
+      if (retryOf && !parent) return denial("RETRY_PARENT_NOT_FOUND");
+      if (parent && parent.status !== "failed") return denial("RETRY_PARENT_NOT_FAILED");
+      if (parent && parent.fingerprint !== args._fingerprint) return denial("RETRY_FINGERPRINT_MISMATCH");
+      if (row && row.retryOf !== retryOf) return denial("REQUEST_ANCESTRY_MISMATCH");
+      if (row && row.fingerprint !== args._fingerprint) return denial("REQUEST_FINGERPRINT_MISMATCH");
+      const canonical = row ? [key, row] as const : retryOf ? [...rows].find(([, candidate]) => candidate.retryOf === retryOf) : undefined;
+      const parentReceipt = parent && retryOf ? fixtureReceipt(retryOf, true) : undefined;
+      if (canonical) return { data: { ok: true, execute: false, status: canonical[1].status,
+        request_id: canonical[0], retry_of_request_id: canonical[1].retryOf,
+        refunded: canonical[1].status === "failed", refund_receipt: fixtureReceipt(canonical[0], canonical[1].status === "failed"),
+        retry_parent_refund_receipt: parentReceipt }, error: null };
+      const token = "server-attempt-" + key;
+      rows.set(key, { fingerprint: args._fingerprint, status: "in_progress", token, retryOf });
+      consumed++;
+      return { data: { ok: true, execute: true, status: "in_progress", request_id: key,
+        retry_of_request_id: retryOf, retry_parent_refund_receipt: parentReceipt, attempt_token: token }, error: null };
+    }
+    if (name === "finish_citation_request" && row?.status === "in_progress" && row.token === args._attempt_token) {
+      row.status = String(args._outcome);
+      if (row.status === "failed") refunded++;
+      return { data: { ok: true, status: row.status, result_stored: row.status === "succeeded", refunded: row.status === "failed",
+        refund_receipt: fixtureReceipt(key, row.status === "failed") }, error: null };
+    }
+    return { data: { ok: false, error: "NOT_ELIGIBLE" }, error: null };
+  };
+  return { rpc, rows, totals: () => ({ consumed, refunded }) };
+}
+
+const paidFixture = { raw: "מקור משפטי לבדיקת מסלול הבקרה", label: "אחר", noPplx: true };
+
+describe("citation paid execution ownership through the real edge handler", () => {
+  it("executes once for overlapping identical IDs and returns a status for both in-flight and completed replays", async () => {
+    const db = usageFixture();
+    let release!: () => void, started!: () => void;
+    const gate = new Promise<void>((resolve) => { release = resolve; });
+    const entered = new Promise<void>((resolve) => { started = resolve; });
+    const first = runHandler({ ...paidFixture, rpcImpl: db.rpc, providerGate: gate, onProvider: started });
+    await entered;
+    const overlap = await runHandler({ ...paidFixture, rpcImpl: db.rpc });
+    expect(overlap.status).toBe(409);
+    expect(overlap.body).toMatchObject({ error: "REQUEST_ALREADY_STARTED", status: "in_progress" });
+    expect(overlap.calls).toHaveLength(0);
+    release();
+    const original = await first;
+    expect(original.status).toBe(200);
+    expect(original.calls).toHaveLength(1);
+    expect(original.claimClients).toEqual([
+      { key: "fixture-service", options: undefined }, { key: "fixture-service", options: undefined },
+    ]);
+    const replay = await runHandler({ ...paidFixture, rpcImpl: db.rpc });
+    expect(replay.body.status).toBe("succeeded");
+    expect(replay.calls).toHaveLength(0);
+    expect(db.totals()).toEqual({ consumed: 1, refunded: 0 });
+  });
+
+  it.each([
+    { raw: "מקור משפטי אחר לבדיקת הבקרה" },
+    { batchId: "different-batch-0001" },
+    { foreign: { enabled: false, rawInput: "different payload" } },
+  ])("rejects changed paid inputs under an existing ID before provider work %#", async (change) => {
+    const db = usageFixture();
+    await runHandler({ ...paidFixture, rpcImpl: db.rpc });
+    const second = await runHandler({ ...paidFixture, ...change, rpcImpl: db.rpc });
+    expect(second.status).toBe(409);
+    expect(second.body.error).toBe("REQUEST_FINGERPRINT_MISMATCH");
+    expect(second.calls).toHaveLength(0);
+    expect(db.totals().consumed).toBe(1);
+  });
+
+  it.each(["plan_expired", "plan_allowance", "short_window", "trial_exhausted"])("rejects %s before any provider work", async (block_reason) => {
+    const r = await runHandler({ ...paidFixture, rpcImpl: async () => ({ data: { ok: false, error: "INSUFFICIENT_CREDITS", block_reason }, error: null }) });
+    expect(r.status).toBe(402);
+    expect(r.body.block_reason).toBe(block_reason);
+    expect(r.calls).toHaveLength(0);
+    expect(r.rpc).toHaveBeenCalledTimes(1);
+  });
+
+  it.each([
+    { data: { ok: true, replayed: true }, error: null },
+    { data: { ok: true, execute: true, status: "in_progress" }, error: null },
+    { data: { ok: false, error: "REQUEST_ID_ALREADY_USED" }, error: null },
+    { data: null, error: { message: "unknown committed outcome" } },
+  ])("never interprets ambiguous or legacy charge replies as execution permission %#", async (result) => {
+    const r = await runHandler({ ...paidFixture, rpcImpl: async () => result });
+    expect(r.status).not.toBe(200);
+    expect(r.calls).toHaveLength(0);
+    expect(r.rpc).toHaveBeenCalledTimes(1);
+  });
+
+  it.each([402, 403, 429, 500])("refunds a confirmed provider rejection %i only once", async (providerStatus) => {
+    const db = usageFixture();
+    const first = await runHandler({ ...paidFixture, providerStatus, rpcImpl: db.rpc });
+    expect(first.body.refunded).toBe(true);
+    const replay = await runHandler({ ...paidFixture, providerStatus, rpcImpl: db.rpc });
+    expect(replay.status).toBe(409);
+    expect(replay.body.status).toBe("failed");
+    expect(replay.calls).toHaveLength(0);
+    expect(db.totals()).toEqual({ consumed: 1, refunded: 1 });
+  });
+
+  it.each([{ providerThrows: true }, { providerJson: {} }, { providerJson: { choices: [] } }])("keeps uncertain provider outcomes unrefunded and non-executable %#", async (provider) => {
+    const db = usageFixture();
+    const first = await runHandler({ ...paidFixture, ...provider, rpcImpl: db.rpc });
+    expect(first.status).toBe(500);
+    expect(first.body).toMatchObject({ error: "REQUEST_OUTCOME_UNKNOWN", refunded: false });
+    const replay = await runHandler({ ...paidFixture, rpcImpl: db.rpc });
+    expect(replay.body.status).toBe("unknown");
+    expect(replay.calls).toHaveLength(0);
+    expect(db.totals()).toEqual({ consumed: 1, refunded: 0 });
+  });
+
+  it.each([
+    { failStage: "book_retrieval_tier1" }, { malformedStage: "book_retrieval_tier1" },
+    { providerJsonStage: "book_retrieval_tier1", stageJson: {} },
+    { providerJsonStage: "book_retrieval_tier1", stageJson: { choices: [{ message: { content: "{}" } }] } },
+    { providerJsonStage: "book_retrieval_tier1", stageJson: { choices: [{ message: { content: "Malformed inner JSON { broken" } }] } },
+  ])("keeps swallowed upstream uncertainty sticky across a later formatter rejection %#", async (uncertain) => {
+    const db = usageFixture();
+    const r = await runHandler({ raw: "אהרן ברק פרשנות במשפט", label: "ספר", ...uncertain, providerStatus: 429, rpcImpl: db.rpc });
+    expect(r.calls.map((call) => call.stage)).toContain("book_retrieval_tier1");
+    expect(r.calls.map((call) => call.stage)).toContain("formatter");
+    expect(r.body.refunded).toBe(false);
+    expect(db.rows.get("fixture-request-0001")?.status).toBe("unknown");
+    expect(db.totals().refunded).toBe(0);
+  });
+
+  it("does not leak provider uncertainty between concurrent requests", async () => {
+    const uncertain = usageFixture(), rejected = usageFixture();
+    const [unknown, failed] = await Promise.all([
+      runHandler({ raw: "אהרן ברק פרשנות במשפט", label: "ספר", failStage: "book_retrieval_tier1", providerStatus: 429, rpcImpl: uncertain.rpc }),
+      runHandler({ ...paidFixture, providerStatus: 429, rpcImpl: rejected.rpc }),
+    ]);
+    expect(unknown.body.refunded).toBe(false);
+    expect(failed.body.refunded).toBe(true);
+    expect(rejected.totals().refunded).toBe(1);
+  });
+
+  it("does not refund a delivered citation because its title includes a refusal phrase", async () => {
+    const db = usageFixture();
+    const r = await runHandler({ ...paidFixture, formatterReply: 'Jane Doe, "Cannot Interpret", 10 Legal Journal 1 (2020).', rpcImpl: db.rpc });
+    expect(r.status).toBe(200);
+    expect(r.body.content).toContain("Cannot Interpret");
+    expect(db.rows.get("fixture-request-0001")?.status).toBe("succeeded");
+    expect(db.totals().refunded).toBe(0);
+  });
+
+  it("keeps a plain-text refusal pending review without granting a refund or new execution", async () => {
+    const db = usageFixture();
+    const r = await runHandler({ ...paidFixture, formatterReply: "Cannot interpret the requested input.", rpcImpl: db.rpc });
+    expect(r.status).toBe(502);
+    expect(r.body).toMatchObject({ error: "AI_RESPONSE_UNVERIFIED", status: "unknown", refunded: false });
+    expect(db.totals().refunded).toBe(0);
+    const retry = await runHandler({ ...paidFixture, rpcImpl: db.rpc });
+    expect(retry.calls).toHaveLength(0);
+    expect(retry.body.status).toBe("unknown");
+  });
+
+  it.each([null, "", "  "])("refunds a provider-structured refusal with empty content %#, but not delivered content", async (content) => {
+    const failed = usageFixture();
+    const r = await runHandler({ ...paidFixture, providerJson: { choices: [{ message: { content, refusal: "Request refused" } }] }, rpcImpl: failed.rpc });
+    expect(r.status).toBe(422);
+    expect(r.body).toMatchObject({ error: "AI_REFUSED", refunded: true });
+    const delivered = usageFixture();
+    const successful = await runHandler({ ...paidFixture, providerJson: { choices: [{ message: { content: "Valid citation content", refusal: "Metadata must not refund a delivered answer" } }] }, rpcImpl: delivered.rpc });
+    expect(successful.status).toBe(200);
+    expect(delivered.totals().refunded).toBe(0);
+  });
+
+  it("does not announce a refund when terminal persistence is rejected", async () => {
+    const db = usageFixture();
+    const r = await runHandler({ ...paidFixture, providerStatus: 403, rpcImpl: async (name, args) => name === "finish_citation_request"
+      ? { data: { ok: false }, error: { message: "write failed" } } : db.rpc(name, args) });
+    expect(r.body.refunded).toBe(false);
+    expect(r.body.message).not.toContain("הוחזרו");
+    expect(r.rpc.mock.calls.filter(([name]) => name === "finish_citation_request")).toHaveLength(1);
+  });
+
+  it("keeps a delivered answer usable after a lost completion acknowledgment without rerunning or refunding", async () => {
+    const db = usageFixture();
+    const rpcImpl: TestRpc = async (name, args) => {
+      const result = await db.rpc(name, args);
+      return name === "finish_citation_request" ? { data: null, error: { message: "response lost" } } : result;
+    };
+    const first = await runHandler({ ...paidFixture, rpcImpl });
+    expect(first.status).toBe(200);
+    expect(first.body.content).toBeTruthy();
+    expect(first.usageStatus).toBe("unconfirmed");
+    const replay = await runHandler({ ...paidFixture, rpcImpl });
+    expect(replay.body.status).toBe("succeeded");
+    expect(replay.calls).toHaveLength(0);
+    expect(db.totals()).toEqual({ consumed: 1, refunded: 0 });
+  });
+
+  it.each([null, 0, 1, 2, 4])("rejects outdated paid-citation clients before any credit, cache or provider calls %#", async (version) => {
+    const r = await runHandler({ ...paidFixture, version });
+    expect(r.status).toBe(426);
+    expect(r.body.error).toBe("CLIENT_UPDATE_REQUIRED");
+    expect(r.calls).toHaveLength(0);
+    expect(r.rpc).not.toHaveBeenCalled();
+  });
+
+  it.each([null, "short", "x".repeat(201)])("rejects missing or invalid stable IDs before paid work %#", async (requestId) => {
+    const r = await runHandler({ ...paidFixture, requestId });
+    expect(r.status).toBe(400);
+    expect(r.body.error).toBe("INVALID_REQUEST_ID");
+    expect(r.calls).toHaveLength(0);
+    expect(r.rpc).not.toHaveBeenCalled();
+  });
+
+  it("fails closed when the service client is unavailable", async () => {
+    const r = await runHandler({ ...paidFixture, serviceUnavailable: true });
+    expect(r.status).toBe(503);
+    expect(r.calls).toHaveLength(0);
+    expect(r.rpc).not.toHaveBeenCalled();
+  });
+});
+
+describe("explicit failed-parent successors through the real edge handler", () => {
+  it("executes one canonical child for concurrent distinct successor IDs, never silently retrying a failed child", async () => {
+    const db = usageFixture();
+    const parentId = "fixture-request-0001";
+    await runHandler({ ...paidFixture, providerStatus: 429, rpcImpl: db.rpc });
+    let release!: () => void, started!: () => void;
+    const gate = new Promise<void>((resolve) => { release = resolve; });
+    const entered = new Promise<void>((resolve) => { started = resolve; });
+    const child = runHandler({ ...paidFixture, requestId: "child-request-0001", retryOfRequestId: parentId, rpcImpl: db.rpc, providerStatus: 429, providerGate: gate, onProvider: started });
+    await entered;
+    const rival = await runHandler({ ...paidFixture, requestId: "child-request-0002", retryOfRequestId: parentId, rpcImpl: db.rpc });
+    expect(rival.status).toBe(409);
+    expect(rival.body).toMatchObject({ requestId: "child-request-0001", retryOfRequestId: parentId, status: "in_progress", retry_parent_refund_receipt: { status: "refunded", refunded: true } });
+    expect(rival.calls).toHaveLength(0);
+    release();
+    expect((await child).body.status).toBe("failed");
+    const stale = await runHandler({ ...paidFixture, requestId: "child-request-0003", retryOfRequestId: parentId, rpcImpl: db.rpc });
+    expect(stale.body).toMatchObject({ requestId: "child-request-0001", status: "failed", refund_receipt: { status: "refunded", refunded: true } });
+    expect(stale.calls).toHaveLength(0);
+    expect(db.totals()).toEqual({ consumed: 2, refunded: 2 });
+    expect(db.rows.size).toBe(2);
+    expect(db.rows.get(parentId)?.status).toBe("failed");
+  });
+  it.each(["in_progress", "unknown", "succeeded"])("rejects a %s parent before provider work", async (state) => {
+    const db = usageFixture();
+    await runHandler({ ...paidFixture, rpcImpl: db.rpc });
+    db.rows.get("fixture-request-0001")!.status = state;
+    const r = await runHandler({ ...paidFixture, requestId: "child-request-0001", retryOfRequestId: "fixture-request-0001", rpcImpl: db.rpc });
+    expect(r.status).toBe(409);
+    expect(r.body.error).toBe("RETRY_PARENT_NOT_FAILED");
+    expect(r.calls).toHaveLength(0);
+    expect(db.totals().consumed).toBe(1);
+  });
+  it("rejects changed input and a child replay that omits its immutable parent", async () => {
+    const db = usageFixture();
+    await runHandler({ ...paidFixture, providerStatus: 429, rpcImpl: db.rpc });
+    const mismatch = await runHandler({ ...paidFixture, raw: "מקור משפטי אחר לבדיקת הבקרה", requestId: "child-request-0001", retryOfRequestId: "fixture-request-0001", rpcImpl: db.rpc });
+    expect(mismatch.body.error).toBe("RETRY_FINGERPRINT_MISMATCH");
+    expect(mismatch.calls).toHaveLength(0);
+    await runHandler({ ...paidFixture, requestId: "child-request-0001", retryOfRequestId: "fixture-request-0001", rpcImpl: db.rpc });
+    const detached = await runHandler({ ...paidFixture, requestId: "child-request-0001", rpcImpl: db.rpc });
+    expect(detached.body.error).toBe("REQUEST_ANCESTRY_MISMATCH");
+    expect(detached.calls).toHaveLength(0);
+    expect(db.totals().consumed).toBe(2);
+  });
+  it.each([null, "short", 42, "fixture-request-0001", "x".repeat(201)])("rejects malformed or self-linked parents before claim %#", async (retryOfRequestId) => {
+    const r = await runHandler({ ...paidFixture, retryOfRequestId });
+    expect(r.status).toBe(400);
+    expect(r.body.error).toBe("INVALID_RETRY_REQUEST");
+    expect(r.calls).toHaveLength(0);
+    expect(r.rpc).not.toHaveBeenCalled();
+  });
+  it.each(["deferred", "review_required", "retained", "not_charged"])("reports %s failed settlement without inventing a refund", async (status) => {
+    const db = usageFixture();
+    const receipt = { status, refunded: false, units_refunded: 0, request_id: "billing-anchor" };
+    const r = await runHandler({ ...paidFixture, providerStatus: 403, rpcImpl: async (name, args) => name === "finish_citation_request" ? { data: { ok: true, status: "failed", refunded: false, refund_receipt: receipt }, error: null } : db.rpc(name, args) });
+    expect(r.body).toMatchObject({ status: "failed", refunded: false, refund_receipt: receipt });
+    expect(r.body.message).not.toContain("הוחזרו");
+  });
+});
+
+
+describe("gateway outcomes cannot authorize a paid successor", () => {
+  it.each([408, 502, 504])("keeps formatter HTTP %i unknown and unrefunded", async (providerStatus) => {
+    const db = usageFixture();
+    const r = await runHandler({ ...paidFixture, providerStatus, rpcImpl: db.rpc });
+    expect(r.body).toMatchObject({ error: "REQUEST_OUTCOME_UNKNOWN", status: "unknown", refunded: false });
+    expect(db.rows.get("fixture-request-0001")?.status).toBe("unknown");
+    const child = await runHandler({ ...paidFixture, requestId: "child-request-0001", retryOfRequestId: "fixture-request-0001", rpcImpl: db.rpc });
+    expect(child.body.error).toBe("RETRY_PARENT_NOT_FAILED");
+    expect(child.calls).toHaveLength(0);
+    expect(db.totals()).toEqual({ consumed: 1, refunded: 0 });
+  });
+  it("keeps retrieval gateway uncertainty sticky across formatter rejection, isolated from a concurrent clean rejection", async () => {
+    const uncertain = usageFixture(), known = usageFixture();
+    const [a, b] = await Promise.all([
+      runHandler({ raw: "אהרן ברק פרשנות במשפט", label: "ספר", statusStage: { stage: "book_retrieval_tier1", status: 502 }, providerStatus: 429, rpcImpl: uncertain.rpc }),
+      runHandler({ ...paidFixture, providerStatus: 429, rpcImpl: known.rpc }),
+    ]);
+    expect(a.calls.map((call) => call.stage)).toContain("formatter");
+    expect(a.body).toMatchObject({ error: "REQUEST_OUTCOME_UNKNOWN", status: "unknown", refunded: false });
+    expect(b.body).toMatchObject({ status: "failed", refunded: true });
+    expect(uncertain.totals().refunded).toBe(0);
+    expect(known.totals().refunded).toBe(1);
+  });
+});
+
+
+describe("durable execution inputs and results through actual citation handler", () => {
+  it("persists exact canonical execution body with the claim and request ID with success", async () => {
+    const r = await runHandler(paidFixture);
+    const begin = r.rpc.mock.calls.find(([name]) => name === "begin_citation_request")![1];
+    expect(begin._recovery_input).toMatchObject({ messages: [{ role: "user" }], rawInput: paidFixture.raw, foreignLookup: null, batchId: null });
+    expect(Object.keys(begin._recovery_input as object).sort()).toEqual(["batchId", "foreignLookup", "messages", "rawInput"]);
+    const finish = r.rpc.mock.calls.find(([name]) => name === "finish_citation_request")![1];
+    expect(finish._result).toEqual({ content: r.body.content });
+    expect(r.body).toMatchObject({ requestId: "fixture-request-0001", recoveryAvailability: "available" });
+  });
+  it("accepts exact recovered nonbatch input including explicit nulls for a failed-parent retry", async () => {
+    const db = usageFixture();
+    const original = await runHandler({ ...paidFixture, rawInputNull: true, batchId: null, providerStatus: 429, rpcImpl: db.rpc });
+    expect(original.body.status).toBe("failed");
+    const child = await runHandler({ ...paidFixture, rawInputNull: true, batchId: null, requestId: "child-restored-0001", retryOfRequestId: "fixture-request-0001", rpcImpl: db.rpc });
+    expect(child.status).toBe(200);
+    const payload = child.rpc.mock.calls.find(([name]) => name === "begin_citation_request")![1]._recovery_input;
+    expect(payload).toMatchObject({ rawInput: null, foreignLookup: null, batchId: null });
+    expect(db.totals()).toEqual({ consumed: 2, refunded: 1 });
+  });
+  it("stores valid empty-content structured output without forcing a formatter", async () => {
+    const foreignResult = { kind: "journal_article", jurisdiction: "OTHER", fields: { articleTitle: "Fixture Title" }, grounded: { articleTitle: true },
+      provenance: { articleTitle: { value: "Fixture Title", basis: "structured_metadata" } }, sources: [],
+      identity: { matched: true, anchors: ["title:Fixture Title"], conflicts: [] }, diagnostics: { tier1Queried: false, tier2Fired: false }, articleResolution: "incomplete" };
+    const r = await runHandler({ raw: 'Jane Doe, "Fixture Title"', label: "מאמר לועזי", foreign: { enabled: true, articleResponseVersion: 1, kind: "journal_article", jurisdiction: "OTHER", rawInput: "Fixture Title" }, foreignResult });
+    expect(r.calls).toHaveLength(0);
+    expect(r.body.recoveryAvailability).toBe("available");
+    expect(r.rpc.mock.calls.find(([name]) => name === "finish_citation_request")![1]._result).toEqual({ content: "", foreignLookup: foreignResult });
+  });
+  it("rejects oversized recovery input before cache, claim or providers", async () => {
+    const r = await runHandler({ ...paidFixture, raw: "א".repeat(70000) });
+    expect([400, 413]).toContain(r.status);
+    expect(r.rpc).not.toHaveBeenCalled(); expect(r.calls).toHaveLength(0); expect(r.zero).not.toHaveBeenCalled();
+  });
+  it("keeps a usable oversized live answer unconfirmed without refund or stored raw output", async () => {
+    const r = await runHandler({ ...paidFixture, formatterReply: "Synthetic legal citation ".repeat(12000) });
+    expect(r.status).toBe(200); expect(r.body.content.length).toBeGreaterThan(262144);
+    expect(r.body.recoveryAvailability).toBe("unconfirmed");
+    const terminal = r.rpc.mock.calls.filter(([name]) => name === "finish_citation_request");
+    expect(terminal).toHaveLength(1); expect(terminal[0][1]).toMatchObject({ _outcome: "unknown", _result: null });
   });
 });

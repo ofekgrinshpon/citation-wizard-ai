@@ -169,7 +169,11 @@ function looksLikePdfUrl(url: string): boolean {
 
 // Convert a PDF byte buffer to plain text via ConvertAPI (pdf/to/txt).
 // Returns "" on any failure so the caller can fall through gracefully.
-async function extractPdfTextViaConvertApi(bytes: Uint8Array, filename = "case.pdf"): Promise<string> {
+async function extractPdfTextViaConvertApi(
+  bytes: Uint8Array,
+  filename = "case.pdf",
+  onUnknownOutcome?: () => void,
+): Promise<string> {
   const CONVERTAPI_SECRET = Deno.env.get("CONVERTAPI_SECRET");
   if (!CONVERTAPI_SECRET) {
     console.warn("extractPdfTextViaConvertApi: CONVERTAPI_SECRET not configured");
@@ -195,11 +199,15 @@ async function extractPdfTextViaConvertApi(bytes: Uint8Array, filename = "case.p
     }
     const json = await res.json();
     const fileUrl = json?.Files?.[0]?.Url;
-    if (!fileUrl) return "";
+    if (typeof fileUrl !== "string" || !fileUrl) {
+      onUnknownOutcome?.();
+      return "";
+    }
     const txtRes = await fetchWithTimeout(fileUrl, { method: "GET" }, 15000);
     if (!txtRes.ok) return "";
     return (await txtRes.text()).trim();
   } catch (e) {
+    onUnknownOutcome?.();
     console.warn("extractPdfTextViaConvertApi error:", e instanceof Error ? e.message : e);
     return "";
   }
@@ -232,13 +240,15 @@ serve(async (req) => {
 
     const adminClient = createClient(supabaseUrl, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
 
+    let executionOutcomeUnknown = false;
+    const markUnknownOutcome = () => { executionOutcomeUnknown = true; };
     const body = await req.json();
     const question: string = (body.question || "").toString();
     const userText: string = (body.userText || "").toString();
 
     if (!question.trim() && !userText.trim()) {
       return new Response(JSON.stringify({
-        source: "none", refusal_message: REFUSAL_MESSAGE,
+        source: "none", refusal_message: REFUSAL_MESSAGE, execution_outcome_unknown: false,
       }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
@@ -322,13 +332,24 @@ serve(async (req) => {
 
         if (ppRes.ok) {
           const pp = await ppRes.json();
-          const txt: string = pp.choices?.[0]?.message?.content || "";
-          const cites: string[] = pp.citations || [];
+          const txt = typeof pp?.choices?.[0]?.message?.content === "string"
+            ? pp.choices[0].message.content : "";
+          const cites: string[] = Array.isArray(pp?.citations)
+            ? pp.citations.filter((value: unknown): value is string => typeof value === "string") : [];
           let parsed: Record<string, unknown> = {};
           try {
             const j = txt.match(/\{[\s\S]*\}/);
             if (j) parsed = JSON.parse(j[0]);
-          } catch { /* ignore */ }
+            // A valid explicit null/empty source URL represents no match. A
+            // missing/malformed provider shape does not prove that outcome.
+            if (!j || !parsed || typeof parsed !== "object" || !("source_url" in parsed) ||
+              (parsed.source_url !== null && typeof parsed.source_url !== "string")) {
+              executionOutcomeUnknown = true;
+              parsed = parsed && typeof parsed === "object" ? parsed : {};
+            }
+          } catch {
+            executionOutcomeUnknown = true;
+          }
 
           const url = (parsed.source_url as string) || cites[0] || "";
           if (url) {
@@ -361,7 +382,7 @@ serve(async (req) => {
                     plain = extractDocxText(buf);
                     console.log(`verify-case-fulltext: external DOCX (${plain.length} chars, ${buf.length}B from ${url})`);
                   } else if (looksLikePdfMagic(buf)) {
-                    plain = await extractPdfTextViaConvertApi(buf);
+                    plain = await extractPdfTextViaConvertApi(buf, "case.pdf", markUnknownOutcome);
                     console.log(`verify-case-fulltext: external PDF via magic (${plain.length} chars, ${buf.length}B from ${url})`);
                   } else {
                     // Not a real binary — try treating buffer as HTML/text fallback.
@@ -383,7 +404,7 @@ serve(async (req) => {
                 } else if (isPdfByCt || cdMentionsPdf || urlSuggestsPdf) {
                   const buf = new Uint8Array(await txtRes.arrayBuffer());
                   if (looksLikePdfMagic(buf) || looksLikeZip(buf)) {
-                    plain = looksLikeZip(buf) ? extractDocxText(buf) : await extractPdfTextViaConvertApi(buf);
+                    plain = looksLikeZip(buf) ? extractDocxText(buf) : await extractPdfTextViaConvertApi(buf, "case.pdf", markUnknownOutcome);
                     console.log(`verify-case-fulltext: external PDF (${plain.length} chars, ${buf.length}B from ${url})`);
                   } else {
                     console.warn(`verify-case-fulltext: rejected PDF — bad magic (bytes=${buf.length}) — ${url}`);
@@ -431,11 +452,13 @@ serve(async (req) => {
                 }
               }
             } catch (e) {
+              executionOutcomeUnknown = true;
               console.warn("External URL fetch failed:", e instanceof Error ? e.message : e);
             }
           }
         }
       } catch (e) {
+        executionOutcomeUnknown = true;
         console.warn("Perplexity verify failed:", e instanceof Error ? e.message : e);
       }
     }
@@ -444,11 +467,12 @@ serve(async (req) => {
     console.log("verify-case-fulltext: not found");
     return new Response(JSON.stringify({
       source: "none",
+      execution_outcome_unknown: executionOutcomeUnknown,
       refusal_message: REFUSAL_MESSAGE,
     }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
   } catch (e) {
     console.error("verify-case-fulltext error:", e);
-    return new Response(JSON.stringify({ error: "internal" }), {
+    return new Response(JSON.stringify({ error: "internal", execution_outcome_unknown: true }), {
       status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }

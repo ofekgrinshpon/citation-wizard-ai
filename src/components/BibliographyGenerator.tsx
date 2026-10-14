@@ -1,11 +1,14 @@
 import { newTelemetryBatch, sourceTelemetry, type CostTelemetry } from "@/lib/costTelemetry";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useBibliography, CATEGORY_LABELS, classifyCitation, type BibSourceCategory } from "@/hooks/useBibliography";
 import { FormattedCitation } from "./FormattedCitation";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { toast } from "sonner";
-import { runCitation, CitationRunError } from "@/lib/runCitation";
+import { runCitation, CitationRunError, type CitationRunRetry, type CitationRunRecovery } from "@/lib/runCitation";
+import { useAuth } from "@/hooks/useAuth";
+import { useCitationRowGuard } from "@/lib/useCitationRowGuard";
+import { citationRetryDisclosure } from "@/lib/functionError";
 import { runPool } from "@/lib/concurrency";
 import type { SourceType } from "@/data/abbreviations";
 
@@ -19,6 +22,8 @@ interface ReviewItem {
   isVerified: boolean;
   options: string[];
   errorMsg?: string;
+  citationRetry?: CitationRunRetry;
+  recovery?: CitationRunRecovery;
   warningMsg?: string;
   isEditing: boolean;
   editValue: string;
@@ -66,11 +71,23 @@ const CATEGORY_TO_SOURCE_TYPE: Partial<Record<BibSourceCategory, SourceType>> = 
 
 
 export function BibliographyGenerator() {
+  const { user } = useAuth();
+  const rowGuard = useCitationRowGuard(user?.id ?? null);
   const { sortedEntries, addEntries, removeEntry, clearAll } = useBibliography();
   const [rawText, setRawText] = useState("");
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState<{ done: number; total: number } | null>(null);
   const [reviewItems, setReviewItems] = useState<ReviewItem[]>([]);
+  const reviewItemsRef = useRef(reviewItems);
+  reviewItemsRef.current = reviewItems;
+  useEffect(() => {
+    rowGuard.invalidate();
+    setReviewItems([]);
+    setRawText("");
+    setLoading(false);
+    setProgress(null);
+    setServiceOutage(null);
+  }, [user?.id, rowGuard]);
   /** Set when every row failed with the same service-level error (AI provider outage). */
   const [serviceOutage, setServiceOutage] = useState<string | null>(null);
 
@@ -122,14 +139,17 @@ export function BibliographyGenerator() {
     rawInput: string,
     sourceTypeHint?: BibSourceCategory,
     telemetry: CostTelemetry = sourceTelemetry(newTelemetryBatch("bibliography")),
+    isResultCurrent?: () => boolean,
+    recovery?: CitationRunRecovery,
   ): Promise<Omit<ReviewItem, "id" | "isEditing" | "editValue">> => {
     const overrideType =
       sourceTypeHint && sourceTypeHint !== "unknown"
         ? CATEGORY_TO_SOURCE_TYPE[sourceTypeHint]
         : undefined;
 
-    const result = await runCitation({
+    const result = recovery ? await recovery.retry(isResultCurrent) : await runCitation({
       rawInput,
+      isResultCurrent,
       overrideType,
       useVerifiedStore: true,
       telemetry,
@@ -143,7 +163,10 @@ export function BibliographyGenerator() {
         citation: "",
         isVerified: false,
         options: [],
-        errorMsg: "לא הוחזר אזכור",
+        errorMsg: result.reply || "לא הוחזר אזכור",
+        // Disambiguation/locally unusable success is already delivered. Keep
+        // its exact result; the generic action may not start another paid call.
+        recovery: Object.freeze({ retry: async () => result }),
         sourceTypeOverride: sourceTypeHint,
       };
     }
@@ -162,9 +185,11 @@ export function BibliographyGenerator() {
   const lookupOneSafe = async (
     rawInput: string,
     sourceTypeHint?: BibSourceCategory,
+    isResultCurrent?: () => boolean,
+    recovery?: CitationRunRecovery,
   ): Promise<Omit<ReviewItem, "id" | "isEditing" | "editValue">> => {
     try {
-      return await lookupOne(rawInput, sourceTypeHint);
+      return await lookupOne(rawInput, sourceTypeHint, undefined, isResultCurrent, recovery);
     } catch (e) {
       return {
         rawInput,
@@ -172,6 +197,8 @@ export function BibliographyGenerator() {
         citation: "",
         isVerified: false,
         options: [],
+        citationRetry: e instanceof CitationRunError ? e.citationRetry : undefined,
+        recovery: e instanceof CitationRunError ? e.recovery : undefined,
         errorMsg:
           e instanceof CitationRunError
             ? e.userMessage
@@ -193,6 +220,8 @@ export function BibliographyGenerator() {
       return;
     }
 
+    const job = rowGuard.begin("raw-list");
+    if (!job) return;
     setLoading(true);
     setServiceOutage(null);
     setProgress({ done: 0, total: lines.length });
@@ -205,17 +234,19 @@ export function BibliographyGenerator() {
       const rowTelemetry = lines.map(() => sourceTelemetry(telemetryBatch));
       const results = await runPool(
         lines,
-        (line, i) => lookupOne(line, undefined, rowTelemetry[i]),
+        (line, i) => lookupOne(line, undefined, rowTelemetry[i], job.isCurrent),
         {
           concurrency: CONCURRENCY,
-          retries: 1,
+          retries: 0,
           onSettled: () => {
             done += 1;
+            if (!job.isCurrent()) return;
             setProgress({ done, total: lines.length });
           },
         },
       );
 
+      if (!job.isCurrent()) return;
       const newItems: ReviewItem[] = results.map((r, i) => {
         const base: Omit<ReviewItem, "id" | "isEditing" | "editValue"> = r.ok
           ? r.value!
@@ -225,6 +256,8 @@ export function BibliographyGenerator() {
               citation: "",
               isVerified: false,
               options: [],
+              citationRetry: r.error instanceof CitationRunError ? r.error.citationRetry : undefined,
+              recovery: r.error instanceof CitationRunError ? r.error.recovery : undefined,
               errorMsg:
                 r.error instanceof CitationRunError
                   ? r.error.userMessage
@@ -268,18 +301,23 @@ export function BibliographyGenerator() {
       }
 
     } catch {
-      toast.error("שגיאה בעיבוד הרשימה");
+      if (job.isCurrent()) toast.error("שגיאה בעיבוד הרשימה");
     } finally {
-      setLoading(false);
-      setProgress(null);
+      if (job.isCurrent()) { setLoading(false); setProgress(null); }
+      job.finish();
     }
   };
 
   const updateItem = (id: string, patch: Partial<ReviewItem>) => {
+    if ("editValue" in patch || "sourceTypeOverride" in patch) {
+      rowGuard.invalidate(id);
+      patch = { ...patch, citationRetry: undefined, recovery: undefined };
+    }
     setReviewItems((prev) => prev.map((it) => (it.id === id ? { ...it, ...patch } : it)));
   };
 
   const removeReviewItem = (id: string) => {
+    rowGuard.invalidate(id);
     setReviewItems((prev) => prev.filter((it) => it.id !== id));
   };
 
@@ -288,10 +326,12 @@ export function BibliographyGenerator() {
   };
 
   const startEdit = (id: string) => {
+    rowGuard.invalidate(id);
     setReviewItems((prev) =>
       prev.map((it) =>
         it.id === id
-          ? { ...it, isEditing: true, editValue: it.citation || it.rawInput }
+          ? { ...it, citationRetry: undefined, isEditing: true, editValue: it.citation || it.rawInput,
+            status: it.status === "loading" ? "error" : it.status }
           : it,
       ),
     );
@@ -303,7 +343,7 @@ export function BibliographyGenerator() {
         if (it.id !== id) return it;
         const v = it.editValue.trim();
         if (!v) return it;
-        return { ...it, isEditing: false, citation: v, status: "ok", isVerified: false, options: [], errorMsg: undefined, warningMsg: undefined };
+        return { ...it, isEditing: false, citation: v, status: "ok", isVerified: false, options: [], errorMsg: undefined, warningMsg: undefined, citationRetry: undefined, recovery: undefined };
       }),
     );
   };
@@ -312,25 +352,23 @@ export function BibliographyGenerator() {
     updateItem(id, { isEditing: false });
   };
 
-  const retryLookup = async (id: string, hintOverride?: BibSourceCategory) => {
-    const item = reviewItems.find((i) => i.id === id);
-    if (!item) return;
-    // Always prefer the current edit buffer if the user typed something there;
-    // otherwise fall back to the existing citation, then to the original raw input.
-    const editedValue = item.editValue?.trim();
-    const currentCitation = item.citation?.trim();
-    const query = editedValue || currentCitation || item.rawInput;
+  const retryLookup = async (id: string, hintOverride?: BibSourceCategory, explicitRetry?: CitationRunRetry) => {
+    const item = reviewItemsRef.current.find((i) => i.id === id);
+    if (!item || (explicitRetry && (item.citationRetry !== explicitRetry || hintOverride !== undefined))) return;
+    const recovery = hintOverride === undefined ? item.recovery : undefined;
+    const query = explicitRetry || recovery ? item.rawInput : item.editValue?.trim() || item.citation?.trim() || item.rawInput;
     if (!query) return;
+    const job = rowGuard.begin(id);
+    if (!job) return;
     const hint = hintOverride ?? item.sourceTypeOverride;
-    updateItem(id, { status: "loading", isEditing: false, sourceTypeOverride: hint });
-    const r = await lookupOneSafe(query, hint);
-    setReviewItems((prev) =>
-      prev.map((it) =>
-        it.id === id
-          ? { ...it, ...r, rawInput: query, isEditing: false, editValue: r.citation || query }
-          : it,
-      ),
-    );
+    setReviewItems((prev) => prev.map((it) => it.id === id
+      ? { ...it, status: "loading", isEditing: false, sourceTypeOverride: hint, citationRetry: undefined } : it));
+    try {
+      const r = await lookupOneSafe(query, hint, job.isCurrent, explicitRetry ?? recovery);
+      if (!job.isCurrent()) return;
+      setReviewItems((prev) => prev.map((it) => it.id === id
+        ? { ...it, ...r, rawInput: query, isEditing: false, editValue: r.citation || query } : it));
+    } finally { job.finish(); }
   };
 
   const handleChangeCategory = (id: string, cat: BibSourceCategory) => {
@@ -348,7 +386,7 @@ export function BibliographyGenerator() {
       if (!it.isEditing) return it;
       const v = it.editValue?.trim();
       if (!v) return { ...it, isEditing: false };
-      return { ...it, isEditing: false, citation: v, status: "ok" as ReviewStatus, isVerified: false, options: [], errorMsg: undefined, warningMsg: undefined };
+      return { ...it, isEditing: false, citation: v, status: "ok" as ReviewStatus, isVerified: false, options: [], errorMsg: undefined, warningMsg: undefined, citationRetry: undefined, recovery: undefined };
     });
     if (flushed !== reviewItems) setReviewItems(flushed);
 
@@ -547,7 +585,7 @@ export function BibliographyGenerator() {
               </p>
             </div>
             <button
-              onClick={() => setReviewItems([])}
+              onClick={() => { reviewItems.forEach((item) => rowGuard.invalidate(item.id)); setReviewItems([]); }}
               className="text-xs text-muted-foreground hover:text-destructive px-2 py-1 rounded transition-colors"
             >
               נקה רשימה
@@ -564,6 +602,7 @@ export function BibliographyGenerator() {
                 onCancelEdit={() => cancelEdit(item.id)}
                 onChangeEdit={(v) => updateItem(item.id, { editValue: v })}
                 onRetry={() => retryLookup(item.id)}
+                onNewAttempt={rowGuard.bind(item.id, () => { if (item.citationRetry) void retryLookup(item.id, undefined, item.citationRetry); })}
                 onRemove={() => removeReviewItem(item.id)}
                 onPickOption={(opt) => pickDisambiguation(item.id, opt)}
                 onChangeCategory={(cat) => handleChangeCategory(item.id, cat)}
@@ -691,6 +730,7 @@ function ReviewRow({
   onCancelEdit,
   onChangeEdit,
   onRetry,
+  onNewAttempt,
   onRemove,
   onPickOption,
   onChangeCategory,
@@ -701,6 +741,7 @@ function ReviewRow({
   onCancelEdit: () => void;
   onChangeEdit: (v: string) => void;
   onRetry: () => void;
+  onNewAttempt: () => void;
   onRemove: () => void;
   onPickOption: (opt: string) => void;
   onChangeCategory: (cat: BibSourceCategory) => void;
@@ -764,7 +805,7 @@ function ReviewRow({
         )}
 
 
-        {item.status === "ok" && (
+        {(item.status === "ok" || item.status === "error") && (
           <Popover>
             <PopoverTrigger asChild>
               <button className="text-[10px] bg-muted hover:bg-accent text-foreground px-1.5 py-0.5 rounded border border-border transition-colors">
@@ -843,7 +884,15 @@ function ReviewRow({
           ))}
         </div>
       ) : item.status === "error" ? (
-        <p className="text-sm text-destructive">{item.errorMsg || "שגיאה לא ידועה"}</p>
+        <div className="space-y-2">
+          <p className="text-sm text-destructive">{item.errorMsg || "שגיאה לא ידועה"}</p>
+          {item.citationRetry && <>
+            <p className="text-xs text-muted-foreground">{citationRetryDisclosure(item.citationRetry.descriptor)}</p>
+            <button type="button" onClick={onNewAttempt} className="text-xs px-3 py-1.5 rounded-md border border-primary text-primary">
+              ניסיון חדש
+            </button>
+          </>}
+        </div>
       ) : item.status === "loading" ? (
         <p className="text-sm text-muted-foreground italic">מחפש מחדש...</p>
       ) : (

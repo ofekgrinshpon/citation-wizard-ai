@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { normalizeHebrewNumberRanges } from "@/lib/hebrewNumberRange";
+import { citationHistoryHtml } from "@/lib/citationHistoryMarkup";
 
 interface CitationRecord {
   id: string;
@@ -89,12 +90,9 @@ export function CitationHistorySidebar({ projectId, refreshKey }: Props) {
     return citationLines.length > 0 ? citationLines[citationLines.length - 1] : normalized;
   };
 
-  /** Convert markdown bold/italic to HTML */
-  const markdownToHtml = (text: string) =>
-    text
-      .replace(/\*\*(.+?)\*\*/g, "<b>$1</b>")
-      .replace(/\*(.+?)\*/g, "<i>$1</i>")
-      .replace(/_(.+?)_/g, "<i>$1</i>");
+  // Both the display and HTML clipboard accept only generated emphasis tags.
+  // Stored text (including HTML-looking source titles) stays literal.
+  const markdownToHtml = citationHistoryHtml;
 
   /** Strip markdown for plain text fallback */
   const stripMarkdown = (text: string) =>

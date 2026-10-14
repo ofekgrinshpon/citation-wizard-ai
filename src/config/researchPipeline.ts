@@ -1,25 +1,22 @@
 /**
- * Which legal-research pipeline the beta experience calls.
- *
- * Rollback: set RESEARCH_PIPELINE back to "v1" — one line, no other change.
- * V1 stays deployed and fully functional either way.
+ * The supported legal-research execution pipeline.
+ * V1 is retired; its historical results and stage labels remain readable.
  */
-export const RESEARCH_PIPELINE: "v1" | "v2" = "v2";
+export const RESEARCH_PIPELINE = "v2" as const;
 
 export const RESEARCH_FUNCTIONS = {
-  v1: "legal-research-v1",
   v2: "legal-research-v2",
 } as const;
 
 /**
  * One destination for normal Legal Research, attachments or not.
  *
- * V2 reads user uploads as first-class preloaded evidence sources, so a file
- * no longer diverts the request to V1. Rollback stays global and intentional:
- * set RESEARCH_PIPELINE = "v1" above.
+ * V2 reads user uploads as first-class preloaded evidence sources.
+ * Keep the options signature for existing callers; attachments never change
+ * the execution endpoint.
  */
 export function researchFunctionFor(_opts: { hasAttachments: boolean } = { hasAttachments: false }): string {
-  return RESEARCH_PIPELINE === "v2" ? RESEARCH_FUNCTIONS.v2 : RESEARCH_FUNCTIONS.v1;
+  return RESEARCH_FUNCTIONS.v2;
 }
 
 export const V1_STAGES: Array<{ key: string; label: string }> = [

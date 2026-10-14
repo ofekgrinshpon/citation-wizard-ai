@@ -1,8 +1,11 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { FootnoteReviewCard, type ReviewCardCell } from "@/components/FootnoteReviewCard";
-import { runCitation, CitationRunError, type RunCitationResult } from "@/lib/runCitation";
-import { runPool, isTransientError } from "@/lib/concurrency";
+import { runCitation, CitationRunError, type RunCitationResult, type CitationRunRetry, type CitationRunRecovery } from "@/lib/runCitation";
+import { citationRetryDisclosure } from "@/lib/functionError";
+import { useCitationRowGuard } from "@/lib/useCitationRowGuard";
+import { useAuth } from "@/hooks/useAuth";
+import { runPool } from "@/lib/concurrency";
 import { applyRepeatCitationRules, extractCitationOnly, stripPresentationWarnings } from "@/lib/footnoteRepeatRules";
 import { CREDIT_COSTS } from "@/lib/creditCosts";
 import { newTelemetryBatch, sourceTelemetry, type CostTelemetry } from "@/lib/costTelemetry";
@@ -22,6 +25,8 @@ export type UniformFootnote = {
 };
 
 interface Cell extends ReviewCardCell {
+  citationRetry?: CitationRunRetry;
+  recovery?: CitationRunRecovery;
   /** The untouched V2 footnote text, kept as regeneration grounding. */
   originalCitation: string;
   originalUrl?: string | null;
@@ -48,6 +53,7 @@ interface Props {
 }
 
 export function UniformCitationPanel({ footnotes }: Props) {
+  const { user } = useAuth();
   const { currentProject } = useProjects();
   const { isOfficeAddin, hasDocumentAccess } = useOffice();
   const projectId = currentProject?.id;
@@ -57,6 +63,18 @@ export function UniformCitationPanel({ footnotes }: Props) {
   const [running, setRunning] = useState(false);
   const [progress, setProgress] = useState<{ done: number; total: number } | null>(null);
   const [cells, setCells] = useState<Cell[]>([]);
+  const scope = JSON.stringify([user?.id ?? null, projectId ?? null, footnotes]);
+  const rowGuard = useCitationRowGuard(scope);
+  const cellsRef = useRef(cells);
+  cellsRef.current = cells;
+  useEffect(() => {
+    rowGuard.invalidate();
+    setConfirming(false);
+    setStarted(false);
+    setRunning(false);
+    setProgress(null);
+    setCells([]);
+  }, [scope, rowGuard]);
 
   const maxCost = footnotes.length * CREDIT_COSTS.batchPerCitation;
 
@@ -66,6 +84,8 @@ export function UniformCitationPanel({ footnotes }: Props) {
     status: res.status,
     warningMsg: res.status === "warning" ? res.warningMsg : undefined,
     errorMsg: undefined,
+    citationRetry: undefined,
+    recovery: undefined,
     detectedType: res.sourceType,
     approved: false,
   });
@@ -74,6 +94,8 @@ export function UniformCitationPanel({ footnotes }: Props) {
     (e as { userMessage?: string })?.userMessage || "לא ניתן היה ליצור אזכור אחיד למקור זה";
 
   const start = async () => {
+    const batchJob = rowGuard.begin("batch");
+    if (!batchJob) return;
     setConfirming(false);
     setStarted(true);
     setRunning(true);
@@ -86,11 +108,12 @@ export function UniformCitationPanel({ footnotes }: Props) {
       originalCitation: fn.title,
       originalUrl: fn.url ?? null,
     }));
+    const rowJobs = initial.map((cell) => rowGuard.begin(String(cell.id)));
     setCells(initial);
     setProgress({ done: 0, total: initial.length });
 
-    // Create ids once, outside the pool task, so automatic retries stay
-    // attributed to the same source. These ids never affect billing.
+    // Create attribution once per logical source. Explicit recovery retains
+    // this prepared context; these ids never affect billing.
     let sourceAttribution: Array<CostTelemetry | undefined> = [];
     try {
       const batch = newTelemetryBatch("uniform_citation");
@@ -103,6 +126,7 @@ export function UniformCitationPanel({ footnotes }: Props) {
       (cell, index) =>
         runCitation({
           rawInput: cell.input,
+          isResultCurrent: () => batchJob.isCurrent() && !!rowJobs[index]?.isCurrent(),
           overrideType: cell.sourceTypeOverride,
           projectId,
           useVerifiedStore: true,
@@ -110,10 +134,10 @@ export function UniformCitationPanel({ footnotes }: Props) {
         }),
       {
         concurrency: 2,
-        retries: 1,
-        shouldRetry: (e) =>
-          isTransientError(e) && !(e as CitationRunError)?.isInsufficientCredits,
+        retries: 0,
         onSettled: (index, result) => {
+          const rowJob = rowJobs[index];
+          if (!batchJob.isCurrent() || !rowJob?.isCurrent()) return;
           const cellId = initial[index].id;
           done += 1;
           setProgress({ done, total: initial.length });
@@ -125,69 +149,74 @@ export function UniformCitationPanel({ footnotes }: Props) {
             setCells((prev) =>
               prev.map((c) =>
                 c.id === cellId
-                  ? { ...c, status: "error" as const, output: null, errorMsg: message }
+                  ? { ...c, status: "error" as const, output: null, errorMsg: message,
+                    citationRetry: result.error instanceof CitationRunError ? result.error.citationRetry : undefined,
+                    recovery: result.error instanceof CitationRunError ? result.error.recovery : undefined }
                   : c,
               ),
             );
           }
+          rowJob.finish();
         },
       },
     );
 
+    if (!batchJob.isCurrent()) { rowJobs.forEach((job) => job?.finish()); batchJob.finish(); return; }
+    rowJobs.forEach((job) => job?.finish());
+    batchJob.finish();
     setCells((prev) => applyRepeatCitationRules(prev));
     setRunning(false);
     setProgress(null);
   };
 
-  const regenerateOne = async (id: number) => {
-    const cell = cells.find((c) => c.id === id);
-    if (!cell || !cell.input.trim()) return;
+  const regenerateOne = async (id: number, explicitRetry?: CitationRunRetry) => {
+    const cell = cellsRef.current.find((c) => c.id === id);
+    if (!cell || !cell.input.trim() || (explicitRetry && cell.citationRetry !== explicitRetry)) return;
+    const job = rowGuard.begin(String(id));
+    if (!job) return;
     let telemetry: CostTelemetry | undefined;
+    try { telemetry = sourceTelemetry(newTelemetryBatch("uniform_citation")); }
+    catch { /* A new user action must still work without attribution. */ }
+    setCells((prev) => prev.map((c) => c.id === id
+      ? { ...c, status: "loading", output: null, errorMsg: undefined, approved: false, citationRetry: undefined } : c));
     try {
-      telemetry = sourceTelemetry(newTelemetryBatch("uniform_citation"));
-    } catch { /* A new user action must still work without attribution. */ }
-    setCells((prev) =>
-      prev.map((c) =>
-        c.id === id ? { ...c, status: "loading", output: null, errorMsg: undefined, approved: false } : c,
-      ),
-    );
-    try {
-      const res = await runCitation({
-        rawInput: cell.input,
-        overrideType: cell.sourceTypeOverride,
-        projectId,
-        useVerifiedStore: true,
-        telemetry,
+      const recovery = explicitRetry ?? cell.recovery;
+      const res = recovery ? await recovery.retry(job.isCurrent) : await runCitation({
+        rawInput: cell.input, overrideType: cell.sourceTypeOverride, projectId,
+        useVerifiedStore: true, telemetry, isResultCurrent: job.isCurrent,
       });
-      setCells((prev) =>
-        applyRepeatCitationRules(prev.map((c) => (c.id === id ? applyResult(c, res) : c))),
-      );
+      if (!job.isCurrent()) return;
+      setCells((prev) => applyRepeatCitationRules(prev.map((c) => c.id === id ? applyResult(c, res) : c)));
     } catch (e) {
+      if (!job.isCurrent()) return;
       const message = errorMessageOf(e);
-      setCells((prev) =>
-        prev.map((c) => (c.id === id ? { ...c, status: "error", output: null, errorMsg: message } : c)),
-      );
+      setCells((prev) => prev.map((c) => c.id === id ? { ...c, status: "error", output: null, errorMsg: message,
+        citationRetry: e instanceof CitationRunError ? e.citationRetry : undefined,
+        recovery: e instanceof CitationRunError ? e.recovery : undefined } : c));
       toast.error(`יצירת אזכור אחיד להערה ${id} נכשלה`, { description: message });
-    }
+    } finally { job.finish(); }
   };
 
   const handleInputChange = useCallback((id: number, value: string) => {
-    setCells((prev) => prev.map((c) => (c.id === id ? { ...c, input: value, approved: false } : c)));
-  }, []);
+    rowGuard.invalidate(String(id));
+    setCells((prev) => prev.map((c) => (c.id === id ? { ...c, input: value, approved: false, citationRetry: undefined, recovery: undefined } : c)));
+  }, [rowGuard]);
 
   const handleOutputChange = useCallback((id: number, value: string) => {
+    rowGuard.invalidate(String(id));
     setCells((prev) =>
       applyRepeatCitationRules(
-        prev.map((c) => (c.id === id ? { ...c, output: value, approved: false } : c)),
+        prev.map((c) => (c.id === id ? { ...c, output: value, approved: false, citationRetry: undefined, recovery: undefined } : c)),
       ),
     );
-  }, []);
+  }, [rowGuard]);
 
   const handleSourceTypeChange = useCallback((id: number, t: SourceType) => {
+    rowGuard.invalidate(String(id));
     setCells((prev) =>
-      prev.map((c) => (c.id === id ? { ...c, sourceTypeOverride: t, approved: false } : c)),
+      prev.map((c) => (c.id === id ? { ...c, sourceTypeOverride: t, approved: false, citationRetry: undefined, recovery: undefined } : c)),
     );
-  }, []);
+  }, [rowGuard]);
 
   const handleApproveToggle = useCallback((id: number, approved: boolean) => {
     setCells((prev) => prev.map((c) => (c.id === id ? { ...c, approved } : c)));
@@ -316,6 +345,12 @@ export function UniformCitationPanel({ footnotes }: Props) {
               onSourceTypeChange={handleSourceTypeChange}
               onApproveToggle={handleApproveToggle}
               onRegenerate={regenerateOne}
+              newAttempt={c.status === "error" && c.citationRetry ? {
+                disclosure: citationRetryDisclosure(c.citationRetry.descriptor),
+                onRetry: rowGuard.bind(String(c.id), () => {
+                  if (c.citationRetry) void regenerateOne(c.id, c.citationRetry);
+                }),
+              } : undefined}
               onRemove={() => toast.info("המספור נשמר לפי התשובה — לא ניתן להסיר הערה")}
               onCopy={copySingle}
               hideRemove

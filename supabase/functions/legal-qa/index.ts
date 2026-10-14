@@ -20,6 +20,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
 import { acquireOperationLock, lockUnavailablePayload, operationInProgressPayload } from "../_shared/operationLock.ts";
+import { attestUsageFailure, DefinitiveUsageFailure, type UsageRpcClient } from "../_shared/legacyUsageRefund.ts";
 import { USAGE_WEIGHTS } from "../_shared/usageWeights.ts";
 
 const RESEARCH_MODE = "research";
@@ -249,6 +250,8 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
   let __creditsCharged = false;
   let __creditRequestId: string | null = null;
   let __userClientForRefund: ReturnType<typeof createClient> | null = null;
+  let __adminForRefund: UsageRpcClient | null = null;
+  let __userId: string | null = null;
   // Account-level concurrency ownership (case_summary only).
   let __lockOperationId: string | null = null;
 
@@ -274,6 +277,13 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
         status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+
+    __userId = user.id;
+    const adminClient = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+    );
+    __adminForRefund = adminClient;
 
     // ─── Body parse ───────────────────────────────────────────────
     const body = await req.json();
@@ -405,6 +415,11 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
           },
         );
       }
+      if (lock.reused) {
+        return new Response(JSON.stringify(operationInProgressPayload(lock.active_operation_type)), {
+          status: 409, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
       __lockOperationId = lock.bypass ? null : creditRequestId;
     }
 
@@ -440,35 +455,27 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
           status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
-      creditsCharged = true;
-      __creditsCharged = true;
+      if (cr.replayed === true) {
+        return new Response(JSON.stringify({ error: "REQUEST_ALREADY_CONSUMED", refunded: false, retryable: false }), {
+          status: 409, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      creditsCharged = cr.admin !== true;
+      __creditsCharged = creditsCharged;
     }
 
     const refundAndPayload = async (extraReason: string, payload: Record<string, unknown>) => {
       let refunded = false;
       if (creditsCharged) {
-        try {
-          const { data: refundData } = await userClient.rpc("refund_credits", {
-            _request_id: creditRequestId,
-            _reason: `auto-refund: ${extraReason}`,
-          });
-          refunded = Boolean((refundData as Record<string, unknown> | null)?.ok);
-          creditsCharged = !refunded;
-          __creditsCharged = creditsCharged;
-        } catch (rfErr) {
-          console.error("refund_credits failed (non-fatal):", rfErr);
-        }
+        refunded = await attestUsageFailure(adminClient, user.id, creditRequestId, `auto-refund: ${extraReason}`);
+        creditsCharged = !refunded;
+        __creditsCharged = creditsCharged;
       }
       return { ...payload, refunded, refundReason: refunded ? extraReason : undefined };
     };
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
-
-    const adminClient = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
-    );
+    if (!LOVABLE_API_KEY) throw new DefinitiveUsageFailure("LOVABLE_API_KEY is not configured");
 
     const t0 = Date.now();
 
@@ -894,7 +901,8 @@ ${externalList}
         userSuppliedText = documentText;
       }
 
-      let verify: { source: "user" | "local" | "external" | "none"; fullText?: string; metadata?: Record<string, unknown>; refusal_message?: string } | null = null;
+      let verificationOutcomeUnknown = false;
+      let verify: { execution_outcome_unknown?: boolean; source: "user" | "local" | "external" | "none"; fullText?: string; metadata?: Record<string, unknown>; refusal_message?: string } | null = null;
       try {
         const vRes = await fetchWithTimeout(`${Deno.env.get("SUPABASE_URL")}/functions/v1/verify-case-fulltext`, {
           method: "POST",
@@ -902,10 +910,17 @@ ${externalList}
           body: JSON.stringify({ question, userText: userSuppliedText }),
         }, 20000);
         if (vRes.ok) verify = await vRes.json();
+        else verificationOutcomeUnknown = true;
       } catch (e) {
+        verificationOutcomeUnknown = true;
         console.error("verify-case-fulltext call failed:", e instanceof Error ? e.message : e);
       }
 
+      if (verificationOutcomeUnknown || ((!verify || verify.source === "none" || !verify.fullText) && verify?.execution_outcome_unknown !== false)) {
+        return new Response(JSON.stringify({ error: "VERIFICATION_OUTCOME_UNKNOWN", refunded: false, retryable: false }), {
+          status: 503, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
       if (!verify || verify.source === "none" || !verify.fullText) {
         console.log("case_summary: refusing — no full text available");
         const payload = await refundAndPayload("case_summary:no-fulltext", {
@@ -1008,19 +1023,13 @@ ${(verify.fullText as string).slice(0, 50000)}
   } catch (e) {
     console.error("legal-qa error:", e);
     let refunded = false;
-    if (__creditsCharged && __creditRequestId && __userClientForRefund) {
-      try {
-        const { data: refundData } = await __userClientForRefund.rpc("refund_credits", {
-          _request_id: __creditRequestId,
-          _reason: "auto-refund: legal-qa runtime error",
-        });
-        refunded = Boolean((refundData as Record<string, unknown> | null)?.ok);
-      } catch (rfErr) {
-        console.error("refund_credits failed in catch (non-fatal):", rfErr);
-      }
+    // A thrown network/timeout/runtime exception does not prove whether an
+    // upstream operation completed. Only explicit pre-provider failures attest.
+    if (e instanceof DefinitiveUsageFailure && __creditsCharged && __creditRequestId && __adminForRefund && __userId) {
+      refunded = await attestUsageFailure(__adminForRefund, __userId, __creditRequestId, "auto-refund: legal-qa configuration error");
     }
     return new Response(
-      JSON.stringify({ error: "שגיאה בעיבוד השאלה. נסו שוב.", refunded, refundReason: refunded ? "runtime-error" : undefined }),
+      JSON.stringify({ error: "שגיאה בעיבוד השאלה. נסו שוב.", refunded, execution_outcome_unknown: !(e instanceof DefinitiveUsageFailure), refundReason: refunded ? "configuration-error" : undefined }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   } finally {

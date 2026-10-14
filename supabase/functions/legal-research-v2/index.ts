@@ -1,3 +1,4 @@
+import { attestUsageFailure, isDefinitiveInsertFailure } from "../_shared/legacyUsageRefund.ts";
 // =========================================================================
 // legal-research-v2 — agentic research core (vertical slice).
 //
@@ -69,6 +70,7 @@ import {
   type BetaJob,
   finishJobError,
   gatewayFailure,
+  definitiveGatewayFailure,
   finishJobSuccess,
   ACADEMIC_CHAPTER_CREDIT_COST,
   academicWritingEnabled,
@@ -1448,7 +1450,7 @@ function createRunBeat(admin: SupabaseClient, run_id: string, directPilot = fals
  * fires only when research actually remains.
  */
 const CHAT_FAILURE_HE =
-  "לא הצלחתי להשלים את המחקר הפעם בגלל תקלה. אם נוצל שימוש, הוא הוחזר. אפשר לנסות לשלוח את ההודעה שוב.";
+  "לא הצלחתי להשלים את המחקר הפעם בגלל תקלה. אפשר לבדוק את מצב ההרצה לפני ניסיון נוסף.";
 
 /**
  * Background run wrapper: one isolated cost-telemetry context per run chunk
@@ -1584,20 +1586,25 @@ async function driveRunInner(
     if (job) {
       const blocked = gatewayFailure(out as Record<string, unknown>);
       if (blocked) {
-        await finishJobError(admin, job, blocked);
-        await postAssistantMessage(admin, job.id, { kind: "text", content: CHAT_FAILURE_HE, metadata: { run_id: intake.run_id, failed: true } });
+        const terminal = await finishJobError(admin, job, blocked, definitiveGatewayFailure(out as Record<string, unknown>));
+        if (!terminal.skipped) {
+          await postAssistantMessage(admin, job.id, { kind: "text", content: CHAT_FAILURE_HE, metadata: { run_id: intake.run_id, failed: true, credits_refunded: terminal.refunded } });
+          await progress.finish();
+        }
       } else {
         const br = toBetaResult(out as Record<string, unknown>) as unknown as Record<string, unknown>;
-        await finishJobSuccess(admin, job, br as unknown as Parameters<typeof finishJobSuccess>[2]);
-        await postAssistantMessage(admin, job.id, {
-          kind: "research_answer",
-          content: String(br.answer ?? "").trim() || CHAT_FAILURE_HE,
-          footnotes: br.footnotes ?? null,
-          used_sources: br.used_sources ?? null,
-          metadata: { run_id: intake.run_id, output_mode: br.output_mode ?? "answer" },
-        });
+        const terminal = await finishJobSuccess(admin, job, br as unknown as Parameters<typeof finishJobSuccess>[2]);
+        if (!terminal.skipped) {
+          await postAssistantMessage(admin, job.id, {
+            kind: "research_answer",
+            content: String(br.answer ?? "").trim() || CHAT_FAILURE_HE,
+            footnotes: br.footnotes ?? null,
+            used_sources: br.used_sources ?? null,
+            metadata: { run_id: intake.run_id, output_mode: br.output_mode ?? "answer", credits_refunded: terminal.refunded },
+          });
+          await progress.finish();
+        }
       }
-      await progress.finish();
     }
     await admin.from("v2_eval_runs").update({
       status: "done",
@@ -1614,8 +1621,10 @@ async function driveRunInner(
     }
     const message = e instanceof Error ? e.message : String(e);
     if (job) {
-      await finishJobError(admin, job, message);
-      await postAssistantMessage(admin, job.id, { kind: "text", content: CHAT_FAILURE_HE, metadata: { run_id: intake.run_id, failed: true } });
+      const terminal = await finishJobError(admin, job, message);
+      if (!terminal.skipped) {
+        await postAssistantMessage(admin, job.id, { kind: "text", content: CHAT_FAILURE_HE, metadata: { run_id: intake.run_id, failed: true, credits_refunded: terminal.refunded } });
+      }
     }
     await admin.from("v2_eval_runs").update({
       status: "error",
@@ -2081,6 +2090,7 @@ async function handleRequest(req: Request): Promise<Response> {
         ? json(lockUnavailablePayload(), 503)
         : json(operationInProgressPayload(lock.active_operation_type), 409);
     }
+    if (lock.reused) return json(operationInProgressPayload(lock.active_operation_type), 409);
     const lockOperationId = lock.bypass ? null : clientRequestId;
 
     // deno-lint-ignore no-explicit-any
@@ -2115,6 +2125,11 @@ async function handleRequest(req: Request): Promise<Response> {
         }, 402);
       }
       return json({ error: (cr.error as string) || "CREDIT_ERROR" }, 500);
+    }
+    // A replayed debit is not authority to start another provider execution
+    // or to attest a failure for the earlier attempt.
+    if (cr.replayed === true) {
+      return json({ error: "REQUEST_ALREADY_CONSUMED", refunded: false, retryable: false }, 409);
     }
     // Admin accounts record a zero-delta consume; those are never refunded.
     const creditRequestId = cr.admin ? null : clientRequestId;
@@ -2151,16 +2166,14 @@ async function handleRequest(req: Request): Promise<Response> {
       .select("id")
       .maybeSingle();
     if (jobErr || !jobRow?.id) {
-      if (creditRequestId) {
-        // deno-lint-ignore no-explicit-any
-        await (admin as any).rpc("refund_credits_for_user", {
-          _user_id: user.id,
-          _request_id: creditRequestId,
-          _reason: "auto-refund: job_create_failed",
-        });
-      }
+      // A SQL rejection proves no row was created. Missing/lost responses
+      // may have committed a job and are deliberately left for reconciliation.
+      const refunded = creditRequestId && isDefinitiveInsertFailure(jobErr)
+        ? await attestUsageFailure(admin, user.id, creditRequestId, "auto-refund: job_create_failed")
+        : false;
       await releaseLockNow("job_create_failed");
-      return json({ error: "job_create_failed", detail: jobErr?.message ?? null }, 500);
+      return json({ error: "job_create_failed", detail: jobErr?.message ?? null, refunded,
+        execution_outcome_unknown: !isDefinitiveInsertFailure(jobErr) }, 500);
     }
 
     const job: BetaJob = {

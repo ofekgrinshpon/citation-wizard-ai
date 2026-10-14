@@ -25,6 +25,8 @@ interface Props {
   onRegenerate: (id: number) => void;
   onRemove: (id: number) => void;
   disabled?: boolean;
+  /** Available only for an explicit retry of a server-confirmed failed request. */
+  newAttempt?: { disclosure: string; onRetry: () => void };
   /** Optional per-card copy action (used by the V2 אזכור אחיד review layer). */
   onCopy?: (id: number) => void;
   /** Optional label shown next to the footnote number (original V2 source). */
@@ -90,6 +92,7 @@ export function FootnoteReviewCard({
   onRegenerate,
   onRemove,
   disabled,
+  newAttempt,
   onCopy,
   originLabel,
   hideRemove,
@@ -243,6 +246,13 @@ export function FootnoteReviewCard({
         ) : isError ? (
           <div className="py-2 space-y-2">
             <div className="text-xs text-destructive">{cell.errorMsg || "לא ניתן להפיק. נסה שוב."}</div>
+            {newAttempt && <div className="space-y-2">
+              <p className="text-xs text-muted-foreground">{newAttempt.disclosure}</p>
+              <button type="button" onClick={newAttempt.onRetry} disabled={disabled}
+                className="text-[11px] px-2.5 py-1 rounded-md border border-primary text-primary disabled:opacity-40">
+                ניסיון חדש
+              </button>
+            </div>}
             <button
               onClick={() => onRegenerate(cell.id)}
               disabled={disabled || !cell.input.trim()}

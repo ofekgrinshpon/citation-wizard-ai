@@ -15,6 +15,7 @@ import Auth from "./pages/Auth.tsx";
 import Index from "./pages/Index.tsx";
 import Admin from "./pages/Admin.tsx";
 import Profile from "./pages/Profile.tsx";
+import CitationRecovery from "./pages/CitationRecovery.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import ResetPassword from "./pages/ResetPassword.tsx";
 import AuthDialog from "./pages/AuthDialog.tsx";
@@ -111,6 +112,7 @@ const App = () => (
                   <Route path="/app/chat/:conversationId" element={<BibliographyProvider><Index /></BibliographyProvider>} />
                   <Route path="/admin" element={<Admin />} />
                   <Route path="/profile" element={<Profile />} />
+                  <Route path="/citation-recovery" element={<CitationRecovery />} />
                   <Route path="/verified-sources" element={<VerifiedSources />} />
                   <Route path="/legal-qa" element={<LegalQARedirect />} />
                   <Route path="/auth-redirect" element={<AuthRedirect />} />

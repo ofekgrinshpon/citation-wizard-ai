@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { attestUsageFailure, DefinitiveUsageFailure } from "../_shared/legacyUsageRefund.ts";
 import { USAGE_BATCH_GROUP } from "../_shared/usageWeights.ts";
 import {
   HEBREW_JOURNALS,
@@ -115,7 +116,7 @@ async function callPerplexity(
   sourceTypeHint?: string,
 ): Promise<{ isDisambiguation: boolean; citation: string; options: string[] }> {
   const PERPLEXITY_API_KEY = Deno.env.get("PERPLEXITY_API_KEY");
-  if (!PERPLEXITY_API_KEY) throw new Error("PERPLEXITY_API_KEY is not configured");
+  if (!PERPLEXITY_API_KEY) throw new DefinitiveUsageFailure("PERPLEXITY_API_KEY is not configured");
 
   const hintLine = sourceTypeHint && HINT_INSTRUCTIONS[sourceTypeHint]
     ? HINT_INSTRUCTIONS[sourceTypeHint] + "\n\n"
@@ -152,8 +153,9 @@ async function callPerplexity(
   });
 
   if (!response.ok) {
-    const t = await response.text();
-    throw new Error(`Perplexity error ${response.status}: ${t}`);
+    // Receiving an explicit rejection is definitive, even if its body fails.
+    const t = await response.text().catch(() => "");
+    throw new DefinitiveUsageFailure(`Perplexity error ${response.status}: ${t}`);
   }
   const data = await response.json();
   const content = data?.choices?.[0]?.message?.content || "{}";
@@ -199,6 +201,11 @@ serve(async (req) => {
     );
   }
 
+  const userId = claimsData.claims.sub;
+  if (typeof userId !== "string" || !userId) {
+    return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: corsHeaders });
+  }
+  const sb = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
   let creditRequestId: string | null = null;
   try {
     const body = await req.json();
@@ -208,7 +215,6 @@ serve(async (req) => {
       typeof body?.sourceTypeHint === "string" && body.sourceTypeHint.length > 0
         ? body.sourceTypeHint
         : undefined;
-    creditRequestId = requestId;
     // Batch-priced usage: one internal unit per up to 20 bibliography entries.
     const usageBatchId: string | null =
       typeof body?.batchId === "string" && body.batchId.length >= 8 ? body.batchId : null;
@@ -221,7 +227,6 @@ serve(async (req) => {
     }
 
     // ── 1. Verified-source lookup (free) ──
-    const sb = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
     const words = tokenizeSearchTerms(rawSource);
     const caseNumberParts = (rawSource.match(/\d+(?:\/\d+)?/g) || []).filter((p) => p.length >= 2);
     const allTerms = Array.from(new Set([...words, ...caseNumberParts]));
@@ -301,6 +306,13 @@ serve(async (req) => {
     }
 
 
+    if (consumeData.replayed === true) {
+      return new Response(JSON.stringify({ error: "REQUEST_ALREADY_CONSUMED", refunded: false, retryable: false }), {
+        status: 409, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    creditRequestId = consumeData.admin === true ? null : requestId;
+
     // ── 3. Perplexity fallback ──
     try {
       const result = await callPerplexity(rawSource, sourceTypeHint);
@@ -321,27 +333,19 @@ serve(async (req) => {
         { headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
     } catch (e) {
-      // Refund on failure
-      if (creditRequestId) {
-        await userClient.rpc("refund_credits", {
-          _request_id: creditRequestId,
-          _reason: "bibliography-lookup-failed",
-        });
-      }
+      const refunded = creditRequestId && e instanceof DefinitiveUsageFailure
+        ? await attestUsageFailure(sb, userId, creditRequestId, "bibliography-lookup-failed")
+        : false;
       console.error("Perplexity call failed:", e);
       return new Response(
-        JSON.stringify({ error: "LOOKUP_FAILED", details: e instanceof Error ? e.message : "unknown" }),
+        JSON.stringify({ error: "LOOKUP_FAILED", details: e instanceof Error ? e.message : "unknown", refunded, execution_outcome_unknown: !(e instanceof DefinitiveUsageFailure) }),
         { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
     }
   } catch (e) {
     console.error("bibliography-lookup error:", e);
-    if (creditRequestId) {
-      await userClient.rpc("refund_credits", {
-        _request_id: creditRequestId,
-        _reason: "bibliography-lookup-error",
-      });
-    }
+    // The outer catch includes unknown consume/DB outcomes. It cannot attest
+    // a failure or refund a client-selected request id.
     return new Response(
       JSON.stringify({ error: "INTERNAL_ERROR", details: e instanceof Error ? e.message : "unknown" }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
