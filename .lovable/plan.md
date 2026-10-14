@@ -1,74 +1,103 @@
-# Three-arm comparison plan: GPT-6.1 Sol vs Astra vs historical Astra
+# Plan: send ordinary public SOL research calls straight to the owner's OpenAI account
 
-Planning only. Nothing was edited, deployed or called. I read the database with four read-only metadata queries, which returned no content.
+Planning only. I read code at Main `83223320`. I edited nothing, deployed nothing, ran no model, read no secrets and ran no database queries.
 
-## 1. Can this project use GPT-6.1 Sol?
-**Not established.**
-- **Verified:** the project's model catalog lists `openai/gpt-6-sol`, `openai/gpt-6-astra` and `openai/gpt-6-luna`. It has no 6.1 entry, and nothing in the repository mentions `gpt-6.1`.
-- **Unknown:** the exact model ID (for example `openai/gpt-6.1-sol`), whether it supports Responses tool calling, its reasoning efforts and its billing rate. No non-secret documentation or configuration covers any of these. A missing catalog entry does not prove the model is unsupported.
-- **Smallest next step (not run):** one authenticated `GET https://ai.gateway.lovable.dev/v1/models` from the server. It is a catalog listing, not a model call. It uses the existing key without printing it. Copy the exact ID, modalities, `data_retention_by_surface.responses` and any listed price. If no 6.1 ID appears, arm A stops. No substitute model is used.
-- Responses tool support can only be confirmed by one real call. That call is the first step of arm A, and its own check (section 5) stops the run on failure.
+## 1. What the code does today (verified by reading it)
+- **New public job intake** (`index.ts:2140`) copies in `ORDINARY_RESEARCH_SETTINGS`: `agent_model = openai/gpt-6.1-sol`, `agent_reasoning_effort = medium`. It does not set `agent_direct_provider`.
+- **Agent call** (`agent/researchAgent.ts:757-780`) calls `chat()` in `shared/model.ts`. With no `directProvider`, `chat()` uses `LOVABLE_API_KEY` and `responsesChatGuarded` (the Lovable gateway). That is why the recent trial logged `lovable_gateway`.
+- **Direct pilot** (`shared/directProviders.ts` `directChat`, plus `directProviderPolicy.ts`) already handles native OpenAI Responses for `gpt-6.1-sol`. It sends `stream:true`, `store:false`, `include:[reasoning.encrypted_content]`, `reasoning:{effort, summary:auto}`, function tools, `max_output_tokens`, and `service_tier:default`. Before each call it does an exact `/v1/responses/input_tokens` count and a USD reservation. It records each attempt (requested and returned model, tokens, cached tokens, duration, outcome) and checkpoints before sending.
+- **Why the pilot can't be reused as is:**
+  - It is locked to one approved run ID (`V2_DIRECT_PROVIDER_PILOT_RUN_ID`).
+  - It writes results to `v2_eval_runs` by `id`.
+  - It has a fixed $2 budget per run.
+  - Any error is terminal (`direct_provider_experiment_failed`).
+  - A pause needs manual review (`direct_pause_requires_review`).
+  - None of these fit public jobs, which need normal history, refunds and resume.
+- **Gateway fallback guard:** `chat()` already rejects a checkpoint that has direct attempts but no direct route (`direct_provider_route_missing`). This is a useful base for "no silent fallback".
 
-## 2. Is the run 0bbe6e54 evidence snapshot reusable?
-**No complete reusable snapshot exists.**
-- **Verified:** the run is job `e8748d32…`, status done, created 2026-10-02 03:48 UTC.
-- **Verified:** the stored result holds only these fields: answer (10.8 KB), footnotes, used_sources (848 B), and debug (telemetry 94 KB, unresolved_questions, error fields). There is no stored agent state, no tool trace and no source-body field.
-- **Verified:** there is no separate evidence or run-state table. The only body cache is `secondary_source_bodies`, keyed by source, not by run.
-- **Conclusion:** exact historical replay of that run is impossible. used_sources gives the source list, but not the bodies as they were served.
-
-## 3. Three kinds of test (kept separate)
-- **Exact historical replay:** not possible (see section 2).
-- **Frozen identical corpus (proposed):** collect the bodies once, freeze them with sha256 per document, and give all three arms the same corpus. This tests reasoning and writing on identical evidence. It does not test how well each arm finds sources.
-- **Live acquisition test:** each arm searches the live web. It is not proposed, because results would differ by search luck as well as by model.
-
-## 4. Isolated execution approach
-Use an offline local harness in the sandbox. It runs no deployed function, writes no production rows, and leaves the live default unchanged.
+## 2. Proposed design
+Add a third, production route next to "gateway" and "pilot": **ordinary direct OpenAI**. The pilot stays as it is.
 
 ```text
-corpus.json (frozen, hashed) -> replay tools (search/fetch/lookup answer only from corpus)
-   -> agent loop at commit X with model M -> verifier -> render -> report.json
+new public job -> intake stamps agent_transport = "openai_direct" (server-owned)
+  -> researchAgent -> chat({transport}) -> directChat(mode:"ordinary") -> api.openai.com
+existing / resumed job -> keeps whatever transport its checkpoint recorded (missing = gateway)
 ```
-- Arms A and B check out `2f7da3e0` into `/tmp/arm-current`. Arm C checks out `9ac6c068` into `/tmp/arm-hist`. Both are temporary git worktrees, not the deployed code, and each arm keeps its own prompts and code exactly as committed.
-- The model is selected through the existing per-run `agent_model` intake field (index.ts:188, 293). It is a field the code already reads, so no source change is needed. It is reused only through the harness, never through the public endpoint or the `V2_EVAL_TOKEN*` path, so production and stored data are never touched.
-- Identical across arms: the question as you gave it, the corpus, reasoning effort `medium`, ToolBudgets, verifier model, rendering and drafter settings. If the two commits differ in budgets or verifier defaults, the harness pins one value for all arms and reports the difference.
 
-**New files only (outside deployed code):**
-1. `eval/three-arm/corpus.json`: the frozen bodies with hashes, built once with Perplexity and fetch (small paid cost).
-2. `eval/three-arm/replayTools.ts`: corpus-backed search, fetch and lookup with the same output shape as the real tools. A corpus miss returns "not found" and never falls back to the live web.
-3. `eval/three-arm/run.ts`: runs one arm, injects the replay tools, and writes report.json.
+1. **Policy (`ordinaryResearchPolicy.ts`):** add `agent_transport: "openai_direct"` to `ORDINARY_RESEARCH_SETTINGS`, behind a server env switch `V2_ORDINARY_TRANSPORT` (`gateway` by default, `openai_direct` to turn it on). The value never comes from the request body.
+2. **Intake (`index.ts buildIntake`):** store the transport once, at creation. On resume it is never rewritten.
+3. **Agent (`researchAgent.ts`):** pass `transport` into `chat()` with the same messages, tools, toolChoice, effort and replay flag. Only the research-agent stage changes. Verifier and drafter stay on their current routes.
+4. **`directChat` ordinary mode:** reuse the same request body, streaming parser, attempt ledger and input-token pre-count. Swap the pilot-only gates for production ones:
+   - no run-ID pin and no `v2_eval_runs`; use the normal job and conversation tables
+   - a per-run native USD ceiling (a value for the owner to choose; see section 6)
+   - a server-wide daily native ceiling
+   - errors follow the normal job failure and refund path, not the "experiment failed" throw
+5. **Resume:** the ordinary direct route uses the normal checkpoint and resume path. It does not use `direct_pause_id` or manual review. A resume where the last attempt is `pending`, `network_unknown`, `stream_unknown` or `aborted_unknown` fails closed: the job ends as a normal error with a refund and is never re-sent automatically. This matches the existing "never retry uncertain runs" rule.
 
-No changes to `supabase/functions/**`, the frontend, settings or data.
+## 3. New jobs vs existing jobs
+- Only jobs created after the switch is turned on use the direct route.
+- In-flight and paused jobs keep their recorded transport, so mixed history cannot happen: the existing `direct_provider_route_changed` and `direct_cross_provider_replay` checks reject switching mid-run.
+- Old results, conversations and history display are unchanged.
 
-**Open risk:** if commit `9ac6c068` hard-wires its tools with no injection point, arm C would need a shim. That shim is the only code that would differ for C, and it would be documented. Inspecting this is step 1 of build.
+## 4. Compatibility and parity
+- **Tools:** function tools are converted with `strict:false`, the same as the pilot that already ran several Sol 6.1 trials. Forced memo choice maps to `{type:"function", name}`.
+- **Medium reasoning:** sent as `reasoning.effort:"medium"`. The returned effort is recorded (`effort_returned`, `effort_status`). For medium, `not_reported` is logged, not treated as an error.
+- **Reasoning replay:** the direct OpenAI path keeps all `reasoning_items` per turn (researchAgent:783). It also bypasses `enforceReplayBudget`, which means a large history is not trimmed the way the gateway trims it. **Decision needed:** either apply the same 2M-char / 64-item replay limit on the direct path (parity), or keep the full replay (the pilot's behaviour). I recommend parity.
+- **Output cap:** the pilot needs an explicit `max_output_tokens` (1,024 to 128,000). The ordinary policy needs a fixed value for the owner to approve. The ordinary gateway path today does not reliably enforce one.
 
-## 5. No-silent-fallback checks
-- Before each call, assert that the requested model equals the arm's configured ID.
-- After each call, read the `model` field returned in the Responses body. If it differs from the requested ID, or if a 400 or 404 is returned, stop the arm and mark it invalid. No retry, no substitution, and no move to chat-completions.
-- The harness disables the Astra router fallback and the separate drafter fallback (`V2_USE_SEPARATE_DRAFTER` stays at its commit default and is logged).
-- Every call is logged with requested ID, returned ID, AI Gateway run ID and attempt number.
+## 5. No silent fallback, missing key
+- If the transport is `openai_direct`, the code never reaches the `LOVABLE_API_KEY` branch. A unit test asserts that the gateway is never called.
+- Missing `OPENAI_API_KEY` returns `401 direct_provider_key_missing` before anything is sent. The job then fails through the normal path with a refund and the usual Hebrew failure message. Nothing switches to the gateway.
+- OpenAI `429` and `5xx` responses get the existing bounded retry only when the attempt is known `not_sent` or is a clean HTTP error. Every uncertain outcome is terminal.
+- **To verify at approval time:** that an `OPENAI_API_KEY` secret already exists on the project from the existing OpenAI integration. I check the secret name only, never the value. If it does not exist, the rollout is blocked: I will not create one.
 
-## 6. Budgets
-**Preparation credits (estimate):** this inquiry about 1 to 2. Build plus offline tests about 4 to 6. Total stays within 10. If arm C needs a shim, the scope stops for review before going further.
+## 6. Spending safeguards (owner sets the values)
+- **Per run:** a pre-call reservation using the exact input count and the output cap. The run stops with `402` if the next call would go over the run ceiling.
+- **Per day, server-wide:** an atomic counter for reserved and settled native USD, kept in an existing service-role-only table or a new one. **Decision:** which of the two to use. Adding a new table needs a migration and your approval. Once the ceiling is hit, new direct calls fail closed. They don't switch to the gateway.
+- The long-context guard stays (`>272k` input tokens is rejected). Recent trials had about 16k tokens per call (400,197 across 25 calls), well below that.
+- The OpenAI account's own spending limit is outside the app's control. This plan does not change it.
 
-**Provider cost per run:** these are estimates, not billed rates. Astra and 6.1 Sol rates are unknown.
-- Building the corpus (Perplexity and fetch): about $0.5 to $1.
-- One arm: about $1 to $4, scaled from earlier runs (Q2 Astra: 371k input and 16k output tokens).
-- All three arms: about $5 to $13, inside the $20 target.
+## 7. What gets recorded per attempt
+For each attempt: requested model, returned model, input, cached, cache-write, output and reasoning tokens, `duration_ms`, input-count time, checkpoint time, outcome, provider request and response IDs, and estimated USD from the `sol61-standard-2026-10-03` list price. The estimate is labelled as an estimate.
+- Attempts are also written to `ai_cost_events` (stage `v2_research_agent`, provider `openai_direct`). This fixes the "total cost missing" gap for this stage. The actual OpenAI invoice is never available to the app.
 
-**Technical vs advisory limits:**
-- *Technical:* step, tool and search ceilings (ToolBudgets), the replay corpus (no live web), one run per arm, and abort on a model mismatch.
-- *Advisory only:* the $20 target. There is no pre-call dollar cap: the gateway's output-cap enforcement on Responses is unverified, and telemetry is recorded after each call. As a soft stop, the harness halts before starting the next arm if the running estimate passes $15.
+## 8. Latency (not assumed fixed)
+The 11m19s run has no per-stage breakdown in this plan. Moving the model provider changes only model time. Two items add time per call: the extra input-count round trip and the checkpoint before each call. These two need measuring. The fetch, Perplexity and verifier stages are unchanged. The earlier direct pilots took 4 to 4.5 minutes, but those runs had different setups. I will report model time vs tool time separately, without assuming an improvement.
 
-## 7. Report format (per arm, then side by side)
-- The full answer text and the full footnote and citation list.
-- Source availability: corpus documents served, documents cited, corpus misses.
-- Issue coverage against a fixed checklist: rights involved, sale vs licence, exhaustion, Israel vs comparative law (for example ReDigi and UsedSoft).
-- Verifier results: verified, partial and rejected claims, plus invariant errors.
-- Timing: wall time, and model time vs tool time.
-- Per-attempt usage: requested and returned model, input, cached, output and reasoning tokens, estimated USD (labelled as estimated), and gateway credits if available.
-- One run per arm is a directional signal only, not a statistical result.
+## 9. What still uses Lovable / other providers
+- **Lovable AI gateway (Lovable credits):** the verifier (`gemini-3.7-flash`), the drafter (`gemini-3.1-pro-preview`, only if the separate drafter is on), the model router and short replies (`modelRouter.ts`), and citation-chat and the other functions.
+- **Separate providers, unchanged:** Perplexity/Sonar search, Apify and the fetch relay.
+- **Lovable Cloud infrastructure:** the database, functions, storage and hosting.
+- **Lovable development credits:** building and planning in this chat.
 
-## Verified vs uncertain (summary)
-- **Verified:** 6.1 Sol is absent from the catalog and the repository. Run 0bbe6e54 has no body snapshot. A per-run `agent_model` field exists.
-- **Uncertain:** the 6.1 Sol ID, availability, tool support, reasoning settings and price. Astra's billed rate. Whether commit 9ac6c068 accepts injected tools. Whether the gateway enforces output caps on Responses.
-- **This turn's development-credit usage:** not shown to me.
+## 10. Preserved behaviour
+Sign-in checks, owner-scoped conversations, assistant messages inserted only by the function, credit claims and refunds, idempotent job claim and the terminal-race guards, and the evidence and verifier trust rules are all unchanged.
+
+## 11. Offline tests (no network calls; fake fetch)
+- New job stamps `openai_direct` when the switch is on and `gateway` when it is off.
+- A resumed checkpoint keeps its original transport.
+- The direct transport never calls the gateway, and a missing key leads to a 401 and a refund path with no call sent.
+- Uncertain last attempt on resume leads to a terminal error, with no re-send.
+- Per-run and daily ceilings return 402 before sending.
+- Request body: effort is medium, `store:false`, the include field is set, tools are mapped, and the output cap is present.
+- Usage parsing: cached tokens, reasoning tokens and a model mismatch lead to `model_mismatch`.
+- The replay limit is applied, if parity is chosen.
+- The existing `directProviders`, `directSol61High` and `ordinaryResearchPolicy` tests still pass.
+
+## 12. Rollback
+Set `V2_ORDINARY_TRANSPORT=gateway`, or leave it unset. New jobs go back to the gateway right away. Jobs already running on the direct route finish on it, or fail closed if the key is removed. The code can be reverted, but external charges already incurred cannot be undone.
+
+## Risks
+- Unknown OpenAI rate limits or tier on the owner's account could cause 429s under public load.
+- The extra input-count call adds latency and a second point of failure.
+- List-price estimates may not match the invoice.
+- Keeping the full replay could make requests larger.
+- The ordinary resume code differs from the pilot's manual-review pause, so it needs careful review.
+
+## Steps that need approval
+1. Approve this plan. Implementation is about 4 to 7 build credits, within the daily 30.
+2. Choose: the per-run USD ceiling, the daily USD ceiling, the output cap, and replay parity vs full replay.
+3. Approve a migration if the daily counter needs a new table.
+4. Check that the `OPENAI_API_KEY` secret name exists (no value is read).
+5. Deploy `legal-research-v2` only, with the switch still off.
+6. Turn the switch on and run one approved live trial, as a separate authorization.
