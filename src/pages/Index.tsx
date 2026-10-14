@@ -44,10 +44,17 @@ interface Message {
 }
 
 import { applyYearPreferences, isLegislationInput, extractLawNameFromInput, extractCitationFromResponse, type YearPreferences } from "@/lib/citationUtils";
-import { invokeFunction } from "@/lib/functionError";
+import { invokeFunction, retryCitationFunction, citationRetryDisclosure, type CitationRetryDescriptor } from "@/lib/functionError";
+
+interface IndexCitationRetry {
+  descriptor: CitationRetryDescriptor;
+  run: () => Promise<string>;
+  isCurrent: () => boolean;
+}
 
 import { validateCitationInput } from "@/lib/citationInputValidation";
 import { handleRefundResponse } from "@/lib/refundResponse";
+import { saveCitationHistoryRecord } from "@/lib/citationHistorySave";
 import { articleRequestFields, compatibleArticleCache, renderForeignArticleLookup, type ForeignArticleLookupResponse } from "@/lib/foreignArticleAdapter";
 
 interface PendingVerification {
@@ -170,6 +177,26 @@ const Index = () => {
   
   
   const { user, isAdmin, loading: authLoading, signOut } = useAuth();
+  const [citationRetry, setCitationRetry] = useState<IndexCitationRetry | null>(null);
+  const citationRetryRef = useRef<IndexCitationRetry | null>(null);
+  const citationRetryBusy = useRef<object | null>(null);
+  const citationRevision = useRef(0);
+  const citationScope = useRef({ accountId: user?.id, projectId, mode });
+  citationScope.current = { accountId: user?.id, projectId, mode };
+  const clearCitationRetry = () => {
+    citationRevision.current += 1;
+    citationRetryRef.current = null;
+    setCitationRetry(null);
+  };
+  useEffect(() => {
+    citationRevision.current += 1;
+    citationRetryRef.current = null;
+    setCitationRetry(null);
+    citationRetryBusy.current = null;
+    setLoading(false);
+    setLoadingMessage(null);
+    return () => { citationRevision.current += 1; citationRetryRef.current = null; };
+  }, [user?.id, projectId, mode]);
   const { isOfficeAddin } = useOffice();
   const navigate = useNavigate();
   const subscription = useSubscription();
@@ -227,47 +254,100 @@ const Index = () => {
     );
   }
 
-  const callAPI = async (userMessage: string, history: Message[], telemetry?: CostTelemetry, article?: { sourceType: SourceType; rawInput: string }) => {
+  const callAPI = async (userMessage: string, history: Message[], telemetry?: CostTelemetry, article?: { sourceType: SourceType; rawInput: string }, onSuccess?: (reply: string, isCurrent: () => boolean, historyRequestId?: string) => Promise<void> | void) => {
+    // Bind to the render that started the outer handler, not whichever account
+    // happens to be current after asynchronous classification/cache work.
+    const scope = { accountId: user?.id, projectId, mode };
+    if (citationScope.current.accountId !== scope.accountId || citationScope.current.projectId !== scope.projectId || citationScope.current.mode !== scope.mode) {
+      throw Object.assign(new Error("CITATION_RETRY_STALE"), { handled: true });
+    }
+    clearCitationRetry();
+    const revision = citationRevision.current;
+    const isCurrent = () => citationRevision.current === revision &&
+      citationScope.current.accountId === scope.accountId && citationScope.current.projectId === scope.projectId && citationScope.current.mode === scope.mode;
     const requestId = crypto.randomUUID();
     const articleFields = articleRequestFields(article?.sourceType, article?.rawInput);
-    const { data, errorInfo } = await invokeFunction<{ content?: string } & Record<string, unknown>>(
-      "citation-chat",
-      {
-        messages: [
-          ...history.map((m) => ({ role: m.role, content: m.content })),
-          { role: "user", content: userMessage },
-        ],
-        requestId,
-        ...telemetryBody(telemetry),
-        ...articleFields,
-      },
-      { projectId },
-    );
+    let completed = false;
+    const execute = async (retry?: CitationRetryDescriptor): Promise<string> => {
+      const { data, errorInfo } = retry
+        ? await retryCitationFunction<{ content?: string } & Record<string, unknown>>(retry, { isCitationResultCurrent: isCurrent })
+        : await invokeFunction<{ content?: string } & Record<string, unknown>>(
+        "citation-chat",
+        {
+          messages: [
+            ...history.map((m) => ({ role: m.role, content: m.content })),
+            { role: "user", content: userMessage },
+          ],
+          requestId,
+          ...telemetryBody(telemetry),
+          ...articleFields,
+        },
+        { projectId, isCitationResultCurrent: isCurrent },
+      );
 
-    if (errorInfo) {
-      toast.error(errorInfo.message, {
-        description: errorInfo.isInvalidInput ? "לא נוצל שימוש מהמכסה." : undefined,
-      });
-      const err = new Error(errorInfo.code || `HTTP_${errorInfo.status ?? "ERR"}`) as Error & {
-        isInvalidInput?: boolean;
-        handled?: boolean;
-        userMessage?: string;
-      };
-      err.isInvalidInput = errorInfo.isInvalidInput;
-      err.handled = true;
-      err.userMessage = errorInfo.message;
-      throw err;
+      if (!isCurrent()) throw Object.assign(new Error("CITATION_RETRY_STALE"), { handled: true });
+      if (errorInfo) {
+        if (errorInfo.citationRetry && onSuccess) {
+          const descriptor = errorInfo.citationRetry;
+          const offer = { descriptor, run: () => execute(descriptor), isCurrent };
+          citationRetryRef.current = offer;
+          setCitationRetry(offer);
+        }
+        toast.error(errorInfo.message, {
+          description: errorInfo.isInvalidInput ? "לא נוצל שימוש מהמכסה." : undefined,
+        });
+        const err = new Error(errorInfo.code || `HTTP_${errorInfo.status ?? "ERR"}`) as Error & {
+          isInvalidInput?: boolean;
+          handled?: boolean;
+          userMessage?: string;
+        };
+        err.isInvalidInput = errorInfo.isInvalidInput;
+        err.handled = true;
+        err.userMessage = errorInfo.message;
+        throw err;
+      }
+
+      // Server signaled it auto-refunded the credit (e.g. AI returned a refusal).
+      handleRefundResponse(data);
+
+      let reply = (data?.content as string) || "אירעה שגיאה בעיבוד הבקשה.";
+      if (articleFields.foreignLookup) {
+        const rendered = renderForeignArticleLookup(articleFields.foreignLookup, data?.foreignLookup as ForeignArticleLookupResponse | undefined)
+          ?? renderForeignArticleLookup(articleFields.foreignLookup, { fields: {}, articleResolution: "incomplete" });
+        if (rendered) reply = rendered.reply;
+      }
+      if (!completed) {
+        completed = true;
+        const historyRequestId = typeof data?.requestId === "string" &&
+          ["available", "unconfirmed"].includes(String(data.recoveryAvailability)) ? data.requestId : undefined;
+        await onSuccess?.(reply, isCurrent, historyRequestId);
+      }
+      if (!isCurrent()) throw Object.assign(new Error("CITATION_RETRY_STALE"), { handled: true });
+      return reply;
+    };
+    return execute();
+  };
+
+  const startCitationRetry = async (offer: IndexCitationRetry) => {
+    if (citationRetryBusy.current || citationRetryRef.current !== offer || !offer.isCurrent()) return;
+    const ticket = {};
+    citationRetryBusy.current = ticket;
+    citationRetryRef.current = null;
+    setCitationRetry(null);
+    setPendingBillType(null);
+    setPendingTreatyType(null);
+    setPendingSuggestion(null);
+    setLoading(true);
+    try { await offer.run(); }
+    catch (error) {
+      if (!(error as { handled?: boolean })?.handled) toast.error("לא ניתן היה להשלים את הבקשה.");
+    } finally {
+      if (citationRetryBusy.current === ticket) citationRetryBusy.current = null;
+      if (offer.isCurrent()) {
+        setLoading(false);
+        setLoadingMessage(null);
+      }
     }
-
-    // Server signaled it auto-refunded the credit (e.g. AI returned a refusal).
-    handleRefundResponse(data);
-
-    if (articleFields.foreignLookup) {
-      const rendered = renderForeignArticleLookup(articleFields.foreignLookup, data?.foreignLookup as ForeignArticleLookupResponse | undefined)
-        ?? renderForeignArticleLookup(articleFields.foreignLookup, { fields: {}, articleResolution: "incomplete" });
-      if (rendered) return rendered.reply;
-    }
-    return (data?.content as string) || "אירעה שגיאה בעיבוד הבקשה.";
   };
 
 
@@ -277,8 +357,10 @@ const Index = () => {
     sourceType: string | null,
     yearPrefs?: YearPreferences,
     telemetry?: CostTelemetry,
+    isCurrent: () => boolean = () => true,
   ) => {
     try {
+      if (!isCurrent()) return;
       const result = await ensureVerifiedSources(
         [{
           rawInput,
@@ -290,6 +372,7 @@ const Index = () => {
           telemetry,
         }],
       );
+      if (!isCurrent()) return;
       if (result.invalid > 0) {
         toast.warning("המקור נשמר לבדיקת אדמין – אימות AI זיהה חוסר עקביות");
       } else if (result.skipped > 0) {
@@ -337,6 +420,7 @@ const Index = () => {
     setPendingBillType(null);
     setLoading(true);
 
+    let citationStale = false;
     try {
       // Inject bill type info into the prompt
       const billTypeHint = billType
@@ -376,41 +460,49 @@ const Index = () => {
         }
       }
 
-      const reply = await callAPI(prompt, messages, telemetry, { sourceType, rawInput: normalized });
-      const assistantIndex = newMessages.length;
+      const onCitationSuccess = async (reply: string, isCurrent: () => boolean, historyRequestId?: string) => {
+        const assistantIndex = newMessages.length;
 
-      const validation = validateAIResponse(reply, sourceType as SourceType);
-      let finalReply = reply;
-      if (!validation.isComplete && validation.missingFields.length > 0) {
-        const summary = getMissingFieldsSummary(validation.effectiveSourceType ?? (sourceType as SourceType), validation.missingFields);
-        if (summary && !/⚠️/.test(reply)) {
-          finalReply = `${reply}\n⚠️ ${summary}`;
+        const validation = validateAIResponse(reply, sourceType as SourceType);
+        let finalReply = reply;
+        if (!validation.isComplete && validation.missingFields.length > 0) {
+          const summary = getMissingFieldsSummary(validation.effectiveSourceType ?? (sourceType as SourceType), validation.missingFields);
+          if (summary && !/⚠️/.test(reply)) {
+            finalReply = `${reply}\n⚠️ ${summary}`;
+          }
         }
-      }
 
-      setMessages([...newMessages, { role: "assistant", content: finalReply }]);
-      setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: sourceType as SourceType }));
-      setMessageRawInputs((prev) => ({ ...prev, [assistantIndex]: rawText }));
-      // Credit already charged server-side by citation-chat (no frontend double-charge).
+        setMessages([...newMessages, { role: "assistant", content: finalReply }]);
+        setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: sourceType as SourceType }));
+        setMessageRawInputs((prev) => ({ ...prev, [assistantIndex]: rawText }));
+        // Credit already charged server-side by citation-chat (no frontend double-charge).
 
-      const extractedCitation = extractCitationFromResponse(reply);
-      supabase.from("citation_history").insert([{
-        raw_input: fullRawInput,
-        formatted_output: extractedCitation || reply,
-        source_type: sourceType !== "unknown" ? sourceLabel : null,
-        user_id: user?.id || null,
-        project_id: currentProject?.id || null,
-      }]).then(() => { setCitationRefreshKey(k => k + 1); });
+        const extractedCitation = extractCitationFromResponse(reply);
+        saveCitationHistoryRecord({
+          raw_input: fullRawInput,
+          formatted_output: extractedCitation || reply,
+          source_type: sourceType !== "unknown" ? sourceLabel : null,
+          user_id: user?.id || null,
+          project_id: currentProject?.id || null,
+        }, historyRequestId, isCurrent).then(() => { if (isCurrent()) setCitationRefreshKey(k => k + 1); }).catch(() => { if (isCurrent()) toast.error("האזכור מוצג, אך שמירתו בהיסטוריה לא אושרה. אפשר להעתיק אותו ולבדוק את מצב הבקשה במסך השחזור."); });
 
-      const isVerifiedClean = !/\[חסר:/.test(reply) && !/⚠️/.test(reply);
-      const isFragment = !extractedCitation || extractedCitation.length < 10;
-      if (isVerifiedClean && !isFragment) {
-        await saveVerifiedSource(fullRawInput, extractedCitation, sourceType !== "unknown" ? sourceLabel : null, undefined, telemetry);
-      }
-    } catch {
-      setMessages([...newMessages, { role: "assistant", content: "שגיאה בחיבור לשרת. אנא נסה שנית." }]);
+        const isVerifiedClean = !/\[חסר:/.test(reply) && !/⚠️/.test(reply);
+        const isFragment = !extractedCitation || extractedCitation.length < 10;
+        if (isVerifiedClean && !isFragment) {
+          await saveVerifiedSource(fullRawInput, extractedCitation, sourceType !== "unknown" ? sourceLabel : null, undefined, telemetry, isCurrent);
+        }
+      };
+      await callAPI(prompt, messages, telemetry, { sourceType, rawInput: normalized }, onCitationSuccess);
+    } catch (err) {
+      if ((err as { message?: string })?.message === "CITATION_RETRY_STALE") { citationStale = true; return; }
+
+      // Keep the same pending choice/history for a manual retry. An error
+      // bubble in model history would silently create a different request.
+      setPendingBillType({ rawText, normalized, sourceType, sourceLabel, newMessages, telemetry });
     } finally {
-      setLoading(false);
+      if (!citationStale) {
+        setLoading(false);
+      }
     }
   };
 
@@ -420,6 +512,7 @@ const Index = () => {
     setPendingTreatyType(null);
     setLoading(true);
 
+    let citationStale = false;
     try {
       const treatyHint = treatyType === "multilateral"
         ? '\n[סוג אמנה: רב-צדדית – "נפתחה לחתימה ב-{שנה}"]'
@@ -432,41 +525,47 @@ const Index = () => {
       }
 
       const fullRawInput = buildFullRawInput(rawText, messages);
-      const reply = await callAPI(prompt, messages, telemetry, { sourceType, rawInput: normalized });
-      const assistantIndex = newMessages.length;
+      const onCitationSuccess = async (reply: string, isCurrent: () => boolean, historyRequestId?: string) => {
+        const assistantIndex = newMessages.length;
 
-      const validation = validateAIResponse(reply, sourceType as SourceType);
-      let finalReply = reply;
-      if (!validation.isComplete && validation.missingFields.length > 0) {
-        const summary = getMissingFieldsSummary(validation.effectiveSourceType ?? (sourceType as SourceType), validation.missingFields);
-        if (summary && !/⚠️/.test(reply)) {
-          finalReply = `${reply}\n⚠️ ${summary}`;
+        const validation = validateAIResponse(reply, sourceType as SourceType);
+        let finalReply = reply;
+        if (!validation.isComplete && validation.missingFields.length > 0) {
+          const summary = getMissingFieldsSummary(validation.effectiveSourceType ?? (sourceType as SourceType), validation.missingFields);
+          if (summary && !/⚠️/.test(reply)) {
+            finalReply = `${reply}\n⚠️ ${summary}`;
+          }
         }
-      }
 
-      setMessages([...newMessages, { role: "assistant", content: finalReply }]);
-      setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: sourceType as SourceType }));
-      setMessageRawInputs((prev) => ({ ...prev, [assistantIndex]: rawText }));
-      // Credit already charged server-side by citation-chat (no frontend double-charge).
+        setMessages([...newMessages, { role: "assistant", content: finalReply }]);
+        setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: sourceType as SourceType }));
+        setMessageRawInputs((prev) => ({ ...prev, [assistantIndex]: rawText }));
+        // Credit already charged server-side by citation-chat (no frontend double-charge).
 
-      const extractedCitation = extractCitationFromResponse(reply);
-      supabase.from("citation_history").insert([{
-        raw_input: fullRawInput,
-        formatted_output: extractedCitation || reply,
-        source_type: sourceType !== "unknown" ? sourceLabel : null,
-        user_id: user?.id || null,
-        project_id: currentProject?.id || null,
-      }]).then(() => { setCitationRefreshKey(k => k + 1); });
+        const extractedCitation = extractCitationFromResponse(reply);
+        saveCitationHistoryRecord({
+          raw_input: fullRawInput,
+          formatted_output: extractedCitation || reply,
+          source_type: sourceType !== "unknown" ? sourceLabel : null,
+          user_id: user?.id || null,
+          project_id: currentProject?.id || null,
+        }, historyRequestId, isCurrent).then(() => { if (isCurrent()) setCitationRefreshKey(k => k + 1); }).catch(() => { if (isCurrent()) toast.error("האזכור מוצג, אך שמירתו בהיסטוריה לא אושרה. אפשר להעתיק אותו ולבדוק את מצב הבקשה במסך השחזור."); });
 
-      const isVerifiedClean = !/\[חסר:/.test(reply) && !/⚠️/.test(reply);
-      const isFragment = !extractedCitation || extractedCitation.length < 10;
-      if (isVerifiedClean && !isFragment) {
-        await saveVerifiedSource(fullRawInput, extractedCitation, sourceType !== "unknown" ? sourceLabel : null, undefined, telemetry);
-      }
-    } catch {
-      setMessages([...newMessages, { role: "assistant", content: "שגיאה בחיבור לשרת. אנא נסה שנית." }]);
+        const isVerifiedClean = !/\[חסר:/.test(reply) && !/⚠️/.test(reply);
+        const isFragment = !extractedCitation || extractedCitation.length < 10;
+        if (isVerifiedClean && !isFragment) {
+          await saveVerifiedSource(fullRawInput, extractedCitation, sourceType !== "unknown" ? sourceLabel : null, undefined, telemetry, isCurrent);
+        }
+      };
+      await callAPI(prompt, messages, telemetry, { sourceType, rawInput: normalized }, onCitationSuccess);
+    } catch (err) {
+      if ((err as { message?: string })?.message === "CITATION_RETRY_STALE") { citationStale = true; return; }
+
+      setPendingTreatyType({ rawText, normalized, sourceType, sourceLabel, newMessages, telemetry });
     } finally {
-      setLoading(false);
+      if (!citationStale) {
+        setLoading(false);
+      }
     }
   };
 
@@ -504,37 +603,44 @@ const Index = () => {
     const { rawInput, normalized, sourceType, sourceLabel, telemetry } = pendingSuggestion;
     setPendingSuggestion(null);
     setLoading(true);
+    let citationStale = false;
     try {
       let prompt = normalized;
       if (sourceType !== "unknown") {
         const engineHint = buildEnginePromptHint(sourceType as SourceType);
         prompt = `[סיווג אוטומטי: ${sourceLabel}]\n${engineHint}${normalized}`;
       }
-      const reply = await callAPI(prompt, messages, telemetry, { sourceType, rawInput: normalized });
-      const assistantIndex = messages.length;
-      setMessages((prev) => [...prev, { role: "assistant", content: reply }]);
-      setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: sourceType }));
-      setMessageRawInputs((prev) => ({ ...prev, [assistantIndex]: rawInput }));
-      // Credit already charged server-side by citation-chat (no frontend double-charge).
+      const onCitationSuccess = async (reply: string, isCurrent: () => boolean, historyRequestId?: string) => {
+        const assistantIndex = messages.length;
+        setMessages((prev) => [...prev, { role: "assistant", content: reply }]);
+        setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: sourceType }));
+        setMessageRawInputs((prev) => ({ ...prev, [assistantIndex]: rawInput }));
+        // Credit already charged server-side by citation-chat (no frontend double-charge).
 
-      const extractedCitation = extractCitationFromResponse(reply);
-      supabase.from("citation_history").insert([{
-        raw_input: rawInput,
-        formatted_output: extractedCitation || reply,
-        source_type: sourceType !== "unknown" ? sourceLabel : null,
-        user_id: user?.id || null,
-        project_id: currentProject?.id || null,
-      }]).then(() => { setCitationRefreshKey(k => k + 1); });
+        const extractedCitation = extractCitationFromResponse(reply);
+        saveCitationHistoryRecord({
+          raw_input: rawInput,
+          formatted_output: extractedCitation || reply,
+          source_type: sourceType !== "unknown" ? sourceLabel : null,
+          user_id: user?.id || null,
+          project_id: currentProject?.id || null,
+        }, historyRequestId, isCurrent).then(() => { if (isCurrent()) setCitationRefreshKey(k => k + 1); }).catch(() => { if (isCurrent()) toast.error("האזכור מוצג, אך שמירתו בהיסטוריה לא אושרה. אפשר להעתיק אותו ולבדוק את מצב הבקשה במסך השחזור."); });
 
-      const isVerifiedClean = !/\[חסר:/.test(reply) && !/⚠️/.test(reply);
-      const isFragment = !extractedCitation || extractedCitation.length < 10 || /^\d+\.?$/.test(extractedCitation.trim());
-      if (isVerifiedClean && !isFragment) {
-        await saveVerifiedSource(rawInput, extractedCitation, sourceType !== "unknown" ? sourceLabel : null, undefined, telemetry);
-      }
-    } catch {
-      setMessages((prev) => [...prev, { role: "assistant", content: "שגיאה בחיבור לשרת. אנא נסה שנית." }]);
+        const isVerifiedClean = !/\[חסר:/.test(reply) && !/⚠️/.test(reply);
+        const isFragment = !extractedCitation || extractedCitation.length < 10 || /^\d+\.?$/.test(extractedCitation.trim());
+        if (isVerifiedClean && !isFragment) {
+          await saveVerifiedSource(rawInput, extractedCitation, sourceType !== "unknown" ? sourceLabel : null, undefined, telemetry, isCurrent);
+        }
+      };
+      await callAPI(prompt, messages, telemetry, { sourceType, rawInput: normalized }, onCitationSuccess);
+    } catch (err) {
+      if ((err as { message?: string })?.message === "CITATION_RETRY_STALE") { citationStale = true; return; }
+
+      setPendingSuggestion(pendingSuggestion);
     } finally {
-      setLoading(false);
+      if (!citationStale) {
+        setLoading(false);
+      }
     }
   };
 
@@ -618,6 +724,7 @@ const Index = () => {
       setLoadingMessage(null);
     }
 
+    let citationStale = false;
     try {
       const fullRawInput = buildFullRawInput(rawText, messages);
       const isPinpoint = PINPOINT_RE.test(rawText);
@@ -688,120 +795,123 @@ const Index = () => {
         prompt = `${prompt}\n\n══ מקור מאומת (${verifiedCategory}) ══\nהשתמש בפרטים הבאים מהמקור המאומת כדי להשלים את האזכור:\nשם: ${verifiedMatch.source_name}\nאזכור מלא: ${verifiedMatch.full_citation}\n══════════════════════════════════`;
       }
 
-      const reply = await callAPI(prompt, messages, tel, { sourceType, rawInput: normalized });
-      const assistantIndex = newMessages.length;
+      const onCitationSuccess = async (reply: string, isCurrent: () => boolean, historyRequestId?: string) => {
+        const assistantIndex = newMessages.length;
 
-      // Re-classify source type based on AI output (e.g., database → published if פ"ד found)
-      let effectiveSourceType = sourceType as SourceType;
-      if (effectiveSourceType === "case_law_database" && /פ["״]ד\s+[א-ת]+/.test(reply)) {
-        effectiveSourceType = "case_law_published";
-      }
+        // Re-classify source type based on AI output (e.g., database → published if פ"ד found)
+        let effectiveSourceType = sourceType as SourceType;
+        if (effectiveSourceType === "case_law_database" && /פ["״]ד\s+[א-ת]+/.test(reply)) {
+          effectiveSourceType = "case_law_published";
+        }
 
-      // Post-response validation using the citation engine
-      let finalReply = reply;
-      // The article adapter already validates structured fields. Re-parsing its
-      // display markers as generic model text would report false missing fields.
-      if (effectiveSourceType !== "foreign_journal_article") {
-        const validation = validateAIResponse(reply, effectiveSourceType);
-        if (!validation.isComplete && validation.missingFields.length > 0) {
-          const summary = getMissingFieldsSummary(validation.effectiveSourceType ?? effectiveSourceType, validation.missingFields);
-          if (summary && !/⚠️/.test(reply)) {
-            finalReply = `${reply}\n⚠️ ${summary}`;
+        // Post-response validation using the citation engine
+        let finalReply = reply;
+        // The article adapter already validates structured fields. Re-parsing its
+        // display markers as generic model text would report false missing fields.
+        if (effectiveSourceType !== "foreign_journal_article") {
+          const validation = validateAIResponse(reply, effectiveSourceType);
+          if (!validation.isComplete && validation.missingFields.length > 0) {
+            const summary = getMissingFieldsSummary(validation.effectiveSourceType ?? effectiveSourceType, validation.missingFields);
+            if (summary && !/⚠️/.test(reply)) {
+              finalReply = `${reply}\n⚠️ ${summary}`;
+            }
           }
         }
-      }
 
-      setMessages([...newMessages, { role: "assistant", content: finalReply }]);
-      setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: effectiveSourceType }));
-      setMessageRawInputs((prev) => ({ ...prev, [assistantIndex]: rawText }));
-      // Credit already charged server-side by citation-chat (no frontend double-charge).
+        setMessages([...newMessages, { role: "assistant", content: finalReply }]);
+        setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: effectiveSourceType }));
+        setMessageRawInputs((prev) => ({ ...prev, [assistantIndex]: rawText }));
+        // Credit already charged server-side by citation-chat (no frontend double-charge).
 
-      // Extract the actual citation from the AI response (skip step explanations, rules, warnings)
-      const extractedCitation = extractCitationFromResponse(reply);
+        // Extract the actual citation from the AI response (skip step explanations, rules, warnings)
+        const extractedCitation = extractCitationFromResponse(reply);
 
-      // Save to citation history — use the full reply for display, but the extracted citation for verification
-      const citationPayload = {
-        raw_input: fullRawInput,
-        formatted_output: extractedCitation || reply,
-        source_type: sourceType !== "unknown" ? sourceLabel : null,
-        user_id: user?.id || null,
-        project_id: currentProject?.id || null,
-      };
+        // Save to citation history — use the full reply for display, but the extracted citation for verification
+        const citationPayload = {
+          raw_input: fullRawInput,
+          formatted_output: extractedCitation || reply,
+          source_type: sourceType !== "unknown" ? sourceLabel : null,
+          user_id: user?.id || null,
+          project_id: currentProject?.id || null,
+        };
 
-      supabase.from("citation_history").insert([citationPayload]).then(() => { setCitationRefreshKey(k => k + 1); });
-      logActivity("יצירת אזכור", { source_type: sourceLabel, raw_input: fullRawInput.slice(0, 100) });
+        saveCitationHistoryRecord(citationPayload, historyRequestId, isCurrent).then(() => { if (isCurrent()) setCitationRefreshKey(k => k + 1); }).catch(() => { if (isCurrent()) toast.error("האזכור מוצג, אך שמירתו בהיסטוריה לא אושרה. אפשר להעתיק אותו ולבדוק את מצב הבקשה במסך השחזור."); });
+        logActivity("יצירת אזכור", { source_type: sourceLabel, raw_input: fullRawInput.slice(0, 100) });
 
-      // Only verify if we have a real, complete citation (not a fragment, not missing data)
-      const isVerifiedClean = !/\[חסר:/.test(reply) && !/⚠️/.test(reply);
-      const isFragment = !extractedCitation || extractedCitation.length < 10 || /^\d+\.?$/.test(extractedCitation.trim());
-      // Don't save pinpoint references to verified sources — they are specific references, not master records
+        // Only verify if we have a real, complete citation (not a fragment, not missing data)
+        const isVerifiedClean = !/\[חסר:/.test(reply) && !/⚠️/.test(reply);
+        const isFragment = !extractedCitation || extractedCitation.length < 10 || /^\d+\.?$/.test(extractedCitation.trim());
+        // Don't save pinpoint references to verified sources — they are specific references, not master records
 
-      if (isVerifiedClean && !isFragment && !isPinpoint) {
-        const isLegislation = isLegislationInput(fullRawInput) || isLegislationInput(extractedCitation);
+        if (isVerifiedClean && !isFragment && !isPinpoint) {
+          const isLegislation = isLegislationInput(fullRawInput) || isLegislationInput(extractedCitation);
 
-        if (isLegislation) {
-          const lawName = extractLawNameFromInput(fullRawInput) || extractLawNameFromInput(extractedCitation);
-          // Split into words for better matching (same as autocomplete)
-          const words = lawName.split(/[\s\-:]+/).filter(w => w.length >= 2);
-          const orConditions = words.map(w => `source_name.ilike.%${w}%`).join(',');
+          if (isLegislation) {
+            const lawName = extractLawNameFromInput(fullRawInput) || extractLawNameFromInput(extractedCitation);
+            // Split into words for better matching (same as autocomplete)
+            const words = lawName.split(/[\s\-:]+/).filter(w => w.length >= 2);
+            const orConditions = words.map(w => `source_name.ilike.%${w}%`).join(',');
 
-          const { data: existingSources } = await supabase
-            .from("verified_sources")
-            .select("metadata, verification_status")
-            .or(orConditions)
-            .limit(1);
+            const { data: existingSources } = await supabase
+              .from("verified_sources")
+              .select("metadata, verification_status")
+              .or(orConditions)
+              .limit(1);
+            if (!isCurrent()) return;
 
-          const existing = existingSources?.[0];
-          const existingMeta = existing?.metadata as Record<string, unknown> | null;
+            const existing = existingSources?.[0];
+            const existingMeta = existing?.metadata as Record<string, unknown> | null;
 
-          if (existing?.verification_status === "verified") {
-            // Source is already verified — use stored preferences silently, skip the card
-            const prefs: YearPreferences = {
-              hasHebrewYear: (existingMeta?.hasHebrewYear as boolean) ?? true,
-              hasGregorianYear: (existingMeta?.hasGregorianYear as boolean) ?? true,
-            };
-            const adjustedCitation = applyYearPreferences(extractedCitation, prefs);
-            await saveVerifiedSource(fullRawInput, adjustedCitation, citationPayload.source_type, prefs, tel);
-          } else if (existingMeta && ("hasHebrewYear" in existingMeta)) {
-            // Has year preferences but not fully verified — still use silently
-            const prefs: YearPreferences = {
-              hasHebrewYear: existingMeta.hasHebrewYear as boolean ?? true,
-              hasGregorianYear: existingMeta.hasGregorianYear as boolean ?? true,
-            };
-            const adjustedCitation = applyYearPreferences(extractedCitation, prefs);
-            await saveVerifiedSource(fullRawInput, adjustedCitation, citationPayload.source_type, prefs, tel);
+            if (existing?.verification_status === "verified") {
+              // Source is already verified — use stored preferences silently, skip the card
+              const prefs: YearPreferences = {
+                hasHebrewYear: (existingMeta?.hasHebrewYear as boolean) ?? true,
+                hasGregorianYear: (existingMeta?.hasGregorianYear as boolean) ?? true,
+              };
+              const adjustedCitation = applyYearPreferences(extractedCitation, prefs);
+              await saveVerifiedSource(fullRawInput, adjustedCitation, citationPayload.source_type, prefs, tel, isCurrent);
+            } else if (existingMeta && ("hasHebrewYear" in existingMeta)) {
+              // Has year preferences but not fully verified — still use silently
+              const prefs: YearPreferences = {
+                hasHebrewYear: existingMeta.hasHebrewYear as boolean ?? true,
+                hasGregorianYear: existingMeta.hasGregorianYear as boolean ?? true,
+              };
+              const adjustedCitation = applyYearPreferences(extractedCitation, prefs);
+              await saveVerifiedSource(fullRawInput, adjustedCitation, citationPayload.source_type, prefs, tel, isCurrent);
+            } else {
+              // New law — show the Publication Integrity Card
+              setPendingVerification({
+                lawName,
+                rawInput: fullRawInput,
+                fullCitation: extractedCitation,
+                sourceType: citationPayload.source_type,
+                reply,
+                telemetry: tel,
+              });
+            }
           } else {
-            // New law — show the Publication Integrity Card
-            setPendingVerification({
-              lawName,
-              rawInput: fullRawInput,
-              fullCitation: extractedCitation,
-              sourceType: citationPayload.source_type,
-              reply,
-              telemetry: tel,
-            });
+            // Non-legislation: verify directly
+            await saveVerifiedSource(fullRawInput, extractedCitation, citationPayload.source_type, undefined, tel, isCurrent);
           }
-        } else {
-          // Non-legislation: verify directly
-          await saveVerifiedSource(fullRawInput, extractedCitation, citationPayload.source_type, undefined, tel);
         }
-      }
+      };
+      await callAPI(prompt, messages, tel, { sourceType, rawInput: normalized }, onCitationSuccess);
     } catch (err) {
+      if ((err as { message?: string })?.message === "CITATION_RETRY_STALE") { citationStale = true; return; }
+
       const e = err as Error & { isInvalidInput?: boolean; handled?: boolean; userMessage?: string; message?: string };
-      if (e?.isInvalidInput || e?.message === "INVALID_INPUT" || e?.message === "INSUFFICIENT_CREDITS") {
-        // Already toasted by callAPI. Roll back the user message bubble — nothing was processed.
-        setMessages(messages);
-      } else {
-        setMessages([
-          ...newMessages,
-          { role: "assistant", content: e?.userMessage || "שגיאה בחיבור לשרת. אנא נסה שנית." },
-        ]);
-        if (!e?.handled) toast.error(e?.userMessage || "שגיאה בחיבור לשרת. אנא נסה שנית.");
-      }
+      // Restore the submitted input and exact pre-request history. The shared
+      // invocation boundary can then recover the same ID on a manual retry.
+      // This rollback makes no assertion about whether paid work happened.
+      setMessages(messages);
+      setInput(rawText);
+      if (!e?.handled) toast.error(e?.userMessage || "תוצאת הבקשה אינה ידועה. יש לברר את הבקשה לפני פתיחת בקשה חדשה לאותו מקור.");
 
     } finally {
-      setLoading(false);
-      setLoadingMessage(null);
+      if (!citationStale) {
+        setLoading(false);
+        setLoadingMessage(null);
+      }
     }
   };
 
@@ -866,6 +976,10 @@ const Index = () => {
           </div>
 
           <div className="flex items-center gap-1.5 sm:gap-2">
+            {user && <button onClick={() => navigate("/citation-recovery")}
+              className="text-[10px] sm:text-xs text-muted-foreground hover:text-foreground px-2 py-1 rounded-lg">
+              שחזור בקשות
+            </button>}
             {!subscription.isSubscribed && (
               <span className="text-[9px] sm:text-[10px] text-muted-foreground bg-muted px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-md">
                 {subscription.remaining}/{subscription.limit} אזכורים
@@ -1032,6 +1146,7 @@ const Index = () => {
                           }
                           setMessages(updatedMessages);
                           setLoading(true);
+                          let citationStale = false;
                           try {
                             const editTel = sourceTelemetry(newTelemetryBatch("uniform_citation"));
                             const normalized = normalizeAbbreviations(newContent);
@@ -1077,23 +1192,29 @@ const Index = () => {
                                 });
                               }
                             } else {
-                              const reply = await callAPI(prompt, updatedMessages.slice(0, i), editTel, { sourceType, rawInput: normalized });
-                              const assistantIndex = updatedMessages.length;
-                              setMessages([...updatedMessages, { role: "assistant", content: reply }]);
-                              setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: sourceType as SourceType }));
-                              setMessageRawInputs((prev) => ({ ...prev, [assistantIndex]: newContent }));
+                              const onCitationSuccess = async (reply: string, isCurrent: () => boolean, historyRequestId?: string) => {
+                                const assistantIndex = updatedMessages.length;
+                                setMessages([...updatedMessages, { role: "assistant", content: reply }]);
+                                setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: sourceType as SourceType }));
+                                setMessageRawInputs((prev) => ({ ...prev, [assistantIndex]: newContent }));
 
-                              const extractedCitation = extractCitationFromResponse(reply);
-                              const isVerifiedClean = !/\[חסר:/.test(reply) && !/⚠️/.test(reply);
-                              const isFragment = !extractedCitation || extractedCitation.length < 10;
-                              if (isVerifiedClean && !isFragment) {
-                                await saveVerifiedSource(newContent, extractedCitation, sourceType !== "unknown" ? sourceLabel : null, undefined, editTel);
-                              }
+                                const extractedCitation = extractCitationFromResponse(reply);
+                                const isVerifiedClean = !/\[חסר:/.test(reply) && !/⚠️/.test(reply);
+                                const isFragment = !extractedCitation || extractedCitation.length < 10;
+                                if (isVerifiedClean && !isFragment) {
+                                  await saveVerifiedSource(newContent, extractedCitation, sourceType !== "unknown" ? sourceLabel : null, undefined, editTel, isCurrent);
+                                }
+                              };
+                              await callAPI(prompt, updatedMessages.slice(0, i), editTel, { sourceType, rawInput: normalized }, onCitationSuccess);
                             }
-                          } catch {
-                            setMessages([...updatedMessages, { role: "assistant", content: "שגיאה בחיבור לשרת. אנא נסה שנית." }]);
+                          } catch (err) {
+                            if ((err as { message?: string })?.message === "CITATION_RETRY_STALE") { citationStale = true; return; }
+
+                            setMessages(updatedMessages);
                           } finally {
-                            setLoading(false);
+                            if (!citationStale) {
+                              setLoading(false);
+                            }
                           }
                         }
                       : undefined
@@ -1105,21 +1226,28 @@ const Index = () => {
                           if (!rawInput) return;
                           setMessageSourceTypes((prev) => ({ ...prev, [i]: newType }));
                           setLoading(true);
+                          let citationStale = false;
                           try {
                             const newLabel = SOURCE_TYPE_LABELS[newType];
                             const engineHint = buildEnginePromptHint(newType);
                             // IMPORTANT: include [סיווג אוטומטי: ...] so the backend routes to the right Perplexity branch
                             const reclassifiedPrompt = `[סיווג אוטומטי: ${newLabel}]\n[תיקון סיווג: המשתמש ציין שמדובר ב${newLabel}]\n${engineHint}[כלל רלוונטי: ${getEngineRuleReference(newType)}]\n${rawInput}`;
-                            const reply = await callAPI(reclassifiedPrompt, messages.slice(0, i), sourceTelemetry(newTelemetryBatch("uniform_citation")), { sourceType: newType, rawInput: normalizeAbbreviations(rawInput) });
-                            setMessages((prev) => {
-                              const updated = [...prev];
-                              updated[i] = { role: "assistant", content: reply };
-                              return updated;
-                            });
-                          } catch {
+                            const onCitationSuccess = async (reply: string, isCurrent: () => boolean, historyRequestId?: string) => {
+                              setMessages((prev) => {
+                                const updated = [...prev];
+                                updated[i] = { role: "assistant", content: reply };
+                                return updated;
+                              });
+                            };
+                            await callAPI(reclassifiedPrompt, messages.slice(0, i), sourceTelemetry(newTelemetryBatch("uniform_citation")), { sourceType: newType, rawInput: normalizeAbbreviations(rawInput) }, onCitationSuccess);
+                          } catch (err) {
+                            if ((err as { message?: string })?.message === "CITATION_RETRY_STALE") { citationStale = true; return; }
+
                             toast.error("שגיאה בעיבוד מחדש");
                           } finally {
-                            setLoading(false);
+                            if (!citationStale) {
+                              setLoading(false);
+                            }
                           }
                         }
                       : undefined
@@ -1184,6 +1312,13 @@ const Index = () => {
                 </div>
               )}
               <div ref={chatEndRef} />
+              {citationRetry && (
+                <div className="my-4 rounded-lg border border-border p-3 text-sm" role="status">
+                  <p>{citationRetryDisclosure(citationRetry.descriptor)}</p>
+                  <button type="button" disabled={loading} className="mt-2 rounded border px-3 py-2"
+                    onClick={() => void startCitationRetry(citationRetry)}>ניסיון חדש</button>
+                </div>
+              )}
             </div>
           </>
         )}
@@ -1201,6 +1336,10 @@ const Index = () => {
                 onClick={() => {
                   const totalLen = messages.reduce((sum, m) => sum + m.content.length, 0);
                   const doClear = () => {
+                    clearCitationRetry();
+                    citationRetryBusy.current = null;
+                    setLoading(false);
+                    setLoadingMessage(null);
                     setMessages([]);
                     setInput("");
                     localStorage.removeItem(getProjectKey(LS_KEY_INPUT_PREFIX, projectId));
@@ -1224,9 +1363,10 @@ const Index = () => {
             <div className="input-field flex flex-1 min-w-0">
               <VerifiedAutocomplete
                 value={input}
-                onChange={setInput}
+                onChange={(value) => { clearCitationRetry(); setInput(value); }}
                 onKeyDown={handleKeyDown}
                 onSelectCitation={(citation) => {
+                  clearCitationRetry();
                   setInput("");
                   const newMessages: Message[] = [
                     ...messages,

@@ -14,14 +14,20 @@ import { toast } from "sonner";
 import { copyCitationRich, copyCitationsRich } from "@/lib/citationRichText";
 import { ensureVerifiedSources } from "@/lib/verifiedSources";
 import { applyYearPreferences, isLegislationInput, extractLawNameFromInput, type YearPreferences } from "@/lib/citationUtils";
-import { runCitation, CitationRunError, type RunCitationResult } from "@/lib/runCitation";
-import { runPool, isTransientError } from "@/lib/concurrency";
+import { runCitation, CitationRunError, type RunCitationResult, type CitationRunRetry, type CitationRunRecovery } from "@/lib/runCitation";
+import { citationRetryDisclosure } from "@/lib/functionError";
+import { useCitationRowGuard } from "@/lib/useCitationRowGuard";
+import { runPool } from "@/lib/concurrency";
 import { applyRepeatCitationRules, extractCitationOnly } from "@/lib/footnoteRepeatRules";
 import { useAuth } from "@/hooks/useAuth";
 import { activeCitationDiagnostic, citationDiagnosticCandidate, prepareCitationDiagnostic } from "@/lib/citationDiagnostic";
 
 interface FootnoteCell {
   id: number;
+  /** Stable through display-number changes and row removal. */
+  key: string;
+  citationRetry?: CitationRunRetry;
+  recovery?: CitationRunRecovery;
   input: string;
   output: string | null;
   status: "empty" | "loading" | "valid" | "warning" | "verified" | "error";
@@ -48,6 +54,7 @@ type Phase = "input" | "review" | "final";
 
 const createCell = (id: number): FootnoteCell => ({
   id,
+  key: crypto.randomUUID(),
   input: "",
   output: null,
   status: "empty",
@@ -74,7 +81,7 @@ function loadCells(projectId: string | undefined): FootnoteCell[] {
     const raw = localStorage.getItem(getCellsKey(projectId));
     if (raw) {
       const parsed = JSON.parse(raw) as FootnoteCell[];
-      if (Array.isArray(parsed) && parsed.length > 0) return parsed.map(c => ({ ...c, status: c.status === "loading" ? "empty" : c.status }));
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed.map(c => ({ ...c, key: c.key || crypto.randomUUID(), citationRetry: undefined, recovery: undefined, status: c.status === "loading" ? "empty" : c.status }));
     }
   } catch {}
   return Array.from({ length: 5 }, (_, i) => createCell(i + 1));
@@ -90,7 +97,7 @@ function loadPhase(projectId: string | undefined): Phase {
 
 
 export function BatchFootnoteBuilder({}: BatchProps) {
-  const { isAdmin, isAdminResolved } = useAuth();
+  const { user, isAdmin, isAdminResolved } = useAuth();
   const { currentProject } = useProjects();
   const { isOfficeAddin, hasDocumentAccess } = useOffice();
   const projectId = currentProject?.id;
@@ -103,6 +110,9 @@ export function BatchFootnoteBuilder({}: BatchProps) {
   const [phase, setPhase] = useState<Phase>(() => loadPhase(projectId));
   const [finalizing, setFinalizing] = useState(false);
   const bibliography = useBibliography();
+  const rowGuard = useCitationRowGuard(`${user?.id ?? ""}:${projectId ?? ""}`);
+  const cellsRef = useRef(cells);
+  cellsRef.current = cells;
 
   useEffect(() => {
     const populated = cells.filter((cell) => cell.input.trim());
@@ -111,15 +121,19 @@ export function BatchFootnoteBuilder({}: BatchProps) {
     if (tag) void prepareCitationDiagnostic(tag);
   }, [cells, isAdmin, isAdminResolved]);
 
-  // Reload when project changes
+  // Drop in-memory retry actions on account/project changes.
   useEffect(() => {
+    rowGuard.invalidate();
+    setGlobalLoading(false);
     setCells(loadCells(projectId));
     setSummary(localStorage.getItem(getSummaryKey(projectId)));
     setPhase(loadPhase(projectId));
-  }, [projectId]);
+  }, [projectId, user?.id, rowGuard]);
 
   useEffect(() => {
-    localStorage.setItem(getCellsKey(projectId), JSON.stringify(cells));
+    // Retry authority and retained engine/render context must stay in memory.
+    const savedCells = cells.map(({ citationRetry: _retry, recovery: _recovery, ...cell }) => cell);
+    localStorage.setItem(getCellsKey(projectId), JSON.stringify(savedCells));
   }, [cells, projectId]);
 
   useEffect(() => {
@@ -133,31 +147,38 @@ export function BatchFootnoteBuilder({}: BatchProps) {
   }, [phase, projectId]);
 
   const updateCellInput = useCallback((id: number, value: string) => {
+    const cell = cellsRef.current.find((c) => c.id === id);
+    if (cell) rowGuard.invalidate(cell.key);
     setCells((prev) =>
       prev.map((c) =>
-        c.id === id ? { ...c, input: value, status: "empty", verifiedCitation: undefined } : c
+        c.id === id ? { ...c, input: value, status: "empty", verifiedCitation: undefined, citationRetry: undefined, recovery: undefined } : c
       )
     );
-  }, []);
+  }, [rowGuard]);
 
   const setCellVerified = useCallback((id: number, citation: string) => {
+    const cell = cellsRef.current.find((c) => c.id === id);
+    if (cell) rowGuard.invalidate(cell.key);
     setCells((prev) =>
       prev.map((c) =>
-        c.id === id ? { ...c, output: citation, status: "verified", verifiedCitation: citation } : c
+        c.id === id ? { ...c, output: citation, status: "verified", verifiedCitation: citation, citationRetry: undefined, recovery: undefined } : c
       )
     );
-  }, []);
+  }, [rowGuard]);
 
   const addCell = useCallback(() => {
     setCells((prev) => [...prev, createCell(prev.length + 1)]);
   }, []);
 
   const removeCell = useCallback((id: number) => {
+    if (cellsRef.current.length <= 1) return;
+    const cell = cellsRef.current.find((c) => c.id === id);
+    if (cell) rowGuard.invalidate(cell.key);
     setCells((prev) => {
       if (prev.length <= 1) return prev;
       return prev.filter((c) => c.id !== id).map((c, i) => ({ ...c, id: i + 1 }));
     });
-  }, []);
+  }, [rowGuard]);
 
   // Drag and drop
   const dragItem = useRef<number | null>(null);
@@ -194,8 +215,10 @@ export function BatchFootnoteBuilder({}: BatchProps) {
     input: string,
     overrideType?: SourceType,
     telemetry: CostTelemetry = sourceTelemetry(newTelemetryBatch("footnotes")),
+    isResultCurrent?: () => boolean,
+    recovery?: CitationRunRecovery,
   ): Promise<RunCitationResult> =>
-    runCitation({ rawInput: input, overrideType, projectId, useVerifiedStore: true, telemetry,
+    recovery ? recovery.retry(isResultCurrent) : runCitation({ rawInput: input, isResultCurrent, overrideType, projectId, useVerifiedStore: true, telemetry,
       diagnostic: activeCitationDiagnostic(input, isAdminResolved && isAdmin, window.location.search) });
 
   const applyResultToCell = (c: FootnoteCell, res: RunCitationResult): FootnoteCell => ({
@@ -205,6 +228,7 @@ export function BatchFootnoteBuilder({}: BatchProps) {
     status: res.status,
     warningMsg: res.status === "warning" ? res.warningMsg : undefined,
     errorMsg: undefined,
+    citationRetry: undefined, recovery: undefined,
     verifiedCitation: res.fromVerifiedStore ? res.citation : undefined,
     detectedType: res.sourceType,
     approved: false,
@@ -222,13 +246,16 @@ export function BatchFootnoteBuilder({}: BatchProps) {
       return;
     }
 
+    const batchJob = rowGuard.begin("batch");
+    if (!batchJob) return;
+    const rowJobs = activeCells.map((cell) => rowGuard.begin(cell.key));
     setGlobalLoading(true);
     setSummary(null);
 
     setCells((prev) =>
       prev.map((c) =>
         c.input.trim() && c.status !== "verified"
-          ? { ...c, status: "loading", output: null, errorMsg: undefined, approved: false }
+          ? { ...c, status: "loading", output: null, errorMsg: undefined, approved: false, citationRetry: undefined }
           : c
       )
     );
@@ -240,29 +267,36 @@ export function BatchFootnoteBuilder({}: BatchProps) {
     const rowTelemetry = activeCells.map(() => sourceTelemetry(telemetryBatch));
     const results = await runPool(
       activeCells,
-      (cell, i) => runSingleCitation(cell.input, cell.sourceTypeOverride, rowTelemetry[i]),
+      (cell, i) => runSingleCitation(cell.input, cell.sourceTypeOverride, rowTelemetry[i],
+        () => batchJob.isCurrent() && !!rowJobs[i]?.isCurrent(), cell.recovery),
       {
         concurrency: 2,
-        retries: 1,
-        shouldRetry: (e) =>
-          isTransientError(e) && !(e as CitationRunError)?.isInsufficientCredits,
+        retries: 0,
         onSettled: (index, result) => {
-          const cellId = activeCells[index].id;
+          const rowJob = rowJobs[index];
+          if (!batchJob.isCurrent() || !rowJob?.isCurrent()) return;
+          const cellKey = activeCells[index].key;
           if (result.ok && result.value) {
             const value = result.value;
-            setCells((prev) => prev.map((c) => (c.id === cellId ? applyResultToCell(c, value) : c)));
+            setCells((prev) => prev.map((c) => (c.key === cellKey ? applyResultToCell(c, value) : c)));
           } else {
             const message = errorMessageOf(result.error);
             setCells((prev) =>
               prev.map((c) =>
-                c.id === cellId ? { ...c, status: "error" as const, output: null, errorMsg: message } : c
+                c.key === cellKey ? { ...c, status: "error" as const, output: null, errorMsg: message,
+                  citationRetry: result.error instanceof CitationRunError ? result.error.citationRetry : undefined,
+                  recovery: result.error instanceof CitationRunError ? result.error.recovery : undefined } : c
               )
             );
           }
+          rowJob.finish();
         },
       }
     );
 
+    if (!batchJob.isCurrent()) { rowJobs.forEach((job) => job?.finish()); batchJob.finish(); return; }
+    rowJobs.forEach((job) => job?.finish());
+    batchJob.finish();
     setCells((prev) => applyRepeatCitationRules(prev));
     setPhase("review");
     setGlobalLoading(false);
@@ -278,44 +312,46 @@ export function BatchFootnoteBuilder({}: BatchProps) {
   };
 
   // Re-run a single cell (e.g. user changed source type or edited input).
-  const regenerateOne = async (id: number) => {
-    const cell = cells.find((c) => c.id === id);
-    if (!cell || !cell.input.trim()) return;
-
-    setCells((prev) =>
-      prev.map((c) =>
-        c.id === id ? { ...c, status: "loading", output: null, errorMsg: undefined, approved: false } : c
-      )
-    );
-
+  const regenerateOne = async (id: number, explicitRetry?: CitationRunRetry, expectedKey?: string) => {
+    const cell = cellsRef.current.find((c) => expectedKey ? c.key === expectedKey : c.id === id);
+    if (!cell || !cell.input.trim() || (explicitRetry && cell.citationRetry !== explicitRetry)) return;
+    const job = rowGuard.begin(cell.key);
+    if (!job) return;
+    setCells((prev) => prev.map((c) => c.key === cell.key
+      ? { ...c, status: "loading", output: null, errorMsg: undefined, approved: false, citationRetry: undefined } : c));
     try {
-      const res = await runSingleCitation(cell.input, cell.sourceTypeOverride);
-      setCells((prev) =>
-        applyRepeatCitationRules(prev.map((c) => (c.id === id ? applyResultToCell(c, res) : c)))
-      );
+      const res = await runSingleCitation(cell.input, cell.sourceTypeOverride, undefined, job.isCurrent, explicitRetry ?? cell.recovery);
+      if (!job.isCurrent()) return;
+      setCells((prev) => applyRepeatCitationRules(prev.map((c) => c.key === cell.key ? applyResultToCell(c, res) : c)));
     } catch (e) {
+      if (!job.isCurrent()) return;
       const message = errorMessageOf(e);
-      setCells((prev) =>
-        prev.map((c) => (c.id === id ? { ...c, status: "error", output: null, errorMsg: message } : c))
-      );
+      setCells((prev) => prev.map((c) => c.key === cell.key
+        ? { ...c, status: "error", output: null, errorMsg: message,
+          citationRetry: e instanceof CitationRunError ? e.citationRetry : undefined,
+          recovery: e instanceof CitationRunError ? e.recovery : undefined } : c));
       toast.error(`הפקה מחדש של הערה ${id} נכשלה`, { description: message });
-    }
+    } finally { job.finish(); }
   };
 
 
   // Per-cell handlers used by the review card.
   const handleReviewOutputChange = useCallback((id: number, value: string) => {
+    const cell = cellsRef.current.find((c) => c.id === id);
+    if (cell) rowGuard.invalidate(cell.key);
     setCells((prev) => {
-      const updated = prev.map((c) => (c.id === id ? { ...c, output: value, approved: false } : c));
+      const updated = prev.map((c) => (c.id === id ? { ...c, output: value, approved: false, citationRetry: undefined, recovery: undefined } : c));
       return applyRepeatCitationRules(updated);
     });
-  }, []);
+  }, [rowGuard]);
 
   const handleReviewSourceTypeChange = useCallback((id: number, t: SourceType) => {
+    const cell = cellsRef.current.find((c) => c.id === id);
+    if (cell) rowGuard.invalidate(cell.key);
     setCells((prev) =>
-      prev.map((c) => (c.id === id ? { ...c, sourceTypeOverride: t, approved: false } : c))
+      prev.map((c) => (c.id === id ? { ...c, sourceTypeOverride: t, approved: false, citationRetry: undefined, recovery: undefined } : c))
     );
-  }, []);
+  }, [rowGuard]);
 
   const handleReviewApproveToggle = useCallback((id: number, approved: boolean) => {
     setCells((prev) => prev.map((c) => (c.id === id ? { ...c, approved } : c)));
@@ -507,6 +543,8 @@ export function BatchFootnoteBuilder({}: BatchProps) {
   };
 
   const resetAll = () => {
+    rowGuard.invalidate();
+    setGlobalLoading(false);
     setCells(Array.from({ length: 5 }, (_, i) => createCell(i + 1)));
     setSummary(null);
     setPhase("input");
@@ -615,7 +653,7 @@ export function BatchFootnoteBuilder({}: BatchProps) {
             <div className="space-y-2.5">
               {cells.map((cell, index) => (
                 <div
-                  key={`cell-${index}`}
+                  key={cell.key}
                   draggable={!globalLoading}
                   onDragStart={() => handleDragStart(index)}
                   onDragEnter={() => handleDragEnter(index)}
@@ -693,7 +731,13 @@ export function BatchFootnoteBuilder({}: BatchProps) {
               </div>
               <div className="flex items-center gap-2">
                 <button
-                  onClick={() => setPhase("input")}
+                  onClick={() => {
+                    rowGuard.invalidate();
+                    setGlobalLoading(false);
+                    setCells((prev) => prev.map((c) => ({ ...c, citationRetry: undefined,
+                      status: c.status === "loading" ? "empty" : c.status })));
+                    setPhase("input");
+                  }}
                   className="text-xs text-muted-foreground hover:text-foreground px-2 py-1.5 rounded-lg transition-colors"
                 >
                   ← חזור לעריכה
@@ -710,13 +754,19 @@ export function BatchFootnoteBuilder({}: BatchProps) {
 
             {reviewable.map((cell) => (
               <FootnoteReviewCard
-                key={cell.id}
+                key={cell.key}
                 cell={cell}
                 onInputChange={updateCellInput}
                 onOutputChange={handleReviewOutputChange}
                 onSourceTypeChange={handleReviewSourceTypeChange}
                 onApproveToggle={handleReviewApproveToggle}
                 onRegenerate={regenerateOne}
+                newAttempt={cell.status === "error" && cell.citationRetry ? {
+                  disclosure: citationRetryDisclosure(cell.citationRetry.descriptor),
+                  onRetry: rowGuard.bind(cell.key, () => {
+                    if (cell.citationRetry) void regenerateOne(cell.id, cell.citationRetry, cell.key);
+                  }),
+                } : undefined}
                 onRemove={removeCell}
                 disabled={finalizing}
               />

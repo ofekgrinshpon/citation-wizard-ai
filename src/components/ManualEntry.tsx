@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { LawAutocomplete } from "./LawAutocomplete";
 import { type LawEntry } from "@/data/laws";
 import {
@@ -8,7 +8,8 @@ import {
   SOURCE_TYPE_LABELS,
   RULE_REFERENCES,
 } from "@/data/abbreviations";
-import { invokeFunction } from "@/lib/functionError";
+import { invokeFunction, retryCitationFunction, citationRetryDisclosure, type CitationRetryDescriptor } from "@/lib/functionError";
+import { useAuth } from "@/hooks/useAuth";
 import { FormattedCitation } from "./FormattedCitation";
 import { toast } from "sonner";
 
@@ -25,20 +26,57 @@ const SOURCE_TYPES: { id: SourceType; label: string; icon: string }[] = [
 ];
 
 export function ManualEntry() {
+  const { user } = useAuth();
   const [sourceType, setSourceType] = useState<SourceType | null>(null);
   const [fields, setFields] = useState<Record<string, string>>({});
   const [output, setOutput] = useState<string | null>(null);
   const [ruleRef, setRuleRef] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [missingFields, setMissingFields] = useState<string[]>([]);
+  const [failedRetry, setFailedRetry] = useState<CitationRetryDescriptor | null>(null);
+  const [lastRequestId, setLastRequestId] = useState<string | null>(null);
+  const offeredRetry = useRef<CitationRetryDescriptor | null>(null);
+  offeredRetry.current = failedRetry;
+  const activeRequest = useRef<object | null>(null);
+  const revision = useRef(0);
+  const mounted = useRef(false);
+  const account = useRef(user?.id);
+  account.current = user?.id;
+
+  useEffect(() => {
+    mounted.current = true;
+    revision.current += 1;
+    activeRequest.current = null;
+    setLoading(false);
+    setSourceType(null);
+    setFields({});
+    setOutput(null);
+    setRuleRef("");
+    setMissingFields([]);
+    setFailedRetry(null);
+    setLastRequestId(null);
+    return () => { mounted.current = false; revision.current += 1; };
+  }, [user?.id]);
 
   const updateField = useCallback((key: string, value: string) => {
+    revision.current += 1;
+    offeredRetry.current = null;
+    setFailedRetry(null);
+    setLastRequestId(null);
+    setOutput(null);
+    setRuleRef("");
     setFields((prev) => ({ ...prev, [key]: value }));
     // Clear missing field highlight when user fills it
     setMissingFields((prev) => prev.filter((f) => f !== key));
   }, []);
 
   const handleLawSelect = useCallback((law: LawEntry) => {
+    revision.current += 1;
+    offeredRetry.current = null;
+    setFailedRetry(null);
+    setLastRequestId(null);
+    setOutput(null);
+    setRuleRef("");
     setFields((prev) => ({
       ...prev,
       lawName: law.name,
@@ -89,8 +127,9 @@ export function ManualEntry() {
     return [...required, ...optional.filter((f) => !required.includes(f))];
   };
 
-  const validateAndGenerate = async () => {
-    if (!sourceType) return;
+  const validateAndGenerate = async (retry?: CitationRetryDescriptor) => {
+    // State alone cannot block two clicks before React has rendered loading.
+    if (!sourceType || activeRequest.current || (retry && offeredRetry.current !== retry)) return;
 
     const required = REQUIRED_FIELDS[sourceType];
     const missing = required.filter((f) => !fields[f]?.trim());
@@ -104,23 +143,47 @@ export function ManualEntry() {
       return;
     }
 
+    const ticket = {};
+    activeRequest.current = ticket;
+    const submittedRevision = revision.current;
+    const submittedAccount = account.current;
+    const isCurrent = () => mounted.current && activeRequest.current === ticket &&
+      revision.current === submittedRevision && account.current === submittedAccount;
     setLoading(true);
     setMissingFields([]);
+    // Clear this offer synchronously. A stale second click remains bound to
+    // the displayed failed ID, even if its child fails before React renders.
+    offeredRetry.current = null;
+    setFailedRetry(null);
 
     try {
       const prompt = buildPromptFromFields(sourceType, fields);
-      const { data, errorInfo } = await invokeFunction<{ content?: string }>("citation-chat", {
+      const { data, errorInfo } = retry
+        ? await retryCitationFunction<{ content?: string }>(retry, { isCitationResultCurrent: isCurrent })
+        : await invokeFunction<{ content?: string }>("citation-chat", {
         messages: [{ role: "user", content: prompt }],
-      });
+        // The shared invocation boundary retains this ID across unresolved
+        // manual/transport retries of the same account and payload.
+        requestId: crypto.randomUUID(),
+      }, { isCitationResultCurrent: isCurrent });
 
+      if (!isCurrent()) return;
       if (errorInfo) {
+        setLastRequestId(errorInfo.requestId);
+        setFailedRetry(errorInfo.citationRetry ?? null);
         toast.error(errorInfo.message);
         return;
       }
+      setLastRequestId(null);
       setOutput(data?.content || "שגיאה בייצור האזכור");
       setRuleRef(RULE_REFERENCES[sourceType]);
+    } catch {
+      if (isCurrent()) toast.error("תוצאת הבקשה אינה ידועה. אל תפתחו בקשה חדשה לאותו מקור לפני בירור.");
     } finally {
-      setLoading(false);
+      if (mounted.current && activeRequest.current === ticket) {
+        activeRequest.current = null;
+        setLoading(false);
+      }
     }
   };
 
@@ -144,6 +207,12 @@ export function ManualEntry() {
   };
 
   const resetForm = () => {
+    revision.current += 1;
+    activeRequest.current = null;
+    setLoading(false);
+    offeredRetry.current = null;
+    setFailedRetry(null);
+    setLastRequestId(null);
     setSourceType(null);
     setFields({});
     setOutput(null);
@@ -267,7 +336,7 @@ export function ManualEntry() {
 
           {/* Generate button */}
           <button
-            onClick={validateAndGenerate}
+            onClick={() => void validateAndGenerate()}
             disabled={loading}
             className="mt-4 w-full py-3 rounded-lg font-semibold text-sm transition-all disabled:opacity-40"
             style={{
@@ -275,8 +344,18 @@ export function ManualEntry() {
               color: loading ? "hsl(var(--muted-foreground))" : "hsl(var(--primary-foreground))",
             }}
           >
-            {loading ? "מייצר אזכור..." : "⚖ ייצר אזכור תקני"}
+            {loading ? "מייצר אזכור..." : lastRequestId ? "בדיקת מצב הבקשה" : "⚖ ייצר אזכור תקני"}
           </button>
+
+          {failedRetry && (
+            <div className="mt-4 rounded-lg border border-border p-3 text-sm" role="status">
+              <p>{citationRetryDisclosure(failedRetry)}</p>
+              <button type="button" disabled={loading} className="mt-2 rounded border px-3 py-2"
+                onClick={() => void validateAndGenerate(failedRetry)}>
+                ניסיון חדש
+              </button>
+            </div>
+          )}
 
           {/* Output preview */}
           {output && (

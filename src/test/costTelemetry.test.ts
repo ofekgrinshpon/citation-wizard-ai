@@ -304,8 +304,10 @@ describe("source identity and wizard attribution", () => {
     expect(s).toMatch(/interface PendingVerification \{[^}]*telemetry\?: CostTelemetry;/);
     expect(s).toMatch(/telemetry: tel,\n/);
     expect(s).toMatch(/const \{ rawInput, fullCitation, sourceType, reply, telemetry \} = pendingVerification;/);
-    // Article context is additive; telemetry remains the per-call third argument.
-    expect(s).toMatch(/callAPI = async \(userMessage: string, history: Message\[\], telemetry\?: CostTelemetry(?:, article\?: \{ sourceType: SourceType; rawInput: string \})?\)/);
+    // Article context and the saved success continuation are additive;
+    // telemetry remains the per-call third argument, including explicit retries.
+    // Recovery adds only an optional request ID to the success continuation.
+    expect(s).toMatch(/callAPI = async \(userMessage: string, history: Message\[\], telemetry\?: CostTelemetry, article\?: \{ sourceType: SourceType; rawInput: string \}, onSuccess\?: \(reply: string, isCurrent: \(\) => boolean, historyRequestId\?: string\) => Promise<void> \| void\)/);
   });
 
   it("delayed verify of A after submission B keeps A (closure semantics)", () => {
@@ -332,14 +334,16 @@ describe("billing invariants", () => {
     }
   });
 
-  it("consume/refund RPC args are byte-identical to the pre-telemetry baseline (fe36394b)", () => {
+  it("server execution claims keep billing IDs separate from telemetry", () => {
     const s = read("supabase/functions/citation-chat/index.ts");
-    const blocks = [...s.matchAll(/rpc\("(?:consume_[a-z_]+|refund_credits[a-z_]*)",\s*\{[^}]*\}\)/g)].map((m) => m[0].replace(/\s+/g, " "));
-    expect(blocks).toEqual([
-      'rpc("refund_credits", { _request_id: creditRequestId, _reason: reason, })',
-      'rpc("consume_usage_batch", { _batch_id: usageBatchId, _group_size: USAGE_BATCH_GROUP.citation, _reason: "citation-chat", _request_id: creditRequestId, })',
-      'rpc("consume_credits", { _amount: 1, _reason: "citation-chat", _request_id: creditRequestId, })',
-    ]);
+    const guard = read("supabase/functions/_shared/citationUsageGuard.ts");
+    expect(s).not.toMatch(/rpc\("(?:consume_[a-z_]+|refund_credits[a-z_]*)"/);
+    expect(s).toContain("new CitationUsageGuard(");
+    expect(s).toContain("userId, clientReqId");
+    expect(guard).toContain('rpc("begin_citation_request",');
+    expect(guard).toContain("_request_id: this.requestId");
+    expect(guard).toContain("_batch_id: batchId");
+    expect(guard).not.toMatch(/telemetryBatchId|telemetryRequestId/);
     expect(s).toMatch(/const usageBatchId = typeof clientBatchId === "string"/);
     expect(s).not.toMatch(/usageBatchId\s*=.*telemetry/i);
   });

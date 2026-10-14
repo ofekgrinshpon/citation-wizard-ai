@@ -2,12 +2,13 @@
  * legal-research-v2 — beta user job lifecycle.
  *
  * Routing/配置 layer only: it reuses the EXISTING production job table,
- * credit RPCs and refund semantics of the beta experience, and delegates all
+ * credit pricing and trusted-failure refunds, and delegates all
  * research to the unchanged V2 pipeline. No research behaviour lives here.
  */
 
 import type { SupabaseClient } from "../shared/primitives.ts";
 import type { Footnote } from "../types.ts";
+import { attestUsageFailure, hasAmbiguousFailure } from "../../_shared/legacyUsageRefund.ts";
 import { releaseOperationLock } from "../../_shared/operationLock.ts";
 
 export const RESEARCH_CREDIT_COST = 5;
@@ -150,7 +151,8 @@ export function toBetaResult(out: Record<string, unknown>): BetaResultShape {
 
 /**
  * A run only counts as delivered when it produced an actual cited answer.
- * Refusals and empty answers are refunded, exactly as in the current beta.
+ * Definitive refusals and empty answers can be refunded after persistence.
+ * Ambiguous provider outcomes require reconciliation instead.
  */
 export function isDelivered(result: BetaResultShape): boolean {
   // Source search delivers a source pack, not an answer: it counts as
@@ -168,16 +170,7 @@ export async function refundJob(
   reason: string,
 ): Promise<boolean> {
   if (!job.credit_request_id) return false;
-  try {
-    await admin.rpc("refund_credits_for_user", {
-      _user_id: job.user_id,
-      _request_id: job.credit_request_id,
-      _reason: `auto-refund: ${reason}`,
-    });
-    return true;
-  } catch {
-    return false;
-  }
+  return attestUsageFailure(admin, job.user_id, job.credit_request_id, `auto-refund: ${reason}`);
 }
 
 /**
@@ -191,6 +184,16 @@ export function gatewayFailure(out: Record<string, unknown>): string | null {
   return hit ? hit.slice(0, 300) : null;
 }
 
+/** Model error codes can be synthetic (notably 502 for interrupted SSE).
+ * Those codes cannot certify an observed terminal provider rejection. */
+export function definitiveGatewayFailure(out: Record<string, unknown>): boolean {
+  const hit = gatewayFailure(out);
+  return hit !== null && !hasAmbiguousFailure({
+    agent_error: out.agent_error,
+    drafter_error: out.drafter_error,
+  });
+}
+
 /**
  * A job that already reached a terminal state (done / error / timed_out, e.g.
  * written by the stale-job reaper) must never be rewritten by a late worker,
@@ -198,15 +201,16 @@ export function gatewayFailure(out: Record<string, unknown>): string | null {
  */
 export async function isTerminal(admin: SupabaseClient, jobId: string): Promise<boolean> {
   try {
-    const { data } = await admin
+    const { data, error } = await admin
       .from("legal_research_jobs")
       .select("status")
       .eq("id", jobId)
       .maybeSingle();
+    if (error || !data) return true; // Unknown state is not permission to finalize.
     const status = (data as { status?: string } | null)?.status ?? "";
     return status === "done" || status === "error" || status === "timed_out";
   } catch {
-    return false;
+    return true;
   }
 }
 
@@ -215,19 +219,32 @@ export async function finishJobSuccess(
   job: BetaJob,
   result: BetaResultShape,
 ): Promise<{ refunded: boolean; skipped?: boolean }> {
-  if (await isTerminal(admin, job.id)) {
-    await releaseJobLock(admin, job, "already_terminal");
-    return { refunded: false, skipped: true };
-  }
   const delivered = isDelivered(result);
-  const refunded = delivered ? false : await refundJob(admin, job, "no_answer_delivered");
-  await admin.from("legal_research_jobs").update({
+  const uncertain = hasAmbiguousFailure(result.debug);
+  const persistedResult = {
+    ...result,
+    delivery_failed: !delivered && !uncertain,
+    execution_outcome_unknown: uncertain,
+    credits_refunded: false,
+  };
+  // The conditional write is the terminal winner. A read-before-write check
+  // cannot prevent a late failure from refunding a concurrent successful job.
+  const { data, error } = await admin.from("legal_research_jobs").update({
     status: "done",
-    result: { ...result, credits_refunded: refunded },
+    result: persistedResult,
     current_stage: null,
     progress_label_he: null,
     completed_at: new Date().toISOString(),
-  }).eq("id", job.id).in("status", ["running", "queued"]);
+  }).eq("id", job.id).eq("user_id", job.user_id)
+    .in("status", ["running", "queued"]).select("id").maybeSingle();
+  if (error || !data) return { refunded: false, skipped: true };
+  const refunded = !delivered && !uncertain
+    ? await refundJob(admin, job, "no_answer_delivered") : false;
+  if (refunded) {
+    await admin.from("legal_research_jobs").update({
+      result: { ...persistedResult, credits_refunded: true },
+    }).eq("id", job.id).eq("user_id", job.user_id).eq("status", "done");
+  }
   await releaseJobLock(admin, job, refunded ? "refunded" : "done");
   return { refunded };
 }
@@ -236,19 +253,30 @@ export async function finishJobError(
   admin: SupabaseClient,
   job: BetaJob,
   message: string,
-): Promise<void> {
-  if (await isTerminal(admin, job.id)) {
-    await releaseJobLock(admin, job, "already_terminal");
-    return;
-  }
-  const refunded = await refundJob(admin, job, "pipeline_error");
-  await admin.from("legal_research_jobs").update({
+  definitiveFailure = false,
+): Promise<{ refunded: boolean; skipped?: boolean }> {
+  const result = {
+    credits_refunded: false,
+    pipeline_version: "v2",
+    delivery_failed: definitiveFailure,
+    execution_outcome_unknown: !definitiveFailure,
+  };
+  const { data, error } = await admin.from("legal_research_jobs").update({
     status: "error",
     error: message.slice(0, 500),
-    result: { credits_refunded: refunded, pipeline_version: "v2" },
+    result,
     current_stage: null,
     progress_label_he: null,
     completed_at: new Date().toISOString(),
-  }).eq("id", job.id).in("status", ["running", "queued"]);
+  }).eq("id", job.id).eq("user_id", job.user_id)
+    .in("status", ["running", "queued"]).select("id").maybeSingle();
+  if (error || !data) return { refunded: false, skipped: true };
+  const refunded = definitiveFailure ? await refundJob(admin, job, "pipeline_error") : false;
+  if (refunded) {
+    await admin.from("legal_research_jobs").update({
+      result: { ...result, credits_refunded: true },
+    }).eq("id", job.id).eq("user_id", job.user_id).eq("status", "error");
+  }
   await releaseJobLock(admin, job, "error");
+  return { refunded };
 }

@@ -53,7 +53,14 @@ function harness(options: { rawInput?: string; sourceType?: abbreviations.Source
   });
   const toast = { error: vi.fn(), info: vi.fn() };
   const handleRefundResponse = vi.fn();
-  const callAPI = handler("callAPI", { ...adapter, ...telemetry, invokeFunction, toast, handleRefundResponse, projectId: "project-preserved", crypto: { randomUUID: () => "request-preserved" } });
+  const citationRetryRef = { current: null as { descriptor: unknown; run: () => Promise<string>; isCurrent: () => boolean } | null };
+  const retryCitationFunction = vi.fn(async () => ({ data: { content: "Recovered exact citation from the failed request" }, errorInfo: null }));
+  const setCitationRetry = vi.fn();
+  const citationRevision = { current: 0 };
+  const citationScope = { current: { accountId: "fixture-user", projectId: "project-preserved", mode: "freetext" } };
+  const callAPI = handler("callAPI", { ...adapter, ...telemetry, invokeFunction, retryCitationFunction, toast, handleRefundResponse, projectId: "project-preserved", crypto: { randomUUID: () => "request-preserved" },
+    clearCitationRetry: () => { citationRevision.current += 1; citationRetryRef.current = null; }, citationRevision, citationScope, citationRetryRef, setCitationRetry, user: { id: "fixture-user" }, mode: "freetext",
+  });
   const insert = vi.fn(async (_rows: Array<Record<string, unknown>>) => ({}));
   const state = { setMessages: vi.fn(), setPendingSuggestion: vi.fn() };
   const resolveSourceType = vi.fn(async () => ({ sourceType: options.sourceType ?? "foreign_journal_article", source: "regex" }));
@@ -70,16 +77,94 @@ function harness(options: { rawInput?: string; sourceType?: abbreviations.Source
     classifyVerifiedSource: vi.fn(), getVerifiedCategoryLabel: () => "מאמר", reportZeroWork: vi.fn(),
     user: { id: "fixture-user" }, currentProject: { id: "project-preserved" },
     supabase: { from: () => ({ insert }) }, setCitationRefreshKey: vi.fn(), logActivity: vi.fn(),
+    saveCitationHistoryRecord: async (entry: Record<string, unknown>) => {
+      await insert([entry]);
+      return { historyId: "synthetic-history", alreadySaved: false };
+    },
     saveVerifiedSource: vi.fn(async () => {}), setPendingVerification: vi.fn(),
   };
   const handleSend = handler("handleSend", context);
-  return { callAPI, handleSend, context, state, insert, invokeFunction, provider, toast, handleRefundResponse, resolveSourceType, findVerifiedSourceMatch, findSimilarVerifiedSource, subscription };
+  return { callAPI, handleSend, context, state, insert, invokeFunction, retryCitationFunction, citationRetryRef, citationScope, citationRevision, setCitationRetry, provider, toast, handleRefundResponse, resolveSourceType, findVerifiedSourceMatch, findSimilarVerifiedSource, subscription };
 }
 
 beforeEach(() => vi.stubGlobal("fetch", vi.fn(() => { throw new Error("Unmocked network forbidden"); })));
 afterEach(() => vi.unstubAllGlobals());
 
 describe("legacy standalone article adapter", () => {
+  it("explicit retry reuses the saved success continuation once, preserving history/verification without classifying again", async () => {
+    const descriptor = { failedRequestId: "failed-request-parent", handle: "fixture-handle", refundConfirmed: false, refundStatus: "deferred",
+      refundReceipt: { status: "deferred", refunded: false, units_refunded: 0, request_id: "failed-request-parent" } };
+    const h = harness({ sourceType: "foreign_case_us", errorInfo: { code: "AI_REFUSED", status: 422, message: "Failed", citationRetry: descriptor } });
+    await h.handleSend();
+    expect(h.insert).not.toHaveBeenCalled();
+    const offer = h.citationRetryRef.current!;
+    expect(offer.descriptor).toBe(descriptor);
+    await offer.run();
+    await offer.run();
+    expect(h.resolveSourceType).toHaveBeenCalledTimes(1);
+    expect(h.findVerifiedSourceMatch).toHaveBeenCalledTimes(1);
+    expect(h.insert).toHaveBeenCalledTimes(1);
+    expect(h.context.saveVerifiedSource).toHaveBeenCalledTimes(1);
+    expect(last(h.state.setMessages.mock.calls)[0]).toEqual(expect.arrayContaining([
+      expect.objectContaining({ role: "assistant", content: expect.stringContaining("Recovered exact citation") }),
+    ]));
+  });
+
+  it.each(["account", "project", "revision"])("does not restore old messages/input/loading after a stale %s response", async (changed) => {
+    const h = harness();
+    let resolve!: (value: { data: null; errorInfo: Record<string, unknown> }) => void;
+    h.invokeFunction.mockImplementationOnce(() => new Promise((done) => { resolve = done; }));
+    const pending = h.handleSend();
+    await vi.waitFor(() => expect(h.invokeFunction).toHaveBeenCalledTimes(1));
+    const messagesBefore = h.state.setMessages.mock.calls.length;
+    const inputsBefore = h.context.setInput.mock.calls.length;
+    const loadingBefore = h.context.setLoading.mock.calls.length;
+    if (changed === "revision") h.citationRevision.current += 1;
+    else h.citationScope.current = { ...h.citationScope.current, [changed === "account" ? "accountId" : "projectId"]: "new-scope" };
+    resolve({ data: null, errorInfo: { code: "REQUEST_OUTCOME_UNKNOWN", message: "Unknown" } });
+    await pending;
+    expect(h.state.setMessages).toHaveBeenCalledTimes(messagesBefore);
+    expect(h.context.setInput).toHaveBeenCalledTimes(inputsBefore);
+    expect(h.context.setLoading).toHaveBeenCalledTimes(loadingBefore);
+    expect(h.insert).not.toHaveBeenCalled();
+  });
+
+  it("rechecks retry scope after the saved continuation awaits verification metadata", async () => {
+    const descriptor = { failedRequestId: "failed-request-parent", handle: "fixture-handle", refundConfirmed: false, refundStatus: "deferred",
+      refundReceipt: { status: "deferred", refunded: false, units_refunded: 0, request_id: "failed-request-parent" } };
+    const h = harness({ sourceType: "primary_legislation", rawInput: 'חוק העונשין, התשל"ז-1977',
+      errorInfo: { code: "AI_REFUSED", status: 422, message: "Failed", citationRetry: descriptor } });
+    await h.handleSend();
+    const offer = h.citationRetryRef.current!;
+    let resolve!: (value: { data: unknown[] }) => void;
+    const lookup = vi.fn(() => new Promise((done) => { resolve = done; }));
+    Object.assign(h.context.supabase, { from: (table: string) => table === "citation_history" ? { insert: h.insert }
+      : { select: () => ({ or: () => ({ limit: lookup }) }) } });
+    const retry = offer.run();
+    await vi.waitFor(() => expect(lookup).toHaveBeenCalledTimes(1));
+    h.citationScope.current = { ...h.citationScope.current, projectId: "new-project" };
+    resolve({ data: [] });
+    await expect(retry).rejects.toMatchObject({ message: "CITATION_RETRY_STALE" });
+    expect(h.context.setPendingVerification).not.toHaveBeenCalled();
+    expect(h.context.saveVerifiedSource).not.toHaveBeenCalled();
+    expect(h.insert).toHaveBeenCalledTimes(1);
+  });
+
+  it("restores input and exact model history after an unknown outcome so a manual retry keeps its payload", async () => {
+    const h = harness({ errorInfo: { code: "REQUEST_OUTCOME_UNKNOWN", message: "Outcome unknown", status: 503 } });
+    await h.handleSend();
+    const restoredHistory = last(h.state.setMessages.mock.calls)[0];
+    const restoredInput = last(h.context.setInput.mock.calls)[0];
+    expect(restoredHistory).toEqual(history);
+    expect(restoredInput).toBe(raw);
+    await handler("handleSend", { ...h.context, messages: restoredHistory, input: restoredInput })();
+    expect(h.invokeFunction).toHaveBeenCalledTimes(2);
+    const [first, second] = h.invokeFunction.mock.calls.map(([, body]) => body);
+    expect(second.messages).toEqual(first.messages);
+    expect(second.foreignLookup).toEqual(first.foreignLookup);
+    expect(second.rawInput).toEqual(first.rawInput);
+  });
+
   it.each([raw, complete])("keeps one classified, server-billed operation for %s", async (rawInput) => {
     const h = harness({ rawInput });
     await h.handleSend();
@@ -174,7 +259,7 @@ describe("legacy standalone article adapter", () => {
     expect(h.invokeFunction).toHaveBeenCalledWith("citation-chat", {
       messages: [...history, { role: "user", content: "unchanged case prompt" }], requestId: "request-preserved",
       telemetryFeature: "uniform_citation", telemetryBatchId: "batch-attribution", telemetryRequestId: "source-attribution",
-    }, { projectId: "project-preserved" });
+    }, expect.objectContaining({ projectId: "project-preserved" }));
     expect(reply).toContain("910 F.3d 649");
     expect(h.provider).not.toHaveBeenCalled();
     expect(adapter.compatibleArticleCache("foreign_book", "Any book", cached)).toBe(cached);

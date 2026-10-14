@@ -272,6 +272,7 @@ export type Database = {
       }
       citation_history: {
         Row: {
+          citation_request_id: string | null
           created_at: string
           formatted_output: string
           id: string
@@ -282,6 +283,7 @@ export type Database = {
           user_id: string | null
         }
         Insert: {
+          citation_request_id?: string | null
           created_at?: string
           formatted_output: string
           id?: string
@@ -292,6 +294,7 @@ export type Database = {
           user_id?: string | null
         }
         Update: {
+          citation_request_id?: string | null
           created_at?: string
           formatted_output?: string
           id?: string

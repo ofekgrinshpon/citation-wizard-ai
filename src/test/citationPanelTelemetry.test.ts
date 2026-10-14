@@ -55,6 +55,12 @@ function mount(path: string, name: string, props: Record<string, unknown>, overr
         const set: Setter = (next) => { states[slot] = typeof next === "function" ? next(states[slot]) : next; };
         return [states[slot], set];
       },
+      useRef(initial: unknown) {
+        const slot = cursor++;
+        if (!(slot in states)) states[slot] = { current: initial };
+        return states[slot];
+      },
+      useEffect: () => {},
       useMemo: (factory: () => unknown) => factory(),
       useCallback: (callback: unknown) => callback,
     },
@@ -67,12 +73,21 @@ function mount(path: string, name: string, props: Record<string, unknown>, overr
     "@/components/FootnoteReviewCard": { FootnoteReviewCard: "FootnoteReviewCard" },
     "./CitationReviewCard": { CitationReviewCard: "CitationReviewCard" },
     "@/components/ui/button": { Button: "Button" },
+    "@/hooks/useAuth": { useAuth: () => ({ user: { id: "telemetry-test-account" } }) },
+    "@/lib/functionError": { citationRetryDisclosure: () => "explicit retry fixture" },
     "@/hooks/useOffice": { useOffice: () => ({ isOfficeAddin: false, hasDocumentAccess: false }) },
     "@/hooks/useProjects": { useProjects: () => ({ currentProject: { id: "project-unchanged" } }) },
     "@/lib/citationRichText": { copyCitationRich: vi.fn(), copyCitationsRich: vi.fn() },
     "@/lib/wordInsertion": { insertCitationAsFootnote: vi.fn() },
     ...overrides,
   };
+  // Use the production row guard with the same tiny hook harness; lifecycle
+  // interruption behavior is covered by mounted citationRowRetry tests.
+  const guard = { exports: {} };
+  const loadGuard = new Function("require", "module", "exports", compileComponent(readFileSync(
+    resolve(__dirname, "../lib/useCitationRowGuard.ts"), "utf8")));
+  loadGuard((id: string) => modules[id], guard, guard.exports);
+  modules["@/lib/useCitationRowGuard"] = guard.exports;
   const code = compileComponent(readFileSync(resolve(root, path), "utf8"));
   const module = { exports: {} as Record<string, (props: Record<string, unknown>) => Element> };
   // Only the known local component source is evaluated; imports must be mocked
@@ -104,7 +119,7 @@ const call = (props: Record<string, unknown>, key: string, ...args: unknown[]) =
   (props[key] as (...args: unknown[]) => Promise<void>)(...args);
 const cell = (props: Record<string, unknown>) => props.cell as Record<string, unknown>;
 const withoutTelemetry = (value: Record<string, unknown>) => Object.fromEntries(
-  Object.entries(value).filter(([key]) => !["telemetry", "telemetryFeature", "telemetryBatchId", "telemetryRequestId"].includes(key)),
+  Object.entries(value).filter(([key]) => !["telemetry", "telemetryFeature", "telemetryBatchId", "telemetryRequestId", "isResultCurrent"].includes(key)),
 );
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 function assertMetadata(t: Record<string, unknown>, feature: string, wire = false) {
@@ -136,7 +151,7 @@ const notes = [
 const result = (reply = "אזכור מעובד תקין") => ({ reply, citation: reply, status: "valid", sourceType: "case_law_database", fromVerifiedStore: false });
 function uniform(runCitation = vi.fn(async () => result()), overrides: Record<string, unknown> = {}) {
   const instance = mount(uniformPath, "UniformCitationPanel", { footnotes: notes }, {
-    "@/lib/runCitation": { runCitation }, ...overrides,
+    "@/lib/runCitation": { runCitation, CitationRunError: class extends Error {} }, ...overrides,
   });
   return {
     ...instance, runCitation,
@@ -207,7 +222,7 @@ describe("citation panel action/payload/output parity", () => {
     expect(cell(card(p.render(), "FootnoteReviewCard"))).toMatchObject({ output: result().reply, status: "valid" });
   });
 
-  it("retains automatic retry count and never retries insufficient-credit failures", async () => {
+  it("does not automatically retry citation or insufficient-credit failures", async () => {
     vi.useFakeTimers();
     const runCitation = vi.fn()
       .mockRejectedValueOnce({ code: "HTTP_503" })
@@ -217,8 +232,8 @@ describe("citation panel action/payload/output parity", () => {
     const start = p.start();
     await vi.runAllTimersAsync();
     await start;
-    expect(runCitation).toHaveBeenCalledTimes(3);
-    expect(cell(card(p.render(), "FootnoteReviewCard", 0))).toMatchObject({ output: result().reply, status: "valid" });
+    expect(runCitation).toHaveBeenCalledTimes(2);
+    expect(cell(card(p.render(), "FootnoteReviewCard", 0))).toMatchObject({ output: null, status: "error", originalCitation: notes[0].title });
     expect(cell(card(p.render(), "FootnoteReviewCard", 1))).toMatchObject({ output: null, status: "error", originalCitation: notes[1].title });
   });
 
@@ -258,21 +273,20 @@ describeAttribution("citation panel metadata attribution", () => {
     expect(cell(card(p.render(), "CitationReviewCard"))).toMatchObject({ citation: "אזכור אחרי ניסיון חוזר", refillError: undefined });
   });
 
-  it("shares a V2 action id but not source ids; automatic retries retain both ids", async () => {
+  it("shares a V2 action id but not source ids, without automatic citation retries", async () => {
     vi.useFakeTimers();
     const runCitation = vi.fn().mockRejectedValueOnce({ code: "HTTP_503" }).mockResolvedValue(result());
     const p = uniform(runCitation);
     const start = p.start();
     await vi.runAllTimersAsync();
     await start;
-    expect(runCitation).toHaveBeenCalledTimes(3);
+    expect(runCitation).toHaveBeenCalledTimes(2);
     const args = runCitation.mock.calls.map(([opts]) => opts as Record<string, unknown>);
     const attribution = args.map((opts) => opts.telemetry as Record<string, unknown>);
     attribution.forEach((t) => assertMetadata(t, "uniform_citation"));
     expect(new Set(attribution.map((t) => t.telemetryBatchId)).size).toBe(1);
     expect(attribution[0].telemetryRequestId).not.toBe(attribution[1].telemetryRequestId);
-    expect(attribution[2]).toBe(attribution[0]);
-    expect(args[2].rawInput).toBe(args[0].rawInput);
+    expect(attribution).toHaveLength(2);
     expect(JSON.stringify(attribution)).not.toContain("פרטי");
     expect(JSON.stringify(attribution)).not.toContain("example.invalid");
   });

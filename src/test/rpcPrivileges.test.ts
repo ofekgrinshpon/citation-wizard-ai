@@ -26,6 +26,15 @@ export const PROTECTED_RPCS: ReadonlyArray<[name: string, args: string]> = [
   ["reset_or_renew_credits", ""],
   ["grant_referral_bonus_if_eligible", "_user_id uuid"],
   ["refund_credits_for_user", "_user_id uuid, _request_id text, _reason text"],
+  // Local review draft only; these must be present after an explicitly approved
+  // rollout. This privilege suite is never authorization to apply the draft.
+  ["_require_usage_service", ""],
+  ["begin_citation_request", "_user_id uuid, _request_id text, _fingerprint text, _batch_id text, _retry_of_request_id text, _recovery_input jsonb"],
+  ["_citation_refund_receipt", "_user_id uuid, _request_id text"],
+  ["finish_citation_request", "_user_id uuid, _request_id text, _attempt_token uuid, _outcome text, _reason text, _result jsonb"],
+  ["read_citation_recovery", "_user_id uuid, _request_id text, _parent_request_id text, _cursor text, _limit integer"],
+  ["cleanup_citation_recovery", "_limit integer"],
+  ["attest_usage_failure", "_user_id uuid, _request_id text, _reason text"],
   ["bulk_update_legal_chunk_embeddings", "payload jsonb"],
 ];
 
