@@ -1,103 +1,123 @@
-# Plan: send ordinary public SOL research calls straight to the owner's OpenAI account
+# Plan: send ordinary public SOL research calls straight to the owner's OpenAI account (revised)
 
-Planning only. I read code at Main `83223320`. I edited nothing, deployed nothing, ran no model, read no secrets and ran no database queries.
+Planning only. I read the code at Main `83223320`. I edited nothing, deployed nothing, ran no model and read no secrets. No database queries were run.
 
-## 1. What the code does today (verified by reading it)
-- **New public job intake** (`index.ts:2140`) copies in `ORDINARY_RESEARCH_SETTINGS`: `agent_model = openai/gpt-6.1-sol`, `agent_reasoning_effort = medium`. It does not set `agent_direct_provider`.
-- **Agent call** (`agent/researchAgent.ts:757-780`) calls `chat()` in `shared/model.ts`. With no `directProvider`, `chat()` uses `LOVABLE_API_KEY` and `responsesChatGuarded` (the Lovable gateway). That is why the recent trial logged `lovable_gateway`.
-- **Direct pilot** (`shared/directProviders.ts` `directChat`, plus `directProviderPolicy.ts`) already handles native OpenAI Responses for `gpt-6.1-sol`. It sends `stream:true`, `store:false`, `include:[reasoning.encrypted_content]`, `reasoning:{effort, summary:auto}`, function tools, `max_output_tokens`, and `service_tier:default`. Before each call it does an exact `/v1/responses/input_tokens` count and a USD reservation. It records each attempt (requested and returned model, tokens, cached tokens, duration, outcome) and checkpoints before sending.
-- **Why the pilot can't be reused as is:**
-  - It is locked to one approved run ID (`V2_DIRECT_PROVIDER_PILOT_RUN_ID`).
-  - It writes results to `v2_eval_runs` by `id`.
-  - It has a fixed $2 budget per run.
-  - Any error is terminal (`direct_provider_experiment_failed`).
-  - A pause needs manual review (`direct_pause_requires_review`).
-  - None of these fit public jobs, which need normal history, refunds and resume.
-- **Gateway fallback guard:** `chat()` already rejects a checkpoint that has direct attempts but no direct route (`direct_provider_route_missing`). This is a useful base for "no silent fallback".
+## 1. Current behaviour (verified by reading the code)
+- **New public jobs** (`index.ts:2140`) copy in `ORDINARY_RESEARCH_SETTINGS`: `openai/gpt-6.1-sol` with effort `medium`. No `agent_direct_provider` is set, so `chat()` in `shared/model.ts` takes the `LOVABLE_API_KEY` / `responsesChatGuarded` gateway path. That is why the last trial recorded `lovable_gateway`.
+- **The native pilot** (`shared/directProviders.ts` `directChat`, plus `directProviderPolicy.ts`) already handles native Responses:
+  - `stream`, `store:false`, `include:[reasoning.encrypted_content]`, `reasoning{effort, summary:auto}`, function tools with `strict:false`, `max_output_tokens`, `service_tier:default`
+  - an exact `/v1/responses/input_tokens` count, then a USD reservation, then a checkpoint, before anything is sent
+  - a per-attempt ledger, with uncertain outcomes (`pending`, `network_unknown`, `stream_unknown`, `aborted_unknown`) blocking any further call
+- **Pilot-only parts:**
+  - `V2_DIRECT_PROVIDER_PILOT` and `V2_DIRECT_PROVIDER_PILOT_RUN_ID` gates
+  - writes to `v2_eval_runs` by `id`
+  - `direct_pause_id` with manual review
+  - a fixed $2 budget per run (`SOL61_PILOT_NATIVE_BUDGET_USD`)
+  - `direct_provider_experiment_failed` throws
+- **Job finish today** (`beta/job.ts`): `finishJobError(..., definitiveFailure=false)` stores `execution_outcome_unknown:true` and does **not** refund. Only a definitive failure refunds.
+- **`chat()`** already rejects a checkpoint that has direct attempts but no direct route (`direct_provider_route_missing`).
+- **Cost telemetry:**
+  - `_shared/costTelemetry.ts` types `provider` as `"perplexity" | "lovable_gateway" | "none"`.
+  - The generated types show `ai_cost_events.provider` as plain `string`.
+  - The table's migration is not in the repository, so its live CHECK constraints are unverified.
+  - It is also unverified whether the research function writes paid model attempts to `ai_cost_events` today.
 
-## 2. Proposed design
-Add a third, production route next to "gateway" and "pilot": **ordinary direct OpenAI**. The pilot stays as it is.
-
+## 2. Design: a separate "ordinary direct" mode, not the pilot
 ```text
-new public job -> intake stamps agent_transport = "openai_direct" (server-owned)
-  -> researchAgent -> chat({transport}) -> directChat(mode:"ordinary") -> api.openai.com
-existing / resumed job -> keeps whatever transport its checkpoint recorded (missing = gateway)
+new public job -> intake stamps agent_transport="openai_direct" (server-owned, only if switch on)
+  -> researchAgent -> chat({transport}) -> ordinaryDirectChat -> api.openai.com/v1/responses
+existing/resumed job -> keeps recorded transport; missing field = gateway (pinned)
 ```
+1. **New module `shared/ordinaryDirect.ts`.** It reuses the pilot's pure helpers: request body builder, SSE parser, usage parser and `sol61UpperUsd`. It does not call `directChat` and does not read any pilot env flag, run-ID lock or `v2_eval_runs`. The pilot code stays byte-identical.
+2. **Switch `V2_ORDINARY_TRANSPORT`:** `gateway` by default, `openai_direct` to turn it on. It is read only when a new job is created. Any request-body field with this name is ignored.
+3. **Intake:**
+   - `agent_transport` is stored once on the job's intake and checkpoint, and is never rewritten on resume.
+   - A job where both `agent_transport` and `agent_direct_provider` are present is rejected. Ordinary and pilot runs can never mix.
+4. **Agent:** only the research-agent stage (`costStage: v2_research_agent`) changes. Messages, tools, toolChoice, `medium` effort and the stop policy stay the same. The verifier, drafter and router keep their current routes.
+5. **Fixed request fields:**
+   - model `gpt-6.1-sol` and effort `medium`
+   - `max_output_tokens: 16384`, the existing native value, proposed as the starting value only; it is not cost approval
+   - `store:false`, the include field and `service_tier:default`
 
-1. **Policy (`ordinaryResearchPolicy.ts`):** add `agent_transport: "openai_direct"` to `ORDINARY_RESEARCH_SETTINGS`, behind a server env switch `V2_ORDINARY_TRANSPORT` (`gateway` by default, `openai_direct` to turn it on). The value never comes from the request body.
-2. **Intake (`index.ts buildIntake`):** store the transport once, at creation. On resume it is never rewritten.
-3. **Agent (`researchAgent.ts`):** pass `transport` into `chat()` with the same messages, tools, toolChoice, effort and replay flag. Only the research-agent stage changes. Verifier and drafter stay on their current routes.
-4. **`directChat` ordinary mode:** reuse the same request body, streaming parser, attempt ledger and input-token pre-count. Swap the pilot-only gates for production ones:
-   - no run-ID pin and no `v2_eval_runs`; use the normal job and conversation tables
-   - a per-run native USD ceiling (a value for the owner to choose; see section 6)
-   - a server-wide daily native ceiling
-   - errors follow the normal job failure and refund path, not the "experiment failed" throw
-5. **Resume:** the ordinary direct route uses the normal checkpoint and resume path. It does not use `direct_pause_id` or manual review. A resume where the last attempt is `pending`, `network_unknown`, `stream_unknown` or `aborted_unknown` fails closed: the job ends as a normal error with a refund and is never re-sent automatically. This matches the existing "never retry uncertain runs" rule.
+## 3. Existing vs new jobs
+Only jobs created after the switch is turned on use the direct route. Jobs that are queued, running, paused or awaiting the user keep the gateway. Mixing is blocked by an `ordinary_transport_changed` check, and by `direct_cross_provider_replay` in both directions. Old results, history and conversations are untouched.
 
-## 3. New jobs vs existing jobs
-- Only jobs created after the switch is turned on use the direct route.
-- In-flight and paused jobs keep their recorded transport, so mixed history cannot happen: the existing `direct_provider_route_changed` and `direct_cross_provider_replay` checks reject switching mid-run.
-- Old results, conversations and history display are unchanged.
+## 4. Failures, uncertainty and refunds
+| Situation | Sent? | Result |
+|---|---|---|
+| `OPENAI_API_KEY` missing; switch, quota, input-count or reservation refusal; abort before dispatch; checkpoint fails before dispatch | Proven not sent | Attempt is `not_sent`, its reservation is released, and the job is a **definitive** failure: `finishJobError(definitive=true)` and the normal refund |
+| HTTP 429 with no body generated | Treated as rejected | No automatic retry in the first rollout. Definitive failure with a refund, but the reservation is held until a receipt shows no usage (see section 6) |
+| HTTP 5xx, timeout, network error, interrupted stream, `incomplete`, missing usage | **Uncertain** | Attempt keeps its uncertain outcome. No resend. Job ends via `finishJobError(definitive=false)`: `execution_outcome_unknown:true` and **no automatic refund**. The full reservation stays held |
+| Refusal, invalid output, model mismatch | Sent and charged | Settled with the reported usage. The job fails as today, with no fallback |
 
-## 4. Compatibility and parity
-- **Tools:** function tools are converted with `strict:false`, the same as the pilot that already ran several Sol 6.1 trials. Forced memo choice maps to `{type:"function", name}`.
-- **Medium reasoning:** sent as `reasoning.effort:"medium"`. The returned effort is recorded (`effort_returned`, `effort_status`). For medium, `not_reported` is logged, not treated as an error.
-- **Reasoning replay:** the direct OpenAI path keeps all `reasoning_items` per turn (researchAgent:783). It also bypasses `enforceReplayBudget`, which means a large history is not trimmed the way the gateway trims it. **Decision needed:** either apply the same 2M-char / 64-item replay limit on the direct path (parity), or keep the full replay (the pilot's behaviour). I recommend parity.
-- **Output cap:** the pilot needs an explicit `max_output_tokens` (1,024 to 128,000). The ordinary policy needs a fixed value for the owner to approve. The ordinary gateway path today does not reliably enforce one.
+Resume after any uncertain attempt fails closed, using the existing reconciliation rule. Nothing goes to the gateway, ever. A unit test asserts that the gateway fetch is never called once the transport is `openai_direct`.
 
-## 5. No silent fallback, missing key
-- If the transport is `openai_direct`, the code never reaches the `LOVABLE_API_KEY` branch. A unit test asserts that the gateway is never called.
-- Missing `OPENAI_API_KEY` returns `401 direct_provider_key_missing` before anything is sent. The job then fails through the normal path with a refund and the usual Hebrew failure message. Nothing switches to the gateway.
-- OpenAI `429` and `5xx` responses get the existing bounded retry only when the attempt is known `not_sent` or is a clean HTTP error. Every uncertain outcome is terminal.
-- **To verify at approval time:** that an `OPENAI_API_KEY` secret already exists on the project from the existing OpenAI integration. I check the secret name only, never the value. If it does not exist, the rollout is blocked: I will not create one.
+## 5. Reasoning and tool replay
+Keep the pilot's proven replay: every encrypted reasoning item and complete tool call/result pair is resent, and `enforceReplayBudget` stays bypassed on this route, as it is in the pilot. There is no blind 64-item or 2M-character trimming. Explicit limits fail closed:
+- the request is over `DIRECT_LIMITS.maxRequestBytes`
+- the counted input is over 272k tokens
+- the reservation would go over the run or day ceiling
 
-## 6. Spending safeguards (owner sets the values)
-- **Per run:** a pre-call reservation using the exact input count and the output cap. The run stops with `402` if the next call would go over the run ceiling.
-- **Per day, server-wide:** an atomic counter for reserved and settled native USD, kept in an existing service-role-only table or a new one. **Decision:** which of the two to use. Adding a new table needs a migration and your approval. Once the ceiling is hit, new direct calls fail closed. They don't switch to the gateway.
-- The long-context guard stays (`>272k` input tokens is rejected). Recent trials had about 16k tokens per call (400,197 across 25 calls), well below that.
-- The OpenAI account's own spending limit is outside the app's control. This plan does not change it.
+Dependency-aware trimming is a separate, later, tested change.
 
-## 7. What gets recorded per attempt
-For each attempt: requested model, returned model, input, cached, cache-write, output and reasoning tokens, `duration_ms`, input-count time, checkpoint time, outcome, provider request and response IDs, and estimated USD from the `sol61-standard-2026-10-03` list price. The estimate is labelled as an estimate.
-- Attempts are also written to `ai_cost_events` (stage `v2_research_agent`, provider `openai_direct`). This fixes the "total cost missing" gap for this stage. The actual OpenAI invoice is never available to the app.
+## 6. Durable spending limits
+- **Per-run reservation:** kept in the job's own checkpoint ledger, as in the pilot. It uses the exact input count and the 16384 output cap through `sol61UpperUsd`.
+- **Per-day ceiling.** No suitable existing table is verified, so a migration is proposed but **not run**:
+  - Table `public.research_native_spend`: `attempt_id uuid pk`, `job_id uuid`, `reserved_usd numeric`, `settled_usd numeric null`, `state text check (state in ('reserved','settled','released','uncertain'))`, `utc_day date`, `created_at`, `updated_at`.
+  - RLS on, with no policies. `REVOKE ALL` from `anon` and `authenticated`, and `GRANT` to `service_role` only.
+  - RPC `reserve_native_spend(attempt_id, job_id, usd, day_cap)`, `security definer`, granted to `service_role` only. It takes a `pg_advisory_xact_lock`, then sums the rows where state is `reserved` or `uncertain` (any day) plus `settled` (today, UTC), then inserts or refuses. An existing `attempt_id` is a no-op, which makes it idempotent.
+  - RPCs `settle_native_spend` and `release_native_spend`: these only move a row out of `reserved`. A `released` or `settled` row can never be released again, so a resume cannot double-release. `uncertain` rows stay counted against the ceiling indefinitely, across UTC day changes, until an owner reconciles them.
+- **What counts toward the limit:** only native OpenAI research-agent calls, plus their `input_tokens` count calls. Sonar, Gemini and infrastructure costs are excluded.
+- The amounts are list-price upper estimates, not invoice guarantees.
 
-## 8. Latency (not assumed fixed)
-The 11m19s run has no per-stage breakdown in this plan. Moving the model provider changes only model time. Two items add time per call: the extra input-count round trip and the checkpoint before each call. These two need measuring. The fetch, Perplexity and verifier stages are unchanged. The earlier direct pilots took 4 to 4.5 minutes, but those runs had different setups. I will report model time vs tool time separately, without assuming an improvement.
+## 7. Telemetry
+- **Ledger:** each attempt records requested and returned model, effort sent and returned, input, cached, cache-write, output and reasoning tokens, `input_count_ms`, `checkpoint_ms`, `duration_ms`, outcome, provider IDs, and estimated USD.
+- **`ai_cost_events`:** first verify the live constraint and its consumers. This is a read-only check of the table definition and the admin/statistics readers, done at approval time.
+  - Then widen the TypeScript `CostEvent["provider"]` union to include `"openai_direct"`, update the consumers that switch on provider, and add a matching CHECK-constraint migration if one exists.
+  - Until that is verified, write ordinary-direct events with `provider:"openai_direct"` only behind a type-safe adapter. A failed write never affects the job.
 
-## 9. What still uses Lovable / other providers
-- **Lovable AI gateway (Lovable credits):** the verifier (`gemini-3.7-flash`), the drafter (`gemini-3.1-pro-preview`, only if the separate drafter is on), the model router and short replies (`modelRouter.ts`), and citation-chat and the other functions.
-- **Separate providers, unchanged:** Perplexity/Sonar search, Apify and the fetch relay.
-- **Lovable Cloud infrastructure:** the database, functions, storage and hosting.
-- **Lovable development credits:** building and planning in this chat.
+## 8. Latency
+Not assumed to improve. Each call adds an input-count round trip and a checkpoint. Reporting will separate model, count, checkpoint and tool time. The 11m19s run has no per-stage breakdown in this plan.
 
-## 10. Preserved behaviour
-Sign-in checks, owner-scoped conversations, assistant messages inserted only by the function, credit claims and refunds, idempotent job claim and the terminal-race guards, and the evidence and verifier trust rules are all unchanged.
+## 9. What still uses Lovable or others
+- **Lovable AI gateway:** the verifier, the drafter (when enabled), the router and short replies, and every other function.
+- **Separate providers:** Perplexity/Sonar, Apify and the fetch relay.
+- **Lovable Cloud:** database, functions and hosting.
+- **Lovable development credits:** building and planning.
 
-## 11. Offline tests (no network calls; fake fetch)
-- New job stamps `openai_direct` when the switch is on and `gateway` when it is off.
-- A resumed checkpoint keeps its original transport.
-- The direct transport never calls the gateway, and a missing key leads to a 401 and a refund path with no call sent.
-- Uncertain last attempt on resume leads to a terminal error, with no re-send.
-- Per-run and daily ceilings return 402 before sending.
-- Request body: effort is medium, `store:false`, the include field is set, tools are mapped, and the output cap is present.
-- Usage parsing: cached tokens, reasoning tokens and a model mismatch lead to `model_mismatch`.
-- The replay limit is applied, if parity is chosen.
-- The existing `directProviders`, `directSol61High` and `ordinaryResearchPolicy` tests still pass.
+## 10. Preserved
+Auth and owner isolation, assistant messages inserted only by the function, conversation history, credit claim and refund rules (including `execution_outcome_unknown` meaning no refund), idempotent job claim and terminal-race guards, and the verifier and evidence trust rules.
+
+## 11. Offline tests (fake fetch only)
+- With the switch off, new jobs use the gateway. With it on, they use `openai_direct`. A request-body override is ignored.
+- A resumed or queued old job stays on the gateway. A transport change is rejected.
+- A missing key leads to `not_sent`, a definitive failure, a refund and a release, with no network call.
+- 5xx, timeout or a cut-off stream leads to uncertain, no resend, no refund, and the reservation held.
+- 429 is not retried.
+- No gateway fetch happens on any `openai_direct` path.
+- Replay sends all reasoning and tool pairs unchanged. Over-limit requests fail closed.
+- Day reservations: concurrent reservations never exceed the cap, the same `attempt_id` is idempotent, double release is impossible, and uncertain rows carry across UTC days. This is a pure model test; the SQL is reviewed but not executed.
+- **Pilot isolation:** the existing `directProviders`, `directSol61High` and `ordinaryResearchPolicy` tests pass unchanged. A new test proves the ordinary mode never reads the pilot flags or run ID, and that an intake with a pilot marker plus `agent_transport` is rejected.
 
 ## 12. Rollback
-Set `V2_ORDINARY_TRANSPORT=gateway`, or leave it unset. New jobs go back to the gateway right away. Jobs already running on the direct route finish on it, or fail closed if the key is removed. The code can be reverted, but external charges already incurred cannot be undone.
+Set `V2_ORDINARY_TRANSPORT=gateway`, or leave it unset, and new jobs use the gateway right away. Direct jobs already running finish or fail closed. External charges cannot be undone.
+
+## Stages (each needs its own approval)
+1. **Offline implementation, switch off:** code and tests only, with no deploy and no migration run. Estimated 4 to 7 build credits. This is an estimate, not a guarantee.
+2. **Read-only checks:** the `OPENAI_API_KEY` secret name exists (value never read), plus the `ai_cost_events` constraint and its consumers.
+3. **Migration:** the spend table and RPCs from section 6, run only after the SQL is reviewed.
+4. **Deploy:** `legal-research-v2` only, with the switch still off.
+5. **Turn the switch on and run one approved live trial**, under the owner's limits.
 
 ## Risks
-- Unknown OpenAI rate limits or tier on the owner's account could cause 429s under public load.
-- The extra input-count call adds latency and a second point of failure.
+- Unknown OpenAI rate limits on the owner's account.
+- Uncertain outcomes leave jobs unrefunded until someone reconciles them.
 - List-price estimates may not match the invoice.
-- Keeping the full replay could make requests larger.
-- The ordinary resume code differs from the pilot's manual-review pause, so it needs careful review.
+- Full replay makes later requests larger.
+- The live `ai_cost_events` constraints are unknown.
 
-## Steps that need approval
-1. Approve this plan. Implementation is about 4 to 7 build credits, within the daily 30.
-2. Choose: the per-run USD ceiling, the daily USD ceiling, the output cap, and replay parity vs full replay.
-3. Approve a migration if the daily counter needs a new table.
-4. Check that the `OPENAI_API_KEY` secret name exists (no value is read).
-5. Deploy `legal-research-v2` only, with the switch still off.
-6. Turn the switch on and run one approved live trial, as a separate authorization.
+## Owner decisions still needed
+1. The per-run native USD ceiling.
+2. The daily native USD ceiling.
+3. Confirm 16384 as the starting output cap.
+4. Confirm that 429 is a definitive failure with a refund, rather than uncertain.
