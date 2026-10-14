@@ -28,7 +28,11 @@ export interface ModelConfig {
   drafter: string;
 }
 
-/** Production default Research Agent (agent-authored answer architecture). */
+/**
+ * Legacy/unpinned checkpoint and internal-evaluation default. New public runs
+ * persist ordinaryResearchPolicy at creation; changing this would switch old
+ * source-search jobs mid-run. V2_AGENT_MODEL remains legacy/evaluation-only.
+ */
 export const DEFAULT_AGENT_MODEL = "openai/gpt-6-astra";
 
 export function modelConfig(): ModelConfig {

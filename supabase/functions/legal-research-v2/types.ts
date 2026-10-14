@@ -91,16 +91,16 @@ export interface Intake {
   }>;
   budgets: ToolBudgets;
   /**
-   * Evaluation-only Research Agent model override (model bake-off).
-   * Null / absent keeps the configured default. Verifier and drafter are
+   * Persisted Research Agent model. New public runs pin the ordinary policy;
+   * internal evaluations may override it. Legacy null / absent keeps the configured default. Verifier and drafter are
    * never overridable.
    */
   agent_model?: string | null;
   /** Authenticated internal pilot only. Public requests never populate this. */
   agent_direct_provider?: import("./shared/directProviderPolicy.ts").DirectProviderConfig;
-  /** Sol/Astra router decision for this turn (telemetry + model choice). */
+  /** Action-router decision for this turn (legacy model choices remain readable). */
   model_route?: import("./beta/modelRouter.ts").ModelRoute | null;
-  /** EVALUATION ONLY: Research Agent reasoning effort (Responses API). Absent = "medium". */
+  /** Persisted effort: ordinary research pins medium; internal evaluations may override. */
   agent_reasoning_effort?: import("./shared/evaluationReasoning.ts").EvaluationReasoningEffort;
   /**
    * Production answer path: the Research Agent writes the final answer blocks

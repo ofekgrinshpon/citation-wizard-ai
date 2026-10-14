@@ -1,20 +1,22 @@
 /**
- * legal-research-v2 — Sol/Astra model router (chat answer path).
+ * legal-research-v2 — action router (chat answer path).
  *
- * One short, cheap classification before research starts. It chooses ONLY
- * which Research Agent model runs the turn. It never picks a deliverable,
- * budget, source quota or mode — the agent itself infers the deliverable.
- * Verification, EvidenceStore, quote ids, the answer-block gate and the
- * citation renderer are identical for both models.
+ * The existing classifier chooses chat, out-of-scope, or research only.
+ * All new research uses SOL 6.1; no automatic expensive-model escalation.
+ * Known research paths skip the classifier entirely. Direct chat keeps its
+ * existing model. Evidence, rendering, and research limits are unchanged.
  *
- * Fail-safe: any router error keeps the production default (Astra).
+ * Fail-safe: classifier errors start research with the same fixed policy.
  */
 
 import { chat, type ChatMessage } from "../shared/model.ts";
+import { ORDINARY_RESEARCH_MODEL } from "../shared/ordinaryResearchPolicy.ts";
 
 export const ROUTER_MODEL = "openai/gpt-6-luna";
+export const DIRECT_CHAT_MODEL = "openai/gpt-6-sol";
 export const ROUTE_MODELS = {
-  sol: "openai/gpt-6-sol",
+  sol: ORDINARY_RESEARCH_MODEL,
+  // Kept as a legacy checkpoint value, never selected for new research.
   astra: "openai/gpt-6-astra",
 } as const;
 export type RouteChoice = keyof typeof ROUTE_MODELS;
@@ -28,7 +30,7 @@ export interface ModelRoute {
   model: RouteChoice;
   model_id: string;
   reason: string;
-  source: "router" | "fallback" | "academic_context";
+  source: "router" | "fallback" | "academic_context" | "research_required";
   router_model: string | null;
   router_ms: number;
   router_prompt_tokens: number;
@@ -36,7 +38,7 @@ export interface ModelRoute {
   router_error: string | null;
 }
 
-export const ROUTER_SYSTEM = `אתה נתב קטן במערכת מחקר משפטי. תפקידך: להחליט איזה סוג עבודה נדרש עבור ההודעה האחרונה של המשתמש, ואיזה מודל יטפל בה.
+export const ROUTER_SYSTEM = `אתה נתב קטן במערכת מחקר משפטי. תפקידך: להחליט איזה סוג עבודה נדרש עבור ההודעה האחרונה של המשתמש.
 אל תחליט לפי מילות מפתח. החלט לפי המשמעות, הקשר השיחה והשאלה: האם אפשר לתת תשובה איכותית ואמינה רק מתוך השיחה והידע הכללי, או שחיפוש וקריאת מקורות ישפרו מהותית את האיכות, הדיוק או האמינות?
 
 action:
@@ -46,11 +48,7 @@ action:
 אם יש ספק סביר האם חיפוש מקורות ישפר מהותית את התשובה — בחר "research".
 לדוגמה: "תציע לי 3 נושאים כלליים בדיני חוזים" עשוי להיות chat, אבל "תציע לי שאלת מחקר טובה ומקורית לסמינריון בדיני חוזים" הוא בדרך כלל research, כי צריך להבין את הספרות והפסיקה הקיימת.
 
-model (רלוונטי ל-research; עבור chat ו-out_of_scope החזר "sol"):
-- "sol": מחקר ממוקד ופשוט יחסית.
-- "astra": מחקר רחב, כתיבה אקדמית, סינתזה של כמה מקורות, משפט משווה, ניתוח דוקטרינרי מורכב, או משימה שדורשת עומק משמעותי.
-
-החזר JSON בלבד, בלי טקסט נוסף: {"action":"out_of_scope"|"chat"|"research","model":"sol"|"astra","reason":"נימוק קצר"}`;
+החזר JSON בלבד, בלי טקסט נוסף: {"action":"out_of_scope"|"chat"|"research","reason":"נימוק קצר"}`;
 
 export function buildRouterUserMessage(input: {
   question: string;
@@ -65,18 +63,19 @@ export function buildRouterUserMessage(input: {
   ].join("\n\n");
 }
 
-/** Strict parse; null on anything unexpected. Chat/out_of_scope always run on Sol. */
+/** Parse the action; legacy model suggestions cannot override the fixed policy. */
 export function parseRouterOutput(text: string): { action: RouteAction; model: RouteChoice; reason: string } | null {
   const m = (text ?? "").match(/\{[\s\S]*\}/);
   if (!m) return null;
   try {
     const o = JSON.parse(m[0]) as { action?: unknown; model?: unknown; reason?: unknown };
+    if (o.action === undefined && o.model === undefined) return null;
     const rawAction = typeof o.action === "string" ? o.action.trim().toLowerCase() : "research";
     if (rawAction !== "out_of_scope" && rawAction !== "chat" && rawAction !== "research") return null;
     const action = rawAction as RouteAction;
     const rawModel = typeof o.model === "string" ? o.model.trim().toLowerCase() : "";
-    if (action === "research" && rawModel !== "sol" && rawModel !== "astra") return null;
-    const model: RouteChoice = action === "research" ? (rawModel as RouteChoice) : "sol";
+    if (action === "research" && o.model !== undefined && rawModel !== "sol" && rawModel !== "astra") return null;
+    const model: RouteChoice = "sol";
     const reason = typeof o.reason === "string" ? o.reason.trim().slice(0, 300) : "";
     return { action, model, reason };
   } catch {
@@ -87,8 +86,8 @@ export function parseRouterOutput(text: string): { action: RouteAction; model: R
 function fallback(reason: string, extra: Partial<ModelRoute> = {}): ModelRoute {
   return {
     action: "research",
-    model: "astra",
-    model_id: ROUTE_MODELS.astra,
+    model: "sol",
+    model_id: ORDINARY_RESEARCH_MODEL,
     reason,
     source: "fallback",
     router_model: ROUTER_MODEL,
@@ -114,6 +113,9 @@ export async function routeModel(
   if (input.academic) {
     return { ...fallback("academic_context"), source: "academic_context", router_model: null };
   }
+  if (input.has_attachments || input.allow_direct === false) {
+    return { ...fallback("research_required"), source: "research_required", router_model: null };
+  }
   const call = deps.chat ?? chat;
   const t0 = Date.now();
   try {
@@ -125,22 +127,18 @@ export async function routeModel(
     const ms = Date.now() - t0;
     const tokens = { router_prompt_tokens: res.prompt_tokens ?? 0, router_completion_tokens: res.completion_tokens ?? 0 };
     if (!res.ok) {
-      return fallback("router_error_default_astra", { router_ms: ms, ...tokens, router_error: `${res.http_status}: ${res.error ?? ""}`.slice(0, 200) });
+      return fallback("router_error_default_sol61", { router_ms: ms, ...tokens, router_error: `${res.http_status}: ${res.error ?? ""}`.slice(0, 200) });
     }
     const parsed = parseRouterOutput(res.content);
     if (!parsed) {
-      return fallback("router_unparseable_default_astra", { router_ms: ms, ...tokens, router_error: "unparseable" });
+      return fallback("router_unparseable_default_sol61", { router_ms: ms, ...tokens, router_error: "unparseable" });
     }
-    // Attached files can only be read by the research pipeline; outside the
-    // chat there is no place to post a direct reply.
-    const action: RouteAction = parsed.action !== "research" && (input.has_attachments || input.allow_direct === false)
-      ? "research"
-      : parsed.action;
-    const model: RouteChoice = action === "research" && parsed.action !== "research" ? "sol" : parsed.model;
+    const action = parsed.action;
+    const model: RouteChoice = "sol";
     return {
       action,
       model,
-      model_id: ROUTE_MODELS[model],
+      model_id: action === "research" ? ORDINARY_RESEARCH_MODEL : DIRECT_CHAT_MODEL,
       reason: parsed.reason,
       source: "router",
       router_model: ROUTER_MODEL,
@@ -149,7 +147,7 @@ export async function routeModel(
       router_error: null,
     };
   } catch (e) {
-    return fallback("router_exception_default_astra", {
+    return fallback("router_exception_default_sol61", {
       router_ms: Date.now() - t0,
       router_error: (e instanceof Error ? e.message : String(e)).slice(0, 200),
     });
@@ -177,7 +175,7 @@ export async function answerDirectChat(
 ): Promise<DirectChatResult> {
   const call = deps.chat ?? chat;
   const t0 = Date.now();
-  const model_id = ROUTE_MODELS.sol;
+  const model_id = DIRECT_CHAT_MODEL;
   try {
     const ctx = (input.conversation_context ?? "").slice(-9000);
     const messages: ChatMessage[] = [

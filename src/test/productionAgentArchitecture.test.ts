@@ -1,5 +1,5 @@
 /**
- * Production architecture: Astra research agent writes the answer, ask_user
+ * Production architecture: research agent writes the answer, ask_user
  * pause/resume on the same run, answer-block coverage safeguard, and
  * claim-specific statute locators.
  */
@@ -73,7 +73,7 @@ const savedRow = (status: string) => ({
 });
 
 describe("architecture defaults", () => {
-  it("T1 production default Research Agent is Astra", () => {
+  it("T1 legacy unpinned Research Agent remains Astra for resume compatibility", () => {
     expect(DEFAULT_AGENT_MODEL).toBe("openai/gpt-6-astra");
   });
 

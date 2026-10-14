@@ -119,7 +119,7 @@ describe("authenticated pilot isolation", () => {
     const opt = opts({ signal: controller.signal }); const r = await m.chat(opt);
     assert.equal(r.error, "direct_aborted"); assert.deepEqual(r.tool_calls, []); assert.equal(opt.usage.direct_provider_attempts![0].outcome, "aborted_unknown");
   });
-  it("public default stays Astra on Lovable Responses", async () => { mock(oEvents()); const result = await m.chat({ model: m.DEFAULT_AGENT_MODEL, messages });
+  it("legacy unpinned default stays Astra on Lovable Responses", async () => { mock(oEvents()); const result = await m.chat({ model: m.DEFAULT_AGENT_MODEL, messages });
     assert.equal(result.ok, true); assert.equal(requests[0].url, "https://ai.gateway.lovable.dev/v1/responses"); assert.equal(requests[0].body.model, "openai/gpt-6-astra"); });
   it("research checkpoint cannot silently fall back while verifier can keep its route", async () => {
     mock(); const ledger = m.newUsageLedger(); await m.chat(opts({ usage: ledger }));
