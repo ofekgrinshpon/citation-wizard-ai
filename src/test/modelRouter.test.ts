@@ -4,6 +4,7 @@ import {
   parseRouterOutput,
   routeModel,
   ROUTE_MODELS,
+  DIRECT_CHAT_MODEL,
   buildRouterUserMessage,
   answerDirectChat,
   OUT_OF_SCOPE_REPLY_HE,
@@ -14,12 +15,15 @@ const ok = (content: string) => async () => ({
   prompt_tokens: 50, completion_tokens: 10,
 }) as never;
 
-describe("Sol/Astra router", () => {
-  it("R1 parses sol/astra only", () => {
+describe("ordinary research action router", () => {
+  it("R1 accepts legacy model suggestions but always selects research policy", () => {
     expect(parseRouterOutput('{"model":"sol","reason":"x"}')?.model).toBe("sol");
-    expect(parseRouterOutput('```json\n{"model":"ASTRA","reason":"y"}\n```')?.model).toBe("astra");
+    expect(parseRouterOutput('```json\n{"model":"ASTRA","reason":"y"}\n```')?.model).toBe("sol");
     expect(parseRouterOutput('{"model":"luna"}')).toBeNull();
     expect(parseRouterOutput("garbage")).toBeNull();
+    expect(parseRouterOutput("{}")).toBeNull();
+    expect(parseRouterOutput('{"action":"research","reason":"new schema"}')?.model).toBe("sol");
+    expect(parseRouterOutput('{"action":"chat","model":"ignored legacy field"}')?.action).toBe("chat");
   });
 
   it("R2 maps choice to model id with telemetry", async () => {
@@ -30,24 +34,28 @@ describe("Sol/Astra router", () => {
     expect(r.router_prompt_tokens).toBe(50);
   });
 
-  it("R3 any failure falls back to Astra and never throws", async () => {
+  it("R3 any failure falls back to SOL 6.1 and never throws", async () => {
     const bad = await routeModel({ question: "q", has_attachments: false }, { chat: ok("no json") });
-    expect(bad.model).toBe("astra");
+    expect(bad.model).toBe("sol");
+    expect(bad.model_id).toBe("openai/gpt-6.1-sol");
     expect(bad.source).toBe("fallback");
     const thrown = await routeModel({ question: "q", has_attachments: false }, { chat: (async () => { throw new Error("x"); }) as never });
-    expect(thrown.model).toBe("astra");
+    expect(thrown.model).toBe("sol");
+    expect(thrown.model_id).toBe("openai/gpt-6.1-sol");
     const http = await routeModel({ question: "q", has_attachments: false }, {
       chat: (async () => ({ ok: false, http_status: 503, terminal: false, error: "down", content: "", tool_calls: [], finish_reason: null, prompt_tokens: 0, completion_tokens: 0 })) as never,
     });
-    expect(http.model).toBe("astra");
+    expect(http.model).toBe("sol");
+    expect(http.model_id).toBe("openai/gpt-6.1-sol");
     expect(http.router_error).toMatch(/503/);
   });
 
-  it("R4 academic chapters go to Astra without a router call", async () => {
+  it("R4 academic chapters use SOL 6.1 without a router call", async () => {
     let called = false;
     const r = await routeModel({ question: "q", has_attachments: false, academic: true }, { chat: (async () => { called = true; }) as never });
     expect(called).toBe(false);
-    expect(r.model).toBe("astra");
+    expect(r.model).toBe("sol");
+    expect(r.model_id).toBe("openai/gpt-6.1-sol");
   });
 
   it("R5 router input = last message + recent context + attachments flag, no deliverable classes", () => {
@@ -78,14 +86,14 @@ describe("Sol/Astra router", () => {
   it("A2 follow-up clarification → chat on Sol", async () => {
     const r = await route('{"action":"chat","model":"sol","reason":"הבהרה"}', { question: "מה התכוונת במה שאמרת קודם?" });
     expect(r.action).toBe("chat");
-    expect(r.model_id).toBe(ROUTE_MODELS.sol);
+    expect(r.model_id).toBe(DIRECT_CHAT_MODEL);
   });
 
   it("A3 case-law search / original research question → research", async () => {
     expect((await route('{"action":"research","model":"sol","reason":"איתור"}')).action).toBe("research");
     const q = await route('{"action":"research","model":"astra","reason":"מקוריות"}');
     expect(q.action).toBe("research");
-    expect(q.model).toBe("astra");
+    expect(q.model).toBe("sol");
   });
 
   it("A4 general topics may be chat; old {model} output still means research", async () => {
@@ -103,7 +111,7 @@ describe("Sol/Astra router", () => {
     let model = "";
     const r = await answerDirectChat({ question: "q" }, { chat: (async (a: { model: string }) => { model = a.model; return { ok: true, content: "תשובה", prompt_tokens: 1, completion_tokens: 1 }; }) as never });
     expect(r.ok).toBe(true);
-    expect(model).toBe(ROUTE_MODELS.sol);
+    expect(model).toBe(DIRECT_CHAT_MODEL);
     const idx = readFileSync("supabase/functions/legal-research-v2/index.ts", "utf8");
     const direct = idx.slice(idx.indexOf("Direct turns (out_of_scope / chat)"), idx.indexOf("Account-level concurrency protection"));
     expect(direct).not.toMatch(/"consume_credits"|driveRun\(|verifyClaim|footnotes:/);

@@ -32,6 +32,7 @@ import {
   type SupabaseClient,
 } from "./shared/primitives.ts";
 import { modelConfig, newUsageLedger, separateDrafterEnabled, type UsageLedger } from "./shared/model.ts";
+import { ORDINARY_RESEARCH_SETTINGS } from "./shared/ordinaryResearchPolicy.ts";
 import { routeModel, answerDirectChat, OUT_OF_SCOPE_REPLY_HE } from "./beta/modelRouter.ts";
 import type { ModelRoute } from "./beta/modelRouter.ts";
 import { clarificationMessageText, loadOwnedConversationContext, postAssistantMessage } from "./beta/conversation.ts";
@@ -152,10 +153,10 @@ export function buildIntake(input: {
   attachments?: Array<{ storage_path: string; file_name: string; mime_type: string; size?: number }>;
   attachment_owner_id?: string | null;
   budgets?: Partial<ToolBudgets>;
-  /** Evaluation-only Research Agent override. */
+  /** Persisted Research Agent choice; public runs use the server-owned policy. */
   agent_model?: string | null;
   agent_direct_provider?: DirectProviderConfig;
-  /** Evaluation-only Research Agent reasoning effort override. */
+  /** Persisted effort; only authenticated internal evaluations may override it. */
   agent_reasoning_effort?: EvaluationReasoningEffort;
   /** Academic Writing body chapter only — framing context, never evidence. */
   academic_context?: AcademicProjectContext | null;
@@ -165,7 +166,7 @@ export function buildIntake(input: {
   /** "sources" terminates in the Source Renderer instead of the drafter. */
   output_mode?: "answer" | "sources";
   conversation_context?: string | null;
-  /** Sol/Astra router decision (chat answer path). Sets the agent model. */
+  /** Action-router decision (chat answer path); retained with the run. */
   model_route?: ModelRoute | null;
 }): Intake {
   const question = (input.question ?? "").trim();
@@ -312,7 +313,8 @@ async function runPipeline(
     throw new Error("direct_repair_resume_requires_review");
   }
   const models = modelConfig();
-  // Evaluation-only: the Research Agent model may be overridden per run.
+  // New public runs persist their fixed model/effort. Existing checkpoints and
+  // internal evaluations keep their recorded choice (or legacy env default).
   // Verifier and drafter are always the configured defaults.
   const agentModel = intake.agent_model || models.agent;
   if (intake.agent_direct_provider) {
@@ -2007,8 +2009,8 @@ async function handleRequest(req: Request): Promise<Response> {
       ? body.trigger_message_id
       : null;
     const conversationContext = sourceSearch || academicContext ? null : conv.context;
-    // Sol/Astra routing happens once, before research. The chosen model then
-    // runs freely under the existing hard ceilings; no escalation.
+    // Classify only the action when needed. All new public research uses the
+    // fixed SOL 6.1 medium policy, including academic and source-search runs.
     const modelRoute = sourceSearch ? null : await routeModel({
       question,
       conversation_context: conversationContext,
@@ -2135,6 +2137,7 @@ async function handleRequest(req: Request): Promise<Response> {
     const creditRequestId = cr.admin ? null : clientRequestId;
 
     const betaIntake = buildIntake({
+      ...ORDINARY_RESEARCH_SETTINGS,
       run_id: crypto.randomUUID(),
       question,
       model_route: modelRoute,
