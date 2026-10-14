@@ -314,6 +314,108 @@ export type Database = {
           },
         ]
       }
+      citation_recovery_payloads: {
+        Row: {
+          expires_at: string
+          input: Json
+          request_id: string
+          result: Json | null
+          user_id: string
+        }
+        Insert: {
+          expires_at: string
+          input: Json
+          request_id: string
+          result?: Json | null
+          user_id: string
+        }
+        Update: {
+          expires_at?: string
+          input?: Json
+          request_id?: string
+          result?: Json | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "citation_recovery_payloads_user_id_request_id_fkey"
+            columns: ["user_id", "request_id"]
+            isOneToOne: true
+            referencedRelation: "citation_usage_requests"
+            referencedColumns: ["user_id", "request_id"]
+          },
+        ]
+      }
+      citation_usage_requests: {
+        Row: {
+          attempt_token: string
+          batch_anchor_request_id: string | null
+          batch_id: string | null
+          charged_units: number
+          created_at: string
+          fingerprint: string
+          finished_at: string | null
+          request_id: string
+          result_fingerprint: string | null
+          retry_of_request_id: string | null
+          state: string
+          terminal_reason: string | null
+          user_id: string
+        }
+        Insert: {
+          attempt_token?: string
+          batch_anchor_request_id?: string | null
+          batch_id?: string | null
+          charged_units: number
+          created_at?: string
+          fingerprint: string
+          finished_at?: string | null
+          request_id: string
+          result_fingerprint?: string | null
+          retry_of_request_id?: string | null
+          state: string
+          terminal_reason?: string | null
+          user_id: string
+        }
+        Update: {
+          attempt_token?: string
+          batch_anchor_request_id?: string | null
+          batch_id?: string | null
+          charged_units?: number
+          created_at?: string
+          fingerprint?: string
+          finished_at?: string | null
+          request_id?: string
+          result_fingerprint?: string | null
+          retry_of_request_id?: string | null
+          state?: string
+          terminal_reason?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "citation_usage_requests_user_id_batch_anchor_request_id_fkey"
+            columns: ["user_id", "batch_anchor_request_id"]
+            isOneToOne: false
+            referencedRelation: "citation_usage_requests"
+            referencedColumns: ["user_id", "request_id"]
+          },
+          {
+            foreignKeyName: "citation_usage_requests_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "citation_usage_requests_user_id_retry_of_request_id_fkey"
+            columns: ["user_id", "retry_of_request_id"]
+            isOneToOne: true
+            referencedRelation: "citation_usage_requests"
+            referencedColumns: ["user_id", "request_id"]
+          },
+        ]
+      }
       contact_messages: {
         Row: {
           created_at: string
@@ -1078,6 +1180,38 @@ export type Database = {
         }
         Relationships: []
       }
+      usage_terminal_failures: {
+        Row: {
+          created_at: string
+          reason: string
+          request_id: string
+          source: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          reason: string
+          request_id: string
+          source: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          reason?: string
+          request_id?: string
+          source?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "usage_terminal_failures_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           id: string
@@ -1480,12 +1614,30 @@ export type Database = {
       }
     }
     Functions: {
+      _citation_canonical_json: { Args: { _value: Json }; Returns: string }
+      _citation_execution_fingerprint: {
+        Args: { _input: Json }
+        Returns: string
+      }
+      _citation_json_shape: {
+        Args: { _schema: Json; _value: Json }
+        Returns: boolean
+      }
+      _citation_recovery_valid: {
+        Args: { _kind: string; _value: Json }
+        Returns: boolean
+      }
+      _citation_refund_receipt: {
+        Args: { _request_id: string; _user_id: string }
+        Returns: Json
+      }
       _generate_referral_code: { Args: never; Returns: string }
       _plan_credits: { Args: { _plan: string }; Returns: number }
       _plan_is_paid: { Args: { _plan: string }; Returns: boolean }
       _plan_period_length: { Args: { _plan: string }; Returns: string }
       _plan_reset_mode: { Args: { _plan: string }; Returns: string }
       _plan_window_limit: { Args: { _plan: string }; Returns: number }
+      _require_usage_service: { Args: never; Returns: undefined }
       acquire_operation_lock: {
         Args: {
           _operation_id: string
@@ -1499,10 +1651,26 @@ export type Database = {
         Args: { _amount: number; _reason?: string; _user_id: string }
         Returns: Json
       }
+      attest_usage_failure: {
+        Args: { _reason: string; _request_id: string; _user_id: string }
+        Returns: Json
+      }
+      begin_citation_request: {
+        Args: {
+          _batch_id?: string
+          _fingerprint: string
+          _recovery_input?: Json
+          _request_id: string
+          _retry_of_request_id?: string
+          _user_id: string
+        }
+        Returns: Json
+      }
       bulk_update_legal_chunk_embeddings: {
         Args: { payload: Json }
         Returns: number
       }
+      cleanup_citation_recovery: { Args: { _limit?: number }; Returns: number }
       cleanup_email_unsubscribe_tokens: { Args: never; Returns: number }
       compute_verified_source_identity: {
         Args: {
@@ -1568,6 +1736,17 @@ export type Database = {
       enqueue_email: {
         Args: { payload: Json; queue_name: string }
         Returns: number
+      }
+      finish_citation_request: {
+        Args: {
+          _attempt_token: string
+          _outcome: string
+          _reason?: string
+          _request_id: string
+          _result?: Json
+          _user_id: string
+        }
+        Returns: Json
       }
       get_usage_status: { Args: never; Returns: Json }
       grant_referral_bonus_if_eligible: {
@@ -1635,6 +1814,16 @@ export type Database = {
         }
         Returns: number
       }
+      read_citation_recovery: {
+        Args: {
+          _cursor?: string
+          _limit?: number
+          _parent_request_id?: string
+          _request_id?: string
+          _user_id: string
+        }
+        Returns: Json
+      }
       read_email_batch: {
         Args: { batch_size: number; queue_name: string; vt: number }
         Returns: {
@@ -1643,14 +1832,23 @@ export type Database = {
           read_ct: number
         }[]
       }
-      reap_stale_research_jobs: {
-        Args: { _absolute_max_age?: string; _max_age?: string }
-        Returns: {
-          prior_stage: string
-          reaped_id: string
-          stale_seconds: number
-        }[]
-      }
+      reap_stale_research_jobs:
+        | {
+            Args: { _max_age?: string }
+            Returns: {
+              prior_stage: string
+              reaped_id: string
+              stale_seconds: number
+            }[]
+          }
+        | {
+            Args: { _absolute_max_age: string; _max_age: string }
+            Returns: {
+              prior_stage: string
+              reaped_id: string
+              stale_seconds: number
+            }[]
+          }
       rebuild_hnsw_index: { Args: never; Returns: undefined }
       record_legal_acceptance: { Args: { _version: string }; Returns: Json }
       refund_credits: {
