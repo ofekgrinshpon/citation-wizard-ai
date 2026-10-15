@@ -1102,6 +1102,39 @@ export type Database = {
           },
         ]
       }
+      research_native_spend: {
+        Row: {
+          attempt_id: string
+          created_at: string
+          reserved_usd: number
+          run_id: string
+          settled_usd: number | null
+          state: string
+          updated_at: string
+          utc_day: string
+        }
+        Insert: {
+          attempt_id: string
+          created_at?: string
+          reserved_usd: number
+          run_id: string
+          settled_usd?: number | null
+          state?: string
+          updated_at?: string
+          utc_day?: string
+        }
+        Update: {
+          attempt_id?: string
+          created_at?: string
+          reserved_usd?: number
+          run_id?: string
+          settled_usd?: number | null
+          state?: string
+          updated_at?: string
+          utc_day?: string
+        }
+        Relationships: []
+      }
       secondary_source_bodies: {
         Row: {
           acquisition_path: string | null
@@ -1768,6 +1801,10 @@ export type Database = {
           head_text: string
         }[]
       }
+      mark_ordinary_native_spend_uncertain: {
+        Args: { p_attempt_id: string }
+        Returns: boolean
+      }
       match_legal_chunks: {
         Args: {
           match_count?: number
@@ -1867,6 +1904,20 @@ export type Database = {
         Args: { _operation_id: string; _reason?: string; _user_id: string }
         Returns: Json
       }
+      release_ordinary_native_spend: {
+        Args: { p_attempt_id: string }
+        Returns: boolean
+      }
+      reserve_ordinary_native_spend: {
+        Args: {
+          p_attempt_id: string
+          p_day_cap: number
+          p_run_cap: number
+          p_run_id: string
+          p_usd: number
+        }
+        Returns: string
+      }
       reset_or_renew_credits: { Args: never; Returns: number }
       search_legal_chunks_text: {
         Args: { match_count?: number; search_query: string }
@@ -1923,6 +1974,10 @@ export type Database = {
       set_user_plan: {
         Args: { _new_plan: string; _user_id: string }
         Returns: Json
+      }
+      settle_ordinary_native_spend: {
+        Args: { p_attempt_id: string; p_usd: number }
+        Returns: boolean
       }
       v2_resume_watchdog_tick: { Args: never; Returns: undefined }
     }
