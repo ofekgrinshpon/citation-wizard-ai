@@ -9,6 +9,7 @@ import { describe, expect, it, vi } from "vitest";
 import * as articles from "../../supabase/functions/_shared/hebrewArticleEvidence";
 import * as dockets from "../../supabase/functions/_shared/caseTypePrefixes";
 import * as hosts from "../../supabase/functions/_shared/trustedHosts";
+import * as caseLawQuery from "../../supabase/functions/_shared/caseLawQuery";
 import * as ranges from "../../supabase/functions/_shared/hebrewNumberRange";
 import * as editors from "../../supabase/functions/_shared/articleCitationValidator";
 import * as knesset from "../../supabase/functions/_shared/knessetTerms";
@@ -249,6 +250,7 @@ async function runHandler(options: { raw?: string; rawInputNull?: boolean; recor
     "../_shared/hebrewArticleEvidence.ts": articles,
     "../_shared/caseTypePrefixes.ts": dockets,
     "../_shared/trustedHosts.ts": hosts,
+    "../_shared/caseLawQuery.ts": caseLawQuery,
     "../_shared/hebrewNumberRange.ts": ranges,
     "../_shared/articleCitationValidator.ts": editors,
     "../_shared/knessetTerms.ts": knesset,
