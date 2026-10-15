@@ -55,6 +55,7 @@ function normalizeDatabaseName(urls: unknown, fallback: unknown): string {
   return "";
 }
 import { CASE_DOCKET_RE, CASE_TYPE_PREFIX_RE, CASE_TYPE_PREFIXES, findBareDocket } from "../_shared/caseTypePrefixes.ts";
+import { classifyDocketCourt, buildCaseNumberQuery, buildCaseSystemPrompt, shouldRunPartyFollowup, buildPartyFollowupQuery, mergeFollowupFields, strictSnippetEvidence, SNIPPET_EVIDENCE_DB_NAME } from "../_shared/caseLawQuery.ts";
 import {
   TRUSTED_LEGAL,
   TRUSTED_PUB,
@@ -2065,8 +2066,10 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
             // Supreme historical use slashes (e.g. ע"א 158/77). Don't normalize.
             const caseNum = docketQuery.caseNum;
             const fullCaseRef = `${caseType} ${caseNum}`.trim();
-            const query = `מצא את פסק הדין הישראלי ${fullCaseRef}.${caseType ? "" : ` מספר התיק הוא ${caseNum} וסוג ההליך (הקידומת) לא צוין — עליך לזהות את סוג ההליך המדויק (למשל בג"ץ, ע"א, רע"א, ע"פ) עבור מספר תיק זה בדיוק. אסור להחזיר פסק דין אחר עם מספר תיק אחר.`} חשוב מאוד: בדוק קודם כל האם פסק הדין פורסם בפד"י (פסקי דין של בית המשפט העליון). חפש את מספר התיק יחד עם המילה "פ"ד" וכרך. רק אם וידאת שהוא לא מופיע בפד"י, ציין באיזה מאגר (נבו/תקדין/פסקדין). ציין: 1) שמות הצדדים (שם משפחה בלבד לאנשים פרטיים, שם מלא לתאגידים), 2) תאריך מתן פסק הדין (יום.חודש.שנה), 3) שם בית המשפט, 4) סוג ההליך (caseType) בקיצור הרשמי, 5) פרסום בפד"י: כרך, חלק ועמוד ראשון. ענה בעברית בלבד.`;
-
+            // פ"ד is the Supreme Court's printed series only — lower-court
+            // dockets get a query/system prompt without the פ"ד instruction.
+            const docketCourt = classifyDocketCourt(caseType, caseNum);
+            const query = buildCaseNumberQuery(caseType, caseNum, docketCourt);
 
             const caseSearchBody: Record<string, unknown> = {
               model: "sonar-pro",
@@ -2074,17 +2077,7 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
               messages: [
                 {
                   role: "system",
-                  content: `אתה עוזר מחקר משפטי ישראלי. החזר תשובה בפורמט JSON בלבד.
-טיפ חיפוש: ב-https://lite.takdin.co.il/search-results מוצגים בעמוד אחד שמות הצדדים, מספר התיק, בית המשפט, תאריך פסק הדין ופרסום בפ"ד — חפש שם קודם כדי לאתר את כל הנתונים במקום אחד.
-חשוב ביותר: עדיפות ראשונה היא לבדוק פרסום בפד"י (פסקי דין). רוב פסקי הדין של בית המשפט העליון פורסמו בפד"י. אל תסתמך רק על מאגרי מידע אלקטרוניים - חפש במיוחד אם יש ציון "פ"ד" עם כרך ועמוד.
-סמן isPublished: false רק אם חיפשת במפורש פרסום בפד"י ווידאת שהוא לא קיים.
-הפורמט:
-{"found":true/false,"caseType":"קיצור סוג ההליך","party1":"שם צד א","party2":"שם צד ב","date":"DD.MM.YYYY","court":"בית המשפט","isPublished":true/false,"padi_volume":"כרך","padi_part":"חלק","padi_page":"עמוד","databaseName":"שם מאגר","year":"YYYY","confidence":"high/low"}
-שמות צדדים: שם משפחה בלבד לאנשים פרטיים, שם מלא לתאגידים. ללא תארים.
-caseType: הקיצור הרשמי של סוג ההליך לפי כללי האזכור האחיד (בג"ץ, ע"א, רע"א, ע"פ, עת"מ וכו'). אם לא אומת — השאר ריק.
-אסור להחזיר פסק דין שמספר התיק שלו שונה ממספר התיק שהתבקש. אם לא מצאת את מספר התיק המדויק — החזר found:false.
-confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות רבים, "low" אם יש ספק או מקור יחיד.
-חשוב: שדה year/date חייב להיות תאריך/שנת מתן פסק הדין על ידי בית המשפט, ולא שנת הוצאת כרך פ"ד.`,
+                  content: buildCaseSystemPrompt(docketCourt),
                 },
                 { role: "user", content: query },
               ],
@@ -2094,6 +2087,11 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
             // Three-part lower-court dockets keep all segments (number,
             // month, year) so 1477-12-22 never collapses to 1477/12.
             const docketAnchor: DocketId | null = extractDocket(fullCaseRef) ?? parseDocketNumber(caseNum);
+            const docketMatchIndices = (text: string): number[] => {
+              if (!docketAnchor) return [];
+              const re = new RegExp(docketPatternSource(docketAnchor, { yearAliases: true }), "g");
+              return Array.from(text.normalize("NFKC").matchAll(re), (m) => m.index ?? 0);
+            };
             const caseSearchRun = await perplexityWithFallback(
               PERPLEXITY_API_KEY,
               caseSearchBody,
@@ -2129,7 +2127,9 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                   //       (נ׳ / נ' / נגד / העותרים / המשיבים / המערערים / המבקשים) → "caption_marker"
                   // Otherwise drop the parties and render explicit [חסר: שמות צדדים].
                   let partyMismatch = false;
-                  let partyVerification: "both" | "caption_marker" | "insufficient_snippet" | "no_anchor" | "n/a" = "n/a";
+                  let partyVerification: "both" | "caption_marker" | "insufficient_snippet" | "no_anchor" | "snippet_strict" | "n/a" = "n/a";
+                  // Set when facts are proven only by an exact non-trusted snippet (Option B).
+                  let snippetEvidenceUrl: string | null = null;
                   let docketAnchored = false;
                   // Hoisted so the publication gate and the anchored-date
                   // fallback below can reuse the same anchored source set.
@@ -2171,7 +2171,23 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
 
 
                     if (parsed.found && parsed.party1 && parsed.party2) {
-                      if (anchoredResults.length === 0) {
+                      const strictUrl = anchoredResults.length === 0
+                        ? strictSnippetEvidence(searchResults, docketMatchIndices, String(parsed.party1), String(parsed.party2))
+                        : null;
+                      if (strictUrl) {
+                        // Option B: exact docket + both parties together in one
+                        // non-trusted snippet. Keep parties/date/court; source
+                        // becomes אר״ש; never accept פ"ד from such a source.
+                        snippetEvidenceUrl = strictUrl;
+                        docketAnchored = true;
+                        partyVerification = "snippet_strict";
+                        parsed.isPublished = false;
+                        parsed.padi_volume = "";
+                        parsed.padi_part = "";
+                        parsed.padi_page = "";
+                        parsed.confidence = "low";
+                        console.log(`[case-law] party_verification=snippet_strict for ${fullCaseRef} via ${strictUrl}`);
+                      } else if (anchoredResults.length === 0) {
                         // No anchored snippet → we cannot ground the parties against
                         // the actual case page. Treat as a hard mismatch and drop
                         // every model-supplied fact that depends on the source set
@@ -2288,6 +2304,54 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                     }
                   }
 
+                  // ── Party-name follow-up (at most once) ──
+                  // Parties are confirmed for the exact docket but the date or
+                  // source is missing: search once more with the case number +
+                  // parties. Same anchoring rules; only empty fields are filled.
+                  if (docketAnchor && shouldRunPartyFollowup({ docketAnchored, partyVerification, parsed, alreadyRan: false })) {
+                    try {
+                      const fuRun = await perplexityWithFallback(
+                        PERPLEXITY_API_KEY,
+                        {
+                          ...caseSearchBody,
+                          messages: [
+                            (caseSearchBody.messages as unknown[])[0],
+                            { role: "user", content: buildPartyFollowupQuery(caseType, caseNum, String(parsed.party1), String(parsed.party2), docketCourt) },
+                          ],
+                        },
+                        `case-followup:${fullCaseRef}`,
+                        { docketAnchor, forceOpenWebFallback: true },
+                      );
+                      if (fuRun.resp?.ok) {
+                        const fu = await fuRun.resp.json();
+                        const fuResults: Array<Record<string, unknown>> = Array.isArray(fu.search_results) ? fu.search_results : [];
+                        const fuAnchored = fuResults.filter((r) => typeof r.url === "string" && (
+                          urlContainsDocket(r.url, docketAnchor) ||
+                          (isTrustedHost(r.url, TRUSTED_LEGAL) && (textContainsDocket(r.title, docketAnchor) || textContainsDocket(r.snippet, docketAnchor)))
+                        ));
+                        const fuSnippetUrl = fuAnchored.length === 0
+                          ? strictSnippetEvidence(fuResults, docketMatchIndices, String(parsed.party1), String(parsed.party2))
+                          : null;
+                        const fuJson = String(fu.choices?.[0]?.message?.content ?? "").match(/\{[\s\S]*\}/);
+                        if ((fuAnchored.length > 0 || fuSnippetUrl) && fuJson) {
+                          const extra = JSON.parse(fuJson[0]);
+                          if (extra && extra.found !== false) {
+                            const filled = mergeFollowupFields(parsed, extra, docketCourt);
+                            anchoredResultsOuter = anchoredResultsOuter.concat(fuAnchored);
+                            if (fuSnippetUrl && fuAnchored.length === 0 && filled.length) snippetEvidenceUrl = fuSnippetUrl;
+                            console.log(`[case-law] party_followup filled=${JSON.stringify(filled)} anchored=${fuAnchored.length} snippet_evidence=${fuSnippetUrl ?? "none"}`);
+                          }
+                        } else {
+                          console.log(`[case-law] party_followup no anchored evidence for ${fullCaseRef}`);
+                        }
+                      }
+                    } catch (e) {
+                      console.log(`[case-law] party_followup failed: ${e instanceof Error ? e.message : String(e)}`);
+                    }
+                  }
+
+
+
                   // ── First-pass publication gate ──
                   // The SECOND-pass path below already validates an פ"ד override
                   // (known volume + year fit + docket in a citation URL), but a
@@ -2315,7 +2379,8 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
 
                   // ── Secondary verification: if Perplexity says not published, double-check with a focused query ──
 
-                  if (parsed.found && !parsed.isPublished) {
+                  // פ"ד exists only for the Supreme Court — never verify it for lower courts.
+                  if (parsed.found && !parsed.isPublished && docketCourt !== "lower") {
                     console.log(`[case-law] First search says unpublished for ${fullCaseRef}, running verification search...`);
                     try {
                       const verifyResp = await trackedFetch("https://api.perplexity.ai/chat/completions", {
@@ -2438,6 +2503,11 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                   if (!parsed.isPublished) {
                     const normalized = normalizeDatabaseName(pData.citations, parsed.databaseName);
                     if (normalized) parsed.databaseName = normalized;
+                  }
+                  // Option B: facts proven only by an exact non-trusted snippet
+                  // carry the אר״ש source label, never a database name.
+                  if (snippetEvidenceUrl && !parsed.isPublished) {
+                    parsed.databaseName = SNIPPET_EVIDENCE_DB_NAME;
                   }
 
 
