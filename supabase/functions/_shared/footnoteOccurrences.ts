@@ -82,11 +82,10 @@ export function extractShortSourceLabel(text: string): string {
     return `עניין ${pick}`;
   }
 
-  // The legislation lead word must START a word. Hebrew has no \b, so require
-  // string start or a separator before it — otherwise "צו" inside "שצורף"
-  // (a user-document label) is mistaken for an order and the label collapses.
+  // A legislation label must lead the title (allow opening quotation marks).
+  // A judgment or document merely mentioning a law must retain its own label.
   const hebrewLaw = cleaned.match(
-    /(?:^|[\s"'\u05f4\u05f3(\[])(חוק[\s-]יסוד[^,\n]*|חוק[^,\n]*|פקודת[^,\n]*|פקודה[^,\n]*|תקנות[^,\n]*|צו[\s-][^,\n]*)/,
+    /^[\s"'\u05f4\u05f3(\[]*(חוק[\s-]יסוד[^,\n]*|חוק[^,\n]*|פקודת[^,\n]*|פקודה[^,\n]*|תקנות[^,\n]*|צו[\s-][^,\n]*)/,
   );
   if (hebrewLaw) return hebrewLaw[1].trim();
 
