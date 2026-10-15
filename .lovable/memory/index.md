@@ -132,3 +132,5 @@
 - [Database Name URL Mapping](mem://logic/citation-rules/database-name-url-mapping) — Maps Perplexity source URL host → canonical Rule 19.1 database name (lite.takdin → תקדין, supremedecisions.court.gov.il → אר״ש, nevo → נבו, psakdin → פסקדין); allowed set: נבו/פדאור/דינים/תקדין/אר״ש/פסקדין; mirrored in citation-chat, citationValidation.ts, and both citationEngine.ts copies
 - [Deep Research Resume](mem://logic/legal-qa/deep-research-resume) — Deep research uses Pass E async (no SSE); client mints runId + localStorage marker BEFORE fetch; resume effect on remount polls legal-qa-status; backend dedupes by runId so duplicate clicks reattach instead of charging twice
 - [Batch Verifier](mem://logic/legal-qa/batch-verifier) — One LLM call per claim (cap 24) with legacy chunk-of-8 fallback; rich telemetry incl. naive_per_candidate; validated 2026-05-22
+
+- [Case-law snippet evidence](mem://logic/case-law-snippet-evidence) — Option B: exact docket+both parties in non-trusted snippet; source label אר״ש; no פ"ד for lower courts

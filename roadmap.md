@@ -24,3 +24,8 @@
 - [x] V2 Responses SSE lifecycle fix (terminal-before-EOF, premature EOF fails, split frames)
 - [ ] Deferred: checkpoint completed memo before verification + resume consumption
 - [ ] Deferred: lease/fencing for common resume before any handoff retry
+
+## Citation case-law lookup
+- [x] Court-aware query, party follow-up, Option B (אר״ש) — offline tests pass
+- [ ] Deploy citation-chat — waits for owner approval
+- [ ] Live re-run of 1477-12-22 and 11487/03 — after deploy
