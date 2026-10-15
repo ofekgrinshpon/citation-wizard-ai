@@ -115,20 +115,91 @@ export function untrustedHosts(
 }
 
 /**
- * Shared docket parser/matcher. Accepts dockets like "4769/24", "4769-24",
- * with ASCII or Hebrew quotes between case-type letters. Returns the bare
- * {num, year} pair (the two segments URL fragments typically use).
+ * Shared docket identity. Two-part dockets ("4769/24") carry {num, year};
+ * three-part lower-court dockets ("1477-12-22") additionally carry `month`
+ * and their identity is ALL three segments — never collapsed to num/month.
+ * Backward compatible: existing callers reading {full, num, year} still work.
  */
-const DOCKET_RE_SHARED =
-  /([א-ת]{1,4}(?:["״׳']?[א-ת]?)?)\s*(\d{1,6})\s*[\/\-\u2013]\s*(\d{2,4})/;
+export interface DocketId {
+  full: string;
+  num: string;
+  year: string;
+  /** Present only for three-part dockets; canonical two-digit "01".."12". */
+  month?: string;
+}
 
-export function extractDocket(
-  s: unknown,
-): { full: string; num: string; year: string } | null {
+const SEP_SRC = "\\s*[\\/\\-\\u2013_]\\s*";
+
+/**
+ * Parse a bare docket number (no prefix). Accepts "/", "-", en-dash, "_"
+ * separators with optional whitespace. Three-part: month 1–12 (leading zero
+ * optional, normalized to two digits), year exactly 2 or 4 digits. Anything
+ * malformed returns null — no partial two-part fallback for a three-part input.
+ */
+export function parseDocketNumber(s: unknown): DocketId | null {
+  if (typeof s !== "string") return null;
+  const t = s.normalize("NFKC").trim();
+  const m3 = t.match(new RegExp(`^(\\d{1,6})${SEP_SRC}(\\d{1,2})${SEP_SRC}(\\d+)$`));
+  if (m3) return buildThreePart(m3[1], m3[2], m3[3]);
+  const m2 = t.match(new RegExp(`^(\\d{1,6})${SEP_SRC}(\\d{2,4})$`));
+  if (m2) return { full: `${m2[1]}/${m2[2]}`, num: m2[1], year: m2[2] };
+  return null;
+}
+
+function buildThreePart(num: string, month: string, year: string): DocketId | null {
+  const mo = parseInt(month, 10);
+  if (!/^\d{1,2}$/.test(month) || mo < 1 || mo > 12) return null;
+  if (!/^(?:\d{2}|\d{4})$/.test(year)) return null;
+  const mm = String(mo).padStart(2, "0");
+  return { full: `${num}-${mm}-${year}`, num, year, month: mm };
+}
+
+const DOCKET_RE_SHARED = new RegExp(
+  `([א-ת]{1,4}(?:["״׳']?[א-ת]?)?)\\s*(\\d{1,6})${SEP_SRC}(\\d+)(?:${SEP_SRC}(\\d+))?(?!\\d)(${SEP_SRC}\\d)?`,
+);
+
+export function extractDocket(s: unknown): DocketId | null {
   if (typeof s !== "string" || !s) return null;
-  const m = s.match(DOCKET_RE_SHARED);
+  const m = s.normalize("NFKC").match(DOCKET_RE_SHARED);
   if (!m) return null;
+  if (m[5]) return null; // four+ segments → malformed
+  if (m[4] !== undefined) return buildThreePart(m[2], m[3], m[4]);
+  if (!/^\d{2,4}$/.test(m[3])) return null;
   return { full: `${m[2]}/${m[3]}`, num: m[2], year: m[3] };
+}
+
+/** True for a three-part (lower-court) docket identity. */
+export function isThreePartDocket(d: { month?: string } | null | undefined): boolean {
+  return !!d && typeof d.month === "string" && d.month.length > 0;
+}
+
+/** Human/log label: "1477-12-22" or "4769/24". */
+export function docketLabel(d: { num: string; year: string; month?: string }): string {
+  return d.month ? `${d.num}-${d.month}-${d.year}` : `${d.num}/${d.year}`;
+}
+
+function escRe(x: string): string {
+  return x.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+/**
+ * Regex SOURCE matching the docket as a complete numeric token. Two-part
+ * never matches the first two segments of a three-part number; three-part
+ * requires all three segments in order. Leading zeros on num/month tolerated.
+ */
+export function docketPatternSource(
+  d: { num: string; year: string; month?: string },
+  opts: { yearAliases?: boolean } = {},
+): string {
+  const num = `0*${escRe(d.num.replace(/^0+(?=\d)/, ""))}`;
+  const yf = opts.yearAliases ? yearForms(d.year) : null;
+  const years = yf ? Array.from(new Set([d.year, yf.yy, yf.yyyy])) : [d.year];
+  const yAlt = `(?:${years.map(escRe).join("|")})`;
+  if (d.month) {
+    const mo = `0?${parseInt(d.month, 10)}`;
+    return `(?<!\\d)(?<!\\d[\\-\\u2013_]\\s*)${num}${SEP_SRC}${mo}${SEP_SRC}${yAlt}(?!\\d)(?!${SEP_SRC}\\d)`;
+  }
+  return `(?<!\\d)${num}${SEP_SRC}${yAlt}(?!\\d)(?!${SEP_SRC}\\d)`;
 }
 
 /**
@@ -190,7 +261,7 @@ function yearForms(yearStr: string): { yy: string; yyyy: string } | null {
  */
 export function urlContainsDocketVia(
   url: unknown,
-  docket: { num: string; year: string },
+  docket: { num: string; year: string; month?: string },
 ): { ok: boolean; via: DocketAnchorVia } {
   if (typeof url !== "string" || !url) return { ok: false, via: "none" };
   let host: string | null = null;
@@ -200,12 +271,15 @@ export function urlContainsDocketVia(
   try { decoded = decodeURIComponent(url); } catch { /* keep raw */ }
   const u = decoded.toLowerCase();
   const { num, year } = docket;
+  // Explicit percent-encoded separators (covers malformed-% URLs where
+  // decodeURIComponent threw and we kept the raw string).
+  const uNorm = u.replace(/%2f/g, "/").replace(/%2d/g, "-").replace(/%5f/g, "_").replace(/%20/g, " ");
 
   // Channel 1: plain NUM/YY (after URL-decode, %2F became /).
-  const plainPatterns = [`${num}/${year}`, `${num}-${year}`, `${num}_${year}`];
-  if (plainPatterns.some((p) => u.includes(p))) return { ok: true, via: "plain" };
+  if (new RegExp(docketPatternSource(docket), "i").test(uNorm)) return { ok: true, via: "plain" };
 
-  // Supreme-only channels below.
+  // Supreme-only channels below — genuine two-part dockets only.
+  if (isThreePartDocket(docket)) return { ok: false, via: "none" };
   if (!isSupremeHost(host)) return { ok: false, via: "none" };
 
   const enc = supremeEncodeNum(num);
@@ -241,7 +315,7 @@ export function urlContainsDocketVia(
 /** Backward-compatible boolean wrapper. */
 export function urlContainsDocket(
   url: unknown,
-  docket: { num: string; year: string },
+  docket: { num: string; year: string; month?: string },
 ): boolean {
   return urlContainsDocketVia(url, docket).ok;
 }
@@ -257,30 +331,17 @@ export function urlContainsDocket(
  */
 export function textContainsDocket(
   text: unknown,
-  docket: { num: string; year: string },
+  docket: { num: string; year: string; month?: string },
 ): boolean {
   if (typeof text !== "string" || !text) return false;
   const t = text.normalize("NFKC");
-  const { num, year } = docket;
-  const yf = yearForms(year);
-  const years = yf ? Array.from(new Set([year, yf.yy, yf.yyyy])) : [year];
-  for (const y of years) {
-    if (!y) continue;
-    if (
-      t.includes(`${num}/${y}`) ||
-      t.includes(`${num}-${y}`) ||
-      t.includes(`${num}_${y}`)
-    ) {
-      return true;
-    }
-  }
-  return false;
+  return new RegExp(docketPatternSource(docket, { yearAliases: true })).test(t);
 }
 
 /** First non-"none" via among the urls, else "none". */
 export function anyUrlContainsDocketVia(
   urls: unknown,
-  docket: { num: string; year: string },
+  docket: { num: string; year: string; month?: string },
 ): DocketAnchorVia {
   if (!Array.isArray(urls)) return "none";
   for (const u of urls) {
@@ -292,7 +353,7 @@ export function anyUrlContainsDocketVia(
 
 export function anyUrlContainsDocket(
   urls: unknown,
-  docket: { num: string; year: string },
+  docket: { num: string; year: string; month?: string },
 ): boolean {
   return anyUrlContainsDocketVia(urls, docket) !== "none";
 }
