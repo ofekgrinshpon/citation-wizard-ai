@@ -68,6 +68,11 @@ import {
   textContainsDocket,
   anyUrlContainsDocket,
   anyUrlContainsDocketVia,
+  parseDocketNumber,
+  docketLabel,
+  docketPatternSource,
+  isThreePartDocket,
+  type DocketId,
   type DocketAnchorVia,
 } from "../_shared/trustedHosts.ts";
 import { normalizeHebrewNumberRanges } from "../_shared/hebrewNumberRange.ts";
@@ -140,7 +145,7 @@ async function perplexityWithFallback(
   apiKey: string,
   tier1Body: Record<string, unknown>,
   logTag: string,
-  opts?: { docketAnchor?: { num: string; year: string }; forceOpenWebFallback?: boolean },
+  opts?: { docketAnchor?: DocketId; forceOpenWebFallback?: boolean },
 ): Promise<PplxRunResult> {
   const result: PplxRunResult = {
     resp: null,
@@ -203,7 +208,7 @@ async function perplexityWithFallback(
   }
   if (result.tier1_trusted > 0 && !tier1DocketAnchored) {
     console.log(
-      `[pplx-fallback:${logTag}] tier1_trusted=${result.tier1_trusted} but NO trusted url anchors docket ${opts!.docketAnchor!.num}/${opts!.docketAnchor!.year} → firing tier2`,
+      `[pplx-fallback:${logTag}] tier1_trusted=${result.tier1_trusted} but NO trusted url anchors docket ${docketLabel(opts!.docketAnchor!)} → firing tier2`,
     );
   }
 
@@ -260,7 +265,7 @@ async function perplexityWithFallback(
     result.resp = t2;
     result.tier = "tier2_openweb_fallback";
   } else if (result.tier2_trusted > 0 && !anchorOk) {
-    console.log(`[pplx-fallback:${logTag}] tier2 discarded — no trusted URL contains docket ${opts!.docketAnchor!.num}/${opts!.docketAnchor!.year}`);
+    console.log(`[pplx-fallback:${logTag}] tier2 discarded — no trusted URL contains docket ${docketLabel(opts!.docketAnchor!)}`);
   }
   return result;
 }
@@ -475,8 +480,9 @@ async function retryOldSupremeDocket(
   yearStr: string,
 ): Promise<Record<string, unknown> | null> {
   const fullCaseRef = `${caseType} ${caseNum}`;
-  const docket = extractDocket(fullCaseRef);
-  if (!docket) return null;
+  const docket = extractDocket(fullCaseRef) ?? parseDocketNumber(caseNum);
+  // Old Supreme retry is for genuine two-part Supreme dockets only.
+  if (!docket || isThreePartDocket(docket)) return null;
   try {
     const query = `אנא מצא את פסק הדין הישראלי הישן ${fullCaseRef} (משנת ${yearStr}). חפש את הצירוף המדויק "${caseType} ${caseNum}" בכל מאגרי הפסיקה הישראליים ובמקורות אקדמיים, כולל ויקיפדיה העברית ומאגרי תרגום של בית המשפט העליון (כגון Versa של אוניברסיטת קרדוזו). ציין במדויק: 1) שמות הצדדים (שם משפחה בלבד לאנשים, שם מלא לתאגידים), 2) תאריך מתן פסק הדין (יום.חודש.שנה), 3) בית המשפט (בית המשפט העליון), 4) פרסום בפד"י: כרך, חלק ועמוד ראשון. אל תמציא נתונים — אם אינך בטוח, סמן שדה כריק. ענה בעברית בלבד.`;
     const body: Record<string, unknown> = {
@@ -521,7 +527,7 @@ async function retryOldSupremeDocket(
         || textContainsDocket(r.snippet, docket);
     });
     if (!urlAnchored && !snippetAnchored) {
-      console.log(`[case-law:old-retry] no trusted source anchors docket ${docket.num}/${docket.year} → discarding`);
+      console.log(`[case-law:old-retry] no trusted source anchors docket ${docketLabel(docket)} → discarding`);
       return null;
     }
 
@@ -2085,16 +2091,15 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
             };
             // extractDocket() requires a Hebrew case-type prefix, so for a bare
             // docket we build the anchor directly from the number/year pair.
-            const docketAnchor = extractDocket(fullCaseRef) ?? (() => {
-              const m = caseNum.match(/^(\d{1,6})[\/\-\u2013](\d{2,4})$/);
-              return m ? { full: `${m[1]}/${m[2]}`, num: m[1], year: m[2] } : null;
-            })();
+            // Three-part lower-court dockets keep all segments (number,
+            // month, year) so 1477-12-22 never collapses to 1477/12.
+            const docketAnchor: DocketId | null = extractDocket(fullCaseRef) ?? parseDocketNumber(caseNum);
             const caseSearchRun = await perplexityWithFallback(
               PERPLEXITY_API_KEY,
               caseSearchBody,
               `case-number:${fullCaseRef}`,
               docketAnchor
-                ? { docketAnchor: { num: docketAnchor.num, year: docketAnchor.year }, forceOpenWebFallback: true }
+                ? { docketAnchor, forceOpenWebFallback: true }
                 : { forceOpenWebFallback: true },
             );
             const perplexityResp = caseSearchRun.resp!;
@@ -2236,7 +2241,7 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                   if (docketAnchor && anchoredResultsOuter.length > 0) {
                     const HEB = "\u0590-\u05FF";
                     const capRe = new RegExp(
-                      `${docketAnchor.num}\\s*/\\s*${docketAnchor.year}\\s+([${HEB}][${HEB}"'\u05F3\u05F4\\s]{1,40}?)\\s+נ['\u05F3\u05F4]?\\s+([${HEB}][${HEB}"'\u05F3\u05F4\\s]{1,50}?)\\s*(?=[,.()]|פסק|פס['\u05F3]|$)`,
+                      `${docketPatternSource(docketAnchor)}\\s+([${HEB}][${HEB}"'\u05F3\u05F4\\s]{1,40}?)\\s+נ['\u05F3\u05F4]?\\s+([${HEB}][${HEB}"'\u05F3\u05F4\\s]{1,50}?)\\s*(?=[,.()]|פסק|פס['\u05F3]|$)`,
                     );
                     for (const r of anchoredResultsOuter) {
                       const txt = `${typeof r.title === "string" ? r.title : ""} ${typeof r.snippet === "string" ? r.snippet : ""}`;
@@ -2262,7 +2267,7 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                   // dropped), try once more with a stronger query and broader trusted
                   // mirrors (versa.cardozo, he.wikipedia, padi.gov.il). Only fires for
                   // years < 1995 to keep modern-case protection intact.
-                  if (!docketAnchored && docketAnchor) {
+                  if (!docketAnchored && docketAnchor && !isThreePartDocket(docketAnchor)) {
                     const yNum = parseInt(docketAnchor.year.length === 2
                       ? (parseInt(docketAnchor.year, 10) < 70 ? `20${docketAnchor.year}` : `19${docketAnchor.year}`)
                       : docketAnchor.year, 10);
