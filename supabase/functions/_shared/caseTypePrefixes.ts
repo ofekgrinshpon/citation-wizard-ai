@@ -62,7 +62,7 @@ export function buildPrefixAlternation(): string {
 
 /** Full docket: prefix + space + number/year. Cap1=prefix, cap2=docket. */
 export const CASE_DOCKET_RE = new RegExp(
-  `(${buildPrefixAlternation()})\\s+([0-9]+[\\/\\-][0-9]+(?:[\\/\\-][0-9]+)?)`
+  `(${buildPrefixAlternation()})\\s+([0-9]+\\s*[\\/\\-\u2013]\\s*[0-9]+(?:\\s*[\\/\\-\u2013]\\s*[0-9]+)?)(?![0-9])`
 );
 
 /** Just the prefix — for free-text input validation. */
@@ -80,7 +80,7 @@ export const CASE_TYPE_PREFIX_RE = new RegExp(`(?:${buildPrefixAlternation()})`)
  * two-part dashed form (which is usually a page/paragraph range like 4-6).
  */
 const BARE_DOCKET_SLASH_RE = /(?<![\d\/\-.])(\d{1,6}\/\d{2,4})(?![\d\/\-])/;
-const BARE_DOCKET_DASH_RE = /(?<![\d\/\-.])(\d{1,6}-\d{1,2}-\d{2,4})(?![\d\/\-])/;
+const BARE_DOCKET_DASH_RE = /(?<![\d\/\-\u2013.])(\d{1,6}\s*[-\u2013]\s*\d{1,2}\s*[-\u2013]\s*\d{2,4})(?![\d\/\-\u2013])/;
 
 const PINPOINT_MARKER_RE =
   /(?:ס['׳]|סעיף|סע['׳]|עמ['׳]|עמוד|פס['׳]|פסקה|ה["״]ש|תק['׳]|תקנה|כרך|חלק)\s*$/;
