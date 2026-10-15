@@ -62,7 +62,7 @@ export function buildPrefixAlternation(): string {
 
 /** Full docket: prefix + space + number/year. Cap1=prefix, cap2=docket. */
 export const CASE_DOCKET_RE = new RegExp(
-  `(${buildPrefixAlternation()})\\s+([0-9]+\\s*[\\/\\-\u2013]\\s*[0-9]+(?:\\s*[\\/\\-\u2013]\\s*[0-9]+)?)(?![0-9])`
+  `(${buildPrefixAlternation()})\\s+([0-9]+[\\/\\-\u2013][0-9]+(?:[\\/\\-\u2013][0-9]+)?)`
 );
 
 /** Just the prefix — for free-text input validation. */
