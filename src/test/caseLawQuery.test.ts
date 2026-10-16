@@ -82,6 +82,27 @@ describe("Option B strict snippet evidence (live fixtures)", () => {
     const r = [{ url: "https://x.example/y", title: "", snippet: `1477-12-22 ${"מילה ".repeat(200)} ${P1} נ' ${P2}` }];
     expect(strictSnippetEvidence(r, idx(A), P1, P2)).toBeNull();
   });
+  it("accepts case/quote/suffix variants seen in the live 11487/03 run", () => {
+    const D = extractDocket('ע"א 11487/03')!;
+    const live = [
+      { url: "https://www.iprights.co.il/x/", title: "סימן מסחר תלת מימדי",
+        snippet: "פרשת 'טופיפי' – נ' אלפא אינטואיט מוצרי מזון בע\"מ August storck kG ע\"א 11487/03, יצרנית הממתק" },
+      { url: "https://www.gsip.co.il/y/", title: "התנאים לרישום סימן מסחר תלת מימדי",
+        snippet: "ניתן בבית המשפט העליון פסק דין בע”א 11487/03 August Stork KG נ’ אלפא אינטואיט מוצרי מזון בע”מ אשר עסק ברישום" },
+    ];
+    expect(strictSnippetEvidence(live, idx(D), "August Storck KG", 'אלפא אינטואיט מוצרי מזון בע"מ')).toMatch(/iprights/);
+  });
+  it("still rejects when only a name core matches but the other party is absent", () => {
+    const D = extractDocket('ע"א 11487/03')!;
+    const r = [{ url: "https://x.example/z", title: "", snippet: 'ע"א 11487/03 August Storck KG נ’ חברה אחרת לגמרי' }];
+    expect(strictSnippetEvidence(r, idx(D), "August Storck KG", 'אלפא אינטואיט מוצרי מזון בע"מ')).toBeNull();
+  });
+  it("accepts RTL-reversed Latin party order (live HUJI snippet)", () => {
+    const D = extractDocket('ע"א 11487/03')!;
+    const live = [{ url: "https://shnaton.huji.ac.il/x.pdf", title: "דיני סימני מסחר",
+      snippet: "' ואח' נ' אלפא אינטואיט מוצרי מזון בע\"מ ואחKG Storck August 11487/03 ע\"א\nנ' שריג אלקטריק בע\"מV.N Electronics Philips" }];
+    expect(strictSnippetEvidence(live, idx(D), "August Storck KG", 'אלפא אינטואיט מוצרי מזון בע"מ')).toMatch(/huji/);
+  });
 });
 
 describe("historic district (פ\"מ)", () => {

@@ -70,6 +70,7 @@ const SYS_TAIL = `
 שמות צדדים: שם משפחה בלבד לאנשים פרטיים, שם מלא לתאגידים. ללא תארים.
 caseType: הקיצור הרשמי של סוג ההליך לפי כללי האזכור האחיד (בג"ץ, ע"א, רע"א, ע"פ, עת"מ וכו'). אם לא אומת — השאר ריק.
 אסור להחזיר פסק דין שמספר התיק שלו שונה ממספר התיק שהתבקש. אם לא מצאת את מספר התיק המדויק — החזר found:false.
+תוצאת חיפוש שבה מופיע מספר התיק המדויק יחד עם שמות הצדדים (גם באתר שאינו מאגר משפטי, למשל מאמר או קובץ PDF) נחשבת זיהוי של התיק — חלץ ממנה את הפרטים, החזר found:true וסמן confidence:"low".
 confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות רבים, "low" אם יש ספק או מקור יחיד.
 חשוב: שדה year/date חייב להיות תאריך/שנת מתן פסק הדין על ידי בית המשפט, ולא שנת הוצאת כרך פ"ד.`;
 
@@ -137,15 +138,53 @@ export function strictSnippetEvidence(
   party2: string,
   windowChars = 300,
 ): string | null {
+  // Normalised matching: real snippets vary in case ("storck kG"), quote
+  // style (בע"מ / בע״מ) and corporate suffixes. The docket anchor itself
+  // stays exact; only party-name comparison is normalised.
   const n = (s: unknown) => (typeof s === "string" ? s : "").replace(/\s+/g, " ").trim();
-  const p1 = n(party1), p2 = n(party2);
-  if (p1.length < 3 || p2.length < 3) return null;
+  const normTxt = (s: string) =>
+    n(s).normalize("NFKC")
+      .replace(/[״“”"]/g, '"').replace(/[׳‘’']/g, "'")
+      .toLowerCase();
+  const partyCore = (s: string) =>
+    normTxt(s)
+      .replace(/בע["']מ/g, " ")
+      .replace(/\b(kg|gmbh|ltd|llc|inc|co)\b/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+  const variants = (p: string): string[] => {
+    const full = normTxt(p);
+    const core = partyCore(p);
+    return core.length >= 4 && core !== full ? [full, core] : [full];
+  };
+  // RTL pages often reverse Latin word order ("KG Storck August"), so a party
+  // also matches when EVERY significant token of its core appears in the
+  // window, regardless of order. The exact-docket anchor keeps this safe.
+  const tokens = (p: string): string[] =>
+    partyCore(p).split(" ").filter((t) => t.length >= 2);
+  const v1 = variants(party1).filter((v) => v.length >= 3);
+  const v2 = variants(party2).filter((v) => v.length >= 3);
+  const t1 = tokens(party1), t2 = tokens(party2);
+  if ((!v1.length && !t1.length) || (!v2.length && !t2.length)) return null;
+  const hasParty = (win: string, vs: string[], ts: string[]) =>
+    vs.some((v) => win.includes(v)) || (ts.length > 0 && ts.every((t) => win.includes(t)));
   for (const r of results) {
     if (typeof r.url !== "string") continue;
-    const txt = `${n(r.title)} ${n(r.snippet)}`;
-    for (const at of matchDocket(txt)) {
-      const win = txt.slice(Math.max(0, at - windowChars), at + windowChars);
-      if (win.includes(p1) && win.includes(p2)) return r.url;
+    const raw = `${n(r.title)} ${n(r.snippet)}`;
+    const txt = normTxt(raw);
+    for (const at of matchDocket(raw)) {
+      // Recompute the window in the normalised text around the docket: the
+      // docket pattern is separator-tolerant, so locate it again in txt.
+      const winRaw = raw.slice(Math.max(0, at - windowChars), at + windowChars + 40);
+      const win = normTxt(winRaw);
+      if (hasParty(win, v1, t1) && hasParty(win, v2, t2)) return r.url;
+    }
+    // Docket may normalize differently (quote chars); also try matching in txt.
+    if (matchDocket(raw).length === 0) {
+      for (const at of matchDocket(txt)) {
+        const win = txt.slice(Math.max(0, at - windowChars), at + windowChars + 40);
+        if (hasParty(win, v1, t1) && hasParty(win, v2, t2)) return r.url;
+      }
     }
   }
   return null;
