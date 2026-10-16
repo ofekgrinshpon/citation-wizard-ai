@@ -83,3 +83,24 @@ describe("Option B strict snippet evidence (live fixtures)", () => {
     expect(strictSnippetEvidence(r, idx(A), P1, P2)).toBeNull();
   });
 });
+
+describe("historic district (פ\"מ)", () => {
+  it("classifies pre-2007 two-part lower dockets", () => {
+    expect(classifyDocketCourt('ת"א', "1234/95")).toBe("district_historic");
+    expect(classifyDocketCourt('ע"ש', "12/1998")).toBe("unknown");
+    expect(classifyDocketCourt('ת"א', "1234/07")).toBe("lower");
+    expect(classifyDocketCourt('תא"מ', "1234/95")).toBe("lower");
+    expect(classifyDocketCourt('ת"א', "1477-12-02")).toBe("lower");
+  });
+  it("asks for פ\"מ, never פד\"י first", () => {
+    const q = buildCaseNumberQuery('ת"א', "1234/95", "district_historic");
+    expect(q).toMatch(/פ"מ/);
+    expect(q).not.toMatch(/בדוק קודם כל האם פסק הדין פורסם בפד"י/);
+    expect(buildCaseSystemPrompt("district_historic")).not.toMatch(/עדיפות ראשונה היא לבדוק פרסום בפד"י/);
+  });
+  it("never merges פ\"ד volume for historic district", () => {
+    const p: any = { isPublished: false };
+    mergeFollowupFields(p, { isPublished: true, padi_volume: "מט(2)" }, "district_historic");
+    expect(p.isPublished).toBe(false);
+  });
+});
