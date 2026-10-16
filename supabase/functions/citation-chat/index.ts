@@ -265,6 +265,16 @@ async function perplexityWithFallback(
   if (result.tier2_trusted > 0 && anchorOk) {
     result.resp = t2;
     result.tier = "tier2_openweb_fallback";
+  } else if (!anchorOk && opts?.docketAnchor && !tier1DocketAnchored &&
+    Array.isArray(t2Json?.search_results) &&
+    (t2Json!.search_results as Array<Record<string, unknown>>).some((r) =>
+      textContainsDocket(r?.title, opts.docketAnchor!) || textContainsDocket(r?.snippet, opts.docketAnchor!))) {
+    // Option B candidate: a tier-2 snippet names the exact docket. Hand it
+    // downstream, where strictSnippetEvidence still requires both parties
+    // next to the docket before anything is accepted (source → אר״ש).
+    result.resp = t2;
+    result.tier = "tier2_openweb_fallback";
+    console.log(`[pplx-fallback:${logTag}] tier2 kept as snippet-evidence candidate for docket ${docketLabel(opts.docketAnchor)}`);
   } else if (result.tier2_trusted > 0 && !anchorOk) {
     console.log(`[pplx-fallback:${logTag}] tier2 discarded — no trusted URL contains docket ${docketLabel(opts!.docketAnchor!)}`);
   }
