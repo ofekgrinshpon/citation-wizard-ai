@@ -213,7 +213,12 @@ async function perplexityWithFallback(
     );
   }
 
-  // Tier-2: same body without `search_domain_filter`.
+  // Tier-2: same body without `search_domain_filter`. When tier1 was already
+  // open-web (no filter), tier2 would resend an identical request — skip it.
+  if (!("search_domain_filter" in tier1Body)) {
+    console.log(`[pplx-fallback:${logTag}] tier1 already open-web → no tier2`);
+    return result;
+  }
   const { search_domain_filter: _ignored, ...t2Body } = tier1Body as Record<string, unknown>;
   result.tier2_fired = true;
   if (result.tier1_trusted === 0) {
