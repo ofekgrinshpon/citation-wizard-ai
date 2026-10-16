@@ -2081,9 +2081,12 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
             const docketCourt = classifyDocketCourt(caseType, caseNum);
             const query = buildCaseNumberQuery(caseType, caseNum, docketCourt);
 
+            // Open web from the first call: the trusted-domain filter returned
+            // generic landing pages for well-defined dockets, and the docket
+            // anchor + strict evidence gates below already reject anything
+            // that does not prove the exact case.
             const caseSearchBody: Record<string, unknown> = {
               model: "sonar-pro",
-              search_domain_filter: ["nevo.co.il", "court.gov.il", "supreme.court.gov.il", "takdin.co.il", "lite.takdin.co.il", "psakdin.co.il"],
               messages: [
                 {
                   role: "system",
