@@ -55,7 +55,7 @@ function normalizeDatabaseName(urls: unknown, fallback: unknown): string {
   return "";
 }
 import { CASE_DOCKET_RE, CASE_TYPE_PREFIX_RE, CASE_TYPE_PREFIXES, findBareDocket } from "../_shared/caseTypePrefixes.ts";
-import { classifyDocketCourt, buildCaseNumberQuery, buildCaseSystemPrompt, shouldRunPartyFollowup, buildPartyFollowupQuery, mergeFollowupFields, strictSnippetEvidence, SNIPPET_EVIDENCE_DB_NAME, isLowerCourt, isPrintedDistrictRef } from "../_shared/caseLawQuery.ts";
+import { classifyDocketCourt, buildCaseNumberQuery, buildCaseSystemPrompt, shouldRunPartyFollowup, shouldRunUnanchoredFollowup, buildPartyFollowupQuery, mergeFollowupFields, strictSnippetEvidence, SNIPPET_EVIDENCE_DB_NAME, isLowerCourt, isPrintedDistrictRef } from "../_shared/caseLawQuery.ts";
 import {
   TRUSTED_LEGAL,
   TRUSTED_PUB,
@@ -2148,6 +2148,9 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
                   let partyVerification: "both" | "caption_marker" | "insufficient_snippet" | "no_anchor" | "snippet_strict" | "n/a" = "n/a";
                   // Set when facts are proven only by an exact non-trusted snippet (Option B).
                   let snippetEvidenceUrl: string | null = null;
+                  // Unverified parties the model named when no anchor existed;
+                  // used only as a follow-up query hint, never rendered as-is.
+                  let unanchoredCandidate: { party1: string; party2: string } | null = null;
                   let docketAnchored = false;
                   // Hoisted so the publication gate and the anchored-date
                   // fallback below can reuse the same anchored source set.
@@ -2212,6 +2215,7 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
                         // (parties, court, date, publication, database name).
                         partyVerification = "no_anchor";
                         partyMismatch = true;
+                        unanchoredCandidate = { party1: String(parsed.party1), party2: String(parsed.party2) };
                         console.log(`[case-law] party_verification=no_anchor for ${fullCaseRef} — no search_result URL contains the docket (citations_anchored=${anchoredCitationUrls.length}). Dropping parties + date + court + isPublished + databaseName.`);
                         parsed.party1 = "";
                         parsed.party2 = "";
@@ -2365,6 +2369,61 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
                       }
                     } catch (e) {
                       console.log(`[case-law] party_followup failed: ${e instanceof Error ? e.message : String(e)}`);
+                    }
+                  }
+
+                  // ── Unanchored party follow-up (at most once) ──
+                  // First pass named parties but nothing proved them. Search
+                  // once with docket + those parties; accept ONLY if one result
+                  // holds the exact docket and both parties (Option B). Source
+                  // stays אר״ש; פ"ד is never taken from this path.
+                  if (docketAnchor && !docketAnchored && shouldRunUnanchoredFollowup(unanchoredCandidate)) {
+                    const cand = unanchoredCandidate!;
+                    try {
+                      const fuRun = await perplexityWithFallback(
+                        PERPLEXITY_API_KEY,
+                        {
+                          ...caseSearchBody,
+                          messages: [
+                            (caseSearchBody.messages as unknown[])[0],
+                            { role: "user", content: buildPartyFollowupQuery(caseType, caseNum, cand.party1, cand.party2, docketCourt) },
+                          ],
+                        },
+                        `case-unanchored-followup:${fullCaseRef}`,
+                        { docketAnchor, forceOpenWebFallback: true },
+                      );
+                      if (fuRun.resp?.ok) {
+                        const fu = await fuRun.resp.json();
+                        const fuResults: Array<Record<string, unknown>> = Array.isArray(fu.search_results) ? fu.search_results : [];
+                        const proofUrl = strictSnippetEvidence(fuResults, docketMatchIndices, cand.party1, cand.party2);
+                        const fuJson = String(fu.choices?.[0]?.message?.content ?? "").match(/\{[\s\S]*\}/);
+                        if (proofUrl) {
+                          parsed.found = true;
+                          parsed.party1 = cand.party1;
+                          parsed.party2 = cand.party2;
+                          parsed.confidence = "low";
+                          if (fuJson) {
+                            try {
+                              const extra = JSON.parse(fuJson[0]);
+                              if (extra && extra.found !== false) {
+                                extra.isPublished = false;
+                                mergeFollowupFields(parsed, extra, docketCourt);
+                              }
+                            } catch { /* ignore malformed JSON */ }
+                          }
+                          parsed.isPublished = false;
+                          parsed.padi_volume = ""; parsed.padi_part = ""; parsed.padi_page = "";
+                          snippetEvidenceUrl = proofUrl;
+                          docketAnchored = true;
+                          partyMismatch = false;
+                          partyVerification = "snippet_strict";
+                          console.log(`[case-law] unanchored_followup proved parties for ${fullCaseRef} via ${proofUrl}`);
+                        } else {
+                          console.log(`[case-law] unanchored_followup no proof for ${fullCaseRef}`);
+                        }
+                      }
+                    } catch (e) {
+                      console.log(`[case-law] unanchored_followup failed: ${e instanceof Error ? e.message : String(e)}`);
                     }
                   }
 
