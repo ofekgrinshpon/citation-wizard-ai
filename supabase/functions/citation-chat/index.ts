@@ -55,7 +55,7 @@ function normalizeDatabaseName(urls: unknown, fallback: unknown): string {
   return "";
 }
 import { CASE_DOCKET_RE, CASE_TYPE_PREFIX_RE, CASE_TYPE_PREFIXES, findBareDocket } from "../_shared/caseTypePrefixes.ts";
-import { classifyDocketCourt, buildCaseNumberQuery, buildCaseSystemPrompt, shouldRunPartyFollowup, buildPartyFollowupQuery, mergeFollowupFields, strictSnippetEvidence, SNIPPET_EVIDENCE_DB_NAME } from "../_shared/caseLawQuery.ts";
+import { classifyDocketCourt, buildCaseNumberQuery, buildCaseSystemPrompt, shouldRunPartyFollowup, buildPartyFollowupQuery, mergeFollowupFields, strictSnippetEvidence, SNIPPET_EVIDENCE_DB_NAME, isLowerCourt, isPrintedDistrictRef } from "../_shared/caseLawQuery.ts";
 import {
   TRUSTED_LEGAL,
   TRUSTED_PUB,
@@ -2380,7 +2380,7 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
                   // ── Secondary verification: if Perplexity says not published, double-check with a focused query ──
 
                   // פ"ד exists only for the Supreme Court — never verify it for lower courts.
-                  if (parsed.found && !parsed.isPublished && docketCourt !== "lower") {
+                  if (parsed.found && !parsed.isPublished && !isLowerCourt(docketCourt)) {
                     console.log(`[case-law] First search says unpublished for ${fullCaseRef}, running verification search...`);
                     try {
                       const verifyResp = await trackedFetch("https://api.perplexity.ai/chat/completions", {
@@ -2500,7 +2500,7 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
 
                   // Normalize databaseName from Perplexity citation URLs (lite.takdin → תקדין,
                   // supremedecisions.court.gov.il → אר״ש, etc). Overrides free-form strings.
-                  if (!parsed.isPublished) {
+                  if (!parsed.isPublished && !(docketCourt === "district_historic" && isPrintedDistrictRef(parsed.databaseName))) {
                     const normalized = normalizeDatabaseName(pData.citations, parsed.databaseName);
                     if (normalized) parsed.databaseName = normalized;
                   }
