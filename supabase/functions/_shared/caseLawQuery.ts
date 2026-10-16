@@ -93,6 +93,13 @@ export function shouldRunPartyFollowup(p: {
   return !s(p.parsed.date) || !hasSource;
 }
 
+/** Unanchored follow-up needs two real (≥2 char) candidate party names. */
+export function shouldRunUnanchoredFollowup(c: { party1: string; party2: string } | null | undefined): boolean {
+  if (!c) return false;
+  const ok = (s: string) => typeof s === "string" && s.trim().length >= 2;
+  return ok(c.party1) && ok(c.party2);
+}
+
 export function buildPartyFollowupQuery(caseType: string, caseNum: string, party1: string, party2: string, court: DocketCourt): string {
   const ref = `${caseType} ${caseNum}`.trim();
   const where = court === "district_historic"

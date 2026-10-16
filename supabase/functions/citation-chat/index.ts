@@ -2372,6 +2372,61 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
                     }
                   }
 
+                  // ── Unanchored party follow-up (at most once) ──
+                  // First pass named parties but nothing proved them. Search
+                  // once with docket + those parties; accept ONLY if one result
+                  // holds the exact docket and both parties (Option B). Source
+                  // stays אר״ש; פ"ד is never taken from this path.
+                  if (docketAnchor && !docketAnchored && shouldRunUnanchoredFollowup(unanchoredCandidate)) {
+                    const cand = unanchoredCandidate!;
+                    try {
+                      const fuRun = await perplexityWithFallback(
+                        PERPLEXITY_API_KEY,
+                        {
+                          ...caseSearchBody,
+                          messages: [
+                            (caseSearchBody.messages as unknown[])[0],
+                            { role: "user", content: buildPartyFollowupQuery(caseType, caseNum, cand.party1, cand.party2, docketCourt) },
+                          ],
+                        },
+                        `case-unanchored-followup:${fullCaseRef}`,
+                        { docketAnchor, forceOpenWebFallback: true },
+                      );
+                      if (fuRun.resp?.ok) {
+                        const fu = await fuRun.resp.json();
+                        const fuResults: Array<Record<string, unknown>> = Array.isArray(fu.search_results) ? fu.search_results : [];
+                        const proofUrl = strictSnippetEvidence(fuResults, docketMatchIndices, cand.party1, cand.party2);
+                        const fuJson = String(fu.choices?.[0]?.message?.content ?? "").match(/\{[\s\S]*\}/);
+                        if (proofUrl) {
+                          parsed.found = true;
+                          parsed.party1 = cand.party1;
+                          parsed.party2 = cand.party2;
+                          parsed.confidence = "low";
+                          if (fuJson) {
+                            try {
+                              const extra = JSON.parse(fuJson[0]);
+                              if (extra && extra.found !== false) {
+                                extra.isPublished = false;
+                                mergeFollowupFields(parsed, extra, docketCourt);
+                              }
+                            } catch { /* ignore malformed JSON */ }
+                          }
+                          parsed.isPublished = false;
+                          parsed.padi_volume = ""; parsed.padi_part = ""; parsed.padi_page = "";
+                          snippetEvidenceUrl = proofUrl;
+                          docketAnchored = true;
+                          partyMismatch = false;
+                          partyVerification = "snippet_strict";
+                          console.log(`[case-law] unanchored_followup proved parties for ${fullCaseRef} via ${proofUrl}`);
+                        } else {
+                          console.log(`[case-law] unanchored_followup no proof for ${fullCaseRef}`);
+                        }
+                      }
+                    } catch (e) {
+                      console.log(`[case-law] unanchored_followup failed: ${e instanceof Error ? e.message : String(e)}`);
+                    }
+                  }
+
 
 
                   // ── First-pass publication gate ──
