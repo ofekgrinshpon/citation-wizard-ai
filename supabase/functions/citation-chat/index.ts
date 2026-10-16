@@ -55,7 +55,7 @@ function normalizeDatabaseName(urls: unknown, fallback: unknown): string {
   return "";
 }
 import { CASE_DOCKET_RE, CASE_TYPE_PREFIX_RE, CASE_TYPE_PREFIXES, findBareDocket } from "../_shared/caseTypePrefixes.ts";
-import { classifyDocketCourt, buildCaseNumberQuery, buildCaseSystemPrompt, shouldRunPartyFollowup, buildPartyFollowupQuery, mergeFollowupFields, strictSnippetEvidence, SNIPPET_EVIDENCE_DB_NAME, isLowerCourt, isPrintedDistrictRef } from "../_shared/caseLawQuery.ts";
+import { classifyDocketCourt, buildCaseNumberQuery, buildCaseSystemPrompt, shouldRunPartyFollowup, shouldRunUnanchoredFollowup, buildPartyFollowupQuery, mergeFollowupFields, strictSnippetEvidence, SNIPPET_EVIDENCE_DB_NAME, isLowerCourt, isPrintedDistrictRef } from "../_shared/caseLawQuery.ts";
 import {
   TRUSTED_LEGAL,
   TRUSTED_PUB,
