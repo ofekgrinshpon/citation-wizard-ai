@@ -2148,6 +2148,9 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
                   let partyVerification: "both" | "caption_marker" | "insufficient_snippet" | "no_anchor" | "snippet_strict" | "n/a" = "n/a";
                   // Set when facts are proven only by an exact non-trusted snippet (Option B).
                   let snippetEvidenceUrl: string | null = null;
+                  // Unverified parties the model named when no anchor existed;
+                  // used only as a follow-up query hint, never rendered as-is.
+                  let unanchoredCandidate: { party1: string; party2: string } | null = null;
                   let docketAnchored = false;
                   // Hoisted so the publication gate and the anchored-date
                   // fallback below can reuse the same anchored source set.
@@ -2212,6 +2215,7 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
                         // (parties, court, date, publication, database name).
                         partyVerification = "no_anchor";
                         partyMismatch = true;
+                        unanchoredCandidate = { party1: String(parsed.party1), party2: String(parsed.party2) };
                         console.log(`[case-law] party_verification=no_anchor for ${fullCaseRef} — no search_result URL contains the docket (citations_anchored=${anchoredCitationUrls.length}). Dropping parties + date + court + isPublished + databaseName.`);
                         parsed.party1 = "";
                         parsed.party2 = "";
