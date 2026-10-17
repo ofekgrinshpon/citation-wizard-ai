@@ -159,7 +159,7 @@ describe("saving the name", () => {
     renderProfile("profile");
     const btn = await screen.findByRole("button", { name: "שמור שינויים" });
     fireEvent.click(btn); fireEvent.click(btn);
-    expect(updateCalls).toBe(1);
+    await waitFor(() => expect(updateCalls).toBe(1));
     expect((screen.getByRole("button", { name: "שומר…" }) as HTMLButtonElement).disabled).toBe(true);
     d.resolve({ data: [{ id: "A" }], error: null });
     expect(await screen.findByText("השם נשמר.")).toBeTruthy();
