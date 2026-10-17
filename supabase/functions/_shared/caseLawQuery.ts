@@ -86,7 +86,7 @@ export function shouldRunPartyFollowup(p: {
   alreadyRan: boolean;
 }): boolean {
   if (p.alreadyRan || !p.docketAnchored || !p.parsed || !p.parsed.found) return false;
-  if (p.partyVerification !== "both" && p.partyVerification !== "caption_marker") return false;
+  if (!["both", "caption_marker", "snippet_strict"].includes(p.partyVerification)) return false;
   const s = (v: unknown) => (typeof v === "string" ? v.trim() : "");
   if (!s(p.parsed.party1) || !s(p.parsed.party2)) return false;
   const hasSource = !!s(p.parsed.databaseName) || (p.parsed.isPublished === true && !!s(p.parsed.padi_volume));
