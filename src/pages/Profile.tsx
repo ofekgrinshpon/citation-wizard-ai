@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useCredits } from "@/hooks/useCredits";
+import { useAccountProfile } from "@/hooks/useAccountProfile";
 import { useCreditLedger, type LedgerRow } from "@/hooks/useCreditLedger";
 import { supabase } from "@/integrations/supabase/client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -26,7 +27,7 @@ interface ActivityLog {
 
 const EVENT_LABEL: Record<string, string> = {
   consume: "שימוש",
-  refund: "החזר אוטומטי",
+  refund: "מכסת שימוש שהוחזרה",
   topup: "טעינת חבילה",
   renewal: "חידוש מסלול",
   admin_adjustment: "התאמה ידנית",
@@ -85,45 +86,35 @@ function formatLedgerReason(raw: string | null): string {
 
 
 const Profile = () => {
-  const { user, signOut } = useAuth();
+  const { user, signOut, loading: authLoading } = useAuth();
   const { isAdmin, referralCode } = useCredits();
   const {
     status: usage,
+    loading: usageLoading,
+    error: usageError,
+    refresh: retryUsage,
     planMeta: usagePlanMeta,
     windowCountdown,
     planDaysLeft,
   } = useUsage();
   const [usageInfoOpen, setUsageInfoOpen] = useState(false);
-  const { rows: ledger, loading: ledgerLoading } = useCreditLedger(50);
+  const { rows: ledger, loading: ledgerLoading, error: ledgerError, refresh: retryLedger } = useCreditLedger(50);
+  const account = useAccountProfile();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const defaultTab = searchParams.get("tab") || "profile";
-  const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState("");
   const [activities, setActivities] = useState<ActivityLog[]>([]);
   const [citations, setCitations] = useState<any[]>([]);
   const [referralsGranted, setReferralsGranted] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
-  const [loading, setLoading] = useState(true);
-
   useEffect(() => {
+    if (authLoading) return;
+    setActivities([]); setCitations([]); setReferralsGranted(0);
     if (!user) { navigate("/"); return; }
-    loadProfile();
     loadActivity();
     loadCitations();
     loadReferralCount();
   }, [user]);
-
-  const loadProfile = async () => {
-    if (!user) return;
-    const { data } = await supabase
-      .from("profiles").select("full_name, email").eq("id", user.id).single();
-    if (data) {
-      setFullName(data.full_name || "");
-      setEmail(data.email || user.email || "");
-    }
-    setLoading(false);
-  };
 
   const loadActivity = async () => {
     if (!user) return;
@@ -149,13 +140,6 @@ const Profile = () => {
     setReferralsGranted(count ?? 0);
   };
 
-  const updateProfile = async () => {
-    if (!user) return;
-    const { error } = await supabase.from("profiles").update({ full_name: fullName }).eq("id", user.id);
-    if (error) toast.error("שגיאה בשמירה");
-    else toast.success("הפרופיל עודכן");
-  };
-
   const filteredCitations = citations.filter((c) =>
     !searchQuery || c.raw_input?.includes(searchQuery) || c.formatted_output?.includes(searchQuery)
   );
@@ -170,9 +154,10 @@ const Profile = () => {
 
   
 
-  if (loading) {
+  if (authLoading || account.loading) {
     return (
-      <div className="flex items-center justify-center h-screen">
+      <div className="flex items-center justify-center h-screen" role="status" aria-live="polite" aria-busy="true">
+        <span className="sr-only">טוען את פרטי החשבון…</span>
         <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
       </div>
     );
@@ -202,19 +187,41 @@ const Profile = () => {
           </TabsList>
 
           <TabsContent value="profile">
-            <div className="bg-card border border-border rounded-xl p-6 space-y-4">
+            <form
+              className="bg-card border border-border rounded-xl p-6 space-y-4"
+              onSubmit={(e) => { e.preventDefault(); void account.save(); }}
+              aria-busy={account.saveState === "saving"}
+            >
+              {account.error && (
+                <div role="alert" className="text-sm text-destructive flex items-center gap-3">
+                  לא הצלחנו לטעון את פרטי החשבון.
+                  <button type="button" onClick={() => account.reload()} className="underline font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded">נסה שוב</button>
+                </div>
+              )}
               <div>
-                <label className="block text-sm font-medium text-foreground mb-1">שם מלא</label>
-                <Input value={fullName} onChange={(e) => setFullName(e.target.value)} />
+                <label htmlFor="profile-full-name" className="block text-sm font-medium text-foreground mb-1">שם מלא</label>
+                <Input id="profile-full-name" value={account.fullName} onChange={(e) => account.setFullName(e.target.value)} disabled={!!account.error} />
               </div>
               <div>
-                <label className="block text-sm font-medium text-foreground mb-1">אימייל</label>
-                <Input value={email} disabled dir="ltr" />
+                <label htmlFor="profile-email" className="block text-sm font-medium text-foreground mb-1">אימייל</label>
+                <Input id="profile-email" value={account.email} readOnly aria-readonly="true" dir="ltr" aria-describedby="profile-email-hint" />
+                <p id="profile-email-hint" className="text-xs text-muted-foreground mt-1">לא ניתן לשנות את כתובת הדוא״ל מכאן.</p>
               </div>
-              <button onClick={updateProfile} className="px-6 py-2.5 rounded-xl font-semibold text-sm text-primary-foreground" style={{ background: "var(--gradient-primary)" }}>
-                שמור שינויים
+              <button
+                type="submit"
+                disabled={account.saveState === "saving" || !!account.error}
+                className="px-6 py-2.5 rounded-xl font-semibold text-sm text-primary-foreground disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                style={{ background: "var(--gradient-primary)" }}
+              >
+                {account.saveState === "saving" ? "שומר…" : account.saveState === "error" ? "נסה לשמור שוב" : "שמור שינויים"}
               </button>
-            </div>
+              <div aria-live="polite" role="status" className="text-sm min-h-5">
+                {account.saveState === "saved" && <span className="text-primary">השם נשמר.</span>}
+              </div>
+              {account.saveState === "error" && (
+                <p role="alert" className="text-sm text-destructive">השמירה נכשלה. הטקסט שהזנת נשמר — אפשר לנסות שוב.</p>
+              )}
+            </form>
           </TabsContent>
 
           <TabsContent value="account">
@@ -224,7 +231,8 @@ const Profile = () => {
                 <div className="flex items-center justify-between flex-wrap gap-2">
                   <div className="flex items-center gap-3">
                     <h3 className="text-foreground font-bold text-base">התוכנית שלי</h3>
-                    <Badge variant={usage?.isPaid ? "default" : "secondary"}>{usagePlanMeta.label}</Badge>
+                    {usage && <Badge variant={usage.isPaid && !usage.isExpired ? "default" : "secondary"}>{usagePlanMeta.label}</Badge>}
+                    {usage?.isExpired && <Badge variant="destructive">פג תוקף</Badge>}
                   </div>
                   <button
                     type="button"
@@ -235,7 +243,14 @@ const Profile = () => {
                   </button>
                 </div>
 
-                {isAdmin ? (
+                {usageLoading && !usage ? (
+                  <p role="status" aria-live="polite" className="text-sm text-muted-foreground">טוען נתוני מכסה…</p>
+                ) : usageError || !usage ? (
+                  <div role="alert" className="text-sm text-destructive flex items-center gap-3 flex-wrap">
+                    לא הצלחנו לטעון את נתוני המסלול והמכסה.
+                    <button type="button" onClick={() => retryUsage()} className="underline font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded">נסה שוב</button>
+                  </div>
+                ) : isAdmin || usage.isAdmin ? (
                   <div className="flex items-center gap-2 text-sm text-foreground">
                     <InfinityIcon className="w-4 h-4 text-primary" />
                     שימוש ללא הגבלה
@@ -287,7 +302,11 @@ const Profile = () => {
                           }}
                         />
                       </div>
-                      {usage?.planEndsAt ? (
+                      {usage.isExpired ? (
+                        <p className="text-xs text-destructive">
+                          תוקף המסלול הסתיים{usage.planEndsAt ? ` ב־${format(new Date(usage.planEndsAt), "dd/MM/yyyy")}` : ""}. המסלול אינו מתחדש אוטומטית.
+                        </p>
+                      ) : usage?.planEndsAt ? (
                         <p className="text-xs text-muted-foreground">
                           התוכנית מסתיימת בעוד {planDaysLeft} ימים ({format(new Date(usage.planEndsAt), "dd/MM/yyyy")})
                         </p>
@@ -315,8 +334,10 @@ const Profile = () => {
                       return (
                         <button
                           key={id}
-                          onClick={() => toast.info("רכישת תוכנית תיפתח בקרוב")}
-                          className="border border-border rounded-lg p-3 text-right hover:border-primary/50 transition-colors"
+                          type="button"
+                          disabled
+                          aria-describedby="plans-unavailable-note"
+                          className="border border-border rounded-lg p-3 text-right opacity-70 cursor-not-allowed"
                         >
                           <div className="font-semibold text-foreground text-sm">{p.label}</div>
                           <div className="text-xs text-primary mt-0.5">{p.priceLabel}</div>
@@ -326,6 +347,9 @@ const Profile = () => {
                       );
                     })}
                   </div>
+                  <p id="plans-unavailable-note" className="text-xs text-foreground mt-3 font-medium">
+                    רכישת מסלול עדיין לא זמינה באתר — הכפתורים יופעלו עם חיבור הסליקה.
+                  </p>
                   <p className="text-[11px] text-muted-foreground mt-3">
                     התוכניות הן לתקופה קצובה וללא חידוש אוטומטי. השימוש כפוף למכסה קצרת טווח
                     המתחדשת כל 5 שעות ולמכסה כוללת לתקופה.
@@ -345,7 +369,12 @@ const Profile = () => {
               <div className="bg-card border border-border rounded-xl p-6">
                 <h4 className="text-sm font-bold text-foreground mb-3">היסטוריית שימוש</h4>
                 {ledgerLoading ? (
-                  <p className="text-xs text-muted-foreground">טוען...</p>
+                  <p role="status" aria-live="polite" className="text-xs text-muted-foreground">טוען היסטוריית שימוש…</p>
+                ) : ledgerError ? (
+                  <div role="alert" className="text-xs text-destructive flex items-center gap-3">
+                    לא הצלחנו לטעון את היסטוריית השימוש.
+                    <button type="button" onClick={() => retryLedger()} className="underline font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded">נסה שוב</button>
+                  </div>
                 ) : ledger.length === 0 ? (
                   <p className="text-xs text-muted-foreground text-center py-4">אין פעולות עדיין</p>
                 ) : (
@@ -357,7 +386,7 @@ const Profile = () => {
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2">
                               <span className="font-medium text-foreground">{EVENT_LABEL[row.event_type] || row.event_type}</span>
-                              {isRefund && <Badge variant="outline" className="text-[10px] px-1 py-0 text-emerald-600 border-emerald-600/40">הוחזר</Badge>}
+                              {isRefund && <Badge variant="outline" className="text-[10px] px-1 py-0 text-primary border-primary/40">הוחזר למכסה</Badge>}
                             </div>
                             {row.reason && (
                               <div className="text-muted-foreground truncate" title={row.reason}>

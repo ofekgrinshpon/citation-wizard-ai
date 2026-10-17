@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { PLANS, type PlanId, isPaidPlan } from "@/lib/plans";
@@ -34,6 +34,8 @@ export function useCredits() {
   const { user, isAdmin } = useAuth();
   const [profile, setProfile] = useState<ProfileRow | null>(null);
   const [loading, setLoading] = useState(true);
+  const userIdRef = useRef<string | null>(null);
+  userIdRef.current = user?.id ?? null;
 
   const refresh = useCallback(async () => {
     if (!user) {
@@ -48,11 +50,13 @@ export function useCredits() {
       )
       .eq("id", user.id)
       .single();
+    if (userIdRef.current !== user.id) return;
     if (!error && data) setProfile(data as unknown as ProfileRow);
     setLoading(false);
   }, [user]);
 
   useEffect(() => {
+    setProfile(null);
     refresh();
   }, [refresh]);
 

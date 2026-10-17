@@ -76,22 +76,47 @@ export function formatDaysLeft(targetIso: string | null, nowMs: number): number 
 }
 
 export function useUsage() {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
+  const userId = user?.id ?? null;
   const [status, setStatus] = useState<UsageStatus | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  /** Latest user id + request sequence; stale responses are discarded. */
+  const scopeRef = useRef<{ userId: string | null; seq: number }>({ userId: null, seq: 0 });
   /** server_now − client Date.now(), applied to every countdown. */
   const skewRef = useRef(0);
   const [tick, setTick] = useState(() => Date.now());
 
   const refresh = useCallback(async () => {
-    if (!user) {
+    const seq = ++scopeRef.current.seq;
+    scopeRef.current.userId = userId;
+    if (authLoading) return;
+    if (!userId) {
       setStatus(null);
+      setError(null);
       setLoading(false);
       return;
     }
-    const { data, error } = await supabase.rpc("get_usage_status");
+    setLoading(true);
+    setError(null);
+    let data: unknown = null;
+    let rpcError: unknown = null;
+    try {
+      const res = await supabase.rpc("get_usage_status");
+      data = res.data;
+      rpcError = res.error;
+    } catch (e) {
+      rpcError = e;
+    }
+    if (scopeRef.current.seq !== seq || scopeRef.current.userId !== userId) return;
     const r = (data ?? {}) as Record<string, unknown>;
-    if (!error && r.ok) {
+    if (rpcError || !r.ok) {
+      setStatus(null);
+      setError("USAGE_LOAD_FAILED");
+      setLoading(false);
+      return;
+    }
+    {
       const serverNow = (r.server_now as string) ?? null;
       if (serverNow) skewRef.current = new Date(serverNow).getTime() - Date.now();
       const windowRatio = Number(r.window_used_ratio ?? 0);
@@ -114,9 +139,13 @@ export function useUsage() {
       });
     }
     setLoading(false);
-  }, [user]);
+  }, [userId, authLoading]);
 
   useEffect(() => {
+    // Clear the previous account's data immediately on user switch / sign-out.
+    setStatus(null);
+    setError(null);
+    setLoading(true);
     refresh();
   }, [refresh]);
 
@@ -133,6 +162,7 @@ export function useUsage() {
   return {
     status,
     loading,
+    error,
     refresh,
     planMeta,
     serverNowMs,
