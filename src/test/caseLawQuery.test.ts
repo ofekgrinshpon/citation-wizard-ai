@@ -46,6 +46,8 @@ describe("party follow-up gate", () => {
     expect(shouldRunPartyFollowup({ docketAnchored: false, partyVerification: "both", parsed: base, alreadyRan: false })).toBe(false);
     expect(shouldRunPartyFollowup({ docketAnchored: true, partyVerification: "no_anchor", parsed: base, alreadyRan: false })).toBe(false);
     expect(shouldRunPartyFollowup({ docketAnchored: true, partyVerification: "both", parsed: { ...base, date: "1.1.2020", databaseName: "נבו" }, alreadyRan: false })).toBe(false);
+    expect(shouldRunPartyFollowup({ docketAnchored: true, partyVerification: "snippet_strict", parsed: base, alreadyRan: false })).toBe(true);
+    expect(shouldRunPartyFollowup({ docketAnchored: true, partyVerification: "snippet_strict", parsed: { ...base, date: "1.1.2020", databaseName: "נבו" }, alreadyRan: false })).toBe(false);
   });
   it("merge never overwrites and never adds פ\"ד for lower courts", () => {
     const p: any = { date: "01.01.2020", databaseName: "", isPublished: false };
