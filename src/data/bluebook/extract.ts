@@ -63,7 +63,7 @@ function normalizePins(raw: string): string {
 
 /** Supplied trailing text the parser did not structure, or undefined. */
 function remainderOf(rest: string): string | undefined {
-  const r = rest.trim().replace(/^[,;]\s*/, "").replace(/[.,;\s]+$/, "").trim();
+  const r = rest.trim().replace(/[.,;\s]+$/, "").trim();
   return r || undefined;
 }
 

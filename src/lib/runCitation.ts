@@ -238,7 +238,7 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
     // otherwise the stored text is preserved as-is (never guessed).
     const reRendered = renderForeignCitation(verifiedMatch.full_citation);
     const citation = cachedArticleCitation ?? (
-      reRendered && reRendered.missing.length === 0
+      reRendered && reRendered.missing.length === 0 && !reRendered.unrepresented?.length
         ? reRendered.citation
         : verifiedMatch.full_citation);
     // Classifier cost (if any) stays attached to the same telemetryRequestId.
@@ -273,7 +273,10 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
         : undefined;
       return {
         telemetry: opts.telemetry,
-        reply: identifierWarning ? `${rendered.citation}\n⚠️ ${[identifierWarning, ...rendered.warnings].join(" ")}` : rendered.citation,
+        // Renderer warnings (e.g. supplied details kept verbatim) must reach the reply.
+        reply: identifierWarning || rendered.warnings.length
+          ? `${rendered.citation}\n⚠️ ${[identifierWarning, ...rendered.warnings].filter(Boolean).join(" ")}`
+          : rendered.citation,
         citation: rendered.citation,
         sourceType: rendered.detection.sourceType,
         sourceLabel: SOURCE_TYPE_LABELS[rendered.detection.sourceType],
