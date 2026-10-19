@@ -29,13 +29,40 @@ export const sc = (s: string) => `^^${s}^^`;
 export interface RenderResult {
   citation: string;
   warnings: string[];
+  /** Required fields that were NOT supplied. */
   missing: string[];
+  /**
+   * Supplied information that the deterministic renderer does not structure
+   * (distinct from `missing`). Either appended verbatim with a warning, or —
+   * for structured fields — reported in a warning and listed here.
+   */
+  unrepresented?: string[];
 }
 
-function finish(parts: string, warnings: string[], missing: string[]): RenderResult {
+function finish(parts: string, warnings: string[], missing: string[], unrepresented: string[] = []): RenderResult {
   let citation = parts.replace(/\s+/g, " ").replace(/\s+([,.;:])/g, "$1").trim();
   if (citation && !/[.]$/.test(citation)) citation += ".";
-  return { citation, warnings, missing };
+  return unrepresented.length ? { citation, warnings, missing, unrepresented } : { citation, warnings, missing };
+}
+
+/** Keep supplied-but-unstructured trailing text verbatim, with an honest warning. */
+function appendRemainder(out: string, remainder: string | undefined, warnings: string[], unrep: string[]): string {
+  const r = remainder?.trim();
+  if (!r) return out;
+  unrep.push(r.replace(/^[,;]\s*/, ""));
+  warnings.push(`פרטים שסופקו נשמרו כפי שהוזנו, בלי עיצוב או אימות אוטומטי: "${r.replace(/^[,;]\s*/, "")}".`);
+  return /^[,;]/.test(r) ? `${out}${r}` : `${out} ${r}`;
+}
+
+/** Report structured fields that were supplied but have no place in this template. */
+function reportExtraFields(f: object, used: readonly string[], warnings: string[], unrep: string[]): void {
+  const extra = Object.entries(f as Record<string, unknown>).filter(([k, v]) =>
+    !used.includes(k) && k !== "multi" && k !== "unparsedRemainder" && v != null &&
+    (Array.isArray(v) ? v.length > 0 : String(v).trim() !== ""));
+  if (!extra.length) return;
+  const items = extra.map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join(", ") : String(v)}`);
+  unrep.push(...items);
+  warnings.push(`פרטים שסופקו אינם נתמכים כרגע בתבנית זו ולא נכללו באזכור: ${items.join("; ")}.`);
 }
 
 function miss(label: string) {
@@ -45,13 +72,15 @@ function miss(label: string) {
 /** Page list: first page, then pinpoint — never conflated. */
 function pageSpan(firstPage?: string, pinpoint?: string): string {
   if (!firstPage) return "";
-  return pinpoint && pinpoint !== firstPage ? `${firstPage}, ${pinpoint}` : firstPage;
+  // An explicitly supplied pinpoint is kept even when it equals the first page.
+  return pinpoint ? `${firstPage}, ${pinpoint}` : firstPage;
 }
 
 // ─── Cases ────────────────────────────────────────────────────────
 export function renderUsCase(f: ForeignCaseFields): RenderResult {
   const warnings: string[] = [];
   const missing: string[] = [];
+  const unrep: string[] = [];
   const name = f.caseName?.trim() || (missing.push("caseName"), miss("שם ההליך"));
 
   if (!f.reporter) missing.push("reporter");
@@ -69,15 +98,20 @@ export function renderUsCase(f: ForeignCaseFields): RenderResult {
     if (f.caseName?.trim() && dbMissing.length === 0) {
       const star = f.starPinpoint ?? (f.pinpoint ? f.pinpoint : undefined);
       const core = `No. ${f.docket}, ${f.databaseIdentifier}${star ? `, at *${star}` : ""}`;
-      return finish(`${it(name)}, ${core} (${f.court} ${f.decisionDate})`, warnings, []);
+      reportExtraFields(f, ["caseName", "docket", "databaseIdentifier", "starPinpoint", "pinpoint", "court", "decisionDate", "year"], warnings, unrep);
+      const out = appendRemainder(`${it(name)}, ${core} (${f.court} ${f.decisionDate})`, f.unparsedRemainder, warnings, unrep);
+      return finish(out, warnings, [], unrep);
     }
     missing.push(...dbMissing);
   }
 
   let core: string;
+  const used = ["caseName", "volume", "reporter", "firstPage", "pinpoint", "paragraph", "court", "year", "parallel"];
   if (f.volume && f.reporter && f.firstPage) {
     core = `${f.volume} ${f.reporter} ${pageSpan(f.firstPage, f.pinpoint)}`;
+    if (f.parallel) core += `, ${f.parallel}`;
   } else if (f.databaseIdentifier) {
+    used.push("docket", "databaseIdentifier");
     core = `${f.docket ? `No. ${f.docket}, ` : ""}${f.databaseIdentifier}${
       f.pinpoint ? `, at *${f.pinpoint}` : ""
     }`;
@@ -95,23 +129,26 @@ export function renderUsCase(f: ForeignCaseFields): RenderResult {
     warnings.push("חסרה שנת ההחלטה.");
   }
   const paren = [courtPart, f.year || miss("שנה")].filter(Boolean).join(" ");
-
-  return finish(`${it(name)}, ${core} (${paren})`, warnings, missing);
+  reportExtraFields(f, used, warnings, unrep);
+  const out = appendRemainder(`${it(name)}, ${core} (${paren})`, f.unparsedRemainder, warnings, unrep);
+  return finish(out, warnings, missing, unrep);
 }
 
 export function renderUkCase(f: ForeignCaseFields): RenderResult {
   const warnings: string[] = [];
   const missing: string[] = [];
+  const unrep: string[] = [];
   const name = f.caseName?.trim() || (missing.push("caseName"), miss("שם ההליך"));
   // Traditional Law Reports without a neutral citation (M2A).
   if (!f.neutral && f.reporter && f.firstPage && f.year) {
     const vol = f.reporterVolume ? `${f.reporterVolume} ` : "";
     const court = f.court ? ` (${f.court})` : "";
-    return finish(
+    reportExtraFields(f, ["caseName", "year", "reporterVolume", "reporter", "firstPage", "pinpoint", "court"], warnings, unrep);
+    const out = appendRemainder(
       `${it(name)} [${f.year}] ${vol}${f.reporter} ${pageSpan(f.firstPage, f.pinpoint)}${court}`,
-      warnings,
-      missing,
+      f.unparsedRemainder, warnings, unrep,
     );
+    return finish(out, warnings, missing, unrep);
   }
   const bits: string[] = [it(name)];
   if (f.neutral && f.year) {
@@ -122,14 +159,17 @@ export function renderUkCase(f: ForeignCaseFields): RenderResult {
     missing.push("year");
   }
   if (f.reporter && f.firstPage) {
-    bits.push(`, [${f.volume || f.year}] ${f.reporter} ${pageSpan(f.firstPage, f.pinpoint)}`);
+    const rvol = f.reporterVolume ? `${f.reporterVolume} ` : "";
+    bits.push(`, [${f.volume || f.year}] ${rvol}${f.reporter} ${pageSpan(f.firstPage, f.pinpoint)}`);
   }
   let out = bits.join(" ").replace(/\s+,/g, ",");
   if (f.paragraph) out += ` [${f.paragraph}]`;
   if (!f.neutral && !f.reporter) {
     warnings.push("לא אותר אזכור ניטרלי או דיווח רשמי לפסק הדין האנגלי.");
   }
-  return finish(out, warnings, missing);
+  reportExtraFields(f, ["caseName", "year", "neutral", "volume", "reporterVolume", "reporter", "firstPage", "pinpoint", "paragraph"], warnings, unrep);
+  out = appendRemainder(out, f.unparsedRemainder, warnings, unrep);
+  return finish(out, warnings, missing, unrep);
 }
 
 // ─── Constitution ────────────────────────────────────────────────
@@ -141,9 +181,12 @@ export function renderConstitution(f: ForeignConstitutionFields): RenderResult {
   if (f.division) parts.push(`${f.division}${f.number ? ` ${f.number}` : ""}`);
   else if (f.number) parts.push(`art. ${f.number}`);
   let out = parts.join(" ");
-  if (f.section) out += `, § ${f.section}`;
+  const unrep: string[] = [];
+  if (f.section) out += `, ${/[–,]/.test(f.section) ? "§§" : "§"} ${f.section}`;
   if (f.clause) out += `, cl. ${f.clause}`;
-  return finish(out, warnings, missing);
+  reportExtraFields(f, ["jurisdiction", "division", "number", "section", "clause"], warnings, unrep);
+  out = appendRemainder(out, f.unparsedRemainder, warnings, unrep);
+  return finish(out, warnings, missing, unrep);
 }
 
 // ─── Statutes ────────────────────────────────────────────────────
@@ -165,7 +208,9 @@ export function renderUsStatute(
   const head = f.statuteName ? `${f.statuteName}, ` : "";
   const body = `${f.titleNumber || miss("title")} ${f.code || miss("קודקס")} ${sectionText}`;
   const tail = f.year ? ` (${f.year})` : "";
-  return finish(`${head}${body}${tail}`, warnings, missing);
+  const unrep: string[] = [];
+  reportExtraFields(f, ["statuteName", "titleNumber", "code", "section", "sections", "subsection", "year"], warnings, unrep);
+  return finish(`${head}${body}${tail}`, warnings, missing, unrep);
 }
 
 export function renderUkStatute(f: ForeignStatuteFields): RenderResult {
@@ -178,7 +223,9 @@ export function renderUkStatute(f: ForeignStatuteFields): RenderResult {
   if (f.regnalYear && f.monarch) out += `, ${f.regnalYear} ${f.monarch}`;
   if (f.chapter) out += `, c. ${f.chapter}`;
   if (f.section) out += `, § ${f.section}`;
-  return finish(out, warnings, missing);
+  const unrep: string[] = [];
+  reportExtraFields(f, ["statuteName", "year", "regnalYear", "monarch", "chapter", "section"], warnings, unrep);
+  return finish(out, warnings, missing, unrep);
 }
 
 // ─── Secondary literature ────────────────────────────────────────
@@ -194,7 +241,11 @@ export function renderJournalArticle(f: ForeignArticleFields): RenderResult {
   const vol = f.volume || miss("כרך");
   const pages = f.firstPage ? pageSpan(f.firstPage, f.pinpoint) : [miss("עמוד"), f.pinpoint].filter(Boolean).join(", ");
   const year = f.year || miss("שנה");
-  return finish(`${authors}, ${it(title)}, ${vol} ${sc(journal)} ${pages} (${year})`, warnings, missing);
+  const unrep: string[] = [];
+  // doi/sourceUrl are identity evidence handled by the article adapter, not citation content.
+  reportExtraFields(f, ["authors", "articleTitle", "volume", "journal", "firstPage", "pinpoint", "year", "doi", "sourceUrl"], warnings, unrep);
+  const out = appendRemainder(`${authors}, ${it(title)}, ${vol} ${sc(journal)} ${pages} (${year})`, f.unparsedRemainder, warnings, unrep);
+  return finish(out, warnings, missing, unrep);
 }
 
 export function renderBook(f: ForeignBookFields): RenderResult {
@@ -216,7 +267,9 @@ export function renderBook(f: ForeignBookFields): RenderResult {
     .filter(Boolean)
     .join(", ");
   const pin = f.pinpoint ? ` ${f.pinpoint}` : "";
-  return finish(`${head}${pin} (${paren})`, warnings, missing);
+  const unrep: string[] = [];
+  reportExtraFields(f, ["authors", "bookTitle", "volume", "edition", "editors", "translators", "pinpoint", "year"], warnings, unrep);
+  return finish(`${head}${pin} (${paren})`, warnings, missing, unrep);
 }
 
 export function renderBookChapter(f: ForeignChapterFields): RenderResult {
@@ -238,7 +291,14 @@ export function renderBookChapter(f: ForeignChapterFields): RenderResult {
     )} ${pages} (${paren})`,
     warnings,
     missing,
+    chapterUnrep(f, warnings),
   );
+}
+
+function chapterUnrep(f: ForeignChapterFields, warnings: string[]): string[] {
+  const unrep: string[] = [];
+  reportExtraFields(f, ["authors", "chapterTitle", "bookTitle", "firstPage", "pinpoint", "editors", "edition", "year"], warnings, unrep);
+  return unrep;
 }
 
 export function renderInternet(f: ForeignInternetFields): RenderResult {
@@ -251,7 +311,9 @@ export function renderInternet(f: ForeignInternetFields): RenderResult {
   const site = f.site ? `, ${sc(f.site)}` : "";
   const date = f.date ? ` (${f.date})` : "";
   const url = f.url || miss("URL");
-  return finish(`${head}${title}${site}${date}, ${url}`, warnings, missing);
+  const unrep: string[] = [];
+  reportExtraFields(f, ["author", "title", "site", "date", "url"], warnings, unrep);
+  return finish(`${head}${title}${site}${date}, ${url}`, warnings, missing, unrep);
 }
 
 /** Strip every internal marker — used for plain-text fallbacks. */

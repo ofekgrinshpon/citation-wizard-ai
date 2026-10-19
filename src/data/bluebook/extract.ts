@@ -52,9 +52,25 @@ const REPORTER_ALTERNATION = Object.values(US_REPORTERS)
   .map((r) => esc(r).replace(/\\\.\s/g, "\\.\\s*"))
   .join("|");
 
+/** A page/paragraph list item: number or range, never the volume of a following reporter. */
+const PIN_ITEM = String.raw`\d+(?:\s*[–\-]\s*\d+)?(?!\d|\s+[A-Z])`;
+const PIN_LIST = String.raw`${PIN_ITEM}(?:\s*,\s*${PIN_ITEM})*`;
+
+/** Normalise list/range separators only; never compress or interconvert. */
+function normalizePins(raw: string): string {
+  return raw.replace(/\s*[–\-]\s*/g, "–").replace(/\s*,\s*/g, ", ").trim();
+}
+
+/** Supplied trailing text the parser did not structure, or undefined. */
+function remainderOf(rest: string): string | undefined {
+  const r = rest.trim().replace(/[.,;\s]+$/, "").trim();
+  return r || undefined;
+}
+
 const US_CASE_RE = new RegExp(
   String.raw`^(?<name>.{3,200}?),\s*(?<vol>\d+)\s+(?<rep>${REPORTER_ALTERNATION})\s+(?<page>\d+)` +
-    String.raw`(?:,\s*(?<pin>\d+(?:\s*[–\-]\s*\d+)?))?` +
+    String.raw`(?:,\s*(?<pin>${PIN_LIST}))?` +
+    String.raw`(?:,\s*(?<pvol>\d+)\s+(?<prep>${REPORTER_ALTERNATION})\s+(?<ppage>\d+)(?:,\s*(?<ppin>${PIN_LIST}))?)?` +
     String.raw`(?:\s*¶+\s*(?<para>[\d.\-–]+))?` +
     String.raw`(?:\s*\((?<paren>[^)]{0,60})\))?`,
   "u",
@@ -93,11 +109,17 @@ export function extractUsCase(text: string): ForeignCaseFields | null {
     volume: g.vol,
     reporter,
     firstPage: g.page,
-    pinpoint: g.pin ? g.pin.replace(/\s*[–\-]\s*/, "–") : undefined,
+    pinpoint: g.pin ? normalizePins(g.pin) : undefined,
     paragraph: g.para,
     court: normalizeCourt(court),
     year,
   };
+  if (g.pvol && g.prep && g.ppage) {
+    const prep = normalizeReporter(g.prep.replace(/\s+/g, " ").trim());
+    fields.parallel = `${g.pvol} ${prep} ${g.ppage}${g.ppin ? `, ${normalizePins(g.ppin)}` : ""}`;
+  }
+  const rest = remainderOf(text.trim().slice(m[0].length));
+  if (rest) fields.unparsedRemainder = rest;
   const dk = text.match(/\bNo\.\s*([\d:\-cvCV]+)/);
   if (dk) fields.docket = dk[1];
   const db = text.match(/\b((?:19|20)\d{2}\s+(?:WL|U\.S\. App\. LEXIS|U\.S\. Dist\. LEXIS)\s+\d+)/);
@@ -109,19 +131,24 @@ export function extractUkCase(text: string) {
   const m = text
     .trim()
     .match(
-      /^(?<name>.{3,200}?)\s*\[(?<year>(?:19|20)\d{2})\]\s*(?<court>UKSC|UKHL|UKPC|EWCA|EWHC)\s*(?:\((?<div>[^)]{1,20})\)\s*)?(?<num>\d+)(?:\s*(?:,|\s)\s*\[(?<ryear>(?:19|20)\d{2})\]\s*(?<rep>[A-Z][A-Za-z.\s]{1,10}?)\s*(?<page>\d+))?/u,
+      /^(?<name>.{3,200}?)\s*\[(?<year>(?:19|20)\d{2})\]\s*(?<court>UKSC|UKHL|UKPC|EWCA|EWHC)\s*(?:\((?<div>[^)]{1,20})\)\s*)?(?<num>\d+)(?:\s*(?:,|\s)\s*\[(?<ryear>(?:19|20)\d{2})\]\s*(?:(?<rvol>\d{1,2})\s+)?(?<rep>[A-Z][A-Za-z.\s]{1,10}?)\s*(?<page>\d+))?/u,
     );
   if (!m?.groups) return null;
   const g = m.groups;
-  const pin = text.match(/(?:\bat\s+)?\[(\d+(?:\s*[–\-]\s*\d+)?)\]\s*$/);
+  let rest = text.trim().slice((m.index ?? 0) + m[0].length);
+  const pin = rest.match(/(?:\bat\s+)?\[(\d+(?:\s*[–\-]\s*\d+)?(?:\s*,\s*\d+(?:\s*[–\-]\s*\d+)?)*)\]\s*\.?\s*$/);
+  if (pin) rest = rest.slice(0, pin.index);
+  const remainder = remainderOf(rest);
   return {
     caseName: g.name.replace(/,\s*$/, "").trim(),
     year: g.year,
     neutral: `${g.court}${g.div ? ` (${g.div})` : ""} ${g.num}`,
     reporter: g.rep?.trim(),
     volume: g.ryear,
+    reporterVolume: g.rvol,
     firstPage: g.page,
-    paragraph: pin ? pin[1].replace(/\s*[–\-]\s*/, "–") : undefined,
+    paragraph: pin ? normalizePins(pin[1]) : undefined,
+    ...(remainder ? { unparsedRemainder: remainder } : {}),
   };
 }
 
@@ -169,18 +196,20 @@ export function extractUsConstitution(text: string) {
   const m = text.match(
     new RegExp(
       String.raw`(?<jur>U\.\s?S\.|[A-Z][A-Za-z.]{1,12})\s*CONST\.?\s*(?<div>amend\.|art\.|pmbl\.)?\s*(?<num>${ROMAN.source}|\d+)?` +
-        String.raw`(?:,\s*§+\s*(?<sec>[\w.]+))?(?:,\s*cl\.\s*(?<cl>[\w.]+))?`,
+        String.raw`(?:,\s*§+\s*(?<sec>[\w.]+(?:\s*[–\-]\s*[\w.]+)?))?(?:,\s*cl\.\s*(?<cl>[\w.]+))?`,
       "i",
     ),
   );
   if (!m?.groups) return null;
   const g = m.groups;
+  const remainder = remainderOf(text.slice((m.index ?? 0) + m[0].length));
   return {
     jurisdiction: g.jur.replace(/\s+/g, ""),
     division: g.div ? g.div.toLowerCase() : undefined,
     number: g.num,
-    section: g.sec,
+    section: g.sec ? normalizePins(g.sec) : undefined,
     clause: g.cl,
+    ...(remainder ? { unparsedRemainder: remainder } : {}),
   };
 }
 
@@ -218,6 +247,7 @@ export function extractJournalArticle(text: string): ForeignArticleFields | null
     firstPage: g.page,
     pinpoint: g.pin ? g.pin.replace(/\s*[–\-]\s*/, "–") : undefined,
     year: g.year,
+    ...(() => { const r = remainderOf(text.trim().slice(m[0].length)); return r ? { unparsedRemainder: r } : {}; })(),
   };
 }
 

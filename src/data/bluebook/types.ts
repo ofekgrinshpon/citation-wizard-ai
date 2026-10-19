@@ -105,6 +105,10 @@ export interface ForeignCaseFields {
   reporterVolume?: string;
   /** Neutral citation body for UK sources, e.g. "UKSC 41". */
   neutral?: string;
+  /** Additional (parallel) reporter citation exactly as parsed, e.g. "50 N.Y.2d 1, 5". */
+  parallel?: string;
+  /** Supplied trailing text the deterministic parser could not structure (kept verbatim). */
+  unparsedRemainder?: string;
 }
 
 export interface ForeignConstitutionFields {
@@ -113,6 +117,7 @@ export interface ForeignConstitutionFields {
   number?: string; // "XIV"
   section?: string;
   clause?: string;
+  unparsedRemainder?: string;
 }
 
 export interface ForeignStatuteFields {
@@ -136,6 +141,7 @@ export interface ForeignArticleFields {
   firstPage?: string;
   pinpoint?: string;
   year?: string;
+  unparsedRemainder?: string;
 }
 
 export interface ForeignBookFields {
