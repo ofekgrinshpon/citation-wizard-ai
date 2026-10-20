@@ -8,7 +8,7 @@ Baseline: `d2fbaf575a1397c0acaba24eaa0c1dcfb41c5def`. Offline only; nothing depl
 
 ## Supported grammar (`src/data/bluebook/periodical.ts`, shared adapter `src/lib/periodicalLocal.ts`)
 ```text
-[Author, ][Designation, ][Title, ]Periodical[ (Place)], DateOrIssue[ (Section)], at Page[, pins][tail]
+[Author: A, ][Designation, ][Title: ]Title, Periodical[ (Place)], DateOrIssue[ (Section)], at Page[, pins][tail]
 Designation := Editorial | Opinion | Op-Ed | Letter to the Editor
 DateOrIssue := Mon. D, YYYY | Mon. YYYY | Mon.–Mon. YYYY | Season[–Season] YYYY[–YY]
              | [vol. N, ]no. N[, [Mon. ]YYYY]
@@ -22,12 +22,12 @@ Section     := (§ N) | (sec. X) | (X section)
 | Kind decision | Article only from cover season/month/range or issue no.; newspaper only from place or section parenthetical. Day-date input with neither (or with a designation only) is **ambiguous** → generic foreign, preserved with a warning and subtype candidates; never guessed |
 | Manual choice | `periodical.newspaper` → `foreign_newspaper`; `periodical.article` → existing route + this mode. Contradicting structure is preserved with a mismatch warning; manual newspaper on unparseable input preserved as unsupported. Generic/unsupported siblings never pass through the formatter |
 | Issue mode | No cover date: supplied `vol. N` is parsed separately and placed before the periodical (R16.5 → R16.4): `Title, 7 Periodical, no. 3, 2020, at 12` |
-| Author/title | A comma-split heading is an author only if the first part has a personal-name shape (2–4 name tokens/initials per author, `&`/`and` joined). Otherwise (e.g. `Courts, Memory and Society, …`) the input is preserved unformatted with a specific author-vs-title warning on every route; manual article/newspaper choice does not resolve it |
+| Author/title | The author/title boundary is never inferred from capitalization, name shape, initials or word lists. An author is recognized only from explicit labels: `Author: A, Title: T` or `Author: A, <Designation>[, Title: T]`; `Title: T` labels a whole (comma-containing) title. Any other unlabelled comma-split heading (e.g. `Hidden Costs, Courts and Memory, …`, and now also bare signed forms like `Alpha Gamma, Quiet Fields, …`) is preserved unformatted with a specific author-vs-title warning on every route; manual article/newspaper choice is not author evidence. Single-part unsigned titles and designation-first forms (`Editorial, Title, …`) format without any author |
 | Safety | Unknown tails kept verbatim with warning; HTML/`##`/`^^` escaped; Hebrew-headed input left to Israeli rules; no identity verification claimed (reply always says so) |
 | Callers | runCitation (single/batch/bibliography) and Index initial/regeneration; complete recognized input skips classifier and providers |
 
 ## Excluded
 - Wire services, commercial databases, internet editions, consecutively paginated newspapers, student notes/reviews/symposia/newsletters and other `periodical.*` siblings: no new support (stay unsupported/generic).
-- An unsigned title whose first comma-part itself has a personal-name shape (e.g. `Hidden Costs, …`) is still read as an author; single-word or non-name-shaped first parts are preserved with a warning, never silently formatted. Periodical names containing commas are not parsed. Year-only magazine dates are not parsed.
+- Bare signed inputs without `Author:`/`Title:` labels are no longer auto-formatted (preserved with warning) — deliberate, to avoid fabricated authors. Periodical names containing commas are not parsed. Year-only magazine dates are not parsed.
 - Short forms beyond existing Israeli repeat rules; bibliography category beyond "foreign other"; no T6/T10/T13 additions.
 - Not every case in either subtype is covered. Stage 5 remains incomplete.
