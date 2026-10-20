@@ -164,6 +164,23 @@ describe("chat page — typed statute request through initial send and regenerat
     await waitFor(() => expect(screen.getByTestId("bubble-assistant")).toHaveTextContent("אינו תואם"));
     expect(m.invoke).not.toHaveBeenCalled();
   });
+  it.each([
+    "Hidden Costs, Courts and Memory, Synthetic Mag., Mar. 2020, at 12",
+    "New Horizons, Courts and Memory, Synthetic Mag., Mar. 2020, at 12",
+  ])("R16 unlabelled author/title heading is preserved on actual initial + manual regeneration chat: %s", async (input) => {
+    m.classify.mockResolvedValue({ sourceType: "foreign_journal_article", source: "regex" });
+    await mountChat();
+    await send(input);
+    await waitFor(() => expect(screen.getByTestId("bubble-assistant")).toHaveTextContent("שם מחבר"));
+    expect(screen.getByTestId("bubble-assistant").textContent).toContain(input);
+    expect(screen.getByTestId("bubble-assistant").textContent).not.toContain(`${input}.`);
+    for (const t of ["foreign_newspaper", "foreign_journal_article"]) {
+      await act(async () => { fireEvent.click(screen.getByRole("button", { name: `regen-${t}` })); });
+      await waitFor(() => expect(screen.getByTestId("bubble-assistant")).toHaveTextContent("שם מחבר"));
+      expect(screen.getByTestId("bubble-assistant").textContent).toContain(input);
+    }
+    expect(m.invoke).not.toHaveBeenCalled();
+  });
 
   it.each([
     "Alpha v. Beta, No. 24-CV-017-A, slip op. at 6, 9–11 (D. Mass. Mar. 2, 2024)",
