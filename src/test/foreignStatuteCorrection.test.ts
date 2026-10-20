@@ -220,3 +220,20 @@ describe("#2 typed statute route always terminates (shared with citation-chat)",
     expect(src.indexOf("validateStatuteRequest(foreignLookupRequest)")).toBeLessThan(src.indexOf("usageGuard.begin("));
   });
 });
+
+describe("read-only recovery uses the same statute adapter", () => {
+  it("never merges unmatched stored fields; merges a matched same-jurisdiction result", async () => {
+    const { renderCitationRecovery } = await import("@/lib/renderCitationRecovery");
+    const now = Date.parse("2026-10-20T12:00:00Z");
+    const request = { enabled: true, statuteResponseVersion: 1, kind: "statute", jurisdiction: "UK", rawInput: "Example Act § 2", parsedFields: { statuteName: "Example Act", section: "2" } };
+    const base = { status: "succeeded", availability: "available", createdAt: "2026-10-20T11:00:00Z", expiresAt: "2026-10-21T11:00:00Z",
+      input: { messages: [{ role: "user", content: "x" }], rawInput: null, foreignLookup: request, batchId: null } };
+    const result = (identity: Record<string, unknown>) => ({ foreignLookup: { statuteResponseVersion: 1, kind: "statute", jurisdiction: "UK",
+      fields: { year: "1999", chapter: "77" }, grounded: {}, provenance: {}, sources: [], identity: { anchors: [], ...identity }, diagnostics: { tier1Queried: true, tier2Fired: false } } });
+    const unmatched = renderCitationRecovery({ ...base, result: result({ matched: false, conflicts: ["wrong_record"] }) } as never, now);
+    expect(unmatched?.plainText).not.toMatch(/1999/);
+    expect(unmatched?.warning).toBeTruthy();
+    const matched = renderCitationRecovery({ ...base, result: result({ matched: true, jurisdiction: "UK", conflicts: [] }) } as never, now);
+    expect(matched?.plainText).toContain("Example Act 1999, c. 77, § 2.");
+  });
+});
