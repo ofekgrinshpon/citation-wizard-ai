@@ -6,7 +6,7 @@
  */
 import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { runForeignLookup } from "../../supabase/functions/citation-chat/foreignLookup";
 import { resolveStatuteLookup } from "../../supabase/functions/citation-chat/statuteRoute";
 
@@ -398,3 +398,14 @@ describe("chat page — typed statute request through initial send and regenerat
     expect(screen.queryByTestId("bubble-assistant")).toBeNull();
   });
 });
+
+// Batch B: the actual host must plan through the shared pure planner with declared capabilities.
+const plannerHosts = vi.hoisted(() => new Set<string>());
+vi.mock("@/lib/citationPlanner", async (original) => {
+  const a = await original<typeof import("@/lib/citationPlanner")>();
+  return { ...a,
+    planLocalCitation: (p: Parameters<typeof a.planLocalCitation>[0], c: Parameters<typeof a.planLocalCitation>[1]) => { plannerHosts.add(c.host); return a.planLocalCitation(p, c); },
+    resolveCitationResponse: (p: Parameters<typeof a.resolveCitationResponse>[0], d: Parameters<typeof a.resolveCitationResponse>[1], c: Parameters<typeof a.resolveCitationResponse>[2]) => { plannerHosts.add(c.host + ":resolve"); return a.resolveCitationResponse(p, d, c); },
+  };
+});
+afterAll(() => { expect(plannerHosts.has("chat")).toBe(true); expect(plannerHosts.has("chat:resolve")).toBe(true); });
