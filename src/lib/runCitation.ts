@@ -41,7 +41,8 @@ import { renderUsUnreportedLocal } from "@/lib/usUnreportedLocal";
 import { renderUnpublishedLocal } from "@/lib/unpublishedWorkLocal";
 import { renderPeriodicalLocal } from "@/lib/periodicalLocal";
 import { renderBookLocal } from "@/lib/bookLocal";
-import { citationManualChoice, preparePastedCitation, readPastedCitationSafety, pastedCaseRequest, renderPastedCaseResponse } from "@/lib/pastedCitationAdapter";
+import { citationManualChoice } from "@/lib/pastedCitationAdapter";
+import { planCitationEvidence, planLocalCitation, planTypedRequest, resolveCitationResponse, RUNNER_HOST } from "@/lib/citationPlanner";
 import type { CitationManualChoice, PastedCitationContract } from "../../supabase/functions/_shared/pastedCitation";
 import { citationDiagnosticBody, observeCitationDiagnostic, type CitationDiagnosticActivation } from "@/lib/citationDiagnostic";
 
@@ -321,13 +322,6 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
 
   function renderPreparedResponse(data: ({ content?: string } & Record<string, unknown>) | null): RunCitationResult {
     const resolved = resolveCitationResponse(plan, data, RUNNER_HOST);
-    const safety = readPastedCitationSafety(pasted.contract, data);
-    if (safety) return { ...safety, pastedCitation: pasted.contract, telemetry: opts.telemetry, sourceType,
-      sourceLabel, fromVerifiedStore: false, status: "warning" };
-    const caseResult = (data?.foreignLookup as ForeignLookupResponse | undefined)?.disambiguation?.length ? null
-      : renderPastedCaseResponse(pasted.contract, caseRequest, data?.foreignLookup);
-    if (caseResult) return { ...caseResult, pastedCitation: pasted.contract, telemetry: opts.telemetry, sourceType, sourceLabel,
-      fromVerifiedStore: false, status: caseResult.warningMsg ? "warning" : "valid" };
     const rejectUnusableResponse = (code: string, userMessage: string): never => {
       // A transport-successful response is not proof of usable citation output.
       // Rechecking this unchanged row only re-renders the retained response; it
@@ -342,85 +336,13 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
       }) });
     };
 
-    // 3a) M2B: grounded foreign metadata returned → merge + deterministic render.
-    // User-supplied identity anchors win; grounded lookup fields fill the gaps;
-    // anything ungrounded stays [חסר: …] via the existing renderer behavior.
-    const fl = (data as { foreignLookup?: ForeignLookupResponse } | null)?.foreignLookup;
-    if (caseRequest && fl?.identity?.matched && fl.fields && !Object.keys(fl.fields).some(k => ["caseName", "court", "reporter", "year", "firstPage", "neutral", "docket"].includes(k))) {
+    if (resolved.kind === "reject") {
       rejectUnusableResponse("EMPTY_RESPONSE", "השרת החזיר תשובה ללא אזכור שניתן להציג. לא תופעל בקשה נוספת והחזר שימוש לא אושר.");
     }
-    // Stage 4: a typed statute request is terminal — the typed response (or
-    // its absence) is rendered from supplied fields; model content is ignored.
-    if (statutePrep?.request) {
-      return { ...renderForeignStatuteLookup(statutePrep, (data as { foreignLookup?: unknown } | null)?.foreignLookup), telemetry: opts.telemetry, fromVerifiedStore: false };
+    if (resolved.kind === "terminal") {
+      return { sourceType, sourceLabel, ...resolved.resolution, telemetry: opts.telemetry, fromVerifiedStore: false };
     }
-    if (foreignLookupRequest && fl?.disambiguation && fl.disambiguation.length > 1) {
-      const lines = fl.disambiguation.map(
-        (o, i) => `${i + 1}. ${o.label} (${o.jurisdiction === "UK" ? "בריטניה" : "ארה\"ב"}) — ${o.url}`,
-      );
-      const reply = `נמצאו כמה פסקי דין אפשריים בשם זה. כדי לא לנחש, בחרו את הנכון והוסיפו את הערכאה או השנה:\n${lines.join("\n")}`;
-      return {
-        telemetry: opts.telemetry,
-        reply,
-        citation: "",
-        sourceType,
-        sourceLabel: SOURCE_TYPE_LABELS[sourceType],
-        fromVerifiedStore: false,
-        status: "warning",
-        warningMsg: "נדרשת בחירה בין כמה פסקי דין",
-      };
-    }
-    if (foreignLookupRequest?.kind === "journal_article") {
-      const article = renderForeignArticleLookup(foreignLookupRequest as { parsedFields: Record<string, string> }, fl);
-      if (article) return { ...article, telemetry: opts.telemetry, sourceType, sourceLabel: SOURCE_TYPE_LABELS[sourceType], fromVerifiedStore: false };
-    }
-    if (foreignLookupRequest && fl?.fields && fl.identity?.matched && Object.keys(fl.fields).length > 0) {
-      const req = foreignLookupRequest as { kind: ForeignSourceKind; jurisdiction: string; parsedFields: Record<string, string> };
-      // Jurisdiction comes from the verified record when the input did not state it.
-      const resolvedJur: ForeignJurisdiction | null =
-        req.kind === "case"
-          ? (fl.identity?.jurisdiction ?? (req.jurisdiction === "US" || req.jurisdiction === "UK" ? req.jurisdiction : null))
-          : ((req.jurisdiction as ForeignJurisdiction) ?? "OTHER");
-      if (resolvedJur) {
-        const effectiveType = req.kind === "case" ? toSourceType("case", resolvedJur) : sourceType;
-        const baseFields: Record<string, unknown> = { ...(fl.fields as Record<string, unknown>) };
-        // Never overwrite what the user supplied; lookup only fills gaps.
-        for (const [k, v] of Object.entries(req.parsedFields)) {
-          if (typeof v === "string" && v.trim()) baseFields[k] = v.trim();
-        }
-        const detection = {
-          sourceType: effectiveType,
-          kind: req.kind,
-          jurisdiction: resolvedJur,
-          confidence: "deterministic" as const,
-          fields: baseFields as unknown as ForeignFields,
-        };
-        const rendered = renderForeignDetection(detection);
-        if (rendered && rendered.citation.trim()) {
-          const missingSummary =
-            rendered.missing.length > 0
-              ? getMissingFieldsSummary(effectiveType, rendered.missing)
-              : null;
-          const warningBits = [...rendered.warnings];
-          if (missingSummary) warningBits.push(`חסרים פרטים: ${missingSummary}`);
-          const hasMissing = rendered.missing.length > 0;
-          const reply = hasMissing || warningBits.length
-            ? `${rendered.citation}\n⚠️ ${warningBits.join(" ") || missingSummary}`
-            : rendered.citation;
-          return {
-            telemetry: opts.telemetry,
-            reply,
-            citation: rendered.citation,
-            sourceType: effectiveType,
-            sourceLabel: SOURCE_TYPE_LABELS[effectiveType],
-            fromVerifiedStore: false,
-            status: hasMissing || warningBits.length ? "warning" : "valid",
-            warningMsg: warningBits[0],
-          };
-        }
-      }
-    }
-
+    // Declared legacy handoff: generic content handling below (unchanged).
     const reply = (data?.content as string) || "";
     if (!reply.trim()) {
       rejectUnusableResponse("EMPTY_RESPONSE",
