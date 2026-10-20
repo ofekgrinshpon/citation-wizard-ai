@@ -1,5 +1,10 @@
 # Roadmap — research → memo → draft handoff (legal-research-v2)
 
+## Unified pasted-citation infrastructure batch A (offline only)
+- [ ] Shared versioned supplied-evidence contract, exact raw spans and safe jurisdiction routing.
+- [ ] Index initial/manual regeneration, runCitation/batch and pre-cache server guard; terminal outcomes never escape to generic providers.
+- [ ] Offline caller/server regressions, full suite, automatic app checks and bounded report; stop before batch B.
+
 ## Authorized book/chapter boundary correction (offline only)
 - [x] Reproduce ambiguous comma chapter headings and numeric editor-only/collection titles through real callers (10 pre-fix failures).
 - [x] Preserve ambiguous boundaries without inferred authors or pages; retain explicit metadata controls.

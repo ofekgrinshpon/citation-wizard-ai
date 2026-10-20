@@ -99,6 +99,31 @@ beforeEach(() => {
 const CORNELL_1983 = { title: "42 U.S.C. § 1983 - Civil action for deprivation of rights", url: "https://www.law.cornell.edu/uscode/text/42/1983", snippet: "Civil Rights Act — 42 U.S.C. § 1983 (2018)." };
 
 describe("chat page — typed statute request through initial send and regeneration", () => {
+  it.each([
+    "BVerfG, Urteil vom 15. Januar 1958, 1 BvR 400/51, BVerfGE 7, 198",
+    "BVerfG 1 BvR 400/51",
+    "400/51",
+  ])("batch A initial and foreign manual regeneration preserve unsafe docket locally: %s", async (input) => {
+    m.classify.mockResolvedValue({ sourceType: "unknown", source: "regex" });
+    m.invoke.mockResolvedValue({ data: { content: "UNSAFE MODEL OUTPUT" }, errorInfo: null });
+    await mountChat();
+    await send(input);
+    await waitFor(() => expect(screen.getByTestId("bubble-assistant")).toHaveTextContent(input));
+    await act(async () => { fireEvent.click(screen.getByRole("button", { name: "regen-foreign" })); });
+    expect(screen.getByTestId("bubble-assistant")).toHaveTextContent(input);
+    expect(m.invoke).not.toHaveBeenCalled();
+    expect(m.classify).not.toHaveBeenCalled();
+  });
+  it("batch A complete US case initial and manual regeneration use the shared local route", async () => {
+    const input = "Brown v. Board of Education, 347 U.S. 483 (1954)";
+    m.classify.mockResolvedValue({ sourceType: "foreign_case_us", source: "regex" });
+    m.invoke.mockResolvedValue({ data: { content: "UNSAFE MODEL OUTPUT" }, errorInfo: null });
+    await mountChat();
+    await send(input);
+    await waitFor(() => expect(screen.getByTestId("bubble-assistant")).toHaveTextContent("347 U.S. 483 (1954)"));
+    await act(async () => { fireEvent.click(screen.getByRole("button", { name: "regen-us-case" })); });
+    expect(m.invoke).not.toHaveBeenCalled();
+  });
   const MS = "Maya Cohen, Courts and Memory 12–15 (Mar. 2, 2024) (unpublished manuscript) (on file with author)";
   const TH = "Maya Cohen, Courts and Memory 12, 15 (2024) (Ph.D. dissertation, Example University) (on file with Example Library)";
   it.each([[MS, "foreign_unpublished_manuscript"], [TH, "foreign_thesis"]] as const)("R17.2 actual chat initial+same-type regeneration stays local: %s", async (input, type) => {
