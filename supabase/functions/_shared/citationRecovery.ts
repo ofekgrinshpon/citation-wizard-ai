@@ -4,7 +4,7 @@ export const CITATION_RECOVERY_RESULT_BYTES = 256 * 1024;
 export const CITATION_RECOVERY_TTL_MS = 24 * 60 * 60 * 1000;
 export const CITATION_FIELD_KEYS = [
   "caseName", "volume", "reporter", "firstPage", "pinpoint", "paragraph", "court", "year", "docket",
-  "databaseIdentifier", "starPinpoint", "decisionDate", "reporterVolume", "neutral", "ukVolume", "ukSeries",
+  "databaseIdentifier", "starPinpoint", "decisionDate", "reporterVolume", "neutral", "ukVolume", "ukSeries", "parallel", "unparsedRemainder",
   "authors", "author", "articleTitle", "journal", "bookTitle", "edition", "editors", "translators", "chapterTitle",
   "doi", "sourceUrl", "title", "jurisdiction", "division", "number", "section", "clause", "statuteName",
   "titleNumber", "code", "subsection", "chapter", "regnalYear", "monarch", "site", "date", "url",

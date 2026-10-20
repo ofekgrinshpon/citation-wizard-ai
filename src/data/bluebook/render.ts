@@ -123,12 +123,24 @@ export function renderUsCase(f: ForeignCaseFields): RenderResult {
   if (f.paragraph) core += ` ¶ ${f.paragraph}`;
 
   const impliesCourt = f.reporter ? REPORTER_IMPLIES_COURT.has(f.reporter) : false;
+  // An explicit parallel court-specific reporter can identify the same court.
+  const parallelReporter = f.parallel?.replace(/^\d+\s+/, "");
+  const parallelImpliesCourt = !!parallelReporter && [...REPORTER_IMPLIES_COURT].some((reporter) =>
+    parallelReporter.startsWith(`${reporter} `));
+  // Only the original decision parenthetical at the end of an unparsed suffix
+  // counts as supplied: never derive a year from procedural history or prose.
+  const suppliedYearInSuffix = !f.year && !!f.unparsedRemainder &&
+    /^[\s,;\d.n–\-¶]*\([^()]*\b(?:17|18|19|20)\d{2}\)$/.test(f.unparsedRemainder.trim());
+  if (!impliesCourt && !parallelImpliesCourt && !f.court && !suppliedYearInSuffix) {
+    missing.push("court");
+    warnings.push("חסרה ערכאה; מקור הפרסום אינו מזהה אותה לבדו.");
+  }
   const courtPart = !impliesCourt && f.court ? f.court : "";
-  if (!f.year) {
+  if (!f.year && !suppliedYearInSuffix) {
     missing.push("year");
     warnings.push("חסרה שנת ההחלטה.");
   }
-  const paren = [courtPart, f.year || miss("שנה")].filter(Boolean).join(" ");
+  const paren = [courtPart, f.year || (suppliedYearInSuffix ? "[לא עוצב: שנה שסופקה בהמשך]" : miss("שנה"))].filter(Boolean).join(" ");
   reportExtraFields(f, used, warnings, unrep);
   const out = appendRemainder(`${it(name)}, ${core} (${paren})`, f.unparsedRemainder, warnings, unrep);
   return finish(out, warnings, missing, unrep);
@@ -167,7 +179,8 @@ export function renderUkCase(f: ForeignCaseFields): RenderResult {
   if (!f.neutral && !f.reporter) {
     warnings.push("לא אותר אזכור ניטרלי או דיווח רשמי לפסק הדין האנגלי.");
   }
-  reportExtraFields(f, ["caseName", "year", "neutral", "volume", "reporterVolume", "reporter", "firstPage", "pinpoint", "paragraph"], warnings, unrep);
+  reportExtraFields(f, ["caseName", "year", "neutral", "volume", "reporterVolume", "reporter", "firstPage", "paragraph",
+    ...(f.reporter && f.firstPage ? ["pinpoint"] : [])], warnings, unrep);
   out = appendRemainder(out, f.unparsedRemainder, warnings, unrep);
   return finish(out, warnings, missing, unrep);
 }

@@ -1,5 +1,10 @@
 # Roadmap — research → memo → draft handoff (legal-research-v2)
 
+## Current bounded Stage A correction (offline only)
+- [x] Restore named preservation fields across caller/recovery validation and rendering.
+- [x] Close full-date, UK pinpoint, cached warning, suffix-year and constitutional-list gaps.
+- [x] Run regression, focused and full offline checks; report remaining limitations without deployment.
+
 - [ ] 1. Durable quote references (memo evidence may cite `quote_id`; server resolves to stored text)
 - [ ] 2. Quote catalog in the rolling research state (survives compaction)
 - [ ] 3. Coverage reflection: non-binding summary of unused read sources + available quotes

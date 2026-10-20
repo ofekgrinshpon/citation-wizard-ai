@@ -34,7 +34,7 @@ import {
 import type { ForeignDetection } from "@/data/bluebook/extract";
 import { parseForeignArticleInput } from "../../supabase/functions/_shared/foreignArticle";
 import { extractWorkIdentifiers } from "../../supabase/functions/_shared/workIdentifiers";
-import { buildForeignArticleRequest, mergeForeignArticleCache, renderForeignArticleLookup } from "@/lib/foreignArticleAdapter";
+import { buildForeignArticleRequest, renderForeignArticleCache, renderForeignArticleLookup } from "@/lib/foreignArticleAdapter";
 import { citationDiagnosticBody, observeCitationDiagnostic, type CitationDiagnosticActivation } from "@/lib/citationDiagnostic";
 
 interface ForeignLookupResponse {
@@ -229,29 +229,33 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
     }
   }
 
-  const cachedArticleCitation = verifiedMatch && suppliedArticle
-    ? mergeForeignArticleCache(normalized, verifiedMatch.full_citation) : null;
+  const cachedArticle = verifiedMatch && suppliedArticle
+    ? renderForeignArticleCache(normalized, verifiedMatch.full_citation) : null;
   if (verifiedMatch && !isHebrewArticle && !isPinpoint && isDirectVerifiedMatch(verifiedMatch, normalized) &&
-      (!suppliedArticle || cachedArticleCitation)) {
+      (!suppliedArticle || cachedArticle)) {
     // Verified identity is always kept. Formatting may be deterministically
     // re-rendered when the stored citation carries enough structured fields;
     // otherwise the stored text is preserved as-is (never guessed).
     const reRendered = renderForeignCitation(verifiedMatch.full_citation);
-    const citation = cachedArticleCitation ?? (
+    const citation = cachedArticle?.citation ?? (
       reRendered && reRendered.missing.length === 0 && !reRendered.unrepresented?.length
         ? reRendered.citation
         : verifiedMatch.full_citation);
+    const cacheRender = cachedArticle ?? reRendered;
+    const cacheWarnings = [...(cacheRender?.warnings ?? [])];
+    if (cacheRender?.missing.length) cacheWarnings.push(`חסרים פרטים: ${getMissingFieldsSummary(sourceType, cacheRender.missing)}`);
     // Classifier cost (if any) stays attached to the same telemetryRequestId.
     reportZeroWork(opts.telemetry, "client_verified_store", "cache_hit");
     observeCitationDiagnostic(opts.diagnostic, rawInput, "cache_hit");
     return {
       telemetry: opts.telemetry,
-      reply: citation,
+      reply: cacheWarnings.length ? `${citation}\n⚠️ ${cacheWarnings.join(" ")}` : citation,
       citation,
       sourceType,
       sourceLabel: verifiedMatch.source_type || sourceLabel,
       fromVerifiedStore: true,
-      status: "verified",
+      status: cacheWarnings.length ? "warning" : "verified",
+      warningMsg: cacheWarnings[0],
     };
   }
 
