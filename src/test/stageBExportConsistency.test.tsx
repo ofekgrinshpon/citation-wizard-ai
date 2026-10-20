@@ -60,7 +60,7 @@ describe("repeat citations — Israeli 37.9 form, distinct from full-citation st
 
   it("non-adjacent repeat of a small-caps source carries a clean label", () => {
     const out = applyRepeatCitationRules([
-      { id: 1, input: "Hart, The Concept of Law", output: BOOK },
+      { id: 1, input: "Hart, The Concept of Law, בעמ' 100", output: BOOK },
       { id: 2, input: "חוק העונשין", output: 'חוק העונשין, התשל"ז-1977.' },
       { id: 3, input: "Hart, The Concept of Law, בעמ' 100", output: BOOK },
     ]);
