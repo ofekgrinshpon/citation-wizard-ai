@@ -1038,6 +1038,7 @@ export async function runForeignLookup(
   }
   const doFetch = deps?.fetchImpl ?? trackedFetch;
   if (input.kind === "journal_article") return lookupArticle(input, empty, doFetch, apiKey, deps?.diagnosticObserver);
+  if (input.kind === "statute") return lookupStatute(input, empty, doFetch, apiKey);
   const query = buildQuery(input);
 
   // Tier 1 — preferred-domain discovery hints.

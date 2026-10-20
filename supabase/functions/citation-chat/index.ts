@@ -1928,7 +1928,7 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
           ? (foreignLookupRequest.parsedFields as Record<string, string>)
           : undefined;
       if (
-        ["case", "journal_article", "book", "book_chapter"].includes(flKind) &&
+        ["case", "journal_article", "book", "book_chapter", "statute"].includes(flKind) &&
         ["US", "UK", "OTHER", "UNKNOWN"].includes(flJur) &&
         flRaw.trim()
       ) {
