@@ -111,6 +111,8 @@ const KIND_TO_SUBTYPE: Record<string, string> = {
   book: "nonperiodical.book",
   book_chapter: "collection_component.chapter",
   internet: "web_native.page",
+  unpublished_manuscript: "unpublished_communication.manuscript",
+  thesis: "unpublished_communication.thesis",
 };
 
 /** Deterministic detection. Language, script, host and publisher are never jurisdiction evidence. */
@@ -158,6 +160,7 @@ export function detectClassification(raw: string): DetectedClassification {
       if (schemes.length) multi.citation_scheme = ev(schemes, conf, schemes.map((s) => `field:${s}`));
     }
   }
+  if (d?.kind === "unpublished_manuscript") scalars.publication_status = ev("unpublished", "high", ["label:unpublished_work_type"]);
   if (/https?:\/\/\S+/i.test(text)) multi.access_medium = ev(["web"], "medium", ["url_present"]);
   if (/\bpending\b/i.test(text)) scalars.proceeding_status = ev("pending", "low", ["term:pending"]);
   return { version: CLASSIFICATION_VERSION, taxonomy: TAXONOMY_VERSION, inputFingerprint: fingerprintInput(text), scalars, multi };
@@ -261,6 +264,9 @@ export function engineRouteFor(e: EffectiveClassification): { sourceType: Source
   if (sub === "nonperiodical.book") return { sourceType: "foreign_book", supported: true };
   if (sub === "collection_component.chapter") return { sourceType: "foreign_book_chapter", supported: true };
   if (sub === "web_native.page") return { sourceType: "foreign_internet", supported: true };
+  // Stage 5 batch 2: only these two siblings; letters/memos/etc. stay unsupported.
+  if (sub === "unpublished_communication.manuscript") return { sourceType: "foreign_unpublished_manuscript", supported: true };
+  if (sub === "unpublished_communication.thesis") return { sourceType: "foreign_thesis", supported: true };
   if (fam === "decision") return { sourceType: "foreign_case_other", supported: false };
   return { sourceType: "foreign", supported: false };
 }

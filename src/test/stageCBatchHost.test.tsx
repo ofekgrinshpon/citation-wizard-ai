@@ -106,6 +106,45 @@ describe("BatchFootnoteBuilder — explicit regeneration", () => {
     expect(b.copyRichText.mock.calls[0][0]).not.toContain("##");
   });
 
+  it("R17.2 manual manuscript choice reaches actual batch regeneration locally; copy stays roman and safe", async () => {
+    const input = "Maya Cohen, Courts <b>and</b> Memory 12, 15 (2024)";
+    localStorage.setItem("footnote_cells_row-project", JSON.stringify([
+      { id: 1, key: "k1", input, output: "old output", status: "valid", detectedType: "foreign_book" },
+    ]));
+    saveRecord("u1", applyOverride(createRecord("batch:k1", input), { scalars: { family: "unpublished_communication", subtype: "unpublished_communication.manuscript" } }));
+    const actual = await vi.importActual<typeof import("@/lib/runCitation")>("@/lib/runCitation");
+    b.runCitation.mockImplementation(actual.runCitation);
+    render(<BatchFootnoteBuilder />);
+    expect(screen.getByTestId("foreign-stale")).toBeInTheDocument();
+    await act(async () => { fireEvent.click(screen.getByRole("button", { name: "הפקה מחדש לפי הסיווג" })); });
+    await waitFor(() => expect(screen.queryByTestId("foreign-stale")).toBeNull());
+    expect(b.runCitation.mock.calls[0][0].overrideType).toBe("foreign_unpublished_manuscript");
+    const result = await b.runCitation.mock.results[0].value;
+    expect(result.citation).toBe(`${input} (unpublished manuscript).`);
+    expect(fetchSpy).not.toHaveBeenCalled();
+    expect(vi.mocked(supabase.functions.invoke).mock.calls.every(([name]) => name === "cost-telemetry-event")).toBe(true);
+    await act(async () => { fireEvent.click(screen.getByRole("button", { name: /אשר הכל/ })); });
+    await act(async () => { fireEvent.click(screen.getByRole("button", { name: /בנה רשימה סופית/ })); });
+    await act(async () => { fireEvent.click(await screen.findByRole("button", { name: /העתק הכל/ })); });
+    await waitFor(() => expect(b.copyRichText).toHaveBeenCalled());
+    const [html, plain] = b.copyRichText.mock.calls[0];
+    expect(plain).toContain(`${input} (unpublished manuscript).`);
+    expect(html).toContain("&lt;b&gt;");
+    expect(html).not.toMatch(/<i>|small-caps|##|\^\^/);
+  });
+  it("R17.2 unsupported sibling (letter) choice is generic and flagged, never the manuscript renderer", async () => {
+    const input = "Maya Cohen, Courts and Memory (2024) (unpublished manuscript)";
+    localStorage.setItem("footnote_cells_row-project", JSON.stringify([
+      { id: 1, key: "k1", input, output: "x", status: "valid", detectedType: "foreign_unpublished_manuscript" },
+    ]));
+    saveRecord("u1", applyOverride(createRecord("batch:k1", input), { scalars: { family: "unpublished_communication", subtype: "unpublished_communication.letter" } }));
+    render(<BatchFootnoteBuilder />);
+    expect(screen.getByTestId("foreign-support").dataset.status).toBe("unsupported");
+    await act(async () => { fireEvent.click(screen.getByRole("button", { name: /הפק מחדש$/ })); });
+    await waitFor(() => expect(b.runCitation).toHaveBeenCalledTimes(1));
+    expect(b.runCitation.mock.calls[0][0].overrideType).toBe("foreign");
+  });
+
   it("supported US decision choice reaches the engine; stale clears only after that generation", async () => {
     choose("us");
     render(<BatchFootnoteBuilder />);

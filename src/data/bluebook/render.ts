@@ -19,6 +19,7 @@ import type {
   ForeignConstitutionFields,
   ForeignInternetFields,
   ForeignStatuteFields,
+  ForeignUnpublishedFields,
 } from "./types";
 
 export const SMALL_CAPS_OPEN = "^^";
@@ -377,4 +378,40 @@ export function renderInternet(f: ForeignInternetFields): RenderResult {
 /** Strip every internal marker — used for plain-text fallbacks. */
 export function stripMarkers(text: string): string {
   return citationTextOnly(text);
+}
+
+/**
+ * Stage 5 batch 2 — Bluebook 21 R17.2.1 (unpublished manuscript) and R17.2.2
+ * (dissertation/thesis). Roman typography throughout; all supplied text is
+ * kept verbatim. Missing required details are reported, never invented.
+ */
+export function renderUnpublishedWork(kind: "unpublished_manuscript" | "thesis", f: ForeignUnpublishedFields): RenderResult {
+  const warnings: string[] = [];
+  const missing: string[] = [];
+  if (!f.authors) missing.push("authors");
+  if (!f.title) missing.push("title");
+  if (!f.date) missing.push("date");
+  let workType = f.workType;
+  if (!workType && kind === "unpublished_manuscript" && f.typeFromSelection) {
+    workType = "unpublished manuscript";
+    warnings.push("סוג העבודה (unpublished manuscript) נקבע לפי הסיווג שבחרתם ולא הופיע בקלט.");
+  }
+  if (!workType) missing.push("workType");
+  if (kind === "thesis" && !f.institution) missing.push("institution");
+  if (f.ambiguousTrailingNumber) warnings.push("מספר בסוף הכותרת עשוי להיות חלק מהכותרת או עמוד מצוטט; הוא נשמר בכותרת כפי שסופק.");
+  const typeParen = kind === "thesis"
+    ? `${workType || miss("סוג העבודה/התואר")}, ${f.institution || miss("המוסד המעניק")}`
+    : workType || miss("סוג העבודה");
+  let out = `${f.authors || miss("מחבר")}, ${f.title || miss("כותרת")}${f.pinpoint ? ` ${f.pinpoint}` : ""} (${f.date || miss("תאריך")}) (${typeParen})`;
+  if (f.location) out += ` (${f.location})`;
+  if (f.unparsedRemainder) {
+    out += f.unparsedRemainder.startsWith(",") ? f.unparsedRemainder : ` ${f.unparsedRemainder}`;
+    warnings.push(/https?:\/\//.test(f.unparsedRemainder)
+      ? "קישור או פרט נוסף נשמר כפי שסופק; הקישור והמאגר לא נבדקו ולא אומתו."
+      : "חלק מהקלט לא זוהה במבנה הנתמך ונשמר כפי שסופק.");
+  }
+  if (missing.length) warnings.push("חסרים פרטים בסיסיים; לא הושלמו או נוחשו.");
+  const unrep: string[] = [];
+  reportExtraFields(f, ["authors", "title", "pinpoint", "date", "workType", "institution", "location", "typeFromSelection", "ambiguousTrailingNumber"], warnings, unrep);
+  return finish(out, warnings, missing, unrep);
 }

@@ -111,6 +111,8 @@ const FOREIGN_KIND_TO_CATEGORY: Record<string, BibSourceCategory> = {
   journal_article: "foreign_articles",
   book_chapter: "foreign_books",
   internet: "foreign_internet",
+  unpublished_manuscript: "foreign_other",
+  thesis: "foreign_other",
   other: "foreign_other",
 };
 

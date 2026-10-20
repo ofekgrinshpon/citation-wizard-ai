@@ -48,6 +48,8 @@ const ENGINE_KEY_MAP: Record<SourceType, string> = {
   foreign_journal_article: "foreign_journal_article",
   foreign_book_chapter: "foreign_book_chapter",
   foreign_internet: "foreign_internet",
+  foreign_unpublished_manuscript: "foreign",
+  foreign_thesis: "foreign",
   other: "other",
   unknown: "",
 };
