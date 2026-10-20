@@ -35,8 +35,8 @@ import {
   type ForeignSourceKind,
 } from "@/data/bluebook/types";
 import type { ForeignDetection } from "@/data/bluebook/extract";
-import { parseForeignArticleInput } from "../../supabase/functions/_shared/foreignArticle";
-import { extractWorkIdentifiers } from "../../supabase/functions/_shared/workIdentifiers";
+import { parseForeignArticleInput } from "../../../supabase/functions/_shared/foreignArticle";
+import { extractWorkIdentifiers } from "../../../supabase/functions/_shared/workIdentifiers";
 import { buildForeignArticleRequest, renderForeignArticleCache, renderForeignArticleLookup } from "@/lib/foreignArticleAdapter";
 import { prepareForeignStatute, renderForeignStatuteLookup, renderStatuteLocal } from "@/lib/foreignStatuteAdapter";
 import { renderUsUnreportedLocal } from "@/lib/usUnreportedLocal";
@@ -44,7 +44,7 @@ import { renderUnpublishedLocal } from "@/lib/unpublishedWorkLocal";
 import { renderPeriodicalLocal } from "@/lib/periodicalLocal";
 import { renderBookLocal } from "@/lib/bookLocal";
 import { citationManualChoice, preparePastedCitation, readPastedCitationSafety, pastedCaseRequest, renderPastedCaseResponse } from "@/lib/pastedCitationAdapter";
-import type { CitationManualChoice, PastedCitationContract } from "../../supabase/functions/_shared/pastedCitation";
+import type { CitationManualChoice, PastedCitationContract } from "../../../supabase/functions/_shared/pastedCitation";
 import { citationDiagnosticBody, observeCitationDiagnostic, type CitationDiagnosticActivation } from "@/lib/citationDiagnostic";
 
 interface ForeignLookupResponse {
