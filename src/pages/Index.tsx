@@ -293,6 +293,7 @@ const Index = () => {
     const pasted = preparePastedCitation(article?.rawInput ?? userMessage,
       article?.manualChoice ?? (article?.manual ? citationManualChoice(article.sourceType) : null));
     if (pasted.local) {
+      if (pasted.contract.route !== "preserve") reportZeroWork(telemetry, "local_foreign_formatter", "deterministic");
       if (!isCurrent()) throw Object.assign(new Error("CITATION_RETRY_STALE"), { handled: true });
       await onSuccess?.(pasted.local.reply, isCurrent, undefined, true);
       if (!isCurrent()) throw Object.assign(new Error("CITATION_RETRY_STALE"), { handled: true });

@@ -45,6 +45,10 @@ export function renderPastedCaseResponse(contract: PastedCitationContract, reque
   const fl = response as { identity?: { matched?: boolean; jurisdiction?: "US" | "UK"; conflicts?: string[] }; fields?: Record<string, unknown> } | null;
   if (fl?.identity?.matched && fl.fields && !Object.keys(fl.fields).some(k => ["caseName", "court", "reporter", "year", "firstPage", "neutral", "docket"].includes(k))) return null;
   const jurisdiction = fl?.identity?.jurisdiction ?? (request.jurisdiction === "US" || request.jurisdiction === "UK" ? request.jurisdiction : undefined);
+  if (fl?.identity?.conflicts?.length || (fl?.identity?.jurisdiction && request.jurisdiction !== "UNKNOWN" && fl.identity.jurisdiction !== request.jurisdiction)) {
+    const warningMsg = "פרטי השיפוט שהוחזרו סותרים את הבחירה או הקלט; המקור שסופק נשמר ללא השלמה.";
+    return { citation: escapeCitationLiteral(contract.rawInput), reply: `${escapeCitationLiteral(contract.rawInput)}\n⚠️ ${warningMsg}`, warningMsg };
+  }
   if (fl?.identity?.matched && !fl.identity.conflicts?.length && (jurisdiction === "US" || jurisdiction === "UK") &&
     (request.jurisdiction === "UNKNOWN" || jurisdiction === request.jurisdiction) && fl.fields) {
     const suppliedKeys = ["caseName", "court", "reporter", "docket", "year", "decisionDate", "volume", "firstPage", "pinpoint", "paragraph", "neutral", "parallel", "unparsedRemainder"];

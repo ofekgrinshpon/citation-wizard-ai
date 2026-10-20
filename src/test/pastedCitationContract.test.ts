@@ -1,9 +1,21 @@
 import { describe, expect, it } from "vitest";
 import { buildPastedCitation, guardPastedCitationRequest, rawCitationFingerprint } from "../../supabase/functions/_shared/pastedCitation";
-import { preparePastedCitation, citationManualChoice } from "@/lib/pastedCitationAdapter";
+import { preparePastedCitation, citationManualChoice, pastedCaseRequest, renderPastedCaseResponse } from "@/lib/pastedCitationAdapter";
 const DE = "BVerfG, Urteil vom 15. Januar 1958, 1 BvR 400/51, BVerfGE 7, 198";
 const US = "Brown v. Board of Education, 347 U.S. 483 (1954)";
 describe("batch A pure supplied-evidence contract", () => {
+  it("matched foreign response still cannot cross manual jurisdiction or supplied identity fields", () => {
+    const raw = "Brown v. Board of Education";
+    const { contract } = preparePastedCitation(raw, { jurisdiction: "US", foreign: true });
+    const request = pastedCaseRequest(raw, contract);
+    expect(renderPastedCaseResponse(contract, request, { identity: { matched: true, jurisdiction: "UK" }, fields: { caseName: "Wrong", neutral: "UKSC 1", year: "2020" } })?.citation).toBe(raw);
+    expect(renderPastedCaseResponse(contract, request, { identity: { matched: true, jurisdiction: "US" }, fields: { caseName: "Wrong", reporter: "U.S.", volume: "347", firstPage: "483", year: "1954" } })?.citation).toContain(raw);
+  });
+  it("manual choice survives bounded recovery messages without trusting country declarations", () => {
+    const manual = { jurisdiction: "IL", sourceType: "case_law_database" };
+    const c = guardPastedCitationRequest({ rawInput: DE, messages: [{ role: "user", content: `[סיווג שיפוט ידני: ${JSON.stringify(manual)}]\n${DE}` }] });
+    expect(c.route).toBe("preserve"); expect(c.conflicts).toContain("manual_jurisdiction_conflict");
+  });
   it.each([
     [DE, "DE", "preserve"], ["BVerfG 1 BvR 400/51", "DE", "preserve"],
     ['ע"א 1234/20 כהן נ׳ לוי (נבו 2.3.2021)', "IL", "israeli"], ['ע"א 1234/20', "IL", "israeli"],
