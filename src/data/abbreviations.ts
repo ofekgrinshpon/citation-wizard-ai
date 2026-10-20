@@ -150,6 +150,8 @@ export type SourceType =
   | 'foreign_journal_article'  // מאמר בכתב עת לועזי (כלל 36.7)
   | 'foreign_book_chapter'     // מאמר בספר לועזי (כלל 36.8)
   | 'foreign_internet'         // מקור מרשתת לועזי (כלל 36.9)
+  | 'foreign_unpublished_manuscript' // כתב יד לועזי שלא פורסם (Bluebook 21 R17.2.1)
+  | 'foreign_thesis'           // עבודת דוקטורט/תזה לועזית (Bluebook 21 R17.2.2)
   | 'other'                 // אחר (דברי כנסת וכו')
   | 'unknown';
 
@@ -193,6 +195,8 @@ export const REQUIRED_FIELDS: Record<SourceType, string[]> = {
   foreign_journal_article: ['authors', 'articleTitle', 'volume', 'journal', 'firstPage', 'year'],
   foreign_book_chapter: ['authors', 'articleTitle', 'bookTitle', 'firstPage', 'year'],
   foreign_internet: ['title', 'site', 'url'],
+  foreign_unpublished_manuscript: ['authors', 'title', 'date', 'workType'],
+  foreign_thesis: ['authors', 'title', 'date', 'workType', 'institution'],
   other: [],
   unknown: [],
 };
@@ -567,6 +571,8 @@ export const SOURCE_TYPE_LABELS: Record<SourceType, string> = {
   foreign_journal_article: 'מאמר לועזי בכתב עת (36.7)',
   foreign_book_chapter: 'מאמר לועזי בספר (36.8)',
   foreign_internet: 'מקור מרשתת לועזי (36.9)',
+  foreign_unpublished_manuscript: 'כתב יד לועזי שלא פורסם',
+  foreign_thesis: 'עבודת דוקטורט/תזה לועזית',
   other: 'אחר',
   unknown: 'לא מזוהה',
 };
@@ -611,6 +617,8 @@ export const RULE_REFERENCES: Record<SourceType, string> = {
   foreign_journal_article: 'כלל 36.7 – מאמרים בכתבי עת לועזיים',
   foreign_book_chapter: 'כלל 36.8 – מאמרים שפורסמו בספרים לועזיים',
   foreign_internet: 'כלל 36.9 – מקורות במרשתת לועזיים',
+  foreign_unpublished_manuscript: 'כלל 35.1 – Bluebook 21 R17.2.1 (כתבי יד שלא פורסמו)',
+  foreign_thesis: 'כלל 35.1 – Bluebook 21 R17.2.2 (עבודות דוקטורט ותזות)',
   other: 'כלל 8 – אחר (דברי כנסת וכו׳)',
   unknown: '',
 };

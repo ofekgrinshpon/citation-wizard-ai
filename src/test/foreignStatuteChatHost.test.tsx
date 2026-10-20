@@ -51,6 +51,11 @@ vi.mock("@/components/MessageBubble", () => ({
           itemKey: "chat:0", sourceType: "foreign_case_us", supported: true, effectiveKey: "us-case-eff", inputFingerprint: "us-case-fp",
         })}>regen-us-case</button>
       )}
+      {onChangeSourceType && (["foreign_unpublished_manuscript", "foreign_thesis", "foreign"] as const).map((t) => (
+        <button key={t} type="button" onClick={() => onChangeSourceType(t, {
+          itemKey: "chat:0", sourceType: t, supported: t !== "foreign", effectiveKey: `eff-${t}`, inputFingerprint: `fp-${t}`,
+        })}>{`regen-${t}`}</button>
+      ))}
     </div>
   ),
 }));
@@ -94,6 +99,38 @@ beforeEach(() => {
 const CORNELL_1983 = { title: "42 U.S.C. § 1983 - Civil action for deprivation of rights", url: "https://www.law.cornell.edu/uscode/text/42/1983", snippet: "Civil Rights Act — 42 U.S.C. § 1983 (2018)." };
 
 describe("chat page — typed statute request through initial send and regeneration", () => {
+  const MS = "Maya Cohen, Courts and Memory 12–15 (Mar. 2, 2024) (unpublished manuscript) (on file with author)";
+  const TH = "Maya Cohen, Courts and Memory 12, 15 (2024) (Ph.D. dissertation, Example University) (on file with Example Library)";
+  it.each([[MS, "foreign_unpublished_manuscript"], [TH, "foreign_thesis"]] as const)("R17.2 actual chat initial+same-type regeneration stays local: %s", async (input, type) => {
+    m.classify.mockResolvedValue({ sourceType: type, source: "regex" });
+    m.invoke.mockResolvedValue({ data: { content: "MODEL TEXT" }, errorInfo: null });
+    await mountChat();
+    await send(input);
+    await waitFor(() => expect(screen.getByTestId("bubble-assistant")).toHaveTextContent(`${input}.`));
+    expect(screen.getByTestId("bubble-assistant")).toHaveTextContent("לא אומתו");
+    await act(async () => { fireEvent.click(screen.getByRole("button", { name: `regen-${type}` })); });
+    await waitFor(() => expect(m.recordGeneration).toHaveBeenCalledWith("acct-1", expect.objectContaining({ effectiveKey: `eff-${type}` })));
+    expect(m.invoke).not.toHaveBeenCalled();
+  });
+  it("R17.2 manual thesis on a manuscript label is preserved locally with a mismatch warning", async () => {
+    m.classify.mockResolvedValue({ sourceType: "foreign_unpublished_manuscript", source: "regex" });
+    await mountChat();
+    await send(MS);
+    await waitFor(() => expect(screen.getByTestId("bubble-assistant")).toHaveTextContent(`${MS}.`));
+    await act(async () => { fireEvent.click(screen.getByRole("button", { name: "regen-foreign_thesis" })); });
+    await waitFor(() => expect(screen.getByTestId("bubble-assistant")).toHaveTextContent("אינו תואם"));
+    expect(m.invoke).not.toHaveBeenCalled();
+  });
+  it("R17.2 unsupported sibling selection (letter → generic foreign) never uses the manuscript renderer", async () => {
+    m.classify.mockResolvedValue({ sourceType: "foreign_unpublished_manuscript", source: "regex" });
+    m.invoke.mockResolvedValue({ data: { content: "GENERIC MODEL OUTPUT" }, errorInfo: null });
+    await mountChat();
+    await send(MS);
+    await waitFor(() => expect(screen.getByTestId("bubble-assistant")).toHaveTextContent(`${MS}.`));
+    await act(async () => { fireEvent.click(screen.getByRole("button", { name: "regen-foreign" })); });
+    await waitFor(() => expect(m.invoke).toHaveBeenCalledTimes(1));
+  });
+
   it.each([
     "Alpha v. Beta, No. 24-CV-017-A, slip op. at 6, 9–11 (D. Mass. Mar. 2, 2024)",
     "Alpha v. Beta, No. 24-CV-017-A (D. Mass. filed Mar. 2, 2024)",

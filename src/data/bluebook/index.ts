@@ -11,6 +11,7 @@ import {
   renderConstitution,
   renderInternet,
   renderJournalArticle,
+  renderUnpublishedWork,
   renderUkCase,
   renderUkStatute,
   renderUsCase,
@@ -32,9 +33,11 @@ export {
   renderBook,
   renderBookChapter,
   renderInternet,
+  renderUnpublishedWork,
   stripMarkers,
   type RenderResult,
 } from "./render";
+export { extractUnpublishedWork, type UnpublishedKind } from "./unpublished";
 
 /** Source-supplied field text is literal: escape marker-like characters. */
 function literalFields(fields: unknown): unknown {
@@ -81,6 +84,9 @@ function renderDetectionFields(kind: ForeignDetection["kind"], jurisdiction: For
       return renderBookChapter(f);
     case "internet":
       return renderInternet(f);
+    case "unpublished_manuscript":
+    case "thesis":
+      return renderUnpublishedWork(d.kind, f);
     default:
       return null;
   }

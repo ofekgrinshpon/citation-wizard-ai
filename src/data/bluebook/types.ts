@@ -22,6 +22,8 @@ export type ForeignSourceKind =
   | "journal_article"
   | "book_chapter"
   | "internet"
+  | "unpublished_manuscript"
+  | "thesis"
   | "other";
 
 export type ForeignJurisdiction = "US" | "UK" | "OTHER";
@@ -42,6 +44,8 @@ export const FOREIGN_TYPE_IDENTITY: Partial<Record<SourceType, ForeignIdentity>>
   foreign_journal_article: { kind: "journal_article", jurisdiction: "OTHER" },
   foreign_book_chapter: { kind: "book_chapter", jurisdiction: "OTHER" },
   foreign_internet: { kind: "internet", jurisdiction: "OTHER" },
+  foreign_unpublished_manuscript: { kind: "unpublished_manuscript", jurisdiction: "OTHER" },
+  foreign_thesis: { kind: "thesis", jurisdiction: "OTHER" },
   foreign: { kind: "other", jurisdiction: "OTHER" },
 };
 
@@ -73,6 +77,10 @@ export function toSourceType(
       return "foreign_book_chapter";
     case "internet":
       return "foreign_internet";
+    case "unpublished_manuscript":
+      return "foreign_unpublished_manuscript";
+    case "thesis":
+      return "foreign_thesis";
     default:
       return "foreign";
   }
@@ -185,4 +193,23 @@ export type ForeignFields =
   | ForeignArticleFields
   | ForeignBookFields
   | ForeignChapterFields
-  | ForeignInternetFields;
+  | ForeignInternetFields
+  | ForeignUnpublishedFields;
+
+/** Stage 5 batch 2 (R17.2.1–17.2.2): supplied manuscript/thesis fields, verbatim. */
+export interface ForeignUnpublishedFields {
+  authors?: string;
+  title?: string;
+  pinpoint?: string;
+  date?: string;
+  /** Supplied work-type label, e.g. "unpublished manuscript", "Ph.D. dissertation". */
+  workType?: string;
+  /** Degree-awarding institution as supplied (theses only). */
+  institution?: string;
+  /** Location/repository parenthetical as supplied, e.g. "on file with author". */
+  location?: string;
+  /** No type label was supplied; the manual subtype selection supplied the kind. */
+  typeFromSelection?: boolean;
+  ambiguousTrailingNumber?: boolean;
+  unparsedRemainder?: string;
+}

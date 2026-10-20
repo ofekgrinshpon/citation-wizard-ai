@@ -1,3 +1,4 @@
+import { extractUnpublishedWork } from "./unpublished";
 /**
  * Deterministic foreign-source detection + field extraction (Bluebook 22, M1).
  *
@@ -564,6 +565,10 @@ export function detectForeignSource(raw: string): ForeignDetection | null {
     const f = extractUsCase(text);
     if (f) return build("case", "US", f);
   }
+
+  // Stage 5 batch 2: explicit manuscript / thesis parenthetical only.
+  const unpub = extractUnpublishedWork(text);
+  if (unpub) return build(unpub.kind, "OTHER", unpub.fields);
 
   // 5a. Book chapter (before article/book so "in <Book>" never collapses) — M2A
   const chap = extractBookChapter(text);

@@ -38,6 +38,7 @@ import { extractWorkIdentifiers } from "../../supabase/functions/_shared/workIde
 import { buildForeignArticleRequest, renderForeignArticleCache, renderForeignArticleLookup } from "@/lib/foreignArticleAdapter";
 import { prepareForeignStatute, renderForeignStatuteLookup, renderStatuteLocal } from "@/lib/foreignStatuteAdapter";
 import { renderUsUnreportedLocal } from "@/lib/usUnreportedLocal";
+import { renderUnpublishedLocal } from "@/lib/unpublishedWorkLocal";
 import { citationDiagnosticBody, observeCitationDiagnostic, type CitationDiagnosticActivation } from "@/lib/citationDiagnostic";
 
 interface ForeignLookupResponse {
@@ -275,7 +276,7 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
   // is never crossed by a contradicting detection (honest mismatch instead).
   const statutePrep = !isPinpoint ? prepareForeignStatute(sourceType, normalized, { manual: !!opts.overrideType }) : null;
 
-  const unreported = !isPinpoint ? renderUsUnreportedLocal(sourceType, normalized) : null;
+  const unreported = !isPinpoint ? (renderUsUnreportedLocal(sourceType, normalized) ?? renderUnpublishedLocal(sourceType, normalized)) : null;
   if (unreported) {
     if (opts.isResultCurrent && !opts.isResultCurrent()) {
       throw new CitationRunError({ code: "CITATION_INPUT_CHANGED", userMessage: "הקלט או החשבון השתנו. התוצאה לא נשמרה." });
@@ -292,9 +293,10 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
     const identifiers = suppliedArticle ? extractWorkIdentifiers(normalized) : null;
     const hasIdentifier = !!(identifiers?.doi || identifiers?.sourceUrl || identifiers?.conflicts.length);
     const rendered = renderForeignCitation(hasIdentifier ? identifiers!.text : normalized);
-    const crossedUnreportedOverride = rendered?.detection.kind === "case" &&
-      !!(rendered.detection.fields as import("@/data/bluebook/types").ForeignCaseFields).opinionFormat &&
-      sourceType !== rendered.detection.sourceType;
+    const crossedUnreportedOverride = (rendered?.detection.kind === "case" &&
+      !!(rendered.detection.fields as import("@/data/bluebook/types").ForeignCaseFields).opinionFormat ||
+      rendered?.detection.kind === "unpublished_manuscript" || rendered?.detection.kind === "thesis") &&
+      sourceType !== rendered!.detection.sourceType;
     if (rendered && rendered.missing.length === 0 && !crossedUnreportedOverride) {
       reportZeroWork(opts.telemetry, "local_foreign_formatter", "deterministic");
       observeCitationDiagnostic(opts.diagnostic, rawInput, "deterministic");
