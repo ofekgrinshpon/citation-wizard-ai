@@ -1,7 +1,7 @@
 # Roadmap — research → memo → draft handoff (legal-research-v2)
 
 ## Unified pasted-citation infrastructure batch A (offline only)
-- [ ] Narrow correction: effective-family conflicts and canonical lookup/response binding; offline actual-host/handler gates only, no batch B.
+- [x] Narrow correction: effective-family conflicts and canonical lookup/response binding; actual-host/handler gates passed, full offline suite 3,426 passed / 1 skipped; no batch B. Separate app TypeScript/production-build evidence still blocked by harness visibility.
 - [x] Shared versioned supplied-evidence contract, exact raw spans and safe jurisdiction routing.
 - [x] Index initial/manual regeneration, runCitation/batch and pre-cache server guard; terminal outcomes never escape to generic providers.
 - [x] Offline caller/server regressions and full suite (3,392 passed / 1 skipped); automatic compilation OK; bounded report recorded. Stop before batch B.
