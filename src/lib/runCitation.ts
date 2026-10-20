@@ -53,6 +53,20 @@ export function extractForeignCaseName(raw: string): string | null {
   return m ? m[1].trim().replace(/[,\s]+$/, "") : null;
 }
 
+/** Statute name anchor: leading text before any section/code apparatus. */
+export function extractStatuteNameHint(raw: string): string | null {
+  const head = raw.split(/§|,/)[0].replace(/\b(?:1[6-9]|20)\d{2}\b/g, "").trim();
+  return /[A-Za-z]{3}/.test(head) ? head : null;
+}
+
+/** Statute section anchor(s): the § tail, preserving lists and ranges. */
+export function extractStatuteSectionsHint(raw: string): string[] | null {
+  const m = raw.match(/§{1,2}\s*([0-9A-Za-z][0-9A-Za-z().\-–]*(?:\s*,\s*[0-9A-Za-z().\-–]+)*)/);
+  if (!m) return null;
+  const items = m[1].split(",").map((s) => s.trim()).filter(Boolean);
+  return items.length ? items : null;
+}
+
 /**
  * Decide whether a foreign input is eligible for the grounded lookup and
  * with which jurisdiction. A case-shaped input without an explicit
@@ -68,6 +82,17 @@ export function planForeignLookup(
   const caseShaped = FOREIGN_CASE_SHAPE.test(raw);
   if (detection && detection.kind === "case" && (detection.jurisdiction === "US" || detection.jurisdiction === "UK")) {
     return { kind: "case", jurisdiction: detection.jurisdiction };
+  }
+  // Statutes: the supported bound is explicit — US/UK only, from the source
+  // type or a deterministic detection. UNKNOWN is never treated as US, and an
+  // unresolved statute jurisdiction is unsupported, not guessed.
+  if (identity?.kind === "statute" || detection?.kind === "statute") {
+    const jur = detection?.kind === "statute" && (detection.jurisdiction === "US" || detection.jurisdiction === "UK")
+      ? detection.jurisdiction
+      : identity?.kind === "statute" && (identity.jurisdiction === "US" || identity.jurisdiction === "UK")
+        ? identity.jurisdiction
+        : null;
+    return jur ? { kind: "statute", jurisdiction: jur } : null;
   }
   if (identity && ["journal_article", "book", "book_chapter"].includes(identity.kind)) {
     return { kind: identity.kind, jurisdiction: identity.jurisdiction };
