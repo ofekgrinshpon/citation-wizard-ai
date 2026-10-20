@@ -37,6 +37,7 @@ import { parseForeignArticleInput } from "../../supabase/functions/_shared/forei
 import { extractWorkIdentifiers } from "../../supabase/functions/_shared/workIdentifiers";
 import { buildForeignArticleRequest, renderForeignArticleCache, renderForeignArticleLookup } from "@/lib/foreignArticleAdapter";
 import { prepareForeignStatute, renderForeignStatuteLookup, renderStatuteLocal } from "@/lib/foreignStatuteAdapter";
+import { renderUsUnreportedLocal } from "@/lib/usUnreportedLocal";
 import { citationDiagnosticBody, observeCitationDiagnostic, type CitationDiagnosticActivation } from "@/lib/citationDiagnostic";
 
 interface ForeignLookupResponse {
@@ -274,13 +275,27 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
   // is never crossed by a contradicting detection (honest mismatch instead).
   const statutePrep = !isPinpoint ? prepareForeignStatute(sourceType, normalized, { manual: !!opts.overrideType }) : null;
 
+  const unreported = !isPinpoint ? renderUsUnreportedLocal(sourceType, normalized) : null;
+  if (unreported) {
+    if (opts.isResultCurrent && !opts.isResultCurrent()) {
+      throw new CitationRunError({ code: "CITATION_INPUT_CHANGED", userMessage: "הקלט או החשבון השתנו. התוצאה לא נשמרה." });
+    }
+    reportZeroWork(opts.telemetry, "local_foreign_formatter", "deterministic");
+    observeCitationDiagnostic(opts.diagnostic, rawInput, "deterministic");
+    return { telemetry: opts.telemetry, reply: unreported.reply, citation: unreported.citation,
+      sourceType, sourceLabel, fromVerifiedStore: false, status: "warning", warningMsg: unreported.warningMsg };
+  }
+
   // 1b) Deterministic Bluebook rendering for a clearly identified foreign
   // source (Israeli Rule 35.1). No model call, no fabricated fields.
   if (!isPinpoint && isForeignSourceType(sourceType) && statutePrep?.outcome !== "mismatch") {
     const identifiers = suppliedArticle ? extractWorkIdentifiers(normalized) : null;
     const hasIdentifier = !!(identifiers?.doi || identifiers?.sourceUrl || identifiers?.conflicts.length);
     const rendered = renderForeignCitation(hasIdentifier ? identifiers!.text : normalized);
-    if (rendered && rendered.missing.length === 0) {
+    const crossedUnreportedOverride = rendered?.detection.kind === "case" &&
+      !!(rendered.detection.fields as import("@/data/bluebook/types").ForeignCaseFields).opinionFormat &&
+      sourceType !== rendered.detection.sourceType;
+    if (rendered && rendered.missing.length === 0 && !crossedUnreportedOverride) {
       reportZeroWork(opts.telemetry, "local_foreign_formatter", "deterministic");
       observeCitationDiagnostic(opts.diagnostic, rawInput, "deterministic");
       // Formatting complete supplied fields stays local. An explicit identifier

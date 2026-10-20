@@ -122,27 +122,33 @@ export function renderUsCase(f: ForeignCaseFields): RenderResult {
   const unrep: string[] = [];
   const name = f.caseName?.trim() || (missing.push("caseName"), miss("שם ההליך"));
 
+  if (f.opinionFormat || (!(f.volume && f.reporter && f.firstPage) && f.databaseIdentifier)) {
+    for (const key of ["docket", "court", "decisionDate"] as const) {
+      if (!f[key]) { missing.push(key); warnings.push(`חסר פרט חובה לאזכור החלטה לא מדווחת: ${key}.`); }
+    }
+    const bits = [`No. ${f.docket || miss("מספר תיק")}`];
+    if (f.databaseIdentifier) {
+      bits.push(f.databaseIdentifier);
+      // Lists and ranges have independent star prefixes; never reinterpret paragraphs.
+      const star = f.starPinpoint;
+      if (star) bits.push(`at ${star.split(/,\s*/).map((p) => `*${p.replace(/^\*/, "")}`).join(", ")}`);
+    } else if (f.opinionFormat === "slip_nonseparate") {
+      if (!f.firstPage) { missing.push("firstPage"); warnings.push("חסר עמוד פתיחה לחוות דעת ללא מספור נפרד."); }
+      bits.push(`slip op. ${f.firstPage || miss("עמוד פתיחה")}${f.pinpoint ? `, ${f.pinpoint}` : ""}`);
+    } else if (f.opinionFormat === "slip_separate") {
+      bits.push(`slip op.${f.pinpoint ? ` at ${f.pinpoint}` : ""}`);
+    }
+    if (f.paragraph) bits.push(`${/[,–\-]/.test(f.paragraph) ? "¶¶" : "¶"} ${f.paragraph}`);
+    const date = [f.dateMeaning, f.decisionDate || miss("תאריך מלא")].filter(Boolean).join(" ");
+    reportExtraFields(f, ["caseName", "docket", "databaseIdentifier", "opinionFormat", "starPinpoint", "paragraph", "court", "decisionDate", "dateMeaning", "year",
+      ...(f.opinionFormat?.startsWith("slip") ? ["firstPage", "pinpoint"] : [])], warnings, unrep);
+    const out = appendRemainder(`${fullCitationCaseName(name)}, ${bits.join(", ")} (${f.court || miss("ערכאה")} ${date})`, f.unparsedRemainder, warnings, unrep);
+    return finish(out, warnings, missing, unrep);
+  }
+
   if (!f.reporter) missing.push("reporter");
   if (!f.volume) missing.push("volume");
   if (!f.firstPage) missing.push("firstPage");
-
-  // Database-only path (M2A): an alternative publication identifier — never a
-  // reporter/volume/page. Requires docket, court and exact decision date.
-  const isDbOnly = !(f.volume && f.reporter && f.firstPage) && !!f.databaseIdentifier;
-  if (isDbOnly) {
-    const dbMissing: string[] = [];
-    if (!f.docket) dbMissing.push("docket");
-    if (!f.court) dbMissing.push("court");
-    if (!f.decisionDate) dbMissing.push("decisionDate");
-    if (f.caseName?.trim() && dbMissing.length === 0) {
-      const star = f.starPinpoint ?? (f.pinpoint ? f.pinpoint : undefined);
-      const core = `No. ${f.docket}, ${f.databaseIdentifier}${star ? `, at *${star}` : ""}`;
-      reportExtraFields(f, ["caseName", "docket", "databaseIdentifier", "starPinpoint", "pinpoint", "court", "decisionDate", "year"], warnings, unrep);
-      const out = appendRemainder(`${fullCitationCaseName(name)}, ${core} (${f.court} ${f.decisionDate})`, f.unparsedRemainder, warnings, unrep);
-      return finish(out, warnings, [], unrep);
-    }
-    missing.push(...dbMissing);
-  }
 
   let core: string;
   const used = ["caseName", "volume", "reporter", "firstPage", "pinpoint", "paragraph", "court", "year", "parallel"];

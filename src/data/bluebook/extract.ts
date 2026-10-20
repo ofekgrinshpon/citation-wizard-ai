@@ -21,6 +21,7 @@ import {
   UK_REPORT_SERIES,
   UK_VOLUMED_SERIES,
   UK_REPORT_COURTS,
+  US_COURTS,
 } from "./tables";
 import {
   toSourceType,
@@ -279,37 +280,77 @@ export function normalizeBluebookDate(raw: string): { date: string; year: string
   return { date: `${mon} ${Number(m[2])}, ${m[3]}`, year: m[3] };
 }
 
-const US_DB_CASE_RE = new RegExp(
-  String.raw`^(?<name>.{3,200}?),\s*No\.\s*(?<docket>[\w:\-–./]+(?:\s*\([A-Za-z]+\))?),\s*(?<db>${DB_ID_SRC})` +
-    String.raw`(?:,\s*at\s*\*\s*(?<star>\d+(?:\s*[–\-]\s*\*?\d+)?))?` +
-    String.raw`\s*\((?<court>[^()]{2,40}?)\s+(?<date>[A-Za-z]{3,9}\.?\s+\d{1,2},\s*(?:19|20)\d{2})\)\.?$`,
-  "u",
-);
+// A bounded structural US court anchor, not a new court/table dictionary.
+const isUsUnreportedCourt = (court: string) => court === "D. Mass." ||
+  Object.values(US_COURTS).includes(court) || /^(?:\d+(?:st|nd|rd|th|d)|D\.C\.)\s+Cir\.$/.test(court);
+const UNREPORTED_PIN = String.raw`\*?\d+(?:\s*[–\-]\s*\*?\d+)?(?:\s+n\.\s*\d+)?`;
+const UNREPORTED_LIST = String.raw`${UNREPORTED_PIN}(?:\s*,\s*${UNREPORTED_PIN})*`;
+
+/** D1a supplied fields only. Unknown tails remain verbatim, never evidence. */
+export function extractUsUnreportedCase(text: string): ForeignCaseFields | null {
+  const t = text.trim();
+  const head = t.match(/^(?<name>.{3,200}?),\s*(?:No\.\s*(?<docket>[\w:\-–./]+(?:\s*\([A-Za-z]+\))?)\s*)?/u);
+  if (!head?.groups || !/\bv\.?\s|^(?:In re|Ex parte)\s/.test(head.groups.name)) return null;
+  let rest = t.slice(head[0].length).replace(/^,\s*/, "");
+  const f: ForeignCaseFields = { caseName: head.groups.name.trim(), docket: head.groups.docket };
+  const db = rest.match(new RegExp(`^(${DB_ID_SRC})`));
+  const slip = rest.match(/^slip op\./);
+  if (db) {
+    f.opinionFormat = "database";
+    f.databaseIdentifier = db[1].replace(/\s+/g, " ").replace(/U\.\s?S\.\s?(Dist|App)\.\s?LEXIS/, "U.S. $1. LEXIS");
+    rest = rest.slice(db[0].length);
+  } else if (slip) {
+    f.opinionFormat = "slip_separate";
+    rest = rest.slice(slip[0].length);
+    const pages = rest.match(new RegExp(String.raw`^\s+(\d+)(?:,\s*(${UNREPORTED_LIST}))?`));
+    if (pages) {
+      f.opinionFormat = "slip_nonseparate";
+      f.firstPage = pages[1];
+      f.pinpoint = pages[2] ? normalizePins(pages[2]) : undefined;
+      rest = rest.slice(pages[0].length);
+    }
+  } else if (!f.docket) return null;
+  const pin = rest.match(new RegExp(String.raw`^\s*,?\s*(at\s+|¶¶?\s*)(${UNREPORTED_LIST})`));
+  if (pin) {
+    const value = normalizePins(pin[2]);
+    if (pin[1].includes("¶")) f.paragraph = value;
+    else if (db && value.startsWith("*")) f.starPinpoint = value.slice(1);
+    else if (slip && !value.includes("*")) f.pinpoint = value;
+    else return null; // Do not guess whether an ordinary page is a star page.
+    rest = rest.slice(pin[0].length);
+  }
+  const paren = rest.match(/^\s*\(([^()]*)\)/);
+  if (paren) {
+    const dated = paren[1].trim().match(/^(.*?)\s*\b([A-Za-z]{3,9}\.?\s+\d{1,2},\s*(?:19|20)\d{2})$/);
+    const date = dated ? normalizeBluebookDate(dated[2]) : null;
+    let court = dated?.[1].trim() ?? paren[1].trim();
+    const meaning = court.match(/\s+(filed|decided|issued|argued|submitted)$/);
+    if (meaning) { f.dateMeaning = meaning[1]; court = court.slice(0, -meaning[0].length).trim(); }
+    f.court = normalizeCourt(court) || undefined;
+    if (date) {
+      f.decisionDate = date.date;
+      if (!f.dateMeaning || f.dateMeaning === "decided") f.year = date.year;
+      if (db && db[1].slice(0, 4) !== date.year) return null;
+    }
+    rest = rest.slice(paren[0].length);
+  }
+  if (!db && !slip) {
+    if (!f.dateMeaning) return null;
+    f.opinionFormat = "pending";
+  }
+  // No court/US anchor means the source remains ambiguous, not US by default.
+  if (!f.court || !isUsUnreportedCourt(f.court)) return null;
+  f.unparsedRemainder = remainderOf(rest);
+  return f;
+}
 
 /**
  * Database-only U.S. case. Declines (null) unless case name, docket number,
  * database identifier, court and exact decision date are ALL present.
  */
 export function extractUsDbCase(text: string): ForeignCaseFields | null {
-  const m = US_DB_CASE_RE.exec(text.trim());
-  if (!m?.groups) return null;
-  const g = m.groups;
-  const d = normalizeBluebookDate(g.date);
-  if (!d) return null;
-  const db = g.db.replace(/\s+/g, " ").replace(/U\.\s?S\.\s?(Dist|App)\.\s?LEXIS/, "U.S. $1. LEXIS");
-  // The database year must agree with the decision year — otherwise decline.
-  if (db.slice(0, 4) !== d.year) return null;
-  const court = normalizeCourt(g.court.trim());
-  if (!court || /\d{4}/.test(court)) return null;
-  return {
-    caseName: g.name.trim(),
-    docket: g.docket.trim(),
-    databaseIdentifier: db,
-    starPinpoint: g.star ? g.star.replace(/\s*[–\-]\s*\*?/, "–*").replace(/\s+/g, "") : undefined,
-    court,
-    decisionDate: d.date,
-    year: d.year,
-  };
+  const f = extractUsUnreportedCase(text);
+  return f?.databaseIdentifier && f.docket && f.decisionDate ? f : null;
 }
 
 // ─── M2A: traditional UK Law Reports (no neutral citation) ────────
@@ -512,9 +553,9 @@ export function detectForeignSource(raw: string): ForeignDetection | null {
     if (f) return build("case", "UK", f);
   }
 
-  // 3c. U.S. database-only case (Westlaw / Lexis) — M2A
-  if (US_DB_SIGNAL.test(text) && !US_REPORTER_SIGNAL.test(text)) {
-    const f = extractUsDbCase(text);
+  // D1a: US database, slip and pending forms — supplied court anchor required.
+  if (!US_REPORTER_SIGNAL.test(text)) {
+    const f = extractUsUnreportedCase(text);
     if (f) return build("case", "US", f);
   }
 
