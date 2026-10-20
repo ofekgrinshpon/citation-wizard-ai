@@ -308,28 +308,45 @@ export function renderJournalArticle(f: ForeignArticleFields): RenderResult {
   return finish(out, warnings, missing, unrep);
 }
 
+const plural = (names: string) => /&|,|\sand\s/.test(names);
+
+/** R15.2–15.4(a) parenthetical: editors, translators, [non-original publisher] [edition] year. */
+function bookParen(f: ForeignBookFields | ForeignChapterFields, warnings: string[], unrep: string[]): string {
+  let publisher = "";
+  if (f.publisher) {
+    if (f.publisherStatus === "non-original") publisher = f.publisher;
+    else {
+      unrep.push(`publisher: ${f.publisher}`);
+      warnings.push(f.publisherStatus === "original"
+        ? `המו״ל שסופק (${f.publisher}) לא נכלל: במהדורה המקורית אין לציין מו״ל (R15.4).`
+        : `המו״ל שסופק (${f.publisher}) לא נכלל: לא צוין אם זו מהדורה שאינה של המו״ל המקורי.`);
+    }
+  }
+  const paren = [
+    f.editors ? `${f.editors} ed${plural(f.editors) ? "s" : ""}.` : "",
+    f.translators ? `${f.translators} trans.` : "",
+    [publisher, f.edition ? `${f.edition} ed.` : "", f.year || miss("שנה")].filter(Boolean).join(" "),
+  ].filter(Boolean).join(", ");
+  return `(${paren})${f.originalYear ? ` (${f.originalYear})` : ""}`;
+}
+
+const BOOK_USED = ["authors", "bookTitle", "heading", "volume", "edition", "editors", "translators", "pinpoint", "year", "publisher", "publisherStatus", "originalYear"];
+
 export function renderBook(f: ForeignBookFields): RenderResult {
   const warnings: string[] = [];
   const missing: string[] = [];
-  if (!f.authors) missing.push("authors");
-  if (!f.bookTitle) missing.push("bookTitle");
+  // Editor-only works begin with the title; an absent author is not missing.
+  if (!f.authors && !f.heading && !f.editors) missing.push("authors");
+  if (!f.bookTitle && !f.heading) missing.push("bookTitle");
   if (!f.year) missing.push("year");
-
-  const head =
-    (f.volume ? `${f.volume} ` : "") +
-    sc(`${f.authors || miss("מחבר")}, ${f.bookTitle || miss("שם הספר")}`);
-  // Bluebook: contributors are comma-separated; edition and year are not.
-  const paren = [
-    f.editors ? `${f.editors} ed${f.editors.includes("&") ? "s" : ""}.` : "",
-    f.translators ? `${f.translators} trans.` : "",
-    [f.edition ? `${f.edition} ed.` : "", f.year || miss("שנה")].filter(Boolean).join(" "),
-  ]
-    .filter(Boolean)
-    .join(", ");
-  const pin = f.pinpoint ? ` ${f.pinpoint}` : "";
   const unrep: string[] = [];
-  reportExtraFields(f, ["authors", "bookTitle", "volume", "edition", "editors", "translators", "pinpoint", "year"], warnings, unrep);
-  return finish(`${head}${pin} (${paren})`, warnings, missing, unrep);
+  const titleText = f.heading ?? (f.authors ? `${f.authors}, ${f.bookTitle || miss("שם הספר")}` : f.bookTitle || miss("שם הספר"));
+  const head = (f.volume ? `${f.volume} ` : "") + sc(titleText);
+  // A title ending in a numeral takes ", at" before a page pinpoint (R3.2(a)).
+  const pin = !f.pinpoint ? "" : /^[§¶]/.test(f.pinpoint) || !/\d$/.test(titleText) ? ` ${f.pinpoint}` : `, at ${f.pinpoint}`;
+  const paren = bookParen(f, warnings, unrep);
+  reportExtraFields(f, BOOK_USED, warnings, unrep);
+  return finish(appendRemainder(`${head}${pin} ${paren}`, f.unparsedRemainder, warnings, unrep), warnings, missing, unrep);
 }
 
 export function renderBookChapter(f: ForeignChapterFields): RenderResult {
@@ -338,27 +355,16 @@ export function renderBookChapter(f: ForeignChapterFields): RenderResult {
   for (const k of ["authors", "chapterTitle", "bookTitle", "firstPage", "year"] as const) {
     if (!f[k]) missing.push(k);
   }
-  const pages = f.firstPage ? pageSpan(f.firstPage, f.pinpoint) : miss("עמוד");
-  const paren = [
-    f.editors ? `${f.editors} ed${/(&|,)/.test(f.editors) ? "s" : ""}.` : "",
-    [f.edition ? `${f.edition} ed.` : "", f.year || miss("שנה")].filter(Boolean).join(" "),
-  ]
-    .filter(Boolean)
-    .join(", ");
-  return finish(
-    `${f.authors || miss("מחבר")}, ${f.chapterTitle ? italicTitle(f.chapterTitle, warnings) : it(miss("שם הפרק"))}, in ${sc(
-      f.bookTitle || miss("שם הספר"),
-    )} ${pages} (${paren})`,
-    warnings,
-    missing,
-    chapterUnrep(f, warnings),
-  );
-}
-
-function chapterUnrep(f: ForeignChapterFields, warnings: string[]): string[] {
   const unrep: string[] = [];
-  reportExtraFields(f, ["authors", "chapterTitle", "bookTitle", "firstPage", "pinpoint", "editors", "edition", "year"], warnings, unrep);
-  return unrep;
+  // A missing first page stays missing; a supplied pinpoint is never promoted.
+  const pages = `${f.firstPage || miss("עמוד")}${f.pinpoint ? `, ${f.pinpoint}` : ""}`;
+  const paren = bookParen(f, warnings, unrep);
+  reportExtraFields(f, ["authors", "chapterTitle", "bookTitle", "firstPage", "pinpoint", "editors", "edition", "year", "volume", "translators", "publisher", "publisherStatus", "originalYear"], warnings, unrep);
+  // R15.5.1(a) / Israeli 36.8: roman comma outside the italic title, italic "in".
+  const out = `${f.authors || miss("מחבר")}, ${f.chapterTitle ? italicTitle(f.chapterTitle, warnings) : it(miss("שם הפרק"))}, ${it("in")} ${f.volume ? `${f.volume} ` : ""}${sc(
+    f.bookTitle || miss("שם הספר"),
+  )} ${pages} ${paren}`;
+  return finish(appendRemainder(out, f.unparsedRemainder, warnings, unrep), warnings, missing, unrep);
 }
 
 export function renderInternet(f: ForeignInternetFields): RenderResult {

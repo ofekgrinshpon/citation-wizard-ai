@@ -1,5 +1,6 @@
 import { extractUnpublishedWork } from "./unpublished";
 import { extractPeriodical } from "./periodical";
+import { extractBookWork } from "./bookWorks";
 /**
  * Deterministic foreign-source detection + field extraction (Bluebook 22, M1).
  *
@@ -580,6 +581,12 @@ export function detectForeignSource(raw: string): ForeignDetection | null {
     return build("other", "OTHER", per.fields);
   }
 
+  // Stage 5 batch 4: bounded book/chapter grammar. Signalled ambiguous input
+  // surfaces as generic foreign "other" (preserved by the local adapter).
+  const bw = extractBookWork(text);
+  if (bw?.kind === "chapter") return build(bw.preserve ? "other" : "book_chapter", "OTHER", bw.fields);
+  if (bw?.kind === "book" && bw.explicitNew) return build(bw.preserve ? "other" : "book", "OTHER", bw.fields);
+
   // 5a. Book chapter (before article/book so "in <Book>" never collapses) — M2A
   const chap = extractBookChapter(text);
   if (chap) return build("book_chapter", "OTHER", chap);
@@ -588,9 +595,10 @@ export function detectForeignSource(raw: string): ForeignDetection | null {
   const art = extractJournalArticle(text);
   if (art) return build("journal_article", journalJurisdiction(art.journal), art);
 
-  // 5b. Book — M2A
+  // 5b. Book — M2A (existing grammar first), then the bounded batch-4 grammar.
   const book = extractBook(text);
   if (book) return build("book", "OTHER", book);
+  if (bw?.kind === "book" && bw.signal) return build(bw.preserve ? "other" : "book", "OTHER", bw.fields);
 
   // 6. UK statute (modern form)
   const ukAct = extractUkStatute(text);

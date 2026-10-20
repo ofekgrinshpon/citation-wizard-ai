@@ -158,6 +158,23 @@ describe("BatchFootnoteBuilder — explicit regeneration", () => {
     expect(html).toContain("&lt;b&gt;");
     expect(html).not.toMatch(/##|\^\^/);
   });
+  it("R15.5.1(a) manual chapter choice reaches actual batch regeneration locally with italic in", async () => {
+    const input = "Ana Roe, Quiet <b>Rules</b>, in 3 The Synthetic Collection 210, 214 (Ben Poe ed., Cy Lu trans., 2015)";
+    localStorage.setItem("footnote_cells_row-project", JSON.stringify([
+      { id: 1, key: "k1", input, output: "old output", status: "valid", detectedType: "foreign" },
+    ]));
+    saveRecord("u1", applyOverride(createRecord("batch:k1", input), { scalars: { family: "collection_component", subtype: "collection_component.chapter" } }));
+    const actual = await vi.importActual<typeof import("@/lib/runCitation")>("@/lib/runCitation");
+    b.runCitation.mockImplementation(actual.runCitation);
+    render(<BatchFootnoteBuilder />);
+    await act(async () => { fireEvent.click(screen.getByRole("button", { name: "הפקה מחדש לפי הסיווג" })); });
+    await waitFor(() => expect(b.runCitation).toHaveBeenCalledTimes(1));
+    expect(b.runCitation.mock.calls[0][0].overrideType).toBe("foreign_book_chapter");
+    const result = await b.runCitation.mock.results[0].value;
+    expect(result.citation).toBe("Ana Roe, ##Quiet <b>Rules</b>##, ##in## 3 ^^The Synthetic Collection^^ 210, 214 (Ben Poe ed., Cy Lu trans., 2015).");
+    expect(fetchSpy).not.toHaveBeenCalled();
+    expect(vi.mocked(supabase.functions.invoke).mock.calls.every(([name]) => name === "cost-telemetry-event")).toBe(true);
+  });
   it("R17.2 unsupported sibling (letter) choice is generic and flagged, never the manuscript renderer", async () => {
     const input = "Maya Cohen, Courts and Memory (2024) (unpublished manuscript)";
     localStorage.setItem("footnote_cells_row-project", JSON.stringify([

@@ -169,6 +169,14 @@ export interface ForeignBookFields {
   translators?: string;
   pinpoint?: string;
   year?: string;
+  /** Unlabelled "Author, Title" heading kept whole (no author boundary asserted). */
+  heading?: string;
+  /** Stage 5 batch 4: supplied publisher; rendered only when publisherStatus is "non-original" (R15.4). */
+  publisher?: string;
+  publisherStatus?: "non-original" | "original";
+  /** Explicitly supplied original publication year (second parenthetical). */
+  originalYear?: string;
+  unparsedRemainder?: string;
 }
 
 export interface ForeignChapterFields {
@@ -180,6 +188,14 @@ export interface ForeignChapterFields {
   editors?: string;
   edition?: string;
   year?: string;
+  volume?: string;
+  translators?: string;
+  /** Stage 5 batch 4: supplied publisher; rendered only when publisherStatus is "non-original" (R15.4). */
+  publisher?: string;
+  publisherStatus?: "non-original" | "original";
+  /** Explicitly supplied original publication year (second parenthetical). */
+  originalYear?: string;
+  unparsedRemainder?: string;
 }
 
 export interface ForeignInternetFields {

@@ -7,6 +7,7 @@ import * as statuteAdapter from "@/lib/foreignStatuteAdapter";
 import { renderUsUnreportedLocal } from "@/lib/usUnreportedLocal";
 import { renderUnpublishedLocal } from "@/lib/unpublishedWorkLocal";
 import { renderPeriodicalLocal } from "@/lib/periodicalLocal";
+import { renderBookLocal } from "@/lib/bookLocal";
 import * as abbreviations from "@/data/abbreviations";
 import * as validation from "@/lib/citationValidation";
 import * as telemetry from "@/lib/costTelemetry";
@@ -63,7 +64,7 @@ function harness(options: { rawInput?: string; sourceType?: abbreviations.Source
   const setCitationStatus = vi.fn();
   const citationRevision = { current: 0 };
   const citationScope = { current: { accountId: "fixture-user", projectId: "project-preserved", mode: "freetext" } };
-  const callAPI = handler("callAPI", { ...adapter, ...statuteAdapter, ...telemetry, renderUsUnreportedLocal, renderUnpublishedLocal, renderPeriodicalLocal, invokeFunction, retryCitationFunction, toast, handleRefundResponse, projectId: "project-preserved", crypto: { randomUUID: () => "request-preserved" },
+  const callAPI = handler("callAPI", { ...adapter, ...statuteAdapter, ...telemetry, renderUsUnreportedLocal, renderUnpublishedLocal, renderPeriodicalLocal, renderBookLocal, invokeFunction, retryCitationFunction, toast, handleRefundResponse, projectId: "project-preserved", crypto: { randomUUID: () => "request-preserved" },
     clearCitationRetry: () => { citationRevision.current += 1; citationRetryRef.current = null; }, citationRevision, citationScope, citationRetryRef, setCitationRetry, setCitationStatus, user: { id: "fixture-user" }, mode: "freetext",
   });
   const insert = vi.fn(async (_rows: Array<Record<string, unknown>>) => ({}));
