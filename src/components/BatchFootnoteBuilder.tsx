@@ -766,6 +766,7 @@ export function BatchFootnoteBuilder({}: BatchProps) {
                 onInputChange={updateCellInput}
                 onOutputChange={handleReviewOutputChange}
                 onSourceTypeChange={handleReviewSourceTypeChange}
+                foreignScope={{ accountId: user?.id, itemKey: `batch:${cell.key}` }}
                 onApproveToggle={handleReviewApproveToggle}
                 onRegenerate={regenerateOne}
                 newAttempt={cell.status === "error" && cell.citationRetry ? {

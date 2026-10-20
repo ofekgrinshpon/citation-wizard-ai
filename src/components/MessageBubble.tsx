@@ -8,6 +8,8 @@ import { citationToHtml, citationToPlain } from "@/lib/citationRichText";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { RULE_EXPLANATIONS } from "@/data/ruleTooltips";
 import { SourceTypeConfirmation } from "./SourceTypeConfirmation";
+import { ForeignSourcePicker } from "./ForeignSourcePicker";
+import { isForeignSourceType } from "@/data/bluebook/types";
 import { VerifiedAutocomplete } from "./VerifiedAutocomplete";
 import { useOffice } from "@/hooks/useOffice";
 import { insertCitationAsFootnote } from "@/lib/wordInsertion";
@@ -32,9 +34,11 @@ interface MessageBubbleProps {
   onEdit?: (newContent: string) => void;
   onUpdateAssistantContent?: (newContent: string) => void;
   onSelectOption?: (optionText: string) => void;
+  /** Local foreign-source classification scope (assistant citations only). */
+  foreignScope?: { accountId: string | null | undefined; itemKey: string; input: string };
 }
 
-export function MessageBubble({ msg: rawMsg, detectedType, onChangeSourceType, onEdit, onUpdateAssistantContent, onSelectOption }: MessageBubbleProps) {
+export function MessageBubble({ msg: rawMsg, detectedType, onChangeSourceType, onEdit, onUpdateAssistantContent, onSelectOption, foreignScope }: MessageBubbleProps) {
   // Rule 1.10 safety net: enforce Hebrew number-range order on display/copy,
   // including cached messages produced before the server-side fix.
   const msg: Message = rawMsg.role === "assistant"
@@ -185,6 +189,14 @@ export function MessageBubble({ msg: rawMsg, detectedType, onChangeSourceType, o
               <SourceTypeConfirmation
                 detectedType={detectedType}
                 onChangeType={onChangeSourceType}
+              />
+            )}
+            {detectedType && foreignScope && isForeignSourceType(detectedType) && (
+              <ForeignSourcePicker
+                accountId={foreignScope.accountId}
+                itemKey={foreignScope.itemKey}
+                input={foreignScope.input}
+                output={msg.content}
               />
             )}
             {msg.content.split("\n").map((line, i) => {

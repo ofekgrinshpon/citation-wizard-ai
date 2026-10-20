@@ -68,8 +68,9 @@ const CATEGORY_TO_SOURCE_TYPE: Partial<Record<BibSourceCategory, SourceType>> = 
   caselaw_district: "case_law_database",
   caselaw_magistrate: "case_law_database",
   caselaw_specialized: "case_law_database",
-  foreign_caselaw: "foreign_case_us",
-  foreign_legislation: "foreign_statute_us",
+  // Generic foreign categories carry no jurisdiction (never a U.S. default).
+  foreign_caselaw: "foreign_case_other",
+  foreign_legislation: "foreign",
   foreign_books: "foreign_book",
   foreign_articles: "foreign_journal_article",
   foreign_internet: "foreign_internet",
@@ -626,6 +627,7 @@ export function BibliographyGenerator() {
                 onRemove={() => removeReviewItem(item.id)}
                 onPickOption={(opt) => pickDisambiguation(item.id, opt)}
                 onChangeCategory={(cat) => handleChangeCategory(item.id, cat)}
+                accountId={user?.id}
               />
             ))}
           </div>
@@ -765,6 +767,7 @@ function ReviewRow({
   onRemove: () => void;
   onPickOption: (opt: string) => void;
   onChangeCategory: (cat: BibSourceCategory) => void;
+  accountId?: string | null;
 }) {
   const hasMissing = item.status === "ok" && /\[חסר:/.test(item.citation);
   const detectedCat = item.sourceTypeOverride

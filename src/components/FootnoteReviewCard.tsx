@@ -3,7 +3,8 @@ import { useState, useEffect } from "react";
 import { SOURCE_TYPE_LABELS, type SourceType } from "@/data/abbreviations";
 import { FormattedCitation } from "./FormattedCitation";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { toForeignIdentity } from "@/data/bluebook/types";
+import { toForeignIdentity, isForeignSourceType } from "@/data/bluebook/types";
+import { ForeignSourcePicker } from "./ForeignSourcePicker";
 
 export interface ReviewCardCell {
   id: number;
@@ -35,6 +36,8 @@ interface Props {
   originLabel?: string;
   /** Replaces the ✕ remove button label/behavior hint when provided. */
   hideRemove?: boolean;
+  /** Local foreign-source classification scope (account + stable item key). */
+  foreignScope?: { accountId: string | null | undefined; itemKey: string };
 }
 
 const TYPE_OPTIONS: SourceType[] = [
@@ -58,8 +61,11 @@ const TYPE_OPTIONS: SourceType[] = [
 
 /** Foreign families (Rule 35.1 → current Bluebook). Family only — jurisdiction stays automatic. */
 const FOREIGN_TYPE_OPTIONS: { type: SourceType; label: string }[] = [
-  { type: "foreign_case_us", label: "פסיקה" },
-  { type: "foreign_statute_us", label: "חקיקה" },
+  // Generic choices never default to a U.S. jurisdiction.
+  { type: "foreign_case_other", label: "פסיקה" },
+  { type: "foreign_case_us", label: "פסיקה אמריקנית" },
+  { type: "foreign_statute_us", label: "חקיקה אמריקנית" },
+  { type: "foreign_statute_uk", label: "חקיקה בריטית" },
   { type: "foreign_constitution", label: "חוקה" },
   { type: "foreign_book", label: "ספר" },
   { type: "foreign_journal_article", label: "מאמר בכתב עת" },
@@ -98,6 +104,7 @@ export function FootnoteReviewCard({
   onCopy,
   originLabel,
   hideRemove,
+  foreignScope,
 }: Props) {
   const [editInput, setEditInput] = useState(false);
   const [draftOutput, setDraftOutput] = useState(cell.output ?? "");
@@ -236,6 +243,10 @@ export function FootnoteReviewCard({
           </span>
         )}
       </div>
+
+      {foreignScope && isForeignSourceType(activeType) && (
+        <ForeignSourcePicker accountId={foreignScope.accountId} itemKey={foreignScope.itemKey} input={cell.input} output={cell.output} />
+      )}
 
       {/* Output */}
       <div className="mb-2">

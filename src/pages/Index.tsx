@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { fingerprintInput } from "@/lib/foreignClassification";
 import { Link, useNavigate } from "react-router-dom";
 import { CitationRequestStatusLink } from "@/components/CitationRequestStatusLink";
 import { MessageBubble } from "@/components/MessageBubble";
@@ -1138,6 +1139,9 @@ const Index = () => {
                   key={i}
                   msg={msg}
                   detectedType={msg.role === "assistant" ? messageSourceTypes[i] : undefined}
+                  foreignScope={msg.role === "assistant" && messageRawInputs[i]
+                    ? { accountId: user?.id, itemKey: `chat:${projectId ?? "default"}:${i}:${fingerprintInput(messageRawInputs[i])}`, input: messageRawInputs[i] }
+                    : undefined}
                   onEdit={
                     msg.role === "user"
                       ? async (newContent: string) => {
