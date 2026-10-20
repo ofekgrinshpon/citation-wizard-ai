@@ -1,7 +1,7 @@
 import { MemoryRouter } from "react-router-dom";
 import { webcrypto } from "node:crypto";
 import { act, cleanup, fireEvent, render as rtlRender, screen, waitFor } from "@testing-library/react";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterAll, afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const render = (ui: React.ReactElement) => rtlRender(ui, { wrapper: MemoryRouter });
 import { BibliographyGenerator } from "@/components/BibliographyGenerator";
@@ -645,3 +645,14 @@ it("does not keep the old failed request link after a new attempt returns a choi
   expect(requestAt(1).retryOfRequestId).toBe(requestAt(0).requestId);
   expect(requestAt(1).requestId).not.toBe(requestAt(0).requestId);
 });
+
+// Batch B: the actual host must plan through the shared pure planner with declared capabilities.
+const plannerHosts = vi.hoisted(() => new Set<string>());
+vi.mock("@/lib/citationPlanner", async (original) => {
+  const a = await original<typeof import("@/lib/citationPlanner")>();
+  return { ...a,
+    planLocalCitation: (p: Parameters<typeof a.planLocalCitation>[0], c: Parameters<typeof a.planLocalCitation>[1]) => { plannerHosts.add(c.host); return a.planLocalCitation(p, c); },
+    resolveCitationResponse: (p: Parameters<typeof a.resolveCitationResponse>[0], d: Parameters<typeof a.resolveCitationResponse>[1], c: Parameters<typeof a.resolveCitationResponse>[2]) => { plannerHosts.add(c.host + ":resolve"); return a.resolveCitationResponse(p, d, c); },
+  };
+});
+afterAll(() => { expect(plannerHosts.has("runner")).toBe(true); expect(plannerHosts.has("runner:resolve")).toBe(true); });
