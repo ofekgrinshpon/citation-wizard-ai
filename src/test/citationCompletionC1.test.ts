@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { acceptCitationCompletion } from "@/lib/citationCompletion";
 import { CHAT_HOST, RUNNER_HOST, planCitationEvidence, planLocalCitation, planTypedRequest, resolveCitationResponse } from "@/lib/citationPlanner";
-import { c1ServerPayload, C1_BROWN } from "./fixtures/c1ServerPayload";
+import { c1ServerPayload, C1_BROWN, C1_REDIGI } from "./fixtures/c1ServerPayload";
 import { buildForeignArticleRequest } from "@/lib/foreignArticleAdapter";
 import type { SourceType } from "@/data/abbreviations";
 import capture from "./fixtures/foreignArticleSearchCapture.json";
@@ -15,6 +15,33 @@ function plan(input = raw, sourceType: SourceType | null = null, caps = CHAT_HOS
   return planTypedRequest({ ...p, statutePrep: "statutePrep" in local ? local.statutePrep : null, canonicalRaw: input }, caps);
 }
 describe("C1 existing extraction envelope acceptance", () => {
+  it("retains ReDigi volume and reporter when only firstPage lacks provenance", async () => {
+    const input = "Capitol Records, LLC v. ReDigi Inc.";
+    const p = plan(input);
+    const { response } = await c1ServerPayload({ kind: "case", jurisdiction: "UNKNOWN", rawInput: input, parsedFields: { caseName: input } }, [C1_REDIGI]);
+    expect(response.fields).toMatchObject({ volume: "910", reporter: "F.3d", firstPage: "649", court: "2d Cir.", year: "2018" });
+    delete response.provenance.firstPage;
+    const result = resolveCitationResponse(p, { foreignLookup: response }, CHAT_HOST);
+    expect(result.kind).toBe("terminal");
+    if (result.kind !== "terminal") return;
+    expect(result.resolution.completion?.fields).toMatchObject({ volume: "910", reporter: "F.3d" });
+    expect(result.resolution.citation).toContain("910 F.3d [חסר: עמוד]");
+    expect(result.resolution.reply).not.toContain("לא אותר מקור פרסום");
+    expect(result.resolution.completion?.fields.firstPage).toBeUndefined();
+  });
+  it.each([false, true])("rejects crossed UK declaration with grounded US evidence, supplied anchor=%s", async anchored => {
+    const input = "Capitol Records, LLC v. ReDigi Inc." + (anchored ? " (2d Cir. 2018)" : "");
+    const p = plan(input);
+    const { response } = await c1ServerPayload({ kind: "case", jurisdiction: "UNKNOWN", rawInput: input, parsedFields: { caseName: "Capitol Records, LLC v. ReDigi Inc." } }, [C1_REDIGI]);
+    const crossed = { ...response, jurisdiction: "UK", identity: { ...response.identity, jurisdiction: "UK" } };
+    const result = resolveCitationResponse(p, { foreignLookup: crossed }, CHAT_HOST);
+    expect(result.kind).toBe("terminal");
+    if (result.kind !== "terminal") return;
+    expect(result.resolution.completion?.identityConfirmed).toBe(false);
+    expect(result.resolution.citation).toBe(input);
+    expect(result.resolution.warningMsg).toContain("שיפוט");
+    expect(result.resolution.completion?.fields).toEqual({});
+  });
   it("accepts real case server output identically, without requiring a new envelope or raw echo", async () => {
     const { response, calls } = await c1ServerPayload({ kind: "case", jurisdiction: "UNKNOWN", rawInput: raw, parsedFields: { caseName: raw } });
     const a = resolveCitationResponse(plan(), { foreignLookup: response }, CHAT_HOST);

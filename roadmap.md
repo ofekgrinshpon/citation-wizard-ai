@@ -1,6 +1,7 @@
 # Roadmap — research → memo → draft handoff (legal-research-v2)
 
 ## Unified pasted-citation infrastructure batch A (offline only)
+- [ ] C1 correction at 4f34e462: terminal server book/chapter outcomes, independently rendered US partials, jurisdiction evidence conflicts, transient host completion metadata; offline tests/report, no C2.
 - [x] Infrastructure C1 implementation/offline regression: shared strict partial acceptance and local/resolution parity; 3,752 passed / 1 skipped; report records compatibility limits. No C2 or deployment.
 - [ ] C1 independent QA: separate explicit app TypeScript/Vite gate evidence unavailable under manual-command prohibition; review unbound historical recovery compatibility branch.
 - [x] Narrow correction: effective-family conflicts and canonical lookup/response binding; actual-host/handler gates passed, full offline suite 3,426 passed / 1 skipped; no batch B. Separate app TypeScript/production-build evidence still blocked by harness visibility.
