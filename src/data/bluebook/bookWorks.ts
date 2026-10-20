@@ -5,15 +5,15 @@
  * Bounded grammars (verbatim supplied text; no dictionaries, no lookups):
  *   Labelled:  Key: value; Key: value; …   (≥ 2 segments, first key known)
  *   Book:      [Vol ]Heading[, at Pin | § N | ¶ N] (Paren)[tail]
- *   Chapter:   Author, Title, in [Vol ]Collection[ First][, Pin | , at Pin] (Paren)[tail]
+ *   Chapter:   Heading, in [Vol ]Collection[, at Pin] (Paren)[tail]
  *   Paren:     [Ed ed[s]., ][Tr trans., ][Nd ed. ]YYYY
  *
  * The author/title boundary is never inferred from name shape. A free-text
  * book heading is kept whole (author and title share small caps, so the
- * output is identical); a chapter needs exactly one comma before ", in"
- * (R15.5.1(a) components carry an author), otherwise the input is preserved.
- * A bare trailing page after a title ending in a numeral, or a bare roman
- * numeral, is ambiguous (title vs pinpoint) and needs ", at".
+ * output is identical). Any comma in an unlabelled chapter heading is an
+ * ambiguous author/title boundary, never evidence of author identity.
+ * Lone trailing numerals in editor-only book or chapter collection titles
+ * remain ambiguous; explicit labels / ", at" resolve pages without guessing.
  * Supplied publishers render only with an explicit non-original status;
  * free-text publishers, unknown status and pre-1900 editions are preserved.
  */
@@ -41,7 +41,7 @@ const normPin = (s: string) => s.replace(/\s*[–\-]\s*/g, "–").replace(/\s*,\
 interface Paren { editors?: string; translators?: string; edition?: string; year: string; publisher?: string; contributors: boolean }
 function parseParen(inner: string): Paren | null {
   const comps = inner.trim().split(/,\s+/);
-  const last = comps.pop()!.match(new RegExp(String.raw`^(?:(.+?)\s+)??(?:(${EDITION})\s+ed\.\s+)?((?:1[5-9]|20)\d{2})$`));
+  const last = comps.pop()?.match(new RegExp(String.raw`^(?:(.+?)\s+)??(?:(${EDITION})\s+ed\.\s+)?((?:1[5-9]|20)\d{2})$`));
   if (!last) return null;
   const out: Paren = { year: last[3], contributors: false };
   if (last[1]) out.publisher = last[1];
@@ -129,17 +129,21 @@ export function extractBookWork(raw: string): BookWorkParse | null {
     const vm = coll.match(/^(\d{1,3})\s+(?=\D)/);
     if (vm) { fields.volume = vm[1]; coll = coll.slice(vm[0].length); }
     const at = coll.match(new RegExp(String.raw`^(.+?),\s+at\s+(${PIN})$`));
+    const sect = coll.match(new RegExp(String.raw`^(.+?)\s+(${SECT})$`));
     const pages = coll.match(new RegExp(String.raw`^(.+?)\s+(\d{1,5}|${ROMAN})(?:,\s+(${PIN}))?$`));
-    if (at) { fields.bookTitle = at[1]; fields.pinpoint = normPin(at[2]); }
-    else if (pages) { fields.bookTitle = pages[1]; fields.firstPage = pages[2]; if (pages[3]) fields.pinpoint = normPin(pages[3]); }
-    else fields.bookTitle = coll;
-    const parts = head.split(/,\s+/);
     let preserve: BookWorkParse["preserve"];
-    if (parts.length === 2) { fields.authors = parts[0]; fields.chapterTitle = parts[1]; }
-    else if (parts.length === 1) fields.chapterTitle = head;
-    else { fields.chapterTitle = head; preserve = "ambiguous_author"; }
-    preserve ??= applyParen(fields, paren);
-    return { kind: "chapter", fields, preserve, signal: true };
+    if (at) { fields.bookTitle = at[1]; fields.pinpoint = normPin(at[2]); }
+    else if (sect) { fields.bookTitle = sect[1]; fields.pinpoint = normPin(sect[2]); }
+    else if (pages && pages[3] && !/\d$/.test(pages[1])) {
+      fields.bookTitle = pages[1]; fields.firstPage = pages[2]; fields.pinpoint = normPin(pages[3]);
+    }
+    else if (pages) { fields.bookTitle = coll; preserve = "ambiguous_pinpoint"; }
+    else fields.bookTitle = coll;
+    fields.chapterTitle = head;
+    if (head.includes(",")) preserve = "ambiguous_author";
+    const parenReason = applyParen(fields, paren);
+    preserve ??= parenReason;
+    return { kind: "chapter", fields, preserve, signal: true, explicitNew: true };
   }
   // Article shape ("…, 3 J.L. & Econ. 1") belongs to the journal path.
   if (/,\s*\d+\s+[A-Z][A-Za-z.'&\s]{2,60}?\s+\d+$/.test(pre)) return null;
@@ -157,12 +161,14 @@ export function extractBookWork(raw: string): BookWorkParse | null {
     // A bare trailing page is a pinpoint only when the remaining title does not
     // itself end in a numeral; bare roman numerals always need ", at".
     const bare = head.match(/^(.+?)\s+(\d{1,5}(?:\s*[–\-]\s*\d{1,5})?)$/);
-    if (bare && !/\d$/.test(bare[1])) { head = bare[1]; fields.pinpoint = normPin(bare[2]); }
+    const editorOnly = !!paren.editors && !head.includes(",");
+    if (bare && !/\d$/.test(bare[1]) && !editorOnly) { head = bare[1]; fields.pinpoint = normPin(bare[2]); }
     else if (new RegExp(String.raw`\s(?:${PIN})$`).test(head)) preserve = "ambiguous_pinpoint";
   }
   if (/,/.test(head)) fields.heading = head;
   else { fields.bookTitle = head; if (paren.editors) explicitNew = true; }
-  preserve ??= applyParen(fields, paren);
+  const parenReason = applyParen(fields, paren);
+  preserve ??= parenReason;
   if (preserve === "ambiguous_pinpoint") explicitNew = true;
   return { kind: "book", fields, preserve, signal, explicitNew };
 }

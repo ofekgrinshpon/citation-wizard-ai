@@ -1,5 +1,10 @@
 # Roadmap — research → memo → draft handoff (legal-research-v2)
 
+## Authorized book/chapter boundary correction (offline only)
+- [x] Reproduce ambiguous comma chapter headings and numeric editor-only/collection titles through real callers (10 pre-fix failures).
+- [x] Preserve ambiguous boundaries without inferred authors or pages; retain explicit metadata controls.
+- [x] Focused 93/93; full 3,351 passed / 1 skipped; app typecheck and automatic build passed; bounded ledger updated. No next family.
+
 ## Stage 5 batch 2 — manuscripts/theses (offline only)
 - [x] R17.2.1–17.2.2 parser/renderer, classification route, chat/batch wiring and tests; ledger updated.
 - [ ] Remaining Stage 5 family batches (each separately authorized).

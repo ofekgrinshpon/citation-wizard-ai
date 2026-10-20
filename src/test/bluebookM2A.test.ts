@@ -126,7 +126,7 @@ describe("M2A — books and chapters", () => {
     expect(det("H.L.A. Hart, The Concept of Law (revised by someone 1994)")).toBeNull();
   });
   it("C1 complete chapter", () => {
-    const s = "Joseph Raz, The Rule of Law and Its Virtue, in The Authority of Law 210, 214 (1979)";
+    const s = "Author: Joseph Raz; Chapter: The Rule of Law and Its Virtue; Collection: The Authority of Law; First page: 210; Pinpoint: 214; Year: 1979";
     const d = detectForeignSource(s)!;
     expect(d.kind).toBe("book_chapter");
     expect(plain(det(s)!.citation)).toBe(
@@ -135,13 +135,13 @@ describe("M2A — books and chapters", () => {
   });
   it("C2 chapter with editors and pinpoint", () => {
     const d = detectForeignSource(
-      "Jeremy Waldron, The Concept and the Rule of Law, in Oxford Essays in Jurisprudence 1, 5 (Leslie Green & Brian Leiter eds., 2013)",
+      "Author: Jeremy Waldron; Chapter: The Concept and the Rule of Law; Collection: Oxford Essays in Jurisprudence; First page: 1; Pinpoint: 5; Editor: Leslie Green & Brian Leiter; Year: 2013",
     )!;
     expect(d.kind).toBe("book_chapter");
     expect(d.fields).toMatchObject({ firstPage: "1", pinpoint: "5", editors: "Leslie Green & Brian Leiter", year: "2013" });
   });
   it("C3 chapter is never a journal article or book", () => {
-    const d = detectForeignSource("Joseph Raz, The Rule of Law and Its Virtue, in The Authority of Law 210 (1979)")!;
+    const d = detectForeignSource("Author: Joseph Raz; Chapter: The Rule of Law and Its Virtue; Collection: The Authority of Law; First page: 210; Year: 1979")!;
     expect(d.kind).toBe("book_chapter");
   });
 });
@@ -173,7 +173,7 @@ describe("M2A — journals", () => {
 
 describe("M2A — invariants", () => {
   it("repeat of a new M2A source uses Israeli Rule 37", () => {
-    const full = det("Joseph Raz, The Rule of Law and Its Virtue, in The Authority of Law 210 (1979)")!.citation;
+    const full = det("Author: Joseph Raz; Chapter: The Rule of Law and Its Virtue; Collection: The Authority of Law; First page: 210; Year: 1979")!.citation;
     const out = applyRepeatCitationRules([
       { id: 1, input: "Raz chapter", output: full },
       { id: 2, input: "חוק העונשין", output: 'חוק העונשין, התשל"ז-1977.' },
