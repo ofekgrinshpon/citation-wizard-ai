@@ -78,6 +78,7 @@ import {
 } from "../_shared/trustedHosts.ts";
 import { normalizeHebrewNumberRanges } from "../_shared/hebrewNumberRange.ts";
 import { runForeignLookup, articleLookupFallback, type ForeignLookupResult } from "./foreignLookup.ts";
+import { isStatuteLookupRequest, validateStatuteRequest, resolveStatuteLookup } from "./statuteRoute.ts";
 import { createCitationDiagnosticCollector } from "../_shared/citationDiagnostic.ts";
 import { authorizeCitationDiagnostic, isCitationDiagnosticPreflight, CITATION_DIAGNOSTIC_BUILD, CITATION_DIAGNOSTIC_PARSER } from "../_shared/citationDiagnosticGate.ts";
 import { normalizeEditorPlacement } from "../_shared/articleCitationValidator.ts";
@@ -1768,6 +1769,14 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
         status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+    // Stage 4: a malformed typed statute request is invalid input, rejected
+    // before any usage claim (existing invalid-input semantics, no new refund).
+    const statuteRequest = isStatuteLookupRequest(foreignLookupRequest);
+    if (statuteRequest && !validateStatuteRequest(foreignLookupRequest)) {
+      return new Response(JSON.stringify({ error: "INVALID_INPUT", messageHe: INVALID_INPUT_MSG_HE }), {
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
     const lastUserMessage = [...messages].reverse().find((m: { role: string }) => m.role === "user");
     const userInput = lastUserMessage?.content || "";
@@ -1794,7 +1803,7 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
     const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
     const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 
-    if (SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY && userInput.length >= 2 && foreignLookupRequest?.kind !== "journal_article") {
+    if (SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY && userInput.length >= 2 && foreignLookupRequest?.kind !== "journal_article" && !statuteRequest) {
       try {
         const sb = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
         const searchTerm = articleRequest?.raw || userInput
@@ -1919,6 +1928,23 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
     // renders the citation with the existing Bluebook renderers. One citation
     // operation = one credit; the single Tier-2 open-web retry is included.
     let foreignLookupResult: ForeignLookupResult | null = null;
+    // Stage 4: a typed statute request always terminates with a typed result
+    // (grounded, unmatched, ambiguous, or an honest error). It never falls
+    // through to the generic model and is never retried here.
+    if (statuteRequest) {
+      const statuteResult = await resolveStatuteLookup(foreignLookupRequest, {
+        apiKey: Deno.env.get("PERPLEXITY_API_KEY"),
+        fetchImpl: trackedFetch,
+        runLookup: runForeignLookup,
+        onProviderUnknown: markCitationProviderUnknown,
+        onError: (flErr) => console.error("foreign statute lookup error:", flErr),
+        ...(diagnostic ? { diagnosticObserver: diagnostic.collector.observe } : {}),
+      });
+      return completeResponse(new Response(JSON.stringify({ content: "", foreignLookup: statuteResult,
+        ...diagnosticEnvelope(statuteResult.error === "lookup_failed" ? "lookup_failed" : "lookup_complete") }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      }));
+    }
     if (foreignLookupRequest && foreignLookupRequest.enabled === true) {
       const flKind = foreignLookupRequest.kind;
       const flJur = foreignLookupRequest.jurisdiction;
@@ -1928,7 +1954,7 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
           ? (foreignLookupRequest.parsedFields as Record<string, string>)
           : undefined;
       if (
-        ["case", "journal_article", "book", "book_chapter", "statute"].includes(flKind) &&
+        ["case", "journal_article", "book", "book_chapter"].includes(flKind) &&
         ["US", "UK", "OTHER", "UNKNOWN"].includes(flJur) &&
         flRaw.trim()
       ) {
@@ -1951,11 +1977,7 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
           if (
             !!foreignLookupResult?.articleResolution ||
             (foreignLookupResult?.identity.matched && Object.keys(foreignLookupResult.fields).length > 0) ||
-            (foreignLookupResult?.disambiguation && foreignLookupResult.disambiguation.length > 1) ||
-            // Statutes never fall through to the model: an unmatched, ambiguous
-            // or conflicting lookup is an honest typed state, not a prompt hint.
-            (flKind === "statute" && !!foreignLookupResult &&
-              (foreignLookupResult.identity.matched || foreignLookupResult.identity.conflicts.length > 0))
+            (foreignLookupResult?.disambiguation && foreignLookupResult.disambiguation.length > 1)
           ) {
             // Older clients merge article fields without the new identity and
             // pinpoint contract. Do not let them consume a partial typed result.

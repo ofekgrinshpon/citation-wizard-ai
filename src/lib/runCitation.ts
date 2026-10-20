@@ -36,6 +36,7 @@ import type { ForeignDetection } from "@/data/bluebook/extract";
 import { parseForeignArticleInput } from "../../supabase/functions/_shared/foreignArticle";
 import { extractWorkIdentifiers } from "../../supabase/functions/_shared/workIdentifiers";
 import { buildForeignArticleRequest, renderForeignArticleCache, renderForeignArticleLookup } from "@/lib/foreignArticleAdapter";
+import { prepareForeignStatute, renderForeignStatuteLookup, renderStatuteLocal } from "@/lib/foreignStatuteAdapter";
 import { citationDiagnosticBody, observeCitationDiagnostic, type CitationDiagnosticActivation } from "@/lib/citationDiagnostic";
 
 interface ForeignLookupResponse {
@@ -53,20 +54,6 @@ export function extractForeignCaseName(raw: string): string | null {
   return m ? m[1].trim().replace(/[,\s]+$/, "") : null;
 }
 
-/** Statute name anchor: leading text before any section apparatus. */
-export function extractStatuteNameHint(raw: string): string | null {
-  const head = raw.split("§")[0].replace(/\b(?:1[6-9]|20)\d{2}\b/g, "").replace(/[,\s]+$/, "").trim();
-  return /[A-Za-z]{3}/.test(head) ? head : null;
-}
-
-/** Statute section anchor(s): the § tail, preserving lists and ranges. */
-export function extractStatuteSectionsHint(raw: string): string[] | null {
-  const m = raw.match(/§{1,2}\s*([0-9A-Za-z][0-9A-Za-z().\-–]*(?:\s*,\s*[0-9A-Za-z().\-–]+)*)/);
-  if (!m) return null;
-  const items = m[1].split(",").map((s) => s.trim()).filter(Boolean);
-  return items.length ? items : null;
-}
-
 /**
  * Decide whether a foreign input is eligible for the grounded lookup and
  * with which jurisdiction. A case-shaped input without an explicit
@@ -80,19 +67,16 @@ export function planForeignLookup(
 ): { kind: ForeignSourceKind; jurisdiction: "US" | "UK" | "OTHER" | "UNKNOWN" } | null {
   const identity = toForeignIdentity(sourceType);
   const caseShaped = FOREIGN_CASE_SHAPE.test(raw);
+  // Statutes: the supported bound is explicit — US/UK only. The effective
+  // source type wins over a detection (never crossed); UNKNOWN is never US.
+  if (identity?.kind === "statute") {
+    return identity.jurisdiction === "US" || identity.jurisdiction === "UK" ? { kind: "statute", jurisdiction: identity.jurisdiction } : null;
+  }
+  if (detection?.kind === "statute") {
+    return detection.jurisdiction === "US" || detection.jurisdiction === "UK" ? { kind: "statute", jurisdiction: detection.jurisdiction } : null;
+  }
   if (detection && detection.kind === "case" && (detection.jurisdiction === "US" || detection.jurisdiction === "UK")) {
     return { kind: "case", jurisdiction: detection.jurisdiction };
-  }
-  // Statutes: the supported bound is explicit — US/UK only, from the source
-  // type or a deterministic detection. UNKNOWN is never treated as US, and an
-  // unresolved statute jurisdiction is unsupported, not guessed.
-  if (identity?.kind === "statute" || detection?.kind === "statute") {
-    const jur = detection?.kind === "statute" && (detection.jurisdiction === "US" || detection.jurisdiction === "UK")
-      ? detection.jurisdiction
-      : identity?.kind === "statute" && (identity.jurisdiction === "US" || identity.jurisdiction === "UK")
-        ? identity.jurisdiction
-        : null;
-    return jur ? { kind: "statute", jurisdiction: jur } : null;
   }
   if (identity && ["journal_article", "book", "book_chapter"].includes(identity.kind)) {
     return { kind: identity.kind, jurisdiction: identity.jurisdiction };
@@ -286,9 +270,13 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
     };
   }
 
+  // Stage 4: statutes go through the shared adapter. A manual statute choice
+  // is never crossed by a contradicting detection (honest mismatch instead).
+  const statutePrep = !isPinpoint ? prepareForeignStatute(sourceType, normalized, { manual: !!opts.overrideType }) : null;
+
   // 1b) Deterministic Bluebook rendering for a clearly identified foreign
   // source (Israeli Rule 35.1). No model call, no fabricated fields.
-  if (!isPinpoint && isForeignSourceType(sourceType)) {
+  if (!isPinpoint && isForeignSourceType(sourceType) && statutePrep?.outcome !== "mismatch") {
     const identifiers = suppliedArticle ? extractWorkIdentifiers(normalized) : null;
     const hasIdentifier = !!(identifiers?.doi || identifiers?.sourceUrl || identifiers?.conflicts.length);
     const rendered = renderForeignCitation(hasIdentifier ? identifiers!.text : normalized);
@@ -326,9 +314,17 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
   let foreignDetection = isForeignSourceType(sourceType) && !isPinpoint
     ? detectForeignSource(normalized)
     : null;
-  if (!isPinpoint && isForeignSourceType(sourceType)) {
+  if (statutePrep && statutePrep.outcome !== "lookup") {
+    // Complete supplied input or a manual mismatch: local, no paid request.
+    reportZeroWork(opts.telemetry, "local_foreign_formatter", "deterministic");
+    observeCitationDiagnostic(opts.diagnostic, rawInput, "deterministic");
+    return { ...renderStatuteLocal(statutePrep), telemetry: opts.telemetry, fromVerifiedStore: false };
+  }
+  if (statutePrep?.request) {
+    foreignLookupRequest = { ...statutePrep.request };
+  } else if (!isPinpoint && isForeignSourceType(sourceType)) {
     const plan = planForeignLookup(sourceType, normalized, foreignDetection);
-    if (plan) {
+    if (plan && plan.kind !== "statute") {
       const parsedFields: Record<string, string> = plan.kind === "journal_article" ? parseForeignArticleInput(normalized) : {};
       if (foreignDetection) {
         for (const [k, v] of Object.entries(foreignDetection.fields as Record<string, unknown>)) {
@@ -339,21 +335,6 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
       if (plan.kind === "case" && !parsedFields.caseName) {
         const name = extractForeignCaseName(normalized);
         if (name) parsedFields.caseName = name;
-      }
-      if (plan.kind === "statute") {
-        if (!parsedFields.statuteName) {
-          const name = extractStatuteNameHint(normalized);
-          if (name) parsedFields.statuteName = name;
-        }
-        if (!parsedFields.section && !parsedFields.sections) {
-          const sections = extractStatuteSectionsHint(normalized);
-          if (sections) {
-            if (sections.length > 1) parsedFields.sections = sections.join(", ");
-            else parsedFields.section = sections[0];
-          }
-        }
-        const year = normalized.match(/\b((?:1[6-9]|20)\d{2})\b/)?.[1];
-        if (year && !parsedFields.year) parsedFields.year = year;
       }
       foreignLookupRequest = plan.kind === "journal_article" ? { ...buildForeignArticleRequest(normalized) } : {
         enabled: true,
@@ -450,6 +431,11 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
     // User-supplied identity anchors win; grounded lookup fields fill the gaps;
     // anything ungrounded stays [חסר: …] via the existing renderer behavior.
     const fl = (data as { foreignLookup?: ForeignLookupResponse } | null)?.foreignLookup;
+    // Stage 4: a typed statute request is terminal — the typed response (or
+    // its absence) is rendered from supplied fields; model content is ignored.
+    if (statutePrep?.request) {
+      return { ...renderForeignStatuteLookup(statutePrep, (data as { foreignLookup?: unknown } | null)?.foreignLookup), telemetry: opts.telemetry, fromVerifiedStore: false };
+    }
     if (foreignLookupRequest && fl?.disambiguation && fl.disambiguation.length > 1) {
       const lines = fl.disambiguation.map(
         (o, i) => `${i + 1}. ${o.label} (${o.jurisdiction === "UK" ? "בריטניה" : "ארה\"ב"}) — ${o.url}`,
@@ -469,52 +455,6 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
     if (foreignLookupRequest?.kind === "journal_article") {
       const article = renderForeignArticleLookup(foreignLookupRequest as { parsedFields: Record<string, string> }, fl);
       if (article) return { ...article, telemetry: opts.telemetry, sourceType, sourceLabel: SOURCE_TYPE_LABELS[sourceType], fromVerifiedStore: false };
-    }
-    // 3b) Stage 4: grounded statute lookup → merge + deterministic render.
-    // User-supplied anchors win; lookup fields fill gaps; unmatched, ambiguous
-    // or conflicting evidence is an honest warning state, never a silent merge
-    // or a "verified" claim. Formatting complete is not source-accuracy proof.
-    if (foreignLookupRequest?.kind === "statute" && fl) {
-      const req = foreignLookupRequest as { jurisdiction: string; parsedFields: Record<string, string> };
-      const resolvedJur: ForeignJurisdiction | null =
-        fl.identity?.jurisdiction ?? (req.jurisdiction === "US" || req.jurisdiction === "UK" ? req.jurisdiction : null);
-      if (resolvedJur) {
-        const effectiveType = toSourceType("statute", resolvedJur);
-        const baseFields: Record<string, unknown> = { ...((fl.fields ?? {}) as Record<string, unknown>) };
-        // Never overwrite what the user supplied; lookup only fills gaps.
-        for (const [k, v] of Object.entries(req.parsedFields)) {
-          if (typeof v === "string" && v.trim()) baseFields[k] = v.trim();
-        }
-        if (typeof baseFields.sections === "string") {
-          const list = baseFields.sections.split(",").map((s) => s.trim()).filter(Boolean);
-          if (list.length) { baseFields.sections = list; delete baseFields.section; }
-          else delete baseFields.sections;
-        }
-        const rendered = renderForeignDetection({
-          sourceType: effectiveType,
-          kind: "statute",
-          jurisdiction: resolvedJur,
-          confidence: "deterministic",
-          fields: baseFields as unknown as ForeignFields,
-        });
-        if (rendered && rendered.citation.trim()) {
-          const warningBits = [...rendered.warnings];
-          if (!fl.identity?.matched || fl.identity?.conflicts?.length) {
-            warningBits.push("לא אומתו פרטי החוק כנגד מקור חיצוני יחיד; נשמרו הפרטים שסיפקתם ופרטים סותרים לא שולבו.");
-          }
-          if (rendered.missing.length) warningBits.push(`חסרים פרטים: ${getMissingFieldsSummary(effectiveType, rendered.missing)}`);
-          return {
-            telemetry: opts.telemetry,
-            reply: warningBits.length ? `${rendered.citation}\n⚠️ ${warningBits.join(" ")}` : rendered.citation,
-            citation: rendered.citation,
-            sourceType: effectiveType,
-            sourceLabel: SOURCE_TYPE_LABELS[effectiveType],
-            fromVerifiedStore: false,
-            status: warningBits.length ? "warning" : "valid",
-            warningMsg: warningBits[0],
-          };
-        }
-      }
     }
     if (foreignLookupRequest && fl?.fields && fl.identity?.matched && Object.keys(fl.fields).length > 0) {
       const req = foreignLookupRequest as { kind: ForeignSourceKind; jurisdiction: string; parsedFields: Record<string, string> };

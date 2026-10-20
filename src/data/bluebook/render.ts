@@ -262,7 +262,7 @@ export function renderUsStatute(
   const tail = f.year ? ` (${f.year})` : "";
   const unrep: string[] = [];
   reportExtraFields(f, ["statuteName", "titleNumber", "code", "section", "sections", "subsection", "year"], warnings, unrep);
-  return finish(`${head}${body}${tail}`, warnings, missing, unrep);
+  return finish(appendRemainder(`${head}${body}${tail}`, f.unparsedRemainder, warnings, unrep), warnings, missing, unrep);
 }
 
 export function renderUkStatute(f: ForeignStatuteFields): RenderResult {
@@ -277,7 +277,7 @@ export function renderUkStatute(f: ForeignStatuteFields): RenderResult {
   if (f.section) out += `, § ${f.section}`;
   const unrep: string[] = [];
   reportExtraFields(f, ["statuteName", "year", "regnalYear", "monarch", "chapter", "section"], warnings, unrep);
-  return finish(out, warnings, missing, unrep);
+  return finish(appendRemainder(out, f.unparsedRemainder, warnings, unrep), warnings, missing, unrep);
 }
 
 // ─── Secondary literature ────────────────────────────────────────

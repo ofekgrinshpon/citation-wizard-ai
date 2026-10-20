@@ -257,8 +257,7 @@ function textContainsParty(text: string, party: string): boolean {
 function normalizeTitle(s: string): string {
   return s
     .toLowerCase()
-    // Marker-like characters (#, *) are never meaningful title content.
-    .replace(/[.,'"’‘:;()\[\]#*]/g, " ")
+    .replace(/[.,'"’‘:;()\[\]]/g, " ")
     .replace(/\s+/g, " ")
     .trim();
 }
@@ -455,19 +454,64 @@ export function extractStatuteFromEvidence(
 }
 
 /**
- * Jurisdiction of ONE identity-matched statute source from its own explicit
- * citation form. A recognised host alone (legislation.gov.uk, cornell) proves
- * nothing — only an extracted citation signature does.
+ * Official record locator for a statute source. Only these record paths can
+ * establish a jurisdiction: a host alone, a bare "Act" or an "Act YEAR, c. N"
+ * form (shared by AU/CA/NZ/... legislation) never does. UK paths are limited
+ * to chapter-numbered series the existing UK renderer can represent.
+ */
+export interface StatuteRecord { jurisdiction: "US" | "UK"; year?: string; chapter?: string; title?: string; section?: string }
+export function statuteRecordFromUrl(url: string): StatuteRecord | null {
+  let u: URL;
+  try { u = new URL(url); } catch { return null; }
+  const host = u.hostname.replace(/^www\./, "").toLowerCase();
+  const path = decodeURIComponent(u.pathname);
+  if (host === "legislation.gov.uk") {
+    const m = path.match(/^\/(ukpga|apgb|aep)\/((?:1[6-9]|20)\d{2})\/(\d+)(?:\/|$)/);
+    return m ? { jurisdiction: "UK", year: m[2], chapter: m[3] } : null;
+  }
+  if (host === "law.cornell.edu") {
+    const m = path.match(/^\/uscode\/text\/(\d+)(?:\/([0-9A-Za-z.\-]+))?\/?$/);
+    return m ? { jurisdiction: "US", title: m[1], section: m[2] } : null;
+  }
+  if (host === "uscode.house.gov") {
+    const m = `${path}${u.search}`.match(/USC-prelim-title(\d+)-section([0-9A-Za-z.\-]+)/);
+    return m ? { jurisdiction: "US", title: m[1], section: m[2] } : null;
+  }
+  if (host === "govinfo.gov") {
+    const m = path.match(/USCODE-\d{4}-title(\d+)(?:-[^/]*?-sec([0-9A-Za-z.\-]+))?/);
+    return m ? { jurisdiction: "US", title: m[1], section: m[2] } : null;
+  }
+  return null;
+}
+
+function sectionItems(cite: StatuteCite): string[] {
+  return (cite.sections ?? cite.section ?? "").split(",").map((x) => x.trim()).filter(Boolean);
+}
+
+/** The extracted citation must agree with the official record it came from. */
+function recordConsistent(record: StatuteRecord, cite: StatuteCite): boolean {
+  if (record.jurisdiction === "UK") {
+    return !!cite.year && cite.year === record.year && (!cite.chapter || cite.chapter === record.chapter);
+  }
+  if (!cite.titleNumber || cite.titleNumber !== record.title) return false;
+  return !record.section || sectionItems(cite).some((x) => x === record.section || x.startsWith(`${record.section}(`));
+}
+
+/**
+ * Jurisdiction of ONE identity-matched statute source: an official record
+ * path whose locator is consistent with the citation extracted from the same
+ * source. Anything weaker leaves the jurisdiction unresolved.
  */
 function resolveStatuteJurisdiction(
   s: { url: string; title?: string; snippet?: string },
-): { jurisdiction: "US" | "UK"; sig: string; url: string } | null {
-  const ev = `${s.title ?? ""} ${s.snippet ?? ""}`;
-  const us = extractStatuteFromEvidence(ev, "US");
-  if (us) return { jurisdiction: "US", sig: `US|${us.titleNumber}|${us.section ?? us.sections ?? ""}`, url: s.url };
-  const uk = extractStatuteFromEvidence(ev, "UK");
-  if (uk) return { jurisdiction: "UK", sig: `UK|${normalizeTitle(uk.statuteName ?? "")}|${uk.year ?? ""}`, url: s.url };
-  return null;
+  nameAnchor: string | null,
+): { jurisdiction: "US" | "UK"; url: string } | null {
+  const record = statuteRecordFromUrl(s.url);
+  if (!record) return null;
+  const cite = extractStatuteFromEvidence(`${s.title ?? ""} ${s.snippet ?? ""}`, record.jurisdiction);
+  if (!cite || !recordConsistent(record, cite)) return null;
+  if (record.jurisdiction === "UK" && (!nameAnchor || normalizeTitle(cite.statuteName ?? "") !== normalizeTitle(nameAnchor))) return null;
+  return { jurisdiction: record.jurisdiction, url: s.url };
 }
 
 // Lazy journal capture between volume and first page; the candidate is then
@@ -890,7 +934,10 @@ async function lookupStatute(
     Object.entries(input.parsedFields ?? {}).filter(([, v]) => typeof v === "string" && v.trim()),
   ) as Record<string, string>;
   const nameAnchor = supplied.statuteName ?? null;
-  const userYear = supplied.year ?? input.rawInput.match(/\b((?:1[6-9]|20)\d{2})\b/)?.[1];
+  // Only a year the client parsed in a dated context is an anchor: section,
+  // title or chapter numbers that look like years ("§ 1983") are not dates.
+  const userYear = supplied.year;
+  const userSections = (supplied.sections ?? supplied.section ?? "").split(",").map((x) => x.trim()).filter(Boolean);
   if (nameAnchor) result.identity.anchors.push(`title:${nameAnchor}`);
   if (userYear) result.identity.anchors.push(`year:${userYear}`);
 
@@ -930,7 +977,7 @@ async function lookupStatute(
   // Jurisdiction: given US/UK is never re-discovered or crossed; UNKNOWN is
   // resolved only from an explicit citation form in the evidence itself.
   if (isUnresolvedJurisdiction(input.jurisdiction)) {
-    const records = identitySources.filter((s) => s.strong).map(resolveStatuteJurisdiction).filter((r): r is NonNullable<typeof r> => !!r);
+    const records = identitySources.filter((s) => s.strong).map((s) => resolveStatuteJurisdiction(s, nameAnchor)).filter((r): r is NonNullable<typeof r> => !!r);
     if (records.length === 0) {
       result.identity.conflicts.push("jurisdiction_unresolved");
       return result;
@@ -954,8 +1001,17 @@ async function lookupStatute(
   // identity anchor (year / title number) is discarded entirely.
   const usable: Array<{ donor: LookupSource; fields: StatuteCite }> = [];
   for (const s of identitySources.filter((x) => x.strong)) {
+    // Grounding requires an official record of THIS jurisdiction whose
+    // locator agrees with the extracted citation (never a host or form alone).
+    const record = statuteRecordFromUrl(s.url);
+    if (!record || record.jurisdiction !== input.jurisdiction) continue;
     const f = extractStatuteFromEvidence(`${s.title ?? ""} ${s.snippet ?? ""}`, input.jurisdiction);
-    if (!f) continue;
+    if (!f || !recordConsistent(record, f)) continue;
+    // UK identity: the record's own Act name must be the supplied name.
+    if (input.jurisdiction === "UK" && (!nameAnchor || normalizeTitle(f.statuteName ?? "") !== normalizeTitle(nameAnchor))) continue;
+    // A record for a different section than the one the user cited is a different record.
+    if (input.jurisdiction === "US" && record.section && userSections.length &&
+      !userSections.some((x) => x === record.section || x.startsWith(`${record.section}(`) || x.startsWith(`${record.section}–`))) continue;
     if (userYear && f.year && f.year !== userYear) {
       result.identity.conflicts.push(`year:${userYear} vs ${f.year}`);
       continue;
@@ -968,7 +1024,7 @@ async function lookupStatute(
   }
   if (usable.length === 0) {
     result.identity.matched = false;
-    if (!result.identity.conflicts.length) result.identity.conflicts.push("no_identity_matched_source");
+    if (!result.identity.conflicts.length) result.identity.conflicts.push("no_official_record");
     return result;
   }
 

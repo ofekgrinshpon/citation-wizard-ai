@@ -20,6 +20,7 @@ import * as diagnosticGate from "../../supabase/functions/_shared/citationDiagno
 import { buildForeignArticleRequest } from "@/lib/foreignArticleAdapter";
 import { articleLookupFallback, runForeignLookup as actualForeignLookup, type ForeignLookupInput, type LookupDeps } from "../../supabase/functions/citation-chat/foreignLookup";
 import { buildEnginePromptHint } from "@/lib/citationValidation";
+import * as statuteRoute from "../../supabase/functions/citation-chat/statuteRoute";
 import { CITATION_RULES } from "@/data/citationEngine";
 
 const natural = "המאמר של דפנה ברק־ארז על כתיבה שיפוטית, בעמודים 291 עד 293.";
@@ -267,6 +268,7 @@ async function runHandler(options: { raw?: string; rawInputNull?: boolean; recor
         return new Response(JSON.stringify({ results: [] }), { status: 200 });
       }) as typeof fetch });
     }, articleLookupFallback },
+    "./statuteRoute.ts": statuteRoute,
   };
   runInContext(options.compiledEntrypoint || compiled, createContext({ exports: {}, require: (name: string) => {
     if (!(name in modules)) throw new Error(`Unexpected real module boundary: ${name}`);
@@ -461,6 +463,45 @@ describe("article boundary through the real edge handler", () => {
     expect(r.body.foreignLookup).toBeUndefined();
     expect(r.body.content.startsWith(raw + "\n")).toBe(true);
     expect(r.body.content).toContain("⚠️");
+    expect(r.calls).toHaveLength(0);
+  });
+});
+
+describe("Stage 4 typed statute requests through the real edge handler", () => {
+  const raw = "Civil Rights Act § 1983";
+  const statute = { enabled: true, statuteResponseVersion: 1, kind: "statute", jurisdiction: "US", rawInput: raw, parsedFields: { statuteName: "Civil Rights Act", section: "1983" } };
+  const cached = [{ source_name: raw, full_citation: "unrelated cache donor", source_type: "חקיקה זרה" }];
+  const outcomes = (r: { rpc: { mock: { calls: unknown[][] } } }) => r.rpc.mock.calls.filter(([n]) => n === "finish_citation_request").map(([, a]) => (a as { _outcome: string })._outcome);
+
+  it.each([
+    ["missing key", { noPplx: true }, "missing_perplexity_credentials"],
+    ["thrown/timeout", { foreignThrows: true }, "lookup_failed"],
+    ["empty result", {}, "empty_result"],
+    ["malformed result", { foreignResult: {} }, "empty_result"],
+  ] as const)("%s terminates with a typed warning and never reaches a model, cache donor or retry", async (_n, extra, error) => {
+    const r = await runHandler({ raw, label: "חקיקה זרה", foreign: statute, cached, ...extra });
+    expect(r.status).toBe(200);
+    expect(r.body.content).toBe("");
+    expect(r.body.foreignLookup).toMatchObject({ statuteResponseVersion: 1, kind: "statute", error, identity: { matched: false } });
+    expect(Object.keys(r.body.foreignLookup.fields)).toHaveLength(0);
+    expect(r.calls).toHaveLength(0);
+    // Existing delivery semantics (same as the typed article path): one terminal settlement, no new refund.
+    expect(outcomes(r)).toEqual(["succeeded"]);
+  });
+
+  it("an invalid / version-missing statute request is rejected before any usage claim", async () => {
+    const r = await runHandler({ raw, label: "חקיקה זרה", foreign: { ...statute, statuteResponseVersion: undefined } });
+    expect(r.status).toBe(400);
+    expect(r.body.error).toBe("INVALID_INPUT");
+    expect(r.rpc.mock.calls.some(([n]) => n === "begin_citation_request")).toBe(false);
+    expect(r.calls).toHaveLength(0);
+  });
+
+  it("a grounded result is returned typed and versioned, with no model call", async () => {
+    const foreignResult = { kind: "statute", jurisdiction: "US", fields: { titleNumber: "42", code: "U.S.C." }, grounded: {}, provenance: {}, sources: [],
+      identity: { matched: true, jurisdiction: "US", anchors: [], conflicts: [] }, diagnostics: { tier1Queried: true, tier2Fired: false } };
+    const r = await runHandler({ raw, label: "חקיקה זרה", foreign: statute, foreignResult });
+    expect(r.body.foreignLookup).toMatchObject({ statuteResponseVersion: 1, identity: { matched: true }, fields: { titleNumber: "42" } });
     expect(r.calls).toHaveLength(0);
   });
 });
