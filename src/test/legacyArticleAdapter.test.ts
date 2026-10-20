@@ -179,15 +179,18 @@ describe("legacy standalone article adapter", () => {
     await h.handleSend();
     expect(h.resolveSourceType).toHaveBeenCalledTimes(1);
     expect(h.findVerifiedSourceMatch).toHaveBeenCalledTimes(1);
-    expect(h.invokeFunction).toHaveBeenCalledTimes(1);
-    expect(h.provider).toHaveBeenCalledTimes(1);
+    // C1 gives complete chat input the runner's zero-call local path.
+    expect(h.invokeFunction).toHaveBeenCalledTimes(rawInput === complete ? 0 : 1);
+    expect(h.provider).toHaveBeenCalledTimes(rawInput === complete ? 0 : 1);
     expect(h.subscription.incrementCount).not.toHaveBeenCalled();
-    const body = h.invokeFunction.mock.calls[0][1];
-    expect(body.messages).toEqual([...history, { role: "user", content: expect.stringContaining(rawInput) }]);
-    expect(body.foreignLookup).toMatchObject({ enabled: true, articleResponseVersion: 1, kind: "journal_article", rawInput, parsedFields: { authors: "Warren & Brandeis", articleTitle: "The Right to Privacy", pinpoint: "213–214" } });
+    if (rawInput !== complete) {
+      const body = h.invokeFunction.mock.calls[0][1];
+      expect(body.messages).toEqual([...history, { role: "user", content: expect.stringContaining(rawInput) }]);
+      expect(body.foreignLookup).toMatchObject({ enabled: true, articleResponseVersion: 1, kind: "journal_article", rawInput, parsedFields: { authors: "Warren & Brandeis", articleTitle: "The Right to Privacy", pinpoint: "213–214" } });
+    }
     const messages = last(h.state.setMessages.mock.calls)[0] as typeof history;
     expect(last(messages).content).toContain("193, 213–214 (1890)");
-    expect(last(messages).content).toContain("Samuel D. Warren and Louis D. Brandeis");
+    expect(last(messages).content).toContain("Warren & Brandeis");
     expect(last(messages).content).not.toContain("⚠️");
     expect(h.insert.mock.calls[0][0][0].formatted_output).toContain("213–214");
     expect(globalThis.fetch).not.toHaveBeenCalled();

@@ -9,6 +9,8 @@ import { MemoryRouter } from "react-router-dom";
 import { afterAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { runForeignLookup } from "../../supabase/functions/citation-chat/foreignLookup";
 import { resolveStatuteLookup } from "../../supabase/functions/citation-chat/statuteRoute";
+import { c1ServerPayload } from "./fixtures/c1ServerPayload";
+import { runCitation } from "@/lib/runCitation";
 
 const m = vi.hoisted(() => ({
   invoke: vi.fn(), classify: vi.fn(), recordGeneration: vi.fn(),
@@ -105,6 +107,21 @@ beforeEach(() => {
 const CORNELL_1983 = { title: "42 U.S.C. § 1983 - Civil action for deprivation of rights", url: "https://www.law.cornell.edu/uscode/text/42/1983", snippet: "Civil Rights Act — 42 U.S.C. § 1983 (2018)." };
 
 describe("chat page — typed statute request through initial send and regeneration", () => {
+  it("C1 real server partial fields have identical initial/manual chat and runner output with one call each", async () => {
+    const input = "Brown v. Board of Education";
+    const { response } = await c1ServerPayload({ kind: "case", jurisdiction: "UNKNOWN", rawInput: input, parsedFields: { caseName: input } });
+    delete response.provenance.year;
+    m.invoke.mockResolvedValue({ data: { foreignLookup: response, content: "UNSAFE" }, errorInfo: null });
+    const runner = await runCitation({ rawInput: input, useVerifiedStore: false });
+    m.invoke.mockClear();
+    await mountChat(); await send(input);
+    await waitFor(() => expect(screen.getByTestId("bubble-assistant").textContent).toBe(runner.reply));
+    await act(async () => { fireEvent.click(screen.getByRole("button", { name: "regen-us-case" })); });
+    expect(screen.getByTestId("bubble-assistant").textContent).toBe(runner.reply);
+    expect(runner.status).toBe("warning");
+    expect(runner.citation).toContain("347 U.S. 483");
+    expect(m.invoke).toHaveBeenCalledTimes(2);
+  });
   it("batch A Brown initial then manual book regeneration is terminal local conflict", async () => {
     const input = "Brown v. Board of Education";
     m.invoke.mockResolvedValue({ data: { content: "UNSAFE MODEL OUTPUT" }, errorInfo: null });
