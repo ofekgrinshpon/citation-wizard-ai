@@ -51,6 +51,7 @@ export function buildPastedCitation(raw: string, manual: CitationManualChoice | 
     ["caseName", "court", "reporter", "docket", "year", "decisionDate", "volume", "firstPage"].map(k => [k, unknown()]));
   const add = (re: RegExp, jurisdiction: CitationJurisdiction, signal: PastedCitationContract["evidence"][number]["signal"]) => {
     for (const m of raw.matchAll(new RegExp(re.source, "g"))) {
+      if (evidence.length >= 128) break; // Bounded metadata only; raw text/unknown spans remain intact.
       const span = { start: m.index, end: m.index + m[0].length };
       evidence.push({ jurisdiction, signal, span });
       if (signal === "court" || signal === "reporter") candidates[signal].push(field(raw, m[0], "supplied_text"));
@@ -134,11 +135,14 @@ export function guardPastedCitationRequest(body: { messages: Array<{ role: strin
   const choice = wire?.version === 1 ? wire.manualChoice : retainedChoice;
   const manual = choice && typeof choice === "object" && !Array.isArray(choice) ? {
     ...(typeof choice.jurisdiction === "string" && ["IL", "US", "UK", "DE", "UNKNOWN"].includes(choice.jurisdiction) ? { jurisdiction: choice.jurisdiction } : {}),
-    ...(typeof choice.subjurisdiction === "string" ? { subjurisdiction: choice.subjurisdiction } : {}),
-    ...(typeof choice.sourceType === "string" ? { sourceType: choice.sourceType } : {}),
+    ...(typeof choice.subjurisdiction === "string" && choice.subjurisdiction.length <= 200 ? { subjurisdiction: choice.subjurisdiction } : {}),
+    ...(typeof choice.sourceType === "string" && choice.sourceType.length <= 200 ? { sourceType: choice.sourceType } : {}),
     ...(typeof choice.foreign === "boolean" ? { foreign: choice.foreign } : {}),
   } : null;
   const c = buildPastedCitation(raw, manual);
+  if (choice && (typeof choice.subjurisdiction === "string" && choice.subjurisdiction.length > 200 || typeof choice.sourceType === "string" && choice.sourceType.length > 200)) {
+    c.route = "preserve"; c.conflicts.push("manual_metadata_unsupported");
+  }
   const messageEvidence = buildPastedCitation(stripped);
   if (messageEvidence.route === "preserve" || (messageEvidence.classification === "identified_foreign" && c.classification === "identified_israeli")) {
     c.route = "preserve"; c.conflicts.push("request_text_conflict");
