@@ -1,6 +1,6 @@
 /** Pure acceptance boundary for the existing server extraction envelope. No IO. */
 import { citationBindingText } from "../../supabase/functions/_shared/pastedCitation";
-import { articleFieldMatches } from "../../supabase/functions/_shared/foreignArticle";
+import { articleFieldMatches, parseForeignArticleInput } from "../../supabase/functions/_shared/foreignArticle";
 
 const record = (v: unknown): Record<string, unknown> => v && typeof v === "object" && !Array.isArray(v) ? v as Record<string, unknown> : {};
 const text = (v: unknown): string => typeof v === "string" ? v : "";
@@ -41,8 +41,9 @@ export function acceptCitationCompletion(request: Record<string, unknown>, raw: 
   const anchors = Array.isArray(identity.anchors) ? identity.anchors.filter((v): v is string => typeof v === "string") : [];
   // Server splitParties excludes supplied court/year parentheticals.
   const name = text(supplied.caseName).split(/[([]/)[0].trim();
+  const identifierArticle = request.kind === "journal_article" && (supplied.doi || supplied.sourceUrl) ? parseForeignArticleInput(raw) : null;
   const expected = request.kind === "case" && name ? [`parties:${party(name.split(/\s+v(?:s)?\.?\s+/i)[0])} v ${party(name.split(/\s+v(?:s)?\.?\s+/i)[1] ?? "")}`]
-    : ["articleTitle", "chapterTitle", "bookTitle", "statuteName", "doi", "sourceUrl"].filter(k => supplied[k]).map(k => `${k === "doi" || k === "sourceUrl" ? k : "title"}:${text(supplied[k])}`);
+    : ["articleTitle", "chapterTitle", "bookTitle", "statuteName", "doi", "sourceUrl"].filter(k => (identifierArticle ?? supplied)[k]).map(k => `${k === "doi" || k === "sourceUrl" ? k : "title"}:${text((identifierArticle ?? supplied)[k])}`);
   const conflicts = Array.isArray(identity.conflicts) ? identity.conflicts : null;
   // Explicit field conflicts quarantine only that field; identity/record conflicts stop acceptance.
   const fieldConflicts = (conflicts ?? []).filter((v): v is string => typeof v === "string" && /^(conflicting_statute_|(?:year|journal|volume|firstPage):)/.test(v));
@@ -57,7 +58,7 @@ export function acceptCitationCompletion(request: Record<string, unknown>, raw: 
   out.identityConfirmed = true;
   const fields = record(r.fields), grounded = record(r.grounded), provenance = record(r.provenance);
   const identityFields = request.kind === "case" ? ["caseName", "docket"] : request.kind === "book_chapter" ? ["chapterTitle", "bookTitle"] : ["articleTitle", "bookTitle", "statuteName", "doi", "sourceUrl"];
-  if (identityFields.some(key => supplied[key] !== undefined && fields[key] !== undefined && citationBindingText(text(supplied[key])) !== citationBindingText(text(fields[key])))) {
+  if (identityFields.some(key => (identifierArticle ?? supplied)[key] !== undefined && fields[key] !== undefined && citationBindingText(text((identifierArticle ?? supplied)[key])) !== citationBindingText(text(fields[key])))) {
     out.identityConfirmed = false; return fail("identity");
   }
   const sources = Array.isArray(r.sources) ? r.sources.map(record) : [];
