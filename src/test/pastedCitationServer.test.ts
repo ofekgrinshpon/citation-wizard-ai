@@ -22,6 +22,7 @@ function fixture() {
     if (path.includes("citationRecovery")) return recovery;
     if (path.includes("caseTypePrefixes")) return prefixes;
     if (path.includes("statuteRoute")) return statute;
+    if (path.includes("citationDiagnosticGate")) return { isCitationDiagnosticPreflight: () => false };
     if (path.includes("costTelemetry")) return { withCostTelemetry: (_: unknown, fn: () => unknown) => fn(), setTelemetryFromBody: () => {}, trackedFetch: provider };
     if (path.includes("citationUsageGuard")) return { withCitationProviderOutcome: (fn: () => unknown) => fn() };
     // Imports not exercised by this pre-cache safety branch remain inaccessible.

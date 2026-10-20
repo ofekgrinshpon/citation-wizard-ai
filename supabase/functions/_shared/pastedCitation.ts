@@ -97,7 +97,7 @@ export function buildPastedCitation(raw: string, manual: CitationManualChoice | 
     ? "preserve" : detected === "IL" ? "israeli" : detected !== "UNKNOWN" || foreignShape || manual?.foreign ? "foreign" : "existing";
   const missing = caseInput ? ["caseName", "year", "reporter"].filter(k => fields[k]?.state !== "supplied") : [];
   if (caseInput && detected === "UNKNOWN") missing.push("jurisdiction_evidence");
-  const covered = [...evidence.map(e => e.span), ...Object.values(fields).flatMap(f => f.spans)].sort((a,b) => a.start-b.start);
+  const covered = [...evidence.map(e => e.span), ...Object.entries(fields).filter(([k]) => k !== "unparsedRemainder").flatMap(([,f]) => f.spans)].sort((a,b) => a.start-b.start);
   const unknownSpans: InputSpan[] = [];
   let cursor = 0;
   for (const s of covered) { if (s.start > cursor) unknownSpans.push({ start: cursor, end: s.start }); cursor = Math.max(cursor, s.end); }
@@ -120,7 +120,13 @@ export function guardPastedCitationRequest(body: { messages: Array<{ role: strin
   const stripped = last.replace(/══[\s\S]*?═{3,}/g, "").replace(/\[[^\]\n]*(?:סיווג|כלל רלוונטי)[^\]\n]*\]\s*/g, "").trim();
   const raw = typeof body.rawInput === "string" ? body.rawInput : stripped;
   const wire = body.pastedCitation as Partial<PastedCitationContract> | undefined;
-  const manual = wire?.version === 1 && wire.manualChoice ? wire.manualChoice : null;
+  const choice = wire?.version === 1 ? wire.manualChoice : null;
+  const manual = choice && typeof choice === "object" && !Array.isArray(choice) ? {
+    ...(typeof choice.jurisdiction === "string" && ["IL", "US", "UK", "DE", "UNKNOWN"].includes(choice.jurisdiction) ? { jurisdiction: choice.jurisdiction } : {}),
+    ...(typeof choice.subjurisdiction === "string" ? { subjurisdiction: choice.subjurisdiction } : {}),
+    ...(typeof choice.sourceType === "string" ? { sourceType: choice.sourceType } : {}),
+    ...(typeof choice.foreign === "boolean" ? { foreign: choice.foreign } : {}),
+  } : null;
   const c = buildPastedCitation(raw, manual);
   const messageEvidence = buildPastedCitation(stripped);
   if (messageEvidence.route === "preserve" || (messageEvidence.classification === "identified_foreign" && c.classification === "identified_israeli")) {
@@ -128,6 +134,18 @@ export function guardPastedCitationRequest(body: { messages: Array<{ role: strin
   }
   if (wire && (wire.version !== 1 || wire.fingerprint !== c.fingerprint || wire.rawInput !== raw)) {
     c.route = "preserve"; c.conflicts.push("contract_input_mismatch");
+  }
+  const lookup = body.foreignLookup as { rawInput?: unknown; kind?: unknown; jurisdiction?: unknown } | null;
+  if (lookup && typeof lookup.rawInput === "string") {
+    const lookupEvidence = buildPastedCitation(lookup.rawInput);
+    if (lookupEvidence.route === "preserve" ||
+      (lookupEvidence.jurisdiction !== "UNKNOWN" && c.jurisdiction !== "UNKNOWN" && lookupEvidence.jurisdiction !== c.jurisdiction) ||
+      (lookupEvidence.jurisdiction !== "UNKNOWN" && ["US", "UK"].includes(String(lookup.jurisdiction)) && lookup.jurisdiction !== lookupEvidence.jurisdiction)) {
+      c.route = "preserve"; c.conflicts.push("lookup_text_jurisdiction_conflict");
+    }
+  }
+  if (manual?.subjurisdiction && c.jurisdiction === "UK" && manual.subjurisdiction !== "t2:united-kingdom/england-and-wales") {
+    c.route = "preserve"; c.formatter = "unsupported"; c.unsupported.push("subjurisdiction_formatter_not_supported");
   }
   return c;
 }
