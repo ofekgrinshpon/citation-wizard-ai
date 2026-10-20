@@ -13,6 +13,14 @@ beforeEach(() => {
   vi.stubGlobal("fetch", vi.fn(() => { throw new Error("Live network forbidden"); }));
 });
 describe("batch A real runCitation boundary", () => {
+  it.each(["foreign_book", "foreign_book_chapter", "foreign_journal_article"] as const)("manual %s cannot cross supplied Brown source family", async overrideType => {
+    const rawInput = "Brown v. Board of Education";
+    const result = await runCitation({ rawInput, overrideType });
+    expect(result.citation).toBe(rawInput);
+    expect(result.pastedCitation?.conflicts).toContain("manual_source_kind_conflict");
+    expect(result.status).toBe("warning");
+    expect(m.invoke).not.toHaveBeenCalled(); expect(m.cache).not.toHaveBeenCalled(); expect(m.classifier).not.toHaveBeenCalled();
+  });
   it("incomplete foreign case crosses request boundary typed, and generic response is terminal preservation", async () => {
     const rawInput = "Brown v. Board of Education";
     const r = await runCitation({ rawInput, useVerifiedStore: false });

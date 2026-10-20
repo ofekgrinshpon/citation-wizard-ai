@@ -307,13 +307,13 @@ describe("bibliography mounted per-row retry", () => {
     bibliographyInput();
     const oldAction = await screen.findByRole("button", { name: "ניסיון חדש" });
     fireEvent.click(screen.getByRole("button", { name: /אחר ▾/ }));
-    fireEvent.click(await screen.findByRole("button", { name: /חקיקה ראשית/ }));
+    fireEvent.click(await screen.findByRole("button", { name: /פסיקה.*פורסם/ }));
     await waitFor(() => expect(boundary.invoke).toHaveBeenCalledTimes(2));
     await screen.findByRole("button", { name: "ניסיון חדש" });
     expect(requestAt(1).requestId).not.toBe(requestAt(0).requestId);
     expect(requestAt(1).retryOfRequestId).toBeUndefined();
     expect(requestAt(1).messages).not.toEqual(requestAt(0).messages);
-    expect(JSON.stringify(requestAt(1).messages)).toContain("חקיקה ראשית");
+    expect(JSON.stringify(requestAt(1).messages)).toContain("פסיקה");
     act(() => oldAction.click());
     expect(boundary.invoke).toHaveBeenCalledTimes(2);
   });

@@ -79,6 +79,19 @@ const choose = (jurisdiction: string) => saveRecord("u1", applyOverride(createRe
   { scalars: { family: "decision", subtype: "decision.judgment", jurisdiction } }));
 
 describe("BatchFootnoteBuilder — explicit regeneration", () => {
+  it("batch A actual Brown regeneration as book preserves source before transports", async () => {
+    const input = "Brown v. Board of Education";
+    localStorage.setItem("footnote_cells_row-project", JSON.stringify([{ id: 1, key: "k1", input, output: "old output", status: "warning", detectedType: "foreign_case_other" }]));
+    saveRecord("u1", applyOverride(createRecord("batch:k1", input), { scalars: { family: "nonperiodical", subtype: "nonperiodical.book" } }));
+    const actual = await vi.importActual<typeof import("@/lib/runCitation")>("@/lib/runCitation");
+    b.runCitation.mockImplementation(actual.runCitation);
+    render(<BatchFootnoteBuilder />);
+    await act(async () => { fireEvent.click(screen.getByRole("button", { name: "הפקה מחדש לפי הסיווג" })); });
+    expect(b.runCitation).toHaveBeenCalledTimes(1); expect(b.runCitation.mock.calls[0][0].overrideType).toBe("foreign_book");
+    const result = await b.runCitation.mock.results[0].value;
+    expect(result.citation).toBe(input); expect(result.pastedCitation.conflicts).toContain("manual_source_kind_conflict");
+    expect(fetchSpy).not.toHaveBeenCalled(); expect(supabase.functions.invoke).not.toHaveBeenCalled();
+  });
   it("batch A actual batch regeneration preserves Germany under conflicting US manual choice without transport", async () => {
     const input = "BVerfG 1 BvR 400/51";
     localStorage.setItem("footnote_cells_row-project", JSON.stringify([{ id: 1, key: "k1", input, output: "old output", status: "warning", detectedType: "foreign" }]));

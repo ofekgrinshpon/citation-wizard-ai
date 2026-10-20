@@ -1763,6 +1763,14 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
       });
     }
 
+    pastedContract = guardPastedCitationRequest({ messages, rawInput, foreignLookup: foreignLookupRequest, pastedCitation: requestBody.pastedCitation });
+    const preservePasted = () => completeResponse(new Response(JSON.stringify({
+      content: `${pastedContract?.rawInput ?? ""}\n⚠️ ${pastedContract ? pastedCitationWarning(pastedContract) : "חסרים פרטים"}`,
+    }), { headers: { ...corsHeaders, "Content-Type": "application/json" } }));
+    // Source binding must reject even malformed recovery payloads before cache or usage.
+    if (pastedContract.route === "preserve" || (pastedContract.route === "foreign" && pastedContract.sourceKind === "case" && !foreignLookupRequest)) {
+      return preservePasted();
+    }
     const recoveryInput = citationRecoveryInput({
       messages, rawInput: rawInput ?? null, foreignLookup: foreignLookupRequest ?? null, batchId: usageBatchId,
     });
@@ -1782,14 +1790,6 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
 
     const lastUserMessage = [...messages].reverse().find((m: { role: string }) => m.role === "user");
     const userInput = lastUserMessage?.content || "";
-    pastedContract = guardPastedCitationRequest({ messages, rawInput, foreignLookup: foreignLookupRequest, pastedCitation: requestBody.pastedCitation });
-    const preservePasted = () => completeResponse(new Response(JSON.stringify({
-      content: `${pastedContract?.rawInput ?? ""}\n⚠️ ${pastedContract ? pastedCitationWarning(pastedContract) : "חסרים פרטים"}`,
-    }), { headers: { ...corsHeaders, "Content-Type": "application/json" } }));
-    // Before any docket-derived cache/search/claim. Text evidence, never client classification, authorizes the Israeli route.
-    if (pastedContract.route === "preserve" || (pastedContract.route === "foreign" && pastedContract.sourceKind === "case" && !foreignLookupRequest)) {
-      return preservePasted();
-    }
     const articleClass = userInput.match(/\[סיווג אוטומטי:\s*([^\]]+)\]/)?.[1] || "";
     const articleRequest = /מאמר/.test(articleClass) && !/לועז|אנגלי|זר|ספר/.test(articleClass) &&
       !/בתוך|בספר/.test(articleRawInput(userInput, rawInput)) && !foreignLookupRequest
