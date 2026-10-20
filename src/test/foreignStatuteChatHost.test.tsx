@@ -139,15 +139,29 @@ describe("chat page — typed statute request through initial send and regenerat
     expect(m.recordGeneration).toHaveBeenCalledWith("acct-1", expect.objectContaining({ effectiveKey: "eff", inputFingerprint: "fp" }));
   });
 
-  it("manual UK regeneration of a US-form citation is an honest local mismatch (no request)", async () => {
+  it("complete US initial send is rendered locally; manual UK regeneration is an honest local mismatch (zero requests)", async () => {
     m.classify.mockResolvedValue({ sourceType: "foreign_statute_us", source: "regex" });
-    m.invoke.mockResolvedValueOnce({ data: { content: "17 U.S.C. § 512 (2018)." }, errorInfo: null });
+    m.invoke.mockResolvedValue({ data: { content: "MODEL TEXT" }, errorInfo: null });
     await mountChat();
     await send("17 U.S.C. § 512 (2018)");
     await waitFor(() => expect(screen.getByTestId("bubble-assistant")).toHaveTextContent("17 U.S.C. § 512 (2018)."));
+    expect(screen.getByTestId("bubble-assistant")).not.toHaveTextContent("MODEL TEXT");
     await act(async () => { fireEvent.click(screen.getByRole("button", { name: "regen-uk" })); });
     await waitFor(() => expect(screen.getByTestId("bubble-assistant")).toHaveTextContent("סותר"));
-    expect(m.invoke).toHaveBeenCalledTimes(1);
+    expect(m.invoke).toHaveBeenCalledTimes(0);
+  });
+
+  it("complete UK initial send and same-jurisdiction regeneration make zero transport calls, with provenance", async () => {
+    m.classify.mockResolvedValue({ sourceType: "foreign_statute_uk", source: "regex" });
+    m.invoke.mockResolvedValue({ data: { content: "MODEL TEXT" }, errorInfo: null });
+    await mountChat();
+    await send("Human Rights Act 1998, c. 42");
+    await waitFor(() => expect(screen.getByTestId("bubble-assistant")).toHaveTextContent("Human Rights Act 1998, c. 42."));
+    await act(async () => { fireEvent.click(screen.getByRole("button", { name: "regen-uk" })); });
+    await waitFor(() => expect(m.recordGeneration).toHaveBeenCalledWith("acct-1", expect.objectContaining({ effectiveKey: "eff", inputFingerprint: "fp" })));
+    expect(screen.getByTestId("bubble-assistant")).toHaveTextContent("Human Rights Act 1998, c. 42.");
+    expect(screen.getByTestId("bubble-assistant")).not.toHaveTextContent("MODEL TEXT");
+    expect(m.invoke).toHaveBeenCalledTimes(0);
   });
 
   it("a delayed response after leaving the chat scope cannot write a reply", async () => {
