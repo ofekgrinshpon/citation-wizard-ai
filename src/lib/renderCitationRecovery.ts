@@ -7,6 +7,7 @@ import { renderForeignArticleLookup } from "@/lib/foreignArticleAdapter";
 import { renderForeignStatuteLookup, statutePreparationFromRequest } from "@/lib/foreignStatuteAdapter";
 import type { CitationRecoveryRecord } from "@/lib/citationRecoveryApi";
 import { CITATION_FIELD_KEYS } from "../../supabase/functions/_shared/citationRecovery";
+import { planCitationEvidence, resolveCitationResponse, RUNNER_HOST, type TypedPlan } from "@/lib/citationPlanner";
 
 export const RECOVERY_RETENTION_MS = 24 * 60 * 60 * 1000;
 export const RECOVERY_TEXT_LIMIT = 50_000;
@@ -106,6 +107,21 @@ export function renderCitationRecovery(record: CitationRecoveryRecord, now = Dat
       citationRecoveryDeadline(record) === null || citationRecoveryExpired(record, now) || !record.result) return null;
   const request = object(record.input?.foreignLookup);
   const result = object(record.result.foreignLookup);
+  // Existing retained extraction envelopes with raw binding use the same strict
+  // terminal resolver as initial/retried requests. Older unbound records below
+  // remain readable, never dispatched or promoted to verified identity.
+  if (request && typeof request.rawInput === "string" && ["case", "statute", "journal_article", "book", "book_chapter"].includes(String(request.kind))) {
+    const raw = originalRecoveryInput(record);
+    if (!fields(request.parsedFields)) return null;
+    const jur = request.jurisdiction === "US" || request.jurisdiction === "UK" ? request.jurisdiction : "OTHER";
+    const sourceType = toSourceType(request.kind as ForeignSourceKind, jur);
+    const prep = request.kind === "statute" ? statutePreparationFromRequest(request) : null;
+    const plan: TypedPlan = { kind: "typed", evidence: planCitationEvidence(raw, null), sourceType,
+      statutePrep: prep, caseRequest: null, articleRequest: request.kind === "journal_article" ? { parsedFields: fields(request.parsedFields) ?? {} } : null,
+      foreignLookup: request, extraBody: {} };
+    const resolved = resolveCitationResponse(plan, { ...record.result }, RUNNER_HOST);
+    if (resolved.kind === "terminal") return output(resolved.resolution.reply, resolved.resolution.sourceType ?? sourceType, true, resolved.resolution.warningMsg ?? null);
+  }
   if (request && result) {
     const parsedFields = fields(request.parsedFields);
     const resultFields = fields(result.fields);

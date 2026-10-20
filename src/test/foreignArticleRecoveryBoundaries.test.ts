@@ -100,7 +100,8 @@ describe("synthetic isolated publisher formatting through the actual lookup and 
     const test = replay([[variants[2][1]]]);
     boundaries.invoke.mockImplementation(async (_name, body) => ({ data: { content: "", foreignLookup: await test.lookup(body.foreignLookup) }, errorInfo: null }));
     const result = await runCitation({ rawInput: input.rawInput, useVerifiedStore: false });
-    expect(result).toMatchObject({ citation: expectedCitation, status: "valid", fromVerifiedStore: false });
+    // C1 confirmation never silently replaces a supplied abbreviated byline.
+    expect(result).toMatchObject({ citation: expectedCitation.replace(authors, anchors.authors), status: "valid", fromVerifiedStore: false });
     expect(boundaries.invoke).toHaveBeenCalledTimes(1);
     expect(boundaries.invoke.mock.calls[0][0]).toBe("citation-chat");
     expect(boundaries.invoke.mock.calls[0][1].foreignLookup.parsedFields).toEqual(anchors);
@@ -283,7 +284,8 @@ describe("existing unrelated routes and bounded evidence", () => {
     ["foreign_book", "H.L.A. Hart, The Concept of Law (2d ed. 1994)", "1994"],
   ] as const)("preserves the complete %s client path", async (overrideType, rawInput, expected) => {
     const result = await runCitation({ rawInput, overrideType, useVerifiedStore: false });
-    expect(result.status).toBe("valid");
+    // Local book parity keeps its explicit formatting-only warning.
+    expect(result.status).toBe(overrideType === "foreign_book" ? "warning" : "valid");
     expect(result.citation).toContain(expected);
     expect(boundaries.invoke).not.toHaveBeenCalled();
   });

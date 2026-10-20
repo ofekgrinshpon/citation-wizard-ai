@@ -231,7 +231,9 @@ describe("read-only recovery uses the same statute adapter", () => {
     const base = { status: "succeeded", availability: "available", createdAt: "2026-10-20T11:00:00Z", expiresAt: "2026-10-21T11:00:00Z",
       input: { messages: [{ role: "user", content: "x" }], rawInput: null, foreignLookup: request, batchId: null } };
     const result = (identity: Record<string, unknown>) => ({ foreignLookup: { statuteResponseVersion: 1, kind: "statute", jurisdiction: "UK",
-      fields: { year: "1999", chapter: "77" }, grounded: {}, provenance: {}, sources: [], identity: { anchors: [], ...identity }, diagnostics: { tier1Queried: true, tier2Fired: false } } });
+      fields: { year: "1999", chapter: "77" }, grounded: { year: true, chapter: true },
+      provenance: Object.fromEntries(Object.entries({ year: "1999", chapter: "77" }).map(([key,value]) => [key, { value, sourceUrl: "https://www.legislation.gov.uk/ukpga/1999/77", sourceTitle: "Example Act 1999", basis: "official_record" }])),
+      sources: [{ url: "https://www.legislation.gov.uk/ukpga/1999/77", title: "Example Act 1999", tier: "tier1" }], identity: { anchors: ["title:Example Act"], ...identity }, diagnostics: { tier1Queried: true, tier2Fired: false } } });
     const unmatched = renderCitationRecovery({ ...base, result: result({ matched: false, conflicts: ["wrong_record"] }) } as never, now);
     expect(unmatched?.plainText).not.toMatch(/1999/);
     expect(unmatched?.warning).toBeTruthy();

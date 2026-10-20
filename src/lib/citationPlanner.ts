@@ -9,6 +9,8 @@
  * Host behaviour that currently differs is declared explicitly as
  * capabilities (see CHAT_HOST / RUNNER_HOST) — never silently unified.
  */
+import { acceptCitationCompletion } from "@/lib/citationCompletion";
+import { escapeCitationLiteral } from "@/lib/citationSegments";
 import { SOURCE_TYPE_LABELS, type SourceType } from "@/data/abbreviations";
 import { renderForeignCitation, renderForeignDetection } from "@/data/bluebook";
 import { detectForeignSource, type ForeignDetection } from "@/data/bluebook/extract";
@@ -47,14 +49,14 @@ export interface CitationHostCapabilities {
 }
 
 export const CHAT_HOST: CitationHostCapabilities = Object.freeze({
-  host: "chat", pastedLocalDefersOpinionFormat: false, bookDefersToDeterministic: false,
-  deterministicForeignRender: false, typedRequestBuilder: "chat_article_fields", articleIncompleteFallback: true,
-  caseDisambiguation: false, groundedMerge: false, rejectEmptyCaseFields: false,
+  host: "chat", pastedLocalDefersOpinionFormat: true, bookDefersToDeterministic: false,
+  deterministicForeignRender: true, typedRequestBuilder: "chat_article_fields", articleIncompleteFallback: true,
+  caseDisambiguation: true, groundedMerge: true, rejectEmptyCaseFields: false,
 });
 export const RUNNER_HOST: CitationHostCapabilities = Object.freeze({
-  host: "runner", pastedLocalDefersOpinionFormat: true, bookDefersToDeterministic: true,
-  deterministicForeignRender: true, typedRequestBuilder: "runner_foreign_lookup", articleIncompleteFallback: false,
-  caseDisambiguation: true, groundedMerge: true, rejectEmptyCaseFields: true,
+  host: "runner", pastedLocalDefersOpinionFormat: true, bookDefersToDeterministic: false,
+  deterministicForeignRender: true, typedRequestBuilder: "runner_foreign_lookup", articleIncompleteFallback: true,
+  caseDisambiguation: true, groundedMerge: true, rejectEmptyCaseFields: false,
 });
 
 export interface CitationResolution {
@@ -66,6 +68,7 @@ export interface CitationResolution {
   sourceType?: SourceType;
   sourceLabel?: string;
   pastedCitation?: PastedCitationContract;
+  completion?: ReturnType<typeof acceptCitationCompletion>;
 }
 export type LocalOrigin = "preserve" | "pasted_local" | "unreported_local" | "deterministic" | "statute_local";
 
@@ -97,7 +100,7 @@ export function planLocalCitation(p: LocalPlanInput, caps: CitationHostCapabilit
   if (pasted.local && !(caps.pastedLocalDefersOpinionFormat && OPINION(pasted.detection))) {
     const warnings = pasted.detection ? renderForeignDetection(pasted.detection)?.warnings ?? [] : [];
     return { origin: "pasted_local", resolution: { ...pasted.local, pastedCitation: pasted.contract,
-      status: warnings.length ? "warning" : "valid", warningMsg: caps.host === "runner" ? warnings[0] : pasted.local.warningMsg } };
+      status: warnings.length ? "warning" : "valid", warningMsg: warnings[0] } };
   }
   const statutePrep = st && !p.isPinpoint ? prepareForeignStatute(st, p.input, { manual: p.manual }) : null;
   const unreported = st && !p.isPinpoint ? (renderUsUnreportedLocal(st, p.input) ?? renderUnpublishedLocal(st, p.input) ??
@@ -107,14 +110,14 @@ export function planLocalCitation(p: LocalPlanInput, caps: CitationHostCapabilit
     const suppliedArticle = st === "foreign_journal_article";
     const identifiers = suppliedArticle ? extractWorkIdentifiers(p.input) : null;
     const hasIdentifier = !!(identifiers?.doi || identifiers?.sourceUrl || identifiers?.conflicts.length);
-    const rendered = renderForeignCitation(hasIdentifier ? identifiers!.text : p.input);
+    const rendered = renderForeignCitation(hasIdentifier && identifiers ? identifiers.text : p.input);
     const k = rendered?.detection.kind;
-    const crossed = (k === "case" && OPINION(rendered!.detection) || k === "unpublished_manuscript" || k === "thesis" || k === "newspaper" ||
-      k === "journal_article" && !!(rendered!.detection.fields as { nonconsecutive?: boolean }).nonconsecutive) && st !== rendered!.detection.sourceType;
+    const crossed = (k === "case" && OPINION(rendered?.detection) || k === "unpublished_manuscript" || k === "thesis" || k === "newspaper" ||
+      k === "journal_article" && !!(rendered?.detection.fields as { nonconsecutive?: boolean }).nonconsecutive) && st !== rendered?.detection.sourceType;
     if (rendered && rendered.missing.length === 0 && !crossed) {
       // Rendering is not identifier verification and never causes a billed lookup.
       const identifierWarning = hasIdentifier
-        ? identifiers!.conflicts.length
+        ? identifiers?.conflicts.length
           ? "נמצאו מזהים סותרים או קישור שאינו נתמך; לא אומתה התאמתם לפרטי המאמר שסיפקתם."
           : "לא אומתה התאמת ה־DOI או הקישור לפרטי המאמר שסיפקתם."
         : undefined;
@@ -204,58 +207,70 @@ export function planTypedRequest(p: LocalPlanInput & { statutePrep: StatutePrepa
   return { kind: typed ? "typed" : "legacy", evidence: p.evidence, sourceType: st, statutePrep: p.statutePrep, caseRequest, articleRequest, foreignLookup, extraBody };
 }
 
-interface FL { identity?: { matched?: boolean; jurisdiction?: "US" | "UK"; conflicts?: string[] }; fields?: Record<string, string>; disambiguation?: Array<{ jurisdiction: "US" | "UK"; label: string; url: string }> }
 export type ResponseResolution =
   | { kind: "terminal"; origin: "safety" | "case" | "statute" | "disambiguation" | "article" | "merge"; resolution: CitationResolution }
   | { kind: "reject"; code: "EMPTY_RESPONSE" }
-  /** Declared legacy handoff: host applies its own existing generic content handling. */
   | { kind: "legacy" };
 
-/** Typed response resolver. Never switches the requested identity or source kind from a response. */
-export function resolveCitationResponse(plan: TypedPlan, data: Record<string, unknown> | null, caps: CitationHostCapabilities): ResponseResolution {
+/** One terminal acceptance path for every existing typed request; legacy requests alone hand off. */
+export function resolveCitationResponse(plan: TypedPlan, data: Record<string, unknown> | null, _caps: CitationHostCapabilities): ResponseResolution {
   const contract = plan.evidence.pasted.contract;
-  const fl = data?.foreignLookup as FL | undefined;
-  const st = plan.sourceType;
-  const label = st ? SOURCE_TYPE_LABELS[st] : undefined;
   const safety = readPastedCitationSafety(contract, data);
   if (safety) return { kind: "terminal", origin: "safety", resolution: { ...safety, status: "warning", pastedCitation: contract } };
-  const caseResult = caps.caseDisambiguation && fl?.disambiguation?.length ? null : renderPastedCaseResponse(contract, plan.caseRequest, fl);
-  if (caseResult) return { kind: "terminal", origin: "case", resolution: { ...caseResult, status: caseResult.warningMsg ? "warning" : "valid", pastedCitation: contract } };
-  if (caps.rejectEmptyCaseFields && plan.caseRequest && fl?.identity?.matched && fl.fields &&
-    !Object.keys(fl.fields).some(k => ["caseName", "court", "reporter", "year", "firstPage", "neutral", "docket"].includes(k))) return { kind: "reject", code: "EMPTY_RESPONSE" };
-  if (plan.statutePrep?.request) {
-    const r = renderForeignStatuteLookup(plan.statutePrep, fl);
-    return { kind: "terminal", origin: "statute", resolution: { ...r, status: r.status === "warning" ? "warning" : "valid" } };
+  if (plan.kind === "legacy" || !plan.foreignLookup) return { kind: "legacy" };
+  const req = plan.foreignLookup;
+  const response = data?.foreignLookup;
+  const accepted = acceptCitationCompletion(req, contract.rawInput, response);
+  const st = plan.sourceType;
+  const warnings: string[] = [];
+  const messages = {
+    binding: "תשובת החיפוש סותרת את הקלט, סוג המקור או השיפוט; הקלט נשמר ללא השלמה.",
+    malformed: "תשובת החיפוש אינה בפורמט נתמך; נשמרו רק הפרטים שסופקו.",
+    unavailable: "חיפוש פרטי המקור לא היה זמין; נשמרו רק הפרטים שסופקו.",
+    identity: "לא אומתה התאמת המקור לפרטים שסופקו או נמצאו פרטים סותרים; נשמרו רק הפרטים שסופקו.",
+    ambiguous: "נדרשת בחירה בין כמה פסקי דין",
+  };
+  if (accepted.reason) warnings.push(messages[accepted.reason]);
+  if (accepted.quarantined.length) warnings.push("פרטים סותרים או ללא ראיות מספקות לא שולבו: " + accepted.quarantined.join(", ") + ".");
+  const fl = response && typeof response === "object" ? response as Record<string, unknown> : {};
+  if (accepted.reason === "ambiguous" && req.kind === "case" && Array.isArray(fl.disambiguation)) {
+    const choices = fl.disambiguation.filter((v): v is { jurisdiction: "US" | "UK"; label: string; url: string } => {
+      if (!v || typeof v !== "object") return false;
+      const o = v as Record<string, unknown>;
+      if (!["US", "UK"].includes(String(o.jurisdiction)) || typeof o.label !== "string" || !o.label.trim() || typeof o.url !== "string") return false;
+      try { return ["https:", "http:"].includes(new URL(o.url).protocol); } catch { return false; }
+    });
+    if (choices.length > 1) return { kind: "terminal", origin: "disambiguation", resolution: {
+      citation: "", reply: `נמצאו כמה פסקי דין אפשריים בשם זה. כדי לא לנחש, בחרו את הנכון והוסיפו את הערכאה או השנה:\n${choices.slice(0, 5).map((o, i) => escapeCitationLiteral(`${i + 1}. ${o.label} (${o.jurisdiction}) — ${o.url}`)).join("\n")}`,
+      status: "warning", warningMsg: messages.ambiguous, pastedCitation: contract,
+    } };
   }
-  if (caps.caseDisambiguation && plan.foreignLookup && fl?.disambiguation && fl.disambiguation.length > 1) {
-    const lines = fl.disambiguation.map((o, i) => `${i + 1}. ${o.label} (${o.jurisdiction === "UK" ? "בריטניה" : "ארה\"ב"}) — ${o.url}`);
-    return { kind: "terminal", origin: "disambiguation", resolution: { reply: `נמצאו כמה פסקי דין אפשריים בשם זה. כדי לא לנחש, בחרו את הנכון והוסיפו את הערכאה או השנה:\n${lines.join("\n")}`,
-      citation: "", sourceType: st ?? undefined, sourceLabel: label, status: "warning", warningMsg: "נדרשת בחירה בין כמה פסקי דין" } };
+  const supplied = req.parsedFields && typeof req.parsedFields === "object" ? req.parsedFields as Record<string, string> : {};
+  let rendered: { citation: string; reply?: string; missing?: string[]; warnings?: string[] } | null = null;
+  const kind = req.kind as ForeignSourceKind;
+  const jur = accepted.jurisdiction ?? (req.jurisdiction === "US" || req.jurisdiction === "UK" ? req.jurisdiction : "OTHER");
+  const effectiveType = kind === "case" ? toSourceType(kind, jur) : st ?? toSourceType(kind, jur);
+  if (kind === "statute" && plan.statutePrep) {
+    rendered = renderForeignStatuteLookup(plan.statutePrep, { ...fl, fields: accepted.fields,
+      identity: { matched: accepted.identityConfirmed, jurisdiction: jur, conflicts: [] } });
+  } else if (kind === "journal_article" && plan.articleRequest) {
+    // A sanitized response never replaces supplied authors (including abbreviations).
+    rendered = renderForeignArticleLookup(plan.articleRequest, { fields: accepted.fields, identity: { matched: accepted.identityConfirmed, conflicts: [] }, articleResolution: "incomplete" });
+  } else if (accepted.identityConfirmed) {
+    rendered = renderForeignDetection({ kind, jurisdiction: jur, sourceType: effectiveType,
+      confidence: "deterministic", fields: { ...accepted.fields, ...supplied } as ForeignFields });
   }
-  if (plan.articleRequest) {
-    const article = renderForeignArticleLookup(plan.articleRequest, fl as ForeignArticleLookupResponse | undefined)
-      ?? (caps.articleIncompleteFallback ? renderForeignArticleLookup(plan.articleRequest, { fields: {}, articleResolution: "incomplete" }) : null);
-    if (article) return { kind: "terminal", origin: "article", resolution: { ...article, status: article.status === "warning" ? "warning" : "valid", sourceType: st ?? undefined, sourceLabel: label } };
-  }
-  if (caps.groundedMerge && st && plan.foreignLookup && fl?.fields && fl.identity?.matched && Object.keys(fl.fields).length > 0) {
-    const req = plan.foreignLookup as { kind: ForeignSourceKind; jurisdiction: string; parsedFields: Record<string, string> };
-    const resolvedJur: ForeignJurisdiction | null = req.kind === "case"
-      ? (fl.identity?.jurisdiction ?? (req.jurisdiction === "US" || req.jurisdiction === "UK" ? req.jurisdiction : null))
-      : ((req.jurisdiction as ForeignJurisdiction) ?? "OTHER");
-    if (resolvedJur) {
-      const effectiveType = req.kind === "case" ? toSourceType("case", resolvedJur) : st;
-      const baseFields: Record<string, unknown> = { ...(fl.fields as Record<string, unknown>) };
-      for (const [k, v] of Object.entries(req.parsedFields)) if (typeof v === "string" && v.trim()) baseFields[k] = v.trim();
-      const rendered = renderForeignDetection({ sourceType: effectiveType, kind: req.kind, jurisdiction: resolvedJur, confidence: "deterministic", fields: baseFields as unknown as ForeignFields });
-      if (rendered && rendered.citation.trim()) {
-        const missingSummary = rendered.missing.length > 0 ? getMissingFieldsSummary(effectiveType, rendered.missing) : null;
-        const warningBits = [...rendered.warnings];
-        if (missingSummary) warningBits.push(`חסרים פרטים: ${missingSummary}`);
-        const warn = rendered.missing.length > 0 || warningBits.length > 0;
-        return { kind: "terminal", origin: "merge", resolution: { reply: warn ? `${rendered.citation}\n⚠️ ${warningBits.join(" ") || missingSummary}` : rendered.citation,
-          citation: rendered.citation, sourceType: effectiveType, sourceLabel: SOURCE_TYPE_LABELS[effectiveType], status: warn ? "warning" : "valid", warningMsg: warningBits[0] } };
-      }
-    }
-  }
-  return { kind: "legacy" };
+  if (accepted.identityConfirmed && Array.isArray((fl.identity as { conflicts?: unknown } | undefined)?.conflicts) && ((fl.identity as { conflicts: unknown[] }).conflicts.length)) warnings.push("נמצאו פרטי פרסום סותרים; נשמרו רק השלמות תואמות.");
+  if (rendered?.warnings) warnings.push(...rendered.warnings);
+  if (rendered?.missing?.length) warnings.push(`חסרים פרטים: ${getMissingFieldsSummary(effectiveType, rendered.missing)}`);
+  if (rendered?.reply?.includes("⚠️")) warnings.push(rendered.reply.split("⚠️").slice(1).join(" ").trim());
+  // Unknown spans remain in the evidence contract and are never lost through partial rendering.
+  const citation = rendered?.citation.trim() || escapeCitationLiteral(contract.rawInput);
+  const bits = [...new Set(warnings.filter(Boolean))];
+  return { kind: "terminal", origin: kind === "case" ? "case" : kind === "statute" ? "statute" : kind === "journal_article" ? "article" : "merge", resolution: {
+    citation, reply: citation + (bits.length ? `\n⚠️ ${bits.join(" ")}` : ""),
+    status: bits.length ? "warning" : "valid", warningMsg: bits[0],
+    sourceType: effectiveType, sourceLabel: SOURCE_TYPE_LABELS[effectiveType], pastedCitation: contract,
+    completion: accepted,
+  } };
 }

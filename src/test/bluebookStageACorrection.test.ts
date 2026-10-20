@@ -114,8 +114,13 @@ describe("bounded metadata gaps", () => {
     boundary.invoke.mockImplementation(async (_name, body) => {
       expect(citationRecoveryInput({ messages: body.messages, rawInput: null, batchId: null,
         foreignLookup: body.foreignLookup })).not.toBeNull();
-      return { data: { foreignLookup: { fields: { year: "2020", neutral: "UKSC 12", pinpoint: "23, 25" },
-        identity: { matched: true, jurisdiction: "UK" } } }, errorInfo: null };
+      const url = "https://www.bailii.org/uk/cases/UKSC/2020/12.html", title = "Example v Sample [2020] UKSC 12";
+      const values = { year: "2020", neutral: "UKSC 12", pinpoint: "23, 25" };
+      return { data: { foreignLookup: { kind: "case", jurisdiction: "UK", fields: values,
+        grounded: Object.fromEntries(Object.keys(values).map(k => [k, true])),
+        provenance: Object.fromEntries(Object.entries(values).map(([k,value]) => [k, { value, sourceUrl: url, sourceTitle: title, basis: "structured_metadata" }])),
+        sources: [{ url, title, tier: "tier1" }],
+        identity: { matched: true, jurisdiction: "UK", conflicts: [], anchors: ["parties:example v sample"] } } }, errorInfo: null };
     });
     const r = await runCitation({ rawInput: "Example v Sample (UKSC)", overrideType: "foreign_case_other", useVerifiedStore: false });
     expect(r.status).toBe("warning");

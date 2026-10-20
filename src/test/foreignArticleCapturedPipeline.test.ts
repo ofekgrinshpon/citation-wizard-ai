@@ -56,9 +56,9 @@ describe("captured English search to complete citation", () => {
     const test = replay();
     boundaries.invoke.mockImplementation(async (_name, body) => ({ data: { content: "", foreignLookup: await test.lookup(body.foreignLookup) }, errorInfo: null }));
     const result = await runCitation({ rawInput, useVerifiedStore: false });
-    expect(result.citation).toContain("Samuel D. Warren and Louis D. Brandeis");
+    expect(result.citation).toContain(capture.input.parsedFields.authors);
     expect(result.citation).toContain("The Right to Privacy");
-    expect(result.citation).toBe("Samuel D. Warren and Louis D. Brandeis, ##The Right to Privacy##, 4 ^^Harv. L. Rev.^^ 193, 213–214 (1890).");
+    expect(result.citation).toBe("Warren & Brandeis, ##The Right to Privacy##, 4 ^^Harv. L. Rev.^^ 193, 213–214 (1890).");
     expect(result.citation).not.toMatch(/Catholic|1990|\[חסר/);
     expect(result.status).toBe("valid");
     expect(result.fromVerifiedStore).toBe(false);

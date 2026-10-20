@@ -15,6 +15,7 @@ import { runCitation as legacyRunCitation } from "./fixtures/legacyRunCitation.b
 import { CHAT_HOST, RUNNER_HOST, planCitationEvidence, planLocalCitation, planTypedRequest, resolveCitationResponse } from "@/lib/citationPlanner";
 import { citationManualChoice } from "@/lib/pastedCitationAdapter";
 import type { SourceType } from "@/data/abbreviations";
+import { c1ServerPayload } from "./fixtures/c1ServerPayload";
 
 type Fx = { name: string; raw: string; type?: SourceType };
 const FIXTURES: Fx[] = [
@@ -89,7 +90,22 @@ describe("batch B before/after differential — runner (Batch/Bibliography share
       m.invoke.mockClear(); m.classifier.mockClear();
       const after = await settle(() => runCitation(opts));
       // text, status, labels, provenance (pastedCitation), warnings, source type
-      expect(strip2(after)).toEqual(strip2(before));
+      // C1 deliberately replaces ungrounded typed-case acceptance and local
+      // book presentation; all other before/after result parity remains exact.
+      const changedCase = ["US case incomplete", "unsupported manual Canada"].includes(fx.name) && rname !== "safety_mismatch";
+      const changedBook = ["book", "chapter labelled"].includes(fx.name);
+      if (changedCase) {
+        const result = after.ok as { citation: string; reply: string; status: string; pastedCitation?: unknown };
+        expect(result.citation).toBe(fx.raw);
+        expect(result.status).toBe("warning");
+        expect(result.reply).not.toMatch(/UNSAFE|ע"א 400\/51/);
+        expect(result.pastedCitation).toEqual(planCitationEvidence(fx.raw, citationManualChoice(fx.type)).pasted.contract);
+      } else if (changedBook) {
+        const result = after.ok as { citation: string; reply: string; status: string };
+        expect(result.citation).toBe((before.ok as { citation: string }).citation);
+        expect(result.status).toBe("warning");
+        expect(result.reply).toContain("לא אומתו");
+      } else expect(strip2(after)).toEqual(strip2(before));
       expect(strip(m.invoke.mock.calls)).toEqual(beforeCalls);
       expect(m.classifier.mock.calls.length).toBe(beforeClassifier);
     });
@@ -118,7 +134,8 @@ describe("batch B required runner behaviours", () => {
     expect(r.pastedCitation?.conflicts).toContain("manual_source_kind_conflict"); expect(m.invoke).not.toHaveBeenCalled();
   });
   it("incomplete US case sends one bound typed request; generic content never shown", async () => {
-    m.invoke.mockResolvedValue({ data: RESPONSES.case_ok, errorInfo: null });
+    const { response } = await c1ServerPayload({ kind: "case", jurisdiction: "UNKNOWN", rawInput: "Brown v. Board of Education", parsedFields: { caseName: "Brown v. Board of Education" } });
+    m.invoke.mockResolvedValue({ data: { foreignLookup: response }, errorInfo: null });
     const r = await runCitation({ rawInput: "Brown v. Board of Education", useVerifiedStore: false });
     expect(r.citation).toBe("Brown v. Board of Education, 347 U.S. 483 (1954).");
     const body = m.invoke.mock.calls[0][1];
@@ -133,7 +150,8 @@ describe("batch B required runner behaviours", () => {
   it("server retry reuses the prepared request via descriptor without re-planning or new invoke", async () => {
     const descriptor = { requestId: "r1", attempt: 1 };
     m.invoke.mockResolvedValue({ data: null, errorInfo: { code: "UPSTREAM", status: 502, message: "x", requestId: "r1", citationRetry: descriptor } });
-    m.retry.mockResolvedValue({ data: RESPONSES.case_ok, errorInfo: null });
+    const { response } = await c1ServerPayload({ kind: "case", jurisdiction: "UNKNOWN", rawInput: "Brown v. Board of Education", parsedFields: { caseName: "Brown v. Board of Education" } });
+    m.retry.mockResolvedValue({ data: { foreignLookup: response }, errorInfo: null });
     const r = await settle(() => runCitation({ rawInput: "Brown v. Board of Education", useVerifiedStore: false }));
     const err = (await runCitation({ rawInput: "Brown v. Board of Education", useVerifiedStore: false }).catch(e => e)) as { citationRetry: { retry: () => Promise<{ citation: string }> } };
     expect(r.err?.code).toBe("UPSTREAM");
@@ -202,7 +220,7 @@ describe("batch B pure planner contract", () => {
   });
   it("declared capability differences are explicit", () => {
     expect(CHAT_HOST).not.toEqual(RUNNER_HOST);
-    expect(RUNNER_HOST.groundedMerge && !CHAT_HOST.groundedMerge).toBe(true);
+    expect(RUNNER_HOST.groundedMerge && CHAT_HOST.groundedMerge).toBe(true);
     expect(RUNNER_HOST.typedRequestBuilder).toBe("runner_foreign_lookup");
   });
 });
