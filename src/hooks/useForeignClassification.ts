@@ -4,35 +4,36 @@ import {
   computeEffective,
   isOutputStale,
   keepAfterInputChange,
+  planGeneration,
   reconcileRecord,
   resetOverrides,
   supportFor,
   type ClassificationOverrides,
   type ClassificationRecord,
 } from "@/lib/foreignClassification";
-import { loadRecord, saveRecord } from "@/lib/foreignClassificationStore";
+import { loadRecord, saveRecord, subscribeClassification } from "@/lib/foreignClassificationStore";
 
 /**
  * Local, deterministic classification state for one item. Every action is
  * synchronous and offline: no invoke/fetch/provider call is ever made.
  */
-export function useForeignClassification(args: { accountId: string | null | undefined; itemKey: string; input: string; output: string | null }) {
-  const { accountId, itemKey, input, output } = args;
-  const [rec, setRec] = useState<ClassificationRecord>(() => reconcileRecord(loadRecord(accountId, itemKey), itemKey, input, output));
+export function useForeignClassification(args: { accountId: string | null | undefined; itemKey: string; input: string }) {
+  const { accountId, itemKey, input } = args;
+  const [rec, setRec] = useState<ClassificationRecord>(() => reconcileRecord(loadRecord(accountId, itemKey), itemKey, input));
 
-  // Account/item switch or input/output change: re-read the isolated store.
   useEffect(() => {
-    const next = reconcileRecord(loadRecord(accountId, itemKey), itemKey, input, output);
+    const next = reconcileRecord(loadRecord(accountId, itemKey), itemKey, input);
     setRec(next);
     saveRecord(accountId, next);
-  }, [accountId, itemKey, input, output]);
+  }, [accountId, itemKey, input]);
+
+  // A host's explicit generation recorded provenance: re-read.
+  useEffect(() => subscribeClassification((acct, key) => {
+    if (acct === (accountId || "anon") && key === itemKey) setRec(reconcileRecord(loadRecord(accountId, itemKey), itemKey, input));
+  }), [accountId, itemKey, input]);
 
   const commit = useCallback((f: (r: ClassificationRecord) => ClassificationRecord) => {
-    setRec((prev) => {
-      const next = f(prev);
-      saveRecord(accountId, next);
-      return next;
-    });
+    setRec((prev) => { const next = f(prev); saveRecord(accountId, next); return next; });
   }, [accountId]);
 
   const effective = useMemo(() => computeEffective(rec.detected, rec.overrides), [rec]);
@@ -41,6 +42,7 @@ export function useForeignClassification(args: { accountId: string | null | unde
     effective,
     support: supportFor(effective),
     stale: isOutputStale(rec),
+    plan: planGeneration(rec, input),
     setOverride: (patch: ClassificationOverrides) => commit((r) => applyOverride(r, patch)),
     keep: () => commit((r) => keepAfterInputChange(r)),
     reset: () => commit((r) => resetOverrides(r)),

@@ -1,5 +1,6 @@
 import { CitationRequestStatusLink } from "@/components/CitationRequestStatusLink";
 import { ForeignSourcePicker } from "./ForeignSourcePicker";
+import { planForItem, recordGeneration } from "@/lib/foreignClassificationStore";
 import { newTelemetryBatch, sourceTelemetry, type CostTelemetry } from "@/lib/costTelemetry";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -36,6 +37,8 @@ interface ReviewItem {
   isEditing: boolean;
   editValue: string;
   sourceTypeOverride?: BibSourceCategory;
+  /** Stable foreign-classification key (independent of row id and input). */
+  classificationKey: string;
 }
 
 
@@ -107,6 +110,7 @@ export function BibliographyGenerator() {
       ...prev,
       {
         id: crypto.randomUUID(),
+        classificationKey: entry.classificationKey ?? entry.id,
         rawInput: entry.rawInput || entry.fullCitation,
         status: "ok",
         citation: entry.fullCitation,
@@ -127,6 +131,7 @@ export function BibliographyGenerator() {
     if (sortedEntries.length === 0) return;
     const items: ReviewItem[] = sortedEntries.map((entry) => ({
       id: crypto.randomUUID(),
+      classificationKey: entry.classificationKey ?? entry.id,
       rawInput: entry.rawInput || entry.fullCitation,
       status: "ok",
       citation: entry.fullCitation,
@@ -154,11 +159,12 @@ export function BibliographyGenerator() {
     telemetry: CostTelemetry = sourceTelemetry(newTelemetryBatch("bibliography")),
     isResultCurrent?: () => boolean,
     recovery?: CitationRunRecovery,
-  ): Promise<Omit<ReviewItem, "id" | "isEditing" | "editValue">> => {
-    const overrideType =
+    directType?: SourceType,
+  ): Promise<Omit<ReviewItem, "id" | "isEditing" | "editValue" | "classificationKey">> => {
+    const overrideType = directType ?? (
       sourceTypeHint && sourceTypeHint !== "unknown"
         ? CATEGORY_TO_SOURCE_TYPE[sourceTypeHint]
-        : undefined;
+        : undefined);
 
     const result = recovery ? await recovery.retry(isResultCurrent) : await runCitation({
       rawInput,
@@ -205,9 +211,10 @@ export function BibliographyGenerator() {
     sourceTypeHint?: BibSourceCategory,
     isResultCurrent?: () => boolean,
     recovery?: CitationRunRecovery,
-  ): Promise<Omit<ReviewItem, "id" | "isEditing" | "editValue">> => {
+    directType?: SourceType,
+  ): Promise<Omit<ReviewItem, "id" | "isEditing" | "editValue" | "classificationKey">> => {
     try {
-      return await lookupOne(rawInput, sourceTypeHint, undefined, isResultCurrent, recovery);
+      return await lookupOne(rawInput, sourceTypeHint, undefined, isResultCurrent, recovery, directType);
     } catch (e) {
       return {
         rawInput,
@@ -267,7 +274,7 @@ export function BibliographyGenerator() {
 
       if (!job.isCurrent()) return;
       const newItems: ReviewItem[] = results.map((r, i) => {
-        const base: Omit<ReviewItem, "id" | "isEditing" | "editValue"> = r.ok
+        const base: Omit<ReviewItem, "id" | "isEditing" | "editValue" | "classificationKey"> = r.ok
           ? r.value!
           : {
               rawInput: lines[i],
@@ -287,6 +294,7 @@ export function BibliographyGenerator() {
             };
         return {
           id: crypto.randomUUID(),
+          classificationKey: crypto.randomUUID(),
           ...base,
           isEditing: false,
           editValue: base.citation || base.rawInput,
@@ -382,13 +390,19 @@ export function BibliographyGenerator() {
     const job = rowGuard.begin(id);
     if (!job) return;
     const hint = hintOverride ?? item.sourceTypeOverride;
+    // An explicit regeneration uses the effective foreign classification (if the user set one).
+    const plan = hintOverride === undefined && !explicitRetry && !recovery
+      ? planForItem(user?.id, `bib:${item.classificationKey}`, query) : null;
     setReviewItems((prev) => prev.map((it) => it.id === id
       ? { ...it, status: "loading", isEditing: false, sourceTypeOverride: hint, citationRetry: undefined, requestId: undefined } : it));
     try {
-      const r = await lookupOneSafe(query, hint, job.isCurrent, explicitRetry ?? recovery);
+      const r = await lookupOneSafe(query, hint, job.isCurrent, explicitRetry ?? recovery, plan?.sourceType);
       if (!job.isCurrent()) return;
+      const withPlan = plan && r.status === "ok" && plan.warning
+        ? { ...r, warnings: mergeWarnings(r.warnings, plan.warning), warningMsg: r.warningMsg ?? plan.warning } : r;
+      if (plan && r.status === "ok") recordGeneration(user?.id, plan);
       setReviewItems((prev) => prev.map((it) => it.id === id
-        ? { ...it, ...r, requestId: r.requestId, rawInput: query, isEditing: false, editValue: r.citation || query } : it));
+        ? { ...it, ...withPlan, requestId: r.requestId, rawInput: query, isEditing: false, editValue: r.citation || query } : it));
     } finally { job.finish(); }
   };
 
@@ -428,6 +442,7 @@ export function BibliographyGenerator() {
         isVerified: it.isVerified,
         sourceTypeOverride: it.sourceTypeOverride,
         warnings: mergeWarnings(it.warnings, it.warningMsg),
+        classificationKey: it.classificationKey,
       })),
     );
     const dupes = ready.length - added;
@@ -865,7 +880,8 @@ function ReviewRow({
       </div>
 
       {detectedCat.startsWith("foreign_") && (item.status === "ok" || item.status === "error") && (
-        <ForeignSourcePicker accountId={accountId} itemKey={`bib:${item.id}`} input={item.rawInput} output={item.citation || null} />
+        <ForeignSourcePicker accountId={accountId} itemKey={`bib:${item.classificationKey}`} input={item.rawInput}
+          onRegenerate={onRetry} />
       )}
 
       {/* Body */}

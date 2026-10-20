@@ -245,7 +245,8 @@ export function FootnoteReviewCard({
       </div>
 
       {foreignScope && isForeignSourceType(activeType) && (
-        <ForeignSourcePicker accountId={foreignScope.accountId} itemKey={foreignScope.itemKey} input={cell.input} output={cell.output} />
+        <ForeignSourcePicker accountId={foreignScope.accountId} itemKey={foreignScope.itemKey} input={cell.input}
+          onRegenerate={() => onRegenerate(cell.id)} regenerateDisabled={disabled || isLoading || !cell.input.trim()} />
       )}
 
       {/* Output */}

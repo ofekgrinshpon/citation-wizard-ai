@@ -1,1554 +1,4398 @@
 {
 "provenance": {
-"dataset": "ReLex_Bluebook_expanded_planning_inventory.json#datasets.jurisdiction_registry",
-"edition_target": 22,
-"generated_at_utc": "2026-10-19T17:12:39.849499+00:00",
-"excluded": "T1.5 Tribal Nations rows and R22 branches: separate edition-22 decision, not listed as edition-21 entities",
-"discrepancies": [
-{
-"id": "T1.5-row-count",
-"observed": 573,
-"publisher_claim": 574,
-"resolved": false,
-"action": "Preserve all 573 observed rows; do not invent missing name."
-},
-{
-"id": "T2.43-child-number",
-"parent": "T2.43",
-"displayed_child_id": "T2.41.1",
-"label": "Swiss Cantons",
-"resolved": false,
-"action": "Preserve displayed ID and true page parent separately."
-},
-{
-"id": "T2-stale-url-slugs",
-"resolved": true,
-"action": "Use displayed identifiers, retain exact observed source URLs even where slug numbering differs."
+"note": "Stable entity ids are independent of edition table locators. Edition-21 T2 identity (44) from workbook v3 sheet T2 מקוון21; edition-22 entries from the supplied publisher index are preserved separately. Membership is not parser/renderer support. T1.5 Tribal Nations excluded (separate edition-22 decision). Canada provincial scope: no edition-21 province ids supplied; first four subdivision headings are groups, not enumerated states.",
+"legacy_id_map": {
+"T1": "us",
+"us-state:Alabama": "us:alabama",
+"us-state:Alaska": "us:alaska",
+"us-state:Arizona": "us:arizona",
+"us-state:Arkansas": "us:arkansas",
+"us-state:California": "us:california",
+"us-state:Colorado": "us:colorado",
+"us-state:Connecticut": "us:connecticut",
+"us-state:Delaware": "us:delaware",
+"us-state:Florida": "us:florida",
+"us-state:Georgia": "us:georgia",
+"us-state:Hawaii": "us:hawaii",
+"us-state:Idaho": "us:idaho",
+"us-state:Illinois": "us:illinois",
+"us-state:Indiana": "us:indiana",
+"us-state:Iowa": "us:iowa",
+"us-state:Kansas": "us:kansas",
+"us-state:Kentucky": "us:kentucky",
+"us-state:Louisiana": "us:louisiana",
+"us-state:Maine": "us:maine",
+"us-state:Maryland": "us:maryland",
+"us-state:Massachusetts": "us:massachusetts",
+"us-state:Michigan": "us:michigan",
+"us-state:Minnesota": "us:minnesota",
+"us-state:Mississippi": "us:mississippi",
+"us-state:Missouri": "us:missouri",
+"us-state:Montana": "us:montana",
+"us-state:Nebraska": "us:nebraska",
+"us-state:Nevada": "us:nevada",
+"us-state:New Hampshire": "us:new-hampshire",
+"us-state:New Jersey": "us:new-jersey",
+"us-state:New Mexico": "us:new-mexico",
+"us-state:New York": "us:new-york",
+"us-state:North Carolina": "us:north-carolina",
+"us-state:North Dakota": "us:north-dakota",
+"us-state:Ohio": "us:ohio",
+"us-state:Oklahoma": "us:oklahoma",
+"us-state:Oregon": "us:oregon",
+"us-state:Pennsylvania": "us:pennsylvania",
+"us-state:Rhode Island": "us:rhode-island",
+"us-state:South Carolina": "us:south-carolina",
+"us-state:South Dakota": "us:south-dakota",
+"us-state:Tennessee": "us:tennessee",
+"us-state:Texas": "us:texas",
+"us-state:Utah": "us:utah",
+"us-state:Vermont": "us:vermont",
+"us-state:Virginia": "us:virginia",
+"us-state:Washington": "us:washington",
+"us-state:West Virginia": "us:west-virginia",
+"us-state:Wisconsin": "us:wisconsin",
+"us-state:Wyoming": "us:wyoming",
+"us-state:District of Columbia": "us:district-of-columbia",
+"us-other:American Samoa": "us:american-samoa",
+"us-other:Canal Zone": "us:canal-zone",
+"us-other:Guam": "us:guam",
+"us-other:Northern Mariana Islands": "us:northern-mariana-islands",
+"us-other:Puerto Rico": "us:puerto-rico",
+"us-other:Virgin Islands": "us:virgin-islands",
+"R21.4": "intl:treaties-and-international-agreements",
+"R21.5": "intl:international-cases",
+"R21.5.1": "intl:international-court-of-justice-and-permanent-court-of-international-justice",
+"R21.5.2": "intl:european-union-courts",
+"R21.5.3": "intl:european-court-of-human-rights",
+"R21.5.4": "intl:inter-american-commission-on-human-rights",
+"R21.5.5": "intl:inter-american-court-of-human-rights",
+"R21.5.6": "intl:international-tribunal-for-the-law-of-the-sea",
+"R21.5.7": "intl:international-criminal-court-and-other-tribunals",
+"R21.5.8": "intl:other-international-courts",
+"R21.5.9": "intl:international-cases-in-national-courts",
+"R21.6": "intl:international-arbitrations-and-claims-commissions",
+"R21.7": "intl:united-nations",
+"R21.8": "intl:league-of-nations",
+"R21.9": "intl:european-union",
+"R21.10": "intl:council-of-europe",
+"R21.11": "intl:world-trade-organization",
+"R21.12": "intl:international-monetary-fund",
+"R21.13": "intl:other-intergovernmental-organizations",
+"R21.14": "intl:international-nongovernmental-organizations",
+"T2.1": "t2:argentine-republic",
+"T2.2": "t2:australia",
+"T2.3": "t2:austria-republic-of",
+"T2.4": "t2:belgium-kingdom-of",
+"T2.5": "t2:brazil-federative-republic-of",
+"T2.6": "t2:canada",
+"T2.7": "t2x22:catholic-church-holy-see",
+"T2.8": "t2:chile-republic-of",
+"T2.9": "t2:china-people-s-republic-of",
+"T2.10": "t2:colombia-republic-of",
+"T2.11": "t2x22:czechia",
+"T2.12": "t2:egypt-arab-republic-of",
+"T2.13": "t2:france-republic-of",
+"T2.14": "t2:germany-federal-republic-of",
+"T2.15": "t2:greece",
+"T2.16": "t2:hong-kong",
+"T2.17": "t2:hungary-republic-of",
+"T2.18": "t2:india",
+"T2.19": "t2:iran-islamic-republic-of",
+"T2.20": "t2:iraq-republic-of",
+"T2.21": "t2:ireland-eire-republic-of",
+"T2.22": "t2:israel",
+"T2.23": "t2:italy-republic-of",
+"T2.24": "t2:japan",
+"T2.25": "t2:kenya",
+"T2.26": "t2:lebanon-republic-of",
+"T2.27": "t2x22:malaysia",
+"T2.28": "t2:mexico",
+"T2.29": "t2:netherlands-kingdom-of-the",
+"T2.30": "t2:new-zealand",
+"T2.31": "t2:nicaragua",
+"T2.32": "t2:nigeria",
+"T2.33": "t2:pakistan-islamic-republic-of",
+"T2.34": "t2:philippines",
+"T2.35": "t2:portugal-republic-of",
+"T2.36": "t2:roman-law",
+"T2.37": "t2:russian-federation",
+"T2.38": "t2:south-africa",
+"T2.39": "t2:south-korea",
+"T2.40": "t2:spain",
+"T2.41": "t2x22:sri-lanka",
+"T2.42": "t2:sweden",
+"T2.43": "t2:switzerland",
+"T2.44": "t2:taiwan-republic-of-china",
+"T2.45": "t2x22:turkiye-republic-of",
+"T2.46": "t2:united-kingdom",
+"T2.47": "t2:zambia-republic-of",
+"T2.2.1": "t2:australia/australian-states-and-territories",
+"T2.3.1": "t2:austria-republic-of/austrian-lander",
+"T2.14.1": "t2:germany-federal-republic-of/german-lander",
+"T2.43:displayed-T2.41.1": "t2:switzerland/swiss-cantons",
+"T2.46.1": "t2:united-kingdom/england-and-wales",
+"T2.46.2": "t2:united-kingdom/northern-ireland-and-ireland-until-1924",
+"T2.46.3": "t2:united-kingdom/scotland",
+"T3.1": "intl:united-nations",
+"T3.2": "intl:league-of-nations",
+"T3.3": "intl:european-union",
+"T3.4": "intl:european-commission-of-human-rights",
+"T3.5": "intl:european-court-of-human-rights",
+"T3.6": "intl:inter-american-commission-on-human-rights",
+"T3.7": "intl:inter-american-court-of-human-rights",
+"T3.8": "intl:international-tribunal-for-the-law-of-the-sea",
+"T3.9": "intl:intergovernmental-organizations",
+"T2.2.1:Australian Capital Territory": "t2:australia/x22-australian-capital-territory",
+"T2.2.1:New South Wales": "t2:australia/x22-new-south-wales",
+"T2.2.1:Northern Territory": "t2:australia/x22-northern-territory",
+"T2.2.1:Queensland": "t2:australia/x22-queensland",
+"T2.2.1:South Australia": "t2:australia/x22-south-australia",
+"T2.2.1:Tasmania": "t2:australia/x22-tasmania",
+"T2.2.1:Victoria": "t2:australia/x22-victoria",
+"T2.2.1:Western Australia": "t2:australia/x22-western-australia",
+"T2.6:Alberta": "t2:canada/x22-alberta",
+"T2.6:British Columbia": "t2:canada/x22-british-columbia",
+"T2.6:Manitoba": "t2:canada/x22-manitoba",
+"T2.6:New Brunswick": "t2:canada/x22-new-brunswick",
+"T2.6:Newfoundland and Labrador": "t2:canada/x22-newfoundland-and-labrador",
+"T2.6:Northwest Territories": "t2:canada/x22-northwest-territories",
+"T2.6:Nova Scotia": "t2:canada/x22-nova-scotia",
+"T2.6:Nunavut": "t2:canada/x22-nunavut",
+"T2.6:Ontario": "t2:canada/x22-ontario",
+"T2.6:Prince Edward Island": "t2:canada/x22-prince-edward-island",
+"T2.6:Québec": "t2:canada/x22-quebec",
+"T2.6:Saskatchewan": "t2:canada/x22-saskatchewan",
+"T2.6:Yukon": "t2:canada/x22-yukon"
 }
-],
-"note": "Index listing only; not parser or renderer coverage. Aliases only from source_label_raw."
 },
 "entries": [
 {
-"id": "T1",
+"id": "t2:argentine-republic",
+"name": "Argentine Republic",
+"parent": null,
+"type": "foreign_jurisdiction",
+"locators": {
+"ed21": "T2.1",
+"ed22": "T2.1"
+},
+"provenance": [
+{
+"edition": 21,
+"source": "final workbook v3, sheet 'T2 מקוון21' (official v21 source URLs recorded there; not included in this extract)",
+"observed": "2026-10-19",
+"verified_status": "verified_v21_identity_list"
+},
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions",
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-1-argentine-republic"
+],
+"verified_status": "verified_publisher_v22_index_browser",
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.1"
+],
+"selectable": true,
+"aliases": []
+},
+{
+"id": "t2:australia",
+"name": "Australia",
+"parent": null,
+"type": "foreign_jurisdiction",
+"locators": {
+"ed21": "T2.2",
+"ed22": "T2.2"
+},
+"provenance": [
+{
+"edition": 21,
+"source": "final workbook v3, sheet 'T2 מקוון21' (official v21 source URLs recorded there; not included in this extract)",
+"observed": "2026-10-19",
+"verified_status": "verified_v21_identity_list"
+},
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions",
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-2-australia"
+],
+"verified_status": "verified_publisher_v22_index_browser",
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.2"
+],
+"selectable": true,
+"aliases": []
+},
+{
+"id": "t2:austria-republic-of",
+"name": "Austria, Republic of",
+"parent": null,
+"type": "foreign_jurisdiction",
+"locators": {
+"ed21": "T2.3",
+"ed22": "T2.3"
+},
+"provenance": [
+{
+"edition": 21,
+"source": "final workbook v3, sheet 'T2 מקוון21' (official v21 source URLs recorded there; not included in this extract)",
+"observed": "2026-10-19",
+"verified_status": "verified_v21_identity_list"
+},
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions",
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-3-austria-republic-of"
+],
+"verified_status": "verified_publisher_v22_index_browser",
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.3"
+],
+"selectable": true,
+"aliases": []
+},
+{
+"id": "t2:belgium-kingdom-of",
+"name": "Belgium, Kingdom of",
+"parent": null,
+"type": "foreign_jurisdiction",
+"locators": {
+"ed21": "T2.4",
+"ed22": "T2.4"
+},
+"provenance": [
+{
+"edition": 21,
+"source": "final workbook v3, sheet 'T2 מקוון21' (official v21 source URLs recorded there; not included in this extract)",
+"observed": "2026-10-19",
+"verified_status": "verified_v21_identity_list"
+},
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions",
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-4-belgium-kingdom-of"
+],
+"verified_status": "verified_publisher_v22_index_browser",
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.4"
+],
+"selectable": true,
+"aliases": []
+},
+{
+"id": "t2:brazil-federative-republic-of",
+"name": "Brazil, Federative Republic of",
+"parent": null,
+"type": "foreign_jurisdiction",
+"locators": {
+"ed21": "T2.5",
+"ed22": "T2.5"
+},
+"provenance": [
+{
+"edition": 21,
+"source": "final workbook v3, sheet 'T2 מקוון21' (official v21 source URLs recorded there; not included in this extract)",
+"observed": "2026-10-19",
+"verified_status": "verified_v21_identity_list"
+},
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions",
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-5-brazil-federative-republic-of"
+],
+"verified_status": "verified_publisher_v22_index_browser",
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.5"
+],
+"selectable": true,
+"aliases": []
+},
+{
+"id": "t2:canada",
+"name": "Canada",
+"parent": null,
+"type": "foreign_jurisdiction",
+"locators": {
+"ed21": "T2.6",
+"ed22": "T2.6"
+},
+"provenance": [
+{
+"edition": 21,
+"source": "final workbook v3, sheet 'T2 מקוון21' (official v21 source URLs recorded there; not included in this extract)",
+"observed": "2026-10-19",
+"verified_status": "verified_v21_identity_list"
+},
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions",
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-6-canada"
+],
+"verified_status": "verified_publisher_v22_index_browser",
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.6"
+],
+"selectable": true,
+"aliases": []
+},
+{
+"id": "t2:catholic-church",
+"name": "Catholic Church",
+"parent": null,
+"type": "foreign_jurisdiction",
+"locators": {
+"ed21": "T2.7"
+},
+"provenance": [
+{
+"edition": 21,
+"source": "final workbook v3, sheet 'T2 מקוון21' (official v21 source URLs recorded there; not included in this extract)",
+"observed": "2026-10-19",
+"verified_status": "verified_v21_identity_list"
+}
+],
+"legacy_ids": [],
+"selectable": true,
+"aliases": []
+},
+{
+"id": "t2:chile-republic-of",
+"name": "Chile, Republic of",
+"parent": null,
+"type": "foreign_jurisdiction",
+"locators": {
+"ed21": "T2.8",
+"ed22": "T2.8"
+},
+"provenance": [
+{
+"edition": 21,
+"source": "final workbook v3, sheet 'T2 מקוון21' (official v21 source URLs recorded there; not included in this extract)",
+"observed": "2026-10-19",
+"verified_status": "verified_v21_identity_list"
+},
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions",
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-8-chile-republic-of"
+],
+"verified_status": "verified_publisher_v22_index_browser",
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.8"
+],
+"selectable": true,
+"aliases": []
+},
+{
+"id": "t2:china-people-s-republic-of",
+"name": "China, People's Republic of",
+"parent": null,
+"type": "foreign_jurisdiction",
+"locators": {
+"ed21": "T2.9",
+"ed22": "T2.9"
+},
+"provenance": [
+{
+"edition": 21,
+"source": "final workbook v3, sheet 'T2 מקוון21' (official v21 source URLs recorded there; not included in this extract)",
+"observed": "2026-10-19",
+"verified_status": "verified_v21_identity_list"
+},
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions",
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-9-china-peoples-republic-of"
+],
+"verified_status": "verified_publisher_v22_index_browser",
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.9"
+],
+"selectable": true,
+"aliases": []
+},
+{
+"id": "t2:colombia-republic-of",
+"name": "Colombia, Republic of",
+"parent": null,
+"type": "foreign_jurisdiction",
+"locators": {
+"ed21": "T2.10",
+"ed22": "T2.10"
+},
+"provenance": [
+{
+"edition": 21,
+"source": "final workbook v3, sheet 'T2 מקוון21' (official v21 source URLs recorded there; not included in this extract)",
+"observed": "2026-10-19",
+"verified_status": "verified_v21_identity_list"
+},
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions",
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-10-colombia-republic-of"
+],
+"verified_status": "verified_publisher_v22_index_browser",
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.10"
+],
+"selectable": true,
+"aliases": []
+},
+{
+"id": "t2:czech-republic",
+"name": "Czech Republic",
+"parent": null,
+"type": "foreign_jurisdiction",
+"locators": {
+"ed21": "T2.11"
+},
+"provenance": [
+{
+"edition": 21,
+"source": "final workbook v3, sheet 'T2 מקוון21' (official v21 source URLs recorded there; not included in this extract)",
+"observed": "2026-10-19",
+"verified_status": "verified_v21_identity_list"
+}
+],
+"legacy_ids": [],
+"selectable": true,
+"aliases": []
+},
+{
+"id": "t2:egypt-arab-republic-of",
+"name": "Egypt, Arab Republic of",
+"parent": null,
+"type": "foreign_jurisdiction",
+"locators": {
+"ed21": "T2.12",
+"ed22": "T2.12"
+},
+"provenance": [
+{
+"edition": 21,
+"source": "final workbook v3, sheet 'T2 מקוון21' (official v21 source URLs recorded there; not included in this extract)",
+"observed": "2026-10-19",
+"verified_status": "verified_v21_identity_list"
+},
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions",
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-12-egypt-arab-republic-of"
+],
+"verified_status": "verified_publisher_v22_index_browser",
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.12"
+],
+"selectable": true,
+"aliases": []
+},
+{
+"id": "t2:france-republic-of",
+"name": "France, Republic of",
+"parent": null,
+"type": "foreign_jurisdiction",
+"locators": {
+"ed21": "T2.13",
+"ed22": "T2.13"
+},
+"provenance": [
+{
+"edition": 21,
+"source": "final workbook v3, sheet 'T2 מקוון21' (official v21 source URLs recorded there; not included in this extract)",
+"observed": "2026-10-19",
+"verified_status": "verified_v21_identity_list"
+},
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions",
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-13-france-republic-of"
+],
+"verified_status": "verified_publisher_v22_index_browser",
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.13"
+],
+"selectable": true,
+"aliases": []
+},
+{
+"id": "t2:germany-federal-republic-of",
+"name": "Germany, Federal Republic of",
+"parent": null,
+"type": "foreign_jurisdiction",
+"locators": {
+"ed21": "T2.14",
+"ed22": "T2.14"
+},
+"provenance": [
+{
+"edition": 21,
+"source": "final workbook v3, sheet 'T2 מקוון21' (official v21 source URLs recorded there; not included in this extract)",
+"observed": "2026-10-19",
+"verified_status": "verified_v21_identity_list"
+},
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions",
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-14-germany-federal-republic-of"
+],
+"verified_status": "verified_publisher_v22_index_browser",
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.14"
+],
+"selectable": true,
+"aliases": []
+},
+{
+"id": "t2:greece",
+"name": "Greece",
+"parent": null,
+"type": "foreign_jurisdiction",
+"locators": {
+"ed21": "T2.15",
+"ed22": "T2.15"
+},
+"provenance": [
+{
+"edition": 21,
+"source": "final workbook v3, sheet 'T2 מקוון21' (official v21 source URLs recorded there; not included in this extract)",
+"observed": "2026-10-19",
+"verified_status": "verified_v21_identity_list"
+},
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions",
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-15-greece"
+],
+"verified_status": "verified_publisher_v22_index_browser",
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.15"
+],
+"selectable": true,
+"aliases": []
+},
+{
+"id": "t2:hong-kong",
+"name": "Hong Kong",
+"parent": null,
+"type": "foreign_jurisdiction",
+"locators": {
+"ed21": "T2.16",
+"ed22": "T2.16"
+},
+"provenance": [
+{
+"edition": 21,
+"source": "final workbook v3, sheet 'T2 מקוון21' (official v21 source URLs recorded there; not included in this extract)",
+"observed": "2026-10-19",
+"verified_status": "verified_v21_identity_list"
+},
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions",
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-16-hong-kong"
+],
+"verified_status": "verified_publisher_v22_index_browser",
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.16"
+],
+"selectable": true,
+"aliases": []
+},
+{
+"id": "t2:hungary-republic-of",
+"name": "Hungary, Republic of",
+"parent": null,
+"type": "foreign_jurisdiction",
+"locators": {
+"ed21": "T2.17",
+"ed22": "T2.17"
+},
+"provenance": [
+{
+"edition": 21,
+"source": "final workbook v3, sheet 'T2 מקוון21' (official v21 source URLs recorded there; not included in this extract)",
+"observed": "2026-10-19",
+"verified_status": "verified_v21_identity_list"
+},
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions",
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-17-hungary-republic-of"
+],
+"verified_status": "verified_publisher_v22_index_browser",
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.17"
+],
+"selectable": true,
+"aliases": []
+},
+{
+"id": "t2:india",
+"name": "India",
+"parent": null,
+"type": "foreign_jurisdiction",
+"locators": {
+"ed21": "T2.18",
+"ed22": "T2.18"
+},
+"provenance": [
+{
+"edition": 21,
+"source": "final workbook v3, sheet 'T2 מקוון21' (official v21 source URLs recorded there; not included in this extract)",
+"observed": "2026-10-19",
+"verified_status": "verified_v21_identity_list"
+},
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions",
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-18-india"
+],
+"verified_status": "verified_publisher_v22_index_browser",
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.18"
+],
+"selectable": true,
+"aliases": []
+},
+{
+"id": "t2:iran-islamic-republic-of",
+"name": "Iran, Islamic Republic of",
+"parent": null,
+"type": "foreign_jurisdiction",
+"locators": {
+"ed21": "T2.19",
+"ed22": "T2.19"
+},
+"provenance": [
+{
+"edition": 21,
+"source": "final workbook v3, sheet 'T2 מקוון21' (official v21 source URLs recorded there; not included in this extract)",
+"observed": "2026-10-19",
+"verified_status": "verified_v21_identity_list"
+},
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions",
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-19-iran-islamic-republic-of"
+],
+"verified_status": "verified_publisher_v22_index_browser",
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.19"
+],
+"selectable": true,
+"aliases": []
+},
+{
+"id": "t2:iraq-republic-of",
+"name": "Iraq, Republic of",
+"parent": null,
+"type": "foreign_jurisdiction",
+"locators": {
+"ed21": "T2.20",
+"ed22": "T2.20"
+},
+"provenance": [
+{
+"edition": 21,
+"source": "final workbook v3, sheet 'T2 מקוון21' (official v21 source URLs recorded there; not included in this extract)",
+"observed": "2026-10-19",
+"verified_status": "verified_v21_identity_list"
+},
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions",
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-20-iraq-republic-of"
+],
+"verified_status": "verified_publisher_v22_index_browser",
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.20"
+],
+"selectable": true,
+"aliases": []
+},
+{
+"id": "t2:ireland-eire-republic-of",
+"name": "Ireland (Éire), Republic of",
+"parent": null,
+"type": "foreign_jurisdiction",
+"locators": {
+"ed21": "T2.21",
+"ed22": "T2.21"
+},
+"provenance": [
+{
+"edition": 21,
+"source": "final workbook v3, sheet 'T2 מקוון21' (official v21 source URLs recorded there; not included in this extract)",
+"observed": "2026-10-19",
+"verified_status": "verified_v21_identity_list"
+},
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions",
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-21-ireland-%C3%A9ire-republic-of"
+],
+"verified_status": "verified_publisher_v22_index_browser",
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.21"
+],
+"selectable": true,
+"aliases": []
+},
+{
+"id": "t2:israel",
+"name": "Israel",
+"parent": null,
+"type": "foreign_jurisdiction",
+"locators": {
+"ed21": "T2.22",
+"ed22": "T2.22"
+},
+"provenance": [
+{
+"edition": 21,
+"source": "final workbook v3, sheet 'T2 מקוון21' (official v21 source URLs recorded there; not included in this extract)",
+"observed": "2026-10-19",
+"verified_status": "verified_v21_identity_list"
+},
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions",
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-22-israel"
+],
+"verified_status": "verified_publisher_v22_index_browser",
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.22"
+],
+"selectable": true,
+"aliases": []
+},
+{
+"id": "t2:italy-republic-of",
+"name": "Italy, Republic of",
+"parent": null,
+"type": "foreign_jurisdiction",
+"locators": {
+"ed21": "T2.23",
+"ed22": "T2.23"
+},
+"provenance": [
+{
+"edition": 21,
+"source": "final workbook v3, sheet 'T2 מקוון21' (official v21 source URLs recorded there; not included in this extract)",
+"observed": "2026-10-19",
+"verified_status": "verified_v21_identity_list"
+},
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions",
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-23-italy-republic-of"
+],
+"verified_status": "verified_publisher_v22_index_browser",
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.23"
+],
+"selectable": true,
+"aliases": []
+},
+{
+"id": "t2:japan",
+"name": "Japan",
+"parent": null,
+"type": "foreign_jurisdiction",
+"locators": {
+"ed21": "T2.24",
+"ed22": "T2.24"
+},
+"provenance": [
+{
+"edition": 21,
+"source": "final workbook v3, sheet 'T2 מקוון21' (official v21 source URLs recorded there; not included in this extract)",
+"observed": "2026-10-19",
+"verified_status": "verified_v21_identity_list"
+},
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions",
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-24-japan"
+],
+"verified_status": "verified_publisher_v22_index_browser",
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.24"
+],
+"selectable": true,
+"aliases": []
+},
+{
+"id": "t2:kenya",
+"name": "Kenya",
+"parent": null,
+"type": "foreign_jurisdiction",
+"locators": {
+"ed21": "T2.25",
+"ed22": "T2.25"
+},
+"provenance": [
+{
+"edition": 21,
+"source": "final workbook v3, sheet 'T2 מקוון21' (official v21 source URLs recorded there; not included in this extract)",
+"observed": "2026-10-19",
+"verified_status": "verified_v21_identity_list"
+},
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions",
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-25-kenya"
+],
+"verified_status": "verified_publisher_v22_index_browser",
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.25"
+],
+"selectable": true,
+"aliases": []
+},
+{
+"id": "t2:lebanon-republic-of",
+"name": "Lebanon, Republic of",
+"parent": null,
+"type": "foreign_jurisdiction",
+"locators": {
+"ed21": "T2.26",
+"ed22": "T2.26"
+},
+"provenance": [
+{
+"edition": 21,
+"source": "final workbook v3, sheet 'T2 מקוון21' (official v21 source URLs recorded there; not included in this extract)",
+"observed": "2026-10-19",
+"verified_status": "verified_v21_identity_list"
+},
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions",
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-26-lebanon-republic-of"
+],
+"verified_status": "verified_publisher_v22_index_browser",
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.26"
+],
+"selectable": true,
+"aliases": []
+},
+{
+"id": "t2:mexico",
+"name": "Mexico",
+"parent": null,
+"type": "foreign_jurisdiction",
+"locators": {
+"ed21": "T2.27",
+"ed22": "T2.28"
+},
+"provenance": [
+{
+"edition": 21,
+"source": "final workbook v3, sheet 'T2 מקוון21' (official v21 source URLs recorded there; not included in this extract)",
+"observed": "2026-10-19",
+"verified_status": "verified_v21_identity_list"
+},
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions",
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-27-mexico"
+],
+"verified_status": "verified_publisher_v22_index_browser",
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.28"
+],
+"selectable": true,
+"aliases": []
+},
+{
+"id": "t2:netherlands-kingdom-of-the",
+"name": "Netherlands, Kingdom of the",
+"parent": null,
+"type": "foreign_jurisdiction",
+"locators": {
+"ed21": "T2.28",
+"ed22": "T2.29"
+},
+"provenance": [
+{
+"edition": 21,
+"source": "final workbook v3, sheet 'T2 מקוון21' (official v21 source URLs recorded there; not included in this extract)",
+"observed": "2026-10-19",
+"verified_status": "verified_v21_identity_list"
+},
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions",
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-28-netherlands-kingdom-of-the"
+],
+"verified_status": "verified_publisher_v22_index_browser",
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.29"
+],
+"selectable": true,
+"aliases": []
+},
+{
+"id": "t2:new-zealand",
+"name": "New Zealand",
+"parent": null,
+"type": "foreign_jurisdiction",
+"locators": {
+"ed21": "T2.29",
+"ed22": "T2.30"
+},
+"provenance": [
+{
+"edition": 21,
+"source": "final workbook v3, sheet 'T2 מקוון21' (official v21 source URLs recorded there; not included in this extract)",
+"observed": "2026-10-19",
+"verified_status": "verified_v21_identity_list"
+},
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions",
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-29-new-zealand"
+],
+"verified_status": "verified_publisher_v22_index_browser",
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.30"
+],
+"selectable": true,
+"aliases": []
+},
+{
+"id": "t2:nicaragua",
+"name": "Nicaragua",
+"parent": null,
+"type": "foreign_jurisdiction",
+"locators": {
+"ed21": "T2.30",
+"ed22": "T2.31"
+},
+"provenance": [
+{
+"edition": 21,
+"source": "final workbook v3, sheet 'T2 מקוון21' (official v21 source URLs recorded there; not included in this extract)",
+"observed": "2026-10-19",
+"verified_status": "verified_v21_identity_list"
+},
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions",
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-30-nicaragua"
+],
+"verified_status": "verified_publisher_v22_index_browser",
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.31"
+],
+"selectable": true,
+"aliases": []
+},
+{
+"id": "t2:nigeria",
+"name": "Nigeria",
+"parent": null,
+"type": "foreign_jurisdiction",
+"locators": {
+"ed21": "T2.31",
+"ed22": "T2.32"
+},
+"provenance": [
+{
+"edition": 21,
+"source": "final workbook v3, sheet 'T2 מקוון21' (official v21 source URLs recorded there; not included in this extract)",
+"observed": "2026-10-19",
+"verified_status": "verified_v21_identity_list"
+},
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions",
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-31-nigeria"
+],
+"verified_status": "verified_publisher_v22_index_browser",
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.32"
+],
+"selectable": true,
+"aliases": []
+},
+{
+"id": "t2:pakistan-islamic-republic-of",
+"name": "Pakistan, Islamic Republic of",
+"parent": null,
+"type": "foreign_jurisdiction",
+"locators": {
+"ed21": "T2.32",
+"ed22": "T2.33"
+},
+"provenance": [
+{
+"edition": 21,
+"source": "final workbook v3, sheet 'T2 מקוון21' (official v21 source URLs recorded there; not included in this extract)",
+"observed": "2026-10-19",
+"verified_status": "verified_v21_identity_list"
+},
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions",
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-32-pakistan-islamic-republic-of"
+],
+"verified_status": "verified_publisher_v22_index_browser",
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.33"
+],
+"selectable": true,
+"aliases": []
+},
+{
+"id": "t2:philippines",
+"name": "Philippines",
+"parent": null,
+"type": "foreign_jurisdiction",
+"locators": {
+"ed21": "T2.33",
+"ed22": "T2.34"
+},
+"provenance": [
+{
+"edition": 21,
+"source": "final workbook v3, sheet 'T2 מקוון21' (official v21 source URLs recorded there; not included in this extract)",
+"observed": "2026-10-19",
+"verified_status": "verified_v21_identity_list"
+},
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions",
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-33-philippines"
+],
+"verified_status": "verified_publisher_v22_index_browser",
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.34"
+],
+"selectable": true,
+"aliases": []
+},
+{
+"id": "t2:portugal-republic-of",
+"name": "Portugal, Republic of",
+"parent": null,
+"type": "foreign_jurisdiction",
+"locators": {
+"ed21": "T2.34",
+"ed22": "T2.35"
+},
+"provenance": [
+{
+"edition": 21,
+"source": "final workbook v3, sheet 'T2 מקוון21' (official v21 source URLs recorded there; not included in this extract)",
+"observed": "2026-10-19",
+"verified_status": "verified_v21_identity_list"
+},
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions",
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-34-portugal-republic-of"
+],
+"verified_status": "verified_publisher_v22_index_browser",
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.35"
+],
+"selectable": true,
+"aliases": []
+},
+{
+"id": "t2:roman-law",
+"name": "Roman Law",
+"parent": null,
+"type": "foreign_jurisdiction",
+"locators": {
+"ed21": "T2.35",
+"ed22": "T2.36"
+},
+"provenance": [
+{
+"edition": 21,
+"source": "final workbook v3, sheet 'T2 מקוון21' (official v21 source URLs recorded there; not included in this extract)",
+"observed": "2026-10-19",
+"verified_status": "verified_v21_identity_list"
+},
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions",
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-35-roman-law"
+],
+"verified_status": "verified_publisher_v22_index_browser",
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.36"
+],
+"selectable": true,
+"aliases": []
+},
+{
+"id": "t2:russian-federation",
+"name": "Russian Federation",
+"parent": null,
+"type": "foreign_jurisdiction",
+"locators": {
+"ed21": "T2.36",
+"ed22": "T2.37"
+},
+"provenance": [
+{
+"edition": 21,
+"source": "final workbook v3, sheet 'T2 מקוון21' (official v21 source URLs recorded there; not included in this extract)",
+"observed": "2026-10-19",
+"verified_status": "verified_v21_identity_list"
+},
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions",
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-36-russian-federation"
+],
+"verified_status": "verified_publisher_v22_index_browser",
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.37"
+],
+"selectable": true,
+"aliases": []
+},
+{
+"id": "t2:south-africa",
+"name": "South Africa",
+"parent": null,
+"type": "foreign_jurisdiction",
+"locators": {
+"ed21": "T2.37",
+"ed22": "T2.38"
+},
+"provenance": [
+{
+"edition": 21,
+"source": "final workbook v3, sheet 'T2 מקוון21' (official v21 source URLs recorded there; not included in this extract)",
+"observed": "2026-10-19",
+"verified_status": "verified_v21_identity_list"
+},
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions",
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-37-south-africa"
+],
+"verified_status": "verified_publisher_v22_index_browser",
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.38"
+],
+"selectable": true,
+"aliases": []
+},
+{
+"id": "t2:south-korea",
+"name": "South Korea",
+"parent": null,
+"type": "foreign_jurisdiction",
+"locators": {
+"ed21": "T2.38",
+"ed22": "T2.39"
+},
+"provenance": [
+{
+"edition": 21,
+"source": "final workbook v3, sheet 'T2 מקוון21' (official v21 source URLs recorded there; not included in this extract)",
+"observed": "2026-10-19",
+"verified_status": "verified_v21_identity_list"
+},
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions",
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-38-south-korea"
+],
+"verified_status": "verified_publisher_v22_index_browser",
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.39"
+],
+"selectable": true,
+"aliases": []
+},
+{
+"id": "t2:spain",
+"name": "Spain",
+"parent": null,
+"type": "foreign_jurisdiction",
+"locators": {
+"ed21": "T2.39",
+"ed22": "T2.40"
+},
+"provenance": [
+{
+"edition": 21,
+"source": "final workbook v3, sheet 'T2 מקוון21' (official v21 source URLs recorded there; not included in this extract)",
+"observed": "2026-10-19",
+"verified_status": "verified_v21_identity_list"
+},
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions",
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-39-spain"
+],
+"verified_status": "verified_publisher_v22_index_browser",
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.40"
+],
+"selectable": true,
+"aliases": []
+},
+{
+"id": "t2:sweden",
+"name": "Sweden",
+"parent": null,
+"type": "foreign_jurisdiction",
+"locators": {
+"ed21": "T2.40",
+"ed22": "T2.42"
+},
+"provenance": [
+{
+"edition": 21,
+"source": "final workbook v3, sheet 'T2 מקוון21' (official v21 source URLs recorded there; not included in this extract)",
+"observed": "2026-10-19",
+"verified_status": "verified_v21_identity_list"
+},
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions",
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-40-sweden"
+],
+"verified_status": "verified_publisher_v22_index_browser",
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.42"
+],
+"selectable": true,
+"aliases": []
+},
+{
+"id": "t2:switzerland",
+"name": "Switzerland",
+"parent": null,
+"type": "foreign_jurisdiction",
+"locators": {
+"ed21": "T2.41",
+"ed22": "T2.43"
+},
+"provenance": [
+{
+"edition": 21,
+"source": "final workbook v3, sheet 'T2 מקוון21' (official v21 source URLs recorded there; not included in this extract)",
+"observed": "2026-10-19",
+"verified_status": "verified_v21_identity_list"
+},
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions",
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-41-switzerland"
+],
+"verified_status": "verified_publisher_v22_index_browser",
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.43"
+],
+"selectable": true,
+"aliases": []
+},
+{
+"id": "t2:taiwan-republic-of-china",
+"name": "Taiwan, Republic of China",
+"parent": null,
+"type": "foreign_jurisdiction",
+"locators": {
+"ed21": "T2.42",
+"ed22": "T2.44"
+},
+"provenance": [
+{
+"edition": 21,
+"source": "final workbook v3, sheet 'T2 מקוון21' (official v21 source URLs recorded there; not included in this extract)",
+"observed": "2026-10-19",
+"verified_status": "verified_v21_identity_list"
+},
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions",
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-42-taiwan-republic-of-china"
+],
+"verified_status": "verified_publisher_v22_index_browser",
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.44"
+],
+"selectable": true,
+"aliases": []
+},
+{
+"id": "t2:united-kingdom",
+"name": "United Kingdom",
+"parent": null,
+"type": "foreign_jurisdiction",
+"locators": {
+"ed21": "T2.43",
+"ed22": "T2.46"
+},
+"provenance": [
+{
+"edition": 21,
+"source": "final workbook v3, sheet 'T2 מקוון21' (official v21 source URLs recorded there; not included in this extract)",
+"observed": "2026-10-19",
+"verified_status": "verified_v21_identity_list"
+},
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions",
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-43-united-kingdom"
+],
+"verified_status": "verified_publisher_v22_index_browser",
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.46"
+],
+"selectable": true,
+"aliases": []
+},
+{
+"id": "t2:zambia-republic-of",
+"name": "Zambia, Republic of",
+"parent": null,
+"type": "foreign_jurisdiction",
+"locators": {
+"ed21": "T2.44",
+"ed22": "T2.47"
+},
+"provenance": [
+{
+"edition": 21,
+"source": "final workbook v3, sheet 'T2 מקוון21' (official v21 source URLs recorded there; not included in this extract)",
+"observed": "2026-10-19",
+"verified_status": "verified_v21_identity_list"
+},
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions",
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-44-zambia-republic-of"
+],
+"verified_status": "verified_publisher_v22_index_browser",
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.47"
+],
+"selectable": true,
+"aliases": []
+},
+{
+"id": "t2:australia/australian-states-and-territories",
+"name": "Australian States and Territories",
+"parent": "t2:australia",
+"type": "subdivision_group",
+"locators": {
+"ed21": "T2.2.1",
+"ed22": "T2.2.1"
+},
+"provenance": [
+{
+"edition": 21,
+"source": "final workbook v3, sheet 'T2 מקוון21' (official v21 source URLs recorded there; not included in this extract)",
+"observed": "2026-10-19",
+"verified_status": "verified_v21_identity_list"
+},
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-2-australia"
+],
+"verified_status": "verified_publisher_v22_heading_browser",
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.2.1"
+],
+"selectable": false,
+"aliases": []
+},
+{
+"id": "t2:austria-republic-of/austrian-lander",
+"name": "Austrian Länder",
+"parent": "t2:austria-republic-of",
+"type": "subdivision_group",
+"locators": {
+"ed21": "T2.3.1",
+"ed22": "T2.3.1"
+},
+"provenance": [
+{
+"edition": 21,
+"source": "final workbook v3, sheet 'T2 מקוון21' (official v21 source URLs recorded there; not included in this extract)",
+"observed": "2026-10-19",
+"verified_status": "verified_v21_identity_list"
+},
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-3-austria-republic-of"
+],
+"verified_status": "verified_publisher_v22_heading_browser",
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.3.1"
+],
+"selectable": false,
+"aliases": []
+},
+{
+"id": "t2:germany-federal-republic-of/german-lander",
+"name": "German Länder",
+"parent": "t2:germany-federal-republic-of",
+"type": "subdivision_group",
+"locators": {
+"ed21": "T2.14.1",
+"ed22": "T2.14.1"
+},
+"provenance": [
+{
+"edition": 21,
+"source": "final workbook v3, sheet 'T2 מקוון21' (official v21 source URLs recorded there; not included in this extract)",
+"observed": "2026-10-19",
+"verified_status": "verified_v21_identity_list"
+},
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-14-germany-federal-republic-of"
+],
+"verified_status": "verified_publisher_v22_heading_browser",
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.14.1"
+],
+"selectable": false,
+"aliases": []
+},
+{
+"id": "t2:switzerland/swiss-cantons",
+"name": "Swiss Cantons",
+"parent": "t2:switzerland",
+"type": "subdivision_group",
+"locators": {
+"ed21": "T2.41.1",
+"ed22": "T2.43:displayed-T2.41.1"
+},
+"provenance": [
+{
+"edition": 21,
+"source": "final workbook v3, sheet 'T2 מקוון21' (official v21 source URLs recorded there; not included in this extract)",
+"observed": "2026-10-19",
+"verified_status": "verified_v21_identity_list"
+},
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-41-switzerland"
+],
+"verified_status": "verified_publisher_v22_heading_browser",
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.43:displayed-T2.41.1"
+],
+"selectable": false,
+"aliases": []
+},
+{
+"id": "t2:united-kingdom/england-and-wales",
+"name": "England and Wales",
+"parent": "t2:united-kingdom",
+"type": "legal_system",
+"locators": {
+"ed21": "T2.43.1",
+"ed22": "T2.46.1"
+},
+"provenance": [
+{
+"edition": 21,
+"source": "final workbook v3, sheet 'T2 מקוון21' (official v21 source URLs recorded there; not included in this extract)",
+"observed": "2026-10-19",
+"verified_status": "verified_v21_identity_list"
+},
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-43-united-kingdom"
+],
+"verified_status": "verified_publisher_v22_heading_browser",
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.46.1"
+],
+"selectable": true,
+"aliases": []
+},
+{
+"id": "t2:united-kingdom/northern-ireland-and-ireland-until-1924",
+"name": "Northern Ireland (and Ireland Until 1924)",
+"parent": "t2:united-kingdom",
+"type": "legal_system",
+"locators": {
+"ed21": "T2.43.2",
+"ed22": "T2.46.2"
+},
+"provenance": [
+{
+"edition": 21,
+"source": "final workbook v3, sheet 'T2 מקוון21' (official v21 source URLs recorded there; not included in this extract)",
+"observed": "2026-10-19",
+"verified_status": "verified_v21_identity_list"
+},
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-43-united-kingdom"
+],
+"verified_status": "verified_publisher_v22_heading_browser",
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.46.2"
+],
+"selectable": true,
+"aliases": []
+},
+{
+"id": "t2:united-kingdom/scotland",
+"name": "Scotland",
+"parent": "t2:united-kingdom",
+"type": "legal_system",
+"locators": {
+"ed21": "T2.43.3",
+"ed22": "T2.46.3"
+},
+"provenance": [
+{
+"edition": 21,
+"source": "final workbook v3, sheet 'T2 מקוון21' (official v21 source URLs recorded there; not included in this extract)",
+"observed": "2026-10-19",
+"verified_status": "verified_v21_identity_list"
+},
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-43-united-kingdom"
+],
+"verified_status": "verified_publisher_v22_heading_browser",
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.46.3"
+],
+"selectable": true,
+"aliases": []
+},
+{
+"id": "us",
 "name": "United States Jurisdictions",
 "parent": null,
-"type": "table_scope",
+"type": "us_root",
+"locators": {
+"ed22": "T1"
+},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions"
+],
 "verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "T1United States Jurisdictions",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T1"
+],
+"selectable": true,
+"aliases": [
+"T1United States Jurisdictions"
+]
 },
 {
-"id": "T1.1",
-"name": "Federal Judicial and Legislative Materials",
-"parent": "T1",
-"type": "table_scope",
-"verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "T1.1Federal Judicial and Legislative Materials",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-1-federal-judicial-and-legislative-materials"
-},
-{
-"id": "T1.2",
-"name": "Federal Administrative and Executive Materials",
-"parent": "T1",
-"type": "table_scope",
-"verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "T1.2Federal Administrative and Executive Materials",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-2-federal-administrative-and-executive-materials"
-},
-{
-"id": "T1.3",
-"name": "States and the District of Columbia",
-"parent": "T1",
-"type": "table_scope",
-"verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "T1.3States and the District of Columbia",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia"
-},
-{
-"id": "T1.4",
-"name": "Other United States Jurisdictions",
-"parent": "T1",
-"type": "table_scope",
-"verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "T1.4Other United States Jurisdictions",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-4-other-united-states-jurisdictions"
-},
-{
-"id": "us-state:Alabama",
+"id": "us:alabama",
 "name": "Alabama",
-"parent": "T1.3",
-"type": "state_or_federal_district",
+"parent": "us",
+"type": "us_state_or_dc",
+"locators": {},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/alabama-ala"
+],
 "verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "Alabama (Ala.)",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/alabama-ala"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"us-state:Alabama"
+],
+"selectable": true,
+"aliases": [
+"Alabama (Ala.)"
+]
 },
 {
-"id": "us-state:Alaska",
+"id": "us:alaska",
 "name": "Alaska",
-"parent": "T1.3",
-"type": "state_or_federal_district",
+"parent": "us",
+"type": "us_state_or_dc",
+"locators": {},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/alaska-alaska"
+],
 "verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "Alaska (Alaska)",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/alaska-alaska"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"us-state:Alaska"
+],
+"selectable": true,
+"aliases": [
+"Alaska (Alaska)"
+]
 },
 {
-"id": "us-state:Arizona",
+"id": "us:arizona",
 "name": "Arizona",
-"parent": "T1.3",
-"type": "state_or_federal_district",
+"parent": "us",
+"type": "us_state_or_dc",
+"locators": {},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/arizona-ariz"
+],
 "verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "Arizona (Ariz.)",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/arizona-ariz"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"us-state:Arizona"
+],
+"selectable": true,
+"aliases": [
+"Arizona (Ariz.)"
+]
 },
 {
-"id": "us-state:Arkansas",
+"id": "us:arkansas",
 "name": "Arkansas",
-"parent": "T1.3",
-"type": "state_or_federal_district",
+"parent": "us",
+"type": "us_state_or_dc",
+"locators": {},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/arkansas-ark"
+],
 "verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "Arkansas (Ark.)",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/arkansas-ark"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"us-state:Arkansas"
+],
+"selectable": true,
+"aliases": [
+"Arkansas (Ark.)"
+]
 },
 {
-"id": "us-state:California",
+"id": "us:california",
 "name": "California",
-"parent": "T1.3",
-"type": "state_or_federal_district",
+"parent": "us",
+"type": "us_state_or_dc",
+"locators": {},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/california-cal"
+],
 "verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "California (Cal.)",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/california-cal"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"us-state:California"
+],
+"selectable": true,
+"aliases": [
+"California (Cal.)"
+]
 },
 {
-"id": "us-state:Colorado",
+"id": "us:colorado",
 "name": "Colorado",
-"parent": "T1.3",
-"type": "state_or_federal_district",
+"parent": "us",
+"type": "us_state_or_dc",
+"locators": {},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/colorado-colo"
+],
 "verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "Colorado (Colo.)",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/colorado-colo"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"us-state:Colorado"
+],
+"selectable": true,
+"aliases": [
+"Colorado (Colo.)"
+]
 },
 {
-"id": "us-state:Connecticut",
+"id": "us:connecticut",
 "name": "Connecticut",
-"parent": "T1.3",
-"type": "state_or_federal_district",
+"parent": "us",
+"type": "us_state_or_dc",
+"locators": {},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/connecticut-conn"
+],
 "verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "Connecticut (Conn.)",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/connecticut-conn"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"us-state:Connecticut"
+],
+"selectable": true,
+"aliases": [
+"Connecticut (Conn.)"
+]
 },
 {
-"id": "us-state:Delaware",
+"id": "us:delaware",
 "name": "Delaware",
-"parent": "T1.3",
-"type": "state_or_federal_district",
+"parent": "us",
+"type": "us_state_or_dc",
+"locators": {},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/delaware-del"
+],
 "verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "Delaware (Del.)",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/delaware-del"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"us-state:Delaware"
+],
+"selectable": true,
+"aliases": [
+"Delaware (Del.)"
+]
 },
 {
-"id": "us-state:Florida",
+"id": "us:florida",
 "name": "Florida",
-"parent": "T1.3",
-"type": "state_or_federal_district",
+"parent": "us",
+"type": "us_state_or_dc",
+"locators": {},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/florida-fla"
+],
 "verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "Florida (Fla.)",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/florida-fla"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"us-state:Florida"
+],
+"selectable": true,
+"aliases": [
+"Florida (Fla.)"
+]
 },
 {
-"id": "us-state:Georgia",
+"id": "us:georgia",
 "name": "Georgia",
-"parent": "T1.3",
-"type": "state_or_federal_district",
+"parent": "us",
+"type": "us_state_or_dc",
+"locators": {},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/georgia-ga"
+],
 "verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "Georgia (Ga.)",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/georgia-ga"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"us-state:Georgia"
+],
+"selectable": true,
+"aliases": [
+"Georgia (Ga.)"
+]
 },
 {
-"id": "us-state:Hawaii",
+"id": "us:hawaii",
 "name": "Hawaii",
-"parent": "T1.3",
-"type": "state_or_federal_district",
+"parent": "us",
+"type": "us_state_or_dc",
+"locators": {},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/hawaii-haw"
+],
 "verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "Hawaii (Haw.)",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/hawaii-haw"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"us-state:Hawaii"
+],
+"selectable": true,
+"aliases": [
+"Hawaii (Haw.)"
+]
 },
 {
-"id": "us-state:Idaho",
+"id": "us:idaho",
 "name": "Idaho",
-"parent": "T1.3",
-"type": "state_or_federal_district",
+"parent": "us",
+"type": "us_state_or_dc",
+"locators": {},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/idaho-idaho"
+],
 "verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "Idaho (Idaho)",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/idaho-idaho"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"us-state:Idaho"
+],
+"selectable": true,
+"aliases": [
+"Idaho (Idaho)"
+]
 },
 {
-"id": "us-state:Illinois",
+"id": "us:illinois",
 "name": "Illinois",
-"parent": "T1.3",
-"type": "state_or_federal_district",
+"parent": "us",
+"type": "us_state_or_dc",
+"locators": {},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/illinois-ill"
+],
 "verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "Illinois (Ill.)",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/illinois-ill"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"us-state:Illinois"
+],
+"selectable": true,
+"aliases": [
+"Illinois (Ill.)"
+]
 },
 {
-"id": "us-state:Indiana",
+"id": "us:indiana",
 "name": "Indiana",
-"parent": "T1.3",
-"type": "state_or_federal_district",
+"parent": "us",
+"type": "us_state_or_dc",
+"locators": {},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/indiana-ind"
+],
 "verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "Indiana (Ind.)",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/indiana-ind"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"us-state:Indiana"
+],
+"selectable": true,
+"aliases": [
+"Indiana (Ind.)"
+]
 },
 {
-"id": "us-state:Iowa",
+"id": "us:iowa",
 "name": "Iowa",
-"parent": "T1.3",
-"type": "state_or_federal_district",
+"parent": "us",
+"type": "us_state_or_dc",
+"locators": {},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/iowa-iowa"
+],
 "verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "Iowa (Iowa)",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/iowa-iowa"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"us-state:Iowa"
+],
+"selectable": true,
+"aliases": [
+"Iowa (Iowa)"
+]
 },
 {
-"id": "us-state:Kansas",
+"id": "us:kansas",
 "name": "Kansas",
-"parent": "T1.3",
-"type": "state_or_federal_district",
+"parent": "us",
+"type": "us_state_or_dc",
+"locators": {},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/kansas-kan"
+],
 "verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "Kansas (Kan.)",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/kansas-kan"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"us-state:Kansas"
+],
+"selectable": true,
+"aliases": [
+"Kansas (Kan.)"
+]
 },
 {
-"id": "us-state:Kentucky",
+"id": "us:kentucky",
 "name": "Kentucky",
-"parent": "T1.3",
-"type": "state_or_federal_district",
+"parent": "us",
+"type": "us_state_or_dc",
+"locators": {},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/kentucky-ky"
+],
 "verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "Kentucky (Ky.)",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/kentucky-ky"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"us-state:Kentucky"
+],
+"selectable": true,
+"aliases": [
+"Kentucky (Ky.)"
+]
 },
 {
-"id": "us-state:Louisiana",
+"id": "us:louisiana",
 "name": "Louisiana",
-"parent": "T1.3",
-"type": "state_or_federal_district",
+"parent": "us",
+"type": "us_state_or_dc",
+"locators": {},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/louisiana-la"
+],
 "verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "Louisiana (La.)",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/louisiana-la"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"us-state:Louisiana"
+],
+"selectable": true,
+"aliases": [
+"Louisiana (La.)"
+]
 },
 {
-"id": "us-state:Maine",
+"id": "us:maine",
 "name": "Maine",
-"parent": "T1.3",
-"type": "state_or_federal_district",
+"parent": "us",
+"type": "us_state_or_dc",
+"locators": {},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/maine-me"
+],
 "verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "Maine (Me.)",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/maine-me"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"us-state:Maine"
+],
+"selectable": true,
+"aliases": [
+"Maine (Me.)"
+]
 },
 {
-"id": "us-state:Maryland",
+"id": "us:maryland",
 "name": "Maryland",
-"parent": "T1.3",
-"type": "state_or_federal_district",
+"parent": "us",
+"type": "us_state_or_dc",
+"locators": {},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/maryland-md"
+],
 "verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "Maryland (Md.)",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/maryland-md"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"us-state:Maryland"
+],
+"selectable": true,
+"aliases": [
+"Maryland (Md.)"
+]
 },
 {
-"id": "us-state:Massachusetts",
+"id": "us:massachusetts",
 "name": "Massachusetts",
-"parent": "T1.3",
-"type": "state_or_federal_district",
+"parent": "us",
+"type": "us_state_or_dc",
+"locators": {},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/massachusetts-mass"
+],
 "verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "Massachusetts (Mass.)",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/massachusetts-mass"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"us-state:Massachusetts"
+],
+"selectable": true,
+"aliases": [
+"Massachusetts (Mass.)"
+]
 },
 {
-"id": "us-state:Michigan",
+"id": "us:michigan",
 "name": "Michigan",
-"parent": "T1.3",
-"type": "state_or_federal_district",
+"parent": "us",
+"type": "us_state_or_dc",
+"locators": {},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/michigan-mich"
+],
 "verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "Michigan (Mich.)",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/michigan-mich"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"us-state:Michigan"
+],
+"selectable": true,
+"aliases": [
+"Michigan (Mich.)"
+]
 },
 {
-"id": "us-state:Minnesota",
+"id": "us:minnesota",
 "name": "Minnesota",
-"parent": "T1.3",
-"type": "state_or_federal_district",
+"parent": "us",
+"type": "us_state_or_dc",
+"locators": {},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/minnesota-minn"
+],
 "verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "Minnesota (Minn.)",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/minnesota-minn"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"us-state:Minnesota"
+],
+"selectable": true,
+"aliases": [
+"Minnesota (Minn.)"
+]
 },
 {
-"id": "us-state:Mississippi",
+"id": "us:mississippi",
 "name": "Mississippi",
-"parent": "T1.3",
-"type": "state_or_federal_district",
+"parent": "us",
+"type": "us_state_or_dc",
+"locators": {},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/mississippi-miss"
+],
 "verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "Mississippi (Miss.)",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/mississippi-miss"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"us-state:Mississippi"
+],
+"selectable": true,
+"aliases": [
+"Mississippi (Miss.)"
+]
 },
 {
-"id": "us-state:Missouri",
+"id": "us:missouri",
 "name": "Missouri",
-"parent": "T1.3",
-"type": "state_or_federal_district",
+"parent": "us",
+"type": "us_state_or_dc",
+"locators": {},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/missouri-mo"
+],
 "verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "Missouri (Mo.)",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/missouri-mo"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"us-state:Missouri"
+],
+"selectable": true,
+"aliases": [
+"Missouri (Mo.)"
+]
 },
 {
-"id": "us-state:Montana",
+"id": "us:montana",
 "name": "Montana",
-"parent": "T1.3",
-"type": "state_or_federal_district",
+"parent": "us",
+"type": "us_state_or_dc",
+"locators": {},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/montana-mont"
+],
 "verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "Montana (Mont.)",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/montana-mont"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"us-state:Montana"
+],
+"selectable": true,
+"aliases": [
+"Montana (Mont.)"
+]
 },
 {
-"id": "us-state:Nebraska",
+"id": "us:nebraska",
 "name": "Nebraska",
-"parent": "T1.3",
-"type": "state_or_federal_district",
+"parent": "us",
+"type": "us_state_or_dc",
+"locators": {},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/nebraska-neb"
+],
 "verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "Nebraska (Neb.)",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/nebraska-neb"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"us-state:Nebraska"
+],
+"selectable": true,
+"aliases": [
+"Nebraska (Neb.)"
+]
 },
 {
-"id": "us-state:Nevada",
+"id": "us:nevada",
 "name": "Nevada",
-"parent": "T1.3",
-"type": "state_or_federal_district",
+"parent": "us",
+"type": "us_state_or_dc",
+"locators": {},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/nevada-nev"
+],
 "verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "Nevada (Nev.)",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/nevada-nev"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"us-state:Nevada"
+],
+"selectable": true,
+"aliases": [
+"Nevada (Nev.)"
+]
 },
 {
-"id": "us-state:New Hampshire",
+"id": "us:new-hampshire",
 "name": "New Hampshire",
-"parent": "T1.3",
-"type": "state_or_federal_district",
+"parent": "us",
+"type": "us_state_or_dc",
+"locators": {},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/new-hampshire-n-h"
+],
 "verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "New Hampshire (N.H.)",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/new-hampshire-n-h"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"us-state:New Hampshire"
+],
+"selectable": true,
+"aliases": [
+"New Hampshire (N.H.)"
+]
 },
 {
-"id": "us-state:New Jersey",
+"id": "us:new-jersey",
 "name": "New Jersey",
-"parent": "T1.3",
-"type": "state_or_federal_district",
+"parent": "us",
+"type": "us_state_or_dc",
+"locators": {},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/new-jersey-n-j"
+],
 "verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "New Jersey (N.J.)",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/new-jersey-n-j"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"us-state:New Jersey"
+],
+"selectable": true,
+"aliases": [
+"New Jersey (N.J.)"
+]
 },
 {
-"id": "us-state:New Mexico",
+"id": "us:new-mexico",
 "name": "New Mexico",
-"parent": "T1.3",
-"type": "state_or_federal_district",
+"parent": "us",
+"type": "us_state_or_dc",
+"locators": {},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/new-mexico-n-m"
+],
 "verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "New Mexico (N.M.)",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/new-mexico-n-m"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"us-state:New Mexico"
+],
+"selectable": true,
+"aliases": [
+"New Mexico (N.M.)"
+]
 },
 {
-"id": "us-state:New York",
+"id": "us:new-york",
 "name": "New York",
-"parent": "T1.3",
-"type": "state_or_federal_district",
+"parent": "us",
+"type": "us_state_or_dc",
+"locators": {},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/new-york-n-y"
+],
 "verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "New York (N.Y.)",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/new-york-n-y"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"us-state:New York"
+],
+"selectable": true,
+"aliases": [
+"New York (N.Y.)"
+]
 },
 {
-"id": "us-state:North Carolina",
+"id": "us:north-carolina",
 "name": "North Carolina",
-"parent": "T1.3",
-"type": "state_or_federal_district",
+"parent": "us",
+"type": "us_state_or_dc",
+"locators": {},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/north-carolina-n-c"
+],
 "verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "North Carolina (N.C.)",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/north-carolina-n-c"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"us-state:North Carolina"
+],
+"selectable": true,
+"aliases": [
+"North Carolina (N.C.)"
+]
 },
 {
-"id": "us-state:North Dakota",
+"id": "us:north-dakota",
 "name": "North Dakota",
-"parent": "T1.3",
-"type": "state_or_federal_district",
+"parent": "us",
+"type": "us_state_or_dc",
+"locators": {},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/north-dakota-n-d"
+],
 "verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "North Dakota (N.D.)",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/north-dakota-n-d"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"us-state:North Dakota"
+],
+"selectable": true,
+"aliases": [
+"North Dakota (N.D.)"
+]
 },
 {
-"id": "us-state:Ohio",
+"id": "us:ohio",
 "name": "Ohio",
-"parent": "T1.3",
-"type": "state_or_federal_district",
+"parent": "us",
+"type": "us_state_or_dc",
+"locators": {},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/ohio-ohio"
+],
 "verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "Ohio (Ohio)",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/ohio-ohio"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"us-state:Ohio"
+],
+"selectable": true,
+"aliases": [
+"Ohio (Ohio)"
+]
 },
 {
-"id": "us-state:Oklahoma",
+"id": "us:oklahoma",
 "name": "Oklahoma",
-"parent": "T1.3",
-"type": "state_or_federal_district",
+"parent": "us",
+"type": "us_state_or_dc",
+"locators": {},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/oklahoma-okla"
+],
 "verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "Oklahoma (Okla.)",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/oklahoma-okla"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"us-state:Oklahoma"
+],
+"selectable": true,
+"aliases": [
+"Oklahoma (Okla.)"
+]
 },
 {
-"id": "us-state:Oregon",
+"id": "us:oregon",
 "name": "Oregon",
-"parent": "T1.3",
-"type": "state_or_federal_district",
+"parent": "us",
+"type": "us_state_or_dc",
+"locators": {},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/oregon-or"
+],
 "verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "Oregon (Or.)",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/oregon-or"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"us-state:Oregon"
+],
+"selectable": true,
+"aliases": [
+"Oregon (Or.)"
+]
 },
 {
-"id": "us-state:Pennsylvania",
+"id": "us:pennsylvania",
 "name": "Pennsylvania",
-"parent": "T1.3",
-"type": "state_or_federal_district",
+"parent": "us",
+"type": "us_state_or_dc",
+"locators": {},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/pennsylvania-pa"
+],
 "verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "Pennsylvania (Pa.)",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/pennsylvania-pa"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"us-state:Pennsylvania"
+],
+"selectable": true,
+"aliases": [
+"Pennsylvania (Pa.)"
+]
 },
 {
-"id": "us-state:Rhode Island",
+"id": "us:rhode-island",
 "name": "Rhode Island",
-"parent": "T1.3",
-"type": "state_or_federal_district",
+"parent": "us",
+"type": "us_state_or_dc",
+"locators": {},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/rhode-island-r-i"
+],
 "verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "Rhode Island (R.I.)",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/rhode-island-r-i"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"us-state:Rhode Island"
+],
+"selectable": true,
+"aliases": [
+"Rhode Island (R.I.)"
+]
 },
 {
-"id": "us-state:South Carolina",
+"id": "us:south-carolina",
 "name": "South Carolina",
-"parent": "T1.3",
-"type": "state_or_federal_district",
+"parent": "us",
+"type": "us_state_or_dc",
+"locators": {},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/south-carolina-s-c"
+],
 "verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "South Carolina (S.C.)",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/south-carolina-s-c"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"us-state:South Carolina"
+],
+"selectable": true,
+"aliases": [
+"South Carolina (S.C.)"
+]
 },
 {
-"id": "us-state:South Dakota",
+"id": "us:south-dakota",
 "name": "South Dakota",
-"parent": "T1.3",
-"type": "state_or_federal_district",
+"parent": "us",
+"type": "us_state_or_dc",
+"locators": {},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/south-dakota-s-d"
+],
 "verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "South Dakota (S.D.)",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/south-dakota-s-d"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"us-state:South Dakota"
+],
+"selectable": true,
+"aliases": [
+"South Dakota (S.D.)"
+]
 },
 {
-"id": "us-state:Tennessee",
+"id": "us:tennessee",
 "name": "Tennessee",
-"parent": "T1.3",
-"type": "state_or_federal_district",
+"parent": "us",
+"type": "us_state_or_dc",
+"locators": {},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/tennessee-tenn"
+],
 "verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "Tennessee (Tenn.)",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/tennessee-tenn"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"us-state:Tennessee"
+],
+"selectable": true,
+"aliases": [
+"Tennessee (Tenn.)"
+]
 },
 {
-"id": "us-state:Texas",
+"id": "us:texas",
 "name": "Texas",
-"parent": "T1.3",
-"type": "state_or_federal_district",
+"parent": "us",
+"type": "us_state_or_dc",
+"locators": {},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/texas-tex"
+],
 "verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "Texas (Tex.)",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/texas-tex"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"us-state:Texas"
+],
+"selectable": true,
+"aliases": [
+"Texas (Tex.)"
+]
 },
 {
-"id": "us-state:Utah",
+"id": "us:utah",
 "name": "Utah",
-"parent": "T1.3",
-"type": "state_or_federal_district",
+"parent": "us",
+"type": "us_state_or_dc",
+"locators": {},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/utah-utah"
+],
 "verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "Utah (Utah)",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/utah-utah"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"us-state:Utah"
+],
+"selectable": true,
+"aliases": [
+"Utah (Utah)"
+]
 },
 {
-"id": "us-state:Vermont",
+"id": "us:vermont",
 "name": "Vermont",
-"parent": "T1.3",
-"type": "state_or_federal_district",
+"parent": "us",
+"type": "us_state_or_dc",
+"locators": {},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/vermont-vt"
+],
 "verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "Vermont (Vt.)",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/vermont-vt"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"us-state:Vermont"
+],
+"selectable": true,
+"aliases": [
+"Vermont (Vt.)"
+]
 },
 {
-"id": "us-state:Virginia",
+"id": "us:virginia",
 "name": "Virginia",
-"parent": "T1.3",
-"type": "state_or_federal_district",
+"parent": "us",
+"type": "us_state_or_dc",
+"locators": {},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/virginia-va"
+],
 "verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "Virginia (Va.)",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/virginia-va"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"us-state:Virginia"
+],
+"selectable": true,
+"aliases": [
+"Virginia (Va.)"
+]
 },
 {
-"id": "us-state:Washington",
+"id": "us:washington",
 "name": "Washington",
-"parent": "T1.3",
-"type": "state_or_federal_district",
+"parent": "us",
+"type": "us_state_or_dc",
+"locators": {},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/washington-wash"
+],
 "verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "Washington (Wash.)",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/washington-wash"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"us-state:Washington"
+],
+"selectable": true,
+"aliases": [
+"Washington (Wash.)"
+]
 },
 {
-"id": "us-state:West Virginia",
+"id": "us:west-virginia",
 "name": "West Virginia",
-"parent": "T1.3",
-"type": "state_or_federal_district",
+"parent": "us",
+"type": "us_state_or_dc",
+"locators": {},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/west-virginia-w-va"
+],
 "verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "West Virginia (W. Va.)",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/west-virginia-w-va"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"us-state:West Virginia"
+],
+"selectable": true,
+"aliases": [
+"West Virginia (W. Va.)"
+]
 },
 {
-"id": "us-state:Wisconsin",
+"id": "us:wisconsin",
 "name": "Wisconsin",
-"parent": "T1.3",
-"type": "state_or_federal_district",
+"parent": "us",
+"type": "us_state_or_dc",
+"locators": {},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/wisconsin-wis"
+],
 "verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "Wisconsin (Wis.)",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/wisconsin-wis"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"us-state:Wisconsin"
+],
+"selectable": true,
+"aliases": [
+"Wisconsin (Wis.)"
+]
 },
 {
-"id": "us-state:Wyoming",
+"id": "us:wyoming",
 "name": "Wyoming",
-"parent": "T1.3",
-"type": "state_or_federal_district",
+"parent": "us",
+"type": "us_state_or_dc",
+"locators": {},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/wyoming-wyo"
+],
 "verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "Wyoming (Wyo.)",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/wyoming-wyo"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"us-state:Wyoming"
+],
+"selectable": true,
+"aliases": [
+"Wyoming (Wyo.)"
+]
 },
 {
-"id": "us-state:District of Columbia",
+"id": "us:district-of-columbia",
 "name": "District of Columbia",
-"parent": "T1.3",
-"type": "state_or_federal_district",
+"parent": "us",
+"type": "us_state_or_dc",
+"locators": {},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/district-of-columbia-d-c"
+],
 "verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "District of Columbia (D.C.)",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-3-states-and-the-district-of-columbia/district-of-columbia-d-c"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"us-state:District of Columbia"
+],
+"selectable": true,
+"aliases": [
+"District of Columbia (D.C.)"
+]
 },
 {
-"id": "us-other:American Samoa",
+"id": "us:american-samoa",
 "name": "American Samoa",
-"parent": "T1.4",
-"type": "other_us_jurisdiction",
+"parent": "us",
+"type": "us_other_jurisdiction",
+"locators": {},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-4-other-united-states-jurisdictions/american-samoa"
+],
 "verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "American Samoa",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-4-other-united-states-jurisdictions/american-samoa"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"us-other:American Samoa"
+],
+"selectable": true,
+"aliases": []
 },
 {
-"id": "us-other:Canal Zone",
+"id": "us:canal-zone",
 "name": "Canal Zone",
-"parent": "T1.4",
-"type": "other_us_jurisdiction",
+"parent": "us",
+"type": "us_other_jurisdiction",
+"locators": {},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-4-other-united-states-jurisdictions/canal-zone-c-z"
+],
 "verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "Canal Zone (C.Z.)",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-4-other-united-states-jurisdictions/canal-zone-c-z"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"us-other:Canal Zone"
+],
+"selectable": true,
+"aliases": [
+"Canal Zone (C.Z.)"
+]
 },
 {
-"id": "us-other:Guam",
+"id": "us:guam",
 "name": "Guam",
-"parent": "T1.4",
-"type": "other_us_jurisdiction",
+"parent": "us",
+"type": "us_other_jurisdiction",
+"locators": {},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-4-other-united-states-jurisdictions/guam-guam"
+],
 "verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "Guam (Guam)",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-4-other-united-states-jurisdictions/guam-guam"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"us-other:Guam"
+],
+"selectable": true,
+"aliases": [
+"Guam (Guam)"
+]
 },
 {
-"id": "us-other:Northern Mariana Islands",
+"id": "us:northern-mariana-islands",
 "name": "Northern Mariana Islands",
-"parent": "T1.4",
-"type": "other_us_jurisdiction",
+"parent": "us",
+"type": "us_other_jurisdiction",
+"locators": {},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-4-other-united-states-jurisdictions/northern-mariana-islands-n-mar-i"
+],
 "verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "Northern Mariana Islands (N. Mar. I.)",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-4-other-united-states-jurisdictions/northern-mariana-islands-n-mar-i"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"us-other:Northern Mariana Islands"
+],
+"selectable": true,
+"aliases": [
+"Northern Mariana Islands (N. Mar. I.)"
+]
 },
 {
-"id": "us-other:Puerto Rico",
+"id": "us:puerto-rico",
 "name": "Puerto Rico",
-"parent": "T1.4",
-"type": "other_us_jurisdiction",
+"parent": "us",
+"type": "us_other_jurisdiction",
+"locators": {},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-4-other-united-states-jurisdictions/puerto-rico-p-r"
+],
 "verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "Puerto Rico (P.R.)",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-4-other-united-states-jurisdictions/puerto-rico-p-r"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"us-other:Puerto Rico"
+],
+"selectable": true,
+"aliases": [
+"Puerto Rico (P.R.)"
+]
 },
 {
-"id": "us-other:Virgin Islands",
+"id": "us:virgin-islands",
 "name": "Virgin Islands",
-"parent": "T1.4",
-"type": "other_us_jurisdiction",
+"parent": "us",
+"type": "us_other_jurisdiction",
+"locators": {},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-4-other-united-states-jurisdictions/virgin-islands-v-i"
+],
 "verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "Virgin Islands (V.I.)",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t1-united-states-jurisdictions/t1-4-other-united-states-jurisdictions/virgin-islands-v-i"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"us-other:Virgin Islands"
+],
+"selectable": true,
+"aliases": [
+"Virgin Islands (V.I.)"
+]
 },
 {
-"id": "T2",
-"name": "Foreign jurisdictions",
-"parent": null,
-"type": "table_scope",
-"verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": null,
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions"
-},
-{
-"id": "R21",
-"name": "International materials",
-"parent": null,
-"type": "citation_scope",
-"verified_status": "verified_22_institutional_heading",
-"source_label_raw": null,
-"source": "https://lib.law.uw.edu/c.php?g=1236949&p=10977026"
-},
-{
-"id": "R21.4",
+"id": "intl:treaties-and-international-agreements",
 "name": "Treaties and international agreements",
-"parent": "R21",
-"type": "source_scope",
+"parent": null,
+"type": "international_source_scope",
+"locators": {
+"ed22": "R21.4"
+},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://lib.law.uw.edu/c.php?g=1236949&p=10977026"
+],
 "verified_status": "verified_22_institutional_heading",
-"source_label_raw": null,
-"source": "https://lib.law.uw.edu/c.php?g=1236949&p=10977026"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"R21.4"
+],
+"selectable": true,
+"aliases": []
 },
 {
-"id": "R21.5",
+"id": "intl:international-cases",
 "name": "International cases",
-"parent": "R21",
-"type": "court_scope",
+"parent": null,
+"type": "international_court_scope",
+"locators": {
+"ed22": "R21.5"
+},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://lib.law.uw.edu/c.php?g=1236949&p=10977026"
+],
 "verified_status": "verified_22_institutional_heading",
-"source_label_raw": null,
-"source": "https://lib.law.uw.edu/c.php?g=1236949&p=10977026"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"R21.5"
+],
+"selectable": true,
+"aliases": []
 },
 {
-"id": "R21.5.1",
+"id": "intl:international-court-of-justice-and-permanent-court-of-international-justice",
 "name": "International Court of Justice and Permanent Court of International Justice",
-"parent": "R21.5",
-"type": "court_group",
+"parent": null,
+"type": "international_court_group",
+"locators": {
+"ed22": "R21.5.1"
+},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://lib.law.uw.edu/c.php?g=1236949&p=10977026"
+],
 "verified_status": "verified_22_institutional_heading",
-"source_label_raw": null,
-"source": "https://lib.law.uw.edu/c.php?g=1236949&p=10977026"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"R21.5.1"
+],
+"selectable": true,
+"aliases": []
 },
 {
-"id": "R21.5.2",
+"id": "intl:european-union-courts",
 "name": "European Union Courts",
-"parent": "R21.5",
-"type": "court_group",
+"parent": null,
+"type": "international_court_group",
+"locators": {
+"ed22": "R21.5.2"
+},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://lib.law.uw.edu/c.php?g=1236949&p=10977026"
+],
 "verified_status": "verified_22_institutional_heading",
-"source_label_raw": null,
-"source": "https://lib.law.uw.edu/c.php?g=1236949&p=10977026"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"R21.5.2"
+],
+"selectable": true,
+"aliases": []
 },
 {
-"id": "R21.5.3",
+"id": "intl:european-court-of-human-rights",
 "name": "European Court of Human Rights",
-"parent": "R21.5",
-"type": "court",
+"parent": null,
+"type": "international_court",
+"locators": {
+"ed22": "T3.5"
+},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://lib.law.uw.edu/c.php?g=1236949&p=10977026"
+],
 "verified_status": "verified_22_institutional_heading",
-"source_label_raw": null,
-"source": "https://lib.law.uw.edu/c.php?g=1236949&p=10977026"
+"note": "publisher v22 index listing; membership only"
 },
 {
-"id": "R21.5.4",
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t3-intergovernmental-organizations/t3-5-european-court-of-human-rights"
+],
+"verified_status": "verified_publisher_v22_index_browser",
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"R21.5.3",
+"T3.5"
+],
+"selectable": true,
+"aliases": []
+},
+{
+"id": "intl:inter-american-commission-on-human-rights",
 "name": "Inter-American Commission on Human Rights",
-"parent": "R21.5",
-"type": "commission",
+"parent": null,
+"type": "international_commission",
+"locators": {
+"ed22": "T3.6"
+},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://lib.law.uw.edu/c.php?g=1236949&p=10977026"
+],
 "verified_status": "verified_22_institutional_heading",
-"source_label_raw": null,
-"source": "https://lib.law.uw.edu/c.php?g=1236949&p=10977026"
+"note": "publisher v22 index listing; membership only"
 },
 {
-"id": "R21.5.5",
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t3-intergovernmental-organizations/t3-6-inter-american-commission-on-human-rights"
+],
+"verified_status": "verified_publisher_v22_index_browser",
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"R21.5.4",
+"T3.6"
+],
+"selectable": true,
+"aliases": []
+},
+{
+"id": "intl:inter-american-court-of-human-rights",
 "name": "Inter-American Court of Human Rights",
-"parent": "R21.5",
-"type": "court",
+"parent": null,
+"type": "international_court",
+"locators": {
+"ed22": "T3.7"
+},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://lib.law.uw.edu/c.php?g=1236949&p=10977026"
+],
 "verified_status": "verified_22_institutional_heading",
-"source_label_raw": null,
-"source": "https://lib.law.uw.edu/c.php?g=1236949&p=10977026"
+"note": "publisher v22 index listing; membership only"
 },
 {
-"id": "R21.5.6",
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t3-intergovernmental-organizations/t3-7-inter-american-court-of-human-rights"
+],
+"verified_status": "verified_publisher_v22_index_browser",
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"R21.5.5",
+"T3.7"
+],
+"selectable": true,
+"aliases": []
+},
+{
+"id": "intl:international-tribunal-for-the-law-of-the-sea",
 "name": "International Tribunal for the Law of the Sea",
-"parent": "R21.5",
-"type": "court",
+"parent": null,
+"type": "international_court",
+"locators": {
+"ed22": "T3.8"
+},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://lib.law.uw.edu/c.php?g=1236949&p=10977026"
+],
 "verified_status": "verified_22_institutional_heading",
-"source_label_raw": null,
-"source": "https://lib.law.uw.edu/c.php?g=1236949&p=10977026"
+"note": "publisher v22 index listing; membership only"
 },
 {
-"id": "R21.5.7",
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t3-intergovernmental-organizations/t3-8-international-tribunal-for-the-law-of-the-sea"
+],
+"verified_status": "verified_publisher_v22_index_browser",
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"R21.5.6",
+"T3.8"
+],
+"selectable": true,
+"aliases": []
+},
+{
+"id": "intl:international-criminal-court-and-other-tribunals",
 "name": "International Criminal Court and other tribunals",
-"parent": "R21.5",
-"type": "court_group",
+"parent": null,
+"type": "international_court_group",
+"locators": {
+"ed22": "R21.5.7"
+},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://lib.law.uw.edu/c.php?g=1236949&p=10977026"
+],
 "verified_status": "verified_22_institutional_heading",
-"source_label_raw": null,
-"source": "https://lib.law.uw.edu/c.php?g=1236949&p=10977026"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"R21.5.7"
+],
+"selectable": true,
+"aliases": []
 },
 {
-"id": "R21.5.8",
+"id": "intl:other-international-courts",
 "name": "Other international courts",
-"parent": "R21.5",
-"type": "open_category",
+"parent": null,
+"type": "international_open_category",
+"locators": {
+"ed22": "R21.5.8"
+},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://lib.law.uw.edu/c.php?g=1236949&p=10977026"
+],
 "verified_status": "verified_22_institutional_heading",
-"source_label_raw": null,
-"source": "https://lib.law.uw.edu/c.php?g=1236949&p=10977026"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"R21.5.8"
+],
+"selectable": true,
+"aliases": []
 },
 {
-"id": "R21.5.9",
+"id": "intl:international-cases-in-national-courts",
 "name": "International cases in national courts",
-"parent": "R21.5",
-"type": "open_category",
+"parent": null,
+"type": "international_open_category",
+"locators": {
+"ed22": "R21.5.9"
+},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://lib.law.uw.edu/c.php?g=1236949&p=10977026"
+],
 "verified_status": "verified_22_institutional_heading",
-"source_label_raw": null,
-"source": "https://lib.law.uw.edu/c.php?g=1236949&p=10977026"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"R21.5.9"
+],
+"selectable": true,
+"aliases": []
 },
 {
-"id": "R21.6",
+"id": "intl:international-arbitrations-and-claims-commissions",
 "name": "International arbitrations and claims commissions",
-"parent": "R21",
-"type": "open_category",
+"parent": null,
+"type": "international_open_category",
+"locators": {
+"ed22": "R21.6"
+},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://lib.law.uw.edu/c.php?g=1236949&p=10977026"
+],
 "verified_status": "verified_22_institutional_heading",
-"source_label_raw": null,
-"source": "https://lib.law.uw.edu/c.php?g=1236949&p=10977026"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"R21.6"
+],
+"selectable": true,
+"aliases": []
 },
 {
-"id": "R21.7",
+"id": "intl:united-nations",
 "name": "United Nations",
-"parent": "R21",
-"type": "organization_scope",
+"parent": null,
+"type": "international_organization_scope",
+"locators": {
+"ed22": "T3.1"
+},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://lib.law.uw.edu/c.php?g=1236949&p=10977026"
+],
 "verified_status": "verified_22_institutional_heading",
-"source_label_raw": null,
-"source": "https://lib.law.uw.edu/c.php?g=1236949&p=10977026"
+"note": "publisher v22 index listing; membership only"
 },
 {
-"id": "R21.8",
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t3-intergovernmental-organizations/t3-1-united-nations"
+],
+"verified_status": "verified_publisher_v22_index_browser",
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"R21.7",
+"T3.1"
+],
+"selectable": true,
+"aliases": []
+},
+{
+"id": "intl:league-of-nations",
 "name": "League of Nations",
-"parent": "R21",
-"type": "historical_organization",
+"parent": null,
+"type": "international_historical_organization",
+"locators": {
+"ed22": "T3.2"
+},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://lib.law.uw.edu/c.php?g=1236949&p=10977026"
+],
 "verified_status": "verified_22_institutional_heading",
-"source_label_raw": null,
-"source": "https://lib.law.uw.edu/c.php?g=1236949&p=10977026"
+"note": "publisher v22 index listing; membership only"
 },
 {
-"id": "R21.9",
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t3-intergovernmental-organizations/t3-2-league-of-nations"
+],
+"verified_status": "verified_publisher_v22_index_browser",
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"R21.8",
+"T3.2"
+],
+"selectable": true,
+"aliases": []
+},
+{
+"id": "intl:european-union",
 "name": "European Union",
-"parent": "R21",
-"type": "organization_scope",
+"parent": null,
+"type": "international_organization_scope",
+"locators": {
+"ed22": "T3.3"
+},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://lib.law.uw.edu/c.php?g=1236949&p=10977026"
+],
 "verified_status": "verified_22_institutional_heading",
-"source_label_raw": null,
-"source": "https://lib.law.uw.edu/c.php?g=1236949&p=10977026"
+"note": "publisher v22 index listing; membership only"
 },
 {
-"id": "R21.10",
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t3-intergovernmental-organizations/t3-3-european-union"
+],
+"verified_status": "verified_publisher_v22_index_browser",
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"R21.9",
+"T3.3"
+],
+"selectable": true,
+"aliases": []
+},
+{
+"id": "intl:council-of-europe",
 "name": "Council of Europe",
-"parent": "R21",
-"type": "organization_scope",
+"parent": null,
+"type": "international_organization_scope",
+"locators": {
+"ed22": "R21.10"
+},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://lib.law.uw.edu/c.php?g=1236949&p=10977026"
+],
 "verified_status": "verified_22_institutional_heading",
-"source_label_raw": null,
-"source": "https://lib.law.uw.edu/c.php?g=1236949&p=10977026"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"R21.10"
+],
+"selectable": true,
+"aliases": []
 },
 {
-"id": "R21.11",
+"id": "intl:world-trade-organization",
 "name": "World Trade Organization",
-"parent": "R21",
-"type": "organization_scope",
+"parent": null,
+"type": "international_organization_scope",
+"locators": {
+"ed22": "R21.11"
+},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://lib.law.uw.edu/c.php?g=1236949&p=10977026"
+],
 "verified_status": "verified_22_institutional_heading",
-"source_label_raw": null,
-"source": "https://lib.law.uw.edu/c.php?g=1236949&p=10977026"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"R21.11"
+],
+"selectable": true,
+"aliases": []
 },
 {
-"id": "R21.12",
+"id": "intl:international-monetary-fund",
 "name": "International Monetary Fund",
-"parent": "R21",
-"type": "organization_scope",
+"parent": null,
+"type": "international_organization_scope",
+"locators": {
+"ed22": "R21.12"
+},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://lib.law.uw.edu/c.php?g=1236949&p=10977026"
+],
 "verified_status": "verified_22_institutional_heading",
-"source_label_raw": null,
-"source": "https://lib.law.uw.edu/c.php?g=1236949&p=10977026"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"R21.12"
+],
+"selectable": true,
+"aliases": []
 },
 {
-"id": "R21.13",
+"id": "intl:other-intergovernmental-organizations",
 "name": "Other intergovernmental organizations",
-"parent": "R21",
-"type": "open_category",
+"parent": null,
+"type": "international_open_category",
+"locators": {
+"ed22": "R21.13"
+},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://lib.law.uw.edu/c.php?g=1236949&p=10977026"
+],
 "verified_status": "verified_22_institutional_heading",
-"source_label_raw": null,
-"source": "https://lib.law.uw.edu/c.php?g=1236949&p=10977026"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"R21.13"
+],
+"selectable": true,
+"aliases": []
 },
 {
-"id": "R21.14",
+"id": "intl:international-nongovernmental-organizations",
 "name": "International nongovernmental organizations",
-"parent": "R21",
-"type": "open_category",
+"parent": null,
+"type": "international_open_category",
+"locators": {
+"ed22": "R21.14"
+},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://lib.law.uw.edu/c.php?g=1236949&p=10977026"
+],
 "verified_status": "verified_22_institutional_heading",
-"source_label_raw": null,
-"source": "https://lib.law.uw.edu/c.php?g=1236949&p=10977026"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"R21.14"
+],
+"selectable": true,
+"aliases": []
 },
 {
-"id": "T2.1",
-"name": "Argentine Republic",
-"parent": "T2",
-"type": "foreign_jurisdiction_index_entry",
-"verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "T2.1Argentine Republic",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions"
-},
-{
-"id": "T2.2",
-"name": "Australia",
-"parent": "T2",
-"type": "foreign_jurisdiction_index_entry",
-"verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "T2.2Australia",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions"
-},
-{
-"id": "T2.3",
-"name": "Austria, Republic of",
-"parent": "T2",
-"type": "foreign_jurisdiction_index_entry",
-"verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "T2.3Austria, Republic of",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions"
-},
-{
-"id": "T2.4",
-"name": "Belgium, Kingdom of",
-"parent": "T2",
-"type": "foreign_jurisdiction_index_entry",
-"verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "T2.4Belgium, Kingdom of",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions"
-},
-{
-"id": "T2.5",
-"name": "Brazil, Federative Republic of",
-"parent": "T2",
-"type": "foreign_jurisdiction_index_entry",
-"verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "T2.5Brazil, Federative Republic of",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions"
-},
-{
-"id": "T2.6",
-"name": "Canada",
-"parent": "T2",
-"type": "foreign_jurisdiction_index_entry",
-"verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "T2.6Canada",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions"
-},
-{
-"id": "T2.7",
+"id": "t2x22:catholic-church-holy-see",
 "name": "Catholic Church (Holy See)",
-"parent": "T2",
-"type": "foreign_jurisdiction_index_entry",
+"parent": null,
+"type": "foreign_jurisdiction",
+"locators": {
+"ed22": "T2.7"
+},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions",
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-7-catholic-church"
+],
 "verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "T2.7Catholic Church (Holy See)",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.7"
+],
+"selectable": true,
+"aliases": [
+"T2.7Catholic Church (Holy See)"
+]
 },
 {
-"id": "T2.8",
-"name": "Chile, Republic of",
-"parent": "T2",
-"type": "foreign_jurisdiction_index_entry",
-"verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "T2.8Chile, Republic of",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions"
-},
-{
-"id": "T2.9",
-"name": "China, People's Republic of",
-"parent": "T2",
-"type": "foreign_jurisdiction_index_entry",
-"verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "T2.9China, People's Republic of",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions"
-},
-{
-"id": "T2.10",
-"name": "Colombia, Republic of",
-"parent": "T2",
-"type": "foreign_jurisdiction_index_entry",
-"verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "T2.10Colombia, Republic of",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions"
-},
-{
-"id": "T2.11",
+"id": "t2x22:czechia",
 "name": "Czechia",
-"parent": "T2",
-"type": "foreign_jurisdiction_index_entry",
+"parent": null,
+"type": "foreign_jurisdiction",
+"locators": {
+"ed22": "T2.11"
+},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions",
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-11-czech-republic"
+],
 "verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "T2.11Czechia",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.11"
+],
+"selectable": true,
+"aliases": [
+"T2.11Czechia"
+]
 },
 {
-"id": "T2.12",
-"name": "Egypt, Arab Republic of",
-"parent": "T2",
-"type": "foreign_jurisdiction_index_entry",
-"verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "T2.12Egypt, Arab Republic of",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions"
-},
-{
-"id": "T2.13",
-"name": "France, Republic of",
-"parent": "T2",
-"type": "foreign_jurisdiction_index_entry",
-"verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "T2.13France, Republic of",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions"
-},
-{
-"id": "T2.14",
-"name": "Germany, Federal Republic of",
-"parent": "T2",
-"type": "foreign_jurisdiction_index_entry",
-"verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "T2.14Germany, Federal Republic of",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions"
-},
-{
-"id": "T2.15",
-"name": "Greece",
-"parent": "T2",
-"type": "foreign_jurisdiction_index_entry",
-"verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "T2.15Greece",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions"
-},
-{
-"id": "T2.16",
-"name": "Hong Kong",
-"parent": "T2",
-"type": "foreign_jurisdiction_index_entry",
-"verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "T2.16Hong Kong",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions"
-},
-{
-"id": "T2.17",
-"name": "Hungary, Republic of",
-"parent": "T2",
-"type": "foreign_jurisdiction_index_entry",
-"verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "T2.17Hungary, Republic of",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions"
-},
-{
-"id": "T2.18",
-"name": "India",
-"parent": "T2",
-"type": "foreign_jurisdiction_index_entry",
-"verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "T2.18India",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions"
-},
-{
-"id": "T2.19",
-"name": "Iran, Islamic Republic of",
-"parent": "T2",
-"type": "foreign_jurisdiction_index_entry",
-"verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "T2.19Iran, Islamic Republic of",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions"
-},
-{
-"id": "T2.20",
-"name": "Iraq, Republic of",
-"parent": "T2",
-"type": "foreign_jurisdiction_index_entry",
-"verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "T2.20Iraq, Republic of",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions"
-},
-{
-"id": "T2.21",
-"name": "Ireland (Éire), Republic of",
-"parent": "T2",
-"type": "foreign_jurisdiction_index_entry",
-"verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "T2.21Ireland (Éire), Republic of",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions"
-},
-{
-"id": "T2.22",
-"name": "Israel",
-"parent": "T2",
-"type": "foreign_jurisdiction_index_entry",
-"verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "T2.22Israel",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions"
-},
-{
-"id": "T2.23",
-"name": "Italy, Republic of",
-"parent": "T2",
-"type": "foreign_jurisdiction_index_entry",
-"verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "T2.23Italy, Republic of",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions"
-},
-{
-"id": "T2.24",
-"name": "Japan",
-"parent": "T2",
-"type": "foreign_jurisdiction_index_entry",
-"verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "T2.24Japan",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions"
-},
-{
-"id": "T2.25",
-"name": "Kenya",
-"parent": "T2",
-"type": "foreign_jurisdiction_index_entry",
-"verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "T2.25Kenya",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions"
-},
-{
-"id": "T2.26",
-"name": "Lebanon, Republic of",
-"parent": "T2",
-"type": "foreign_jurisdiction_index_entry",
-"verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "T2.26Lebanon, Republic of",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions"
-},
-{
-"id": "T2.27",
+"id": "t2x22:malaysia",
 "name": "Malaysia",
-"parent": "T2",
-"type": "foreign_jurisdiction_index_entry",
+"parent": null,
+"type": "foreign_jurisdiction",
+"locators": {
+"ed22": "T2.27"
+},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions",
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-27-malaysia"
+],
 "verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "T2.27Malaysia",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.27"
+],
+"selectable": true,
+"aliases": [
+"T2.27Malaysia"
+]
 },
 {
-"id": "T2.28",
-"name": "Mexico",
-"parent": "T2",
-"type": "foreign_jurisdiction_index_entry",
-"verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "T2.28Mexico",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions"
-},
-{
-"id": "T2.29",
-"name": "Netherlands, Kingdom of the",
-"parent": "T2",
-"type": "foreign_jurisdiction_index_entry",
-"verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "T2.29Netherlands, Kingdom of the",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions"
-},
-{
-"id": "T2.30",
-"name": "New Zealand",
-"parent": "T2",
-"type": "foreign_jurisdiction_index_entry",
-"verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "T2.30New Zealand",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions"
-},
-{
-"id": "T2.31",
-"name": "Nicaragua",
-"parent": "T2",
-"type": "foreign_jurisdiction_index_entry",
-"verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "T2.31Nicaragua",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions"
-},
-{
-"id": "T2.32",
-"name": "Nigeria",
-"parent": "T2",
-"type": "foreign_jurisdiction_index_entry",
-"verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "T2.32Nigeria",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions"
-},
-{
-"id": "T2.33",
-"name": "Pakistan, Islamic Republic of",
-"parent": "T2",
-"type": "foreign_jurisdiction_index_entry",
-"verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "T2.33Pakistan, Islamic Republic of",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions"
-},
-{
-"id": "T2.34",
-"name": "Philippines",
-"parent": "T2",
-"type": "foreign_jurisdiction_index_entry",
-"verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "T2.34Philippines",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions"
-},
-{
-"id": "T2.35",
-"name": "Portugal, Republic of",
-"parent": "T2",
-"type": "foreign_jurisdiction_index_entry",
-"verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "T2.35Portugal, Republic of",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions"
-},
-{
-"id": "T2.36",
-"name": "Roman Law",
-"parent": "T2",
-"type": "foreign_jurisdiction_index_entry",
-"verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "T2.36Roman Law",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions"
-},
-{
-"id": "T2.37",
-"name": "Russian Federation",
-"parent": "T2",
-"type": "foreign_jurisdiction_index_entry",
-"verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "T2.37Russian Federation",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions"
-},
-{
-"id": "T2.38",
-"name": "South Africa",
-"parent": "T2",
-"type": "foreign_jurisdiction_index_entry",
-"verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "T2.38South Africa",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions"
-},
-{
-"id": "T2.39",
-"name": "South Korea",
-"parent": "T2",
-"type": "foreign_jurisdiction_index_entry",
-"verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "T2.39South Korea",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions"
-},
-{
-"id": "T2.40",
-"name": "Spain",
-"parent": "T2",
-"type": "foreign_jurisdiction_index_entry",
-"verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "T2.40Spain",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions"
-},
-{
-"id": "T2.41",
+"id": "t2x22:sri-lanka",
 "name": "Sri Lanka",
-"parent": "T2",
-"type": "foreign_jurisdiction_index_entry",
+"parent": null,
+"type": "foreign_jurisdiction",
+"locators": {
+"ed22": "T2.41"
+},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions",
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-41-sri-lanka"
+],
 "verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "T2.41Sri Lanka",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.41"
+],
+"selectable": true,
+"aliases": [
+"T2.41Sri Lanka"
+]
 },
 {
-"id": "T2.42",
-"name": "Sweden",
-"parent": "T2",
-"type": "foreign_jurisdiction_index_entry",
-"verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "T2.42Sweden",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions"
-},
-{
-"id": "T2.43",
-"name": "Switzerland",
-"parent": "T2",
-"type": "foreign_jurisdiction_index_entry",
-"verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "T2.43Switzerland",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions"
-},
-{
-"id": "T2.44",
-"name": "Taiwan, Republic of China",
-"parent": "T2",
-"type": "foreign_jurisdiction_index_entry",
-"verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "T2.44Taiwan, Republic of China",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions"
-},
-{
-"id": "T2.45",
+"id": "t2x22:turkiye-republic-of",
 "name": "Türkiye, Republic of",
-"parent": "T2",
-"type": "foreign_jurisdiction_index_entry",
+"parent": null,
+"type": "foreign_jurisdiction",
+"locators": {
+"ed22": "T2.45"
+},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions",
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-45-t%C3%BCrkiye"
+],
 "verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "T2.45Türkiye, Republic of",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.45"
+],
+"selectable": true,
+"aliases": [
+"T2.45Türkiye, Republic of"
+]
 },
 {
-"id": "T2.46",
-"name": "United Kingdom",
-"parent": "T2",
-"type": "foreign_jurisdiction_index_entry",
+"id": "intl:european-commission-of-human-rights",
+"name": "European Commission of Human Rights",
+"parent": null,
+"type": "international_international_institution_table_entry",
+"locators": {
+"ed22": "T3.4"
+},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t3-intergovernmental-organizations/t3-4-european-commission-of-human-rights"
+],
 "verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "T2.46United Kingdom",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T3.4"
+],
+"selectable": true,
+"aliases": [
+"T3.4European Commission of Human Rights"
+]
 },
 {
-"id": "T2.47",
-"name": "Zambia, Republic of",
-"parent": "T2",
-"type": "foreign_jurisdiction_index_entry",
-"verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "T2.47Zambia, Republic of",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions"
-},
-{
-"id": "T2.2.1",
-"name": "Australian States and Territories",
-"parent": "T2.2",
-"type": "foreign_subjurisdiction_heading",
-"verified_status": "verified_publisher_v22_heading_browser",
-"source_label_raw": "T2.2.1 – Australian States and Territories",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-2-australia"
-},
-{
-"id": "T2.3.1",
-"name": "Austrian Länder",
-"parent": "T2.3",
-"type": "foreign_subjurisdiction_heading",
-"verified_status": "verified_publisher_v22_heading_browser",
-"source_label_raw": "T2.3.1 – Austrian Länder",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-3-austria-republic-of"
-},
-{
-"id": "T2.14.1",
-"name": "German Länder",
-"parent": "T2.14",
-"type": "foreign_subjurisdiction_heading",
-"verified_status": "verified_publisher_v22_heading_browser",
-"source_label_raw": "T2.14.1 – German Länder",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-14-germany-federal-republic-of"
-},
-{
-"id": "T2.43:displayed-T2.41.1",
-"name": "Swiss Cantons",
-"parent": "T2.43",
-"type": "foreign_subjurisdiction_heading",
-"verified_status": "verified_publisher_v22_heading_browser",
-"source_label_raw": "T2.41.1 – Swiss Cantons",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-41-switzerland"
-},
-{
-"id": "T2.46.1",
-"name": "England and Wales",
-"parent": "T2.46",
-"type": "foreign_subjurisdiction_heading",
-"verified_status": "verified_publisher_v22_heading_browser",
-"source_label_raw": "T2.46.1 – England and Wales",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-43-united-kingdom"
-},
-{
-"id": "T2.46.2",
-"name": "Northern Ireland (and Ireland Until 1924)",
-"parent": "T2.46",
-"type": "foreign_subjurisdiction_heading",
-"verified_status": "verified_publisher_v22_heading_browser",
-"source_label_raw": "T2.46.2 – Northern Ireland (and Ireland Until 1924)",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-43-united-kingdom"
-},
-{
-"id": "T2.46.3",
-"name": "Scotland",
-"parent": "T2.46",
-"type": "foreign_subjurisdiction_heading",
-"verified_status": "verified_publisher_v22_heading_browser",
-"source_label_raw": "T2.46.3 – Scotland",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-43-united-kingdom"
-},
-{
-"id": "T3",
+"id": "intl:intergovernmental-organizations",
 "name": "Intergovernmental Organizations",
 "parent": null,
-"type": "table_scope",
+"type": "international_international_institution_table_entry",
+"locators": {
+"ed22": "T3.9"
+},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t3-intergovernmental-organizations/t3-9-intergovernmental-organizations"
+],
 "verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "T3Intergovernmental Organizations",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t3-intergovernmental-organizations"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T3.9"
+],
+"selectable": true,
+"aliases": [
+"T3.9Intergovernmental Organizations"
+]
 },
 {
-"id": "T3.1",
-"name": "United Nations",
-"parent": "T3",
-"type": "international_institution_table_entry",
-"verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "T3.1United Nations",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t3-intergovernmental-organizations/t3-1-united-nations"
-},
-{
-"id": "T3.2",
-"name": "League of Nations",
-"parent": "T3",
-"type": "international_institution_table_entry",
-"verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "T3.2League of Nations",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t3-intergovernmental-organizations/t3-2-league-of-nations"
-},
-{
-"id": "T3.3",
-"name": "European Union",
-"parent": "T3",
-"type": "international_institution_table_entry",
-"verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "T3.3European Union",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t3-intergovernmental-organizations/t3-3-european-union"
-},
-{
-"id": "T3.4",
-"name": "European Commission of Human Rights",
-"parent": "T3",
-"type": "international_institution_table_entry",
-"verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "T3.4European Commission of Human Rights",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t3-intergovernmental-organizations/t3-4-european-commission-of-human-rights"
-},
-{
-"id": "T3.5",
-"name": "European Court of Human Rights",
-"parent": "T3",
-"type": "international_institution_table_entry",
-"verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "T3.5European Court of Human Rights",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t3-intergovernmental-organizations/t3-5-european-court-of-human-rights"
-},
-{
-"id": "T3.6",
-"name": "Inter-American Commission on Human Rights",
-"parent": "T3",
-"type": "international_institution_table_entry",
-"verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "T3.6Inter-American Commission on Human Rights",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t3-intergovernmental-organizations/t3-6-inter-american-commission-on-human-rights"
-},
-{
-"id": "T3.7",
-"name": "Inter-American Court of Human Rights",
-"parent": "T3",
-"type": "international_institution_table_entry",
-"verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "T3.7Inter-American Court of Human Rights",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t3-intergovernmental-organizations/t3-7-inter-american-court-of-human-rights"
-},
-{
-"id": "T3.8",
-"name": "International Tribunal for the Law of the Sea",
-"parent": "T3",
-"type": "international_institution_table_entry",
-"verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "T3.8International Tribunal for the Law of the Sea",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t3-intergovernmental-organizations/t3-8-international-tribunal-for-the-law-of-the-sea"
-},
-{
-"id": "T3.9",
-"name": "Intergovernmental Organizations",
-"parent": "T3",
-"type": "international_institution_table_entry",
-"verified_status": "verified_publisher_v22_index_browser",
-"source_label_raw": "T3.9Intergovernmental Organizations",
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t3-intergovernmental-organizations/t3-9-intergovernmental-organizations"
-},
-{
-"id": "T2.2.1:Australian Capital Territory",
+"id": "t2:australia/x22-australian-capital-territory",
 "name": "Australian Capital Territory",
-"parent": "T2.2.1",
-"type": "named_foreign_subjurisdiction",
+"parent": "t2:australia",
+"type": "named_subunit_ed22",
+"locators": {
+"ed22": "T2.2.1:Australian Capital Territory"
+},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-2-australia"
+],
 "verified_status": "verified_publisher_v22_named_label_browser",
-"source_label_raw": null,
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-2-australia"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.2.1:Australian Capital Territory"
+],
+"selectable": true,
+"aliases": []
 },
 {
-"id": "T2.2.1:New South Wales",
+"id": "t2:australia/x22-new-south-wales",
 "name": "New South Wales",
-"parent": "T2.2.1",
-"type": "named_foreign_subjurisdiction",
+"parent": "t2:australia",
+"type": "named_subunit_ed22",
+"locators": {
+"ed22": "T2.2.1:New South Wales"
+},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-2-australia"
+],
 "verified_status": "verified_publisher_v22_named_label_browser",
-"source_label_raw": null,
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-2-australia"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.2.1:New South Wales"
+],
+"selectable": true,
+"aliases": []
 },
 {
-"id": "T2.2.1:Northern Territory",
+"id": "t2:australia/x22-northern-territory",
 "name": "Northern Territory",
-"parent": "T2.2.1",
-"type": "named_foreign_subjurisdiction",
+"parent": "t2:australia",
+"type": "named_subunit_ed22",
+"locators": {
+"ed22": "T2.2.1:Northern Territory"
+},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-2-australia"
+],
 "verified_status": "verified_publisher_v22_named_label_browser",
-"source_label_raw": null,
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-2-australia"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.2.1:Northern Territory"
+],
+"selectable": true,
+"aliases": []
 },
 {
-"id": "T2.2.1:Queensland",
+"id": "t2:australia/x22-queensland",
 "name": "Queensland",
-"parent": "T2.2.1",
-"type": "named_foreign_subjurisdiction",
+"parent": "t2:australia",
+"type": "named_subunit_ed22",
+"locators": {
+"ed22": "T2.2.1:Queensland"
+},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-2-australia"
+],
 "verified_status": "verified_publisher_v22_named_label_browser",
-"source_label_raw": null,
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-2-australia"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.2.1:Queensland"
+],
+"selectable": true,
+"aliases": []
 },
 {
-"id": "T2.2.1:South Australia",
+"id": "t2:australia/x22-south-australia",
 "name": "South Australia",
-"parent": "T2.2.1",
-"type": "named_foreign_subjurisdiction",
+"parent": "t2:australia",
+"type": "named_subunit_ed22",
+"locators": {
+"ed22": "T2.2.1:South Australia"
+},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-2-australia"
+],
 "verified_status": "verified_publisher_v22_named_label_browser",
-"source_label_raw": null,
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-2-australia"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.2.1:South Australia"
+],
+"selectable": true,
+"aliases": []
 },
 {
-"id": "T2.2.1:Tasmania",
+"id": "t2:australia/x22-tasmania",
 "name": "Tasmania",
-"parent": "T2.2.1",
-"type": "named_foreign_subjurisdiction",
+"parent": "t2:australia",
+"type": "named_subunit_ed22",
+"locators": {
+"ed22": "T2.2.1:Tasmania"
+},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-2-australia"
+],
 "verified_status": "verified_publisher_v22_named_label_browser",
-"source_label_raw": null,
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-2-australia"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.2.1:Tasmania"
+],
+"selectable": true,
+"aliases": []
 },
 {
-"id": "T2.2.1:Victoria",
+"id": "t2:australia/x22-victoria",
 "name": "Victoria",
-"parent": "T2.2.1",
-"type": "named_foreign_subjurisdiction",
+"parent": "t2:australia",
+"type": "named_subunit_ed22",
+"locators": {
+"ed22": "T2.2.1:Victoria"
+},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-2-australia"
+],
 "verified_status": "verified_publisher_v22_named_label_browser",
-"source_label_raw": null,
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-2-australia"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.2.1:Victoria"
+],
+"selectable": true,
+"aliases": []
 },
 {
-"id": "T2.2.1:Western Australia",
+"id": "t2:australia/x22-western-australia",
 "name": "Western Australia",
-"parent": "T2.2.1",
-"type": "named_foreign_subjurisdiction",
+"parent": "t2:australia",
+"type": "named_subunit_ed22",
+"locators": {
+"ed22": "T2.2.1:Western Australia"
+},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-2-australia"
+],
 "verified_status": "verified_publisher_v22_named_label_browser",
-"source_label_raw": null,
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-2-australia"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.2.1:Western Australia"
+],
+"selectable": true,
+"aliases": []
 },
 {
-"id": "T2.6:Alberta",
+"id": "t2:canada/x22-alberta",
 "name": "Alberta",
-"parent": "T2.6",
-"type": "named_foreign_subjurisdiction",
+"parent": "t2:canada",
+"type": "named_subunit_ed22",
+"locators": {
+"ed22": "T2.6:Alberta"
+},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-6-canada"
+],
 "verified_status": "verified_publisher_v22_named_label_browser",
-"source_label_raw": null,
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-6-canada"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.6:Alberta"
+],
+"selectable": true,
+"aliases": []
 },
 {
-"id": "T2.6:British Columbia",
+"id": "t2:canada/x22-british-columbia",
 "name": "British Columbia",
-"parent": "T2.6",
-"type": "named_foreign_subjurisdiction",
+"parent": "t2:canada",
+"type": "named_subunit_ed22",
+"locators": {
+"ed22": "T2.6:British Columbia"
+},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-6-canada"
+],
 "verified_status": "verified_publisher_v22_named_label_browser",
-"source_label_raw": null,
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-6-canada"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.6:British Columbia"
+],
+"selectable": true,
+"aliases": []
 },
 {
-"id": "T2.6:Manitoba",
+"id": "t2:canada/x22-manitoba",
 "name": "Manitoba",
-"parent": "T2.6",
-"type": "named_foreign_subjurisdiction",
+"parent": "t2:canada",
+"type": "named_subunit_ed22",
+"locators": {
+"ed22": "T2.6:Manitoba"
+},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-6-canada"
+],
 "verified_status": "verified_publisher_v22_named_label_browser",
-"source_label_raw": null,
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-6-canada"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.6:Manitoba"
+],
+"selectable": true,
+"aliases": []
 },
 {
-"id": "T2.6:New Brunswick",
+"id": "t2:canada/x22-new-brunswick",
 "name": "New Brunswick",
-"parent": "T2.6",
-"type": "named_foreign_subjurisdiction",
+"parent": "t2:canada",
+"type": "named_subunit_ed22",
+"locators": {
+"ed22": "T2.6:New Brunswick"
+},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-6-canada"
+],
 "verified_status": "verified_publisher_v22_named_label_browser",
-"source_label_raw": null,
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-6-canada"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.6:New Brunswick"
+],
+"selectable": true,
+"aliases": []
 },
 {
-"id": "T2.6:Newfoundland and Labrador",
+"id": "t2:canada/x22-newfoundland-and-labrador",
 "name": "Newfoundland and Labrador",
-"parent": "T2.6",
-"type": "named_foreign_subjurisdiction",
+"parent": "t2:canada",
+"type": "named_subunit_ed22",
+"locators": {
+"ed22": "T2.6:Newfoundland and Labrador"
+},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-6-canada"
+],
 "verified_status": "verified_publisher_v22_named_label_browser",
-"source_label_raw": null,
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-6-canada"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.6:Newfoundland and Labrador"
+],
+"selectable": true,
+"aliases": []
 },
 {
-"id": "T2.6:Northwest Territories",
+"id": "t2:canada/x22-northwest-territories",
 "name": "Northwest Territories",
-"parent": "T2.6",
-"type": "named_foreign_subjurisdiction",
+"parent": "t2:canada",
+"type": "named_subunit_ed22",
+"locators": {
+"ed22": "T2.6:Northwest Territories"
+},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-6-canada"
+],
 "verified_status": "verified_publisher_v22_named_label_browser",
-"source_label_raw": null,
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-6-canada"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.6:Northwest Territories"
+],
+"selectable": true,
+"aliases": []
 },
 {
-"id": "T2.6:Nova Scotia",
+"id": "t2:canada/x22-nova-scotia",
 "name": "Nova Scotia",
-"parent": "T2.6",
-"type": "named_foreign_subjurisdiction",
+"parent": "t2:canada",
+"type": "named_subunit_ed22",
+"locators": {
+"ed22": "T2.6:Nova Scotia"
+},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-6-canada"
+],
 "verified_status": "verified_publisher_v22_named_label_browser",
-"source_label_raw": null,
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-6-canada"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.6:Nova Scotia"
+],
+"selectable": true,
+"aliases": []
 },
 {
-"id": "T2.6:Nunavut",
+"id": "t2:canada/x22-nunavut",
 "name": "Nunavut",
-"parent": "T2.6",
-"type": "named_foreign_subjurisdiction",
+"parent": "t2:canada",
+"type": "named_subunit_ed22",
+"locators": {
+"ed22": "T2.6:Nunavut"
+},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-6-canada"
+],
 "verified_status": "verified_publisher_v22_named_label_browser",
-"source_label_raw": null,
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-6-canada"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.6:Nunavut"
+],
+"selectable": true,
+"aliases": []
 },
 {
-"id": "T2.6:Ontario",
+"id": "t2:canada/x22-ontario",
 "name": "Ontario",
-"parent": "T2.6",
-"type": "named_foreign_subjurisdiction",
+"parent": "t2:canada",
+"type": "named_subunit_ed22",
+"locators": {
+"ed22": "T2.6:Ontario"
+},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-6-canada"
+],
 "verified_status": "verified_publisher_v22_named_label_browser",
-"source_label_raw": null,
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-6-canada"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.6:Ontario"
+],
+"selectable": true,
+"aliases": []
 },
 {
-"id": "T2.6:Prince Edward Island",
+"id": "t2:canada/x22-prince-edward-island",
 "name": "Prince Edward Island",
-"parent": "T2.6",
-"type": "named_foreign_subjurisdiction",
+"parent": "t2:canada",
+"type": "named_subunit_ed22",
+"locators": {
+"ed22": "T2.6:Prince Edward Island"
+},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-6-canada"
+],
 "verified_status": "verified_publisher_v22_named_label_browser",
-"source_label_raw": null,
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-6-canada"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.6:Prince Edward Island"
+],
+"selectable": true,
+"aliases": []
 },
 {
-"id": "T2.6:Québec",
+"id": "t2:canada/x22-quebec",
 "name": "Québec",
-"parent": "T2.6",
-"type": "named_foreign_subjurisdiction",
+"parent": "t2:canada",
+"type": "named_subunit_ed22",
+"locators": {
+"ed22": "T2.6:Québec"
+},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-6-canada"
+],
 "verified_status": "verified_publisher_v22_named_label_browser",
-"source_label_raw": null,
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-6-canada"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.6:Québec"
+],
+"selectable": true,
+"aliases": []
 },
 {
-"id": "T2.6:Saskatchewan",
+"id": "t2:canada/x22-saskatchewan",
 "name": "Saskatchewan",
-"parent": "T2.6",
-"type": "named_foreign_subjurisdiction",
+"parent": "t2:canada",
+"type": "named_subunit_ed22",
+"locators": {
+"ed22": "T2.6:Saskatchewan"
+},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-6-canada"
+],
 "verified_status": "verified_publisher_v22_named_label_browser",
-"source_label_raw": null,
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-6-canada"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.6:Saskatchewan"
+],
+"selectable": true,
+"aliases": []
 },
 {
-"id": "T2.6:Yukon",
+"id": "t2:canada/x22-yukon",
 "name": "Yukon",
-"parent": "T2.6",
-"type": "named_foreign_subjurisdiction",
+"parent": "t2:canada",
+"type": "named_subunit_ed22",
+"locators": {
+"ed22": "T2.6:Yukon"
+},
+"provenance": [
+{
+"edition": 22,
+"source": [
+"https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-6-canada"
+],
 "verified_status": "verified_publisher_v22_named_label_browser",
-"source_label_raw": null,
-"source": "https://www.legalbluebook.com/bluebook/v22/tables/t2-foreign-jurisdictions/t2-6-canada"
+"note": "publisher v22 index listing; membership only"
+}
+],
+"legacy_ids": [
+"T2.6:Yukon"
+],
+"selectable": true,
+"aliases": []
 }
 ]
 }
