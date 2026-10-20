@@ -72,7 +72,10 @@ export function acceptCitationCompletion(request: Record<string, unknown>, raw: 
     try { urlValid = ["https:", "http:"].includes(new URL(text(p.sourceUrl)).protocol); } catch { /* not evidence */ }
     const meaningful = title.trim().length >= 8 && /[A-Za-z]{3}/.test(title) && !/^(home|search|result|untitled|document)\s*$/i.test(title.trim());
     const identityWords = expected.flatMap(a => norm(a.slice(a.indexOf(":") + 1)).split(" ")).filter(w => w.length > 3);
-    const titleRelated = identityWords.some(w => norm(title).includes(w));
+    const confirmedTitle = text(fields.articleTitle);
+    const titleRelated = identityWords.some(w => norm(title).includes(w)) ||
+      (!!identifierArticle && grounded.articleTitle === true && record(provenance.articleTitle).value === confirmedTitle &&
+       record(provenance.articleTitle).sourceUrl === p.sourceUrl && confirmedTitle.length >= 6 && norm(title).includes(norm(confirmedTitle)));
     // The existing structured/document extraction basis is retained when its
     // result heading differs from the cited title; bare discovery titles are not enough.
     const recordEvidence = titleRelated || ["structured_metadata", "document_inspection", "publisher_metadata", "repository_metadata"].includes(text(p.basis));
