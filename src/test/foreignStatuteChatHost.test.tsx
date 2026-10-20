@@ -132,14 +132,15 @@ describe("chat page — typed statute request through initial send and regenerat
   });
 
   // Stage 5 batch 3 — synthetic periodical fixtures.
-  const NEWS = "Ari Doe, Local Vote Delayed, Daily Synthetic (Springfield), June 25, 1990, at A1";
-  const MAG = "Alpha Gamma, Quiet Fields, Synthetic Mag., Sept.–Oct. 1979, at 89, 90";
+  const NEWS = "Author: Ari Doe, Title: Local Vote Delayed, Daily Synthetic (Springfield), June 25, 1990, at A1";
+  const MAG = "Author: Alpha Gamma, Title: Quiet Fields, Synthetic Mag., Sept.–Oct. 1979, at 89, 90";
+  const out = (s: string) => `${s.replace(/^Author: /, "").replace(", Title: ", ", ")}.`;
   const AMBIG = "Local Vote Delayed, Daily Synthetic, June 25, 1990, at A1";
   it.each([["foreign_newspaper", NEWS], ["foreign_journal_article", MAG]] as const)("R16 %s actual initial+regeneration chat is local", async (type, input) => {
     m.classify.mockResolvedValue({ sourceType: type, source: "regex" });
     await mountChat();
     await send(input);
-    await waitFor(() => expect(screen.getByTestId("bubble-assistant").textContent?.replace(/##|\^\^/g, "")).toContain(`${input}.`));
+    await waitFor(() => expect(screen.getByTestId("bubble-assistant").textContent?.replace(/##|\^\^/g, "")).toContain(out(input)));
     expect(screen.getByTestId("bubble-assistant")).toHaveTextContent("לא אומתו");
     await act(async () => { fireEvent.click(screen.getByRole("button", { name: `regen-${type}` })); });
     await waitFor(() => expect(m.recordGeneration).toHaveBeenCalledWith("acct-1", expect.objectContaining({ effectiveKey: `eff-${type}` })));
@@ -158,7 +159,7 @@ describe("chat page — typed statute request through initial send and regenerat
     m.classify.mockResolvedValue({ sourceType: "foreign_newspaper", source: "regex" });
     await mountChat();
     await send(NEWS);
-    await waitFor(() => expect(screen.getByTestId("bubble-assistant").textContent?.replace(/##|\^\^/g, "")).toContain(`${NEWS}.`));
+    await waitFor(() => expect(screen.getByTestId("bubble-assistant").textContent?.replace(/##|\^\^/g, "")).toContain(out(NEWS)));
     await act(async () => { fireEvent.click(screen.getByRole("button", { name: "regen-foreign_journal_article" })); });
     await waitFor(() => expect(screen.getByTestId("bubble-assistant")).toHaveTextContent("אינו תואם"));
     expect(m.invoke).not.toHaveBeenCalled();

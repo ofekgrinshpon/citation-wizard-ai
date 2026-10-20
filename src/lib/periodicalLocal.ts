@@ -15,7 +15,7 @@ export const PERIODICAL_AMBIGUOUS = "לא ניתן לקבוע בבטחה אם ז
 export const PERIODICAL_MISMATCH = "הסוג שנבחר אינו תואם את מבנה הקלט (תאריך/מקום/מדור); האזכור נשמר כפי שסופק ולא עוצב.";
 export const PERIODICAL_UNSUPPORTED = "מבנה הקלט אינו נתמך בתבנית העיתון המודפס; האזכור נשמר כפי שסופק ולא עוצב.";
 
-export const PERIODICAL_AUTHOR_AMBIGUOUS = "לא ניתן לקבוע בבטחה אם החלק שלפני הפסיק הראשון הוא שם מחבר או חלק מהכותרת; האזכור נשמר כפי שסופק ולא עוצב. בחירת תת־סוג אינה פותרת עמימות זו.";
+export const PERIODICAL_AUTHOR_AMBIGUOUS = "לא ניתן לקבוע בבטחה אם החלק שלפני הפסיק הראשון הוא שם מחבר או חלק מהכותרת; האזכור נשמר כפי שסופק ולא עוצב. בחירת תת־סוג אינה פותרת עמימות זו; ניתן לסמן במפורש \"Author: …, Title: …\" או \"Title: …\".";
 
 function preserve(raw: string, warning: string) {
   const citation = escapeCitationLiteral(raw.trim());

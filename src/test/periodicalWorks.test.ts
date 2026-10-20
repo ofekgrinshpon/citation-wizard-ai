@@ -25,7 +25,7 @@ const news = (s: string) => renderPeriodicalLocal("foreign_newspaper", s);
 
 describe("R16.5 nonconsecutive journals/magazines", () => {
   it("signed issue-date article: italic title, small-caps periodical, cover date, at first, pins", () => {
-    const r = art("Alpha Gamma, Quiet Fields, Synthetic Mag., Mar. 2020, at 12, 14–16")!;
+    const r = art("Author: Alpha Gamma, Title: Quiet Fields, Synthetic Mag., Mar. 2020, at 12, 14–16")!;
     expect(r.citation).toBe("Alpha Gamma, ##Quiet Fields##, ^^Synthetic Mag.^^, Mar. 2020, at 12, 14–16.");
     expect(r.missing).toEqual([]);
   });
@@ -60,7 +60,7 @@ describe("R16.5 nonconsecutive journals/magazines", () => {
 
 describe("R16.6(a),(b) print newspapers", () => {
   it("signed newspaper with place", () => {
-    expect(news("Ari Doe, Local Vote Delayed, Daily Synthetic (Springfield), June 25, 1990, at A1")?.citation)
+    expect(news("Author: Ari Doe, Title: Local Vote Delayed, Daily Synthetic (Springfield), June 25, 1990, at A1")?.citation)
       .toBe("Ari Doe, ##Local Vote Delayed##, ^^Daily Synthetic^^ (Springfield), June 25, 1990, at A1.");
   });
   it("unsigned newspaper", () => {
@@ -71,7 +71,7 @@ describe("R16.6(a),(b) print newspapers", () => {
       .toBe("Editorial, ##Local Vote Delayed##, ^^Daily Synthetic^^, June 25, 1990, at 4F.");
   });
   it("titleless letter: designation substitutes for title", () => {
-    const r = news("Ari Doe, Letter to the Editor, Daily Synthetic, June 25, 1990, at A22")!;
+    const r = news("Author: Ari Doe, Letter to the Editor, Daily Synthetic, June 25, 1990, at A22")!;
     expect(r.citation).toBe("Ari Doe, Letter to the Editor, ^^Daily Synthetic^^, June 25, 1990, at A22.");
     expect(r.missing).toEqual([]);
   });
@@ -144,12 +144,13 @@ describe("routing, ambiguity and safety", () => {
     expect(detectForeignSource("כותרת, הארץ, June 25, 1990, at A1")?.kind).not.toBe("newspaper");
   });
   it.each([
-    ["Alpha Gamma, Quiet Fields, Synthetic Mag., Sept.–Oct. 1979, at 89, 90", "foreign_journal_article"],
-    ["Ari Doe, Local Vote Delayed, Daily Synthetic (Springfield), June 25, 1990, at A1", "foreign_newspaper"],
-  ])("real shared runCitation formats %s locally without classifier/provider", async (rawInput, type) => {
+    ["Author: Alpha Gamma, Title: Quiet Fields, Synthetic Mag., Sept.–Oct. 1979, at 89, 90", "foreign_journal_article", "Alpha Gamma, Quiet Fields, Synthetic Mag., Sept.–Oct. 1979, at 89, 90."],
+    ["Author: Ari Doe, Title: Local Vote Delayed, Daily Synthetic (Springfield), June 25, 1990, at A1", "foreign_newspaper", "Ari Doe, Local Vote Delayed, Daily Synthetic (Springfield), June 25, 1990, at A1."],
+    ["Quiet Fields, Synthetic Mag., Sept.–Oct. 1979, at 89", "foreign_journal_article", "Quiet Fields, Synthetic Mag., Sept.–Oct. 1979, at 89."],
+  ])("real shared runCitation formats %s locally without classifier/provider", async (rawInput, type, expected) => {
     const result = await runCitation({ rawInput, useVerifiedStore: false });
     expect(result.sourceType).toBe(type);
-    expect(plain(result.citation)).toBe(`${rawInput}.`);
+    expect(plain(result.citation)).toBe(expected);
     expect(result.status).toBe("warning");
     expect(b.invoke).not.toHaveBeenCalled();
     expect(b.classifier).not.toHaveBeenCalled();
@@ -163,7 +164,14 @@ describe("routing, ambiguity and safety", () => {
 });
 
 describe("author-versus-title ambiguity (no invented author)", () => {
-  const cases = ["Courts, Memory and Society, Synthetic Mag., Mar. 2020, at 12", "Courts, Codes and Reform, Example Monthly, Spring 2024, at 12"];
+  const cases = [
+    "Courts, Memory and Society, Synthetic Mag., Mar. 2020, at 12",
+    "Courts, Codes and Reform, Example Monthly, Spring 2024, at 12",
+    "Hidden Costs, Courts and Memory, Synthetic Mag., Mar. 2020, at 12",
+    "New Horizons, Courts and Memory, Synthetic Mag., Mar. 2020, at 12",
+    "Alpha Gamma, Quiet Fields, Synthetic Mag., Mar. 2020, at 12",
+    "Ari Doe, Letter to the Editor, Daily Synthetic, June 25, 1990, at A22",
+  ];
   it.each(cases)("preserves %s with a specific warning on every route", (s) => {
     for (const t of ["foreign_journal_article", "foreign_newspaper", "foreign"] as const) {
       const r = renderPeriodicalLocal(t, s)!;
@@ -181,10 +189,22 @@ describe("author-versus-title ambiguity (no invented author)", () => {
       expect(r.warningMsg).toContain("שם מחבר");
     }
     expect(b.invoke).not.toHaveBeenCalled();
+    expect(b.classifier).not.toHaveBeenCalled();
   });
-  it("recognized personal authors still format", () => {
-    expect(art("Alpha B. Gamma & Ari Doe, Quiet Fields, Synthetic Mag., Mar. 2020, at 12")?.citation)
-      .toBe("Alpha B. Gamma & Ari Doe, ##Quiet Fields##, ^^Synthetic Mag.^^, Mar. 2020, at 12.");
+  it("explicit Author:/Title: labels establish the boundary (title may contain commas)", () => {
+    expect(art("Author: Alpha B. Gamma & Ari Doe, Title: Hidden Costs, Courts and Memory, Synthetic Mag., Mar. 2020, at 12")?.citation)
+      .toBe("Alpha B. Gamma & Ari Doe, ##Hidden Costs, Courts and Memory##, ^^Synthetic Mag.^^, Mar. 2020, at 12.");
+    const t = art("Title: Hidden Costs, Courts and Memory, Synthetic Mag., Mar. 2020, at 12")!;
+    expect(t.citation).toBe("##Hidden Costs, Courts and Memory##, ^^Synthetic Mag.^^, Mar. 2020, at 12.");
+    expect((detectForeignSource("Title: Hidden Costs, Courts and Memory, Synthetic Mag., Mar. 2020, at 12")?.fields as { authors?: string }).authors).toBeUndefined();
+  });
+  it("editorial designation first never fabricates an author", () => {
+    const d = detectForeignSource("Editorial, Local Vote, Again, Daily Synthetic (Springfield), June 25, 1990, at 4");
+    expect(d?.fields).toMatchObject({ designation: "Editorial", title: "Local Vote, Again" });
+    expect((d?.fields as { authors?: string }).authors).toBeUndefined();
+  });
+  it("volume-before-periodical stays correct", () => {
+    expect(art("Title: Quiet Fields, Synthetic Mag., vol. 7, no. 3, 2020, at 12")?.citation).toBe("##Quiet Fields##, 7 ^^Synthetic Mag.^^, no. 3, 2020, at 12.");
   });
   it("ambiguous heading with markup stays escaped", () => {
     const r = art("Courts <b>x</b> ^^y, Memory, Synthetic Mag., Mar. 2020, at 12")!;
