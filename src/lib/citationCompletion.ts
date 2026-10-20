@@ -39,7 +39,8 @@ export function acceptCitationCompletion(request: Record<string, unknown>, raw: 
   out.jurisdiction = jur === "US" || jur === "UK" || jur === "OTHER" ? jur : null;
   if (Array.isArray(r.disambiguation) && r.disambiguation.length > 1) return fail("ambiguous");
   const anchors = Array.isArray(identity.anchors) ? identity.anchors.filter((v): v is string => typeof v === "string") : [];
-  const name = text(supplied.caseName);
+  // Server splitParties excludes supplied court/year parentheticals.
+  const name = text(supplied.caseName).split(/[([]/)[0].trim();
   const expected = request.kind === "case" && name ? [`parties:${party(name.split(/\s+v(?:s)?\.?\s+/i)[0])} v ${party(name.split(/\s+v(?:s)?\.?\s+/i)[1] ?? "")}`]
     : ["articleTitle", "chapterTitle", "bookTitle", "statuteName", "doi", "sourceUrl"].filter(k => supplied[k]).map(k => `${k === "doi" || k === "sourceUrl" ? k : "title"}:${text(supplied[k])}`);
   const conflicts = Array.isArray(identity.conflicts) ? identity.conflicts : null;

@@ -249,7 +249,7 @@ export function resolveCitationResponse(plan: TypedPlan, data: Record<string, un
   let rendered: { citation: string; reply?: string; missing?: string[]; warnings?: string[] } | null = null;
   const kind = req.kind as ForeignSourceKind;
   const jur = accepted.jurisdiction ?? (req.jurisdiction === "US" || req.jurisdiction === "UK" ? req.jurisdiction : "OTHER");
-  const effectiveType = st ?? toSourceType(kind, jur);
+  const effectiveType = kind === "case" ? toSourceType(kind, jur) : st ?? toSourceType(kind, jur);
   if (kind === "statute" && plan.statutePrep) {
     rendered = renderForeignStatuteLookup(plan.statutePrep, { ...fl, fields: accepted.fields,
       identity: { matched: accepted.identityConfirmed, jurisdiction: jur, conflicts: [] } });

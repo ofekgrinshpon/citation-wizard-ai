@@ -669,7 +669,7 @@ it.each(["bibliography", "footnote"])("C1 actual %s host uses real server partia
   const expected = await runCitation({ rawInput, useVerifiedStore: false });
   boundary.invoke.mockClear();
   if (mode === "bibliography") bibliographyInput(rawInput); else footnoteInput([rawInput]);
-  await screen.findByText(/347 U.S. 483/);
+  await screen.findAllByText(/347 U.S. 483/);
   expect(document.body.textContent).toContain(expected.warningMsg);
   expect(document.body.textContent).not.toContain("UNSAFE");
   expect(boundary.invoke).toHaveBeenCalledTimes(1);
