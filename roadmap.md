@@ -1,7 +1,8 @@
 # Roadmap — research → memo → draft handoff (legal-research-v2)
 
 ## Unified pasted-citation infrastructure batch A (offline only)
-- [ ] Infrastructure C1: strict evidence-backed partial completion and local/resolution parity; chat book/chapter request enablement deferred to C2; offline gates/report only.
+- [x] Infrastructure C1 implementation/offline regression: shared strict partial acceptance and local/resolution parity; 3,752 passed / 1 skipped; report records compatibility limits. No C2 or deployment.
+- [ ] C1 independent QA: separate explicit app TypeScript/Vite gate evidence unavailable under manual-command prohibition; review unbound historical recovery compatibility branch.
 - [x] Narrow correction: effective-family conflicts and canonical lookup/response binding; actual-host/handler gates passed, full offline suite 3,426 passed / 1 skipped; no batch B. Separate app TypeScript/production-build evidence still blocked by harness visibility.
 - [x] Infrastructure batch B: shared pure planner/resolver (`citationPlanner.ts`) used by Index, runCitation (Batch/Bibliography); baseline differential + host tests; full suite 3,727 passed / 1 skipped. Batch C (capability reconciliation) not started.
 - [x] Shared versioned supplied-evidence contract, exact raw spans and safe jurisdiction routing.
