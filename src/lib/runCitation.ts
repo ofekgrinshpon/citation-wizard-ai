@@ -289,7 +289,7 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
   }
 
   // Stage 4: statutes go through the shared adapter. A manual statute choice
-  if (pasted.local) {
+  if (pasted.local && !(pasted.detection?.fields as { opinionFormat?: string } | undefined)?.opinionFormat) {
     const warnings = pasted.detection ? renderForeignDetection(pasted.detection)?.warnings ?? [] : [];
     reportZeroWork(opts.telemetry, "local_foreign_formatter", "deterministic");
     return { ...pasted.local, pastedCitation: pasted.contract, sourceType, sourceLabel, telemetry: opts.telemetry,
@@ -482,6 +482,9 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
     // User-supplied identity anchors win; grounded lookup fields fill the gaps;
     // anything ungrounded stays [חסר: …] via the existing renderer behavior.
     const fl = (data as { foreignLookup?: ForeignLookupResponse } | null)?.foreignLookup;
+    if (caseRequest && fl?.identity?.matched && fl.fields && !Object.keys(fl.fields).some(k => ["caseName", "court", "reporter", "year", "firstPage", "neutral", "docket"].includes(k))) {
+      rejectUnusableResponse("EMPTY_RESPONSE", "השרת החזיר תשובה ללא אזכור שניתן להציג. לא תופעל בקשה נוספת והחזר שימוש לא אושר.");
+    }
     // Stage 4: a typed statute request is terminal — the typed response (or
     // its absence) is rendered from supplied fields; model content is ignored.
     if (statutePrep?.request) {

@@ -211,7 +211,7 @@ describe("prepared runCitation failure context", () => {
     await expect(error.recovery!.retry()).rejects.toMatchObject({ code });
     await expect(error.recovery!.retry()).rejects.toMatchObject({ code });
     expect(boundary.invoke).toHaveBeenCalledTimes(1);
-    expect(boundary.classify).toHaveBeenCalledTimes(1);
+    expect(boundary.classify).toHaveBeenCalledTimes(code === "EMPTY_RESPONSE" ? 0 : 1);
   });
 
 });
@@ -351,7 +351,7 @@ describe("bibliography mounted per-row retry", () => {
     fireEvent.click(screen.getByRole("button", { name: /חפש שוב/ }));
     await screen.findByText(/First Jones case/);
     expect(boundary.invoke).toHaveBeenCalledTimes(1);
-    expect(boundary.classify).toHaveBeenCalledTimes(1);
+    expect(boundary.classify).not.toHaveBeenCalled();
   });
 
   it("runPool does not automatically repeat a normally transient failure", async () => {

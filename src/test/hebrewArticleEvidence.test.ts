@@ -425,9 +425,9 @@ describe("article boundary through the real edge handler", () => {
     expect(r.calls.map(c => c.stage)).toEqual(["article_retrieval_tier1", "biblio_fallback"]);
   });
 
-  it("keeps the existing exact-case cache route free and unchanged", async () => {
+  it("keeps the jurisdiction-identified exact-case cache route free and unchanged", async () => {
     const citation = 'בג״ץ 1308/17 **עיריית סלואד** נ׳ **הכנסת** (נבו 9.6.2020).';
-    const r = await runHandler({ raw: "1308/17", label: "פסיקה (מאגר)", cached: [{ source_name: "1308/17", full_citation: citation, source_type: "case_law_database" }] });
+    const r = await runHandler({ raw: "בג״ץ 1308/17", label: "פסיקה (מאגר)", cached: [{ source_name: "בג״ץ 1308/17", full_citation: citation, source_type: "case_law_database" }] });
     expect(r.body.content).toBe(citation);
     expect(r.calls).toHaveLength(0);
     expect(r.rpc).not.toHaveBeenCalled();
