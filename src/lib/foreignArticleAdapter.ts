@@ -2,6 +2,7 @@
 import type { SourceType } from "@/data/abbreviations";
 import { detectForeignSource } from "@/data/bluebook/extract";
 import { renderForeignDetection } from "@/data/bluebook";
+import { citationTextOnly } from "@/lib/citationSegments";
 import { getMissingFieldsSummary } from "@/lib/citationValidation";
 import { articleFieldMatches, enrichArticleAuthors, parseForeignArticleInput } from "../../supabase/functions/_shared/foreignArticle";
 import { extractWorkIdentifiers } from "../../supabase/functions/_shared/workIdentifiers";
