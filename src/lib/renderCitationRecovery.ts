@@ -4,6 +4,7 @@ import type { SourceType } from "@/data/abbreviations";
 import { renderForeignDetection, stripCitationMarkers } from "@/data/bluebook";
 import { toSourceType, type ForeignFields, type ForeignJurisdiction, type ForeignSourceKind } from "@/data/bluebook/types";
 import { renderForeignArticleLookup } from "@/lib/foreignArticleAdapter";
+import { renderForeignStatuteLookup, statutePreparationFromRequest } from "@/lib/foreignStatuteAdapter";
 import type { CitationRecoveryRecord } from "@/lib/citationRecoveryApi";
 import { CITATION_FIELD_KEYS } from "../../supabase/functions/_shared/citationRecovery";
 
@@ -125,6 +126,14 @@ export function renderCitationRecovery(record: CitationRecoveryRecord, now = Dat
           conflicts: Array.isArray(identity?.conflicts) ? identity.conflicts.slice(0, 32).map((entry) => recoveryPlainText(entry, FIELD_LIMIT)) : [] },
       });
       if (article) return output(article.reply, "foreign_journal_article", true, article.warningMsg ?? null);
+    }
+    if (request.kind === "statute") {
+      // Same terminal adapter as the live paths: merge only from a versioned,
+      // matched, conflict-free same-jurisdiction result; otherwise supplied input + warning.
+      const prep = parsedFields ? statutePreparationFromRequest({ ...request, parsedFields }) : null;
+      if (!prep) return null;
+      const statute = renderForeignStatuteLookup(prep, result.statuteResponseVersion === 1 && resultFields ? { ...result, fields: resultFields } : null);
+      return output(statute.reply, statute.sourceType, true, statute.warningMsg ?? null);
     }
     const kind = request.kind as ForeignSourceKind;
     if (parsedFields && resultFields && KINDS.has(kind) && identity?.matched === true && Object.keys(resultFields).length) {

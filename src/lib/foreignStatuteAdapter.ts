@@ -123,7 +123,9 @@ export function parseStatuteInput(raw: string, jurisdiction: StatuteJurisdiction
       if (!comma) break;
       rest = rest.slice(comma[0].length);
     }
-    const leftover = rest.replace(/^[\s,;]+/, "").replace(/[\s.]+$/, "");
+    // Only a single closing period may follow the parsed sections; any other
+    // character (stray comma, open bracket, words) is an unparsed remainder.
+    const leftover = rest.trim().replace(/^\.$/, "");
     const plural = /^(§§|ss\.|secs\.|sections)$/i.test(signText ?? "");
     if (jurisdiction === "US" && items.length) {
       if (items.length === 1) fields.section = items[0];
@@ -134,7 +136,7 @@ export function parseStatuteInput(raw: string, jurisdiction: StatuteJurisdiction
       fields.section = items[0];
     } else {
       // Lists, ranges or unparsed section text the UK template cannot represent
-      // stay verbatim in the citation with a warning — never dropped.
+      // are kept verbatim; prepareForeignStatute then declines the item.
       const verbatim = `${signText} ${tail}`.replace(/\s+/g, " ").trim().replace(/\.$/, "");
       fields.unparsedRemainder = [fields.unparsedRemainder, verbatim].filter(Boolean).join(" ");
     }
@@ -160,6 +162,31 @@ function requestFields(fields: Record<string, StatuteFieldValue>): Record<string
 }
 
 /**
+ * Rebuild the preparation from a retained typed request (read-only recovery).
+ * Uses only the request's own supplied fields; null when it is not a valid
+ * supported statute request.
+ */
+export function statutePreparationFromRequest(request: unknown): StatutePreparation | null {
+  const r = request && typeof request === "object" ? request as Record<string, unknown> : null;
+  if (!r || r.kind !== "statute" || r.statuteResponseVersion !== STATUTE_RESPONSE_VERSION) return null;
+  if ((r.jurisdiction !== "US" && r.jurisdiction !== "UK") || typeof r.rawInput !== "string") return null;
+  const pf = r.parsedFields && typeof r.parsedFields === "object" ? r.parsedFields as Record<string, unknown> : {};
+  const fields: Record<string, StatuteFieldValue> = {};
+  for (const k of ["statuteName", "titleNumber", "code", "section", "year", "chapter"]) {
+    if (typeof pf[k] === "string" && (pf[k] as string).trim()) fields[k] = (pf[k] as string).trim();
+  }
+  if (typeof pf.sections === "string") {
+    const list = pf.sections.split(",").map((x) => x.trim()).filter(Boolean);
+    if (list.length) fields.sections = list;
+  }
+  const jurisdiction = r.jurisdiction;
+  return {
+    sourceType: jurisdiction === "US" ? "foreign_statute_us" : "foreign_statute_uk", jurisdiction, rawInput: r.rawInput, fields, outcome: "lookup",
+    request: { enabled: true, statuteResponseVersion: STATUTE_RESPONSE_VERSION, kind: "statute", jurisdiction, rawInput: r.rawInput, parsedFields: requestFields(fields) },
+  };
+}
+
+/**
  * Prepare a statute item. Returns null when the source type is not a
  * supported statute, or when no manual choice applies and a deterministic
  * detection of another kind/jurisdiction should keep the existing route.
@@ -181,6 +208,9 @@ export function prepareForeignStatute(
     return { sourceType, jurisdiction, rawInput: raw, fields: {}, outcome: "mismatch", detectedJurisdiction: detection.jurisdiction };
   }
   const fields = parseStatuteInput(raw, jurisdiction);
+  // Unsupported or malformed tails are never truncated or reformatted here:
+  // the whole input keeps its existing declined-input fallback route.
+  if (fields.unparsedRemainder !== undefined) return null;
   const rendered = renderFields(jurisdiction, sourceType, fields);
   const complete = !!rendered && rendered.missing.length === 0 && (jurisdiction === "US" || !!fields.year);
   if (complete || typeof fields.statuteName !== "string") {
