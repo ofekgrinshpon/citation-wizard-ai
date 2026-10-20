@@ -1,5 +1,9 @@
 # Roadmap — research → memo → draft handoff (legal-research-v2)
 
+## Stage 5 batch 2 — manuscripts/theses (offline only)
+- [x] R17.2.1–17.2.2 parser/renderer, classification route, chat/batch wiring and tests; ledger updated.
+- [ ] Remaining Stage 5 family batches (each separately authorized).
+
 ## Current authorized Stage 5 D1a (offline only)
 - [x] Extend US database/slip/pending decision preservation, rendering and existing classification axes.
 - [x] Prove failing regressions, then exercise real chat and batch/local callers with mocked network.
