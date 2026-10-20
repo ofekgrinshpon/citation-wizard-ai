@@ -5,6 +5,7 @@
  */
 
 import { copyPlainText } from "@/lib/clipboard";
+import { citationTextOnly, parseCitationSegments } from "@/lib/citationSegments";
 
 export type InsertionResult = {
   mode: "footnote" | "inline" | "manual-copy";

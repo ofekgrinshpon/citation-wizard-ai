@@ -4,9 +4,13 @@
  *
  * Markers: **bold**  ##italic##  ^^small caps^^
  * The markers themselves must never reach the user in either output.
+ *
+ * Built on the shared structural parser (citationSegments) so every output
+ * channel parses markers exactly once, the same way.
  */
 
 import { copyRichText } from "@/lib/clipboard";
+import { citationTextOnly, parseCitationSegments } from "@/lib/citationSegments";
 
 function escapeHtml(s: string): string {
   return s
@@ -17,25 +21,23 @@ function escapeHtml(s: string): string {
 
 /** Rich HTML for the clipboard (bold / italics / real CSS small caps). */
 export function citationToHtml(text: string): string {
-  let out = escapeHtml(text);
-  out = out.replace(/\*\*([\s\S]*?)\*\*/g, "<strong>$1</strong>");
-  out = out.replace(/##([\s\S]*?)##/g, "<em>$1</em>");
-  out = out.replace(
-    /\^\^([\s\S]*?)\^\^/g,
-    '<span style="font-variant:small-caps;font-variant-caps:small-caps">$1</span>',
-  );
-  // Drop any unterminated marker rather than leaking it.
-  out = out.replace(/\*\*|##|\^\^/g, "");
+  const out = parseCitationSegments(text)
+    .map((seg) => {
+      let inner = escapeHtml(seg.text);
+      if (seg.smallCaps) {
+        inner = `<span style="font-variant:small-caps;font-variant-caps:small-caps">${inner}</span>`;
+      }
+      if (seg.italic) inner = `<em>${inner}</em>`;
+      if (seg.bold) inner = `<strong>${inner}</strong>`;
+      return inner;
+    })
+    .join("");
   return out.replace(/\n/g, "<br/>");
 }
 
 /** Clean plain-text fallback with all markers removed. */
 export function citationToPlain(text: string): string {
-  return text
-    .replace(/\*\*([\s\S]*?)\*\*/g, "$1")
-    .replace(/##([\s\S]*?)##/g, "$1")
-    .replace(/\^\^([\s\S]*?)\^\^/g, "$1")
-    .replace(/\*\*|##|\^\^/g, "");
+  return citationTextOnly(text);
 }
 
 /** Copy one citation (or a joined block) preserving bold/italic/small caps. */
