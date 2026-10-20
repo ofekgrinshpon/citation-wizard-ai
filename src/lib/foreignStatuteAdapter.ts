@@ -123,7 +123,9 @@ export function parseStatuteInput(raw: string, jurisdiction: StatuteJurisdiction
       if (!comma) break;
       rest = rest.slice(comma[0].length);
     }
-    const leftover = rest.replace(/^[\s,;]+/, "").replace(/[\s.]+$/, "");
+    // Only a single closing period may follow the parsed sections; any other
+    // character (stray comma, open bracket, words) is an unparsed remainder.
+    const leftover = rest.trim().replace(/^\.$/, "");
     const plural = /^(§§|ss\.|secs\.|sections)$/i.test(signText ?? "");
     if (jurisdiction === "US" && items.length) {
       if (items.length === 1) fields.section = items[0];
