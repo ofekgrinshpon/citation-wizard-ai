@@ -8,6 +8,7 @@ import { BibliographyGenerator } from "@/components/BibliographyGenerator";
 import { BatchFootnoteBuilder } from "@/components/BatchFootnoteBuilder";
 import { UniformCitationPanel } from "@/components/legal-research/UniformCitationPanel";
 import { FootnoteReviewCard } from "@/components/FootnoteReviewCard";
+import { c1ServerPayload } from "./fixtures/c1ServerPayload";
 import { CitationRunError, runCitation } from "@/lib/runCitation";
 
 const boundary = vi.hoisted(() => ({
@@ -148,12 +149,8 @@ describe("prepared runCitation failure context", () => {
     const rawInput = "Samuel D. Warren and Louis D. Brandeis, The Right to Privacy, pp. 213-214";
     const error = await runCitation({ rawInput }).catch((e) => e as CitationRunError) as CitationRunError;
     expect(requestAt(0).foreignLookup).toMatchObject({ kind: "journal_article" });
-    boundary.invoke.mockResolvedValueOnce({ data: { content: "", foreignLookup: {
-      identity: { matched: true }, articleResolution: "resolved", fields: {
-        authors: "Samuel D. Warren and Louis D. Brandeis", articleTitle: "The Right to Privacy",
-        journal: "Harvard Law Review", volume: "4", firstPage: "193", year: "1890",
-      },
-    } }, error: null });
+    const { response } = await c1ServerPayload({ kind: "journal_article", jurisdiction: "OTHER", rawInput, parsedFields: { authors: "Samuel D. Warren and Louis D. Brandeis", articleTitle: "The Right to Privacy", pinpoint: "213–214" } }, [{ title: "The Right to Privacy — Warren and Brandeis", url: "https://law.harvard.edu/privacy", snippet: "Samuel D. Warren and Louis D. Brandeis, The Right to Privacy, 4 Harvard Law Review 193 (1890)." }]);
+    boundary.invoke.mockResolvedValueOnce({ data: { content: "", foreignLookup: response }, error: null });
     const result = await error.citationRetry!.retry();
     expect(result.citation).toBe("Samuel D. Warren and Louis D. Brandeis, ##The Right to Privacy##, 4 ^^Harv. L. Rev.^^ 193, 213–214 (1890).");
     expect(result.status).toBe("valid");
@@ -165,7 +162,7 @@ describe("prepared runCitation failure context", () => {
     const error = await runCitation({ rawInput: "Jones v. Smith and Sons" }).catch((e) => e as CitationRunError) as CitationRunError;
     await expect(error.citationRetry!.retry(() => false)).rejects.toMatchObject({ code: "CITATION_INPUT_CHANGED" });
     expect(boundary.invoke).toHaveBeenCalledTimes(1);
-    boundary.invoke.mockResolvedValueOnce({ data: { content: "", foreignLookup: { disambiguation: [
+    boundary.invoke.mockResolvedValueOnce({ data: { content: "", foreignLookup: { kind: "case", jurisdiction: "UNKNOWN", disambiguation: [
       { jurisdiction: "US", label: "First Jones case", url: "https://example.test/one" },
       { jurisdiction: "UK", label: "Second Jones case", url: "https://example.test/two" },
     ] } }, error: null });
@@ -198,7 +195,7 @@ describe("prepared runCitation failure context", () => {
     expect(boundary.classify).toHaveBeenCalledTimes(1);
   });
 
-  it.each(["FRAGMENT_RESPONSE", "EMPTY_RESPONSE"])("%s keeps only local recovery after an unusable transport success", async (code) => {
+  it.each(["FRAGMENT_RESPONSE"])("%s keeps only local recovery after an unusable transport success", async (code) => {
     if (code === "EMPTY_RESPONSE") boundary.classify.mockResolvedValue({ sourceType: "foreign_case_us" });
     boundary.invoke.mockResolvedValueOnce({ data: code === "FRAGMENT_RESPONSE" ? { content: "123" } : {
       content: "", foreignLookup: { identity: { matched: true }, fields: { arbitrary: "unrenderable metadata" } },
@@ -341,7 +338,7 @@ describe("bibliography mounted per-row retry", () => {
 
   it("foreign choices remain visible and generic retry only reuses the delivered choices", async () => {
     boundary.classify.mockResolvedValue({ sourceType: "foreign_case_us" });
-    boundary.invoke.mockResolvedValueOnce({ data: { content: "", foreignLookup: { disambiguation: [
+    boundary.invoke.mockResolvedValueOnce({ data: { content: "", foreignLookup: { kind: "case", jurisdiction: "UNKNOWN", disambiguation: [
       { jurisdiction: "US", label: "First Jones case", url: "https://example.test/one" },
       { jurisdiction: "UK", label: "Second Jones case", url: "https://example.test/two" },
     ] } }, error: null });
@@ -634,7 +631,7 @@ it("does not keep the old failed request link after a new attempt returns a choi
   bibliographyInput("Jones v. Smith and Sons");
   const parentLink = await screen.findByRole("link", { name: "בדיקת מצב הבקשה" });
   expect(parentLink).toHaveAttribute("href", `/citation-recovery?requestId=${requestAt(0).requestId}`);
-  boundary.invoke.mockResolvedValueOnce({ data: { content: "", foreignLookup: { disambiguation: [
+  boundary.invoke.mockResolvedValueOnce({ data: { content: "", foreignLookup: { kind: "case", jurisdiction: "UNKNOWN", disambiguation: [
     { jurisdiction: "US", label: "First Jones case", url: "https://example.test/one" },
     { jurisdiction: "UK", label: "Second Jones case", url: "https://example.test/two" },
   ] } }, error: null });
@@ -656,3 +653,24 @@ vi.mock("@/lib/citationPlanner", async (original) => {
   };
 });
 afterAll(() => { expect(plannerHosts.has("runner")).toBe(true); expect(plannerHosts.has("runner:resolve")).toBe(true); });
+
+ it("C1 malformed typed success is terminal preservation with no generic retry/refund", async () => {
+  boundary.invoke.mockResolvedValueOnce({ data: { content: "UNSAFE", foreignLookup: { identity: { matched: true }, fields: { arbitrary: "unrenderable" } } }, error: null });
+  const result = await runCitation({ rawInput: "Jones v. Smith and Sons" });
+  expect(result.citation).toBe("Jones v. Smith and Sons"); expect(result.status).toBe("warning");
+  expect(result.reply).not.toContain("UNSAFE"); expect(boundary.invoke).toHaveBeenCalledTimes(1);
+});
+
+it.each(["bibliography", "footnote"])("C1 actual %s host uses real server partial acceptance and records a single request", async mode => {
+  const rawInput = "Brown v. Board of Education";
+  const { response } = await c1ServerPayload({ kind: "case", jurisdiction: "UNKNOWN", rawInput, parsedFields: { caseName: rawInput } });
+  delete response.provenance.year;
+  boundary.invoke.mockResolvedValue({ data: { content: "UNSAFE", foreignLookup: response }, error: null });
+  const expected = await runCitation({ rawInput, useVerifiedStore: false });
+  boundary.invoke.mockClear();
+  if (mode === "bibliography") bibliographyInput(rawInput); else footnoteInput([rawInput]);
+  await screen.findByText(/347 U.S. 483/);
+  expect(document.body.textContent).toContain(expected.warningMsg);
+  expect(document.body.textContent).not.toContain("UNSAFE");
+  expect(boundary.invoke).toHaveBeenCalledTimes(1);
+});
