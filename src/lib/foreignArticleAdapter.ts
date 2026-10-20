@@ -77,7 +77,8 @@ export function renderForeignArticleLookup(
 export function renderForeignArticleCache(rawInput: string, fullCitation: string): ReturnType<typeof renderForeignDetection> {
   const supplied = buildForeignArticleRequest(rawInput).parsedFields;
   if (!supplied.articleTitle) return null;
-  const cached = detectForeignSource(fullCitation);
+  // Stored citations are marked text: detect from their plain reading.
+  const cached = detectForeignSource(citationTextOnly(fullCitation));
   if (cached?.kind !== "journal_article") return null;
   const fields = cached.fields as unknown as Record<string, string>;
   if (!Object.entries(supplied).every(([field, value]) =>
