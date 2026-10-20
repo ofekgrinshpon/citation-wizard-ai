@@ -857,6 +857,149 @@ export function _dbgFieldsForSource(text: string, jurisdiction: ForeignLookupJur
   return extractCaseFromEvidence(text, jurisdiction) ?? extractWorkFromEvidence(text, kind, title);
 }
 
+/**
+ * Stage 4 — grounded foreign-statute lookup (US/UK only).
+ * Snippet/title evidence only (no page inspection): one Tier-1 search plus the
+ * single bounded Tier-2 open-web retry. Identity anchor = the statute name the
+ * user supplied; user year/title anchors discard contradicting sources;
+ * ambiguous or conflicting evidence stays missing, never merged.
+ */
+async function lookupStatute(
+  input: ForeignLookupInput,
+  result: ForeignLookupResult,
+  doFetch: typeof fetch,
+  apiKey: string,
+): Promise<ForeignLookupResult> {
+  const supplied = Object.fromEntries(
+    Object.entries(input.parsedFields ?? {}).filter(([, v]) => typeof v === "string" && v.trim()),
+  ) as Record<string, string>;
+  const nameAnchor = supplied.statuteName ?? null;
+  const userYear = supplied.year ?? input.rawInput.match(/\b((?:1[6-9]|20)\d{2})\b/)?.[1];
+  if (nameAnchor) result.identity.anchors.push(`title:${nameAnchor}`);
+  if (userYear) result.identity.anchors.push(`year:${userYear}`);
+
+  result.diagnostics.tier1Queried = true;
+  let found = await searchOnce(buildQuery(input), tier1Hints("statute", input.jurisdiction), doFetch, apiKey, "foreign_search_tier1");
+  const usable1 = found.some((r) => r.url && classifySource(r.url) !== "weak");
+  if (!usable1 || found.length === 0) {
+    result.diagnostics.tier2Fired = true;
+    found = [...found, ...(await searchOnce(buildQuery(input), null, doFetch, apiKey, "foreign_search_tier2"))];
+  }
+
+  const seen = new Set<string>();
+  const sources: LookupSource[] = [];
+  for (const r of found) {
+    if (!r.url || seen.has(r.url)) continue;
+    seen.add(r.url);
+    const tier = result.diagnostics.tier2Fired && !sources.some((s) => s.tier === "tier1") ? "tier2" : "tier1";
+    const source: LookupSource = { url: r.url, title: r.title, snippet: r.snippet, tier: result.sources.length || usable1 ? tier : "tier1", strong: classifySource(r.url) !== "weak" };
+    sources.push(source);
+    result.sources.push({ url: source.url, title: source.title, tier: source.tier });
+  }
+
+  // Identity: the evidence must carry the user-supplied statute name.
+  const identitySources = sources.filter((s) => {
+    if (!nameAnchor) return false;
+    return titleMatches(`${s.title ?? ""} ${s.snippet ?? ""}`, nameAnchor);
+  });
+  if (identitySources.length === 0) {
+    result.identity.conflicts.push("no_identity_matched_source");
+    return result;
+  }
+
+  // Jurisdiction: given US/UK is never re-discovered or crossed; UNKNOWN is
+  // resolved only from an explicit citation form in the evidence itself.
+  if (isUnresolvedJurisdiction(input.jurisdiction)) {
+    const records = identitySources.filter((s) => s.strong).map(resolveStatuteJurisdiction).filter((r): r is NonNullable<typeof r> => !!r);
+    if (records.length === 0) {
+      result.identity.conflicts.push("jurisdiction_unresolved");
+      return result;
+    }
+    const jurs = new Set(records.map((r) => r.jurisdiction));
+    if (jurs.size > 1) {
+      result.identity.conflicts.push("ambiguous_jurisdiction");
+      return result;
+    }
+    const resolved = [...jurs][0];
+    input = { ...input, jurisdiction: resolved };
+    result.jurisdiction = resolved;
+    result.identity.jurisdiction = resolved;
+    result.identity.jurisdictionDiscovered = true;
+    result.diagnostics.jurisdictionResolvedBy = records[0].url;
+  } else if (input.jurisdiction === "US" || input.jurisdiction === "UK") {
+    result.identity.jurisdiction = input.jurisdiction;
+  }
+
+  // Extraction + anchor conflicts: a source contradicting a user-supplied
+  // identity anchor (year / title number) is discarded entirely.
+  const usable: Array<{ donor: LookupSource; fields: StatuteCite }> = [];
+  for (const s of identitySources.filter((x) => x.strong)) {
+    const f = extractStatuteFromEvidence(`${s.title ?? ""} ${s.snippet ?? ""}`, input.jurisdiction);
+    if (!f) continue;
+    if (userYear && f.year && f.year !== userYear) {
+      result.identity.conflicts.push(`year:${userYear} vs ${f.year}`);
+      continue;
+    }
+    if (supplied.titleNumber && f.titleNumber && f.titleNumber !== supplied.titleNumber) {
+      result.identity.conflicts.push(`titleNumber:${supplied.titleNumber} vs ${f.titleNumber}`);
+      continue;
+    }
+    usable.push({ donor: s, fields: f });
+  }
+  if (usable.length === 0) {
+    result.identity.matched = false;
+    if (!result.identity.conflicts.length) result.identity.conflicts.push("no_identity_matched_source");
+    return result;
+  }
+
+  // Same-name ambiguity: two or more distinct records and no user year anchor
+  // to bind one — stay unresolved rather than picking silently.
+  const sigs = new Set(usable.map(({ fields: f }) =>
+    input.jurisdiction === "US"
+      ? `${f.titleNumber ?? ""}|${f.section ?? f.sections ?? ""}`
+      : `${normalizeTitle(f.statuteName ?? "")}|${f.year ?? ""}`));
+  if (sigs.size > 1 && !userYear) {
+    result.identity.matched = false;
+    result.identity.conflicts.push("ambiguous_record");
+    return result;
+  }
+
+  result.identity.matched = true;
+
+  // Field-level acceptance: identity-matched sources that disagree on a
+  // non-identity field leave that field missing (never a vote, never a merge).
+  const byField = new Map<string, Array<{ value: string; donor: LookupSource }>>();
+  for (const { donor, fields: f } of usable) {
+    for (const [field, value] of Object.entries(f)) {
+      if (!value) continue;
+      if (field === "year" && userYear === value) continue; // user anchor ≠ new fact
+      const list = byField.get(field) ?? [];
+      list.push({ value, donor });
+      byField.set(field, list);
+    }
+  }
+  for (const [field, list] of byField) {
+    const key = (v: string) => field === "statuteName" ? normalizeTitle(v) : v;
+    const distinct = new Set(list.map((c) => key(c.value)));
+    if (distinct.size > 1) {
+      result.identity.conflicts.push(`conflicting_statute_${field}`);
+      continue;
+    }
+    const chosen = list[0];
+    const quality = classifySource(chosen.donor.url);
+    if (quality === "weak") continue;
+    result.fields[field] = chosen.value;
+    result.grounded[field] = true;
+    result.provenance[field] = {
+      value: chosen.value,
+      sourceUrl: chosen.donor.url,
+      sourceTitle: chosen.donor.title,
+      basis: basisFor(quality, false),
+    };
+  }
+  return result;
+}
+
 export async function runForeignLookup(
   input: ForeignLookupInput,
   deps?: LookupDeps,
