@@ -18,7 +18,11 @@ vi.mock("@/lib/runCitation", async (original) => {
   const actual = await original<typeof import("@/lib/runCitation")>();
   return { ...actual, runCitation: b.runCitation };
 });
-vi.mock("@/integrations/supabase/client", () => ({ supabase: { functions: { invoke: vi.fn() }, from: vi.fn() } }));
+vi.mock("@/integrations/supabase/client", () => ({ supabase: {
+  functions: { invoke: vi.fn() }, from: vi.fn(),
+  auth: { onAuthStateChange: vi.fn(() => ({ data: { subscription: { unsubscribe: vi.fn() } } })),
+    getSession: vi.fn(async () => ({ data: { session: null } })), getUser: vi.fn(async () => ({ data: { user: null } })) },
+} }));
 vi.mock("@/hooks/useAuth", () => ({ useAuth: () => ({ user: { id: "u1" }, isAdmin: false, isAdminResolved: true }) }));
 vi.mock("@/hooks/useProjects", () => ({ useProjects: () => ({ currentProject: { id: "bib-project" } }) }));
 vi.mock("sonner", () => ({ toast: b.toast }));
