@@ -105,6 +105,18 @@ beforeEach(() => {
 const CORNELL_1983 = { title: "42 U.S.C. § 1983 - Civil action for deprivation of rights", url: "https://www.law.cornell.edu/uscode/text/42/1983", snippet: "Civil Rights Act — 42 U.S.C. § 1983 (2018)." };
 
 describe("chat page — typed statute request through initial send and regeneration", () => {
+  it("batch A Brown initial then manual book regeneration is terminal local conflict", async () => {
+    const input = "Brown v. Board of Education";
+    m.invoke.mockResolvedValue({ data: { content: "UNSAFE MODEL OUTPUT" }, errorInfo: null });
+    await mountChat(); await send(input);
+    await waitFor(() => expect(screen.getByTestId("bubble-assistant")).toHaveTextContent(input));
+    expect(m.invoke).toHaveBeenCalledTimes(1); expect(m.invoke.mock.calls[0][1].foreignLookup.kind).toBe("case");
+    await act(async () => { fireEvent.click(screen.getByRole("button", { name: "regen-foreign_book" })); });
+    expect(m.invoke).toHaveBeenCalledTimes(1);
+    expect(screen.getByTestId("bubble-assistant")).toHaveTextContent(input);
+    expect(screen.getByTestId("bubble-assistant")).toHaveTextContent("סותרים");
+    expect(screen.getByTestId("bubble-assistant")).not.toHaveTextContent("UNSAFE MODEL OUTPUT");
+  });
   it("batch A German input and conflicting Israel regeneration stay local", async () => {
     await mountChat(); await send("BVerfG 1 BvR 400/51");
     await waitFor(() => expect(screen.getByTestId("bubble-assistant")).toHaveTextContent("אינו נתמך"));

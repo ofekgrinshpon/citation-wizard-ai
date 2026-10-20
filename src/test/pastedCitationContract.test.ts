@@ -4,6 +4,40 @@ import { preparePastedCitation, citationManualChoice, pastedCaseRequest, renderP
 const DE = "BVerfG, Urteil vom 15. Januar 1958, 1 BvR 400/51, BVerfGE 7, 198";
 const US = "Brown v. Board of Education, 347 U.S. 483 (1954)";
 describe("batch A pure supplied-evidence contract", () => {
+  it("effective book choice conflicts with case shape without manufacturing jurisdiction", () => {
+    const raw = "Brown v. Board of Education";
+    const p = preparePastedCitation(raw, citationManualChoice("foreign_book"));
+    expect(p.contract.jurisdiction).toBe("UNKNOWN"); expect(p.contract.conflicts).toContain("manual_source_kind_conflict");
+    expect(pastedCaseRequest(raw, p.contract)).toBeNull(); expect(p.local?.citation).toBe(raw);
+  });
+  it.each([
+    { rawInput: 'ע"א 400/51 כהן נ׳ לוי' }, { rawInput: "Other v. Source" }, { rawInput: null },
+    { rawInput: "Brown v. Board of Education", kind: "book" },
+    { rawInput: "Brown v. Board of Education", parsedFields: { caseName: "Other v. Source" } },
+    { rawInput: "Brown v. Board of Education", parsedFields: { bookTitle: "Brown" } },
+  ])("server rejects replaced lookup input/kind/fields: %j", overrides => {
+    const raw = "Brown v. Board of Education";
+    const c = guardPastedCitationRequest({ rawInput: raw, messages: [{ role: "user", content: raw }],
+      foreignLookup: { enabled: true, kind: "case", jurisdiction: "UNKNOWN", rawInput: raw, parsedFields: {}, ...overrides } });
+    expect(c.route).toBe("preserve"); expect(c.conflicts.length).toBeGreaterThan(0); expect(c.rawInput).toBe(raw);
+  });
+  it("canonical equal lookup and documented engine/manual/recovery wrappers remain bound", () => {
+    const raw = "Brown v. Board of Education";
+    const message = `[סיווג שיפוט ידני: {"sourceType":"foreign_case_us"}]\n[סיווג אוטומטי: פסיקה]\n[תיקון סיווג: המשתמש ציין שמדובר בפסיקה]\n══ מנוע אזכור (test) ══\nדוגמה: Other v. Source\n══════════\n[כלל רלוונטי: 36.4]\n[בחירת תוצאה]\n${raw}\n\n══ מקור מאומת (פסיקה) ══\nאזכור מלא: Other v. Source\n══════════`;
+    const c = guardPastedCitationRequest({ rawInput: raw, messages: [{ role: "user", content: message }], foreignLookup: { enabled: true, kind: "case", jurisdiction: "UNKNOWN", rawInput: raw, parsedFields: { caseName: raw } } });
+    expect(c.route).toBe("foreign"); expect(c.conflicts).toEqual([]);
+  });
+  it.each([{ kind: "book" }, { fields: { bookTitle: "Brown", reporter: "U.S.", volume: "347", firstPage: "483", year: "1954" } }, { fields: { caseName: "Other v. Source", reporter: "U.S.", volume: "347", firstPage: "483", year: "1954" } }])("matched response cannot change source kind/identity: %j", overrides => {
+    const raw = "Brown v. Board of Education"; const p = preparePastedCitation(raw);
+    const r = renderPastedCaseResponse(p.contract, pastedCaseRequest(raw, p.contract), { kind: "case", identity: { matched: true, jurisdiction: "US" }, fields: { caseName: raw, reporter: "U.S.", volume: "347", firstPage: "483", year: "1954" }, ...overrides });
+    expect(r?.citation).toBe(raw); expect(r?.warningMsg).toBeTruthy();
+  });
+  it("quote presentation normalization retains exact original without granting source identity", () => {
+    const raw = 'ע״א 1234/20 כהן נ׳ לוי';
+    const c = guardPastedCitationRequest({ rawInput: raw, messages: [{ role: "user", content: 'ע"א 1234/20 כהן נ\' לוי' }] });
+    expect(c.rawInput).toBe(raw); expect(c.fingerprint).toBe(rawCitationFingerprint(raw));
+    expect(c.route).toBe("israeli"); expect(c.identityVerified).toBe(false);
+  });
   it("bounded repeated evidence cannot mask conflicting jurisdictions or discard raw spans", () => {
     const raw = "BVerfG ".repeat(200) + "347 U.S. 483 (1954)";
     const c = buildPastedCitation(raw);

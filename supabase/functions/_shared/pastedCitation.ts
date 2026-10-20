@@ -36,6 +36,43 @@ export function rawCitationFingerprint(raw: string): string {
   for (let i = 0; i < raw.length; i++) { hash ^= raw.charCodeAt(i); hash = Math.imul(hash, 0x01000193) >>> 0; }
   return `pc1:${raw.length}:${hash.toString(16)}`;
 }
+/** Existing compatibility choices constrain a family; they never supply identity. */
+export function citationSourceKind(sourceType?: string): string | null {
+  if (!sourceType || ["foreign", "unknown", "other"].includes(sourceType)) return null;
+  if (sourceType.startsWith("case_law_") || sourceType.startsWith("foreign_case_")) return "case";
+  const kinds: Record<string, string> = {
+    foreign_book: "book", book: "book", foreign_book_chapter: "book_chapter", article_in_book: "book_chapter",
+    foreign_journal_article: "journal_article", article: "journal_article", foreign_newspaper: "newspaper",
+    foreign_statute_us: "statute", foreign_statute_uk: "statute", primary_legislation: "statute", secondary_legislation: "statute", basic_law: "statute",
+    foreign_constitution: "constitution", foreign_internet: "internet", internet: "internet",
+    foreign_unpublished_manuscript: "unpublished_manuscript", foreign_thesis: "thesis",
+  };
+  return kinds[sourceType] ?? sourceType;
+}
+/** Only the existing presentation wrappers are removable, not arbitrary bracketed source text. */
+export function citationUserText(text: string): string {
+  return text
+    .replace(/(?:^|\n)══ (?:מנוע(?: אזכור)?|מקור מאומת)[^\n]* ══\n[\s\S]*?\n═{3,}(?=\n|$)/g, "\n")
+    .replace(/^(?:\[(?:סיווג שיפוט ידני|סיווג אוטומטי|תיקון סיווג|כלל רלוונטי):[^\n]*\]|\[בחירת תוצאה\])\s*/gm, "")
+    .trim();
+}
+/** Presentation-only quote/whitespace normalization; no words or source tokens can be replaced. */
+export function citationBindingText(text: string): string {
+  return text.replace(/״/g, '"').replace(/׳/g, "'").replace(/\s+/g, " ").trim();
+}
+const lookupFieldKinds: Record<string, readonly string[]> = {
+  case: ["caseName", "volume", "reporter", "firstPage", "pinpoint", "paragraph", "court", "year", "docket", "databaseIdentifier", "starPinpoint", "decisionDate", "reporterVolume", "neutral", "ukVolume", "ukSeries", "parallel", "unparsedRemainder"],
+  statute: ["statuteName", "titleNumber", "code", "section", "subsection", "chapter", "year", "regnalYear", "monarch", "unparsedRemainder"],
+  journal_article: ["authors", "author", "articleTitle", "journal", "volume", "firstPage", "pinpoint", "year", "doi", "sourceUrl", "unparsedRemainder"],
+  book: ["authors", "author", "bookTitle", "title", "edition", "editors", "translators", "volume", "pinpoint", "year", "unparsedRemainder"],
+  book_chapter: ["authors", "author", "chapterTitle", "bookTitle", "edition", "editors", "translators", "volume", "firstPage", "pinpoint", "year", "unparsedRemainder"],
+};
+export function suppliedLookupFieldsMatch(raw: string, kind: string, fields: unknown): boolean {
+  if (!fields || typeof fields !== "object" || Array.isArray(fields) || !lookupFieldKinds[kind]) return false;
+  const normalized = citationBindingText(raw);
+  return Object.entries(fields).every(([key, value]) => lookupFieldKinds[kind].includes(key) && typeof value === "string" &&
+    (!value || normalized.includes(citationBindingText(value))));
+}
 function field(raw: string, value: string, provenance: SuppliedField["provenance"]): SuppliedField {
   const start = raw.indexOf(value);
   // Normalized parser output is not falsely represented as a supplied span.
@@ -95,6 +132,12 @@ export function buildPastedCitation(raw: string, manual: CitationManualChoice | 
   const jurisdiction = detected !== "UNKNOWN" ? detected : manual?.jurisdiction ?? "UNKNOWN";
   const foreignShape = /[A-Za-z][^\n]*?\s+v(?:s)?\.?\s+[A-Za-z]/.test(raw);
   const caseInput = !!prefixed || !!bare || foreignShape || evidence.some(e => e.signal === "court" || e.signal === "reporter");
+  // Existing parsed literature can contain numbers/case titles without becoming a decision.
+  const sourceKind = parser?.kind ?? (caseInput ? "case" : evidence.some(e => e.signal === "code") ? "statute" : null);
+  const manualKind = citationSourceKind(manual?.sourceType);
+  // This foundation gates decision-vs-other-family crossings only. Existing
+  // literature/statute helpers retain their more precise subtype ambiguity gates.
+  if (manualKind && sourceKind && manualKind !== sourceKind && (manualKind === "case" || sourceKind === "case")) conflicts.push("manual_source_kind_conflict");
   const unsupported = jurisdiction === "DE" ? ["formatter_DE_not_supported"] :
     manual?.jurisdiction === "UNKNOWN" && (manual.jurisdictionId || manual.subjurisdiction) && caseInput ? ["jurisdiction_formatter_unknown"] : [];
   const route = conflicts.length || unsupported.length || (!!bare && detected === "UNKNOWN" && !foreignShape)
@@ -113,14 +156,15 @@ export function buildPastedCitation(raw: string, manual: CitationManualChoice | 
     ...(manual?.subjurisdiction ? [{ value: manual.subjurisdiction, provenance: "manual_choice" as const, spans: [] }] : []),
   ];
   return { version: PASTED_CITATION_VERSION, rawInput: raw, fingerprint: rawCitationFingerprint(raw),
-    sourceKind: parser?.kind ?? (caseInput ? "case" : null), jurisdiction, subjurisdiction, subjurisdictionEvidence,
+    sourceKind, jurisdiction, subjurisdiction, subjurisdictionEvidence,
     evidence, candidates, manualChoice: manual, fields, unknownSpans,
     classification: conflicts.length ? "conflicting" : detected === "IL" ? "identified_israeli" : detected !== "UNKNOWN" ? "identified_foreign" : "ambiguous",
     formatter: unsupported.length ? "unsupported" : jurisdiction === "UNKNOWN" ? "unknown" : "existing_route",
     missing, conflicts, unsupported, identityVerified: false, route };
 }
 export function pastedCitationWarning(c: PastedCitationContract): string {
-  return c.conflicts.length ? "הסיווג שנבחר או פרטי השיפוט סותרים את הקלט; נשמר המקור שסופק ללא השלמה."
+  return c.conflicts.includes("manual_source_kind_conflict") ? "סוג המקור שנבחר ופרטי המקור שסופקו סותרים זה את זה; הקלט נשמר ללא השלמה."
+    : c.conflicts.length ? "הסיווג שנבחר או פרטי השיפוט סותרים את הקלט; נשמר המקור שסופק ללא השלמה."
     : c.unsupported.length ? "עיצוב האזכור בתחום השיפוט שזוהה אינו נתמך; הקלט נשמר, וזהות המקור לא אומתה."
     : "חסרה ראיה לתחום השיפוט או לפרטי המקור; הקלט נשמר ללא אימות. יש לציין ערכאה או תחום שיפוט.";
 }
@@ -128,8 +172,9 @@ export function pastedCitationWarning(c: PastedCitationContract): string {
 export function guardPastedCitationRequest(body: { messages: Array<{ role: string; content: string }>; rawInput?: unknown; foreignLookup?: unknown; pastedCitation?: unknown }) {
   const last = [...body.messages].reverse().find(m => m.role === "user")?.content ?? "";
   const manualLine = last.match(/\[סיווג שיפוט ידני: (\{[^\n]*\})\]/)?.[1];
-  const stripped = last.replace(/══[\s\S]*?═{3,}/g, "").replace(/\[[^\]\n]*(?:סיווג|כלל רלוונטי)[^\]\n]*\]\s*/g, "").trim();
-  const raw = typeof body.rawInput === "string" ? body.rawInput : stripped;
+  const stripped = citationUserText(last);
+  // Preserve the exact original only after proving presentation-equivalent binding.
+  const raw = typeof body.rawInput === "string" && citationBindingText(body.rawInput) === citationBindingText(stripped) ? body.rawInput : stripped;
   const wire = body.pastedCitation as Partial<PastedCitationContract> | undefined;
   let retainedChoice: CitationManualChoice | null = null;
   if (manualLine) { try { retainedChoice = JSON.parse(manualLine); } catch { /* malformed choice is not evidence */ } }
@@ -142,6 +187,9 @@ export function guardPastedCitationRequest(body: { messages: Array<{ role: strin
     ...(typeof choice.foreign === "boolean" ? { foreign: choice.foreign } : {}),
   } : null;
   const c = buildPastedCitation(raw, manual);
+  if (body.rawInput != null && (typeof body.rawInput !== "string" || citationBindingText(body.rawInput) !== citationBindingText(raw))) {
+    c.route = "preserve"; c.conflicts.push("request_text_conflict");
+  }
   if (choice && (typeof choice.subjurisdiction === "string" && choice.subjurisdiction.length > 200 || typeof choice.sourceType === "string" && choice.sourceType.length > 200)) {
     c.route = "preserve"; c.conflicts.push("manual_metadata_unsupported");
   }
@@ -149,10 +197,16 @@ export function guardPastedCitationRequest(body: { messages: Array<{ role: strin
   if (messageEvidence.route === "preserve" || (messageEvidence.classification === "identified_foreign" && c.classification === "identified_israeli")) {
     c.route = "preserve"; c.conflicts.push("request_text_conflict");
   }
-  if (wire && (wire.version !== 1 || wire.fingerprint !== c.fingerprint || wire.rawInput !== raw)) {
+  if (wire && (wire.version !== 1 || typeof wire.rawInput !== "string" || wire.fingerprint !== rawCitationFingerprint(wire.rawInput) || citationBindingText(wire.rawInput) !== citationBindingText(raw))) {
     c.route = "preserve"; c.conflicts.push("contract_input_mismatch");
   }
-  const lookup = body.foreignLookup as { rawInput?: unknown; kind?: unknown; jurisdiction?: unknown } | null;
+  const lookup = body.foreignLookup as { rawInput?: unknown; kind?: unknown; jurisdiction?: unknown; parsedFields?: unknown; enabled?: unknown } | null;
+  if (lookup && (typeof lookup !== "object" || Array.isArray(lookup) || lookup.enabled !== true || typeof lookup.rawInput !== "string" ||
+    citationBindingText(lookup.rawInput) !== citationBindingText(raw) || typeof lookup.kind !== "string" || !lookupFieldKinds[lookup.kind] ||
+    (c.sourceKind && lookup.kind !== c.sourceKind) || (citationSourceKind(manual?.sourceType) && lookup.kind !== citationSourceKind(manual?.sourceType)) ||
+    !suppliedLookupFieldsMatch(raw, String(lookup.kind), lookup.parsedFields ?? {}))) {
+    c.route = "preserve"; c.conflicts.push("lookup_source_binding_conflict");
+  }
   if (lookup && typeof lookup.rawInput === "string") {
     const lookupEvidence = buildPastedCitation(lookup.rawInput);
     if (lookupEvidence.route === "preserve" ||

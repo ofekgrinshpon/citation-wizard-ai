@@ -1,4 +1,4 @@
-import { buildPastedCitation, pastedCitationWarning, type CitationManualChoice, type PastedCitationContract } from "../../supabase/functions/_shared/pastedCitation";
+import { buildPastedCitation, pastedCitationWarning, citationSourceKind, citationBindingText, type CitationManualChoice, type PastedCitationContract } from "../../supabase/functions/_shared/pastedCitation";
 import { detectForeignSource, renderForeignDetection } from "@/data/bluebook";
 import { escapeCitationLiteral } from "@/lib/citationSegments";
 import type { SourceType } from "@/data/abbreviations";
@@ -30,7 +30,8 @@ export function preparePastedCitation(raw: string, manual: CitationManualChoice 
   return { contract, local, detection };
 }
 export function pastedCaseRequest(raw: string, contract: PastedCitationContract) {
-  if (contract.route !== "foreign" || contract.sourceKind !== "case") return null;
+  if (contract.route !== "foreign" || contract.sourceKind !== "case" || raw !== contract.rawInput ||
+    (citationSourceKind(contract.manualChoice?.sourceType) && citationSourceKind(contract.manualChoice?.sourceType) !== "case")) return null;
   const detection = detectForeignSource(raw);
   const parsedFields: Record<string, string> = {};
   if (detection?.kind === "case") for (const [k,v] of Object.entries(detection.fields)) if (typeof v === "string" && v) parsedFields[k] = v;
@@ -42,7 +43,16 @@ export function pastedCaseRequest(raw: string, contract: PastedCitationContract)
 }
 export function renderPastedCaseResponse(contract: PastedCitationContract, request: ReturnType<typeof pastedCaseRequest>, response: unknown) {
   if (!request) return null;
-  const fl = response as { identity?: { matched?: boolean; jurisdiction?: "US" | "UK"; conflicts?: string[] }; fields?: Record<string, unknown> } | null;
+  const fl = response as { kind?: string; rawInput?: string; identity?: { matched?: boolean; jurisdiction?: "US" | "UK"; conflicts?: string[] }; fields?: Record<string, unknown> } | null;
+  const siblingFields = ["bookTitle", "chapterTitle", "articleTitle", "journal", "authors", "editors", "translators", "statuteName", "code", "titleNumber"];
+  const changedSuppliedField = Object.entries(request.parsedFields).some(([k,v]) =>
+    typeof fl?.fields?.[k] === "string" && citationBindingText(String(fl.fields[k])) !== citationBindingText(v));
+  if (request.rawInput !== contract.rawInput || (fl?.kind && fl.kind !== request.kind) ||
+    (fl?.rawInput && citationBindingText(fl.rawInput) !== citationBindingText(contract.rawInput)) ||
+    (fl?.fields && Object.keys(fl.fields).some(k => siblingFields.includes(k))) || changedSuppliedField) {
+    const warningMsg = "פרטי המקור שהוחזרו סותרים את הקלט או את סוג המקור; הקלט נשמר ללא השלמה.";
+    return { citation: escapeCitationLiteral(contract.rawInput), reply: `${escapeCitationLiteral(contract.rawInput)}\n⚠️ ${warningMsg}`, warningMsg };
+  }
   if (fl?.identity?.matched && fl.fields && !Object.keys(fl.fields).some(k => ["caseName", "court", "reporter", "year", "firstPage", "neutral", "docket"].includes(k))) return null;
   const jurisdiction = fl?.identity?.jurisdiction ?? (request.jurisdiction === "US" || request.jurisdiction === "UK" ? request.jurisdiction : undefined);
   if (fl?.identity?.conflicts?.length || (fl?.identity?.jurisdiction && request.jurisdiction !== "UNKNOWN" && fl.identity.jurisdiction !== request.jurisdiction)) {

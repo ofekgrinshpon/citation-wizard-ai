@@ -304,7 +304,7 @@ describe("bibliography mounted per-row retry", () => {
   });
 
   it("a changed category on a failed row builds a new payload instead of reusing its old recovery", async () => {
-    bibliographyInput();
+    bibliographyInput("מקור משפטי לבדיקת מסלול הבקרה");
     const oldAction = await screen.findByRole("button", { name: "ניסיון חדש" });
     fireEvent.click(screen.getByRole("button", { name: /אחר ▾/ }));
     fireEvent.click(await screen.findByRole("button", { name: /חקיקה ראשית/ }));

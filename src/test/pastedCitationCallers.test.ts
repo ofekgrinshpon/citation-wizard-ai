@@ -13,6 +13,26 @@ beforeEach(() => {
   vi.stubGlobal("fetch", vi.fn(() => { throw new Error("Live network forbidden"); }));
 });
 describe("batch A real runCitation boundary", () => {
+  it.each([{ kind: "book", fields: { bookTitle: "Brown" } }, { kind: "case", fields: { caseName: "Other v. Source", reporter: "U.S.", volume: "347", firstPage: "483", year: "1954" } }])("actual typed response %j cannot complete a different source", async foreignLookup => {
+    m.invoke.mockResolvedValue({ data: { foreignLookup: { ...foreignLookup, identity: { matched: true, jurisdiction: "US" } }, content: "UNSAFE" }, errorInfo: null });
+    const result = await runCitation({ rawInput: "Brown v. Board of Education", useVerifiedStore: false });
+    expect(result.citation).toBe("Brown v. Board of Education"); expect(result.status).toBe("warning");
+    expect(m.invoke).toHaveBeenCalledTimes(1);
+  });
+  it("valid canonical US typed completion retains supplied case name", async () => {
+    const rawInput = "Brown v. Board of Education";
+    m.invoke.mockResolvedValue({ data: { foreignLookup: { kind: "case", identity: { matched: true, jurisdiction: "US" }, fields: { caseName: rawInput, reporter: "U.S.", volume: "347", firstPage: "483", year: "1954" } } }, errorInfo: null });
+    const result = await runCitation({ rawInput, useVerifiedStore: false });
+    expect(result.citation).toBe(`${rawInput}, 347 U.S. 483 (1954).`); expect(m.invoke).toHaveBeenCalledTimes(1);
+  });
+  it.each(["foreign_book", "foreign_book_chapter", "foreign_journal_article"] as const)("manual %s cannot cross supplied Brown source family", async overrideType => {
+    const rawInput = "Brown v. Board of Education";
+    const result = await runCitation({ rawInput, overrideType });
+    expect(result.citation).toBe(rawInput);
+    expect(result.pastedCitation?.conflicts).toContain("manual_source_kind_conflict");
+    expect(result.status).toBe("warning");
+    expect(m.invoke).not.toHaveBeenCalled(); expect(m.cache).not.toHaveBeenCalled(); expect(m.classifier).not.toHaveBeenCalled();
+  });
   it("incomplete foreign case crosses request boundary typed, and generic response is terminal preservation", async () => {
     const rawInput = "Brown v. Board of Education";
     const r = await runCitation({ rawInput, useVerifiedStore: false });

@@ -291,8 +291,8 @@ describe("article boundary through the real edge handler", () => {
     const clock = vi.spyOn(Date, "now").mockReturnValue(Date.parse("2026-10-11T10:00:00Z"));
     try {
       const foreign = { ...buildForeignArticleRequest(diagnosticGate.CITATION_DIAGNOSTIC_FIXTURE) };
-      const normal = await runHandler({ foreign, realForeign: true });
-      const observed = await runHandler({ foreign, realForeign: true, admin: true,
+      const normal = await runHandler({ raw: diagnosticGate.CITATION_DIAGNOSTIC_FIXTURE, foreign, realForeign: true });
+      const observed = await runHandler({ raw: diagnosticGate.CITATION_DIAGNOSTIC_FIXTURE, foreign, realForeign: true, admin: true,
         diagnostic: { tag: "relex-en-20261011-0123456789abcdef" } });
       const { citationDiagnostic: trace, ...body } = observed.body;
       expect(body).toEqual(normal.body);
@@ -442,7 +442,7 @@ describe("article boundary through the real edge handler", () => {
 
   it("returns terminal foreign article resolution without calling the formatter", async () => {
     const foreignResult = { identity: { matched: false }, fields: {}, provenance: {}, articleResolution: "incomplete" };
-    const r = await runHandler({ raw: 'Jane Doe, "Legal Writing"', label: "מאמר לועזי", foreign: { enabled: true, articleResponseVersion: 1, kind: "journal_article", jurisdiction: "US", rawInput: "Legal Writing" }, foreignResult });
+    const r = await runHandler({ raw: 'Jane Doe, "Legal Writing"', label: "מאמר לועזי", foreign: { enabled: true, articleResponseVersion: 1, kind: "journal_article", jurisdiction: "US", rawInput: 'Jane Doe, "Legal Writing"' }, foreignResult });
     expect(r.body.foreignLookup).toEqual(foreignResult);
     expect(r.calls).toHaveLength(0);
   });
@@ -643,7 +643,7 @@ describe("citation paid execution ownership through the real edge handler", () =
   it.each([
     { raw: "מקור משפטי אחר לבדיקת הבקרה" },
     { batchId: "different-batch-0001" },
-    { foreign: { enabled: false, rawInput: "different payload" } },
+    { foreign: { enabled: true, kind: "book", jurisdiction: "UNKNOWN", rawInput: "מקור משפטי לבדיקת מסלול הבקרה", parsedFields: {} } },
   ])("rejects changed paid inputs under an existing ID before provider work %#", async (change) => {
     const db = usageFixture();
     await runHandler({ ...paidFixture, rpcImpl: db.rpc });
@@ -914,7 +914,7 @@ describe("durable execution inputs and results through actual citation handler",
     const foreignResult = { kind: "journal_article", jurisdiction: "OTHER", fields: { articleTitle: "Fixture Title" }, grounded: { articleTitle: true },
       provenance: { articleTitle: { value: "Fixture Title", basis: "structured_metadata" } }, sources: [],
       identity: { matched: true, anchors: ["title:Fixture Title"], conflicts: [] }, diagnostics: { tier1Queried: false, tier2Fired: false }, articleResolution: "incomplete" };
-    const r = await runHandler({ raw: 'Jane Doe, "Fixture Title"', label: "מאמר לועזי", foreign: { enabled: true, articleResponseVersion: 1, kind: "journal_article", jurisdiction: "OTHER", rawInput: "Fixture Title" }, foreignResult });
+    const r = await runHandler({ raw: 'Jane Doe, "Fixture Title"', label: "מאמר לועזי", foreign: { enabled: true, articleResponseVersion: 1, kind: "journal_article", jurisdiction: "OTHER", rawInput: 'Jane Doe, "Fixture Title"' }, foreignResult });
     expect(r.calls).toHaveLength(0);
     expect(r.body.recoveryAvailability).toBe("available");
     expect(r.rpc.mock.calls.find(([name]) => name === "finish_citation_request")![1]._result).toEqual({ content: "", foreignLookup: foreignResult });
