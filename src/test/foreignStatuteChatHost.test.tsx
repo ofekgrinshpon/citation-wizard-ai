@@ -115,9 +115,9 @@ describe("chat page — typed statute request through initial send and regenerat
     const runner = await runCitation({ rawInput: input, useVerifiedStore: false });
     m.invoke.mockClear();
     await mountChat(); await send(input);
-    await waitFor(() => expect(screen.getByTestId("bubble-assistant").textContent).toBe(runner.reply));
+    await waitFor(() => expect(screen.getByTestId("bubble-assistant").querySelector("span")?.textContent).toBe(runner.reply));
     await act(async () => { fireEvent.click(screen.getByRole("button", { name: "regen-us-case" })); });
-    expect(screen.getByTestId("bubble-assistant").textContent).toBe(runner.reply);
+    expect(screen.getByTestId("bubble-assistant").querySelector("span")?.textContent).toBe(runner.reply);
     expect(runner.status).toBe("warning");
     expect(runner.citation).toContain("347 U.S. 483");
     expect(m.invoke).toHaveBeenCalledTimes(2);
