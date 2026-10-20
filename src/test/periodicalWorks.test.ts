@@ -82,7 +82,7 @@ describe("R16.6(a),(b) print newspapers", () => {
   it("supplied newspaper pinpoint is not silently dropped", () => {
     const r = news("Local Vote Delayed, Daily Synthetic, June 25, 1990, at A1, A4")!;
     expect(plain(r.citation)).toBe("Local Vote Delayed, Daily Synthetic, June 25, 1990, at A1.");
-    expect(r.unrepresented).toContain("pinpoint: A4");
+    expect((r as { unrepresented?: string[] }).unrepresented).toContain("pinpoint: A4");
     expect(r.reply).toContain("A4");
   });
   it("no invented place/section/author/date", () => {
