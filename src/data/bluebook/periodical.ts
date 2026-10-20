@@ -31,9 +31,17 @@ export interface PeriodicalParse {
   articleSignal: boolean;
   /** Structure only an R16.6 newspaper has here (place or section parenthetical, designation). */
   newspaperSignal: boolean;
+  /** A comma-split heading whose first part is not a recognizable personal name: author vs title unknown. */
+  authorTitleAmbiguous: boolean;
 }
 
 const authorLike = (s: string) => /^[\p{Lu}]/u.test(s) && !/\d/.test(s) && s.split(/\s+/).length <= 8;
+const NAME_TOKEN = /^(?:(?:\p{Lu}\.){1,3}|\p{Lu}[\p{Ll}'’]+(?:-\p{Lu}[\p{Ll}'’]+)?|Jr\.|Sr\.|II|III|IV)$/u;
+/** Structural personal-name shape only: each author is 2–4 name tokens (given + family). */
+const personalName = (s: string) => s.split(/\s+(?:&|and)\s+/).every((n) => {
+  const t = n.trim().split(/\s+/);
+  return t.length >= 2 && t.length <= 4 && t.every((x) => NAME_TOKEN.test(x));
+});
 
 export function extractPeriodical(raw: string): PeriodicalParse | null {
   const text = raw.trim().replace(/\.$/, "");
@@ -51,7 +59,11 @@ export function extractPeriodical(raw: string): PeriodicalParse | null {
   if (sectionRaw) f.section = sectionRaw.trim();
   const full = FULL_DATE.test(dateOrIssue);
   if (full || COVER_DATE.test(dateOrIssue)) f.date = dateOrIssue;
-  else if (ISSUE.test(dateOrIssue)) f.issue = dateOrIssue;
+  else if (ISSUE.test(dateOrIssue)) {
+    // R16.5 → R16.4: a supplied volume goes before the periodical, not in the issue.
+    const vm = dateOrIssue.match(/^vol\.\s+([\w.]+),\s+(.*)$/i);
+    if (vm) { f.volume = vm[1]; f.issue = vm[2]; } else f.issue = dateOrIssue;
+  }
   else return null;
   const pins = pinsRaw.replace(/^\s*,\s*/, "").trim();
   if (pins) f.pinpoint = pins.replace(/\s*[–\-]\s*/g, "–").replace(/\s*,\s*/g, ", ");
@@ -59,9 +71,14 @@ export function extractPeriodical(raw: string): PeriodicalParse | null {
   if (rest) f.unparsedRemainder = rest;
 
   const parts = head ? head.split(/,\s+/) : [];
+  let authorTitleAmbiguous = false;
   if (parts.length && DESIGNATION.test(parts[0])) {
     f.designation = parts[0];
     if (parts.length > 1) f.title = parts.slice(1).join(", ");
+  } else if (parts.length > 1 && authorLike(parts[0]) && !personalName(parts[0])) {
+    // Never claim an uncertain name-like heading as an identified author.
+    authorTitleAmbiguous = true;
+    f.title = head.trim();
   } else if (parts.length > 1 && DESIGNATION.test(parts[1]) && authorLike(parts[0])) {
     f.authors = parts[0];
     f.designation = parts[1];
@@ -73,7 +90,7 @@ export function extractPeriodical(raw: string): PeriodicalParse | null {
 
   const articleSignal = !full;
   const newspaperSignal = !!(f.place || f.section || f.designation);
-  const kind = articleSignal && !newspaperSignal ? "journal_article"
+  const kind = authorTitleAmbiguous ? "ambiguous" : articleSignal && !newspaperSignal ? "journal_article"
     : newspaperSignal && !articleSignal && (f.place || f.section) ? "newspaper" : "ambiguous";
-  return { kind, fields: f, articleSignal, newspaperSignal };
+  return { kind, fields: f, articleSignal, newspaperSignal, authorTitleAmbiguous };
 }

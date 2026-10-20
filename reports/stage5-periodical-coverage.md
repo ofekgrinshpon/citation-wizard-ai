@@ -21,11 +21,13 @@ Section     := (§ N) | (sec. X) | (X section)
 | R16.6 newspaper | Author; roman designation before title; titleless designation substitutes for title; small-caps newspaper; supplied place roman in parentheses; full date; section parenthetical after date; `at` first page only. Supplied pinpoint is excluded from the citation but kept as an unrepresented-field warning |
 | Kind decision | Article only from cover season/month/range or issue no.; newspaper only from place or section parenthetical. Day-date input with neither (or with a designation only) is **ambiguous** → generic foreign, preserved with a warning and subtype candidates; never guessed |
 | Manual choice | `periodical.newspaper` → `foreign_newspaper`; `periodical.article` → existing route + this mode. Contradicting structure is preserved with a mismatch warning; manual newspaper on unparseable input preserved as unsupported. Generic/unsupported siblings never pass through the formatter |
+| Issue mode | No cover date: supplied `vol. N` is parsed separately and placed before the periodical (R16.5 → R16.4): `Title, 7 Periodical, no. 3, 2020, at 12` |
+| Author/title | A comma-split heading is an author only if the first part has a personal-name shape (2–4 name tokens/initials per author, `&`/`and` joined). Otherwise (e.g. `Courts, Memory and Society, …`) the input is preserved unformatted with a specific author-vs-title warning on every route; manual article/newspaper choice does not resolve it |
 | Safety | Unknown tails kept verbatim with warning; HTML/`##`/`^^` escaped; Hebrew-headed input left to Israeli rules; no identity verification claimed (reply always says so) |
 | Callers | runCitation (single/batch/bibliography) and Index initial/regeneration; complete recognized input skips classifier and providers |
 
 ## Excluded
 - Wire services, commercial databases, internet editions, consecutively paginated newspapers, student notes/reviews/symposia/newsletters and other `periodical.*` siblings: no new support (stay unsupported/generic).
-- Unsigned titles containing a comma are read as `Author, Title` (limitation). Periodical names containing commas are not parsed. Year-only magazine dates are not parsed.
+- An unsigned title whose first comma-part itself has a personal-name shape (e.g. `Hidden Costs, …`) is still read as an author; single-word or non-name-shaped first parts are preserved with a warning, never silently formatted. Periodical names containing commas are not parsed. Year-only magazine dates are not parsed.
 - Short forms beyond existing Israeli repeat rules; bibliography category beyond "foreign other"; no T6/T10/T13 additions.
 - Not every case in either subtype is covered. Stage 5 remains incomplete.
