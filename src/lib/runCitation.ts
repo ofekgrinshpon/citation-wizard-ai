@@ -333,11 +333,27 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
       if (foreignDetection) {
         for (const [k, v] of Object.entries(foreignDetection.fields as Record<string, unknown>)) {
           if (typeof v === "string" && v.trim()) parsedFields[k] = v.trim();
+          else if (Array.isArray(v) && v.length && v.every((x) => typeof x === "string")) parsedFields[k] = v.join(", ");
         }
       }
       if (plan.kind === "case" && !parsedFields.caseName) {
         const name = extractForeignCaseName(normalized);
         if (name) parsedFields.caseName = name;
+      }
+      if (plan.kind === "statute") {
+        if (!parsedFields.statuteName) {
+          const name = extractStatuteNameHint(normalized);
+          if (name) parsedFields.statuteName = name;
+        }
+        if (!parsedFields.section && !parsedFields.sections) {
+          const sections = extractStatuteSectionsHint(normalized);
+          if (sections) {
+            if (sections.length > 1) parsedFields.sections = sections.join(", ");
+            else parsedFields.section = sections[0];
+          }
+        }
+        const year = normalized.match(/\b((?:1[6-9]|20)\d{2})\b/)?.[1];
+        if (year && !parsedFields.year) parsedFields.year = year;
       }
       foreignLookupRequest = plan.kind === "journal_article" ? { ...buildForeignArticleRequest(normalized) } : {
         enabled: true,
