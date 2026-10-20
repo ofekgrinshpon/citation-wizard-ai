@@ -49,12 +49,12 @@ export interface CitationHostCapabilities {
 }
 
 export const CHAT_HOST: CitationHostCapabilities = Object.freeze({
-  host: "chat", pastedLocalDefersOpinionFormat: true, bookDefersToDeterministic: true,
+  host: "chat", pastedLocalDefersOpinionFormat: true, bookDefersToDeterministic: false,
   deterministicForeignRender: true, typedRequestBuilder: "chat_article_fields", articleIncompleteFallback: true,
   caseDisambiguation: true, groundedMerge: true, rejectEmptyCaseFields: false,
 });
 export const RUNNER_HOST: CitationHostCapabilities = Object.freeze({
-  host: "runner", pastedLocalDefersOpinionFormat: true, bookDefersToDeterministic: true,
+  host: "runner", pastedLocalDefersOpinionFormat: true, bookDefersToDeterministic: false,
   deterministicForeignRender: true, typedRequestBuilder: "runner_foreign_lookup", articleIncompleteFallback: true,
   caseDisambiguation: true, groundedMerge: true, rejectEmptyCaseFields: false,
 });

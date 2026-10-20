@@ -112,13 +112,14 @@ export function renderCitationRecovery(record: CitationRecoveryRecord, now = Dat
   // remain readable, never dispatched or promoted to verified identity.
   if (request && typeof request.rawInput === "string" && ["case", "statute", "journal_article", "book", "book_chapter"].includes(String(request.kind))) {
     const raw = originalRecoveryInput(record);
+    if (!fields(request.parsedFields)) return null;
     const jur = request.jurisdiction === "US" || request.jurisdiction === "UK" ? request.jurisdiction : "OTHER";
     const sourceType = toSourceType(request.kind as ForeignSourceKind, jur);
     const prep = request.kind === "statute" ? statutePreparationFromRequest(request) : null;
     const plan: TypedPlan = { kind: "typed", evidence: planCitationEvidence(raw, null), sourceType,
       statutePrep: prep, caseRequest: null, articleRequest: request.kind === "journal_article" ? { parsedFields: fields(request.parsedFields) ?? {} } : null,
       foreignLookup: request, extraBody: {} };
-    const resolved = resolveCitationResponse(plan, record.result, RUNNER_HOST);
+    const resolved = resolveCitationResponse(plan, { ...record.result }, RUNNER_HOST);
     if (resolved.kind === "terminal") return output(resolved.resolution.reply, resolved.resolution.sourceType ?? sourceType, true, resolved.resolution.warningMsg ?? null);
   }
   if (request && result) {
