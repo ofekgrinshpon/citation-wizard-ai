@@ -32,7 +32,9 @@ const foreignResult = (fields: Record<string, string>) => ({ kind: "case", juris
   identity: { matched: true, anchors: [], conflicts: [], jurisdiction: "US" }, diagnostics: { tier1Queried: false, tier2Fired: false } });
 
 describe("real caller → real recovery contracts → retained renderer", () => {
-  it.each(inputs)("accepts the captured request without dropping supplied fields: %s", async (rawInput) => {
+  // Keep these genuinely incomplete after the suffix-year correction, so the
+  // real caller still dispatches rather than legitimately completing locally.
+  it.each(inputs.map((raw) => raw.replace(/ \(2d Cir\. 1996\)$/, "")))("accepts the captured request without dropping supplied fields: %s", async (rawInput) => {
     let accepted: ReturnType<typeof citationRecoveryInput> = null;
     boundary.invoke.mockImplementation(async (_name, body) => {
       // The real handler's exact pre-claim projection; only transport is mocked.
