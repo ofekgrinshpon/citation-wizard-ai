@@ -286,9 +286,10 @@ const Index = () => {
     const requestId = crypto.randomUUID();
     const articleFields = articleRequestFields(article?.sourceType, article?.rawInput);
     // Stage 4: the same pure statute adapter as runCitation. The effective
-    // (manual) choice is never crossed; a mismatch is answered locally.
+    // (manual) choice is never crossed; any non-lookup preparation (complete
+    // supplied fields or a mismatch) is answered locally with zero transport.
     const statutePrep = article ? prepareForeignStatute(article.sourceType, article.rawInput, { manual: article.manual }) : null;
-    if (statutePrep?.outcome === "mismatch") {
+    if (statutePrep && statutePrep.outcome !== "lookup") {
       const local = renderStatuteLocal(statutePrep);
       reportZeroWork(telemetry, "local_foreign_formatter", "deterministic");
       await onSuccess?.(local.reply, isCurrent, undefined, true);
