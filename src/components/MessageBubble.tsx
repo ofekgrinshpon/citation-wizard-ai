@@ -10,6 +10,7 @@ import { RULE_EXPLANATIONS } from "@/data/ruleTooltips";
 import { SourceTypeConfirmation } from "./SourceTypeConfirmation";
 import { ForeignSourcePicker } from "./ForeignSourcePicker";
 import { isForeignSourceType } from "@/data/bluebook/types";
+import type { GenerationPlan } from "@/lib/foreignClassification";
 import { VerifiedAutocomplete } from "./VerifiedAutocomplete";
 import { useOffice } from "@/hooks/useOffice";
 import { insertCitationAsFootnote } from "@/lib/wordInsertion";
@@ -30,7 +31,7 @@ function extractRuleNumber(line: string): string | null {
 interface MessageBubbleProps {
   msg: Message;
   detectedType?: SourceType;
-  onChangeSourceType?: (newType: SourceType) => void;
+  onChangeSourceType?: (newType: SourceType, plan?: GenerationPlan) => void;
   onEdit?: (newContent: string) => void;
   onUpdateAssistantContent?: (newContent: string) => void;
   onSelectOption?: (optionText: string) => void;
@@ -196,7 +197,7 @@ export function MessageBubble({ msg: rawMsg, detectedType, onChangeSourceType, o
                 accountId={foreignScope.accountId}
                 itemKey={foreignScope.itemKey}
                 input={foreignScope.input}
-                output={msg.content}
+                onRegenerate={onChangeSourceType ? (plan) => onChangeSourceType(plan.sourceType, plan) : undefined}
               />
             )}
             {msg.content.split("\n").map((line, i) => {

@@ -1,5 +1,7 @@
 import { useState, useRef, useEffect } from "react";
-import { fingerprintInput } from "@/lib/foreignClassification";
+import { chatClassificationKey, type GenerationPlan } from "@/lib/foreignClassification";
+import { isForeignSourceType } from "@/data/bluebook/types";
+import { clearItemsWithPrefix, recordGeneration } from "@/lib/foreignClassificationStore";
 import { Link, useNavigate } from "react-router-dom";
 import { CitationRequestStatusLink } from "@/components/CitationRequestStatusLink";
 import { MessageBubble } from "@/components/MessageBubble";
@@ -121,6 +123,16 @@ const Index = () => {
   const [messageSourceTypes, setMessageSourceTypes] = useState<Record<number, SourceType>>({});
   // Track original user input per assistant message index (for re-classification)
   const [messageRawInputs, setMessageRawInputs] = useState<Record<number, string>>({});
+  /** Raw input of an assistant reply; falls back to the preceding user message after reload. */
+  const rawInputFor = (i: number): string =>
+    messageRawInputs[i] || (messages[i - 1]?.role === "user" ? messages[i - 1].content : "");
+  const restoredSourceType = (i: number): SourceType | undefined => {
+    const raw = rawInputFor(i);
+    if (!raw) return undefined;
+    const t = detectSourceType(normalizeAbbreviations(raw));
+    // Only foreign results are restored (the picker); Hebrew rows keep prior behaviour.
+    return isForeignSourceType(t) ? t : undefined;
+  };
   // "Did you mean?" suggestion state
   const [pendingSuggestion, setPendingSuggestion] = useState<{
     suggestion: VerifiedSourceMatch;
@@ -1138,9 +1150,9 @@ const Index = () => {
                 <MessageBubble
                   key={i}
                   msg={msg}
-                  detectedType={msg.role === "assistant" ? messageSourceTypes[i] : undefined}
-                  foreignScope={msg.role === "assistant" && messageRawInputs[i]
-                    ? { accountId: user?.id, itemKey: `chat:${projectId ?? "default"}:${i}:${fingerprintInput(messageRawInputs[i])}`, input: messageRawInputs[i] }
+                  detectedType={msg.role === "assistant" ? (messageSourceTypes[i] ?? restoredSourceType(i)) : undefined}
+                  foreignScope={msg.role === "assistant" && rawInputFor(i)
+                    ? { accountId: user?.id, itemKey: chatClassificationKey(projectId, i), input: rawInputFor(i) }
                     : undefined}
                   onEdit={
                     msg.role === "user"
@@ -1230,8 +1242,8 @@ const Index = () => {
                   }
                   onChangeSourceType={
                     msg.role === "assistant"
-                      ? async (newType: SourceType) => {
-                          const rawInput = messageRawInputs[i] || "";
+                      ? async (newType: SourceType, plan?: GenerationPlan) => {
+                          const rawInput = rawInputFor(i);
                           if (!rawInput) return;
                           setMessageSourceTypes((prev) => ({ ...prev, [i]: newType }));
                           setLoading(true);
@@ -1247,6 +1259,11 @@ const Index = () => {
                                 updated[i] = { role: "assistant", content: reply };
                                 return updated;
                               });
+                              // Only this explicit, successful generation may vouch for the choice.
+                              if (plan && isCurrent()) {
+                                recordGeneration(user?.id, plan);
+                                if (plan.warning) toast.message(plan.warning);
+                              }
                             };
                             await callAPI(reclassifiedPrompt, messages.slice(0, i), sourceTelemetry(newTelemetryBatch("uniform_citation")), { sourceType: newType, rawInput: normalizeAbbreviations(rawInput) }, onCitationSuccess);
                           } catch (err) {
@@ -1355,6 +1372,7 @@ const Index = () => {
                     setLoading(false);
                     setLoadingMessage(null);
                     setMessages([]);
+                    clearItemsWithPrefix(user?.id, chatClassificationKey(projectId, 0).replace(/0$/, ""));
                     setInput("");
                     localStorage.removeItem(getProjectKey(LS_KEY_INPUT_PREFIX, projectId));
                     localStorage.removeItem(getProjectKey(LS_KEY_MESSAGES_PREFIX, projectId));

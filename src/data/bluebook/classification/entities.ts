@@ -1,34 +1,45 @@
 /**
- * Entity registry (T1 / T2 / T3 / international-rule headings) built only
- * from the supplied jurisdiction index (publisher v22 index browse). Each
- * entry keeps its supplied id, parent, verification status and source URL.
+ * Entity registry. Stable entity ids (e.g. "t2:united-kingdom") are
+ * independent of edition-specific table locators ({ ed21: "T2.43",
+ * ed22: "T2.46" }), so numbering differences never change identity.
  *
- * - Listing an entity is NOT parser or renderer coverage.
- * - Aliases come only from the supplied `source_label_raw`; none are invented.
- * - T1.5 Tribal Nation rows / R22 are excluded: a separate edition-22 decision.
- * - The supplied T2 index lists 47 direct entries; the plan's edition-21
- *   figure (44) is not reconcilable from supplied data and stays unverified.
+ * - Edition-21 T2 identity: the verified 44-entry list from workbook v3
+ *   (sheet "T2 מקוון21", observed 2026-10-19) plus its 7 numbered headings.
+ *   The first four headings are GROUPS (not enumerated states); only the
+ *   three UK legal systems are selectable edition-21 subdivisions.
+ * - Edition-22 publisher-index entries are preserved separately (own
+ *   provenance, ed22 locator only); exact-name matches share one entity.
+ * - T1.5 Tribal Nations are excluded (separate edition-22 decision).
+ * - Membership is NOT parser or renderer coverage.
  */
 import data from "./entitiesIndex.json";
 
+export interface EntityProvenance { edition: 21 | 22; source: string | null; verified_status: string; observed?: string; note?: string }
 export interface RegistryEntity {
   id: string;
   name: string;
   parent: string | null;
   type: string;
-  verified_status: string;
-  source_label_raw: string | null;
-  source: string | null;
+  locators: { ed21?: string; ed22?: string };
+  provenance: EntityProvenance[];
+  legacy_ids: string[];
+  aliases: string[];
+  selectable: boolean;
 }
 
-const D = data as unknown as { provenance: Record<string, unknown>; entries: RegistryEntity[] };
+const D = data as unknown as { provenance: { note: string; legacy_id_map: Record<string, string> }; entries: RegistryEntity[] };
 export const ENTITY_PROVENANCE = D.provenance;
 export const ENTITIES: readonly RegistryEntity[] = D.entries;
 const BY_ID = new Map(ENTITIES.map((e) => [e.id, e]));
+const LEGACY = D.provenance.legacy_id_map;
 
-export const getEntity = (id: string | undefined) => (id ? BY_ID.get(id) : undefined);
+export const getEntity = (id: string | undefined | null) => (id ? BY_ID.get(id) : undefined);
 export const childrenOf = (id: string) => ENTITIES.filter((e) => e.parent === id);
 export const isEntityId = (v: unknown): v is string => typeof v === "string" && BY_ID.has(v);
+/** Map an id stored by an earlier build (edition-22 inventory id) to the stable id. */
+export const resolveEntityId = (v: unknown): string | undefined =>
+  typeof v !== "string" ? undefined : BY_ID.has(v) ? v : LEGACY[v];
+export const byLocator = (edition: "ed21" | "ed22", loc: string) => ENTITIES.find((e) => e.locators[edition] === loc);
 
 export function ancestorsOf(id: string): RegistryEntity[] {
   const out: RegistryEntity[] = [];
@@ -42,24 +53,25 @@ export function ancestorsOf(id: string): RegistryEntity[] {
   return out;
 }
 
-/** Leaf-ish subdivisions (headings and named units) beneath an entity. */
-export function subdivisionsOf(id: string): RegistryEntity[] {
-  const direct = childrenOf(id);
-  return direct.flatMap((c) => (c.type === "foreign_subjurisdiction_heading" && childrenOf(c.id).length ? [c, ...childrenOf(c.id)] : [c]));
-}
+export const isUnder = (id: string | undefined, root: string) => !!id && (id === root || ancestorsOf(id).some((a) => a.id === root));
 
-export function aliasesOf(e: RegistryEntity): string[] {
-  return e.source_label_raw && e.source_label_raw !== e.name ? [e.source_label_raw] : [];
-}
+/** Selectable subdivisions only (groups are shown as context, never chosen). */
+export const subdivisionsOf = (id: string) => childrenOf(id).filter((c) => c.selectable);
+export const subdivisionGroupsOf = (id: string) => childrenOf(id).filter((c) => c.type === "subdivision_group");
 
-/** Top-level jurisdiction choices: US (T1.3 states+DC, T1.4), T2 entries, international. */
-export const US_STATES_AND_DC = ENTITIES.filter((e) => e.parent === "T1.3");
-export const US_OTHER = ENTITIES.filter((e) => e.parent === "T1.4");
-export const FOREIGN_JURISDICTIONS = ENTITIES.filter((e) => e.parent === "T2" && e.type === "foreign_jurisdiction_index_entry");
-export const INTERNATIONAL_ENTITIES = ENTITIES.filter((e) => e.id.startsWith("R21") || e.id.startsWith("T3."));
+export const US_ROOT_ID = "us";
+export const UK_ID = "t2:united-kingdom";
+export const US_STATES_AND_DC = ENTITIES.filter((e) => e.type === "us_state_or_dc");
+export const US_OTHER = ENTITIES.filter((e) => e.type === "us_other_jurisdiction");
+/** Edition-21 verified T2 identity list (44). */
+export const FOREIGN_JURISDICTIONS_ED21 = ENTITIES.filter((e) => e.parent === null && e.type === "foreign_jurisdiction" && e.locators.ed21);
+/** Edition-22 index entries with no exact edition-21 name match (kept separate). */
+export const FOREIGN_JURISDICTIONS_ED22_ONLY = ENTITIES.filter((e) => e.parent === null && e.type === "foreign_jurisdiction" && !e.locators.ed21);
+/** Actual international institutions / organization headings (distinct from profile groups). */
+export const INTERNATIONAL_ENTITIES = ENTITIES.filter((e) => e.id.startsWith("intl:"));
 
 export function searchEntities(q: string, pool: readonly RegistryEntity[] = ENTITIES): RegistryEntity[] {
   const n = q.trim().toLowerCase();
   if (!n) return [...pool];
-  return pool.filter((e) => e.name.toLowerCase().includes(n) || aliasesOf(e).some((a) => a.toLowerCase().includes(n)));
+  return pool.filter((e) => e.name.toLowerCase().includes(n) || e.aliases.some((a) => a.toLowerCase().includes(n)));
 }

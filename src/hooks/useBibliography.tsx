@@ -20,6 +20,8 @@ export interface BibliographyEntry {
   manualCategory?: boolean;
   /** Warnings that came with the citation; kept through reload and export. */
   warnings?: string[];
+  /** Stable local foreign-classification item key; survives review ↔ entry ↔ reload. */
+  classificationKey?: string;
 }
 
 /** Strip stray trailing punctuation/whitespace so bibliography lines never end with "." */
@@ -284,8 +286,10 @@ function rebuildBibliographyEntries(items: BibliographyEntry[]): BibliographyEnt
         }
       : auto;
 
+    const { classificationKey: ck, ...rest } = item;
     rebuilt.push({
-      ...item,
+      ...rest,
+      ...(typeof ck === "string" && /^[\w-]{1,100}$/.test(ck) ? { classificationKey: ck } : {}),
       fullCitation: cleanedCitation,
       rawInput: item.rawInput || cleanedCitation,
       addedFrom: item.addedFrom === "footnote" ? "footnote" : "manual",
@@ -320,7 +324,7 @@ export function sortBibliography(entries: BibliographyEntry[]): BibliographyEntr
 interface BibliographyContextValue {
   entries: BibliographyEntry[];
   addEntry: (rawInput: string, fullCitation: string, from: "footnote" | "manual") => boolean;
-  addEntries: (items: { rawInput: string; fullCitation: string; isVerified?: boolean; sourceTypeOverride?: BibSourceCategory; warnings?: string[] }[], from?: "footnote" | "manual") => number;
+  addEntries: (items: { rawInput: string; fullCitation: string; isVerified?: boolean; sourceTypeOverride?: BibSourceCategory; warnings?: string[]; classificationKey?: string }[], from?: "footnote" | "manual") => number;
   syncFootnoteEntries: (items: { rawInput: string; fullCitation: string; warnings?: string[] }[]) => number;
   removeEntry: (id: string) => void;
   clearAll: () => void;
@@ -407,7 +411,7 @@ export function BibliographyProvider({ children }: { children: React.ReactNode }
   );
 
   const addEntries = useCallback(
-    (items: { rawInput: string; fullCitation: string; isVerified?: boolean; sourceTypeOverride?: BibSourceCategory; warnings?: string[] }[], from: "footnote" | "manual" = "manual"): number => {
+    (items: { rawInput: string; fullCitation: string; isVerified?: boolean; sourceTypeOverride?: BibSourceCategory; warnings?: string[]; classificationKey?: string }[], from: "footnote" | "manual" = "manual"): number => {
       let count = 0;
       setEntries((prev) => {
         const next = [...prev];
@@ -426,6 +430,7 @@ export function BibliographyProvider({ children }: { children: React.ReactNode }
             isVerified: item.isVerified,
             manualCategory,
             ...(item.warnings?.length ? { warnings: [...item.warnings] } : {}),
+            ...(item.classificationKey ? { classificationKey: item.classificationKey } : {}),
             ...info,
           });
           count++;

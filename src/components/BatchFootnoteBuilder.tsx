@@ -1,4 +1,6 @@
 import { newTelemetryBatch, sourceTelemetry, type CostTelemetry } from "@/lib/costTelemetry";
+import { planForItem, recordGeneration } from "@/lib/foreignClassificationStore";
+import type { GenerationPlan } from "@/lib/foreignClassification";
 import { useState, useCallback, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { normalizeAbbreviations, detectSourceType, SOURCE_TYPE_LABELS, type SourceType } from "@/data/abbreviations";
@@ -236,6 +238,10 @@ export function BatchFootnoteBuilder({}: BatchProps) {
     approved: false,
   });
 
+  /** Unsupported classification: keep the output but flag it (never valid). */
+  const withPlanWarning = (c: FootnoteCell, plan: GenerationPlan | null): FootnoteCell =>
+    plan?.warning ? { ...c, status: c.status === "error" ? c.status : "warning", warningMsg: [c.warningMsg, plan.warning].filter(Boolean).join(" · ") } : c;
+
   const errorMessageOf = (e: unknown) =>
     (e as { userMessage?: string })?.userMessage || "ההפקה נכשלה. נסו שוב.";
 
@@ -267,9 +273,10 @@ export function BatchFootnoteBuilder({}: BatchProps) {
     // One stable telemetry identity per logical row, created BEFORE retries.
     const telemetryBatch = newTelemetryBatch("footnotes");
     const rowTelemetry = activeCells.map(() => sourceTelemetry(telemetryBatch));
+    const rowPlans = activeCells.map((c) => (c.recovery ? null : planForItem(user?.id, `batch:${c.key}`, c.input)));
     const results = await runPool(
       activeCells,
-      (cell, i) => runSingleCitation(cell.input, cell.sourceTypeOverride, rowTelemetry[i],
+      (cell, i) => runSingleCitation(cell.input, rowPlans[i]?.sourceType ?? cell.sourceTypeOverride, rowTelemetry[i],
         () => batchJob.isCurrent() && !!rowJobs[i]?.isCurrent(), cell.recovery),
       {
         concurrency: 2,
@@ -280,7 +287,9 @@ export function BatchFootnoteBuilder({}: BatchProps) {
           const cellKey = activeCells[index].key;
           if (result.ok && result.value) {
             const value = result.value;
-            setCells((prev) => prev.map((c) => (c.key === cellKey ? applyResultToCell(c, value) : c)));
+            const plan = rowPlans[index];
+            if (plan) recordGeneration(user?.id, plan);
+            setCells((prev) => prev.map((c) => (c.key === cellKey ? withPlanWarning(applyResultToCell(c, value), plan) : c)));
           } else {
             const message = errorMessageOf(result.error);
             setCells((prev) =>
@@ -322,10 +331,13 @@ export function BatchFootnoteBuilder({}: BatchProps) {
     if (!job) return;
     setCells((prev) => prev.map((c) => c.key === cell.key
       ? { ...c, status: "loading", output: null, errorMsg: undefined, approved: false, citationRetry: undefined, requestId: undefined } : c));
+    // Explicit regeneration uses the effective foreign classification (if set).
+    const plan = explicitRetry || cell.recovery ? null : planForItem(user?.id, `batch:${cell.key}`, cell.input);
     try {
-      const res = await runSingleCitation(cell.input, cell.sourceTypeOverride, undefined, job.isCurrent, explicitRetry ?? cell.recovery);
+      const res = await runSingleCitation(cell.input, plan?.sourceType ?? cell.sourceTypeOverride, undefined, job.isCurrent, explicitRetry ?? cell.recovery);
       if (!job.isCurrent()) return;
-      setCells((prev) => applyRepeatCitationRules(prev.map((c) => c.key === cell.key ? applyResultToCell(c, res) : c)));
+      if (plan) recordGeneration(user?.id, plan);
+      setCells((prev) => applyRepeatCitationRules(prev.map((c) => c.key === cell.key ? withPlanWarning(applyResultToCell(c, res), plan) : c)));
     } catch (e) {
       if (!job.isCurrent()) return;
       const message = errorMessageOf(e);
