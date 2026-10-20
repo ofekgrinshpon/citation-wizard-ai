@@ -22,7 +22,7 @@ export function buildBibliographyCopy(groups: BibliographyCopyGroup[]): { html: 
   const plainLines: string[] = [];
 
   for (const group of groups) {
-    if (group.entries.length === 0) continue;
+    if (!group.label && group.entries.length === 0) continue;
     htmlParts.push(`<div><strong>${escapeHtml(group.label)}</strong></div>`);
     plainLines.push(group.label, "");
     for (const entry of group.entries) {
