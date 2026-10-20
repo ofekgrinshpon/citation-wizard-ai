@@ -37,7 +37,8 @@ describe("effectiveKey canonicalizes set-valued axes", () => {
   it("access_medium permutation yields same key and stays fresh", () => {
     const r = fresh({ multi: { access_medium: ["web", "print"] } });
     const swapped = applyOverride(r, { multi: { access_medium: ["print", "web"] } });
-    if (swapped.overrides.multi?.access_medium?.length === 2) {
+    expect(swapped.overrides.multi?.access_medium).toEqual(["print", "web"]);
+    {
       expect(keyOf(swapped)).toBe(keyOf(r));
       expect(isOutputStale(swapped)).toBe(false);
     }
