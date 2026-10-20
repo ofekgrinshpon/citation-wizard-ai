@@ -284,7 +284,8 @@ describe("existing unrelated routes and bounded evidence", () => {
     ["foreign_book", "H.L.A. Hart, The Concept of Law (2d ed. 1994)", "1994"],
   ] as const)("preserves the complete %s client path", async (overrideType, rawInput, expected) => {
     const result = await runCitation({ rawInput, overrideType, useVerifiedStore: false });
-    expect(result.status).toBe("valid");
+    // Local book parity keeps its explicit formatting-only warning.
+    expect(result.status).toBe(overrideType === "foreign_book" ? "warning" : "valid");
     expect(result.citation).toContain(expected);
     expect(boundaries.invoke).not.toHaveBeenCalled();
   });

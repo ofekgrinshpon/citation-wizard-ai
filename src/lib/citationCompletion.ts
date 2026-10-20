@@ -46,7 +46,13 @@ export function acceptCitationCompletion(request: Record<string, unknown>, raw: 
   const conflicts = Array.isArray(identity.conflicts) ? identity.conflicts : null;
   // Explicit field conflicts quarantine only that field; identity/record conflicts stop acceptance.
   const fieldConflicts = (conflicts ?? []).filter((v): v is string => typeof v === "string" && /^(conflicting_statute_|(?:year|journal|volume|firstPage):)/.test(v));
-  if (identity.matched !== true || !conflicts || conflicts.length !== fieldConflicts.length || !expected.some(a => anchors.some(b => norm(a) === norm(b))) ||
+  const matchingAnchor = expected.some(a => anchors.some(b => norm(a) === norm(b)));
+  const contradictedAnchor = anchors.some(a => {
+    const prefix = a.slice(0, a.indexOf(":") + 1);
+    const sameKind = expected.filter(e => e.startsWith(prefix));
+    return sameKind.length > 0 && !sameKind.some(e => norm(e) === norm(a));
+  });
+  if (identity.matched !== true || !conflicts || conflicts.length !== fieldConflicts.length || !matchingAnchor || contradictedAnchor ||
     (request.kind === "case" && out.jurisdiction !== "US" && out.jurisdiction !== "UK")) return fail("identity");
   out.identityConfirmed = true;
   const fields = record(r.fields), grounded = record(r.grounded), provenance = record(r.provenance);
@@ -64,10 +70,15 @@ export function acceptCitationCompletion(request: Record<string, unknown>, raw: 
     let urlValid = false;
     try { urlValid = ["https:", "http:"].includes(new URL(text(p.sourceUrl)).protocol); } catch { /* not evidence */ }
     const meaningful = title.trim().length >= 8 && /[A-Za-z]{3}/.test(title) && !/^(home|search|result|untitled|document)\s*$/i.test(title.trim());
+    const identityWords = expected.flatMap(a => norm(a.slice(a.indexOf(":") + 1)).split(" ")).filter(w => w.length > 3);
+    const titleRelated = identityWords.some(w => norm(title).includes(w));
+    // The existing structured/document extraction basis is retained when its
+    // result heading differs from the cited title; bare discovery titles are not enough.
+    const recordEvidence = titleRelated || ["structured_metadata", "document_inspection", "publisher_metadata", "repository_metadata"].includes(text(p.basis));
     if (!fieldsByKind[text(request.kind)].includes(key) || typeof value !== "string" || !value.trim() ||
       fieldConflicts.some(c => c === `conflicting_statute_${key}` || c.startsWith(`${key}:`)) ||
       (supplied[key] !== undefined && citationBindingText(text(supplied[key])) !== citationBindingText(value)) ||
-      grounded[key] !== true || p.value !== value || !bases.has(text(p.basis)) || !urlValid || !source || !meaningful || norm(title) !== norm(donorTitle)) {
+      grounded[key] !== true || p.value !== value || !bases.has(text(p.basis)) || !urlValid || !source || !meaningful || !recordEvidence || norm(title) !== norm(donorTitle)) {
       out.quarantined.push(key); continue;
     }
     // Supplied values stay exact; confirmation is not permission to rewrite them.
