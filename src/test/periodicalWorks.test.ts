@@ -187,8 +187,8 @@ describe("author-versus-title ambiguity (no invented author)", () => {
       .toBe("Alpha B. Gamma & Ari Doe, ##Quiet Fields##, ^^Synthetic Mag.^^, Mar. 2020, at 12.");
   });
   it("ambiguous heading with markup stays escaped", () => {
-    const r = art("Courts <b>x</b> ^^2, Memory, Synthetic Mag., Mar. 2020, at 12")!;
+    const r = art("Courts <b>x</b> ^^y, Memory, Synthetic Mag., Mar. 2020, at 12")!;
     expect(citationToHtml(r.citation)).toContain("&lt;b&gt;");
-    expect(plain(r.citation)).toBe("Courts <b>x</b> ^^2, Memory, Synthetic Mag., Mar. 2020, at 12");
+    expect(plain(r.citation)).toBe("Courts <b>x</b> ^^y, Memory, Synthetic Mag., Mar. 2020, at 12");
   });
 });
