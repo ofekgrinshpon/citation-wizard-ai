@@ -59,6 +59,9 @@ describe("batch A pure supplied-evidence contract", () => {
   it("UK subunit manual choice is not proof of a complete formatter", () => {
     const c = preparePastedCitation("Alpha v. Beta [2020] UKSC 1", citationManualChoice("foreign_case_other", "t2:united-kingdom", "t2:united-kingdom/scotland"));
     expect(c.contract.route).toBe("preserve"); expect(c.contract.formatter).toBe("unsupported");
+    const unknownCountry = preparePastedCitation("Alpha v. Beta", citationManualChoice("foreign_case_other", "t2:canada"));
+    expect(unknownCountry.contract.manualChoice?.jurisdictionId).toBe("t2:canada");
+    expect(unknownCountry.contract.route).toBe("preserve");
   });
   it("server derives foreign evidence from text despite forged client declaration/rawInput", () => {
     const c = guardPastedCitationRequest({ messages: [{ role: "user", content: DE }], rawInput: 'ע"א 1234/20',

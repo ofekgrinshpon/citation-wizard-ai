@@ -9,7 +9,7 @@ export function citationManualChoice(type?: SourceType, jurisdictionId?: string,
     : jurisdictionId === "t2:germany-federal-republic-of" || jurisdictionId?.startsWith("t2:germany-federal-republic-of/") ? "DE" : jurisdictionId === "t2:israel" ? "IL"
     : jurisdictionId ? "UNKNOWN" : type === "foreign_case_us" || type === "foreign_statute_us" ? "US"
     : type === "foreign_statute_uk" ? "UK" : type?.startsWith("case_law_") ? "IL" : "UNKNOWN";
-  return { jurisdiction, sourceType: type, foreign: type?.startsWith("foreign"), ...(subjurisdiction ? { subjurisdiction } : {}) };
+  return { jurisdiction, sourceType: type, foreign: type?.startsWith("foreign"), ...(jurisdictionId ? { jurisdictionId } : {}), ...(subjurisdiction ? { subjurisdiction } : {}) };
 }
 export function preparePastedCitation(raw: string, manual: CitationManualChoice | null = null) {
   const detection = detectForeignSource(raw);

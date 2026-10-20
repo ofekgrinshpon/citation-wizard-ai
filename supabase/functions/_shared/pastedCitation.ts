@@ -9,7 +9,7 @@ export interface SuppliedField {
   provenance: "supplied_text" | "existing_parser" | "none";
   spans: InputSpan[];
 }
-export interface CitationManualChoice { jurisdiction?: CitationJurisdiction; subjurisdiction?: string; sourceType?: string; foreign?: boolean }
+export interface CitationManualChoice { jurisdiction?: CitationJurisdiction; jurisdictionId?: string; subjurisdiction?: string; sourceType?: string; foreign?: boolean }
 export interface PastedCitationContract {
   version: typeof PASTED_CITATION_VERSION;
   rawInput: string;
@@ -96,7 +96,7 @@ export function buildPastedCitation(raw: string, manual: CitationManualChoice | 
   const foreignShape = /[A-Za-z][^\n]*?\s+v(?:s)?\.?\s+[A-Za-z]/.test(raw);
   const caseInput = !!prefixed || !!bare || foreignShape || evidence.some(e => e.signal === "court" || e.signal === "reporter");
   const unsupported = jurisdiction === "DE" ? ["formatter_DE_not_supported"] :
-    manual?.jurisdiction === "UNKNOWN" && manual.subjurisdiction && caseInput ? ["jurisdiction_formatter_unknown"] : [];
+    manual?.jurisdiction === "UNKNOWN" && (manual.jurisdictionId || manual.subjurisdiction) && caseInput ? ["jurisdiction_formatter_unknown"] : [];
   const route = conflicts.length || unsupported.length || (!!bare && detected === "UNKNOWN" && !foreignShape)
     ? "preserve" : detected === "IL" ? "israeli" : detected !== "UNKNOWN" || foreignShape || manual?.foreign ? "foreign" : "existing";
   const missing = caseInput ? ["caseName", "year", "reporter"].filter(k => fields[k]?.state !== "supplied") : [];
@@ -137,6 +137,7 @@ export function guardPastedCitationRequest(body: { messages: Array<{ role: strin
   const manual = choice && typeof choice === "object" && !Array.isArray(choice) ? {
     ...(typeof choice.jurisdiction === "string" && ["IL", "US", "UK", "DE", "UNKNOWN"].includes(choice.jurisdiction) ? { jurisdiction: choice.jurisdiction } : {}),
     ...(typeof choice.subjurisdiction === "string" && choice.subjurisdiction.length <= 200 ? { subjurisdiction: choice.subjurisdiction } : {}),
+    ...(typeof choice.jurisdictionId === "string" && choice.jurisdictionId.length <= 200 ? { jurisdictionId: choice.jurisdictionId } : {}),
     ...(typeof choice.sourceType === "string" && choice.sourceType.length <= 200 ? { sourceType: choice.sourceType } : {}),
     ...(typeof choice.foreign === "boolean" ? { foreign: choice.foreign } : {}),
   } : null;
