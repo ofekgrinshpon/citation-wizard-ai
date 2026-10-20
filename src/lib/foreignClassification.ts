@@ -115,7 +115,13 @@ export function detectClassification(raw: string): DetectedClassification {
   const text = (raw ?? "").trim();
   const scalars: DetectedClassification["scalars"] = {};
   const multi: DetectedClassification["multi"] = {};
-  const d = text ? detectForeignSource(text) : null;
+  let d = text ? detectForeignSource(text) : null;
+  // A traditional source that happens to be online is not a web-native item.
+  const withoutUrl = text.replace(/,?\s*https?:\/\/\S+\s*$/i, "").trim();
+  if ((!d || d.kind === "internet") && withoutUrl && withoutUrl !== text) {
+    const alt = detectForeignSource(withoutUrl);
+    if (alt && alt.kind !== "internet") d = alt;
+  }
   if (d) {
     const sub = KIND_TO_SUBTYPE[d.kind];
     const conf: Confidence = d.confidence === "deterministic" ? "high" : "low";
