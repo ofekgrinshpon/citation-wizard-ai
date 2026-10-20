@@ -36,6 +36,8 @@ export {
   renderBookChapter,
   renderInternet,
   renderUnpublishedWork,
+  renderNonconsecutiveArticle,
+  renderNewspaper,
   stripMarkers,
   type RenderResult,
 } from "./render";
