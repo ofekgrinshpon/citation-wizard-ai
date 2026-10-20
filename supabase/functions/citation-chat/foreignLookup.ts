@@ -895,13 +895,14 @@ async function lookupStatute(
   if (userYear) result.identity.anchors.push(`year:${userYear}`);
 
   result.diagnostics.tier1Queried = true;
-  const tier1 = (await searchOnce(buildQuery(input), tier1Hints("statute", input.jurisdiction), doFetch, apiKey, "foreign_search_tier1"))
+  type TieredResult = { title?: string; url?: string; snippet?: string; tier: "tier1" | "tier2" };
+  const tier1: TieredResult[] = (await searchOnce(buildQuery(input), tier1Hints("statute", input.jurisdiction), doFetch, apiKey, "foreign_search_tier1"))
     .map((r) => ({ ...r, tier: "tier1" as const }));
-  let found = tier1;
+  let found: TieredResult[] = tier1;
   const usable1 = tier1.some((r) => r.url && classifySource(r.url) !== "weak");
   if (!usable1 || tier1.length === 0) {
     result.diagnostics.tier2Fired = true;
-    const tier2 = (await searchOnce(buildQuery(input), null, doFetch, apiKey, "foreign_search_tier2"))
+    const tier2: TieredResult[] = (await searchOnce(buildQuery(input), null, doFetch, apiKey, "foreign_search_tier2"))
       .map((r) => ({ ...r, tier: "tier2" as const }));
     found = [...tier1, ...tier2];
   }
