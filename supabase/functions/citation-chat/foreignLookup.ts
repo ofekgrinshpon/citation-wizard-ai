@@ -15,7 +15,7 @@
  * Pure + deps-injected so vitest can exercise it with a mocked fetch.
  */
 
-export type ForeignLookupKind = "case" | "journal_article" | "book" | "book_chapter";
+export type ForeignLookupKind = "case" | "journal_article" | "book" | "book_chapter" | "statute";
 export type ForeignLookupJurisdiction = "US" | "UK" | "OTHER" | "UNKNOWN";
 
 export interface ForeignLookupInput {
@@ -105,6 +105,8 @@ const TIER1_HINTS: Record<string, string[]> = {
     "govinfo.gov",
   ],
   "case:UK": ["bailii.org", "supremecourt.uk", "nationalarchives.gov.uk", "judiciary.uk"],
+  "statute:US": ["law.cornell.edu", "govinfo.gov", "uscode.house.gov"],
+  "statute:UK": ["legislation.gov.uk"],
   academic: [
     "ssrn.com",
     "jstor.org",
