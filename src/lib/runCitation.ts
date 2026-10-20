@@ -278,7 +278,7 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
   // is never crossed by a contradicting detection (honest mismatch instead).
   const statutePrep = !isPinpoint ? prepareForeignStatute(sourceType, normalized, { manual: !!opts.overrideType }) : null;
 
-  const unreported = !isPinpoint ? (renderUsUnreportedLocal(sourceType, normalized) ?? renderUnpublishedLocal(sourceType, normalized) ?? renderPeriodicalLocal(sourceType, normalized) ?? renderBookLocal(sourceType, normalized)) : null;
+  const unreported = !isPinpoint ? (renderUsUnreportedLocal(sourceType, normalized) ?? renderUnpublishedLocal(sourceType, normalized) ?? renderPeriodicalLocal(sourceType, normalized) ?? renderBookLocal(sourceType, normalized, { deferToDeterministic: true })) : null;
   if (unreported) {
     if (opts.isResultCurrent && !opts.isResultCurrent()) {
       throw new CitationRunError({ code: "CITATION_INPUT_CHANGED", userMessage: "הקלט או החשבון השתנו. התוצאה לא נשמרה." });

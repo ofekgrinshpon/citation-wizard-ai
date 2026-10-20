@@ -12,7 +12,8 @@
  * book heading is kept whole (author and title share small caps, so the
  * output is identical); a chapter needs exactly one comma before ", in"
  * (R15.5.1(a) components carry an author), otherwise the input is preserved.
- * Bare trailing numbers/roman numerals are ambiguous (title vs pinpoint).
+ * A bare trailing page after a title ending in a numeral, or a bare roman
+ * numeral, is ambiguous (title vs pinpoint) and needs ", at".
  * Supplied publishers render only with an explicit non-original status;
  * free-text publishers, unknown status and pre-1900 editions are preserved.
  */
@@ -149,7 +150,13 @@ export function extractBookWork(raw: string): BookWorkParse | null {
   const sect = head.match(new RegExp(String.raw`^(.+?)\s+(${SECT})$`));
   if (at) { head = at[1]; fields.pinpoint = normPin(at[2]); signal = true; }
   else if (sect) { head = sect[1]; fields.pinpoint = normPin(sect[2]); signal = true; }
-  else if (new RegExp(String.raw`\s(?:${PIN})$`).test(head)) preserve = "ambiguous_pinpoint";
+  else {
+    // A bare trailing page is a pinpoint only when the remaining title does not
+    // itself end in a numeral; bare roman numerals always need ", at".
+    const bare = head.match(/^(.+?)\s+(\d{1,5}(?:\s*[–\-]\s*\d{1,5})?)$/);
+    if (bare && !/\d$/.test(bare[1])) { head = bare[1]; fields.pinpoint = normPin(bare[2]); }
+    else if (new RegExp(String.raw`\s(?:${PIN})$`).test(head)) preserve = "ambiguous_pinpoint";
+  }
   if (/,/.test(head)) fields.heading = head;
   else fields.bookTitle = head;
   preserve ??= applyParen(fields, paren);

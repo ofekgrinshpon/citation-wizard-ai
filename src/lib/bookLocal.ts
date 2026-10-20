@@ -6,6 +6,7 @@
  * Never a lookup or a source-identity assertion.
  */
 import { renderForeignDetection } from "@/data/bluebook";
+import { detectForeignSource, extractBook } from "@/data/bluebook/extract";
 import { extractBookWork, type BookWorkParse } from "@/data/bluebook/bookWorks";
 import { escapeCitationLiteral } from "@/lib/citationSegments";
 import type { SourceType } from "@/data/abbreviations";
@@ -25,7 +26,11 @@ function preserve(raw: string, warning: string) {
   return { citation, warnings: [warning], missing: [] as string[], reply: `${citation}\n⚠️ ${warning}`, warningMsg: warning };
 }
 
-export function renderBookLocal(sourceType: SourceType, raw: string) {
+/**
+ * `deferToDeterministic`: runCitation keeps its existing deterministic path
+ * (same renderer) for clean inputs whose auto-detection already matches.
+ */
+export function renderBookLocal(sourceType: SourceType, raw: string, opts: { deferToDeterministic?: boolean } = {}) {
   if (!raw.trim()) return null;
   if (sourceType !== "foreign_book" && sourceType !== "foreign_book_chapter" && sourceType !== "foreign") return null;
   const p = extractBookWork(raw);
@@ -35,9 +40,16 @@ export function renderBookLocal(sourceType: SourceType, raw: string) {
     return preserve(raw, p.preserve ? BOOK_PRESERVE[p.preserve] : BOOK_UNSUPPORTED);
   }
   if ((sourceType === "foreign_book") !== (p.kind === "book")) return preserve(raw, BOOK_MISMATCH);
-  if (p.preserve) return preserve(raw, BOOK_PRESERVE[p.preserve]);
+  // The existing M2A book grammar keeps precedence, exactly as in detection.
+  const legacy = p.kind === "book" ? extractBook(raw.trim()) : null;
+  const reason = legacy ? undefined : p.preserve;
+  if (reason) return preserve(raw, BOOK_PRESERVE[reason]);
   const kind = p.kind === "book" ? "book" : "book_chapter";
-  const rendered = renderForeignDetection({ kind, jurisdiction: "OTHER", fields: p.fields, sourceType, confidence: "deterministic" });
+  if (opts.deferToDeterministic) {
+    const d = detectForeignSource(raw);
+    if (d?.kind === kind && d.confidence === "deterministic") return null;
+  }
+  const rendered = renderForeignDetection({ kind, jurisdiction: "OTHER", fields: legacy ?? p.fields, sourceType, confidence: "deterministic" });
   if (!rendered) return null;
   const warnings = [...rendered.warnings];
   if (rendered.missing.length) warnings.push(`חסרים פרטים: ${rendered.missing.join(", ")}.`);

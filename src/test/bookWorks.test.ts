@@ -56,10 +56,11 @@ describe("R15.1–15.4(a) books", () => {
   it("volume at the beginning", () => {
     expect(book("3 Ana Roe, Quiet Rules (2001)")?.citation).toBe("3 ^^Ana Roe, Quiet Rules^^ (2001).");
   });
-  it("numeric-title ending needs explicit ', at'; bare number is ambiguous", () => {
-    expect(book("Ana Roe, Rules 22 (2001)")?.warningMsg).toContain("\", at\"");
-    expect(book("Ana Roe, Rules 22 (2001)")?.citation).toBe("Ana Roe, Rules 22 (2001)");
-    expect(plain(book("Ana Roe, Rules 22, at 15 (2001)")?.citation)).toBe("Ana Roe, Rules 22, at 15 (2001).");
+  it("numeric-title ending needs explicit ', at'; bare number after it is ambiguous", () => {
+    expect(book("Ana Roe, Catch 22 15 (Ben Poe ed., 2001)")?.warningMsg).toContain("\", at\"");
+    expect(book("Ana Roe, Catch 22 15 (Ben Poe ed., 2001)")?.citation).toBe("Ana Roe, Catch 22 15 (Ben Poe ed., 2001)");
+    expect(plain(book("Ana Roe, Catch 22, at 15 (Ben Poe ed., 2001)")?.citation)).toBe("Ana Roe, Catch 22, at 15 (Ben Poe ed., 2001).");
+    expect(plain(book("Ana Roe, Quiet Rules 15 (Ben Poe ed., 2001)")?.citation)).toBe("Ana Roe, Quiet Rules 15 (Ben Poe ed., 2001).");
     expect(plain(book("Ana Roe, Quiet Rules, at 15 (2001)")?.citation)).toBe("Ana Roe, Quiet Rules 15 (2001).");
   });
   it("explicit section/paragraph and ', at' roman pinpoints", () => {
@@ -69,8 +70,9 @@ describe("R15.1–15.4(a) books", () => {
     expect(book("Ana Roe, Quiet Rules xii (2001)")?.warningMsg).toContain("\", at\"");
   });
   it("free-text heading is kept whole: no author identity asserted", () => {
-    const d = detectForeignSource("Ana Roe, Quiet Rules (Ben Poe ed., 2001)");
+    const d = detectForeignSource("Ana Roe, Quiet Rules, at 9 (Ben Poe ed., 2001)");
     expect(d?.kind).toBe("book");
+    expect((d?.fields as { heading?: string }).heading).toBe("Ana Roe, Quiet Rules");
     expect((d?.fields as { authors?: string }).authors).toBeUndefined();
   });
 });
@@ -142,8 +144,8 @@ describe("routing and safety", () => {
   it("runCitation manual mismatch and ambiguous input are preserved locally", async () => {
     const r = await runCitation({ rawInput: CH, useVerifiedStore: false, overrideType: "foreign_book" });
     expect(r.citation).toBe(CH);
-    const a = await runCitation({ rawInput: "Ana Roe, Rules 22 (Ben Poe ed., 2001)", useVerifiedStore: false });
-    expect(a.citation).toBe("Ana Roe, Rules 22 (Ben Poe ed., 2001)");
+    const a = await runCitation({ rawInput: "Ana Roe, Catch 22 15 (Ben Poe ed., 2001)", useVerifiedStore: false });
+    expect(a.citation).toBe("Ana Roe, Catch 22 15 (Ben Poe ed., 2001)");
     expect(b.invoke).not.toHaveBeenCalled();
   });
 });

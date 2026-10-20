@@ -595,11 +595,10 @@ export function detectForeignSource(raw: string): ForeignDetection | null {
   const art = extractJournalArticle(text);
   if (art) return build("journal_article", journalJurisdiction(art.journal), art);
 
-  if (bw?.kind === "book" && bw.signal) return build(bw.preserve ? "other" : "book", "OTHER", bw.fields);
-
-  // 5b. Book — M2A
+  // 5b. Book — M2A (existing grammar first), then the bounded batch-4 grammar.
   const book = extractBook(text);
   if (book) return build("book", "OTHER", book);
+  if (bw?.kind === "book" && bw.signal) return build(bw.preserve ? "other" : "book", "OTHER", bw.fields);
 
   // 6. UK statute (modern form)
   const ukAct = extractUkStatute(text);
