@@ -139,7 +139,7 @@ describe("chat page — typed statute request through initial send and regenerat
     m.classify.mockResolvedValue({ sourceType: type, source: "regex" });
     await mountChat();
     await send(input);
-    await waitFor(() => expect(screen.getByTestId("bubble-assistant")).toHaveTextContent(`${input}.`));
+    await waitFor(() => expect(screen.getByTestId("bubble-assistant").textContent?.replace(/##|\^\^/g, "")).toContain(`${input}.`));
     expect(screen.getByTestId("bubble-assistant")).toHaveTextContent("לא אומתו");
     await act(async () => { fireEvent.click(screen.getByRole("button", { name: `regen-${type}` })); });
     await waitFor(() => expect(m.recordGeneration).toHaveBeenCalledWith("acct-1", expect.objectContaining({ effectiveKey: `eff-${type}` })));
@@ -151,14 +151,14 @@ describe("chat page — typed statute request through initial send and regenerat
     await send(AMBIG);
     await waitFor(() => expect(screen.getByTestId("bubble-assistant")).toHaveTextContent("לא ניתן לקבוע בבטחה"));
     await act(async () => { fireEvent.click(screen.getByRole("button", { name: "regen-foreign_newspaper" })); });
-    await waitFor(() => expect(screen.getByTestId("bubble-assistant")).toHaveTextContent(`${AMBIG}.`));
+    await waitFor(() => expect(screen.getByTestId("bubble-assistant").textContent?.replace(/##|\^\^/g, "")).toContain(`${AMBIG}.`));
     expect(m.invoke).not.toHaveBeenCalled();
   });
   it("R16 manual article on a newspaper-structured input is a preserved mismatch, not formatted", async () => {
     m.classify.mockResolvedValue({ sourceType: "foreign_newspaper", source: "regex" });
     await mountChat();
     await send(NEWS);
-    await waitFor(() => expect(screen.getByTestId("bubble-assistant")).toHaveTextContent(`${NEWS}.`));
+    await waitFor(() => expect(screen.getByTestId("bubble-assistant").textContent?.replace(/##|\^\^/g, "")).toContain(`${NEWS}.`));
     await act(async () => { fireEvent.click(screen.getByRole("button", { name: "regen-foreign_journal_article" })); });
     await waitFor(() => expect(screen.getByTestId("bubble-assistant")).toHaveTextContent("אינו תואם"));
     expect(m.invoke).not.toHaveBeenCalled();
