@@ -1,5 +1,6 @@
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { CITATION_PART_RULES, RULE_EXPLANATIONS } from "@/data/ruleTooltips";
+import { parseCitationSegments, type CitationSegment } from "@/lib/citationSegments";
 
 /** Map missing field descriptions to likely rule numbers */
 const MISSING_FIELD_RULES: Record<string, { rule: string; tip: string }> = {
@@ -63,7 +64,22 @@ function SegmentWithTooltip({
   );
 }
 
-/** Parse inline markers (**bold**, ##italic##, ^^small caps^^, [חסר:...]) into React nodes */
+/** Render one styled segment as a React node (styles can combine). */
+function SegmentNode({ seg }: { seg: CitationSegment }) {
+  let node: React.ReactNode = seg.text;
+  if (seg.italic) node = <em className="italic">{node}</em>;
+  if (seg.smallCaps) {
+    node = (
+      <span style={{ fontVariant: "small-caps", fontVariantCaps: "small-caps" }}>{node}</span>
+    );
+  }
+  if (seg.bold) node = <strong className="font-bold">{node}</strong>;
+  return <>{node}</>;
+}
+
+/** Parse inline markers (**bold**, ##italic##, ^^small caps^^, [חסר:...]) into React nodes.
+ *  Style parsing is delegated to the shared structural parser so display,
+ *  copy and Word all interpret markers identically. */
 function parseInlineMarkers(
   text: string,
   highlightMissing: boolean
@@ -72,87 +88,49 @@ function parseInlineMarkers(
   let remaining = text;
   let key = 0;
 
+  const pushSegments = (chunk: string) => {
+    for (const seg of parseCitationSegments(chunk)) {
+      parts.push(<SegmentNode key={key++} seg={seg} />);
+    }
+  };
+
   while (remaining.length > 0) {
-    const boldIdx = remaining.indexOf("**");
-    const italicIdx = remaining.indexOf("##");
-    const smallCapsIdx = remaining.indexOf("^^");
     const missingIdx = highlightMissing ? remaining.indexOf("[חסר:") : -1;
 
-    const indices = [boldIdx, italicIdx, smallCapsIdx, missingIdx].filter((i) => i !== -1);
-
-    if (indices.length === 0) {
-      parts.push(<span key={key++}>{remaining}</span>);
+    if (missingIdx === -1) {
+      pushSegments(remaining);
       break;
     }
 
-    const nextIdx = Math.min(...indices);
-    let nextType: "bold" | "italic" | "smallcaps" | "missing";
-    if (nextIdx === boldIdx) nextType = "bold";
-    else if (nextIdx === italicIdx) nextType = "italic";
-    else if (nextIdx === smallCapsIdx) nextType = "smallcaps";
-    else nextType = "missing";
-
-    if (nextIdx > 0) {
-      parts.push(<span key={key++}>{remaining.slice(0, nextIdx)}</span>);
+    if (missingIdx > 0) {
+      pushSegments(remaining.slice(0, missingIdx));
     }
 
-    if (nextType === "missing") {
-      const closeIdx = remaining.indexOf("]", nextIdx);
-      if (closeIdx === -1) {
-        parts.push(<span key={key++}>{remaining.slice(nextIdx)}</span>);
-        break;
-      }
-      const inner = remaining.slice(nextIdx, closeIdx + 1);
-      const tooltipText = getMissingFieldTooltip(inner);
-      parts.push(
-        <Tooltip key={key++}>
-          <TooltipTrigger asChild>
-            <span className="bg-destructive/20 text-destructive px-1 py-0.5 rounded text-xs font-medium cursor-help border-b border-dashed border-destructive/50">
-              {inner}
-            </span>
-          </TooltipTrigger>
-          <TooltipContent
-            side="top"
-            className="max-w-xs text-right"
-            style={{ direction: "rtl" }}
-          >
-            <p className="text-xs font-semibold text-destructive mb-0.5">⚠️ פרט חסר</p>
-            <p className="text-xs">{tooltipText}</p>
-          </TooltipContent>
-        </Tooltip>
-      );
-      remaining = remaining.slice(closeIdx + 1);
-      continue;
-    }
-
-    const marker = nextType === "bold" ? "**" : nextType === "italic" ? "##" : "^^";
-    const closeIdx = remaining.indexOf(marker, nextIdx + 2);
+    const closeIdx = remaining.indexOf("]", missingIdx);
     if (closeIdx === -1) {
-      // Unterminated marker: never leak the raw token to the user.
-      parts.push(<span key={key++}>{remaining.slice(nextIdx).split(marker).join("")}</span>);
+      pushSegments(remaining.slice(missingIdx));
       break;
     }
-    const inner = remaining.slice(nextIdx + 2, closeIdx);
-    if (nextType === "bold") {
-      parts.push(
-        <strong key={key++} className="font-bold">
-          {inner}
-        </strong>
-      );
-    } else if (nextType === "smallcaps") {
-      parts.push(
-        <span key={key++} style={{ fontVariant: "small-caps", fontVariantCaps: "small-caps" }}>
-          {inner}
-        </span>
-      );
-    } else {
-      parts.push(
-        <em key={key++} className="italic">
-          {inner}
-        </em>
-      );
-    }
-    remaining = remaining.slice(closeIdx + 2);
+    const inner = remaining.slice(missingIdx, closeIdx + 1);
+    const tooltipText = getMissingFieldTooltip(inner);
+    parts.push(
+      <Tooltip key={key++}>
+        <TooltipTrigger asChild>
+          <span className="bg-destructive/20 text-destructive px-1 py-0.5 rounded text-xs font-medium cursor-help border-b border-dashed border-destructive/50">
+            {inner}
+          </span>
+        </TooltipTrigger>
+        <TooltipContent
+          side="top"
+          className="max-w-xs text-right"
+          style={{ direction: "rtl" }}
+        >
+          <p className="text-xs font-semibold text-destructive mb-0.5">⚠️ פרט חסר</p>
+          <p className="text-xs">{tooltipText}</p>
+        </TooltipContent>
+      </Tooltip>
+    );
+    remaining = remaining.slice(closeIdx + 1);
   }
 
   return parts;
