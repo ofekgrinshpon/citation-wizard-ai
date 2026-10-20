@@ -4,6 +4,7 @@ import { FormattedCitation } from "./FormattedCitation";
 import { PartyNameCheck } from "./PartyNameCheck";
 import { toast } from "sonner";
 import { copyRichText } from "@/lib/clipboard";
+import { citationToHtml, citationToPlain } from "@/lib/citationRichText";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { RULE_EXPLANATIONS } from "@/data/ruleTooltips";
 import { SourceTypeConfirmation } from "./SourceTypeConfirmation";
@@ -100,15 +101,10 @@ export function MessageBubble({ msg: rawMsg, detectedType, onChangeSourceType, o
       .join("\n")
       .trim();
 
-    // Build rich text (HTML) version with bold/italic formatting
-    const htmlContent = citationOnly
-      .replace(/\*\*(.+?)\*\*/g, "<b>$1</b>")
-      .replace(/##(.+?)##/g, "<i>$1</i>")
-      .replace(/\n/g, "<br>");
-
-    const plainContent = citationOnly
-      .replace(/\*\*/g, "")
-      .replace(/##/g, "");
+    // Shared citation serializers: escaped text, bold/italic/small caps,
+    // safe http(s) links; the plain channel is marker-free.
+    const htmlContent = citationToHtml(citationOnly);
+    const plainContent = citationToPlain(citationOnly);
 
     const richHtml = `<div dir="rtl" style="font-family: 'David', 'Times New Roman', serif;">${htmlContent}</div>`;
     await copyRichText(richHtml, plainContent);
