@@ -72,7 +72,10 @@ describe("planForeignLookup — statute bound is explicit", () => {
 
   it("never plans a statute lookup for an unresolved or unsupported jurisdiction", () => {
     expect(planForeignLookup("foreign", "Some Statute § 5", null)).toBeNull();
-    expect(planForeignLookup("foreign_book", "Some Statute § 5", null)).toBeNull();
+    // A statute detection outside the supported US/UK bound is unsupported.
+    expect(planForeignLookup("foreign", "Some Statute § 5", {
+      sourceType: "foreign", kind: "statute", jurisdiction: "OTHER", confidence: "shape", fields: {},
+    })).toBeNull();
   });
 });
 

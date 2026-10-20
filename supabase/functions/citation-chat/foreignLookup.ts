@@ -417,23 +417,38 @@ export function extractStatuteFromEvidence(
 ): StatuteCite | null {
   const flat = text.replace(/\s+/g, " ");
   if (jurisdiction === "US") {
-    const m = flat.match(STATUTE_US_RE);
-    if (!m) return null;
-    const after = flat.slice((m.index ?? 0) + m[0].length, (m.index ?? 0) + m[0].length + 24);
-    const y = after.match(/^\s*\(((?:19|20)\d{2})\)/);
-    const items = m[3].split(",").map((s) => s.trim()).filter(Boolean);
+    // Several citations may appear; prefer the one carrying a publication year.
+    const re = new RegExp(STATUTE_US_RE.source, "g");
+    let best: RegExpExecArray | null = null;
+    let bestYear: string | undefined;
+    let m: RegExpExecArray | null;
+    while ((m = re.exec(flat))) {
+      const after = flat.slice(re.lastIndex, re.lastIndex + 24);
+      const y = after.match(/^\s*\(((?:19|20)\d{2})\)/)?.[1];
+      if (!best) { best = m; bestYear = y; }
+      if (y) { best = m; bestYear = y; break; }
+    }
+    if (!best) return null;
+    const items = best[3].split(",").map((s) => s.trim()).filter(Boolean);
     return {
-      titleNumber: m[1],
-      code: m[2].replace(/\s+/g, ""),
+      titleNumber: best[1],
+      code: best[2].replace(/\s+/g, ""),
       section: items.length === 1 ? items[0] : undefined,
       sections: items.length > 1 ? items.join(", ") : undefined,
-      year: y?.[1],
+      year: bestYear,
     };
   }
   if (jurisdiction === "UK") {
-    const m = flat.match(STATUTE_UK_RE);
-    if (!m) return null;
-    return { statuteName: m[1].trim(), year: m[2], chapter: m[3] };
+    // Prefer the mention carrying a chapter number over a bare name+year.
+    const re = new RegExp(STATUTE_UK_RE.source, "g");
+    let best: RegExpExecArray | null = null;
+    let m: RegExpExecArray | null;
+    while ((m = re.exec(flat))) {
+      if (!best) best = m;
+      if (m[3]) { best = m; break; }
+    }
+    if (!best) return null;
+    return { statuteName: best[1].trim(), year: best[2], chapter: best[3] };
   }
   return null;
 }

@@ -53,9 +53,9 @@ export function extractForeignCaseName(raw: string): string | null {
   return m ? m[1].trim().replace(/[,\s]+$/, "") : null;
 }
 
-/** Statute name anchor: leading text before any section/code apparatus. */
+/** Statute name anchor: leading text before any section apparatus. */
 export function extractStatuteNameHint(raw: string): string | null {
-  const head = raw.split(/§|,/)[0].replace(/\b(?:1[6-9]|20)\d{2}\b/g, "").trim();
+  const head = raw.split("§")[0].replace(/\b(?:1[6-9]|20)\d{2}\b/g, "").replace(/[,\s]+$/, "").trim();
   return /[A-Za-z]{3}/.test(head) ? head : null;
 }
 
