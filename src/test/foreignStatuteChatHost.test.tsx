@@ -51,7 +51,7 @@ vi.mock("@/components/MessageBubble", () => ({
           itemKey: "chat:0", sourceType: "foreign_case_us", supported: true, effectiveKey: "us-case-eff", inputFingerprint: "us-case-fp",
         })}>regen-us-case</button>
       )}
-      {onChangeSourceType && (["foreign_unpublished_manuscript", "foreign_thesis", "foreign"] as const).map((t) => (
+      {onChangeSourceType && (["foreign_unpublished_manuscript", "foreign_thesis", "foreign", "foreign_newspaper", "foreign_journal_article"] as const).map((t) => (
         <button key={t} type="button" onClick={() => onChangeSourceType(t, {
           itemKey: "chat:0", sourceType: t, supported: t !== "foreign", effectiveKey: `eff-${t}`, inputFingerprint: `fp-${t}`,
         })}>{`regen-${t}`}</button>
@@ -129,6 +129,39 @@ describe("chat page — typed statute request through initial send and regenerat
     await waitFor(() => expect(screen.getByTestId("bubble-assistant")).toHaveTextContent(`${MS}.`));
     await act(async () => { fireEvent.click(screen.getByRole("button", { name: "regen-foreign" })); });
     await waitFor(() => expect(m.invoke).toHaveBeenCalledTimes(1));
+  });
+
+  // Stage 5 batch 3 — synthetic periodical fixtures.
+  const NEWS = "Ari Doe, Local Vote Delayed, Daily Synthetic (Springfield), June 25, 1990, at A1";
+  const MAG = "Alpha Gamma, Quiet Fields, Synthetic Mag., Sept.–Oct. 1979, at 89, 90";
+  const AMBIG = "Local Vote Delayed, Daily Synthetic, June 25, 1990, at A1";
+  it.each([["foreign_newspaper", NEWS], ["foreign_journal_article", MAG]] as const)("R16 %s actual initial+regeneration chat is local", async (type, input) => {
+    m.classify.mockResolvedValue({ sourceType: type, source: "regex" });
+    await mountChat();
+    await send(input);
+    await waitFor(() => expect(screen.getByTestId("bubble-assistant").textContent?.replace(/##|\^\^/g, "")).toContain(`${input}.`));
+    expect(screen.getByTestId("bubble-assistant")).toHaveTextContent("לא אומתו");
+    await act(async () => { fireEvent.click(screen.getByRole("button", { name: `regen-${type}` })); });
+    await waitFor(() => expect(m.recordGeneration).toHaveBeenCalledWith("acct-1", expect.objectContaining({ effectiveKey: `eff-${type}` })));
+    expect(m.invoke).not.toHaveBeenCalled();
+  });
+  it("R16 ambiguous article/newspaper is preserved with a warning; manual newspaper correction formats it", async () => {
+    m.classify.mockResolvedValue({ sourceType: "foreign", source: "regex" });
+    await mountChat();
+    await send(AMBIG);
+    await waitFor(() => expect(screen.getByTestId("bubble-assistant")).toHaveTextContent("לא ניתן לקבוע בבטחה"));
+    await act(async () => { fireEvent.click(screen.getByRole("button", { name: "regen-foreign_newspaper" })); });
+    await waitFor(() => expect(screen.getByTestId("bubble-assistant").textContent?.replace(/##|\^\^/g, "")).toContain(`${AMBIG}.`));
+    expect(m.invoke).not.toHaveBeenCalled();
+  });
+  it("R16 manual article on a newspaper-structured input is a preserved mismatch, not formatted", async () => {
+    m.classify.mockResolvedValue({ sourceType: "foreign_newspaper", source: "regex" });
+    await mountChat();
+    await send(NEWS);
+    await waitFor(() => expect(screen.getByTestId("bubble-assistant").textContent?.replace(/##|\^\^/g, "")).toContain(`${NEWS}.`));
+    await act(async () => { fireEvent.click(screen.getByRole("button", { name: "regen-foreign_journal_article" })); });
+    await waitFor(() => expect(screen.getByTestId("bubble-assistant")).toHaveTextContent("אינו תואם"));
+    expect(m.invoke).not.toHaveBeenCalled();
   });
 
   it.each([

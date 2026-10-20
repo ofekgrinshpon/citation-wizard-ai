@@ -9,6 +9,7 @@
  * The markers are internal only and are never shown to the user.
  */
 
+import type { ForeignPeriodicalFields } from "./types";
 import { REPORTER_IMPLIES_COURT, normalizeJournalName } from "./tables";
 import { citationTextOnly } from "@/lib/citationSegments";
 import type {
@@ -413,5 +414,46 @@ export function renderUnpublishedWork(kind: "unpublished_manuscript" | "thesis",
   if (missing.length) warnings.push("חסרים פרטים בסיסיים; לא הושלמו או נוחשו.");
   const unrep: string[] = [];
   reportExtraFields(f, ["authors", "title", "pinpoint", "date", "workType", "institution", "location", "typeFromSelection", "ambiguousTrailingNumber"], warnings, unrep);
+  return finish(out, warnings, missing, unrep);
+}
+
+// ─── Stage 5 batch 3: R16.5 nonconsecutive / R16.6(a),(b) print newspaper ───
+
+export function renderNonconsecutiveArticle(f: ForeignPeriodicalFields): RenderResult {
+  const warnings: string[] = [];
+  const missing: string[] = [];
+  // An unsigned work starts with its title: no author is not missing data.
+  if (!f.title) missing.push("title");
+  if (!f.periodical) missing.push("periodical");
+  if (!f.date && !f.issue) missing.push("date");
+  if (!f.firstPage) missing.push("firstPage");
+  if (f.issue) warnings.push("לא סופק תאריך כריכה; מספר הגיליון נשמר כפי שסופק.");
+  const unrep: string[] = [];
+  reportExtraFields(f, ["authors", "title", "periodical", "date", "issue", "firstPage", "pinpoint", "nonconsecutive"], warnings, unrep);
+  const head = `${f.authors ? `${f.authors}, ` : ""}${f.title ? italicTitle(f.title, warnings) : miss("כותרת")}`;
+  const at = `at ${f.firstPage || miss("עמוד")}${f.pinpoint ? `, ${f.pinpoint}` : ""}`;
+  const out = appendRemainder(`${head}, ${sc(f.periodical || miss("כתב עת"))}, ${f.date || f.issue || miss("תאריך")}, ${at}`, f.unparsedRemainder, warnings, unrep);
+  return finish(out, warnings, missing, unrep);
+}
+
+export function renderNewspaper(f: ForeignPeriodicalFields): RenderResult {
+  const warnings: string[] = [];
+  const missing: string[] = [];
+  if (!f.title && !f.designation) missing.push("title");
+  if (!f.periodical) missing.push("periodical");
+  if (!f.date) missing.push("date");
+  if (!f.firstPage) missing.push("firstPage");
+  const unrep: string[] = [];
+  if (f.pinpoint) {
+    unrep.push(`pinpoint: ${f.pinpoint}`);
+    warnings.push(`עמוד מצוטט שסופק (${f.pinpoint}) לא נכלל: בעיתון מודפס מציינים את עמוד הפתיחה בלבד.`);
+  }
+  reportExtraFields(f, ["authors", "designation", "title", "periodical", "place", "date", "section", "firstPage", "pinpoint"], warnings, unrep);
+  const lead = [f.authors, f.designation].filter(Boolean).join(", ");
+  const title = f.title ? italicTitle(f.title, warnings) : f.designation ? "" : miss("כותרת");
+  const head = [lead, title].filter(Boolean).join(", ");
+  const paper = `${sc(f.periodical || miss("עיתון"))}${f.place ? ` (${f.place})` : ""}`;
+  const date = `${f.date || miss("תאריך")}${f.section ? ` (${f.section})` : ""}`;
+  const out = appendRemainder(`${head}, ${paper}, ${date}, at ${f.firstPage || miss("עמוד")}`, f.unparsedRemainder, warnings, unrep);
   return finish(out, warnings, missing, unrep);
 }

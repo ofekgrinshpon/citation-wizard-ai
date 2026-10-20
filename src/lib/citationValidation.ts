@@ -50,6 +50,7 @@ const ENGINE_KEY_MAP: Record<SourceType, string> = {
   foreign_internet: "foreign_internet",
   foreign_unpublished_manuscript: "foreign",
   foreign_thesis: "foreign",
+  foreign_newspaper: "foreign",
   other: "other",
   unknown: "",
 };

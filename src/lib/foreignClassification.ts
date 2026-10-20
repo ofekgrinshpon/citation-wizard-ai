@@ -113,6 +113,7 @@ const KIND_TO_SUBTYPE: Record<string, string> = {
   internet: "web_native.page",
   unpublished_manuscript: "unpublished_communication.manuscript",
   thesis: "unpublished_communication.thesis",
+  newspaper: "periodical.newspaper",
 };
 
 /** Deterministic detection. Language, script, host and publisher are never jurisdiction evidence. */
@@ -159,6 +160,14 @@ export function detectClassification(raw: string): DetectedClassification {
       }
       if (schemes.length) multi.citation_scheme = ev(schemes, conf, schemes.map((s) => `field:${s}`));
     }
+  }
+  // Stage 5 batch 3: shared periodical structure without a decisive signal is not guessed.
+  if (d?.kind === "other" && (d.fields as { periodical?: string }).periodical) {
+    scalars.family = ev("periodical", "medium", ["shape:periodical_at_page"]);
+    scalars.subtype = ev<string>(null, "none", [], [
+      { value: "periodical.article", confidence: "low", evidence: "shape:periodical_at_page" },
+      { value: "periodical.newspaper", confidence: "low", evidence: "shape:periodical_at_page" },
+    ]);
   }
   if (d?.kind === "unpublished_manuscript") scalars.publication_status = ev("unpublished", "high", ["label:unpublished_work_type"]);
   if (/https?:\/\/\S+/i.test(text)) multi.access_medium = ev(["web"], "medium", ["url_present"]);
@@ -267,6 +276,8 @@ export function engineRouteFor(e: EffectiveClassification): { sourceType: Source
   // Stage 5 batch 2: only these two siblings; letters/memos/etc. stay unsupported.
   if (sub === "unpublished_communication.manuscript") return { sourceType: "foreign_unpublished_manuscript", supported: true };
   if (sub === "unpublished_communication.thesis") return { sourceType: "foreign_thesis", supported: true };
+  // Stage 5 batch 3: print newspaper only; wire/database/internet siblings stay unsupported.
+  if (sub === "periodical.newspaper") return { sourceType: "foreign_newspaper", supported: true };
   if (fam === "decision") return { sourceType: "foreign_case_other", supported: false };
   return { sourceType: "foreign", supported: false };
 }

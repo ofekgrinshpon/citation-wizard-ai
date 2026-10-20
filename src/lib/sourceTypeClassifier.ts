@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { extractWorkIdentifiers } from "../../supabase/functions/_shared/workIdentifiers";
 import { extractUsUnreportedCase } from "@/data/bluebook/extract";
 import { explicitUnpublishedKind } from "@/data/bluebook/unpublished";
+import { extractPeriodical } from "@/data/bluebook/periodical";
 import {
   detectSourceType,
   hasStrongStatuteSignal,
@@ -33,6 +34,7 @@ export function isWeakLegislationGuess(rawText: string, regexType: SourceType): 
 export function shouldUseLLMClassifier(rawText: string, regexType: SourceType): boolean {
   if (extractUsUnreportedCase(rawText)) return false;
   if (explicitUnpublishedKind(rawText)) return false;
+  if (extractPeriodical(rawText)) return false;
   // Scholarship-shaped input always deserves the LLM's opinion.
   if (looksLikeLiteratureShape(rawText) && !hasStrongStatuteSignal(rawText)) return true;
 

@@ -4,6 +4,9 @@
 - [x] R17.2.1–17.2.2 parser/renderer, classification route, chat/batch wiring and tests; ledger updated.
 - [ ] Remaining Stage 5 family batches (each separately authorized).
 
+## Stage 5 batch 3 (offline only)
+- [x] R16.5 nonconsecutive articles and R16.6 print newspapers — see reports/stage5-periodical-coverage.md.
+
 ## Current authorized Stage 5 D1a (offline only)
 - [x] Extend US database/slip/pending decision preservation, rendering and existing classification axes.
 - [x] Prove failing regressions, then exercise real chat and batch/local callers with mocked network.

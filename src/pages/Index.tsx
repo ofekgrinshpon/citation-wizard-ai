@@ -63,6 +63,7 @@ import { articleRequestFields, compatibleArticleCache, renderForeignArticleLooku
 import { prepareForeignStatute, renderForeignStatuteLookup, renderStatuteLocal } from "@/lib/foreignStatuteAdapter";
 import { renderUsUnreportedLocal } from "@/lib/usUnreportedLocal";
 import { renderUnpublishedLocal } from "@/lib/unpublishedWorkLocal";
+import { renderPeriodicalLocal } from "@/lib/periodicalLocal";
 
 interface PendingVerification {
   lawName: string;
@@ -287,7 +288,7 @@ const Index = () => {
       citationScope.current.accountId === scope.accountId && citationScope.current.projectId === scope.projectId && citationScope.current.mode === scope.mode;
     const requestId = crypto.randomUUID();
     const articleFields = articleRequestFields(article?.sourceType, article?.rawInput);
-    const unreported = article ? (renderUsUnreportedLocal(article.sourceType, article.rawInput) ?? renderUnpublishedLocal(article.sourceType, article.rawInput)) : null;
+    const unreported = article ? (renderUsUnreportedLocal(article.sourceType, article.rawInput) ?? renderUnpublishedLocal(article.sourceType, article.rawInput) ?? renderPeriodicalLocal(article.sourceType, article.rawInput)) : null;
     if (unreported) {
       reportZeroWork(telemetry, "local_foreign_formatter", "deterministic");
       if (!isCurrent()) throw Object.assign(new Error("CITATION_RETRY_STALE"), { handled: true });

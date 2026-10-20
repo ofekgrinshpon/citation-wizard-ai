@@ -11,6 +11,8 @@ import {
   renderConstitution,
   renderInternet,
   renderJournalArticle,
+  renderNonconsecutiveArticle,
+  renderNewspaper,
   renderUnpublishedWork,
   renderUkCase,
   renderUkStatute,
@@ -34,10 +36,13 @@ export {
   renderBookChapter,
   renderInternet,
   renderUnpublishedWork,
+  renderNonconsecutiveArticle,
+  renderNewspaper,
   stripMarkers,
   type RenderResult,
 } from "./render";
 export { extractUnpublishedWork, type UnpublishedKind } from "./unpublished";
+export { extractPeriodical, type PeriodicalParse } from "./periodical";
 
 /** Source-supplied field text is literal: escape marker-like characters. */
 function literalFields(fields: unknown): unknown {
@@ -77,7 +82,9 @@ function renderDetectionFields(kind: ForeignDetection["kind"], jurisdiction: For
     case "statute":
       return d.jurisdiction === "UK" ? renderUkStatute(f) : renderUsStatute(f);
     case "journal_article":
-      return renderJournalArticle(f);
+      return (fields as { nonconsecutive?: boolean }).nonconsecutive ? renderNonconsecutiveArticle(f) : renderJournalArticle(f);
+    case "newspaper":
+      return renderNewspaper(f);
     case "book":
       return renderBook(f);
     case "book_chapter":
