@@ -127,6 +127,10 @@ function tier1Hints(kind: ForeignLookupKind, jurisdiction: ForeignLookupJurisdic
     return [...TIER1_HINTS["case:US"], ...TIER1_HINTS["case:UK"]];
   }
   if (kind === "case") return TIER1_HINTS[`case:${jurisdiction}`] ?? [];
+  if (kind === "statute") {
+    if (isUnresolvedJurisdiction(jurisdiction)) return [...TIER1_HINTS["statute:US"], ...TIER1_HINTS["statute:UK"]];
+    return TIER1_HINTS[`statute:${jurisdiction}`] ?? [];
+  }
   return TIER1_HINTS.academic;
 }
 
@@ -139,6 +143,7 @@ const OFFICIAL_HOSTS = [
   "nationalarchives.gov.uk",
   "judiciary.uk",
   "legislation.gov.uk",
+  "uscode.house.gov",
 ];
 const DATABASE_HOSTS = [
   "courtlistener.com",
@@ -273,6 +278,7 @@ function buildQuery(input: ForeignLookupInput): string {
   if (input.kind === "case") return `${raw} citation reporter volume first page`;
   if (input.kind === "journal_article") return `${raw} journal volume page year citation`;
   if (input.kind === "book_chapter") return `${raw} chapter in book pages year`;
+  if (input.kind === "statute") return `${raw} statute code section year`;
   return `${raw} book edition year publisher`;
 }
 
