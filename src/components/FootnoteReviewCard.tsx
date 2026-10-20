@@ -60,7 +60,7 @@ const TYPE_OPTIONS: SourceType[] = [
 ];
 
 /** Foreign families (Rule 35.1 → current Bluebook). Family only — jurisdiction stays automatic. */
-const FOREIGN_TYPE_OPTIONS: { type: SourceType; label: string }[] = [
+export const FOREIGN_TYPE_OPTIONS: { type: SourceType; label: string }[] = [
   // Generic choices never default to a U.S. jurisdiction.
   { type: "foreign_case_other", label: "פסיקה" },
   { type: "foreign_case_us", label: "פסיקה אמריקנית" },

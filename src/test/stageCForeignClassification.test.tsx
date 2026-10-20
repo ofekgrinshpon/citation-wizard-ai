@@ -36,7 +36,7 @@ import {
 } from "@/lib/foreignClassification";
 import { loadAll, loadRecord, saveRecord, storageKeyFor } from "@/lib/foreignClassificationStore";
 import { ForeignSourcePicker } from "@/components/ForeignSourcePicker";
-import { FootnoteReviewCard, type ReviewCardCell } from "@/components/FootnoteReviewCard";
+import { FootnoteReviewCard, FOREIGN_TYPE_OPTIONS, type ReviewCardCell } from "@/components/FootnoteReviewCard";
 import { MessageBubble } from "@/components/MessageBubble";
 import { BibliographyGenerator } from "@/components/BibliographyGenerator";
 import { BibliographyProvider } from "@/hooks/useBibliography";
@@ -247,14 +247,22 @@ describe("picker UI — deterministic, local, zero network", () => {
   });
 
   it("JUR6 batch: generic foreign case option is not a U.S. type", () => {
-    const onType = vi.fn();
-    render(card(cell({ detectedType: "foreign" }), vi.fn(), onType));
-    // Legacy select: the plain "פסיקה" foreign option maps to the non-U.S. generic type.
-    const html = document.body.innerHTML;
-    expect(html).toBeTruthy();
-    // Inspect option source table directly through the rendered select value set.
-    fireEvent.click(screen.getByRole("combobox", { name: "" }) ?? document.body);
-    noNetwork();
+    expect(FOREIGN_TYPE_OPTIONS.find((o) => o.label === "פסיקה")?.type).toBe("foreign_case_other");
+    expect(FOREIGN_TYPE_OPTIONS.filter((o) => o.type.endsWith("_us")).every((o) => o.label.includes("אמריקנית"))).toBe(true);
+  });
+
+  it("JUR6 bibliography: generic foreign case/legislation categories pass no U.S. type", async () => {
+    const ART = "Smith v Jones, 2019 SCC 5.";
+    h.runCitation.mockResolvedValue({ reply: ART, citation: ART, status: "valid", sourceType: "foreign_case_other", sourceLabel: "x", fromVerifiedStore: false });
+    render(<TooltipProvider><BibliographyProvider><BibliographyGenerator /></BibliographyProvider></TooltipProvider>);
+    fireEvent.change(screen.getByRole("textbox"), { target: { value: "Smith v Jones, 2019 SCC 5" } });
+    await act(async () => { fireEvent.click(screen.getByRole("button", { name: /שלח לבדיקה/ })); });
+    for (const label of ["פסיקה לועזית", "חקיקה לועזית"]) {
+      fireEvent.click(await screen.findByRole("button", { name: /▾/ }));
+      await act(async () => { fireEvent.click(await screen.findByRole("button", { name: new RegExp(label) })); });
+      await waitFor(() => expect(h.runCitation.mock.calls.at(-1)?.[0].overrideType).toBeDefined());
+      expect(h.runCitation.mock.calls.at(-1)?.[0].overrideType).not.toMatch(/_us$/);
+    }
   });
 
   it("single-citation bubble shows picker for foreign results; controls are local", () => {
