@@ -4,6 +4,7 @@ import { resolve } from "node:path";
 import ts from "typescript";
 import * as adapter from "@/lib/foreignArticleAdapter";
 import * as pastedAdapter from "@/lib/pastedCitationAdapter";
+import * as citationPlanner from "@/lib/citationPlanner";
 import * as statuteAdapter from "@/lib/foreignStatuteAdapter";
 import { renderUsUnreportedLocal } from "@/lib/usUnreportedLocal";
 import { renderUnpublishedLocal } from "@/lib/unpublishedWorkLocal";
@@ -22,7 +23,7 @@ import { runForeignLookup, type ForeignLookupInput } from "../../supabase/functi
 const source = readFileSync(resolve(__dirname, "../pages/Index.tsx"), "utf8");
 const tree = ts.createSourceFile("Index.tsx", source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
 function handler(name: string, context: Record<string, unknown>): (...args: unknown[]) => Promise<unknown> {
-  context = { ...pastedAdapter, ...context };
+  context = { ...pastedAdapter, ...citationPlanner, ...context };
   let expression = "";
   const walk = (node: ts.Node) => {
     if (ts.isVariableDeclaration(node) && node.name.getText(tree) === name && node.initializer) expression = node.initializer.getText(tree);
