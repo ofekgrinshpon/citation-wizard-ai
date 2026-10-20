@@ -17,8 +17,11 @@ function escapeHtml(s: string): string {
   return s
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
+    .replace(/>/g, "&gt;");
+}
+
+function escapeAttr(s: string): string {
+  return escapeHtml(s).replace(/"/g, "&quot;");
 }
 
 const URL_RE = /https?:\/\/[^\s<>"']+/g;
@@ -32,7 +35,7 @@ function escapeAndLinkify(text: string): string {
     // Trailing sentence punctuation is not part of the link.
     const url = m[0].replace(/[.,;:)\]]+$/, "");
     out += escapeHtml(text.slice(last, start));
-    out += `<a href="${escapeHtml(url)}">${escapeHtml(url)}</a>`;
+    out += `<a href="${escapeAttr(url)}">${escapeHtml(url)}</a>`;
     last = start + url.length;
   }
   return out + escapeHtml(text.slice(last));
