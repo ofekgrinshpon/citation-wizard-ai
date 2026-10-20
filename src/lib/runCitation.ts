@@ -470,6 +470,52 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
       const article = renderForeignArticleLookup(foreignLookupRequest as { parsedFields: Record<string, string> }, fl);
       if (article) return { ...article, telemetry: opts.telemetry, sourceType, sourceLabel: SOURCE_TYPE_LABELS[sourceType], fromVerifiedStore: false };
     }
+    // 3b) Stage 4: grounded statute lookup → merge + deterministic render.
+    // User-supplied anchors win; lookup fields fill gaps; unmatched, ambiguous
+    // or conflicting evidence is an honest warning state, never a silent merge
+    // or a "verified" claim. Formatting complete is not source-accuracy proof.
+    if (foreignLookupRequest?.kind === "statute" && fl) {
+      const req = foreignLookupRequest as { jurisdiction: string; parsedFields: Record<string, string> };
+      const resolvedJur: ForeignJurisdiction | null =
+        fl.identity?.jurisdiction ?? (req.jurisdiction === "US" || req.jurisdiction === "UK" ? req.jurisdiction : null);
+      if (resolvedJur) {
+        const effectiveType = toSourceType("statute", resolvedJur);
+        const baseFields: Record<string, unknown> = { ...((fl.fields ?? {}) as Record<string, unknown>) };
+        // Never overwrite what the user supplied; lookup only fills gaps.
+        for (const [k, v] of Object.entries(req.parsedFields)) {
+          if (typeof v === "string" && v.trim()) baseFields[k] = v.trim();
+        }
+        if (typeof baseFields.sections === "string") {
+          const list = baseFields.sections.split(",").map((s) => s.trim()).filter(Boolean);
+          if (list.length) { baseFields.sections = list; delete baseFields.section; }
+          else delete baseFields.sections;
+        }
+        const rendered = renderForeignDetection({
+          sourceType: effectiveType,
+          kind: "statute",
+          jurisdiction: resolvedJur,
+          confidence: "deterministic",
+          fields: baseFields as unknown as ForeignFields,
+        });
+        if (rendered && rendered.citation.trim()) {
+          const warningBits = [...rendered.warnings];
+          if (!fl.identity?.matched || fl.identity?.conflicts?.length) {
+            warningBits.push("לא אומתו פרטי החוק כנגד מקור חיצוני יחיד; נשמרו הפרטים שסיפקתם ופרטים סותרים לא שולבו.");
+          }
+          if (rendered.missing.length) warningBits.push(`חסרים פרטים: ${getMissingFieldsSummary(effectiveType, rendered.missing)}`);
+          return {
+            telemetry: opts.telemetry,
+            reply: warningBits.length ? `${rendered.citation}\n⚠️ ${warningBits.join(" ")}` : rendered.citation,
+            citation: rendered.citation,
+            sourceType: effectiveType,
+            sourceLabel: SOURCE_TYPE_LABELS[effectiveType],
+            fromVerifiedStore: false,
+            status: warningBits.length ? "warning" : "valid",
+            warningMsg: warningBits[0],
+          };
+        }
+      }
+    }
     if (foreignLookupRequest && fl?.fields && fl.identity?.matched && Object.keys(fl.fields).length > 0) {
       const req = foreignLookupRequest as { kind: ForeignSourceKind; jurisdiction: string; parsedFields: Record<string, string> };
       // Jurisdiction comes from the verified record when the input did not state it.
