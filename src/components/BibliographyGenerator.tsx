@@ -1,4 +1,5 @@
 import { CitationRequestStatusLink } from "@/components/CitationRequestStatusLink";
+import { ForeignSourcePicker } from "./ForeignSourcePicker";
 import { newTelemetryBatch, sourceTelemetry, type CostTelemetry } from "@/lib/costTelemetry";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -756,6 +757,7 @@ function ReviewRow({
   onRemove,
   onPickOption,
   onChangeCategory,
+  accountId,
 }: {
   item: ReviewItem;
   onStartEdit: () => void;
@@ -861,6 +863,10 @@ function ReviewRow({
           הקלט: {item.rawInput}
         </span>
       </div>
+
+      {detectedCat.startsWith("foreign_") && (item.status === "ok" || item.status === "error") && (
+        <ForeignSourcePicker accountId={accountId} itemKey={`bib:${item.id}`} input={item.rawInput} output={item.citation || null} />
+      )}
 
       {/* Body */}
       {item.isEditing ? (
