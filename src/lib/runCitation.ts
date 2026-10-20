@@ -41,6 +41,8 @@ import { renderUsUnreportedLocal } from "@/lib/usUnreportedLocal";
 import { renderUnpublishedLocal } from "@/lib/unpublishedWorkLocal";
 import { renderPeriodicalLocal } from "@/lib/periodicalLocal";
 import { renderBookLocal } from "@/lib/bookLocal";
+import { citationManualChoice, preparePastedCitation, readPastedCitationSafety } from "@/lib/pastedCitationAdapter";
+import type { CitationManualChoice, PastedCitationContract } from "../../supabase/functions/_shared/pastedCitation";
 import { citationDiagnosticBody, observeCitationDiagnostic, type CitationDiagnosticActivation } from "@/lib/citationDiagnostic";
 
 interface ForeignLookupResponse {
@@ -142,6 +144,7 @@ export interface CitationRunRetry extends CitationRunRecovery {
 }
 
 export interface RunCitationOptions {
+  manualChoice?: CitationManualChoice | null;
   rawInput: string;
   /** Prevent dispatch/delivery after row edits, navigation or account changes. */
   isResultCurrent?: () => boolean;
@@ -160,6 +163,7 @@ export interface RunCitationOptions {
 }
 
 export interface RunCitationResult {
+  pastedCitation?: PastedCitationContract;
   /** Full engine reply (may include explanation / warning lines). */
   reply: string;
   /** The citation line only. */
@@ -204,6 +208,13 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
   }
   const rawInput = opts.rawInput.trim();
 
+  const pasted = preparePastedCitation(opts.rawInput, opts.manualChoice ?? citationManualChoice(opts.overrideType));
+  if (pasted.local) {
+    const sourceType = opts.overrideType ?? pasted.detection?.sourceType ?? "foreign";
+    return { ...pasted.local, pastedCitation: pasted.contract, sourceType, sourceLabel: SOURCE_TYPE_LABELS[sourceType],
+      telemetry: opts.telemetry, fromVerifiedStore: false, status: "warning" };
+  }
+
   const inputCheck = validateCitationInput(rawInput);
   if (!inputCheck.valid) {
     throw new CitationRunError({
@@ -220,6 +231,8 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
   let sourceType: SourceType;
   if (opts.overrideType) {
     sourceType = opts.overrideType;
+  } else if (pasted.contract.sourceKind === "case" && pasted.contract.route === "foreign") {
+    sourceType = pasted.detection?.sourceType ?? (pasted.contract.jurisdiction === "US" ? "foreign_case_us" : "foreign_case_other");
   } else {
     const resolved = await resolveSourceType(normalized, opts.telemetry);
     sourceType = resolved.sourceType;
@@ -384,8 +397,9 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
   // successor. Retrying never repeats classification, verified-store search,
   // or the deterministic routing decisions above.
   const preparedBody = {
+    rawInput: opts.rawInput,
+    pastedCitation: pasted.contract,
     messages: [{ role: "user", content: prompt }],
-    ...(isHebrewArticle ? { rawInput: normalized } : {}),
     requestId: crypto.randomUUID(),
     ...telemetryBody(opts.telemetry),
     ...(foreignLookupRequest ? { foreignLookup: foreignLookupRequest } : {}),
@@ -434,6 +448,9 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
   }
 
   function renderPreparedResponse(data: ({ content?: string } & Record<string, unknown>) | null): RunCitationResult {
+    const safety = readPastedCitationSafety(pasted.contract, data);
+    if (safety) return { ...safety, pastedCitation: pasted.contract, telemetry: opts.telemetry, sourceType,
+      sourceLabel, fromVerifiedStore: false, status: "warning" };
     const rejectUnusableResponse = (code: string, userMessage: string): never => {
       // A transport-successful response is not proof of usable citation output.
       // Rechecking this unchanged row only re-renders the retained response; it

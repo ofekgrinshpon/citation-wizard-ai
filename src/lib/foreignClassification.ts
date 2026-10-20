@@ -7,6 +7,8 @@
  */
 import { detectForeignSource } from "@/data/bluebook/extract";
 import type { SourceType } from "@/data/abbreviations";
+import { citationManualChoice } from "@/lib/pastedCitationAdapter";
+import type { CitationManualChoice } from "../../supabase/functions/_shared/pastedCitation";
 import {
   INSTITUTION_PROFILES,
   OTHER_UNIDENTIFIED,
@@ -295,6 +297,7 @@ export const UNSUPPORTED_GENERATION_WARNING =
   "הסיווג שנבחר עדיין לא נתמך בעיצוב האוטומטי: האזכור הופק כמקור לועזי כללי ויש לבדוק אותו ידנית.";
 
 export interface GenerationPlan {
+  manualChoice?: CitationManualChoice | null;
   itemKey: string;
   sourceType: SourceType;
   supported: boolean;
@@ -312,6 +315,7 @@ export function planGeneration(rec: ClassificationRecord | undefined, input: str
   return {
     itemKey: rec.itemKey,
     sourceType: route.sourceType,
+    manualChoice: citationManualChoice(route.sourceType, eff.scalars.jurisdiction, eff.scalars.subjurisdiction),
     supported: route.supported,
     ...(route.supported ? {} : { warning: UNSUPPORTED_GENERATION_WARNING }),
     effectiveKey: effectiveKey(eff),

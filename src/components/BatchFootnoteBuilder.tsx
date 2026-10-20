@@ -221,8 +221,9 @@ export function BatchFootnoteBuilder({}: BatchProps) {
     telemetry: CostTelemetry = sourceTelemetry(newTelemetryBatch("footnotes")),
     isResultCurrent?: () => boolean,
     recovery?: CitationRunRecovery,
+    plan?: GenerationPlan | null,
   ): Promise<RunCitationResult> =>
-    recovery ? recovery.retry(isResultCurrent) : runCitation({ rawInput: input, isResultCurrent, overrideType, projectId, useVerifiedStore: true, telemetry,
+    recovery ? recovery.retry(isResultCurrent) : runCitation({ rawInput: input, isResultCurrent, overrideType, manualChoice: plan?.manualChoice, projectId, useVerifiedStore: true, telemetry,
       diagnostic: activeCitationDiagnostic(input, isAdminResolved && isAdmin, window.location.search) });
 
   const applyResultToCell = (c: FootnoteCell, res: RunCitationResult): FootnoteCell => ({
@@ -277,7 +278,7 @@ export function BatchFootnoteBuilder({}: BatchProps) {
     const results = await runPool(
       activeCells,
       (cell, i) => runSingleCitation(cell.input, rowPlans[i]?.sourceType ?? cell.sourceTypeOverride, rowTelemetry[i],
-        () => batchJob.isCurrent() && !!rowJobs[i]?.isCurrent(), cell.recovery),
+        () => batchJob.isCurrent() && !!rowJobs[i]?.isCurrent(), cell.recovery, rowPlans[i]),
       {
         concurrency: 2,
         retries: 0,
@@ -334,7 +335,7 @@ export function BatchFootnoteBuilder({}: BatchProps) {
     // Explicit regeneration uses the effective foreign classification (if set).
     const plan = explicitRetry || cell.recovery ? null : planForItem(user?.id, `batch:${cell.key}`, cell.input);
     try {
-      const res = await runSingleCitation(cell.input, plan?.sourceType ?? cell.sourceTypeOverride, undefined, job.isCurrent, explicitRetry ?? cell.recovery);
+      const res = await runSingleCitation(cell.input, plan?.sourceType ?? cell.sourceTypeOverride, undefined, job.isCurrent, explicitRetry ?? cell.recovery, plan);
       if (!job.isCurrent()) return;
       if (plan) recordGeneration(user?.id, plan);
       setCells((prev) => applyRepeatCitationRules(prev.map((c) => c.key === cell.key ? withPlanWarning(applyResultToCell(c, res), plan) : c)));

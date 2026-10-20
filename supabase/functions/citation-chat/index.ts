@@ -79,6 +79,7 @@ import {
 import { normalizeHebrewNumberRanges } from "../_shared/hebrewNumberRange.ts";
 import { runForeignLookup, articleLookupFallback, type ForeignLookupResult } from "./foreignLookup.ts";
 import { isStatuteLookupRequest, validateStatuteRequest, resolveStatuteLookup } from "./statuteRoute.ts";
+import { guardPastedCitationRequest, pastedCitationWarning, type PastedCitationContract } from "../_shared/pastedCitation.ts";
 import { createCitationDiagnosticCollector } from "../_shared/citationDiagnostic.ts";
 import { authorizeCitationDiagnostic, isCitationDiagnosticPreflight, CITATION_DIAGNOSTIC_BUILD, CITATION_DIAGNOSTIC_PARSER } from "../_shared/citationDiagnosticGate.ts";
 import { normalizeEditorPlacement } from "../_shared/articleCitationValidator.ts";
@@ -1664,6 +1665,7 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
       parser: CITATION_DIAGNOSTIC_PARSER, phase, trace: diagnostic.collector.snapshot() },
   } : {};
   let usageGuard: CitationUsageGuard | null = null;
+  let pastedContract: PastedCitationContract | null = null;
   const refundIfCharged = async (reason: string) => {
     const settlement = await usageGuard?.finish("failed", reason);
     return { refunded: settlement?.refunded === true,
@@ -1681,7 +1683,7 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
       // the live answer usable and let read-only recovery establish durability.
       headers.set("X-Usage-Status", "unconfirmed");
     }
-    return new Response(JSON.stringify({ ...body, requestId: creditRequestId, recoveryAvailability }), {
+    return new Response(JSON.stringify({ ...body, ...(pastedContract ? { pastedCitation: pastedContract } : {}), requestId: creditRequestId, recoveryAvailability }), {
       status: response.status, headers,
     });
   };
@@ -1780,6 +1782,14 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
 
     const lastUserMessage = [...messages].reverse().find((m: { role: string }) => m.role === "user");
     const userInput = lastUserMessage?.content || "";
+    pastedContract = guardPastedCitationRequest({ messages, rawInput, foreignLookup: foreignLookupRequest, pastedCitation: requestBody.pastedCitation });
+    const preservePasted = () => completeResponse(new Response(JSON.stringify({
+      content: `${pastedContract?.rawInput ?? ""}\n⚠️ ${pastedContract ? pastedCitationWarning(pastedContract) : "חסרים פרטים"}`,
+    }), { headers: { ...corsHeaders, "Content-Type": "application/json" } }));
+    // Before any docket-derived cache/search/claim. Text evidence, never client classification, authorizes the Israeli route.
+    if (pastedContract.route === "preserve" || (pastedContract.route === "foreign" && pastedContract.sourceKind === "case" && !foreignLookupRequest)) {
+      return preservePasted();
+    }
     const articleClass = userInput.match(/\[סיווג אוטומטי:\s*([^\]]+)\]/)?.[1] || "";
     const articleRequest = /מאמר/.test(articleClass) && !/לועז|אנגלי|זר|ספר/.test(articleClass) &&
       !/בתוך|בספר/.test(articleRawInput(userInput, rawInput)) && !foreignLookupRequest
@@ -1803,7 +1813,7 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
     const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
     const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 
-    if (SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY && userInput.length >= 2 && foreignLookupRequest?.kind !== "journal_article" && !statuteRequest) {
+    if (pastedContract.route !== "foreign" && SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY && userInput.length >= 2 && foreignLookupRequest?.kind !== "journal_article" && !statuteRequest) {
       try {
         const sb = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
         const searchTerm = articleRequest?.raw || userInput
@@ -1996,6 +2006,8 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
       }
     }
 
+    // Bounded foreign completion never escapes into Israeli docket enrichment or the generic model on failure.
+    if (pastedContract.route === "foreign" && pastedContract.sourceKind === "case") return preservePasted();
     let caseLawHint = "";
     let caseLawOverrideLabel: string | null = null;
     const classMatch = userInput.match(/\[סיווג אוטומטי:\s*([^\]]+)\]/);
@@ -2010,12 +2022,12 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
       .replace(/\n?══[\s\S]*?══+\s*/g, "")
       .trim();
 
-    const caseNumberMatch = userInput.match(CASE_DOCKET_RE);
+    const caseNumberMatch = pastedContract.route === "israeli" ? userInput.match(CASE_DOCKET_RE) : null;
     // Bare docket fallback: users routinely paste "5555/18 חסון נ' כנסת ישראל"
     // without the בג"ץ prefix. Without this the input degraded to a party-name
     // search, which could return a DIFFERENT case between the same parties and
     // silently substitute its docket.
-    const bareDocket = caseNumberMatch ? null : findBareDocket(cleanedForParty);
+    const bareDocket = caseNumberMatch || pastedContract.route !== "israeli" ? null : findBareDocket(cleanedForParty);
     if (bareDocket) {
       console.log(`[case-law] bare_docket_detected=${bareDocket.docket} (no case-type prefix in input)`);
     }
