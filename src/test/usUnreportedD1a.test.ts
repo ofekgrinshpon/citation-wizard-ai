@@ -3,6 +3,7 @@ import { detectForeignSource, renderForeignCitation, renderUsCase } from "@/data
 import { citationToHtml, citationToPlain } from "@/lib/citationRichText";
 import { runCitation } from "@/lib/runCitation";
 import { detectClassification, applyOverride, createRecord, computeEffective, effectiveKey } from "@/lib/foreignClassification";
+import { renderUsUnreportedLocal } from "@/lib/usUnreportedLocal";
 
 const b = vi.hoisted(() => ({ invoke: vi.fn(), classifier: vi.fn(), verified: vi.fn() }));
 vi.mock("@/lib/functionError", () => ({ invokeFunction: b.invoke }));
@@ -52,9 +53,17 @@ describe("D1a — bounded synthetic general R10.8.1(a,b) fixtures", () => {
     }
   });
   it("does not cross a manual non-US case choice into local US formatting", async () => {
+    expect(renderUsUnreportedLocal("foreign_case_other", SLIP)).toBeNull();
+    expect(renderUsUnreportedLocal("foreign", SLIP)).toBeNull();
     const result = await runCitation({ rawInput: SLIP, overrideType: "foreign_case_other", useVerifiedStore: false });
     expect(result.citation).not.toBe(`${SLIP}.`);
     expect(b.invoke).toHaveBeenCalledTimes(1);
+  });
+  it("does not deliver a local result after account/input becomes stale during the store await", async () => {
+    let current = true;
+    b.verified.mockImplementation(async () => { current = false; return null; });
+    await expect(runCitation({ rawInput: SLIP, isResultCurrent: () => current })).rejects.toMatchObject({ code: "CITATION_INPUT_CHANGED" });
+    expect(b.invoke).not.toHaveBeenCalled();
   });
   it("does not turn a filing date into decision year", () => {
     const f = detectForeignSource(PENDING)?.fields;

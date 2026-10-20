@@ -277,6 +277,9 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
 
   const unreported = !isPinpoint ? renderUsUnreportedLocal(sourceType, normalized) : null;
   if (unreported) {
+    if (opts.isResultCurrent && !opts.isResultCurrent()) {
+      throw new CitationRunError({ code: "CITATION_INPUT_CHANGED", userMessage: "הקלט או החשבון השתנו. התוצאה לא נשמרה." });
+    }
     reportZeroWork(opts.telemetry, "local_foreign_formatter", "deterministic");
     observeCitationDiagnostic(opts.diagnostic, rawInput, "deterministic");
     return { telemetry: opts.telemetry, reply: unreported.reply, citation: unreported.citation,
