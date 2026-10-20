@@ -200,7 +200,7 @@ export function extractUsConstitution(text: string) {
   const m = text.match(
     new RegExp(
       String.raw`(?<jur>U\.\s?S\.|[A-Z][A-Za-z.]{1,12})\s*CONST\.?\s*(?<div>amend\.|art\.|pmbl\.)?\s*(?<num>${ROMAN.source}|\d+)?` +
-        String.raw`(?:,\s*§+\s*(?<sec>[\w.]+(?:\s*[–\-]\s*[\w.]+)?(?:\s*,\s*\d+(?:\s*[–\-]\s*\d+)?) *))?(?:,\s*cl\.\s*(?<cl>[\w.]+))?`.replace("?) *", "?)*"),
+        String.raw`(?:,\s*§+\s*(?<sec>[\w.]+(?:\s*[–\-]\s*[\w.]+)?(?:\s*,\s*\d+(?:\s*[–\-]\s*\d+)?)*))?(?:,\s*cl\.\s*(?<cl>[\w.]+))?`,
       "i",
     ),
   );
