@@ -4,6 +4,7 @@ import { extractWorkIdentifiers } from "../../supabase/functions/_shared/workIde
 import { extractUsUnreportedCase } from "@/data/bluebook/extract";
 import { explicitUnpublishedKind } from "@/data/bluebook/unpublished";
 import { extractPeriodical } from "@/data/bluebook/periodical";
+import { extractBookWork } from "@/data/bluebook/bookWorks";
 import {
   detectSourceType,
   hasStrongStatuteSignal,
@@ -35,6 +36,7 @@ export function shouldUseLLMClassifier(rawText: string, regexType: SourceType): 
   if (extractUsUnreportedCase(rawText)) return false;
   if (explicitUnpublishedKind(rawText)) return false;
   if (extractPeriodical(rawText)) return false;
+  if (extractBookWork(rawText)?.signal) return false;
   // Scholarship-shaped input always deserves the LLM's opinion.
   if (looksLikeLiteratureShape(rawText) && !hasStrongStatuteSignal(rawText)) return true;
 

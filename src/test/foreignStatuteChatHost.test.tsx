@@ -51,7 +51,7 @@ vi.mock("@/components/MessageBubble", () => ({
           itemKey: "chat:0", sourceType: "foreign_case_us", supported: true, effectiveKey: "us-case-eff", inputFingerprint: "us-case-fp",
         })}>regen-us-case</button>
       )}
-      {onChangeSourceType && (["foreign_unpublished_manuscript", "foreign_thesis", "foreign", "foreign_newspaper", "foreign_journal_article"] as const).map((t) => (
+      {onChangeSourceType && (["foreign_unpublished_manuscript", "foreign_thesis", "foreign", "foreign_newspaper", "foreign_journal_article", "foreign_book", "foreign_book_chapter"] as const).map((t) => (
         <button key={t} type="button" onClick={() => onChangeSourceType(t, {
           itemKey: "chat:0", sourceType: t, supported: t !== "foreign", effectiveKey: `eff-${t}`, inputFingerprint: `fp-${t}`,
         })}>{`regen-${t}`}</button>
@@ -179,6 +179,32 @@ describe("chat page — typed statute request through initial send and regenerat
       await waitFor(() => expect(screen.getByTestId("bubble-assistant")).toHaveTextContent("שם מחבר"));
       expect(screen.getByTestId("bubble-assistant").textContent).toContain(input);
     }
+    expect(m.invoke).not.toHaveBeenCalled();
+  });
+
+  // Stage 5 batch 4 — synthetic book/chapter fixtures.
+  const EDBOOK = "2 The Synthetic Handbook, at xii (Ana Roe & Ben Poe eds., Cy Lu trans., 3d ed. 2010)";
+  const CHAP = "Ana Roe, Quiet Rules, in 3 The Synthetic Collection 210, 214 (Ben Poe ed., 2d ed. 2015)";
+  it.each([["foreign_book", EDBOOK, "2 The Synthetic Handbook xii (Ana Roe & Ben Poe eds., Cy Lu trans., 3d ed. 2010)."], ["foreign_book_chapter", CHAP, `${CHAP}.`]] as const)("R15 %s actual initial+regeneration chat is local", async (type, input, expected) => {
+    m.classify.mockResolvedValue({ sourceType: type, source: "regex" });
+    await mountChat();
+    await send(input);
+    await waitFor(() => expect(screen.getByTestId("bubble-assistant").textContent?.replace(/##|\^\^/g, "")).toContain(expected));
+    expect(screen.getByTestId("bubble-assistant")).toHaveTextContent("לא אומתו");
+    await act(async () => { fireEvent.click(screen.getByRole("button", { name: `regen-${type}` })); });
+    await waitFor(() => expect(m.recordGeneration).toHaveBeenCalledWith("acct-1", expect.objectContaining({ effectiveKey: `eff-${type}` })));
+    expect(m.invoke).not.toHaveBeenCalled();
+  });
+  it("R15 manual book choice on a chapter and unsupported sibling are preserved, not formatted", async () => {
+    m.classify.mockResolvedValue({ sourceType: "foreign_book_chapter", source: "regex" });
+    await mountChat();
+    await send(CHAP);
+    await waitFor(() => expect(screen.getByTestId("bubble-assistant")).toHaveTextContent("לא אומתו"));
+    await act(async () => { fireEvent.click(screen.getByRole("button", { name: "regen-foreign_book" })); });
+    await waitFor(() => expect(screen.getByTestId("bubble-assistant")).toHaveTextContent("אינו תואם"));
+    await act(async () => { fireEvent.click(screen.getByRole("button", { name: "regen-foreign" })); });
+    await waitFor(() => expect(screen.getByTestId("bubble-assistant")).toHaveTextContent("אינו נתמך"));
+    expect(screen.getByTestId("bubble-assistant").textContent).toContain(CHAP);
     expect(m.invoke).not.toHaveBeenCalled();
   });
 

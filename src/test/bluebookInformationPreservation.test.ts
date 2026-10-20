@@ -93,7 +93,8 @@ describe("6. Secondary-source metadata", () => {
     const r = renderBook({ authors: "Maya Levin", bookTitle: "Collected Essays", year: "2000", publisher: "Other Press", originalYear: "1901" } as never);
     expect(stripMarkers(r.citation)).toContain("Maya Levin, Collected Essays");
     expect(r.unrepresented?.join(" ")).toContain("Other Press");
-    expect(r.unrepresented?.join(" ")).toContain("1901");
+    // Stage 5 batch 4: an explicit original year is now rendered (second parenthetical).
+    expect(stripMarkers(r.citation)).toContain("(2000) (1901)");
     expect(r.warnings.length).toBeGreaterThan(0);
   });
   it("book: supported editors/edition/translators survive", () => {
