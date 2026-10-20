@@ -4,6 +4,12 @@ import { preparePastedCitation, citationManualChoice, pastedCaseRequest, renderP
 const DE = "BVerfG, Urteil vom 15. Januar 1958, 1 BvR 400/51, BVerfGE 7, 198";
 const US = "Brown v. Board of Education, 347 U.S. 483 (1954)";
 describe("batch A pure supplied-evidence contract", () => {
+  it("bounded repeated evidence cannot mask conflicting jurisdictions or discard raw spans", () => {
+    const raw = "BVerfG ".repeat(200) + "347 U.S. 483 (1954)";
+    const c = buildPastedCitation(raw);
+    expect(c.route).toBe("preserve"); expect(c.conflicts).toContain("conflicting_text_jurisdictions");
+    expect(c.evidence.length).toBeLessThanOrEqual(128); expect(c.rawInput).toBe(raw);
+  });
   it("matched foreign response still cannot cross manual jurisdiction or supplied identity fields", () => {
     const raw = "Brown v. Board of Education";
     const { contract } = preparePastedCitation(raw, { jurisdiction: "US", foreign: true });

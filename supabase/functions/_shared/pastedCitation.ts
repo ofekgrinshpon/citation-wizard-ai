@@ -50,8 +50,9 @@ export function buildPastedCitation(raw: string, manual: CitationManualChoice | 
   const fields: Record<string, SuppliedField> = Object.fromEntries(
     ["caseName", "court", "reporter", "docket", "year", "decisionDate", "volume", "firstPage"].map(k => [k, unknown()]));
   const add = (re: RegExp, jurisdiction: CitationJurisdiction, signal: PastedCitationContract["evidence"][number]["signal"]) => {
+    let count = 0;
     for (const m of raw.matchAll(new RegExp(re.source, "g"))) {
-      if (evidence.length >= 128) break; // Bounded metadata only; raw text/unknown spans remain intact.
+      if (count++ >= 16) break; // Per-signal cap cannot hide another jurisdiction; raw text remains intact.
       const span = { start: m.index, end: m.index + m[0].length };
       evidence.push({ jurisdiction, signal, span });
       if (signal === "court" || signal === "reporter") candidates[signal].push(field(raw, m[0], "supplied_text"));
