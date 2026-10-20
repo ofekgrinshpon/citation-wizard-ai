@@ -105,7 +105,7 @@ describe("detection (JUR3/4/6, axes)", () => {
     expect(d.multi.access_medium?.value).toEqual(["web"]);
   });
   it("German web-access book: nonperiodical + web, language/host never jurisdiction", () => {
-    const d = detectClassification("Hans Müller, Grundrechte im Wandel (3d ed. 2019), https://verlag.example.de/buch");
+    const d = detectClassification("Hans Mueller, Grundrechte im Wandel (2019), https://verlag.example.de/buch");
     const e = computeEffective(d, {});
     expect(e.scalars.family).toBe("nonperiodical");
     expect(e.multi.access_medium).toEqual(["web"]);
@@ -196,7 +196,8 @@ describe("picker UI — deterministic, local, zero network", () => {
     noNetwork();
   });
   it("books do not require a country; other/unidentified always offered; no rule ids", () => {
-    render(<ForeignSourcePicker accountId="acct-A" itemKey="t:2" input="Hans Müller, Grundrechte im Wandel (3d ed. 2019)" output="x" />);
+    render(<ForeignSourcePicker accountId="acct-A" itemKey="t:2" input="Hans Mueller, Grundrechte im Wandel (2019)" output="x" />);
+    expect(screen.getByTestId("foreign-effective").textContent).toContain("ספר ופרסום שאינו כתב עת");
     fireEvent.click(screen.getByRole("button", { name: "שינוי סיווג" }));
     expect(screen.queryByRole("combobox", { name: /תחום שיפוט/ })).toBeNull();
     expect(screen.getByRole("button", { name: "אחר / לא זוהה" })).toBeInTheDocument();
