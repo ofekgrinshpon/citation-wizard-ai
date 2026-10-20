@@ -227,7 +227,7 @@ export function resolveCitationResponse(plan: TypedPlan, data: Record<string, un
     binding: "תשובת החיפוש סותרת את הקלט, סוג המקור או השיפוט; הקלט נשמר ללא השלמה.",
     malformed: "תשובת החיפוש אינה בפורמט נתמך; נשמרו רק הפרטים שסופקו.",
     unavailable: "חיפוש פרטי המקור לא היה זמין; נשמרו רק הפרטים שסופקו.",
-    identity: "לא אומתה התאמת המקור לפרטים שסופקו; נשמרו רק הפרטים שסופקו.",
+    identity: "לא אומתה התאמת המקור לפרטים שסופקו או נמצאו פרטים סותרים; נשמרו רק הפרטים שסופקו.",
     ambiguous: "נדרשת בחירה בין כמה פסקי דין",
   };
   if (accepted.reason) warnings.push(messages[accepted.reason]);
@@ -260,6 +260,7 @@ export function resolveCitationResponse(plan: TypedPlan, data: Record<string, un
     rendered = renderForeignDetection({ kind, jurisdiction: jur, sourceType: effectiveType,
       confidence: "deterministic", fields: { ...accepted.fields, ...supplied } as ForeignFields });
   }
+  if (accepted.identityConfirmed && Array.isArray((fl.identity as { conflicts?: unknown } | undefined)?.conflicts) && ((fl.identity as { conflicts: unknown[] }).conflicts.length)) warnings.push("נמצאו פרטי פרסום סותרים; נשמרו רק השלמות תואמות.");
   if (rendered?.warnings) warnings.push(...rendered.warnings);
   if (rendered?.missing?.length) warnings.push(`חסרים פרטים: ${getMissingFieldsSummary(effectiveType, rendered.missing)}`);
   if (rendered?.reply?.includes("⚠️")) warnings.push(rendered.reply.split("⚠️").slice(1).join(" ").trim());
