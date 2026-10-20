@@ -33,9 +33,9 @@ describe("Bluebook 22 — deterministic golden rendering (M1)", () => {
     expect(plain(r.citation)).toBe("Doe v. Roe, 100 F. Supp. 2d 1 (S.D.N.Y. 2000).");
   });
 
-  it("case name is italicised", () => {
+  it("full-citation case name is roman (Bluebook 21 R2.1(a))", () => {
     const r = renderForeignCitation("Brown v. Board of Education, 347 U.S. 483 (1954)")!;
-    expect(r.citation.startsWith("##Brown v. Board of Education##")).toBe(true);
+    expect(r.citation.startsWith("Brown v. Board of Education, 347 U.S. 483")).toBe(true);
   });
 
   it("U.S. Constitution uses small caps", () => {
