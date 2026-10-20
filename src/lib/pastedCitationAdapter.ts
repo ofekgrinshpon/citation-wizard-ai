@@ -5,8 +5,8 @@ import type { SourceType } from "@/data/abbreviations";
 export function citationManualChoice(type?: SourceType, jurisdictionId?: string, subjurisdiction?: string): CitationManualChoice | null {
   if (!type && !jurisdictionId) return null;
   const jurisdiction = jurisdictionId === "us" || jurisdictionId?.startsWith("us:") ? "US"
-    : jurisdictionId === "t2:united-kingdom" || jurisdictionId?.startsWith("uk:") ? "UK"
-    : jurisdictionId === "t2:germany" ? "DE" : jurisdictionId === "t2:israel" ? "IL"
+    : jurisdictionId === "t2:united-kingdom" || jurisdictionId?.startsWith("t2:united-kingdom/") ? "UK"
+    : jurisdictionId === "t2:germany-federal-republic-of" || jurisdictionId?.startsWith("t2:germany-federal-republic-of/") ? "DE" : jurisdictionId === "t2:israel" ? "IL"
     : jurisdictionId ? "UNKNOWN" : type === "foreign_case_us" || type === "foreign_statute_us" ? "US"
     : type === "foreign_statute_uk" ? "UK" : type?.startsWith("case_law_") ? "IL" : "UNKNOWN";
   return { jurisdiction, sourceType: type, foreign: type?.startsWith("foreign"), ...(subjurisdiction ? { subjurisdiction } : {}) };
@@ -14,6 +14,9 @@ export function citationManualChoice(type?: SourceType, jurisdictionId?: string,
 export function preparePastedCitation(raw: string, manual: CitationManualChoice | null = null) {
   const detection = detectForeignSource(raw);
   const contract = buildPastedCitation(raw, manual, detection ? { kind: detection.kind, fields: detection.fields as Record<string, unknown> } : undefined);
+  if (manual?.subjurisdiction && !["t2:united-kingdom/england-and-wales"].includes(manual.subjurisdiction) && contract.jurisdiction === "UK") {
+    contract.route = "preserve"; contract.formatter = "unsupported"; contract.unsupported.push("subjurisdiction_formatter_not_supported");
+  }
   const preserved = () => ({ citation: escapeCitationLiteral(raw), reply: `${escapeCitationLiteral(raw)}\n⚠️ ${pastedCitationWarning(contract)}`, warningMsg: pastedCitationWarning(contract) });
   if (contract.route === "preserve") return { contract, local: preserved(), detection };
   // Only complete supported case forms. Existing literature ambiguity gates stay authoritative.
@@ -25,6 +28,33 @@ export function preparePastedCitation(raw: string, manual: CitationManualChoice 
     warningMsg: rendered.warnings[0] ?? "זהות המקור לא אומתה.",
   } : null;
   return { contract, local, detection };
+}
+export function pastedCaseRequest(raw: string, contract: PastedCitationContract) {
+  if (contract.route !== "foreign" || contract.sourceKind !== "case") return null;
+  const detection = detectForeignSource(raw);
+  const parsedFields: Record<string, string> = {};
+  if (detection?.kind === "case") for (const [k,v] of Object.entries(detection.fields)) if (typeof v === "string" && v) parsedFields[k] = v;
+  if (!parsedFields.caseName) {
+    const name = raw.match(/^\s*(.+?\s+v(?:s)?\.?\s+.+?)(?:\s*[,([]\s*(?:\d|\[)|\s*\(|\s*\[|$)/);
+    if (name) parsedFields.caseName = name[1].trim().replace(/[,\s]+$/, "");
+  }
+  return { enabled: true, kind: "case" as const, jurisdiction: contract.jurisdiction === "US" || contract.jurisdiction === "UK" ? contract.jurisdiction : "UNKNOWN", rawInput: raw, parsedFields };
+}
+export function renderPastedCaseResponse(contract: PastedCitationContract, request: ReturnType<typeof pastedCaseRequest>, response: unknown) {
+  if (!request) return null;
+  const fl = response as { identity?: { matched?: boolean; jurisdiction?: "US" | "UK"; conflicts?: string[] }; fields?: Record<string, unknown> } | null;
+  const jurisdiction = fl?.identity?.jurisdiction;
+  if (fl?.identity?.matched && !fl.identity.conflicts?.length && (jurisdiction === "US" || jurisdiction === "UK") &&
+    (request.jurisdiction === "UNKNOWN" || jurisdiction === request.jurisdiction) && fl.fields) {
+    const rendered = renderForeignDetection({ kind: "case", jurisdiction, sourceType: jurisdiction === "US" ? "foreign_case_us" : "foreign_case_other",
+      confidence: "deterministic", fields: { ...fl.fields, ...request.parsedFields } });
+    if (rendered) {
+      const warnings = [...rendered.warnings, ...(rendered.missing.length ? ["חסרים פרטים: " + rendered.missing.join(", ")] : [])];
+      return { citation: rendered.citation, reply: rendered.citation + (warnings.length ? `\n⚠️ ${warnings.join(" ")}` : ""), warningMsg: warnings[0] };
+    }
+  }
+  const warningMsg = "לא אומתה התאמת המקור לפרטים שסופקו; הקלט נשמר ללא השלמה.";
+  return { citation: escapeCitationLiteral(contract.rawInput), reply: `${escapeCitationLiteral(contract.rawInput)}\n⚠️ ${warningMsg}`, warningMsg };
 }
 export function readPastedCitationSafety(contract: PastedCitationContract, response: unknown) {
   const c = (response as { pastedCitation?: PastedCitationContract } | null)?.pastedCitation;

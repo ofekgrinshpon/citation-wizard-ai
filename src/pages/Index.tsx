@@ -65,7 +65,7 @@ import { renderUsUnreportedLocal } from "@/lib/usUnreportedLocal";
 import { renderUnpublishedLocal } from "@/lib/unpublishedWorkLocal";
 import { renderPeriodicalLocal } from "@/lib/periodicalLocal";
 import { renderBookLocal } from "@/lib/bookLocal";
-import { citationManualChoice, preparePastedCitation, readPastedCitationSafety } from "@/lib/pastedCitationAdapter";
+import { citationManualChoice, preparePastedCitation, readPastedCitationSafety, pastedCaseRequest, renderPastedCaseResponse } from "@/lib/pastedCitationAdapter";
 import type { CitationManualChoice } from "../../supabase/functions/_shared/pastedCitation";
 
 interface PendingVerification {
@@ -319,6 +319,7 @@ const Index = () => {
       return local.reply;
     }
     const statuteRequest = statutePrep?.request ?? null;
+    const caseRequest = pastedCaseRequest(article?.rawInput ?? userMessage, pasted.contract);
     let completed = false;
     const execute = async (retry?: CitationRetryDescriptor): Promise<string> => {
       const { data, errorInfo } = retry
@@ -336,6 +337,7 @@ const Index = () => {
           rawInput: article?.rawInput ?? userMessage,
           pastedCitation: pasted.contract,
           ...(statuteRequest ? { foreignLookup: statuteRequest } : {}),
+          ...(caseRequest ? { foreignLookup: caseRequest } : {}),
         },
         { projectId, isCitationResultCurrent: isCurrent },
       );
@@ -378,12 +380,14 @@ const Index = () => {
       // absence) from supplied fields; never display generic model content.
       if (statutePrep && statuteRequest) reply = renderForeignStatuteLookup(statutePrep, data?.foreignLookup).reply;
       const safety = readPastedCitationSafety(pasted.contract, data);
+      const caseResult = renderPastedCaseResponse(pasted.contract, caseRequest, data?.foreignLookup);
+      if (caseResult) reply = caseResult.reply;
       if (safety) reply = safety.reply;
       if (!completed) {
         completed = true;
         const historyRequestId = typeof data?.requestId === "string" &&
           ["available", "unconfirmed"].includes(String(data.recoveryAvailability)) ? data.requestId : undefined;
-        await onSuccess?.(reply, isCurrent, historyRequestId, !!statuteRequest || !!safety);
+        await onSuccess?.(reply, isCurrent, historyRequestId, !!statuteRequest || !!safety || !!caseRequest);
       }
       if (!isCurrent()) throw Object.assign(new Error("CITATION_RETRY_STALE"), { handled: true });
       return reply;

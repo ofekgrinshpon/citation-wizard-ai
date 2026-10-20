@@ -41,7 +41,7 @@ import { renderUsUnreportedLocal } from "@/lib/usUnreportedLocal";
 import { renderUnpublishedLocal } from "@/lib/unpublishedWorkLocal";
 import { renderPeriodicalLocal } from "@/lib/periodicalLocal";
 import { renderBookLocal } from "@/lib/bookLocal";
-import { citationManualChoice, preparePastedCitation, readPastedCitationSafety } from "@/lib/pastedCitationAdapter";
+import { citationManualChoice, preparePastedCitation, readPastedCitationSafety, pastedCaseRequest, renderPastedCaseResponse } from "@/lib/pastedCitationAdapter";
 import type { CitationManualChoice, PastedCitationContract } from "../../supabase/functions/_shared/pastedCitation";
 import { citationDiagnosticBody, observeCitationDiagnostic, type CitationDiagnosticActivation } from "@/lib/citationDiagnostic";
 
@@ -381,6 +381,8 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
   }
 
   // 2) Pinpoint + known master source → feed the verified details as a hint.
+  const caseRequest = pastedCaseRequest(opts.rawInput, pasted.contract);
+  if (caseRequest) foreignLookupRequest = caseRequest;
   if (verifiedMatch && !isHebrewArticle && isPinpoint) {
     const category = getVerifiedCategoryLabel(
       classifyVerifiedSource({
@@ -451,6 +453,9 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
     const safety = readPastedCitationSafety(pasted.contract, data);
     if (safety) return { ...safety, pastedCitation: pasted.contract, telemetry: opts.telemetry, sourceType,
       sourceLabel, fromVerifiedStore: false, status: "warning" };
+    const caseResult = renderPastedCaseResponse(pasted.contract, caseRequest, data?.foreignLookup);
+    if (caseResult) return { ...caseResult, pastedCitation: pasted.contract, telemetry: opts.telemetry, sourceType, sourceLabel,
+      fromVerifiedStore: false, status: caseResult.warningMsg ? "warning" : "valid" };
     const rejectUnusableResponse = (code: string, userMessage: string): never => {
       // A transport-successful response is not proof of usable citation output.
       // Rechecking this unchanged row only re-renders the retained response; it
