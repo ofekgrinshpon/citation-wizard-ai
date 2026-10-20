@@ -329,7 +329,7 @@ const Index = () => {
         {
           messages: [
             ...history.map((m) => ({ role: m.role, content: m.content })),
-            { role: "user", content: userMessage + (pasted.contract.manualChoice ? `\n[סיווג שיפוט ידני: ${JSON.stringify(pasted.contract.manualChoice)}]` : "") },
+            { role: "user", content: (pasted.contract.manualChoice ? `[סיווג שיפוט ידני: ${JSON.stringify(pasted.contract.manualChoice)}]\n` : "") + userMessage },
           ],
           requestId,
           ...telemetryBody(telemetry),

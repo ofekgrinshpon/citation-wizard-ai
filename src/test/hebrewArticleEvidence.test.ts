@@ -8,6 +8,7 @@ import ts from "typescript";
 import { describe, expect, it, vi } from "vitest";
 import * as articles from "../../supabase/functions/_shared/hebrewArticleEvidence";
 import * as dockets from "../../supabase/functions/_shared/caseTypePrefixes";
+import * as pastedCitation from "../../supabase/functions/_shared/pastedCitation";
 import * as hosts from "../../supabase/functions/_shared/trustedHosts";
 import * as caseLawQuery from "../../supabase/functions/_shared/caseLawQuery";
 import * as ranges from "../../supabase/functions/_shared/hebrewNumberRange";
@@ -250,6 +251,7 @@ async function runHandler(options: { raw?: string; rawInputNull?: boolean; recor
     "../_shared/costTelemetry.ts": { trackedFetch: fetchProvider, withCostTelemetry: (_name: string, fn: () => unknown) => fn(), setTelemetryFromBody: () => {}, recordZeroWork: zero },
     "../_shared/hebrewArticleEvidence.ts": articles,
     "../_shared/caseTypePrefixes.ts": dockets,
+    "../_shared/pastedCitation.ts": pastedCitation,
     "../_shared/trustedHosts.ts": hosts,
     "../_shared/caseLawQuery.ts": caseLawQuery,
     "../_shared/hebrewNumberRange.ts": ranges,

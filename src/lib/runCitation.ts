@@ -209,7 +209,7 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
   const rawInput = opts.rawInput.trim();
 
   const pasted = preparePastedCitation(opts.rawInput, opts.manualChoice ?? citationManualChoice(opts.overrideType));
-  if (pasted.local) {
+  if (pasted.local && pasted.contract.route === "preserve") {
     const sourceType = opts.overrideType ?? pasted.detection?.sourceType ?? "foreign";
     return { ...pasted.local, pastedCitation: pasted.contract, sourceType, sourceLabel: SOURCE_TYPE_LABELS[sourceType],
       telemetry: opts.telemetry, fromVerifiedStore: false, status: "warning" };
@@ -255,6 +255,7 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
       verifiedMatch = null;
     }
   }
+  if (opts.isResultCurrent && !opts.isResultCurrent()) throw new CitationRunError({ code: "CITATION_INPUT_CHANGED", userMessage: "הקלט או החשבון השתנו. התוצאה לא נשמרה." });
 
   const cachedArticle = verifiedMatch && suppliedArticle
     ? renderForeignArticleCache(normalized, verifiedMatch.full_citation) : null;
@@ -288,6 +289,12 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
   }
 
   // Stage 4: statutes go through the shared adapter. A manual statute choice
+  if (pasted.local) {
+    const warnings = pasted.detection ? renderForeignDetection(pasted.detection)?.warnings ?? [] : [];
+    reportZeroWork(opts.telemetry, "local_foreign_formatter", "deterministic");
+    return { ...pasted.local, pastedCitation: pasted.contract, sourceType, sourceLabel, telemetry: opts.telemetry,
+      fromVerifiedStore: false, status: warnings.length ? "warning" : "valid", warningMsg: warnings[0] };
+  }
   // is never crossed by a contradicting detection (honest mismatch instead).
   const statutePrep = !isPinpoint ? prepareForeignStatute(sourceType, normalized, { manual: !!opts.overrideType }) : null;
 
@@ -401,7 +408,7 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
   const preparedBody = {
     rawInput: opts.rawInput,
     pastedCitation: pasted.contract,
-    messages: [{ role: "user", content: prompt + (pasted.contract.manualChoice ? `\n[סיווג שיפוט ידני: ${JSON.stringify(pasted.contract.manualChoice)}]` : "") }],
+    messages: [{ role: "user", content: (pasted.contract.manualChoice ? `[סיווג שיפוט ידני: ${JSON.stringify(pasted.contract.manualChoice)}]\n` : "") + prompt }],
     requestId: crypto.randomUUID(),
     ...telemetryBody(opts.telemetry),
     ...(foreignLookupRequest ? { foreignLookup: foreignLookupRequest } : {}),
@@ -453,7 +460,8 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
     const safety = readPastedCitationSafety(pasted.contract, data);
     if (safety) return { ...safety, pastedCitation: pasted.contract, telemetry: opts.telemetry, sourceType,
       sourceLabel, fromVerifiedStore: false, status: "warning" };
-    const caseResult = renderPastedCaseResponse(pasted.contract, caseRequest, data?.foreignLookup);
+    const caseResult = (data?.foreignLookup as ForeignLookupResponse | undefined)?.disambiguation?.length ? null
+      : renderPastedCaseResponse(pasted.contract, caseRequest, data?.foreignLookup);
     if (caseResult) return { ...caseResult, pastedCitation: pasted.contract, telemetry: opts.telemetry, sourceType, sourceLabel,
       fromVerifiedStore: false, status: caseResult.warningMsg ? "warning" : "valid" };
     const rejectUnusableResponse = (code: string, userMessage: string): never => {
