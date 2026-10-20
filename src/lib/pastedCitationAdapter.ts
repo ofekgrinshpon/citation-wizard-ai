@@ -44,10 +44,12 @@ export function pastedCaseRequest(raw: string, contract: PastedCitationContract)
 export function renderPastedCaseResponse(contract: PastedCitationContract, request: ReturnType<typeof pastedCaseRequest>, response: unknown) {
   if (!request) return null;
   const fl = response as { kind?: string; rawInput?: string; identity?: { matched?: boolean; jurisdiction?: "US" | "UK"; conflicts?: string[] }; fields?: Record<string, unknown> } | null;
+  const siblingFields = ["bookTitle", "chapterTitle", "articleTitle", "journal", "authors", "editors", "translators", "statuteName", "code", "titleNumber"];
   const changedSuppliedField = Object.entries(request.parsedFields).some(([k,v]) =>
     typeof fl?.fields?.[k] === "string" && citationBindingText(String(fl.fields[k])) !== citationBindingText(v));
   if (request.rawInput !== contract.rawInput || (fl?.kind && fl.kind !== request.kind) ||
-    (fl?.rawInput && citationBindingText(fl.rawInput) !== citationBindingText(contract.rawInput)) || changedSuppliedField) {
+    (fl?.rawInput && citationBindingText(fl.rawInput) !== citationBindingText(contract.rawInput)) ||
+    (fl?.fields && Object.keys(fl.fields).some(k => siblingFields.includes(k))) || changedSuppliedField) {
     const warningMsg = "פרטי המקור שהוחזרו סותרים את הקלט או את סוג המקור; הקלט נשמר ללא השלמה.";
     return { citation: escapeCitationLiteral(contract.rawInput), reply: `${escapeCitationLiteral(contract.rawInput)}\n⚠️ ${warningMsg}`, warningMsg };
   }

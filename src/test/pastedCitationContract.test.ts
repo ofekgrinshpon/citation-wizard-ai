@@ -27,10 +27,16 @@ describe("batch A pure supplied-evidence contract", () => {
     const c = guardPastedCitationRequest({ rawInput: raw, messages: [{ role: "user", content: message }], foreignLookup: { enabled: true, kind: "case", jurisdiction: "UNKNOWN", rawInput: raw, parsedFields: { caseName: raw } } });
     expect(c.route).toBe("foreign"); expect(c.conflicts).toEqual([]);
   });
-  it.each([{ kind: "book" }, { fields: { caseName: "Other v. Source", reporter: "U.S.", volume: "347", firstPage: "483", year: "1954" } }])("matched response cannot change source kind/identity: %j", overrides => {
+  it.each([{ kind: "book" }, { fields: { bookTitle: "Brown", reporter: "U.S.", volume: "347", firstPage: "483", year: "1954" } }, { fields: { caseName: "Other v. Source", reporter: "U.S.", volume: "347", firstPage: "483", year: "1954" } }])("matched response cannot change source kind/identity: %j", overrides => {
     const raw = "Brown v. Board of Education"; const p = preparePastedCitation(raw);
     const r = renderPastedCaseResponse(p.contract, pastedCaseRequest(raw, p.contract), { kind: "case", identity: { matched: true, jurisdiction: "US" }, fields: { caseName: raw, reporter: "U.S.", volume: "347", firstPage: "483", year: "1954" }, ...overrides });
     expect(r?.citation).toBe(raw); expect(r?.warningMsg).toBeTruthy();
+  });
+  it("quote presentation normalization retains exact original without granting source identity", () => {
+    const raw = 'ע״א 1234/20 כהן נ׳ לוי';
+    const c = guardPastedCitationRequest({ rawInput: raw, messages: [{ role: "user", content: 'ע"א 1234/20 כהן נ\' לוי' }] });
+    expect(c.rawInput).toBe(raw); expect(c.fingerprint).toBe(rawCitationFingerprint(raw));
+    expect(c.route).toBe("israeli"); expect(c.identityVerified).toBe(false);
   });
   it("bounded repeated evidence cannot mask conflicting jurisdictions or discard raw spans", () => {
     const raw = "BVerfG ".repeat(200) + "347 U.S. 483 (1954)";

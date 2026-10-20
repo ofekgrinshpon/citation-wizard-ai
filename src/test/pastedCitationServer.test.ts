@@ -37,6 +37,20 @@ function fixture() {
   } };
 }
 describe("batch A actual server pre-cache route guard", () => {
+  it("actual server rederives manual family conflict rather than trusting forged client sourceKind", async () => {
+    const raw = "Brown v. Board of Education"; const h = fixture();
+    const r = await h.invoke({ rawInput: raw, messages: [{ role: "user", content: raw }],
+      pastedCitation: { ...pasted.buildPastedCitation(raw), sourceKind: "book", manualChoice: { sourceType: "foreign_book" } },
+      foreignLookup: { enabled: true, kind: "case", jurisdiction: "UNKNOWN", rawInput: raw, parsedFields: {} } });
+    expect(r.body.pastedCitation.conflicts).toContain("manual_source_kind_conflict");
+    expect(h.construct).not.toHaveBeenCalled(); expect(h.claim).not.toHaveBeenCalled(); expect(h.cache).not.toHaveBeenCalled(); expect(h.provider).not.toHaveBeenCalled();
+  });
+  it.each([null, [], "forged", { enabled: true, kind: "case", jurisdiction: "UNKNOWN", parsedFields: {} }, { enabled: true, kind: "case", jurisdiction: "UNKNOWN", rawInput: "Brown v. Board of Education", parsedFields: [] }])("actual handler terminally rejects malformed lookup %j without side effects", async foreignLookup => {
+    const raw = "Brown v. Board of Education"; const h = fixture();
+    const r = await h.invoke({ rawInput: raw, messages: [{ role: "user", content: raw }], foreignLookup });
+    expect(r.body.content).toContain(raw); expect(r.body.pastedCitation.route === "preserve" || foreignLookup === null).toBe(true);
+    expect(h.construct).not.toHaveBeenCalled(); expect(h.claim).not.toHaveBeenCalled(); expect(h.cache).not.toHaveBeenCalled(); expect(h.provider).not.toHaveBeenCalled();
+  });
   it.each([
     { rawInput: 'ע"א 400/51 כהן נ׳ לוי' }, { rawInput: "Other v. Source" }, { rawInput: null },
     { rawInput: "Brown v. Board of Education", kind: "book" },

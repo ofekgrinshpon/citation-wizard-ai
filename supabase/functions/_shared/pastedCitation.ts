@@ -173,7 +173,8 @@ export function guardPastedCitationRequest(body: { messages: Array<{ role: strin
   const last = [...body.messages].reverse().find(m => m.role === "user")?.content ?? "";
   const manualLine = last.match(/\[סיווג שיפוט ידני: (\{[^\n]*\})\]/)?.[1];
   const stripped = citationUserText(last);
-  const raw = stripped;
+  // Preserve the exact original only after proving presentation-equivalent binding.
+  const raw = typeof body.rawInput === "string" && citationBindingText(body.rawInput) === citationBindingText(stripped) ? body.rawInput : stripped;
   const wire = body.pastedCitation as Partial<PastedCitationContract> | undefined;
   let retainedChoice: CitationManualChoice | null = null;
   if (manualLine) { try { retainedChoice = JSON.parse(manualLine); } catch { /* malformed choice is not evidence */ } }
