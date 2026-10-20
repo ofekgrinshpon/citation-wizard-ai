@@ -307,7 +307,7 @@ describe("bibliography mounted per-row retry", () => {
     bibliographyInput();
     const oldAction = await screen.findByRole("button", { name: "ניסיון חדש" });
     fireEvent.click(screen.getByRole("button", { name: /אחר ▾/ }));
-    fireEvent.click(await screen.findByRole("button", { name: /פסיקה.*פורסם/ }));
+    fireEvent.click(await screen.findByRole("button", { name: "פסיקה – עליון" }));
     await waitFor(() => expect(boundary.invoke).toHaveBeenCalledTimes(2));
     await screen.findByRole("button", { name: "ניסיון חדש" });
     expect(requestAt(1).requestId).not.toBe(requestAt(0).requestId);
