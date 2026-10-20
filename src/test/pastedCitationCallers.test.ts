@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { runCitation } from "@/lib/runCitation";
 import { citationToPlain } from "@/lib/citationRichText";
+import { c1ServerPayload } from "./fixtures/c1ServerPayload";
 const m = vi.hoisted(() => ({ invoke: vi.fn(), classifier: vi.fn(), cache: vi.fn() }));
 vi.mock("@/lib/functionError", () => ({ invokeFunction: m.invoke }));
 vi.mock("@/lib/verifiedSources", () => ({ findVerifiedSourceMatch: m.cache }));
@@ -21,7 +22,8 @@ describe("batch A real runCitation boundary", () => {
   });
   it("valid canonical US typed completion retains supplied case name", async () => {
     const rawInput = "Brown v. Board of Education";
-    m.invoke.mockResolvedValue({ data: { foreignLookup: { kind: "case", identity: { matched: true, jurisdiction: "US" }, fields: { caseName: rawInput, reporter: "U.S.", volume: "347", firstPage: "483", year: "1954" } } }, errorInfo: null });
+    const { response } = await c1ServerPayload({ kind: "case", jurisdiction: "UNKNOWN", rawInput, parsedFields: { caseName: rawInput } });
+    m.invoke.mockResolvedValue({ data: { foreignLookup: response }, errorInfo: null });
     const result = await runCitation({ rawInput, useVerifiedStore: false });
     expect(result.citation).toBe(`${rawInput}, 347 U.S. 483 (1954).`); expect(m.invoke).toHaveBeenCalledTimes(1);
   });

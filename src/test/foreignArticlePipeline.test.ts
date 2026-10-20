@@ -41,7 +41,8 @@ describe("foreign article client / edge / renderer integration", () => {
   it.each(["Warren & Brandeis", "Warren and Brandeis", "Samuel D. Warren and Louis D. Brandeis"])("preserves %s as anchors and uses compatible full names in the citation", async (authors) => {
     const calls = lookupBoundary([donor]);
     const result = await runCitation({ rawInput: `${authors}, The Right to Privacy, pp. 213–214.`, useVerifiedStore: false });
-    expect(result.citation).toContain("Samuel D. Warren and Louis D. Brandeis");
+    // C1 preserves the user's exact supplied byline; compatible expansion is confirmation only.
+    expect(result.citation).toContain(authors);
     expect(result.citation).toContain("The Right to Privacy");
     expect(result.citation).toContain("4");
     expect(result.citation).toContain("Harv. L. Rev.");

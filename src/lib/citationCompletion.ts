@@ -64,7 +64,7 @@ export function acceptCitationCompletion(request: Record<string, unknown>, raw: 
     try { urlValid = ["https:", "http:"].includes(new URL(text(p.sourceUrl)).protocol); } catch { /* not evidence */ }
     const meaningful = title.trim().length >= 8 && /[A-Za-z]{3}/.test(title) && !/^(home|search|result|untitled|document)\s*$/i.test(title.trim());
     if (!fieldsByKind[text(request.kind)].includes(key) || typeof value !== "string" || !value.trim() ||
-      fieldConflicts.includes(`conflicting_statute_${key}`) ||
+      fieldConflicts.some(c => c === `conflicting_statute_${key}` || c.startsWith(`${key}:`)) ||
       (supplied[key] !== undefined && citationBindingText(text(supplied[key])) !== citationBindingText(value)) ||
       grounded[key] !== true || p.value !== value || !bases.has(text(p.basis)) || !urlValid || !source || !meaningful || norm(title) !== norm(donorTitle)) {
       out.quarantined.push(key); continue;
