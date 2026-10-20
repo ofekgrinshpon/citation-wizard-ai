@@ -231,7 +231,7 @@ export function classifyCitation(text: string): {
 }
 
 function normalizeBibliographyCitation(text: string): string {
-  return text
+  const joined = text
     .split("\n")
     .map((line) => line.trim())
     .filter((line) => {
@@ -241,8 +241,9 @@ function normalizeBibliographyCitation(text: string): string {
       if (/^---FOOTNOTE/i.test(line)) return false;
       return true;
     })
-    .join(" ")
-    .replace(/^.*$/s, (joined) => citationTextOnly(joined))
+    .join(" ");
+  // Dedupe on the plain reading (styles and literal escapes removed).
+  return citationTextOnly(joined)
     .replace(/^\[?\d+\]?\.?\s*/, "")
     .replace(/^סעיף\s+[\dא-ת()./\-–]+\s+ל(?=(חוק|חוק-יסוד|חוק\s+יסוד|פקודת|פקודה|תקנות|צו|נוהל|הוראת))/g, "")
     .replace(/^section\s+[A-Za-z0-9()./\-–]+\s+of\s+/gi, "")
