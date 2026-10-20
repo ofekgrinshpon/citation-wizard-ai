@@ -1,12 +1,13 @@
 /** Pure acceptance boundary for the existing server extraction envelope. No IO. */
 import { citationBindingText } from "../../supabase/functions/_shared/pastedCitation";
+import { articleFieldMatches } from "../../supabase/functions/_shared/foreignArticle";
 
 const record = (v: unknown): Record<string, unknown> => v && typeof v === "object" && !Array.isArray(v) ? v as Record<string, unknown> : {};
 const text = (v: unknown): string => typeof v === "string" ? v : "";
 const norm = (v: string) => v.toLowerCase().replace(/[.,'"’‘:;()\[\]]/g, " ").replace(/\s+/g, " ").trim();
 const party = (v: string) => norm(v).replace(/\b(inc|llc|llp|plc|ltd|corp|corporation|co|company|the|of|and)\b/g, " ").replace(/\s+/g, " ").trim();
 const fieldsByKind: Record<string, string[]> = {
-  case: ["caseName", "court", "reporter", "volume", "reporterVolume", "firstPage", "year", "docket", "neutral", "decisionDate", "parallel"],
+  case: ["caseName", "court", "reporter", "ukSeries", "ukVolume", "volume", "reporterVolume", "firstPage", "year", "docket", "neutral", "decisionDate", "parallel", "pinpoint", "paragraph"],
   statute: ["statuteName", "titleNumber", "code", "section", "sections", "year", "chapter"],
   journal_article: ["authors", "articleTitle", "journal", "volume", "firstPage", "year", "doi", "sourceUrl"],
   book: ["authors", "bookTitle", "year", "edition", "volume", "editors", "translators"],
@@ -43,13 +44,19 @@ export function acceptCitationCompletion(request: Record<string, unknown>, raw: 
     : ["articleTitle", "chapterTitle", "bookTitle", "statuteName", "doi", "sourceUrl"].filter(k => supplied[k]).map(k => `${k === "doi" || k === "sourceUrl" ? k : "title"}:${text(supplied[k])}`);
   const conflicts = Array.isArray(identity.conflicts) ? identity.conflicts : null;
   // Explicit field conflicts quarantine only that field; identity/record conflicts stop acceptance.
-  const fieldConflicts = (conflicts ?? []).filter((v): v is string => typeof v === "string" && /^conflicting_statute_/.test(v));
+  const fieldConflicts = (conflicts ?? []).filter((v): v is string => typeof v === "string" && /^(conflicting_statute_|(?:year|journal|volume|firstPage):)/.test(v));
   if (identity.matched !== true || !conflicts || conflicts.length !== fieldConflicts.length || !expected.some(a => anchors.some(b => norm(a) === norm(b))) ||
     (request.kind === "case" && out.jurisdiction !== "US" && out.jurisdiction !== "UK")) return fail("identity");
   out.identityConfirmed = true;
   const fields = record(r.fields), grounded = record(r.grounded), provenance = record(r.provenance);
+  const identityFields = request.kind === "case" ? ["caseName", "docket"] : request.kind === "book_chapter" ? ["chapterTitle", "bookTitle"] : ["articleTitle", "bookTitle", "statuteName", "doi", "sourceUrl"];
+  if (identityFields.some(key => supplied[key] !== undefined && fields[key] !== undefined && citationBindingText(text(supplied[key])) !== citationBindingText(text(fields[key])))) {
+    out.identityConfirmed = false; return fail("identity");
+  }
   const sources = Array.isArray(r.sources) ? r.sources.map(record) : [];
   for (const [key, value] of Object.entries(fields)) {
+    // Compatible full bylines confirm an abbreviated supplied byline, but never replace it.
+    if (request.kind === "journal_article" && key === "authors" && typeof value === "string" && typeof supplied[key] === "string" && articleFieldMatches(key, supplied[key], value)) continue;
     const p = record(provenance[key]);
     const source = sources.find(s => s.url === p.sourceUrl);
     const title = text(source?.title), donorTitle = text(p.sourceTitle);
