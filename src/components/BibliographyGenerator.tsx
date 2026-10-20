@@ -7,6 +7,8 @@ import { FormattedCitation } from "./FormattedCitation";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { toast } from "sonner";
 import { runCitation, CitationRunError, type CitationRunRetry, type CitationRunRecovery } from "@/lib/runCitation";
+import { buildBibliographyCopy, type BibliographyCopyGroup } from "@/lib/bibliographyCopy";
+import { copyRichText } from "@/lib/clipboard";
 import { useAuth } from "@/hooks/useAuth";
 import { useCitationRowGuard } from "@/lib/useCitationRowGuard";
 import { citationRetryDisclosure } from "@/lib/functionError";
@@ -440,35 +442,33 @@ export function BibliographyGenerator() {
     }
 
     const grouped = groupEntries(sortedEntries);
-    const lines: string[] = [];
+    const groups: BibliographyCopyGroup[] = [];
 
     const hebrewCats = grouped.filter((g) => g.language === "hebrew");
     if (hebrewCats.length > 0) {
-      lines.push("מקורות בעברית");
-      lines.push("");
+      groups.push({ label: "מקורות בעברית", entries: [] });
       for (const group of hebrewCats) {
-        lines.push(CATEGORY_LABELS[group.category] || group.category);
-        for (const entry of group.entries) {
-          lines.push(cleanForCopy(entry.fullCitation));
-        }
-        lines.push("");
+        groups.push({ label: CATEGORY_LABELS[group.category] || group.category, entries: group.entries });
       }
     }
 
     const englishCats = grouped.filter((g) => g.language === "english");
     if (englishCats.length > 0) {
-      lines.push("מקורות באנגלית");
-      lines.push("");
+      groups.push({ label: "מקורות באנגלית", entries: [] });
       for (const group of englishCats) {
-        lines.push(CATEGORY_LABELS[group.category] || group.category);
-        for (const entry of group.entries) {
-          lines.push(cleanForCopy(entry.fullCitation));
-        }
-        lines.push("");
+        groups.push({ label: CATEGORY_LABELS[group.category] || group.category, entries: group.entries });
       }
     }
 
-    navigator.clipboard.writeText(lines.join("\n"));
+    // Rich copy keeps citation styles (italic / small caps); the plain
+    // fallback is marker-free. Entry text is cleaned of metadata lines first.
+    const { html, plain } = buildBibliographyCopy(
+      groups.map((g) => ({
+        label: g.label,
+        entries: g.entries.map((e) => ({ fullCitation: cleanForCopy(e.fullCitation) })),
+      })),
+    );
+    void copyRichText(html, plain);
     toast.success("הביבליוגרפיה הועתקה ללוח!");
   };
 
@@ -1026,6 +1026,7 @@ function cleanCitation(text: string): string {
   return text
     .replace(/\*\*/g, "")
     .replace(/##/g, "")
+    .replace(/\^\^/g, "")
     .replace(/^📐.*$/gm, "")
     .replace(/^כלל:.*$/gm, "")
     .replace(/^\d+\.\s*/, "")
@@ -1036,6 +1037,7 @@ function cleanForCopy(text: string): string {
   return text
     .replace(/\*\*/g, "")
     .replace(/##/g, "")
+    .replace(/\^\^/g, "")
     .replace(/^📐.*$/gm, "")
     .trim();
 }
