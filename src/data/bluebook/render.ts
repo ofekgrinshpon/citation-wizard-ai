@@ -150,24 +150,6 @@ export function renderUsCase(f: ForeignCaseFields): RenderResult {
   if (!f.volume) missing.push("volume");
   if (!f.firstPage) missing.push("firstPage");
 
-  // Database-only path (M2A): an alternative publication identifier — never a
-  // reporter/volume/page. Requires docket, court and exact decision date.
-  const isDbOnly = !(f.volume && f.reporter && f.firstPage) && !!f.databaseIdentifier;
-  if (isDbOnly) {
-    const dbMissing: string[] = [];
-    if (!f.docket) dbMissing.push("docket");
-    if (!f.court) dbMissing.push("court");
-    if (!f.decisionDate) dbMissing.push("decisionDate");
-    if (f.caseName?.trim() && dbMissing.length === 0) {
-      const star = f.starPinpoint ?? (f.pinpoint ? f.pinpoint : undefined);
-      const core = `No. ${f.docket}, ${f.databaseIdentifier}${star ? `, at *${star}` : ""}`;
-      reportExtraFields(f, ["caseName", "docket", "databaseIdentifier", "starPinpoint", "pinpoint", "court", "decisionDate", "year"], warnings, unrep);
-      const out = appendRemainder(`${fullCitationCaseName(name)}, ${core} (${f.court} ${f.decisionDate})`, f.unparsedRemainder, warnings, unrep);
-      return finish(out, warnings, [], unrep);
-    }
-    missing.push(...dbMissing);
-  }
-
   let core: string;
   const used = ["caseName", "volume", "reporter", "firstPage", "pinpoint", "paragraph", "court", "year", "parallel"];
   if (f.volume && f.reporter && f.firstPage) {

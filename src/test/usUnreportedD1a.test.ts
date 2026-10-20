@@ -40,6 +40,22 @@ describe("D1a — bounded synthetic general R10.8.1(a,b) fixtures", () => {
     const input = "Alpha v. Beta, No. 24-CV-017-A, slip op. (D. Mass. Mar. 2, 2024)";
     expect(citationToPlain(renderForeignCitation(input)?.citation ?? "")).toBe(`${input}.`);
   });
+  it("locally retains incomplete docket/date with honest warnings", async () => {
+    for (const rawInput of [
+      "Alpha v. Beta, 2024 WL 123456 (D. Mass. Mar. 2, 2024)",
+      "Alpha v. Beta, No. 24-CV-017-A, slip op. at 6 (D. Mass.)",
+    ]) {
+      const result = await runCitation({ rawInput, useVerifiedStore: false });
+      expect(result.status).toBe("warning");
+      expect(result.reply).toContain("[חסר:");
+      expect(b.invoke).not.toHaveBeenCalled();
+    }
+  });
+  it("does not cross a manual non-US case choice into local US formatting", async () => {
+    const result = await runCitation({ rawInput: SLIP, overrideType: "foreign_case_other", useVerifiedStore: false });
+    expect(result.citation).not.toBe(`${SLIP}.`);
+    expect(b.invoke).toHaveBeenCalledTimes(1);
+  });
   it("does not turn a filing date into decision year", () => {
     const f = detectForeignSource(PENDING)?.fields;
     expect(f).toMatchObject({ dateMeaning: "filed", decisionDate: "Mar. 2, 2024" });
