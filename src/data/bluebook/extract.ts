@@ -1,4 +1,5 @@
 import { extractUnpublishedWork } from "./unpublished";
+import { extractPeriodical } from "./periodical";
 /**
  * Deterministic foreign-source detection + field extraction (Bluebook 22, M1).
  *
@@ -569,6 +570,15 @@ export function detectForeignSource(raw: string): ForeignDetection | null {
   // Stage 5 batch 2: explicit manuscript / thesis parenthetical only.
   const unpub = extractUnpublishedWork(text);
   if (unpub) return build(unpub.kind, "OTHER", unpub.fields);
+
+  // Stage 5 batch 3: R16.5 nonconsecutive / R16.6 print newspaper. Ambiguous
+  // shared structure is NOT guessed: it surfaces as generic foreign "other".
+  const per = extractPeriodical(text);
+  if (per) {
+    if (per.kind === "journal_article") return build("journal_article", "OTHER", { ...per.fields, nonconsecutive: true });
+    if (per.kind === "newspaper") return build("newspaper", "OTHER", per.fields);
+    return build("other", "OTHER", per.fields);
+  }
 
   // 5a. Book chapter (before article/book so "in <Book>" never collapses) — M2A
   const chap = extractBookChapter(text);

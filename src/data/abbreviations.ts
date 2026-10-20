@@ -152,6 +152,7 @@ export type SourceType =
   | 'foreign_internet'         // מקור מרשתת לועזי (כלל 36.9)
   | 'foreign_unpublished_manuscript' // כתב יד לועזי שלא פורסם (Bluebook 21 R17.2.1)
   | 'foreign_thesis'           // עבודת דוקטורט/תזה לועזית (Bluebook 21 R17.2.2)
+  | 'foreign_newspaper'        // כתבה בעיתון מודפס לועזי (Bluebook 21 R16.6)
   | 'other'                 // אחר (דברי כנסת וכו')
   | 'unknown';
 
@@ -197,6 +198,7 @@ export const REQUIRED_FIELDS: Record<SourceType, string[]> = {
   foreign_internet: ['title', 'site', 'url'],
   foreign_unpublished_manuscript: ['authors', 'title', 'date', 'workType'],
   foreign_thesis: ['authors', 'title', 'date', 'workType', 'institution'],
+  foreign_newspaper: ['title', 'periodical', 'date', 'firstPage'],
   other: [],
   unknown: [],
 };
@@ -573,6 +575,7 @@ export const SOURCE_TYPE_LABELS: Record<SourceType, string> = {
   foreign_internet: 'מקור מרשתת לועזי (36.9)',
   foreign_unpublished_manuscript: 'כתב יד לועזי שלא פורסם',
   foreign_thesis: 'עבודת דוקטורט/תזה לועזית',
+  foreign_newspaper: 'כתבה בעיתון לועזי',
   other: 'אחר',
   unknown: 'לא מזוהה',
 };
@@ -619,6 +622,7 @@ export const RULE_REFERENCES: Record<SourceType, string> = {
   foreign_internet: 'כלל 36.9 – מקורות במרשתת לועזיים',
   foreign_unpublished_manuscript: 'כלל 35.1 – Bluebook 21 R17.2.1 (כתבי יד שלא פורסמו)',
   foreign_thesis: 'כלל 35.1 – Bluebook 21 R17.2.2 (עבודות דוקטורט ותזות)',
+  foreign_newspaper: 'כלל 35.1 – Bluebook 21 R16.6 (עיתונים מודפסים)',
   other: 'כלל 8 – אחר (דברי כנסת וכו׳)',
   unknown: '',
 };

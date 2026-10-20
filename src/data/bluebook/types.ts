@@ -24,6 +24,7 @@ export type ForeignSourceKind =
   | "internet"
   | "unpublished_manuscript"
   | "thesis"
+  | "newspaper"
   | "other";
 
 export type ForeignJurisdiction = "US" | "UK" | "OTHER";
@@ -46,6 +47,7 @@ export const FOREIGN_TYPE_IDENTITY: Partial<Record<SourceType, ForeignIdentity>>
   foreign_internet: { kind: "internet", jurisdiction: "OTHER" },
   foreign_unpublished_manuscript: { kind: "unpublished_manuscript", jurisdiction: "OTHER" },
   foreign_thesis: { kind: "thesis", jurisdiction: "OTHER" },
+  foreign_newspaper: { kind: "newspaper", jurisdiction: "OTHER" },
   foreign: { kind: "other", jurisdiction: "OTHER" },
 };
 
@@ -81,6 +83,8 @@ export function toSourceType(
       return "foreign_unpublished_manuscript";
     case "thesis":
       return "foreign_thesis";
+    case "newspaper":
+      return "foreign_newspaper";
     default:
       return "foreign";
   }
@@ -194,7 +198,8 @@ export type ForeignFields =
   | ForeignBookFields
   | ForeignChapterFields
   | ForeignInternetFields
-  | ForeignUnpublishedFields;
+  | ForeignUnpublishedFields
+  | ForeignPeriodicalFields;
 
 /** Stage 5 batch 2 (R17.2.1–17.2.2): supplied manuscript/thesis fields, verbatim. */
 export interface ForeignUnpublishedFields {
@@ -211,5 +216,26 @@ export interface ForeignUnpublishedFields {
   /** No type label was supplied; the manual subtype selection supplied the kind. */
   typeFromSelection?: boolean;
   ambiguousTrailingNumber?: boolean;
+  unparsedRemainder?: string;
+}
+
+/** Stage 5 batch 3 (R16.5 nonconsecutive / R16.6 print newspaper): supplied fields, verbatim. */
+export interface ForeignPeriodicalFields {
+  authors?: string;
+  /** Supplied Editorial / Opinion / Letter to the Editor designation (roman). */
+  designation?: string;
+  title?: string;
+  periodical?: string;
+  /** Newspaper publication place as supplied, never inferred. */
+  place?: string;
+  /** Cover/publication date exactly as supplied (season/month range allowed). */
+  date?: string;
+  /** Explicit issue designation used only when no cover date was supplied. */
+  issue?: string;
+  section?: string;
+  firstPage?: string;
+  pinpoint?: string;
+  /** Marks R16.5 nonconsecutive mode on a periodical.article. */
+  nonconsecutive?: true;
   unparsedRemainder?: string;
 }

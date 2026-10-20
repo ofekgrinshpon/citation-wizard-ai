@@ -113,6 +113,7 @@ const KIND_TO_SUBTYPE: Record<string, string> = {
   internet: "web_native.page",
   unpublished_manuscript: "unpublished_communication.manuscript",
   thesis: "unpublished_communication.thesis",
+  newspaper: "periodical.newspaper",
 };
 
 /** Deterministic detection. Language, script, host and publisher are never jurisdiction evidence. */
@@ -267,6 +268,8 @@ export function engineRouteFor(e: EffectiveClassification): { sourceType: Source
   // Stage 5 batch 2: only these two siblings; letters/memos/etc. stay unsupported.
   if (sub === "unpublished_communication.manuscript") return { sourceType: "foreign_unpublished_manuscript", supported: true };
   if (sub === "unpublished_communication.thesis") return { sourceType: "foreign_thesis", supported: true };
+  // Stage 5 batch 3: print newspaper only; wire/database/internet siblings stay unsupported.
+  if (sub === "periodical.newspaper") return { sourceType: "foreign_newspaper", supported: true };
   if (fam === "decision") return { sourceType: "foreign_case_other", supported: false };
   return { sourceType: "foreign", supported: false };
 }
