@@ -1951,7 +1951,11 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
           if (
             !!foreignLookupResult?.articleResolution ||
             (foreignLookupResult?.identity.matched && Object.keys(foreignLookupResult.fields).length > 0) ||
-            (foreignLookupResult?.disambiguation && foreignLookupResult.disambiguation.length > 1)
+            (foreignLookupResult?.disambiguation && foreignLookupResult.disambiguation.length > 1) ||
+            // Statutes never fall through to the model: an unmatched, ambiguous
+            // or conflicting lookup is an honest typed state, not a prompt hint.
+            (flKind === "statute" && !!foreignLookupResult &&
+              (foreignLookupResult.identity.matched || foreignLookupResult.identity.conflicts.length > 0))
           ) {
             // Older clients merge article fields without the new identity and
             // pinpoint contract. Do not let them consume a partial typed result.
