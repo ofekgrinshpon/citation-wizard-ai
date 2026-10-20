@@ -28,29 +28,19 @@ function extractCitationText(fullContent: string): string {
     .trim();
 }
 
-/** Convert citation text with **bold** and ##italic## markers to OOXML runs */
+/** Convert citation text with **bold**, ##italic## and ^^small caps^^ markers
+ *  to OOXML runs. Styles become native Word run properties — marker tokens
+ *  never reach the document. */
 export function citationToOoxml(rawText: string): string {
   const text = extractCitationText(rawText);
 
-  const segments: { text: string; bold: boolean; italic: boolean }[] = [];
-
-  const boldParts = text.split(/\*\*/);
-  boldParts.forEach((part, i) => {
-    const isBold = i % 2 === 1;
-    const italicParts = part.split(/##/);
-    italicParts.forEach((subPart, j) => {
-      const isItalic = j % 2 === 1;
-      if (subPart) {
-        segments.push({ text: subPart, bold: isBold, italic: isItalic });
-      }
-    });
-  });
-
-  const runs = segments
+  const runs = parseCitationSegments(text)
+    .filter((seg) => seg.text)
     .map((seg) => {
       const rPr: string[] = [];
       if (seg.bold) rPr.push("<w:b/>");
       if (seg.italic) rPr.push("<w:i/>");
+      if (seg.smallCaps) rPr.push("<w:smallCaps/>");
       rPr.push('<w:rtl/>');
       rPr.push('<w:rFonts w:cs="David" w:hint="cs"/>');
       rPr.push('<w:sz w:val="20"/>');
@@ -89,11 +79,9 @@ function wrapInOoxmlPackage(innerOoxml: string): string {
 </pkg:package>`;
 }
 
-/** Get plain text from citation (strip formatting markers) */
+/** Get plain text from citation (strip all formatting markers) */
 export function getPlainCitationText(rawText: string): string {
-  return extractCitationText(rawText)
-    .replace(/\*\*/g, "")
-    .replace(/##/g, "");
+  return citationTextOnly(extractCitationText(rawText));
 }
 
 /** Snapshot of available Office capabilities */
