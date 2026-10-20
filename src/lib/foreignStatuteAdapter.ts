@@ -156,7 +156,34 @@ function requestFields(fields: Record<string, StatuteFieldValue>): Record<string
     if (typeof v === "string" && v.trim()) out[k] = v.trim();
   }
   if (Array.isArray(fields.sections) && fields.sections.length) out.sections = fields.sections.join(", ");
+  // Retained for read-only recovery rendering; the server lookup ignores it.
+  if (typeof fields.unparsedRemainder === "string" && fields.unparsedRemainder.trim()) out.unparsedRemainder = fields.unparsedRemainder.trim();
   return out;
+}
+
+/**
+ * Rebuild the preparation from a retained typed request (read-only recovery).
+ * Uses only the request's own supplied fields; null when it is not a valid
+ * supported statute request.
+ */
+export function statutePreparationFromRequest(request: unknown): StatutePreparation | null {
+  const r = request && typeof request === "object" ? request as Record<string, unknown> : null;
+  if (!r || r.kind !== "statute" || r.statuteResponseVersion !== STATUTE_RESPONSE_VERSION) return null;
+  if ((r.jurisdiction !== "US" && r.jurisdiction !== "UK") || typeof r.rawInput !== "string") return null;
+  const pf = r.parsedFields && typeof r.parsedFields === "object" ? r.parsedFields as Record<string, unknown> : {};
+  const fields: Record<string, StatuteFieldValue> = {};
+  for (const k of ["statuteName", "titleNumber", "code", "section", "year", "chapter", "unparsedRemainder"]) {
+    if (typeof pf[k] === "string" && (pf[k] as string).trim()) fields[k] = (pf[k] as string).trim();
+  }
+  if (typeof pf.sections === "string") {
+    const list = pf.sections.split(",").map((x) => x.trim()).filter(Boolean);
+    if (list.length) fields.sections = list;
+  }
+  const jurisdiction = r.jurisdiction;
+  return {
+    sourceType: jurisdiction === "US" ? "foreign_statute_us" : "foreign_statute_uk", jurisdiction, rawInput: r.rawInput, fields, outcome: "lookup",
+    request: { enabled: true, statuteResponseVersion: STATUTE_RESPONSE_VERSION, kind: "statute", jurisdiction, rawInput: r.rawInput, parsedFields: requestFields(fields) },
+  };
 }
 
 /**

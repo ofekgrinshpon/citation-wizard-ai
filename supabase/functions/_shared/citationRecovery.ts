@@ -9,7 +9,7 @@ export const CITATION_FIELD_KEYS = [
   "doi", "sourceUrl", "title", "jurisdiction", "division", "number", "section", "clause", "statuteName",
   "titleNumber", "code", "subsection", "chapter", "regnalYear", "monarch", "site", "date", "url",
 ] as const;
-const kinds = ["case", "journal_article", "book", "book_chapter"];
+const kinds = ["case", "journal_article", "book", "book_chapter", "statute"];
 const jurisdictions = ["US", "UK", "OTHER", "UNKNOWN"];
 const bases = ["official_record", "structured_metadata", "publisher_metadata", "repository_metadata", "search_result_explicit", "document_inspection"];
 export function recoveryObject(value: unknown): value is Record<string, unknown> {
@@ -47,19 +47,20 @@ export function citationRecoveryInput(value: unknown): CitationRecoveryInput | n
       !(value.batchId === null || (typeof value.batchId === "string" && value.batchId.length >= 8 && value.batchId.length <= 200))) return null;
   const foreign = value.foreignLookup;
   if (foreign !== null && (!recoveryObject(foreign) ||
-      !keysOnly(foreign, ["enabled", "kind", "jurisdiction", "rawInput", "parsedFields", "articleResponseVersion"]) ||
+      !keysOnly(foreign, ["enabled", "kind", "jurisdiction", "rawInput", "parsedFields", "articleResponseVersion", "statuteResponseVersion"]) ||
       !(typeof foreign.enabled === "boolean") || !optionalString(foreign, "rawInput") ||
       ("kind" in foreign && !kinds.includes(String(foreign.kind))) ||
       ("jurisdiction" in foreign && !jurisdictions.includes(String(foreign.jurisdiction))) ||
       ("parsedFields" in foreign && !fields(foreign.parsedFields)) ||
-      ("articleResponseVersion" in foreign && foreign.articleResponseVersion !== 1))) return null;
+      ("articleResponseVersion" in foreign && foreign.articleResponseVersion !== 1) ||
+      ("statuteResponseVersion" in foreign && foreign.statuteResponseVersion !== 1))) return null;
   if (!bounded(value, CITATION_RECOVERY_INPUT_BYTES)) return null;
   return structuredClone(value) as unknown as CitationRecoveryInput;
 }
 
 /** Validate the published typed foreign result, never a raw provider envelope. */
 function validForeignResult(value: unknown): value is Record<string, unknown> {
-  if (!recoveryObject(value) || !keysOnly(value, ["kind", "jurisdiction", "fields", "grounded", "provenance", "sources", "identity", "disambiguation", "diagnostics", "error", "articleResolution"]) ||
+  if (!recoveryObject(value) || !keysOnly(value, ["kind", "jurisdiction", "fields", "grounded", "provenance", "sources", "identity", "disambiguation", "diagnostics", "error", "articleResolution", "statuteResponseVersion"]) ||
       !kinds.includes(String(value.kind)) || !jurisdictions.includes(String(value.jurisdiction)) || !fields(value.fields) || !fields(value.grounded, "boolean") ||
       !recoveryObject(value.provenance) || !keysOnly(value.provenance, CITATION_FIELD_KEYS) ||
       !Object.values(value.provenance).every((entry) => recoveryObject(entry) && keysOnly(entry, ["value", "sourceUrl", "sourceTitle", "basis"]) &&
@@ -78,7 +79,8 @@ function validForeignResult(value: unknown): value is Record<string, unknown> {
   const diagnostics = value.diagnostics;
   return recoveryObject(diagnostics) && keysOnly(diagnostics, ["tier1Queried", "tier2Fired", "jurisdictionResolvedBy"]) &&
     typeof diagnostics.tier1Queried === "boolean" && typeof diagnostics.tier2Fired === "boolean" && optionalString(diagnostics, "jurisdictionResolvedBy") &&
-    optionalString(value, "error") && (!("articleResolution" in value) || ["resolved", "incomplete", "conflict"].includes(String(value.articleResolution)));
+    optionalString(value, "error") && (!("articleResolution" in value) || ["resolved", "incomplete", "conflict"].includes(String(value.articleResolution))) &&
+    (!("statuteResponseVersion" in value) || (value.statuteResponseVersion === 1 && value.kind === "statute"));
 }
 
 /** Deliberate projection strips diagnostic/auth/provider envelopes before storage. */
