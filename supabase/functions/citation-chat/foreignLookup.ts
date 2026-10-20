@@ -257,7 +257,8 @@ function textContainsParty(text: string, party: string): boolean {
 function normalizeTitle(s: string): string {
   return s
     .toLowerCase()
-    .replace(/[.,'"’‘:;()\[\]]/g, " ")
+    // Marker-like characters (#, *) are never meaningful title content.
+    .replace(/[.,'"’‘:;()\[\]#*]/g, " ")
     .replace(/\s+/g, " ")
     .trim();
 }
