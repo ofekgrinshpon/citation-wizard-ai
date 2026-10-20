@@ -42,6 +42,12 @@ vi.mock("@/components/MessageBubble", () => ({
     <div data-testid={`bubble-${msg.role}`}>
       <span>{msg.content}</span>
       {onChangeSourceType && (
+        <button type="button" onClick={() => onChangeSourceType("case_law_database", {
+          itemKey: "chat:0", sourceType: "case_law_database", supported: true, effectiveKey: "il-eff", inputFingerprint: "il-fp",
+          manualChoice: { jurisdiction: "IL", sourceType: "case_law_database" },
+        })}>regen-israel</button>
+      )}
+      {onChangeSourceType && (
         <button type="button" onClick={() => onChangeSourceType("foreign_statute_uk", {
           itemKey: "chat:0", sourceType: "foreign_statute_uk", supported: true, effectiveKey: "eff", inputFingerprint: "fp",
         })}>regen-uk</button>
@@ -99,6 +105,31 @@ beforeEach(() => {
 const CORNELL_1983 = { title: "42 U.S.C. § 1983 - Civil action for deprivation of rights", url: "https://www.law.cornell.edu/uscode/text/42/1983", snippet: "Civil Rights Act — 42 U.S.C. § 1983 (2018)." };
 
 describe("chat page — typed statute request through initial send and regeneration", () => {
+  it("batch A German input and conflicting Israel regeneration stay local", async () => {
+    await mountChat(); await send("BVerfG 1 BvR 400/51");
+    await waitFor(() => expect(screen.getByTestId("bubble-assistant")).toHaveTextContent("אינו נתמך"));
+    await act(async () => { fireEvent.click(screen.getByRole("button", { name: "regen-israel" })); });
+    expect(screen.getByTestId("bubble-assistant")).toHaveTextContent("סותרים");
+    expect(m.invoke).not.toHaveBeenCalled();
+  });
+  it("batch A incomplete US-shaped case uses typed request in initial/manual chat and ignores generic output", async () => {
+    const input = "Brown v. Board of Education";
+    m.invoke.mockResolvedValue({ data: { content: "UNSAFE MODEL OUTPUT" }, errorInfo: null });
+    await mountChat(); await send(input);
+    await waitFor(() => expect(screen.getByTestId("bubble-assistant")).toHaveTextContent(input));
+    expect(m.invoke.mock.calls[0][1].foreignLookup).toMatchObject({ kind: "case", jurisdiction: "UNKNOWN", rawInput: input });
+    expect(m.invoke.mock.calls[0][1].pastedCitation).toMatchObject({ version: 1, rawInput: input, jurisdiction: "UNKNOWN" });
+    await act(async () => { fireEvent.click(screen.getByRole("button", { name: "regen-us-case" })); });
+    expect(m.invoke.mock.calls[1][1].pastedCitation.manualChoice.jurisdiction).toBe("US");
+    expect(screen.getByTestId("bubble-assistant")).not.toHaveTextContent("UNSAFE MODEL OUTPUT");
+  });
+  it.each(['ע"א 1234/20 כהן נ׳ לוי (נבו 2.3.2021)', 'ע"א 1234/20'])("batch A Israeli control retains original request flow: %s", async input => {
+    m.classify.mockResolvedValue({ sourceType: "case_law_database", source: "regex" });
+    m.invoke.mockResolvedValue({ data: { content: 'ע"א 1234/20 כהן נ׳ לוי (נבו 2.3.2021)' }, errorInfo: null });
+    await mountChat(); await send(input);
+    await waitFor(() => expect(m.invoke).toHaveBeenCalledTimes(1));
+    expect(m.invoke.mock.calls[0][1].pastedCitation).toMatchObject({ route: "israeli", jurisdiction: "IL", rawInput: input });
+  });
   it.each([
     "BVerfG, Urteil vom 15. Januar 1958, 1 BvR 400/51, BVerfGE 7, 198",
     "BVerfG 1 BvR 400/51",

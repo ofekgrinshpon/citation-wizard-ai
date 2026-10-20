@@ -17,6 +17,7 @@ export interface PastedCitationContract {
   sourceKind: string | null;
   jurisdiction: CitationJurisdiction;
   subjurisdiction: string | null;
+  subjurisdictionEvidence: Array<{ value: string; provenance: "supplied_text" | "manual_choice"; spans: InputSpan[] }>;
   evidence: Array<{ jurisdiction: CitationJurisdiction; signal: "court" | "reporter" | "prefix" | "parties" | "code"; span: InputSpan }>;
   candidates: { court: SuppliedField[]; reporter: SuppliedField[]; docket: SuppliedField[] };
   manualChoice: CitationManualChoice | null;
@@ -92,7 +93,8 @@ export function buildPastedCitation(raw: string, manual: CitationManualChoice | 
   const jurisdiction = detected !== "UNKNOWN" ? detected : manual?.jurisdiction ?? "UNKNOWN";
   const foreignShape = /[A-Za-z][^\n]*?\s+v(?:s)?\.?\s+[A-Za-z]/.test(raw);
   const caseInput = !!prefixed || !!bare || foreignShape || evidence.some(e => e.signal === "court" || e.signal === "reporter");
-  const unsupported = jurisdiction === "DE" ? ["formatter_DE_not_supported"] : [];
+  const unsupported = jurisdiction === "DE" ? ["formatter_DE_not_supported"] :
+    manual?.jurisdiction === "UNKNOWN" && manual.subjurisdiction && caseInput ? ["jurisdiction_formatter_unknown"] : [];
   const route = conflicts.length || unsupported.length || (!!bare && detected === "UNKNOWN" && !foreignShape)
     ? "preserve" : detected === "IL" ? "israeli" : detected !== "UNKNOWN" || foreignShape || manual?.foreign ? "foreign" : "existing";
   const missing = caseInput ? ["caseName", "year", "reporter"].filter(k => fields[k]?.state !== "supplied") : [];
@@ -102,8 +104,14 @@ export function buildPastedCitation(raw: string, manual: CitationManualChoice | 
   let cursor = 0;
   for (const s of covered) { if (s.start > cursor) unknownSpans.push({ start: cursor, end: s.start }); cursor = Math.max(cursor, s.end); }
   if (cursor < raw.length) unknownSpans.push({ start: cursor, end: raw.length });
+  const subSignal = evidence.find(e => e.jurisdiction === "UK" && /^(EWCA|EWHC)$/.test(raw.slice(e.span.start,e.span.end)));
+  const subjurisdiction = manual?.subjurisdiction ?? (subSignal ? "t2:united-kingdom/england-and-wales" : null);
+  const subjurisdictionEvidence: PastedCitationContract["subjurisdictionEvidence"] = [
+    ...(subSignal ? [{ value: "t2:united-kingdom/england-and-wales", provenance: "supplied_text" as const, spans: [subSignal.span] }] : []),
+    ...(manual?.subjurisdiction ? [{ value: manual.subjurisdiction, provenance: "manual_choice" as const, spans: [] }] : []),
+  ];
   return { version: PASTED_CITATION_VERSION, rawInput: raw, fingerprint: rawCitationFingerprint(raw),
-    sourceKind: parser?.kind ?? (caseInput ? "case" : null), jurisdiction, subjurisdiction: manual?.subjurisdiction ?? null,
+    sourceKind: parser?.kind ?? (caseInput ? "case" : null), jurisdiction, subjurisdiction, subjurisdictionEvidence,
     evidence, candidates, manualChoice: manual, fields, unknownSpans,
     classification: conflicts.length ? "conflicting" : detected === "IL" ? "identified_israeli" : detected !== "UNKNOWN" ? "identified_foreign" : "ambiguous",
     formatter: unsupported.length ? "unsupported" : jurisdiction === "UNKNOWN" ? "unknown" : "existing_route",
@@ -117,10 +125,13 @@ export function pastedCitationWarning(c: PastedCitationContract): string {
 /** Derive from supplied messages as well as rawInput: client declarations never override text evidence. */
 export function guardPastedCitationRequest(body: { messages: Array<{ role: string; content: string }>; rawInput?: unknown; foreignLookup?: unknown; pastedCitation?: unknown }) {
   const last = [...body.messages].reverse().find(m => m.role === "user")?.content ?? "";
+  const manualLine = last.match(/\[סיווג שיפוט ידני: (\{[^\n]*\})\]/)?.[1];
   const stripped = last.replace(/══[\s\S]*?═{3,}/g, "").replace(/\[[^\]\n]*(?:סיווג|כלל רלוונטי)[^\]\n]*\]\s*/g, "").trim();
   const raw = typeof body.rawInput === "string" ? body.rawInput : stripped;
   const wire = body.pastedCitation as Partial<PastedCitationContract> | undefined;
-  const choice = wire?.version === 1 ? wire.manualChoice : null;
+  let retainedChoice: CitationManualChoice | null = null;
+  if (manualLine) { try { retainedChoice = JSON.parse(manualLine); } catch { /* malformed choice is not evidence */ } }
+  const choice = wire?.version === 1 ? wire.manualChoice : retainedChoice;
   const manual = choice && typeof choice === "object" && !Array.isArray(choice) ? {
     ...(typeof choice.jurisdiction === "string" && ["IL", "US", "UK", "DE", "UNKNOWN"].includes(choice.jurisdiction) ? { jurisdiction: choice.jurisdiction } : {}),
     ...(typeof choice.subjurisdiction === "string" ? { subjurisdiction: choice.subjurisdiction } : {}),

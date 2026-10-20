@@ -13,6 +13,18 @@ beforeEach(() => {
   vi.stubGlobal("fetch", vi.fn(() => { throw new Error("Live network forbidden"); }));
 });
 describe("batch A real runCitation boundary", () => {
+  it("incomplete foreign case crosses request boundary typed, and generic response is terminal preservation", async () => {
+    const rawInput = "Brown v. Board of Education";
+    const r = await runCitation({ rawInput, useVerifiedStore: false });
+    expect(m.invoke.mock.calls[0][1].pastedCitation).toMatchObject({ version: 1, jurisdiction: "UNKNOWN", rawInput });
+    expect(m.invoke.mock.calls[0][1].foreignLookup).toMatchObject({ kind: "case", jurisdiction: "UNKNOWN", parsedFields: { caseName: rawInput } });
+    expect(r.citation).toBe(rawInput); expect(r.status).toBe("warning");
+  });
+  it("typed response mismatch preserves original and does not redispatch", async () => {
+    m.invoke.mockResolvedValue({ data: { content: "UNSAFE", pastedCitation: { version: 1, fingerprint: "wrong", rawInput: "wrong" } }, errorInfo: null });
+    const r = await runCitation({ rawInput: "Brown v. Board of Education", useVerifiedStore: false });
+    expect(r.citation).toBe("Brown v. Board of Education"); expect(m.invoke).toHaveBeenCalledTimes(1);
+  });
   it.each([
     "BVerfG, Urteil vom 15. Januar 1958, 1 BvR 400/51, BVerfGE 7, 198",
     "BVerfG 1 BvR 400/51",

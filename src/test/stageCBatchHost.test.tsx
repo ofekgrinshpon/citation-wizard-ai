@@ -79,6 +79,20 @@ const choose = (jurisdiction: string) => saveRecord("u1", applyOverride(createRe
   { scalars: { family: "decision", subtype: "decision.judgment", jurisdiction } }));
 
 describe("BatchFootnoteBuilder — explicit regeneration", () => {
+  it("batch A actual batch regeneration preserves Germany under conflicting US manual choice without transport", async () => {
+    const input = "BVerfG 1 BvR 400/51";
+    localStorage.setItem("footnote_cells_row-project", JSON.stringify([{ id: 1, key: "k1", input, output: "old output", status: "warning", detectedType: "foreign" }]));
+    saveRecord("u1", applyOverride(createRecord("batch:k1", input), { scalars: { family: "decision", subtype: "decision.judgment", jurisdiction: "us" } }));
+    const actual = await vi.importActual<typeof import("@/lib/runCitation")>("@/lib/runCitation");
+    b.runCitation.mockImplementation(actual.runCitation);
+    render(<BatchFootnoteBuilder />);
+    await act(async () => { fireEvent.click(screen.getByRole("button", { name: "הפקה מחדש לפי הסיווג" })); });
+    await waitFor(() => expect(b.runCitation).toHaveBeenCalledTimes(1));
+    const result = await b.runCitation.mock.results[0].value;
+    expect(result.citation).toBe(input); expect(result.warningMsg).toContain("סותרים");
+    expect(b.runCitation.mock.calls[0][0].manualChoice.jurisdiction).toBe("US");
+    expect(fetchSpy).not.toHaveBeenCalled(); expect(supabase.functions.invoke).not.toHaveBeenCalled();
+  });
   it("D1a real shared engine renders an actual batch regeneration locally and preserves copies", async () => {
     const input = "Alpha v. Beta, No. 24-CV-017-A, 2024 WL 123456, at *3, *7–9 (D. Mass. Mar. 2, 2024)";
     localStorage.setItem("footnote_cells_row-project", JSON.stringify([
