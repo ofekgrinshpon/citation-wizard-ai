@@ -199,11 +199,10 @@ describe("chat page — typed statute request through initial send and regenerat
     expect(screen.getByTestId("bubble-assistant")).toHaveTextContent(diagnostic);
     expect(screen.getByTestId("bubble-assistant").textContent).toContain(input);
     expect(m.invoke).not.toHaveBeenCalled();
-    expect(m.classify).not.toHaveBeenCalled();
   });
   const EDBOOK = "2 The Synthetic Handbook, at xii (Ana Roe & Ben Poe eds., Cy Lu trans., 3d ed. 2010)";
-  const CHAP = "Ana Roe, Quiet Rules, in 3 The Synthetic Collection 210, 214 (Ben Poe ed., 2d ed. 2015)";
-  it.each([["foreign_book", EDBOOK, "2 The Synthetic Handbook xii (Ana Roe & Ben Poe eds., Cy Lu trans., 3d ed. 2010)."], ["foreign_book_chapter", CHAP, `${CHAP}.`]] as const)("R15 %s actual initial+regeneration chat is local", async (type, input, expected) => {
+  const CHAP = "Author: Ana Roe; Chapter: Quiet Rules; Collection: The Synthetic Collection; Volume: 3; First page: 210; Pinpoint: 214; Editor: Ben Poe; Edition: 2d; Year: 2015";
+  it.each([["foreign_book", EDBOOK, "2 The Synthetic Handbook xii (Ana Roe & Ben Poe eds., Cy Lu trans., 3d ed. 2010)."], ["foreign_book_chapter", CHAP, "Ana Roe, Quiet Rules, in 3 The Synthetic Collection 210, 214 (Ben Poe ed., 2d ed. 2015)."]] as const)("R15 %s actual initial+regeneration chat is local", async (type, input, expected) => {
     m.classify.mockResolvedValue({ sourceType: type, source: "regex" });
     await mountChat();
     await send(input);

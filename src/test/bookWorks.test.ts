@@ -80,7 +80,7 @@ describe("R15.1–15.4(a) books", () => {
 
 describe("R15.5.1(a) chapters (Israeli 36.8 italic 'in')", () => {
   it("roman author, italic title, comma outside italics, italic in, small-caps collection", () => {
-    const r = chap("Ana Roe, Quiet Rules, in The Synthetic Collection 210, 214 (Ben Poe ed., 2015)")!;
+    const r = chap("Author: Ana Roe; Chapter: Quiet Rules; Collection: The Synthetic Collection; First page: 210; Pinpoint: 214; Editor: Ben Poe; Year: 2015")!;
     expect(r.citation).toBe("Ana Roe, ##Quiet Rules##, ##in## ^^The Synthetic Collection^^ 210, 214 (Ben Poe ed., 2015).");
     const html = citationToHtml(r.citation);
     expect(html).toContain("<em>in</em>");
@@ -91,7 +91,7 @@ describe("R15.5.1(a) chapters (Israeli 36.8 italic 'in')", () => {
     expect(plain(r.citation)).toBe("Ana Roe, Quiet Rules, in 3 The Synthetic Collection 210 (Ben Poe ed., Cy Lu trans., 2d ed. 2015) (1960).");
   });
   it("missing first page stays missing, never taken from the pinpoint", () => {
-    const r = chap("Ana Roe, Quiet Rules, in The Synthetic Collection, at 214 (2015)")!;
+    const r = chap("Author: Ana Roe; Chapter: Quiet Rules; Collection: The Synthetic Collection; Pinpoint: 214; Year: 2015")!;
     expect(r.missing).toContain("firstPage");
     expect(plain(r.citation)).toContain("[חסר: עמוד], 214");
     expect(renderBookChapter({ authors: "A", chapterTitle: "B", bookTitle: "C", pinpoint: "9", year: "2000" }).missing).toContain("firstPage");
@@ -104,7 +104,7 @@ describe("R15.5.1(a) chapters (Israeli 36.8 italic 'in')", () => {
 });
 
 describe("routing and safety", () => {
-  const CH = "Ana Roe, Quiet Rules, in The Synthetic Collection 210 (2015)";
+  const CH = "Author: Ana Roe; Chapter: Quiet Rules; Collection: The Synthetic Collection; First page: 210; Year: 2015";
   it("manual book/chapter mismatch is preserved", () => {
     expect(book(CH)?.warningMsg).toContain("אינו תואם");
     expect(chap("The Synthetic Handbook (Ana Roe ed., 2010)")?.warningMsg).toContain("אינו תואם");
@@ -134,7 +134,7 @@ describe("routing and safety", () => {
   });
   it.each([
     ["The Synthetic Handbook (Ana Roe ed., 2010)", "foreign_book", "The Synthetic Handbook (Ana Roe ed., 2010)."],
-    [CH, "foreign_book_chapter", `${CH}.`],
+    [CH, "foreign_book_chapter", "Ana Roe, Quiet Rules, in The Synthetic Collection 210 (2015)."],
   ])("real runCitation formats %s locally without classifier/provider", async (rawInput, type, expected) => {
     const r = await runCitation({ rawInput, useVerifiedStore: false });
     expect(r.sourceType).toBe(type);

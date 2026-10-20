@@ -159,7 +159,7 @@ describe("BatchFootnoteBuilder — explicit regeneration", () => {
     expect(html).not.toMatch(/##|\^\^/);
   });
   it("R15.5.1(a) manual chapter choice reaches actual batch regeneration locally with italic in", async () => {
-    const input = "Ana Roe, Quiet <b>Rules</b>, in 3 The Synthetic Collection 210, 214 (Ben Poe ed., Cy Lu trans., 2015)";
+    const input = "Author: Ana Roe; Chapter: Quiet <b>Rules</b>; Collection: The Synthetic Collection; Volume: 3; First page: 210; Pinpoint: 214; Editor: Ben Poe; Translator: Cy Lu; Year: 2015";
     localStorage.setItem("footnote_cells_row-project", JSON.stringify([
       { id: 1, key: "k1", input, output: "old output", status: "valid", detectedType: "foreign" },
     ]));
