@@ -73,19 +73,26 @@ export function renderForeignArticleLookup(
   };
 }
 
-export function mergeForeignArticleCache(rawInput: string, fullCitation: string): string | null {
-  const supplied = parseForeignArticleInput(rawInput);
+/** Cache identity and formatting quality remain separate, with warnings retained. */
+export function renderForeignArticleCache(rawInput: string, fullCitation: string): ReturnType<typeof renderForeignDetection> {
+  const supplied = buildForeignArticleRequest(rawInput).parsedFields;
   if (!supplied.articleTitle) return null;
   const cached = detectForeignSource(fullCitation);
   if (cached?.kind !== "journal_article") return null;
   const fields = cached.fields as unknown as Record<string, string>;
   if (!Object.entries(supplied).every(([field, value]) =>
-    field === "pinpoint" || (fields[field] && articleFieldMatches(field, value, fields[field])))) return null;
+    field === "pinpoint" || field === "unparsedRemainder" || (fields[field] && articleFieldMatches(field, value, fields[field])))) return null;
+  const remainders = [...new Set([fields.unparsedRemainder, supplied.unparsedRemainder].filter((value): value is string => !!value))];
   const rendered = renderForeignDetection({ ...cached, fields: {
     ...cached.fields, ...supplied, pinpoint: supplied.pinpoint,
     authors: enrichArticleAuthors(supplied.authors, fields.authors),
+    ...(remainders.length ? { unparsedRemainder: remainders.join(" ") } : {}),
   } });
-  return rendered && !rendered.missing.length ? rendered.citation : null;
+  return rendered && !rendered.missing.length ? rendered : null;
+}
+
+export function mergeForeignArticleCache(rawInput: string, fullCitation: string): string | null {
+  return renderForeignArticleCache(rawInput, fullCitation)?.citation ?? null;
 }
 
 /** Preserve the existing candidate object shape and non-article behavior. */
@@ -93,6 +100,7 @@ export function compatibleArticleCache<T extends { full_citation: string }>(sour
   if (!candidate) return null;
   if (sourceType === "article") return null;
   if (sourceType !== "foreign_journal_article") return candidate;
-  const citation = mergeForeignArticleCache(rawInput, candidate.full_citation);
-  return citation ? { ...candidate, full_citation: citation } : null;
+  const rendered = renderForeignArticleCache(rawInput, candidate.full_citation);
+  return rendered ? { ...candidate, full_citation: rendered.citation +
+    (rendered.warnings.length ? `\n⚠️ ${rendered.warnings.join(" ")}` : "") } : null;
 }

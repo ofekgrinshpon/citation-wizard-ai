@@ -87,8 +87,11 @@ export const UK_NEUTRAL_SIGNAL = /\[(?:19|20)\d{2}\]\s*(?:UKSC|UKHL|UKPC|EWCA|EW
 
 const PROC_PREFIX_RE = /^(In re|Ex parte|In the Matter of)\s+/i;
 
-function splitParenthetical(paren?: string): { court?: string; year?: string } {
+function splitParenthetical(paren?: string): { court?: string; year?: string; decisionDate?: string } {
   if (!paren) return {};
+  const dated = paren.trim().match(/^(.*?)\b([A-Za-z]{3,9}\.?\s+\d{1,2},\s*(?:17|18|19|20)\d{2})$/);
+  const date = dated ? normalizeBluebookDate(dated[2]) : null;
+  if (dated && date) return { court: dated[1].trim() || undefined, year: date.year, decisionDate: date.date };
   const m = paren.trim().match(/^(.*?)\s*((?:19|20|18|17)\d{2})$/);
   if (m) {
     const court = m[1].trim();
@@ -102,7 +105,7 @@ export function extractUsCase(text: string): ForeignCaseFields | null {
   const m = US_CASE_RE.exec(text.trim());
   if (!m?.groups) return null;
   const g = m.groups;
-  const { court, year } = splitParenthetical(g.paren);
+  const { court, year, decisionDate } = splitParenthetical(g.paren);
   const reporter = normalizeReporter(g.rep.replace(/\s+/g, " ").trim());
   const fields: ForeignCaseFields = {
     caseName: g.name.trim(),
@@ -113,6 +116,7 @@ export function extractUsCase(text: string): ForeignCaseFields | null {
     paragraph: g.para,
     court: normalizeCourt(court),
     year,
+    ...(decisionDate ? { decisionDate } : {}),
   };
   if (g.pvol && g.prep && g.ppage) {
     const prep = normalizeReporter(g.prep.replace(/\s+/g, " ").trim());
@@ -196,7 +200,7 @@ export function extractUsConstitution(text: string) {
   const m = text.match(
     new RegExp(
       String.raw`(?<jur>U\.\s?S\.|[A-Z][A-Za-z.]{1,12})\s*CONST\.?\s*(?<div>amend\.|art\.|pmbl\.)?\s*(?<num>${ROMAN.source}|\d+)?` +
-        String.raw`(?:,\s*§+\s*(?<sec>[\w.]+(?:\s*[–\-]\s*[\w.]+)?))?(?:,\s*cl\.\s*(?<cl>[\w.]+))?`,
+        String.raw`(?:,\s*§+\s*(?<sec>[\w.]+(?:\s*[–\-]\s*[\w.]+)?(?:\s*,\s*\d+(?:\s*[–\-]\s*\d+)?) *))?(?:,\s*cl\.\s*(?<cl>[\w.]+))?`.replace("?) *", "?)*"),
       "i",
     ),
   );

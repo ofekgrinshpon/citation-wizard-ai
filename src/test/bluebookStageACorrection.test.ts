@@ -54,7 +54,8 @@ describe("real caller → real recovery contracts → retained renderer", () => 
     const now = Date.UTC(2026, 9, 20);
     const recovered = renderCitationRecovery({ requestId: "synthetic-request", retryOfRequestId: null, status: "succeeded",
       createdAt: new Date(now).toISOString(), expiresAt: new Date(now + 86_400_000).toISOString(), availability: "available",
-      input: accepted, result: { foreignLookup: foreignResult({ court: "2d Cir.", year: "1996" }) }, refundReceipt: null }, now);
+      input: accepted, result: { foreignLookup: foreignResult({ court: "2d Cir.", year: "1996" }) },
+      refundReceipt: { status: "retained", refunded: false, units_refunded: 0, request_id: "synthetic-request" } }, now);
     expect(recovered?.structured).toBe(true);
     expect(recovered?.plainText).toBe(stripMarkers(result.reply));
     expect(globalThis.fetch).not.toHaveBeenCalled();
