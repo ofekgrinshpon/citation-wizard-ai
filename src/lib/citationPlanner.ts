@@ -49,12 +49,12 @@ export interface CitationHostCapabilities {
 }
 
 export const CHAT_HOST: CitationHostCapabilities = Object.freeze({
-  host: "chat", pastedLocalDefersOpinionFormat: true, bookDefersToDeterministic: false,
+  host: "chat", pastedLocalDefersOpinionFormat: true, bookDefersToDeterministic: true,
   deterministicForeignRender: true, typedRequestBuilder: "chat_article_fields", articleIncompleteFallback: true,
   caseDisambiguation: true, groundedMerge: true, rejectEmptyCaseFields: false,
 });
 export const RUNNER_HOST: CitationHostCapabilities = Object.freeze({
-  host: "runner", pastedLocalDefersOpinionFormat: true, bookDefersToDeterministic: false,
+  host: "runner", pastedLocalDefersOpinionFormat: true, bookDefersToDeterministic: true,
   deterministicForeignRender: true, typedRequestBuilder: "runner_foreign_lookup", articleIncompleteFallback: true,
   caseDisambiguation: true, groundedMerge: true, rejectEmptyCaseFields: false,
 });
@@ -100,7 +100,7 @@ export function planLocalCitation(p: LocalPlanInput, caps: CitationHostCapabilit
   if (pasted.local && !(caps.pastedLocalDefersOpinionFormat && OPINION(pasted.detection))) {
     const warnings = pasted.detection ? renderForeignDetection(pasted.detection)?.warnings ?? [] : [];
     return { origin: "pasted_local", resolution: { ...pasted.local, pastedCitation: pasted.contract,
-      status: "warning", warningMsg: pasted.local.warningMsg } };
+      status: warnings.length ? "warning" : "valid", warningMsg: warnings[0] } };
   }
   const statutePrep = st && !p.isPinpoint ? prepareForeignStatute(st, p.input, { manual: p.manual }) : null;
   const unreported = st && !p.isPinpoint ? (renderUsUnreportedLocal(st, p.input) ?? renderUnpublishedLocal(st, p.input) ??
