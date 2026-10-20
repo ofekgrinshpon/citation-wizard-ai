@@ -132,6 +132,32 @@ describe("BatchFootnoteBuilder — explicit regeneration", () => {
     expect(html).toContain("&lt;b&gt;");
     expect(html).not.toMatch(/<i>|small-caps|##|\^\^/);
   });
+  it("R16.6 manual newspaper choice reaches actual batch regeneration locally; copy keeps escaping", async () => {
+    const input = "Local <b>Vote</b> Delayed, Daily Synthetic, June 25, 1990, at A1, A4";
+    localStorage.setItem("footnote_cells_row-project", JSON.stringify([
+      { id: 1, key: "k1", input, output: "old output", status: "valid", detectedType: "foreign" },
+    ]));
+    saveRecord("u1", applyOverride(createRecord("batch:k1", input), { scalars: { family: "periodical", subtype: "periodical.newspaper" } }));
+    const actual = await vi.importActual<typeof import("@/lib/runCitation")>("@/lib/runCitation");
+    b.runCitation.mockImplementation(actual.runCitation);
+    render(<BatchFootnoteBuilder />);
+    await act(async () => { fireEvent.click(screen.getByRole("button", { name: "הפקה מחדש לפי הסיווג" })); });
+    await waitFor(() => expect(b.runCitation).toHaveBeenCalledTimes(1));
+    expect(b.runCitation.mock.calls[0][0].overrideType).toBe("foreign_newspaper");
+    const result = await b.runCitation.mock.results[0].value;
+    expect(result.citation).toBe("##Local <b>Vote</b> Delayed##, ^^Daily Synthetic^^, June 25, 1990, at A1.");
+    expect(result.reply).toContain("A4");
+    expect(fetchSpy).not.toHaveBeenCalled();
+    expect(vi.mocked(supabase.functions.invoke).mock.calls.every(([name]) => name === "cost-telemetry-event")).toBe(true);
+    await act(async () => { fireEvent.click(screen.getByRole("button", { name: /אשר הכל/ })); });
+    await act(async () => { fireEvent.click(screen.getByRole("button", { name: /בנה רשימה סופית/ })); });
+    await act(async () => { fireEvent.click(await screen.findByRole("button", { name: /העתק הכל/ })); });
+    await waitFor(() => expect(b.copyRichText).toHaveBeenCalled());
+    const [html, plain] = b.copyRichText.mock.calls[0];
+    expect(plain).toContain("Local <b>Vote</b> Delayed, Daily Synthetic, June 25, 1990, at A1.");
+    expect(html).toContain("&lt;b&gt;");
+    expect(html).not.toMatch(/##|\^\^/);
+  });
   it("R17.2 unsupported sibling (letter) choice is generic and flagged, never the manuscript renderer", async () => {
     const input = "Maya Cohen, Courts and Memory (2024) (unpublished manuscript)";
     localStorage.setItem("footnote_cells_row-project", JSON.stringify([
