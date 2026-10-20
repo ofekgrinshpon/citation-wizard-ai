@@ -46,12 +46,16 @@ export function citationToOoxml(rawText: string): string {
       rPr.push('<w:sz w:val="20"/>');
       rPr.push('<w:szCs w:val="20"/>');
 
-      const escapedText = seg.text
+      const escape = (t: string) => t
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;");
 
-      return `<w:r><w:rPr>${rPr.join("")}</w:rPr><w:t xml:space="preserve">${escapedText}</w:t></w:r>`;
+      // Line breaks (separate URL / warning lines) become native Word breaks.
+      return seg.text
+        .split("\n")
+        .map((part) => `<w:r><w:rPr>${rPr.join("")}</w:rPr><w:t xml:space="preserve">${escape(part)}</w:t></w:r>`)
+        .join(`<w:r><w:br/></w:r>`);
     })
     .join("");
 

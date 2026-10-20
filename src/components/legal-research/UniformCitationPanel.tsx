@@ -6,7 +6,8 @@ import { citationRetryDisclosure } from "@/lib/functionError";
 import { useCitationRowGuard } from "@/lib/useCitationRowGuard";
 import { useAuth } from "@/hooks/useAuth";
 import { runPool } from "@/lib/concurrency";
-import { applyRepeatCitationRules, extractCitationOnly, stripPresentationWarnings } from "@/lib/footnoteRepeatRules";
+import { applyRepeatCitationRules, extractCitationPresentation } from "@/lib/footnoteRepeatRules";
+import { composeCitationExport, escapeCitationLiteral, mergeWarnings, splitCitationWarnings } from "@/lib/citationSegments";
 import { CREDIT_COSTS } from "@/lib/creditCosts";
 import { newTelemetryBatch, sourceTelemetry, type CostTelemetry } from "@/lib/costTelemetry";
 import { copyCitationRich, copyCitationsRich } from "@/lib/citationRichText";
@@ -106,7 +107,7 @@ export function UniformCitationPanel({ footnotes }: Props) {
       output: null,
       status: "loading",
       originalCitation: fn.title,
-      originalUrl: fn.url ?? null,
+      originalUrl: fn.url ?? fn.sources?.find((s) => s.url)?.url ?? null,
     }));
     const rowJobs = initial.map((cell) => rowGuard.begin(String(cell.id)));
     setCells(initial);
@@ -224,9 +225,22 @@ export function UniformCitationPanel({ footnotes }: Props) {
     setCells((prev) => prev.map((c) => (c.id === id ? { ...c, approved } : c)));
   }, []);
 
-  /** The final text for a footnote: the reviewed citation, or the original V2 line. */
-  const finalTextOf = (c: Cell) =>
-    stripPresentationWarnings(c.output ? extractCitationOnly(c.output) : c.originalCitation);
+  /**
+   * The final text for a footnote: the reviewed (possibly edited) citation
+   * with its styles, or the original V2 line as literal text. The source URL
+   * is kept as a separate line when the citation omits it, and warnings are
+   * exported rather than stripped.
+   */
+  const finalTextOf = (c: Cell) => {
+    const { citation, warnings } = c.output
+      ? splitCitationWarnings(extractCitationPresentation(c.output))
+      : { citation: escapeCitationLiteral(c.originalCitation), warnings: [] as string[] };
+    return composeCitationExport({
+      citation,
+      url: c.originalUrl,
+      warnings: mergeWarnings(warnings, c.status === "warning" ? c.warningMsg : undefined),
+    });
+  };
 
   const copySingle = async (id: number) => {
     const cell = cells.find((c) => c.id === id);

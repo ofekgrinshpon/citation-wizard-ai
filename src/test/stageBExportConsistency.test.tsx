@@ -120,9 +120,9 @@ describe("court ordinal presentation (bounded formatting-path fixture)", () => {
 });
 
 describe("context-appropriate styling (R2.1 fixtures, Israeli profile)", () => {
-  it("full foreign citation italicizes the case name (full-citation context)", () => {
+  it("full foreign citation keeps the case name roman (R2.1(a), full-citation context)", () => {
     const r = renderForeignCitation("Brown v. Board of Education, 347 U.S. 483 (1954)")!;
-    expect(r.citation.startsWith("##Brown v. Board of Education##")).toBe(true);
+    expect(r.citation.startsWith("Brown v. Board of Education, 347 U.S. 483")).toBe(true);
   });
 
   it("the same citation keeps every segment across display, rich copy and Word", () => {

@@ -4,6 +4,7 @@
  */
 
 import { detectForeignSource, type ForeignDetection } from "./extract";
+import { escapeCitationLiteral, unescapeCitationLiteral } from "@/lib/citationSegments";
 import {
   renderBook,
   renderBookChapter,
@@ -35,8 +36,36 @@ export {
   type RenderResult,
 } from "./render";
 
+/** Source-supplied field text is literal: escape marker-like characters. */
+function literalFields(fields: unknown): unknown {
+  if (typeof fields === "string") return escapeCitationLiteral(fields);
+  if (Array.isArray(fields)) return fields.map(literalFields);
+  if (fields && typeof fields === "object") {
+    return Object.fromEntries(Object.entries(fields as Record<string, unknown>).map(([k, v]) => [k, literalFields(v)]));
+  }
+  return fields;
+}
+
+/** Warnings / unrepresented details are plain text for their consumers. */
+function plainResult(r: RenderResult | null): RenderResult | null {
+  if (!r) return r;
+  const out: RenderResult = { ...r, warnings: r.warnings.map(unescapeCitationLiteral) };
+  if (r.unrepresented) out.unrepresented = r.unrepresented.map(unescapeCitationLiteral);
+  return out;
+}
+
+/**
+ * Render a detection. Field values are treated as literal source text (a
+ * title such as "C## Guide" is never read as markup); callers holding
+ * stored, already-marked citations must pass plain text to detection.
+ */
 export function renderForeignDetection(d: ForeignDetection): RenderResult | null {
-  const f = d.fields as never;
+  return plainResult(renderDetectionFields(d.kind, d.jurisdiction, literalFields(d.fields)));
+}
+
+function renderDetectionFields(kind: ForeignDetection["kind"], jurisdiction: ForeignDetection["jurisdiction"], fields: unknown): RenderResult | null {
+  const d = { kind, jurisdiction };
+  const f = fields as never;
   switch (d.kind) {
     case "case":
       return d.jurisdiction === "UK" ? renderUkCase(f) : renderUsCase(f);

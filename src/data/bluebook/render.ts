@@ -10,6 +10,7 @@
  */
 
 import { REPORTER_IMPLIES_COURT, normalizeJournalName } from "./tables";
+import { citationTextOnly } from "@/lib/citationSegments";
 import type {
   ForeignArticleFields,
   ForeignBookFields,
@@ -25,6 +26,44 @@ export const SMALL_CAPS_CLOSE = "^^";
 
 export const it = (s: string) => `##${s}##`;
 export const sc = (s: string) => `^^${s}^^`;
+
+/**
+ * Case name in a FULL case citation (Bluebook 21 R2.1(a)): roman, including
+ * "v."; only the procedural phrases "ex rel." and "In re" are italic.
+ * Short forms and narrative mentions are styled by their own context.
+ */
+export function fullCitationCaseName(name: string): string {
+  return name.replace(/(^|\s)(In re|ex rel\.)(?=\s|$)/g, (_m, pre: string, phrase: string) => `${pre}${it(phrase)}`);
+}
+
+const CAP_WORD = String.raw`[A-Z][\w.'’&-]*`;
+const PARTY_CONNECTOR = String.raw`(?:of|the|for|&|ex rel\.)`;
+const EMBEDDED_CASE = new RegExp(
+  String.raw`((?:${CAP_WORD}\s+)*${CAP_WORD})\s+v\.\s+(${CAP_WORD}(?:\s+(?:${PARTY_CONNECTOR}\s+)*${CAP_WORD})*)`,
+);
+
+/**
+ * Italic work title (article/chapter/web page). A case name inside an italic
+ * title stays roman (R2.1(a)). The embedded name is reversed only when its
+ * start is unambiguous: a single-word first party, or a party run that
+ * follows a lowercase word / punctuation. Otherwise the title stays fully
+ * italic and an honest warning asks for manual review.
+ */
+export function italicTitle(title: string, warnings: string[]): string {
+  const m = title.match(EMBEDDED_CASE);
+  if (!m || m.index === undefined) return it(title);
+  const before = title.slice(0, m.index);
+  const singleWordParty = !/\s/.test(m[1]);
+  const anchored = before === ""
+    ? singleWordParty
+    : /(?:[:;,—–(]|\b[a-z][\w'’-]*)\s*$/.test(before);
+  if (!anchored) {
+    warnings.push("ייתכן שבכותרת מופיע שם פסק דין שצריך להופיע באותיות רגילות (R2.1(a)); לא ניתן לזהות בוודאות את גבולותיו — הכותרת נשמרה נטויה כולה ויש לבדוק ידנית.");
+    return it(title);
+  }
+  const tail = title.slice(m.index + m[0].length);
+  return `${before ? it(before) : ""}${m[0]}${tail ? it(tail) : ""}`;
+}
 
 export interface RenderResult {
   citation: string;
@@ -99,7 +138,7 @@ export function renderUsCase(f: ForeignCaseFields): RenderResult {
       const star = f.starPinpoint ?? (f.pinpoint ? f.pinpoint : undefined);
       const core = `No. ${f.docket}, ${f.databaseIdentifier}${star ? `, at *${star}` : ""}`;
       reportExtraFields(f, ["caseName", "docket", "databaseIdentifier", "starPinpoint", "pinpoint", "court", "decisionDate", "year"], warnings, unrep);
-      const out = appendRemainder(`${it(name)}, ${core} (${f.court} ${f.decisionDate})`, f.unparsedRemainder, warnings, unrep);
+      const out = appendRemainder(`${fullCitationCaseName(name)}, ${core} (${f.court} ${f.decisionDate})`, f.unparsedRemainder, warnings, unrep);
       return finish(out, warnings, [], unrep);
     }
     missing.push(...dbMissing);
@@ -142,7 +181,7 @@ export function renderUsCase(f: ForeignCaseFields): RenderResult {
   }
   const paren = [courtPart, f.year || (suppliedYearInSuffix ? "[לא עוצב: שנה שסופקה בהמשך]" : miss("שנה"))].filter(Boolean).join(" ");
   reportExtraFields(f, used, warnings, unrep);
-  const out = appendRemainder(`${it(name)}, ${core} (${paren})`, f.unparsedRemainder, warnings, unrep);
+  const out = appendRemainder(`${fullCitationCaseName(name)}, ${core} (${paren})`, f.unparsedRemainder, warnings, unrep);
   return finish(out, warnings, missing, unrep);
 }
 
@@ -157,12 +196,12 @@ export function renderUkCase(f: ForeignCaseFields): RenderResult {
     const court = f.court ? ` (${f.court})` : "";
     reportExtraFields(f, ["caseName", "year", "reporterVolume", "reporter", "firstPage", "pinpoint", "court"], warnings, unrep);
     const out = appendRemainder(
-      `${it(name)} [${f.year}] ${vol}${f.reporter} ${pageSpan(f.firstPage, f.pinpoint)}${court}`,
+      `${fullCitationCaseName(name)} [${f.year}] ${vol}${f.reporter} ${pageSpan(f.firstPage, f.pinpoint)}${court}`,
       f.unparsedRemainder, warnings, unrep,
     );
     return finish(out, warnings, missing, unrep);
   }
-  const bits: string[] = [it(name)];
+  const bits: string[] = [fullCitationCaseName(name)];
   if (f.neutral && f.year) {
     bits.push(`[${f.year}] ${f.neutral}`);
   } else if (f.year) {
@@ -257,7 +296,7 @@ export function renderJournalArticle(f: ForeignArticleFields): RenderResult {
   const unrep: string[] = [];
   // doi/sourceUrl are identity evidence handled by the article adapter, not citation content.
   reportExtraFields(f, ["authors", "articleTitle", "volume", "journal", "firstPage", "pinpoint", "year", "doi", "sourceUrl"], warnings, unrep);
-  const out = appendRemainder(`${authors}, ${it(title)}, ${vol} ${sc(journal)} ${pages} (${year})`, f.unparsedRemainder, warnings, unrep);
+  const out = appendRemainder(`${authors}, ${f.articleTitle ? italicTitle(title, warnings) : it(title)}, ${vol} ${sc(journal)} ${pages} (${year})`, f.unparsedRemainder, warnings, unrep);
   return finish(out, warnings, missing, unrep);
 }
 
@@ -299,7 +338,7 @@ export function renderBookChapter(f: ForeignChapterFields): RenderResult {
     .filter(Boolean)
     .join(", ");
   return finish(
-    `${f.authors || miss("מחבר")}, ${it(f.chapterTitle || miss("שם הפרק"))}, in ${sc(
+    `${f.authors || miss("מחבר")}, ${f.chapterTitle ? italicTitle(f.chapterTitle, warnings) : it(miss("שם הפרק"))}, in ${sc(
       f.bookTitle || miss("שם הספר"),
     )} ${pages} (${paren})`,
     warnings,
@@ -320,7 +359,7 @@ export function renderInternet(f: ForeignInternetFields): RenderResult {
   if (!f.title) missing.push("title");
   if (!f.url) missing.push("url");
   const head = f.author ? `${f.author}, ` : "";
-  const title = it(f.title || miss("כותרת"));
+  const title = f.title ? italicTitle(f.title, warnings) : it(miss("כותרת"));
   const site = f.site ? `, ${sc(f.site)}` : "";
   const date = f.date ? ` (${f.date})` : "";
   const url = f.url || miss("URL");
@@ -331,5 +370,5 @@ export function renderInternet(f: ForeignInternetFields): RenderResult {
 
 /** Strip every internal marker — used for plain-text fallbacks. */
 export function stripMarkers(text: string): string {
-  return text.replace(/\*\*(.*?)\*\*/gs, "$1").replace(/##(.*?)##/gs, "$1").replace(/\^\^(.*?)\^\^/gs, "$1");
+  return citationTextOnly(text);
 }

@@ -22,6 +22,7 @@ import { invokeFunction, retryCitationFunction } from "@/lib/functionError";
 import type { CitationRetryDescriptor } from "@/lib/citationRequestIdentity";
 import { handleRefundResponse } from "@/lib/refundResponse";
 import { renderForeignCitation, renderForeignDetection } from "@/data/bluebook";
+import { citationTextOnly } from "@/lib/citationSegments";
 import { detectForeignSource } from "@/data/bluebook/extract";
 import {
   isForeignSourceType,
@@ -236,7 +237,8 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
     // Verified identity is always kept. Formatting may be deterministically
     // re-rendered when the stored citation carries enough structured fields;
     // otherwise the stored text is preserved as-is (never guessed).
-    const reRendered = renderForeignCitation(verifiedMatch.full_citation);
+    // Stored citations are marked text: detect from their plain reading.
+    const reRendered = renderForeignCitation(citationTextOnly(verifiedMatch.full_citation));
     const citation = cachedArticle?.citation ?? (
       reRendered && reRendered.missing.length === 0 && !reRendered.unrepresented?.length
         ? reRendered.citation

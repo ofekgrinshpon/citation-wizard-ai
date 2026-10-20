@@ -1,14 +1,16 @@
 /**
  * Bibliography copy payload (Stage B): one pure builder shared by the
  * bibliography panel so rich copy keeps citation styles (italic, small caps)
- * while the plain-text fallback stays clean of internal markers.
+ * while the plain-text fallback stays clean of internal markers. Entry
+ * warnings are exported with the entry, never silently dropped.
  */
 
 import { citationToHtml, citationToPlain } from "@/lib/citationRichText";
+import { composeCitationExport } from "@/lib/citationSegments";
 
 export interface BibliographyCopyGroup {
   label: string;
-  entries: { fullCitation: string }[];
+  entries: { fullCitation: string; warnings?: readonly string[] }[];
 }
 
 function escapeHtml(s: string): string {
@@ -26,8 +28,9 @@ export function buildBibliographyCopy(groups: BibliographyCopyGroup[]): { html: 
     htmlParts.push(`<div><strong>${escapeHtml(group.label)}</strong></div>`);
     plainLines.push(group.label, "");
     for (const entry of group.entries) {
-      htmlParts.push(`<div>${citationToHtml(entry.fullCitation)}</div>`);
-      plainLines.push(citationToPlain(entry.fullCitation));
+      const text = composeCitationExport({ citation: entry.fullCitation, warnings: entry.warnings });
+      htmlParts.push(`<div>${citationToHtml(text)}</div>`);
+      plainLines.push(citationToPlain(text));
     }
     plainLines.push("");
   }

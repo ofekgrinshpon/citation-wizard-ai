@@ -5,6 +5,8 @@
  * implementation instead of duplicating citation formatting logic.
  */
 import { isLegislationInput, extractLawNameFromInput } from "@/lib/citationUtils";
+import { citationTextOnly, escapeCitationLiteral } from "@/lib/citationSegments";
+import { detectForeignSource } from "@/data/bluebook/extract";
 
 export interface RepeatRuleCell {
   id: number;
@@ -63,7 +65,7 @@ export function applyRepeatCitationRules<T extends RepeatRuleCell>(cells: T[]): 
       if (isAdjacentRepeat) {
         nextCitation = bSuffix ? `שם, ${bSuffix}.` : `שם.`;
       } else {
-        const label = extractShortSourceLabel(prior.fullCitation);
+        const label = shortFormLabel(prior.fullCitation);
         nextCitation = `${label}, לעיל ה"ש ${prior.index}${bSuffix ? `, ${bSuffix}` : ""}.`;
       }
     }
@@ -74,6 +76,20 @@ export function applyRepeatCitationRules<T extends RepeatRuleCell>(cells: T[]): 
       output: replaceCitationOnly(cell.output, nextCitation),
     };
   });
+}
+
+/**
+ * Presentation label for a non-adjacent repeat (Israeli 37.9 form). A foreign
+ * case is a short-form reference, so its case name is italic (Bluebook
+ * short-form typeface); every other label keeps the existing plain text.
+ * Source identity and numbering never depend on this styling.
+ */
+function shortFormLabel(priorPlainCitation: string): string {
+  const label = extractShortSourceLabel(priorPlainCitation);
+  const foreign = /[\u0590-\u05FF]/.test(priorPlainCitation) ? null : detectForeignSource(priorPlainCitation);
+  if (foreign?.kind !== "case") return escapeCitationLiteral(label);
+  const caseName = String((foreign.fields as { caseName?: string }).caseName ?? "").trim() || label;
+  return `##${escapeCitationLiteral(caseName)}##`;
 }
 
 export function withBetPrefix(suffix: string): string {
@@ -120,11 +136,7 @@ export function extractReferenceSuffix(text: string): string {
 const GENERIC_PARTIES = /^(מדינת ישראל|פלוני|פלונית|אלמוני|אלמונית|היועץ המשפטי לממשלה|היועמ"ש|היועמ״ש|state of israel|attorney general)\b/i;
 
 export function extractShortSourceLabel(text: string): string {
-  const cleaned = text
-    .replace(/\*\*/g, "")
-    .replace(/##/g, "")
-    .replace(/\^\^/g, "")
-    .trim();
+  const cleaned = citationTextOnly(text).trim();
 
   const caseMatch = cleaned.match(/([^,\n()]+?)\s+נ['׳]\s+([^,\n()]+?)(?=\s*,|\s*\(|$)/);
   if (caseMatch) {
@@ -166,7 +178,13 @@ export function stripPresentationWarnings(text: string): string {
     .trim();
 }
 
-export function extractCitationOnly(text: string): string {
+/**
+ * Style-preserving citation extraction for presentation (copy, Word,
+ * bibliography): drops engine/meta lines and list numbering, keeps markup,
+ * warning lines and [חסר:] placeholders. Use extractCitationOnly for plain
+ * identity / short-label work.
+ */
+export function extractCitationPresentation(text: string): string {
   return text
     .split("\n")
     .filter((line) => {
@@ -181,9 +199,13 @@ export function extractCitationOnly(text: string): string {
       return true;
     })
     .join("\n")
-    .replace(/\*\*/g, "")
-    .replace(/##/g, "")
-    .replace(/\^\^/g, "")
+    .replace(/^\d+\.\s*/, "")
+    .trim();
+}
+
+/** Plain citation text (identity, repeat keys, short labels): no markup. */
+export function extractCitationOnly(text: string): string {
+  return citationTextOnly(extractCitationPresentation(text))
     .replace(/^\d+\.\s*/, "")
     .trim();
 }

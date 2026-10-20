@@ -12,6 +12,7 @@ import { invokeFunction, retryCitationFunction, citationRetryDisclosure, type Ci
 import { useAuth } from "@/hooks/useAuth";
 import { FormattedCitation } from "./FormattedCitation";
 import { toast } from "sonner";
+import { citationTextOnly } from "@/lib/citationSegments";
 
 const SOURCE_TYPES: { id: SourceType; label: string; icon: string }[] = [
   { id: "case_law_published", label: "פסיקה (דפוס)", icon: "⚖️" },
@@ -199,10 +200,8 @@ export function ManualEntry() {
         if (/^📐|^כלל:|^Based on Rule|^Rule \d|^מכיוון ש/.test(trimmed)) return false;
         return true;
       })
-      .join("\n")
-      .replace(/\*\*/g, "")
-      .replace(/##/g, "");
-    navigator.clipboard.writeText(citationOnly);
+      .join("\n");
+    navigator.clipboard.writeText(citationTextOnly(citationOnly));
     toast.success("האזכור הועתק ללוח!");
   };
 

@@ -87,7 +87,8 @@ describe("Bluebook M2B — grounded foreign lookup", () => {
       fields: { ...r.fields, caseName: "Capitol Records, LLC v. ReDigi Inc.", court: "2d Cir.", year: "2018" },
     });
     expect(rendered).not.toBeNull();
-    expect(rendered!.citation).toBe("##Capitol Records, LLC v. ReDigi Inc.##, 910 F.3d 649 (2d Cir. 2018).");
+    // Bluebook 21 R2.1(a): full-citation case names are roman (incl. "v.").
+    expect(rendered!.citation).toBe("Capitol Records, LLC v. ReDigi Inc., 910 F.3d 649 (2d Cir. 2018).");
     expect(rendered!.missing).toEqual([]);
   });
 
@@ -195,7 +196,8 @@ describe("Bluebook M2B — grounded foreign lookup", () => {
       confidence: "deterministic",
       fields: { ...r.fields, caseName: "Donoghue v Stevenson", year: "1932" },
     });
-    expect(rendered!.citation).toBe("##Donoghue v Stevenson## [1932] AC 562 (HL).");
+    // Bluebook 21 R2.1(a): full-citation case names are roman.
+    expect(rendered!.citation).toBe("Donoghue v Stevenson [1932] AC 562 (HL).");
   });
 
   it("B7: article journal passes through; abbreviation stays renderer-owned", async () => {
@@ -389,9 +391,11 @@ describe("Bluebook M2B — grounded foreign lookup", () => {
       kind: "case",
       jurisdiction: "US",
       confidence: "deterministic",
-      fields: { ...r.fields, caseName: "Capitol Records, LLC v. ReDigi Inc.", court: "2d Cir.", year: "2018" },
+      fields: { ...r.fields, caseName: "In re Capitol Records, LLC", court: "2d Cir.", year: "2018" },
     });
-    expect(rendered!.citation).toContain("##");
+    // Style markers survive the renderer: R2.1(a) keeps the procedural
+    // phrase italic while the rest of the full-citation case name is roman.
+    expect(rendered!.citation).toContain("##In re## Capitol Records, LLC,");
   });
 
   it("B18: single formatter — no foreign renderer exists in edge functions", () => {

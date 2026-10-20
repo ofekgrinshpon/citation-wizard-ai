@@ -34,3 +34,7 @@
 - [x] Court-aware query, party follow-up, Option B (אר״ש) — offline tests pass
 - [ ] Deploy citation-chat — waits for owner approval
 - [ ] Live re-run of 1477-12-22 and 11487/03 — after deploy
+
+## Foreign-source citations (Stage B corrective)
+- [x] Caller-level style/warning/URL preservation (bibliography, batch, chat, research panel), R2.1(a) full-case roman typeface, literal-character escaping — offline tests pass
+- [ ] Stage C — waits for owner's independent verification and separate start

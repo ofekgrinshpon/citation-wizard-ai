@@ -9,6 +9,7 @@ import { execFileSync } from "node:child_process";
 import * as telemetry from "@/lib/costTelemetry";
 import * as concurrency from "@/lib/concurrency";
 import * as repeatRules from "@/lib/footnoteRepeatRules";
+import * as citationSegments from "@/lib/citationSegments";
 import * as footnoteRerender from "@/lib/legalQa/footnoteRerender";
 import { CREDIT_COSTS } from "@/lib/creditCosts";
 
@@ -68,6 +69,7 @@ function mount(path: string, name: string, props: Record<string, unknown>, overr
     "@/lib/costTelemetry": telemetry,
     "@/lib/concurrency": concurrency,
     "@/lib/footnoteRepeatRules": repeatRules,
+    "@/lib/citationSegments": citationSegments,
     "@/lib/legalQa/footnoteRerender": footnoteRerender,
     "@/lib/creditCosts": { CREDIT_COSTS },
     "@/components/FootnoteReviewCard": { FootnoteReviewCard: "FootnoteReviewCard" },

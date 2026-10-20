@@ -18,7 +18,8 @@ import { runCitation, CitationRunError, type RunCitationResult, type CitationRun
 import { citationRetryDisclosure } from "@/lib/functionError";
 import { useCitationRowGuard } from "@/lib/useCitationRowGuard";
 import { runPool } from "@/lib/concurrency";
-import { applyRepeatCitationRules, extractCitationOnly } from "@/lib/footnoteRepeatRules";
+import { applyRepeatCitationRules, extractCitationOnly, extractCitationPresentation } from "@/lib/footnoteRepeatRules";
+import { splitCitationWarnings } from "@/lib/citationSegments";
 import { useAuth } from "@/hooks/useAuth";
 import { activeCitationDiagnostic, citationDiagnosticCandidate, prepareCitationDiagnostic } from "@/lib/citationDiagnostic";
 
@@ -491,10 +492,12 @@ export function BatchFootnoteBuilder({}: BatchProps) {
           if (/לעיל ה"ש/.test(cleaned)) return false;
           return true;
         })
-        .map((cell) => ({
-          rawInput: cell.input,
-          fullCitation: extractCitationOnly(cell.output!),
-        }));
+        .map((cell) => {
+          // Styles and warnings travel to the bibliography; identity checks
+          // above stay on the plain reading.
+          const { citation, warnings } = splitCitationWarnings(extractCitationPresentation(cell.output!));
+          return { rawInput: cell.input, fullCitation: citation, ...(warnings.length ? { warnings } : {}) };
+        });
 
       const syncedCount = bibliography.syncFootnoteEntries(bibItems);
       if (syncedCount > 0) {
@@ -525,7 +528,8 @@ export function BatchFootnoteBuilder({}: BatchProps) {
     const outputs = cells
       .filter((c) => c.output)
       .map((c) => {
-        const citation = extractCitationOnly(c.output!);
+        // Style-preserving presentation text (not the plain identity form).
+        const citation = extractCitationPresentation(c.output!);
         return `[${c.id}] ${citation}`;
       })
       .join("\n\n");
@@ -540,7 +544,7 @@ export function BatchFootnoteBuilder({}: BatchProps) {
 
   const copySingle = (cell: FootnoteCell) => {
     if (!cell.output) return;
-    const citation = extractCitationOnly(cell.output);
+    const citation = extractCitationPresentation(cell.output);
     copyCitationRich(citation);
     toast.success(`הערה ${cell.id} הועתקה!`);
   };
