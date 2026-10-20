@@ -246,9 +246,10 @@ export function createRecord(itemKey: string, input: string, output: string | nu
 export function reconcileRecord(rec: ClassificationRecord | undefined, itemKey: string, input: string, output: string | null, now = Date.now()): ClassificationRecord {
   if (!rec || rec.itemKey !== itemKey) return createRecord(itemKey, input, output, now);
   const fp = fingerprintInput(input);
-  let next: ClassificationRecord = rec;
+  // Detection is derived and always recomputed from the current input.
+  let next: ClassificationRecord = { ...rec, detected: detectClassification(input) };
   if (fp !== rec.inputFingerprint) {
-    next = { ...rec, detected: detectClassification(input), needsReview: hasOverrides(rec.overrides) || rec.needsReview, updatedAt: now };
+    next = { ...next, needsReview: hasOverrides(rec.overrides), updatedAt: now };
     if (!next.needsReview) next = { ...next, inputFingerprint: fp };
   }
   const outFp = output == null ? null : fingerprintInput(output);
