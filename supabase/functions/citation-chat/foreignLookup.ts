@@ -15,7 +15,7 @@
  * Pure + deps-injected so vitest can exercise it with a mocked fetch.
  */
 
-export type ForeignLookupKind = "case" | "journal_article" | "book" | "book_chapter";
+export type ForeignLookupKind = "case" | "journal_article" | "book" | "book_chapter" | "statute";
 export type ForeignLookupJurisdiction = "US" | "UK" | "OTHER" | "UNKNOWN";
 
 export interface ForeignLookupInput {
@@ -105,6 +105,8 @@ const TIER1_HINTS: Record<string, string[]> = {
     "govinfo.gov",
   ],
   "case:UK": ["bailii.org", "supremecourt.uk", "nationalarchives.gov.uk", "judiciary.uk"],
+  "statute:US": ["law.cornell.edu", "govinfo.gov", "uscode.house.gov"],
+  "statute:UK": ["legislation.gov.uk"],
   academic: [
     "ssrn.com",
     "jstor.org",
@@ -125,6 +127,10 @@ function tier1Hints(kind: ForeignLookupKind, jurisdiction: ForeignLookupJurisdic
     return [...TIER1_HINTS["case:US"], ...TIER1_HINTS["case:UK"]];
   }
   if (kind === "case") return TIER1_HINTS[`case:${jurisdiction}`] ?? [];
+  if (kind === "statute") {
+    if (isUnresolvedJurisdiction(jurisdiction)) return [...TIER1_HINTS["statute:US"], ...TIER1_HINTS["statute:UK"]];
+    return TIER1_HINTS[`statute:${jurisdiction}`] ?? [];
+  }
   return TIER1_HINTS.academic;
 }
 
@@ -137,6 +143,7 @@ const OFFICIAL_HOSTS = [
   "nationalarchives.gov.uk",
   "judiciary.uk",
   "legislation.gov.uk",
+  "uscode.house.gov",
 ];
 const DATABASE_HOSTS = [
   "courtlistener.com",
@@ -250,7 +257,8 @@ function textContainsParty(text: string, party: string): boolean {
 function normalizeTitle(s: string): string {
   return s
     .toLowerCase()
-    .replace(/[.,'"’‘:;()\[\]]/g, " ")
+    // Marker-like characters (#, *) are never meaningful title content.
+    .replace(/[.,'"’‘:;()\[\]#*]/g, " ")
     .replace(/\s+/g, " ")
     .trim();
 }
@@ -271,6 +279,7 @@ function buildQuery(input: ForeignLookupInput): string {
   if (input.kind === "case") return `${raw} citation reporter volume first page`;
   if (input.kind === "journal_article") return `${raw} journal volume page year citation`;
   if (input.kind === "book_chapter") return `${raw} chapter in book pages year`;
+  if (input.kind === "statute") return `${raw} statute code section year`;
   return `${raw} book edition year publisher`;
 }
 
@@ -382,6 +391,82 @@ export function extractCaseFromEvidence(text: string, jurisdiction: ForeignLooku
       year: m[5],
     };
   }
+  return null;
+}
+
+// ── Statute extraction (Stage 4) ───────────────────────────────────────────
+// Explicit citation forms only: a website host or the bare word "Act" never
+// proves a jurisdiction or a record.
+interface StatuteCite {
+  statuteName?: string;
+  titleNumber?: string;
+  code?: string;
+  section?: string;
+  sections?: string;
+  year?: string;
+  chapter?: string;
+}
+
+const STATUTE_US_RE =
+  /(\d{1,2})\s+(U\.?\s?S\.?\s?C\.?(?:A\.?)?)\s*§{1,2}\s*([0-9A-Za-z][0-9A-Za-z().\-–]*(?:\s*,\s*[0-9A-Za-z().\-–]+)*)/;
+const STATUTE_UK_RE =
+  /([A-Z][A-Za-z'’&(),.\- ]{2,90}?(?:Act|Measure|Order))\s+((?:1[6-9]|20)\d{2})(?:,\s*c\.\s*(\w+))?/;
+
+export function extractStatuteFromEvidence(
+  text: string,
+  jurisdiction: ForeignLookupJurisdiction,
+): StatuteCite | null {
+  const flat = text.replace(/\s+/g, " ");
+  if (jurisdiction === "US") {
+    // Several citations may appear; prefer the one carrying a publication year.
+    const re = new RegExp(STATUTE_US_RE.source, "g");
+    let best: RegExpExecArray | null = null;
+    let bestYear: string | undefined;
+    let m: RegExpExecArray | null;
+    while ((m = re.exec(flat))) {
+      const after = flat.slice(re.lastIndex, re.lastIndex + 24);
+      const y = after.match(/^\s*\(((?:19|20)\d{2})\)/)?.[1];
+      if (!best) { best = m; bestYear = y; }
+      if (y) { best = m; bestYear = y; break; }
+    }
+    if (!best) return null;
+    const items = best[3].split(",").map((s) => s.trim()).filter(Boolean);
+    return {
+      titleNumber: best[1],
+      code: best[2].replace(/\s+/g, ""),
+      section: items.length === 1 ? items[0] : undefined,
+      sections: items.length > 1 ? items.join(", ") : undefined,
+      year: bestYear,
+    };
+  }
+  if (jurisdiction === "UK") {
+    // Prefer the mention carrying a chapter number over a bare name+year.
+    const re = new RegExp(STATUTE_UK_RE.source, "g");
+    let best: RegExpExecArray | null = null;
+    let m: RegExpExecArray | null;
+    while ((m = re.exec(flat))) {
+      if (!best) best = m;
+      if (m[3]) { best = m; break; }
+    }
+    if (!best) return null;
+    return { statuteName: best[1].trim(), year: best[2], chapter: best[3] };
+  }
+  return null;
+}
+
+/**
+ * Jurisdiction of ONE identity-matched statute source from its own explicit
+ * citation form. A recognised host alone (legislation.gov.uk, cornell) proves
+ * nothing — only an extracted citation signature does.
+ */
+function resolveStatuteJurisdiction(
+  s: { url: string; title?: string; snippet?: string },
+): { jurisdiction: "US" | "UK"; sig: string; url: string } | null {
+  const ev = `${s.title ?? ""} ${s.snippet ?? ""}`;
+  const us = extractStatuteFromEvidence(ev, "US");
+  if (us) return { jurisdiction: "US", sig: `US|${us.titleNumber}|${us.section ?? us.sections ?? ""}`, url: s.url };
+  const uk = extractStatuteFromEvidence(ev, "UK");
+  if (uk) return { jurisdiction: "UK", sig: `UK|${normalizeTitle(uk.statuteName ?? "")}|${uk.year ?? ""}`, url: s.url };
   return null;
 }
 
@@ -788,6 +873,153 @@ export function _dbgFieldsForSource(text: string, jurisdiction: ForeignLookupJur
   return extractCaseFromEvidence(text, jurisdiction) ?? extractWorkFromEvidence(text, kind, title);
 }
 
+/**
+ * Stage 4 — grounded foreign-statute lookup (US/UK only).
+ * Snippet/title evidence only (no page inspection): one Tier-1 search plus the
+ * single bounded Tier-2 open-web retry. Identity anchor = the statute name the
+ * user supplied; user year/title anchors discard contradicting sources;
+ * ambiguous or conflicting evidence stays missing, never merged.
+ */
+async function lookupStatute(
+  input: ForeignLookupInput,
+  result: ForeignLookupResult,
+  doFetch: typeof fetch,
+  apiKey: string,
+): Promise<ForeignLookupResult> {
+  const supplied = Object.fromEntries(
+    Object.entries(input.parsedFields ?? {}).filter(([, v]) => typeof v === "string" && v.trim()),
+  ) as Record<string, string>;
+  const nameAnchor = supplied.statuteName ?? null;
+  const userYear = supplied.year ?? input.rawInput.match(/\b((?:1[6-9]|20)\d{2})\b/)?.[1];
+  if (nameAnchor) result.identity.anchors.push(`title:${nameAnchor}`);
+  if (userYear) result.identity.anchors.push(`year:${userYear}`);
+
+  result.diagnostics.tier1Queried = true;
+  type TieredResult = { title?: string; url?: string; snippet?: string; tier: "tier1" | "tier2" };
+  const tier1: TieredResult[] = (await searchOnce(buildQuery(input), tier1Hints("statute", input.jurisdiction), doFetch, apiKey, "foreign_search_tier1"))
+    .map((r) => ({ ...r, tier: "tier1" as const }));
+  let found: TieredResult[] = tier1;
+  const usable1 = tier1.some((r) => r.url && classifySource(r.url) !== "weak");
+  if (!usable1 || tier1.length === 0) {
+    result.diagnostics.tier2Fired = true;
+    const tier2: TieredResult[] = (await searchOnce(buildQuery(input), null, doFetch, apiKey, "foreign_search_tier2"))
+      .map((r) => ({ ...r, tier: "tier2" as const }));
+    found = [...tier1, ...tier2];
+  }
+
+  const seen = new Set<string>();
+  const sources: LookupSource[] = [];
+  for (const r of found) {
+    if (!r.url || seen.has(r.url)) continue;
+    seen.add(r.url);
+    const source: LookupSource = { url: r.url, title: r.title, snippet: r.snippet, tier: r.tier, strong: classifySource(r.url) !== "weak" };
+    sources.push(source);
+    result.sources.push({ url: source.url, title: source.title, tier: source.tier });
+  }
+
+  // Identity: the evidence must carry the user-supplied statute name.
+  const identitySources = sources.filter((s) => {
+    if (!nameAnchor) return false;
+    return titleMatches(`${s.title ?? ""} ${s.snippet ?? ""}`, nameAnchor);
+  });
+  if (identitySources.length === 0) {
+    result.identity.conflicts.push("no_identity_matched_source");
+    return result;
+  }
+
+  // Jurisdiction: given US/UK is never re-discovered or crossed; UNKNOWN is
+  // resolved only from an explicit citation form in the evidence itself.
+  if (isUnresolvedJurisdiction(input.jurisdiction)) {
+    const records = identitySources.filter((s) => s.strong).map(resolveStatuteJurisdiction).filter((r): r is NonNullable<typeof r> => !!r);
+    if (records.length === 0) {
+      result.identity.conflicts.push("jurisdiction_unresolved");
+      return result;
+    }
+    const jurs = new Set(records.map((r) => r.jurisdiction));
+    if (jurs.size > 1) {
+      result.identity.conflicts.push("ambiguous_jurisdiction");
+      return result;
+    }
+    const resolved = [...jurs][0];
+    input = { ...input, jurisdiction: resolved };
+    result.jurisdiction = resolved;
+    result.identity.jurisdiction = resolved;
+    result.identity.jurisdictionDiscovered = true;
+    result.diagnostics.jurisdictionResolvedBy = records[0].url;
+  } else if (input.jurisdiction === "US" || input.jurisdiction === "UK") {
+    result.identity.jurisdiction = input.jurisdiction;
+  }
+
+  // Extraction + anchor conflicts: a source contradicting a user-supplied
+  // identity anchor (year / title number) is discarded entirely.
+  const usable: Array<{ donor: LookupSource; fields: StatuteCite }> = [];
+  for (const s of identitySources.filter((x) => x.strong)) {
+    const f = extractStatuteFromEvidence(`${s.title ?? ""} ${s.snippet ?? ""}`, input.jurisdiction);
+    if (!f) continue;
+    if (userYear && f.year && f.year !== userYear) {
+      result.identity.conflicts.push(`year:${userYear} vs ${f.year}`);
+      continue;
+    }
+    if (supplied.titleNumber && f.titleNumber && f.titleNumber !== supplied.titleNumber) {
+      result.identity.conflicts.push(`titleNumber:${supplied.titleNumber} vs ${f.titleNumber}`);
+      continue;
+    }
+    usable.push({ donor: s, fields: f });
+  }
+  if (usable.length === 0) {
+    result.identity.matched = false;
+    if (!result.identity.conflicts.length) result.identity.conflicts.push("no_identity_matched_source");
+    return result;
+  }
+
+  // Same-name ambiguity: two or more distinct records and no user year anchor
+  // to bind one — stay unresolved rather than picking silently.
+  const sigs = new Set(usable.map(({ fields: f }) =>
+    input.jurisdiction === "US"
+      ? `${f.titleNumber ?? ""}|${f.section ?? f.sections ?? ""}`
+      : `${normalizeTitle(f.statuteName ?? "")}|${f.year ?? ""}`));
+  if (sigs.size > 1 && !userYear) {
+    result.identity.matched = false;
+    result.identity.conflicts.push("ambiguous_record");
+    return result;
+  }
+
+  result.identity.matched = true;
+
+  // Field-level acceptance: identity-matched sources that disagree on a
+  // non-identity field leave that field missing (never a vote, never a merge).
+  const byField = new Map<string, Array<{ value: string; donor: LookupSource }>>();
+  for (const { donor, fields: f } of usable) {
+    for (const [field, value] of Object.entries(f)) {
+      if (!value) continue;
+      if (field === "year" && userYear === value) continue; // user anchor ≠ new fact
+      const list = byField.get(field) ?? [];
+      list.push({ value, donor });
+      byField.set(field, list);
+    }
+  }
+  for (const [field, list] of byField) {
+    const key = (v: string) => field === "statuteName" ? normalizeTitle(v) : v;
+    const distinct = new Set(list.map((c) => key(c.value)));
+    if (distinct.size > 1) {
+      result.identity.conflicts.push(`conflicting_statute_${field}`);
+      continue;
+    }
+    const chosen = list[0];
+    const quality = classifySource(chosen.donor.url);
+    if (quality === "weak") continue;
+    result.fields[field] = chosen.value;
+    result.grounded[field] = true;
+    result.provenance[field] = {
+      value: chosen.value,
+      sourceUrl: chosen.donor.url,
+      sourceTitle: chosen.donor.title,
+      basis: basisFor(quality, false),
+    };
+  }
+  return result;
+}
+
 export async function runForeignLookup(
   input: ForeignLookupInput,
   deps?: LookupDeps,
@@ -823,6 +1055,7 @@ export async function runForeignLookup(
   }
   const doFetch = deps?.fetchImpl ?? trackedFetch;
   if (input.kind === "journal_article") return lookupArticle(input, empty, doFetch, apiKey, deps?.diagnosticObserver);
+  if (input.kind === "statute") return lookupStatute(input, empty, doFetch, apiKey);
   const query = buildQuery(input);
 
   // Tier 1 — preferred-domain discovery hints.
