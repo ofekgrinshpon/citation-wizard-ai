@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { runCitation, CitationRunError, type CitationRunRetry, type CitationRunRecovery } from "@/lib/runCitation";
 import { buildBibliographyCopy, type BibliographyCopyGroup } from "@/lib/bibliographyCopy";
 import { copyRichText } from "@/lib/clipboard";
+import { mergeWarnings, splitCitationWarnings } from "@/lib/citationSegments";
 import { useAuth } from "@/hooks/useAuth";
 import { useCitationRowGuard } from "@/lib/useCitationRowGuard";
 import { citationRetryDisclosure } from "@/lib/functionError";
@@ -29,6 +30,8 @@ interface ReviewItem {
   citationRetry?: CitationRunRetry;
   recovery?: CitationRunRecovery;
   warningMsg?: string;
+  /** Every warning for this citation (engine reply, renderer, cache). */
+  warnings?: string[];
   isEditing: boolean;
   editValue: string;
   sourceTypeOverride?: BibSourceCategory;
@@ -110,6 +113,8 @@ export function BibliographyGenerator() {
         isEditing: true,
         editValue: entry.fullCitation,
         sourceTypeOverride: entry.sourceType,
+        warnings: entry.warnings,
+        warningMsg: entry.warnings?.[0],
       },
     ]);
     removeEntry(id);
@@ -128,6 +133,8 @@ export function BibliographyGenerator() {
       isEditing: false,
       editValue: entry.fullCitation,
       sourceTypeOverride: entry.sourceType,
+      warnings: entry.warnings,
+      warningMsg: entry.warnings?.[0],
     }));
     setReviewItems((prev) => [...prev, ...items]);
     sortedEntries.forEach((e) => removeEntry(e.id));
@@ -159,7 +166,11 @@ export function BibliographyGenerator() {
       telemetry,
     });
 
-    const citation = cleanCitation(result.citation);
+    // Metadata-only cleaning: styles (##, ^^, **) stay for display/export.
+    const split = splitCitationWarnings(cleanCitation(result.citation));
+    const citation = split.citation;
+    // runCitation may carry warnings only in reply/warningMsg: retain them all.
+    const warnings = mergeWarnings(split.warnings, splitCitationWarnings(result.reply || "").warnings, result.warningMsg);
     if (!citation) {
       return {
         rawInput,
@@ -180,7 +191,8 @@ export function BibliographyGenerator() {
       citation,
       isVerified: result.fromVerifiedStore,
       options: [],
-      warningMsg: result.warningMsg,
+      warningMsg: result.warningMsg ?? warnings[0],
+      warnings,
       sourceTypeOverride: sourceTypeHint,
     };
   };
@@ -349,7 +361,8 @@ export function BibliographyGenerator() {
         if (it.id !== id) return it;
         const v = it.editValue.trim();
         if (!v) return it;
-        return { ...it, isEditing: false, citation: v, status: "ok", isVerified: false, options: [], errorMsg: undefined, warningMsg: undefined, citationRetry: undefined, requestId: undefined, recovery: undefined };
+        if (v === it.citation) return { ...it, isEditing: false };
+        return { ...it, isEditing: false, citation: v, status: "ok", isVerified: false, options: [], errorMsg: undefined, warningMsg: undefined, warnings: undefined, citationRetry: undefined, requestId: undefined, recovery: undefined };
       }),
     );
   };
@@ -392,7 +405,8 @@ export function BibliographyGenerator() {
       if (!it.isEditing) return it;
       const v = it.editValue?.trim();
       if (!v) return { ...it, isEditing: false };
-      return { ...it, isEditing: false, citation: v, status: "ok" as ReviewStatus, isVerified: false, options: [], errorMsg: undefined, warningMsg: undefined, citationRetry: undefined, requestId: undefined, recovery: undefined };
+      if (v === it.citation) return { ...it, isEditing: false };
+      return { ...it, isEditing: false, citation: v, status: "ok" as ReviewStatus, isVerified: false, options: [], errorMsg: undefined, warningMsg: undefined, warnings: undefined, citationRetry: undefined, requestId: undefined, recovery: undefined };
     });
     if (flushed !== reviewItems) setReviewItems(flushed);
 
@@ -411,6 +425,7 @@ export function BibliographyGenerator() {
         fullCitation: it.citation,
         isVerified: it.isVerified,
         sourceTypeOverride: it.sourceTypeOverride,
+        warnings: mergeWarnings(it.warnings, it.warningMsg),
       })),
     );
     const dupes = ready.length - added;
@@ -461,11 +476,12 @@ export function BibliographyGenerator() {
     }
 
     // Rich copy keeps citation styles (italic / small caps); the plain
-    // fallback is marker-free. Entry text is cleaned of metadata lines first.
+    // fallback is marker-free. Only metadata lines are cleaned here — style
+    // markup is consumed by the serializers, and warnings are exported.
     const { html, plain } = buildBibliographyCopy(
       groups.map((g) => ({
         label: g.label,
-        entries: g.entries.map((e) => ({ fullCitation: cleanForCopy(e.fullCitation) })),
+        entries: g.entries.map((e) => ({ fullCitation: cleanForCopy(e.fullCitation), warnings: e.warnings })),
       })),
     );
     void copyRichText(html, plain);
@@ -941,7 +957,7 @@ function CategoryGroup({
   onEdit,
 }: {
   label: string;
-  entries: { id: string; fullCitation: string; addedFrom: string; isVerified?: boolean }[];
+  entries: { id: string; fullCitation: string; addedFrom: string; isVerified?: boolean; warnings?: string[] }[];
   onRemove: (id: string) => void;
   onEdit?: (id: string) => void;
 }) {
@@ -958,6 +974,9 @@ function CategoryGroup({
                   ✓ מאומת
                 </span>
               )}
+              {entry.warnings?.map((w) => (
+                <div key={w} className="text-[11px] text-amber-700 dark:text-amber-400 mt-0.5">⚠ {w}</div>
+              ))}
             </div>
             <div className="flex items-center gap-1 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
               {entry.addedFrom === "footnote" && (
@@ -992,11 +1011,11 @@ function CategoryGroup({
 interface GroupedCategory {
   category: string;
   language: "hebrew" | "english";
-  entries: { id: string; fullCitation: string; addedFrom: string; isVerified?: boolean }[];
+  entries: { id: string; fullCitation: string; addedFrom: string; isVerified?: boolean; warnings?: string[] }[];
 }
 
 function groupEntries(
-  sorted: { id: string; fullCitation: string; sourceType: string; language: string; addedFrom: string; isVerified?: boolean }[],
+  sorted: { id: string; fullCitation: string; sourceType: string; language: string; addedFrom: string; isVerified?: boolean; warnings?: string[] }[],
 ): GroupedCategory[] {
   const groups: GroupedCategory[] = [];
   let currentKey = "";
@@ -1016,28 +1035,26 @@ function groupEntries(
       fullCitation: entry.fullCitation,
       addedFrom: entry.addedFrom,
       isVerified: entry.isVerified,
+      warnings: entry.warnings,
     });
   }
 
   return groups;
 }
 
+/** Metadata-only cleaning: rule lines and list numbering go; style markup
+ *  (**, ##, ^^) and literal escapes stay for the shared serializers. */
 function cleanCitation(text: string): string {
   return text
-    .replace(/\*\*/g, "")
-    .replace(/##/g, "")
-    .replace(/\^\^/g, "")
     .replace(/^📐.*$/gm, "")
     .replace(/^כלל:.*$/gm, "")
     .replace(/^\d+\.\s*/, "")
     .trim();
 }
 
+/** Metadata-only cleaning before export; styles are kept for serializers. */
 function cleanForCopy(text: string): string {
   return text
-    .replace(/\*\*/g, "")
-    .replace(/##/g, "")
-    .replace(/\^\^/g, "")
     .replace(/^📐.*$/gm, "")
     .trim();
 }

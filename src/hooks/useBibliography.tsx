@@ -1,5 +1,6 @@
 import { newTelemetryBatch, sourceTelemetry, reportZeroWork } from "@/lib/costTelemetry";
 import { detectForeignSource } from "@/data/bluebook/extract";
+import { citationTextOnly } from "@/lib/citationSegments";
 import { useState, useCallback, useEffect, createContext, useContext } from "react";
 import { useProjects } from "@/hooks/useProjects";
 
@@ -17,6 +18,8 @@ export interface BibliographyEntry {
   isVerified?: boolean;
   /** When true, the user manually chose the category — never auto-reclassify on rebuild. */
   manualCategory?: boolean;
+  /** Warnings that came with the citation; kept through reload and export. */
+  warnings?: string[];
 }
 
 /** Strip stray trailing punctuation/whitespace so bibliography lines never end with "." */
@@ -123,7 +126,9 @@ export function classifyCitation(text: string): {
   year?: number;
   authorSurname?: string;
 } {
-  const trimmed = text.trim();
+  // Classify the plain reading; stored entries may keep style markup.
+  const marked = text.trim();
+  const trimmed = citationTextOnly(marked).trim();
   const isEnglish = /^[A-Za-z]/.test(trimmed) || /\bv\.\b|\bvs\.\b/.test(trimmed);
   const language = isEnglish ? "english" : "hebrew";
 
@@ -131,7 +136,7 @@ export function classifyCitation(text: string): {
   const yearMatch = trimmed.match(/\((\d{4})\)/) || trimmed.match(/\b(1\d{3}|20\d{2})\b/);
   if (yearMatch) year = parseInt(yearMatch[1], 10);
 
-  const authorDetected = hasAuthorPrefix(trimmed, isEnglish);
+  const authorDetected = hasAuthorPrefix(trimmed, isEnglish) || (marked !== trimmed && hasAuthorPrefix(marked, isEnglish));
   const hasLiteratureMarkers = /מאמר|עיוני משפט|משפטים|הפרקליט|מחקרי משפט|כתב[\s-]עת/.test(trimmed) || /\bJ\.\b|\bL\.\s*Rev\b|\bBook\b|\bPress\b/i.test(trimmed);
   const hasPrimaryLegislation = /(?:^|\s|\()(חוק[\s-]יסוד|חוק|פקודת|פקודה)(?=[\s:-])/.test(trimmed) || /(?:^|\s)לחוק(?=\s)/.test(trimmed) || /^(Act|Law|Basic Law|Statute|Code)\b/i.test(trimmed);
   const hasSecondaryLegislation = /(?:^|\s|\()(תקנות|תקנה|צו|נוהל|הוראת)(?=[\s:-])/.test(trimmed) || /^(Regulations?|Order|Directive)\b/i.test(trimmed);
@@ -153,7 +158,7 @@ export function classifyCitation(text: string): {
   // Foreign (English) sources get their own grouping rather than collapsing into
   // literature/misc. Deterministic families only; anything else → foreign_other.
   if (isEnglish) {
-    const foreign = detectForeignSource(trimmed.replace(/\*\*|##|\^\^/g, ""));
+    const foreign = detectForeignSource(trimmed);
     const cat = foreign ? FOREIGN_KIND_TO_CATEGORY[foreign.kind] : undefined;
     if (cat) {
       return {
@@ -237,9 +242,7 @@ function normalizeBibliographyCitation(text: string): string {
       return true;
     })
     .join(" ")
-    .replace(/\*\*/g, "")
-    .replace(/##/g, "")
-    .replace(/\^\^/g, "")
+    .replace(/^.*$/s, (joined) => citationTextOnly(joined))
     .replace(/^\[?\d+\]?\.?\s*/, "")
     .replace(/^סעיף\s+[\dא-ת()./\-–]+\s+ל(?=(חוק|חוק-יסוד|חוק\s+יסוד|פקודת|פקודה|תקנות|צו|נוהל|הוראת))/g, "")
     .replace(/^section\s+[A-Za-z0-9()./\-–]+\s+of\s+/gi, "")
@@ -316,8 +319,8 @@ export function sortBibliography(entries: BibliographyEntry[]): BibliographyEntr
 interface BibliographyContextValue {
   entries: BibliographyEntry[];
   addEntry: (rawInput: string, fullCitation: string, from: "footnote" | "manual") => boolean;
-  addEntries: (items: { rawInput: string; fullCitation: string; isVerified?: boolean; sourceTypeOverride?: BibSourceCategory }[], from?: "footnote" | "manual") => number;
-  syncFootnoteEntries: (items: { rawInput: string; fullCitation: string }[]) => number;
+  addEntries: (items: { rawInput: string; fullCitation: string; isVerified?: boolean; sourceTypeOverride?: BibSourceCategory; warnings?: string[] }[], from?: "footnote" | "manual") => number;
+  syncFootnoteEntries: (items: { rawInput: string; fullCitation: string; warnings?: string[] }[]) => number;
   removeEntry: (id: string) => void;
   clearAll: () => void;
   sortedEntries: BibliographyEntry[];
@@ -403,7 +406,7 @@ export function BibliographyProvider({ children }: { children: React.ReactNode }
   );
 
   const addEntries = useCallback(
-    (items: { rawInput: string; fullCitation: string; isVerified?: boolean; sourceTypeOverride?: BibSourceCategory }[], from: "footnote" | "manual" = "manual"): number => {
+    (items: { rawInput: string; fullCitation: string; isVerified?: boolean; sourceTypeOverride?: BibSourceCategory; warnings?: string[] }[], from: "footnote" | "manual" = "manual"): number => {
       let count = 0;
       setEntries((prev) => {
         const next = [...prev];
@@ -421,6 +424,7 @@ export function BibliographyProvider({ children }: { children: React.ReactNode }
             addedAt: Date.now(),
             isVerified: item.isVerified,
             manualCategory,
+            ...(item.warnings?.length ? { warnings: [...item.warnings] } : {}),
             ...info,
           });
           count++;
@@ -432,12 +436,13 @@ export function BibliographyProvider({ children }: { children: React.ReactNode }
     [isDuplicate]
   );
 
-  const syncFootnoteEntries = useCallback((items: { rawInput: string; fullCitation: string }[]) => {
+  const syncFootnoteEntries = useCallback((items: { rawInput: string; fullCitation: string; warnings?: string[] }[]) => {
     const normalizedItems = rebuildBibliographyEntries(
       items.map((item) => ({
         id: crypto.randomUUID(),
         rawInput: item.rawInput,
         fullCitation: item.fullCitation,
+        ...(item.warnings?.length ? { warnings: [...item.warnings] } : {}),
         addedFrom: "footnote" as const,
         addedAt: Date.now(),
         ...classifyCitation(item.fullCitation),
