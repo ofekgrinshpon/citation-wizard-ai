@@ -46,8 +46,10 @@ export function renderPastedCaseResponse(contract: PastedCitationContract, reque
   const jurisdiction = fl?.identity?.jurisdiction;
   if (fl?.identity?.matched && !fl.identity.conflicts?.length && (jurisdiction === "US" || jurisdiction === "UK") &&
     (request.jurisdiction === "UNKNOWN" || jurisdiction === request.jurisdiction) && fl.fields) {
+    const suppliedKeys = ["caseName", "court", "reporter", "docket", "year", "decisionDate", "volume", "firstPage", "pinpoint", "paragraph", "neutral", "parallel", "unparsedRemainder"];
+    const safeFields = Object.fromEntries(Object.entries(fl.fields).filter(([k,v]) => suppliedKeys.includes(k) && typeof v === "string"));
     const rendered = renderForeignDetection({ kind: "case", jurisdiction, sourceType: jurisdiction === "US" ? "foreign_case_us" : "foreign_case_other",
-      confidence: "deterministic", fields: { ...fl.fields, ...request.parsedFields } });
+      confidence: "deterministic", fields: { ...safeFields, ...request.parsedFields } });
     if (rendered) {
       const warnings = [...rendered.warnings, ...(rendered.missing.length ? ["חסרים פרטים: " + rendered.missing.join(", ")] : [])];
       return { citation: rendered.citation, reply: rendered.citation + (warnings.length ? `\n⚠️ ${warnings.join(" ")}` : ""), warningMsg: warnings[0] };
@@ -60,7 +62,8 @@ export function readPastedCitationSafety(contract: PastedCitationContract, respo
   const c = (response as { pastedCitation?: PastedCitationContract } | null)?.pastedCitation;
   if (!c) return null; // Existing supported article/statute/recovery protocols remain unchanged.
   if (c.version !== 1 || c.fingerprint !== contract.fingerprint || c.rawInput !== contract.rawInput || c.route === "preserve") {
-    const warningMsg = c.version === 1 && c.route === "preserve" ? pastedCitationWarning(c) : "תוצאת האזכור אינה תואמת לקלט; הקלט נשמר ללא השלמה.";
+    const warningMsg = c.version === 1 && c.route === "preserve" && Array.isArray(c.conflicts) && Array.isArray(c.unsupported)
+      ? pastedCitationWarning(c) : "תוצאת האזכור אינה תואמת לקלט; הקלט נשמר ללא השלמה.";
     return { citation: escapeCitationLiteral(contract.rawInput), reply: `${escapeCitationLiteral(contract.rawInput)}\n⚠️ ${warningMsg}`, warningMsg };
   }
   return null;

@@ -401,7 +401,7 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
   const preparedBody = {
     rawInput: opts.rawInput,
     pastedCitation: pasted.contract,
-    messages: [{ role: "user", content: prompt }],
+    messages: [{ role: "user", content: prompt + (pasted.contract.manualChoice ? `\n[סיווג שיפוט ידני: ${JSON.stringify(pasted.contract.manualChoice)}]` : "") }],
     requestId: crypto.randomUUID(),
     ...telemetryBody(opts.telemetry),
     ...(foreignLookupRequest ? { foreignLookup: foreignLookupRequest } : {}),
