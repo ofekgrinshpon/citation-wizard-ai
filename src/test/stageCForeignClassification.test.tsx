@@ -259,7 +259,7 @@ describe("picker UI — deterministic, local, zero network", () => {
     await act(async () => { fireEvent.click(screen.getByRole("button", { name: /שלח לבדיקה/ })); });
     for (const label of ["פסיקה לועזית", "חקיקה לועזית"]) {
       fireEvent.click(await screen.findByRole("button", { name: /▾/ }));
-      await act(async () => { fireEvent.click(await screen.findByRole("button", { name: new RegExp(label) })); });
+      await act(async () => { fireEvent.click((await screen.findAllByRole("button", { name: new RegExp(`🌐\\s*${label}`) })).at(-1)!); });
       await waitFor(() => expect(h.runCitation.mock.calls.at(-1)?.[0].overrideType).toBeDefined());
       expect(h.runCitation.mock.calls.at(-1)?.[0].overrideType).not.toMatch(/_us$/);
     }
