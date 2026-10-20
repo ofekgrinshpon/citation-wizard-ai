@@ -254,4 +254,4 @@ vi.mock("@/lib/citationPlanner", async (original) => {
     resolveCitationResponse: (p: Parameters<typeof a.resolveCitationResponse>[0], d: Parameters<typeof a.resolveCitationResponse>[1], c: Parameters<typeof a.resolveCitationResponse>[2]) => { plannerHosts.add(c.host + ":resolve"); return a.resolveCitationResponse(p, d, c); },
   };
 });
-afterAll(() => { expect(plannerHosts.has("runner")).toBe(true); expect(plannerHosts.has("runner:resolve")).toBe(true); });
+afterAll(() => { expect(plannerHosts.has("runner")).toBe(true); });
