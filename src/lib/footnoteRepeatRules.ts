@@ -123,6 +123,7 @@ export function extractShortSourceLabel(text: string): string {
   const cleaned = text
     .replace(/\*\*/g, "")
     .replace(/##/g, "")
+    .replace(/\^\^/g, "")
     .trim();
 
   const caseMatch = cleaned.match(/([^,\n()]+?)\s+נ['׳]\s+([^,\n()]+?)(?=\s*,|\s*\(|$)/);
@@ -182,6 +183,7 @@ export function extractCitationOnly(text: string): string {
     .join("\n")
     .replace(/\*\*/g, "")
     .replace(/##/g, "")
+    .replace(/\^\^/g, "")
     .replace(/^\d+\.\s*/, "")
     .trim();
 }
