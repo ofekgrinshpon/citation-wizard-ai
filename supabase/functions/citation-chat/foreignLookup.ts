@@ -393,6 +393,67 @@ export function extractCaseFromEvidence(text: string, jurisdiction: ForeignLooku
   return null;
 }
 
+// ── Statute extraction (Stage 4) ───────────────────────────────────────────
+// Explicit citation forms only: a website host or the bare word "Act" never
+// proves a jurisdiction or a record.
+interface StatuteCite {
+  statuteName?: string;
+  titleNumber?: string;
+  code?: string;
+  section?: string;
+  sections?: string;
+  year?: string;
+  chapter?: string;
+}
+
+const STATUTE_US_RE =
+  /(\d{1,2})\s+(U\.?\s?S\.?\s?C\.?(?:A\.?)?)\s*§{1,2}\s*([0-9A-Za-z][0-9A-Za-z().\-–]*(?:\s*,\s*[0-9A-Za-z().\-–]+)*)/;
+const STATUTE_UK_RE =
+  /([A-Z][A-Za-z'’&(),.\- ]{2,90}?(?:Act|Measure|Order))\s+((?:1[6-9]|20)\d{2})(?:,\s*c\.\s*(\w+))?/;
+
+export function extractStatuteFromEvidence(
+  text: string,
+  jurisdiction: ForeignLookupJurisdiction,
+): StatuteCite | null {
+  const flat = text.replace(/\s+/g, " ");
+  if (jurisdiction === "US") {
+    const m = flat.match(STATUTE_US_RE);
+    if (!m) return null;
+    const after = flat.slice((m.index ?? 0) + m[0].length, (m.index ?? 0) + m[0].length + 24);
+    const y = after.match(/^\s*\(((?:19|20)\d{2})\)/);
+    const items = m[3].split(",").map((s) => s.trim()).filter(Boolean);
+    return {
+      titleNumber: m[1],
+      code: m[2].replace(/\s+/g, ""),
+      section: items.length === 1 ? items[0] : undefined,
+      sections: items.length > 1 ? items.join(", ") : undefined,
+      year: y?.[1],
+    };
+  }
+  if (jurisdiction === "UK") {
+    const m = flat.match(STATUTE_UK_RE);
+    if (!m) return null;
+    return { statuteName: m[1].trim(), year: m[2], chapter: m[3] };
+  }
+  return null;
+}
+
+/**
+ * Jurisdiction of ONE identity-matched statute source from its own explicit
+ * citation form. A recognised host alone (legislation.gov.uk, cornell) proves
+ * nothing — only an extracted citation signature does.
+ */
+function resolveStatuteJurisdiction(
+  s: { url: string; title?: string; snippet?: string },
+): { jurisdiction: "US" | "UK"; sig: string; url: string } | null {
+  const ev = `${s.title ?? ""} ${s.snippet ?? ""}`;
+  const us = extractStatuteFromEvidence(ev, "US");
+  if (us) return { jurisdiction: "US", sig: `US|${us.titleNumber}|${us.section ?? us.sections ?? ""}`, url: s.url };
+  const uk = extractStatuteFromEvidence(ev, "UK");
+  if (uk) return { jurisdiction: "UK", sig: `UK|${normalizeTitle(uk.statuteName ?? "")}|${uk.year ?? ""}`, url: s.url };
+  return null;
+}
+
 // Lazy journal capture between volume and first page; the candidate is then
 // validated (must look like a periodical, not title words). The renderer's
 // deterministic table — never this module — owns abbreviation.
