@@ -1,9 +1,9 @@
 # Roadmap — research → memo → draft handoff (legal-research-v2)
 
 ## Current authorized Stage 5 D1a (offline only)
-- [ ] Extend US database/slip/pending decision preservation, rendering and existing classification axes.
-- [ ] Prove failing regressions, then exercise real chat and batch/local callers with mocked network.
-- [ ] Run focused/full checks and record a bounded coverage ledger; no deployment or next batch.
+- [x] Extend US database/slip/pending decision preservation, rendering and existing classification axes.
+- [x] Prove failing regressions, then exercise real chat and batch/local callers with mocked network.
+- [x] Run focused/full checks and record a bounded coverage ledger; no deployment or next batch.
 
 ## Current bounded Stage A correction (offline only)
 - [x] Restore named preservation fields across caller/recovery validation and rendering.

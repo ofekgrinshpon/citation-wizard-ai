@@ -33,3 +33,15 @@ US inference is bounded to the existing court aliases, numeric circuit form and 
 - Remaining normative/legislative/administrative materials and institutional records.
 - Treaties, constitutions and expanded secondary/publication/media variants.
 - Every later batch requires its own verified primary evidence, explicit scope, fixtures/caller tests and licensing/full-text gate. This list is backlog, not an approved implementation sequence or complete coverage claim.
+
+## Verification results
+- New pre-fix tests: **20 failed / 7 passed**, exit **1**. The failures were established on unchanged application code.
+- Focused preservation/Stage A/B/C/statute/repeat suites: **326 passed**, exit **0**; final actual-host/local/legacy suites: **58 passed**, exit **0**.
+- First full run exposed the legacy source-extracted chat harness missing the new imported adapter: 20 failures. This was introduced by the new import, not a pre-existing application defect. The harness now injects the real adapter; its 24 tests pass unchanged in semantics.
+- Final full run: **180 files passed, 3,225 tests passed, 1 existing skipped, 0 failed**, exit **0**.
+- Latest observed automatic compilation diagnostic: **build OK**, 2026-10-20 15:45:51 UTC. No manual build/typecheck was run because the environment delegates those to its automatic harness; no separate typecheck exit status is available.
+- Actual mocked Index initial+regeneration tested all three user-supplied fixture forms with no citation-chat requests. Actual batch regenerated using real runCitation, cleared staleness only after successful explicit generation, then approved/finalized/copied rich+plain output. Existing zero-work metadata telemetry was allowed and mocked, not mistaken for a paid provider call.
+- Bibliography continues to use the shared runCitation path; its existing integration regressions pass, but no new D1a-specific full bibliography UI workflow or live browser flow is claimed.
+- Changed paths: `AGENTS.md`, `roadmap.md`, this ledger; `src/data/bluebook/{extract,render,types}.ts`; `src/lib/{foreignClassification,runCitation,sourceTypeClassifier,usUnreportedLocal}.ts`; `src/pages/Index.tsx`; `src/test/{usUnreportedD1a.test.ts,foreignStatuteChatHost.test.tsx,stageCBatchHost.test.tsx,legacyArticleAdapter.test.ts}`.
+- Credit intake snapshot: project daily recorded usage 133.127791007; later snapshot 139.027791007, **5.9 recorded credits difference** at that check (not the final settled turn cost).
+- No edge-function source changes/deployment, DB/settings/auth/permission/payment changes, paid search/research/provider calls, dependencies or next batch.
