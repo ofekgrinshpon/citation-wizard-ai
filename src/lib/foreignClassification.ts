@@ -251,6 +251,8 @@ export function reconcileRecord(rec: ClassificationRecord | undefined, itemKey: 
   if (fp !== rec.inputFingerprint) {
     next = { ...next, needsReview: hasOverrides(rec.overrides), updatedAt: now };
     if (!next.needsReview) next = { ...next, inputFingerprint: fp };
+  } else if (rec.needsReview) {
+    next = { ...next, needsReview: false };
   }
   const outFp = output == null ? null : fingerprintInput(output);
   if (outFp !== next.outputFingerprint) {
