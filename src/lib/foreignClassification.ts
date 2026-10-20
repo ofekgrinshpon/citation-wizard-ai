@@ -161,6 +161,14 @@ export function detectClassification(raw: string): DetectedClassification {
       if (schemes.length) multi.citation_scheme = ev(schemes, conf, schemes.map((s) => `field:${s}`));
     }
   }
+  // Stage 5 batch 3: shared periodical structure without a decisive signal is not guessed.
+  if (d?.kind === "other" && (d.fields as { periodical?: string }).periodical) {
+    scalars.family = ev("periodical", "medium", ["shape:periodical_at_page"]);
+    scalars.subtype = ev<string>(null, "none", [], [
+      { value: "periodical.article", confidence: "low", evidence: "shape:periodical_at_page" },
+      { value: "periodical.newspaper", confidence: "low", evidence: "shape:periodical_at_page" },
+    ]);
+  }
   if (d?.kind === "unpublished_manuscript") scalars.publication_status = ev("unpublished", "high", ["label:unpublished_work_type"]);
   if (/https?:\/\/\S+/i.test(text)) multi.access_medium = ev(["web"], "medium", ["url_present"]);
   if (/\bpending\b/i.test(text)) scalars.proceeding_status = ev("pending", "low", ["term:pending"]);
