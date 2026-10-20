@@ -37,4 +37,4 @@
 
 ## Foreign-source citations (Stage B corrective)
 - [x] Caller-level style/warning/URL preservation (bibliography, batch, chat, research panel), R2.1(a) full-case roman typeface, literal-character escaping — offline tests pass
-- [ ] Stage C — waits for owner's independent verification and separate start
+- [x] Stage C — shared foreign classification, picker in chat/batch/bibliography, local persistence (offline). Stage D/E not started.
