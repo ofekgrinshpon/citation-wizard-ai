@@ -65,7 +65,8 @@ import { renderUsUnreportedLocal } from "@/lib/usUnreportedLocal";
 import { renderUnpublishedLocal } from "@/lib/unpublishedWorkLocal";
 import { renderPeriodicalLocal } from "@/lib/periodicalLocal";
 import { renderBookLocal } from "@/lib/bookLocal";
-import { citationManualChoice, preparePastedCitation, readPastedCitationSafety, pastedCaseRequest, renderPastedCaseResponse } from "@/lib/pastedCitationAdapter";
+import { citationManualChoice, preparePastedCitation } from "@/lib/pastedCitationAdapter";
+import { planCitationEvidence, planLocalCitation, planTypedRequest, resolveCitationResponse, CHAT_HOST } from "@/lib/citationPlanner";
 import type { CitationManualChoice } from "../../supabase/functions/_shared/pastedCitation";
 
 interface PendingVerification {
@@ -290,37 +291,23 @@ const Index = () => {
     const isCurrent = () => citationRevision.current === revision &&
       citationScope.current.accountId === scope.accountId && citationScope.current.projectId === scope.projectId && citationScope.current.mode === scope.mode;
     const requestId = crypto.randomUUID();
-    const pasted = preparePastedCitation(article?.rawInput ?? userMessage,
+    // Batch B: shared pure planner (same contract as runCitation; chat capabilities declared).
+    const canonicalRaw = article?.rawInput ?? userMessage;
+    const evidence = planCitationEvidence(canonicalRaw,
       article?.manualChoice ?? (article?.manual ? citationManualChoice(article.sourceType) : null));
-    if (pasted.local) {
-      if (pasted.contract.route !== "preserve") reportZeroWork(telemetry, "local_foreign_formatter", "deterministic");
+    const { pasted } = evidence;
+    const planInput = { evidence, sourceType: article?.sourceType ?? null, input: article?.rawInput ?? canonicalRaw, isPinpoint: false, manual: !!article?.manual };
+    const local = evidence.preserve ? { origin: "preserve" as const, resolution: evidence.preserve } : planLocalCitation(planInput, CHAT_HOST);
+    if ("resolution" in local) {
+      if (local.origin !== "preserve") reportZeroWork(telemetry, "local_foreign_formatter", "deterministic");
+      if (local.origin !== "statute_local" && !isCurrent()) throw Object.assign(new Error("CITATION_RETRY_STALE"), { handled: true });
+      await onSuccess?.(local.resolution.reply, isCurrent, undefined, true);
       if (!isCurrent()) throw Object.assign(new Error("CITATION_RETRY_STALE"), { handled: true });
-      await onSuccess?.(pasted.local.reply, isCurrent, undefined, true);
-      if (!isCurrent()) throw Object.assign(new Error("CITATION_RETRY_STALE"), { handled: true });
-      return pasted.local.reply;
+      return local.resolution.reply;
     }
-    const articleFields = articleRequestFields(article?.sourceType, article?.rawInput);
-    const unreported = article ? (renderUsUnreportedLocal(article.sourceType, article.rawInput) ?? renderUnpublishedLocal(article.sourceType, article.rawInput) ?? renderPeriodicalLocal(article.sourceType, article.rawInput) ?? renderBookLocal(article.sourceType, article.rawInput)) : null;
-    if (unreported) {
-      reportZeroWork(telemetry, "local_foreign_formatter", "deterministic");
-      if (!isCurrent()) throw Object.assign(new Error("CITATION_RETRY_STALE"), { handled: true });
-      await onSuccess?.(unreported.reply, isCurrent, undefined, true);
-      if (!isCurrent()) throw Object.assign(new Error("CITATION_RETRY_STALE"), { handled: true });
-      return unreported.reply;
-    }
-    // Stage 4: the same pure statute adapter as runCitation. The effective
-    // (manual) choice is never crossed; any non-lookup preparation (complete
-    // supplied fields or a mismatch) is answered locally with zero transport.
-    const statutePrep = article ? prepareForeignStatute(article.sourceType, article.rawInput, { manual: article.manual }) : null;
-    if (statutePrep && statutePrep.outcome !== "lookup") {
-      const local = renderStatuteLocal(statutePrep);
-      reportZeroWork(telemetry, "local_foreign_formatter", "deterministic");
-      await onSuccess?.(local.reply, isCurrent, undefined, true);
-      if (!isCurrent()) throw Object.assign(new Error("CITATION_RETRY_STALE"), { handled: true });
-      return local.reply;
-    }
-    const statuteRequest = statutePrep?.request ?? null;
-    const caseRequest = pastedCaseRequest(article?.rawInput ?? userMessage, pasted.contract);
+    const plan = planTypedRequest({ ...planInput, statutePrep: local.statutePrep, canonicalRaw }, CHAT_HOST);
+    const statuteRequest = plan.statutePrep?.request ?? null;
+    const caseRequest = plan.caseRequest;
     let completed = false;
     const execute = async (retry?: CitationRetryDescriptor): Promise<string> => {
       const { data, errorInfo } = retry
@@ -334,11 +321,10 @@ const Index = () => {
           ],
           requestId,
           ...telemetryBody(telemetry),
-          ...articleFields,
-          rawInput: article?.rawInput ?? userMessage,
+          ...plan.extraBody,
+          rawInput: canonicalRaw,
           pastedCitation: pasted.contract,
-          ...(statuteRequest ? { foreignLookup: statuteRequest } : {}),
-          ...(caseRequest ? { foreignLookup: caseRequest } : {}),
+          ...(plan.foreignLookup ? { foreignLookup: plan.foreignLookup } : {}),
         },
         { projectId, isCitationResultCurrent: isCurrent },
       );
@@ -371,19 +357,10 @@ const Index = () => {
       // Server signaled it auto-refunded the credit (e.g. AI returned a refusal).
       handleRefundResponse(data);
 
-      let reply = (data?.content as string) || "אירעה שגיאה בעיבוד הבקשה.";
-      if (articleFields.foreignLookup) {
-        const rendered = renderForeignArticleLookup(articleFields.foreignLookup, data?.foreignLookup as ForeignArticleLookupResponse | undefined)
-          ?? renderForeignArticleLookup(articleFields.foreignLookup, { fields: {}, articleResolution: "incomplete" });
-        if (rendered) reply = rendered.reply;
-      }
-      // A typed statute request is terminal: render the typed response (or its
-      // absence) from supplied fields; never display generic model content.
-      if (statutePrep && statuteRequest) reply = renderForeignStatuteLookup(statutePrep, data?.foreignLookup).reply;
-      const safety = readPastedCitationSafety(pasted.contract, data);
-      const caseResult = renderPastedCaseResponse(pasted.contract, caseRequest, data?.foreignLookup);
-      if (caseResult) reply = caseResult.reply;
-      if (safety) reply = safety.reply;
+      const resolved = resolveCitationResponse(plan, data ?? null, CHAT_HOST);
+      // Terminal typed outcomes never fall through; legacy handoff keeps generic content.
+      const reply = resolved.kind === "terminal" ? resolved.resolution.reply : ((data?.content as string) || "אירעה שגיאה בעיבוד הבקשה.");
+      const safety = resolved.kind === "terminal" && resolved.origin === "safety";
       if (!completed) {
         completed = true;
         const historyRequestId = typeof data?.requestId === "string" &&
