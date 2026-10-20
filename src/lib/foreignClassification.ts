@@ -6,8 +6,7 @@
  */
 import { detectForeignSource } from "@/data/bluebook/extract";
 import {
-  AXES,
-  FAMILIES,
+  INSTITUTION_PROFILES,
   OTHER_UNIDENTIFIED,
   TAXONOMY_VERSION,
   getAxis,
@@ -300,13 +299,8 @@ const SCALAR_VALIDATORS: Record<ScalarField, (v: string) => boolean> = {
   publication_status: (v) => !!getAxis("publication_status")?.values.includes(v),
   proceeding_status: (v) => !!getAxis("proceeding_status")?.values.includes(v),
 };
-let INSTITUTION_IDS: Set<string> | null = null;
-function getInstitutionIds() {
-  if (!INSTITUTION_IDS) INSTITUTION_IDS = new Set((AXES.length, FAMILIES.length, []) as string[]);
-  return INSTITUTION_IDS;
-}
-import { INSTITUTION_PROFILES } from "@/data/bluebook/classification/taxonomy";
-INSTITUTION_IDS = new Set(INSTITUTION_PROFILES.map((p) => p.id));
+const INSTITUTION_IDS = new Set(INSTITUTION_PROFILES.map((p) => p.id));
+const getInstitutionIds = () => INSTITUTION_IDS;
 
 export function sanitizeOverrides(raw: unknown): ClassificationOverrides {
   const out: ClassificationOverrides = {};
