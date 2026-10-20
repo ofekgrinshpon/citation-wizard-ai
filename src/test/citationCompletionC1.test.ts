@@ -5,6 +5,7 @@ import { c1ServerPayload, C1_BROWN } from "./fixtures/c1ServerPayload";
 import { buildForeignArticleRequest } from "@/lib/foreignArticleAdapter";
 import type { SourceType } from "@/data/abbreviations";
 import capture from "./fixtures/foreignArticleSearchCapture.json";
+import { renderCitationRecovery } from "@/lib/renderCitationRecovery";
 beforeEach(() => vi.stubGlobal("fetch", vi.fn(() => { throw new Error("Live network forbidden"); })));
 const raw = "Brown v. Board of Education";
 function plan(input = raw, sourceType: SourceType | null = null, caps = CHAT_HOST) {
@@ -74,7 +75,7 @@ describe("C1 existing extraction envelope acceptance", () => {
     const { response, calls } = await c1ServerPayload(request, [donor]);
     const accepted = acceptCitationCompletion({ ...request, ...(statute ? { statuteResponseVersion: 1 } : {}) }, input, response);
     expect(accepted.identityConfirmed).toBe(true);
-    expect(accepted.fields.year).toBe("2018" === (statute ? "2018" : "2020") ? "2018" : "2020");
+    expect(accepted.fields.year).toBe(statute ? "2018" : "2020");
     expect(calls.filter(c => c === "https://api.perplexity.ai/search")).toHaveLength(1);
     expect(calls).toHaveLength(1);
   });
@@ -84,5 +85,34 @@ describe("C1 existing extraction envelope acceptance", () => {
       expect(plan("Synthetic work needing details", type, RUNNER_HOST).foreignLookup?.kind).toBe(type === "foreign_book" ? "book" : "book_chapter");
     }
     expect(CHAT_HOST.typedRequestBuilder).toBe("chat_article_fields");
+  });
+  it("bound retained partial response renders exactly like the shared resolver without IO", async () => {
+    const { response } = await c1ServerPayload({ kind: "case", jurisdiction: "UNKNOWN", rawInput: raw, parsedFields: { caseName: raw } });
+    delete response.provenance.year;
+    const p = plan();
+    const live = resolveCitationResponse(p, { foreignLookup: response }, CHAT_HOST);
+    const now = Date.UTC(2026, 9, 20);
+    const retained = renderCitationRecovery({ requestId: "offline-c1", status: "succeeded", availability: "available",
+      createdAt: new Date(now).toISOString(), expiresAt: new Date(now + 86_400_000).toISOString(), retryOfRequestId: null,
+      input: { messages: [{ role: "user", content: "Prepared presentation wrapper" }], rawInput: raw, foreignLookup: p.foreignLookup, batchId: null },
+      result: { foreignLookup: response }, refundReceipt: null } as never, now);
+    expect(live.kind).toBe("terminal");
+    if (live.kind === "terminal") expect(retained?.formattedOutput).toBe(live.resolution.reply);
+    expect(fetch).not.toHaveBeenCalled();
+  });
+  it("URL and source id alone cannot ground any added fields", async () => {
+    const { response } = await c1ServerPayload({ kind: "case", jurisdiction: "UNKNOWN", rawInput: raw, parsedFields: { caseName: raw } });
+    response.sources = response.sources.map(({ url, tier }) => ({ url, tier }));
+    const accepted = acceptCitationCompletion(plan().foreignLookup ?? {}, raw, response);
+    expect(accepted.fields).toEqual({});
+    expect(accepted.quarantined).toContain("year");
+  });
+  it("matching title anchor cannot hide a different DOI anchor", async () => {
+    const req = buildForeignArticleRequest(capture.input.rawInput + " DOI 10.2307/1321160");
+    const { response } = await c1ServerPayload(req, [capture.searches[1].results[4]]);
+    response.identity.anchors.push("doi:10.9999/wrong");
+    const accepted = acceptCitationCompletion({ ...req }, req.rawInput, response);
+    expect(accepted.identityConfirmed).toBe(false);
+    expect(accepted.fields).toEqual({});
   });
 });
