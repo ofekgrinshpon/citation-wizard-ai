@@ -130,7 +130,7 @@ export function renderUsCase(f: ForeignCaseFields): RenderResult {
   // Only the original decision parenthetical at the end of an unparsed suffix
   // counts as supplied: never derive a year from procedural history or prose.
   const suppliedYearInSuffix = !f.year && !!f.unparsedRemainder &&
-    /^[^()]*\([^()]*\b(?:17|18|19|20)\d{2}\)$/.test(f.unparsedRemainder.trim());
+    /^[\s,;\d.n–\-¶]*\([^()]*\b(?:17|18|19|20)\d{2}\)$/.test(f.unparsedRemainder.trim());
   if (!impliesCourt && !parallelImpliesCourt && !f.court && !suppliedYearInSuffix) {
     missing.push("court");
     warnings.push("חסרה ערכאה; מקור הפרסום אינו מזהה אותה לבדו.");
