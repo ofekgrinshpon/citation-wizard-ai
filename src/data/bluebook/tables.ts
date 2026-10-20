@@ -100,13 +100,22 @@ export const US_COURTS: Record<string, string> = {
   "supreme court of the united states": "U.S.",
 };
 
+/**
+ * Court-ordinal presentation (bounded formatting rule): Bluebook style spells
+ * circuit ordinals as "2d"/"3d" (never "2nd"/"3rd"); other ordinals keep
+ * "st"/"th". Applied only to circuit-court forms, never to source titles.
+ */
+function fixCircuitOrdinal(s: string): string {
+  return s.replace(/\b(\d+)(?:nd|rd)(?=\s+Cir)/gi, "$1d");
+}
+
 export function normalizeCourt(raw: string | undefined): string | undefined {
   if (!raw) return raw;
-  const trimmed = raw.trim();
+  const trimmed = fixCircuitOrdinal(raw.trim());
   const key = trimmed.toLowerCase().replace(/[^a-z0-9 ]/g, "").replace(/\s+/g, " ");
   if (US_COURTS[key]) return US_COURTS[key];
   // Ordinal circuit forms: "7th Circuit" → "7th Cir."
-  const circuit = trimmed.match(/^(\d+(?:st|nd|rd|th))\s+Circuit$/i);
+  const circuit = trimmed.match(/^(\d+(?:st|nd|rd|th|d))\s+Circuit$/i);
   if (circuit) return `${circuit[1].toLowerCase()} Cir.`;
   return trimmed;
 }
