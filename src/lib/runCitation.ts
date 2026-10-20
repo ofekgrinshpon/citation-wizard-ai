@@ -242,7 +242,7 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
   // Batch B: shared pure planner — terminal local outcomes, then the bound typed request.
   const planInput = { evidence, sourceType, input: normalized, isPinpoint, manual: !!opts.overrideType };
   const local = planLocalCitation(planInput, RUNNER_HOST);
-  if (local.origin) {
+  if ("resolution" in local) {
     if (local.origin === "unreported_local" && opts.isResultCurrent && !opts.isResultCurrent()) {
       throw new CitationRunError({ code: "CITATION_INPUT_CHANGED", userMessage: "הקלט או החשבון השתנו. התוצאה לא נשמרה." });
     }
@@ -250,7 +250,7 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
     if (local.origin !== "pasted_local") observeCitationDiagnostic(opts.diagnostic, rawInput, "deterministic");
     return { sourceType, sourceLabel, ...local.resolution, telemetry: opts.telemetry, fromVerifiedStore: false };
   }
-  const plan = planTypedRequest({ ...planInput, statutePrep: local.statutePrep, canonicalRaw: opts.rawInput }, RUNNER_HOST);
+  const plan = planTypedRequest({ ...planInput, statutePrep: "statutePrep" in local ? local.statutePrep : null, canonicalRaw: opts.rawInput }, RUNNER_HOST);
   const foreignLookupRequest = plan.foreignLookup;
 
   // 2) Pinpoint + known master source → feed the verified details as a hint.
