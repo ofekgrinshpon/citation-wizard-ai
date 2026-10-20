@@ -20,9 +20,11 @@ describe("pure recovery renderer", () => {
     vi.stubGlobal("fetch", fetch);
     const rendered = renderCitationRecovery(article(), now)!;
     expect(rendered.structured).toBe(true);
-    expect(rendered.formattedOutput).toContain("Samuel D. Warren and Louis D. Brandeis");
+    // C1 older ungrounded payloads remain readable, but never complete fields.
+    expect(rendered.formattedOutput).toContain("Warren & Brandeis");
     expect(rendered.formattedOutput).toContain("The Right to Privacy");
-    expect(rendered.formattedOutput).toContain("193, 213–214 (1890)");
+    expect(rendered.formattedOutput).toContain("[חסר: עמוד], 213–214");
+    expect(rendered.warning).toBeTruthy();
     expect(rendered.formattedOutput).not.toContain("Provider title");
     expect(rendered.plainText).not.toContain("##");
     expect(recoveryInputText(article())).toBe("Warren & Brandeis, The Right to Privacy, pp. 213–214.");
@@ -37,7 +39,7 @@ describe("pure recovery renderer", () => {
     expect(rendered.formattedOutput).toContain("[חסר:");
     expect(rendered.formattedOutput).toContain("213–214");
     expect(rendered.warning).toBeTruthy();
-    expect(rendered.formattedOutput).toContain("סותרים");
+    expect(rendered.formattedOutput).toContain("אינה בפורמט נתמך");
   });
 
   it("renders structured-only cases with original name/year/pinpoint taking precedence", () => {
@@ -106,8 +108,9 @@ describe("pure recovery renderer", () => {
       { label: "Case B", jurisdiction: "UK", url: "https://example.invalid/case" },
     ] } };
     const rendered = renderCitationRecovery(r, now)!;
-    expect(rendered.structured).toBe(false);
-    expect(rendered.plainText).toContain("נדרשת בחירה");
-    expect(rendered.warning).toContain("אינה תוצאה מאומתת");
+    expect(rendered.structured).toBe(true);
+    expect(rendered.plainText).toContain("The Right to Privacy");
+    expect(rendered.warning).toContain("אינה בפורמט נתמך");
+    expect(rendered.plainText).not.toContain("javascript:");
   });
 });
