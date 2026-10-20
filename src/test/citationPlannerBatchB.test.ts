@@ -173,7 +173,7 @@ describe("batch B pure planner contract", () => {
   });
   it.each(["generic", "unmatched", "safety_mismatch"])("statute typed outcome %s is terminal", rname => {
     for (const caps of [CHAT_HOST, RUNNER_HOST]) {
-      const p = plan("17 U.S.C. § 512", "foreign_statute_us", caps);
+      const p = plan("Civil Rights Act § 1983", "foreign_statute_us", caps);
       const r = resolveCitationResponse(p.typed!, RESPONSES[rname] as Record<string, unknown>, caps);
       expect(r.kind).toBe("terminal"); if (r.kind === "terminal") expect(r.resolution.reply).not.toContain("UNSAFE");
     }
