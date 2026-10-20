@@ -124,8 +124,9 @@ export function renderUsCase(f: ForeignCaseFields): RenderResult {
 
   const impliesCourt = f.reporter ? REPORTER_IMPLIES_COURT.has(f.reporter) : false;
   // An explicit parallel court-specific reporter can identify the same court.
-  const parallelImpliesCourt = !!f.parallel && [...REPORTER_IMPLIES_COURT].some((reporter) =>
-    f.parallel?.startsWith(`${f.parallel.split(" ")[0]} ${reporter} `));
+  const parallelReporter = f.parallel?.replace(/^\d+\s+/, "");
+  const parallelImpliesCourt = !!parallelReporter && [...REPORTER_IMPLIES_COURT].some((reporter) =>
+    parallelReporter.startsWith(`${reporter} `));
   // Only the original decision parenthetical at the end of an unparsed suffix
   // counts as supplied: never derive a year from procedural history or prose.
   const suppliedYearInSuffix = !f.year && !!f.unparsedRemainder &&

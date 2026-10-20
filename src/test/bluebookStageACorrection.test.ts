@@ -102,6 +102,27 @@ describe("bounded metadata gaps", () => {
     expect(r?.warnings.length).toBeGreaterThan(0);
     expect(r?.missing).toContain("court");
   });
+  it("never treats a history year or unrelated prose as the missing decision year", () => {
+    for (const raw of ["Example v. Sample, 100 F.3d 200, rev'd, 520 U.S. 100 (1997)",
+      "Example v. Sample, 100 F.3d 200 cited in 1997"]) {
+      const r = renderForeignCitation(raw);
+      expect(r?.missing).toContain("year");
+      expect(r?.warnings.join(" ")).toContain("חסרה שנת");
+    }
+  });
+  it("UK lookup caller carries an unplaced page pinpoint into the warning", async () => {
+    boundary.invoke.mockImplementation(async (_name, body) => {
+      expect(citationRecoveryInput({ messages: body.messages, rawInput: null, batchId: null,
+        foreignLookup: body.foreignLookup })).not.toBeNull();
+      return { data: { foreignLookup: { fields: { year: "2020", neutral: "UKSC 12", pinpoint: "23, 25" },
+        identity: { matched: true, jurisdiction: "UK" } } }, errorInfo: null };
+    });
+    const r = await runCitation({ rawInput: "Example v Sample (UKSC)", overrideType: "foreign_case_other", useVerifiedStore: false });
+    expect(r.status).toBe("warning");
+    expect(r.reply).toContain("pinpoint: 23, 25");
+    expect(r.citation).not.toContain("[23, 25]");
+    expect(boundary.invoke).toHaveBeenCalledTimes(1);
+  });
   it("constitution section list preserves §§ identity", () => {
     const r = renderForeignCitation("U.S. CONST. art. III, §§ 1, 3");
     expect(stripMarkers(r?.citation ?? "")).toBe("U.S. Const. art. III, §§ 1, 3.");
