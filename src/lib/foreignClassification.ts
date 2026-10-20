@@ -217,11 +217,14 @@ export function axisContract(e: EffectiveClassification) {
 }
 
 export function effectiveKey(e: EffectiveClassification): string {
-  const sortObj = (o: Record<string, unknown>): unknown => Object.keys(o).sort().map((k) => {
+  // Object keys are always sorted for determinism. Array order is preserved
+  // (author/editor/translator/party lists are semantically ordered); only the
+  // explicit set-valued multi axes are canonicalized by sorting.
+  const sortObj = (o: Record<string, unknown>, sortArrays = false): unknown => Object.keys(o).sort().map((k) => {
     const v = o[k];
-    return [k, Array.isArray(v) ? [...v].sort() : v && typeof v === "object" ? sortObj(v as Record<string, unknown>) : v];
+    return [k, Array.isArray(v) ? (sortArrays ? [...v].sort() : [...v]) : v && typeof v === "object" ? sortObj(v as Record<string, unknown>) : v];
   });
-  return JSON.stringify([sortObj(e.scalars), sortObj(e.multi), sortObj(e.flags), sortObj(e.structured as Record<string, unknown>), e.otherUnidentified]);
+  return JSON.stringify([sortObj(e.scalars), sortObj(e.multi, true), sortObj(e.flags), sortObj(e.structured as Record<string, unknown>), e.otherUnidentified]);
 }
 
 export type SupportStatus = "renderer_partial" | "unsupported" | "unidentified";
