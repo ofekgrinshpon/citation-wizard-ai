@@ -133,7 +133,8 @@ export function detectClassification(raw: string): DetectedClassification {
     }
     const legal = d.kind === "case" || d.kind === "statute" || d.kind === "constitution";
     if (legal && d.jurisdiction === "US") {
-      scalars.jurisdiction = ev(US_ROOT_ID, conf, [d.kind === "statute" ? "code:U.S.C." : d.kind === "constitution" ? "U.S. CONST." : "reporter:US"]);
+      const caseFields = d.fields as { opinionFormat?: string; court?: string };
+      scalars.jurisdiction = ev(US_ROOT_ID, conf, [d.kind === "statute" ? "code:U.S.C." : d.kind === "constitution" ? "U.S. CONST." : caseFields.opinionFormat ? `supplied_us_court:${caseFields.court}` : "reporter:US"]);
     } else if (legal && d.jurisdiction === "UK") {
       const f = d.fields as { neutral?: string; reporter?: string };
       const explicitUk = /\b(?:UK|United Kingdom|England|Wales|Scotland|Northern Ireland)\b/.test(text);
@@ -142,10 +143,18 @@ export function detectClassification(raw: string): DetectedClassification {
       else scalars.jurisdiction = ev<string>(null, "none", [], [{ value: UK_ID, confidence: "low", evidence: "chapter_number_shape" }]);
     }
     if (d.kind === "case") {
-      const f = d.fields as { neutral?: string; reporter?: string; parallel?: string };
+      const f = d.fields as { neutral?: string; reporter?: string; parallel?: string; docket?: string; paragraph?: string; databaseIdentifier?: string; opinionFormat?: string; dateMeaning?: string };
       const schemes: string[] = [];
       if (f.neutral) schemes.push("neutral_citation");
       if (f.reporter || f.parallel) schemes.push("reporter_locator");
+      if (f.opinionFormat) {
+        if (f.docket) schemes.push("document_number");
+        if (f.paragraph) schemes.push("paragraph_number");
+        if (f.databaseIdentifier) multi.access_medium = ev(["commercial_database"], conf, ["field:databaseIdentifier"]);
+        // A database/slip locator does not prove publication or proceeding status.
+        scalars.publication_status = ev("unknown", conf, ["publication_not_established"]);
+        if (f.dateMeaning === "filed") scalars.proceeding_status = ev("pending", "medium", ["date_meaning:filed"]);
+      }
       if (schemes.length) multi.citation_scheme = ev(schemes, conf, schemes.map((s) => `field:${s}`));
     }
   }

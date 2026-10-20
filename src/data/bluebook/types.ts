@@ -101,6 +101,10 @@ export interface ForeignCaseFields {
   starPinpoint?: string;
   /** Exact decision date in Bluebook form, e.g. "Mar. 22, 2019" (database cases). */
   decisionDate?: string;
+  /** D1a full-date meaning; a filing date is not a decision year. */
+  dateMeaning?: string;
+  /** D1a publication form; independent of taxonomy publication status. */
+  opinionFormat?: "database" | "slip_separate" | "slip_nonseparate" | "pending";
   /** Volume number inside a UK report year, e.g. "1" in "[1990] 1 WLR 1". */
   reporterVolume?: string;
   /** Neutral citation body for UK sources, e.g. "UKSC 41". */

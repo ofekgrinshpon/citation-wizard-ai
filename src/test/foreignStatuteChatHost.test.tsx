@@ -46,6 +46,11 @@ vi.mock("@/components/MessageBubble", () => ({
           itemKey: "chat:0", sourceType: "foreign_statute_uk", supported: true, effectiveKey: "eff", inputFingerprint: "fp",
         })}>regen-uk</button>
       )}
+      {onChangeSourceType && (
+        <button type="button" onClick={() => onChangeSourceType("foreign_case_us", {
+          itemKey: "chat:0", sourceType: "foreign_case_us", supported: true, effectiveKey: "us-case-eff", inputFingerprint: "us-case-fp",
+        })}>regen-us-case</button>
+      )}
     </div>
   ),
 }));
@@ -89,6 +94,23 @@ beforeEach(() => {
 const CORNELL_1983 = { title: "42 U.S.C. § 1983 - Civil action for deprivation of rights", url: "https://www.law.cornell.edu/uscode/text/42/1983", snippet: "Civil Rights Act — 42 U.S.C. § 1983 (2018)." };
 
 describe("chat page — typed statute request through initial send and regeneration", () => {
+  it.each([
+    "Alpha v. Beta, No. 24-CV-017-A, slip op. at 6, 9–11 (D. Mass. Mar. 2, 2024)",
+    "Alpha v. Beta, No. 24-CV-017-A (D. Mass. filed Mar. 2, 2024)",
+    "Alpha v. Beta, No. 24-CV-017-A, 2024 WL 123456, at *3, *7–9 (D. Mass. Mar. 2, 2024)",
+  ])("D1a actual initial+regeneration chat remains local: %s", async (input) => {
+    m.classify.mockResolvedValue({ sourceType: "foreign_case_us", source: "regex" });
+    m.invoke.mockResolvedValue({ data: { content: "MODEL TEXT" }, errorInfo: null });
+    await mountChat();
+    await send(input);
+    await waitFor(() => expect(screen.getByTestId("bubble-assistant")).toHaveTextContent(`${input}.`));
+    expect(screen.getByTestId("bubble-assistant")).not.toHaveTextContent("[חסר:");
+    await act(async () => { fireEvent.click(screen.getByRole("button", { name: "regen-us-case" })); });
+    await waitFor(() => expect(m.recordGeneration).toHaveBeenCalledWith("acct-1", expect.objectContaining({ effectiveKey: "us-case-eff", inputFingerprint: "us-case-fp" })));
+    expect(screen.getByTestId("bubble-assistant")).toHaveTextContent(`${input}.`);
+    expect(m.invoke).not.toHaveBeenCalled();
+  });
+
   it("initial send dispatches the typed request and renders the grounded response", async () => {
     m.classify.mockResolvedValue({ sourceType: "foreign_statute_us", source: "regex" });
     const server = serverWith([CORNELL_1983]);

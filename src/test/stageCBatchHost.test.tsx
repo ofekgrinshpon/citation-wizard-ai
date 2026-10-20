@@ -79,6 +79,33 @@ const choose = (jurisdiction: string) => saveRecord("u1", applyOverride(createRe
   { scalars: { family: "decision", subtype: "decision.judgment", jurisdiction } }));
 
 describe("BatchFootnoteBuilder — explicit regeneration", () => {
+  it("D1a real shared engine renders an actual batch regeneration locally and preserves copies", async () => {
+    const input = "Alpha v. Beta, No. 24-CV-017-A, 2024 WL 123456, at *3, *7–9 (D. Mass. Mar. 2, 2024)";
+    localStorage.setItem("footnote_cells_row-project", JSON.stringify([
+      { id: 1, key: "k1", input, output: "old output", status: "valid", detectedType: "foreign_case_us" },
+    ]));
+    saveRecord("u1", applyOverride(createRecord("batch:k1", input), { scalars: { family: "decision", subtype: "decision.judgment", jurisdiction: "us", publication_status: "unpublished" } }));
+    const actual = await vi.importActual<typeof import("@/lib/runCitation")>("@/lib/runCitation");
+    b.runCitation.mockImplementation(actual.runCitation);
+    render(<BatchFootnoteBuilder />);
+    expect(screen.getByTestId("foreign-stale")).toBeInTheDocument();
+    await act(async () => { fireEvent.click(screen.getByRole("button", { name: "הפקה מחדש לפי הסיווג" })); });
+    await waitFor(() => expect(screen.queryByTestId("foreign-stale")).toBeNull());
+    const result = await b.runCitation.mock.results[0].value;
+    expect(result.citation).toBe(`${input}.`);
+    expect(result.status).toBe("warning");
+    expect(fetchSpy).not.toHaveBeenCalled();
+    expect(vi.mocked(supabase.functions.invoke).mock.calls.every(([name]) => name === "cost-telemetry-event")).toBe(true);
+    // Exercise the actual batch copy callback, not just the formatting helper.
+    await act(async () => { fireEvent.click(screen.getByRole("button", { name: /אשר הכל/ })); });
+    await act(async () => { fireEvent.click(screen.getByRole("button", { name: /בנה רשימה סופית/ })); });
+    await waitFor(() => expect(screen.getByRole("button", { name: /העתק הכל/ })).toBeInTheDocument());
+    await act(async () => { fireEvent.click(screen.getByRole("button", { name: /העתק הכל/ })); });
+    await waitFor(() => expect(b.copyRichText).toHaveBeenCalled());
+    expect(b.copyRichText.mock.calls[0][1]).toContain("at *3, *7–9");
+    expect(b.copyRichText.mock.calls[0][0]).not.toContain("##");
+  });
+
   it("supported US decision choice reaches the engine; stale clears only after that generation", async () => {
     choose("us");
     render(<BatchFootnoteBuilder />);

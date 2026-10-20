@@ -61,6 +61,7 @@ import { handleRefundResponse } from "@/lib/refundResponse";
 import { saveCitationHistoryRecord } from "@/lib/citationHistorySave";
 import { articleRequestFields, compatibleArticleCache, renderForeignArticleLookup, type ForeignArticleLookupResponse } from "@/lib/foreignArticleAdapter";
 import { prepareForeignStatute, renderForeignStatuteLookup, renderStatuteLocal } from "@/lib/foreignStatuteAdapter";
+import { renderUsUnreportedLocal } from "@/lib/usUnreportedLocal";
 
 interface PendingVerification {
   lawName: string;
@@ -285,6 +286,14 @@ const Index = () => {
       citationScope.current.accountId === scope.accountId && citationScope.current.projectId === scope.projectId && citationScope.current.mode === scope.mode;
     const requestId = crypto.randomUUID();
     const articleFields = articleRequestFields(article?.sourceType, article?.rawInput);
+    const unreported = article ? renderUsUnreportedLocal(article.sourceType, article.rawInput) : null;
+    if (unreported) {
+      reportZeroWork(telemetry, "local_foreign_formatter", "deterministic");
+      if (!isCurrent()) throw Object.assign(new Error("CITATION_RETRY_STALE"), { handled: true });
+      await onSuccess?.(unreported.reply, isCurrent, undefined, true);
+      if (!isCurrent()) throw Object.assign(new Error("CITATION_RETRY_STALE"), { handled: true });
+      return unreported.reply;
+    }
     // Stage 4: the same pure statute adapter as runCitation. The effective
     // (manual) choice is never crossed; any non-lookup preparation (complete
     // supplied fields or a mismatch) is answered locally with zero transport.
