@@ -429,10 +429,10 @@ export function renderNonconsecutiveArticle(f: ForeignPeriodicalFields): RenderR
   if (!f.firstPage) missing.push("firstPage");
   if (f.issue) warnings.push("לא סופק תאריך כריכה; מספר הגיליון נשמר כפי שסופק.");
   const unrep: string[] = [];
-  reportExtraFields(f, ["authors", "title", "periodical", "date", "issue", "firstPage", "pinpoint", "nonconsecutive"], warnings, unrep);
+  reportExtraFields(f, ["authors", "title", "periodical", "volume", "date", "issue", "firstPage", "pinpoint", "nonconsecutive"], warnings, unrep);
   const head = `${f.authors ? `${f.authors}, ` : ""}${f.title ? italicTitle(f.title, warnings) : miss("כותרת")}`;
   const at = `at ${f.firstPage || miss("עמוד")}${f.pinpoint ? `, ${f.pinpoint}` : ""}`;
-  const out = appendRemainder(`${head}, ${sc(f.periodical || miss("כתב עת"))}, ${f.date || f.issue || miss("תאריך")}, ${at}`, f.unparsedRemainder, warnings, unrep);
+  const out = appendRemainder(`${head}, ${f.volume && !f.date ? `${f.volume} ` : ""}${sc(f.periodical || miss("כתב עת"))}, ${f.date || f.issue || miss("תאריך")}, ${at}`, f.unparsedRemainder, warnings, unrep);
   return finish(out, warnings, missing, unrep);
 }
 

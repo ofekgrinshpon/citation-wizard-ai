@@ -40,9 +40,11 @@ describe("R16.5 nonconsecutive journals/magazines", () => {
   it("pinpoint list with range and note", () => {
     expect(plain(art("Quiet Fields, Synthetic Mag., Mar. 2020, at 12, 13, 15-17 n.2")?.citation)).toBe("Quiet Fields, Synthetic Mag., Mar. 2020, at 12, 13, 15–17 n.2.");
   });
-  it("explicit issue number without date is kept with a warning", () => {
+  it("issue mode: volume goes before the periodical (R16.5 → R16.4)", () => {
     const r = art("Quiet Fields, Synthetic Mag., vol. 7, no. 3, 2020, at 12")!;
-    expect(plain(r.citation)).toBe("Quiet Fields, Synthetic Mag., vol. 7, no. 3, 2020, at 12.");
+    expect(r.citation).toBe("##Quiet Fields##, 7 ^^Synthetic Mag.^^, no. 3, 2020, at 12.");
+    expect(plain(r.citation)).not.toContain("vol.");
+    expect(plain(art("Quiet Fields, Synthetic Mag., no. 3, Mar. 2020, at 12")?.citation)).toBe("Quiet Fields, Synthetic Mag., no. 3, Mar. 2020, at 12.");
     expect(r.warnings.join(" ")).toContain("מספר הגיליון");
   });
   it("unparseable no-date input is not routed here (existing consecutive path)", () => {
@@ -157,5 +159,36 @@ describe("routing, ambiguity and safety", () => {
     const result = await runCitation({ rawInput, useVerifiedStore: false, overrideType: "foreign_newspaper" });
     expect(plain(result.citation)).toBe(`${rawInput}.`);
     expect(b.invoke).not.toHaveBeenCalled();
+  });
+});
+
+describe("author-versus-title ambiguity (no invented author)", () => {
+  const cases = ["Courts, Memory and Society, Synthetic Mag., Mar. 2020, at 12", "Courts, Codes and Reform, Example Monthly, Spring 2024, at 12"];
+  it.each(cases)("preserves %s with a specific warning on every route", (s) => {
+    for (const t of ["foreign_journal_article", "foreign_newspaper", "foreign"] as const) {
+      const r = renderPeriodicalLocal(t, s)!;
+      expect(r.citation).toBe(s);
+      expect(r.warningMsg).toContain("שם מחבר");
+    }
+    const d = detectForeignSource(s);
+    expect((d?.fields as { authors?: string })?.authors).toBeUndefined();
+    expect(renderForeignCitation(s)).toBeNull();
+  });
+  it.each(cases)("real runCitation (auto and manual) preserves %s without provider", async (rawInput) => {
+    for (const overrideType of [undefined, "foreign_journal_article", "foreign_newspaper"] as const) {
+      const r = await runCitation({ rawInput, useVerifiedStore: false, overrideType });
+      expect(r.citation).toBe(rawInput);
+      expect(r.warningMsg).toContain("שם מחבר");
+    }
+    expect(b.invoke).not.toHaveBeenCalled();
+  });
+  it("recognized personal authors still format", () => {
+    expect(art("Alpha B. Gamma & Ari Doe, Quiet Fields, Synthetic Mag., Mar. 2020, at 12")?.citation)
+      .toBe("Alpha B. Gamma & Ari Doe, ##Quiet Fields##, ^^Synthetic Mag.^^, Mar. 2020, at 12.");
+  });
+  it("ambiguous heading with markup stays escaped", () => {
+    const r = art("Courts <b>x</b> ^^2, Memory, Synthetic Mag., Mar. 2020, at 12")!;
+    expect(citationToHtml(r.citation)).toContain("&lt;b&gt;");
+    expect(plain(r.citation)).toBe("Courts <b>x</b> ^^2, Memory, Synthetic Mag., Mar. 2020, at 12");
   });
 });

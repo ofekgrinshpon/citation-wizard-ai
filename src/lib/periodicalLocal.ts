@@ -15,6 +15,8 @@ export const PERIODICAL_AMBIGUOUS = "לא ניתן לקבוע בבטחה אם ז
 export const PERIODICAL_MISMATCH = "הסוג שנבחר אינו תואם את מבנה הקלט (תאריך/מקום/מדור); האזכור נשמר כפי שסופק ולא עוצב.";
 export const PERIODICAL_UNSUPPORTED = "מבנה הקלט אינו נתמך בתבנית העיתון המודפס; האזכור נשמר כפי שסופק ולא עוצב.";
 
+export const PERIODICAL_AUTHOR_AMBIGUOUS = "לא ניתן לקבוע בבטחה אם החלק שלפני הפסיק הראשון הוא שם מחבר או חלק מהכותרת; האזכור נשמר כפי שסופק ולא עוצב. בחירת תת־סוג אינה פותרת עמימות זו.";
+
 function preserve(raw: string, warning: string) {
   const citation = escapeCitationLiteral(raw.trim());
   return { citation, warnings: [warning], missing: [] as string[], reply: `${citation}\n⚠️ ${warning}`, warningMsg: warning };
@@ -24,6 +26,7 @@ export function renderPeriodicalLocal(sourceType: SourceType, raw: string) {
   if (!raw.trim()) return null;
   if (sourceType !== "foreign_journal_article" && sourceType !== "foreign_newspaper" && sourceType !== "foreign") return null;
   const p = extractPeriodical(raw);
+  if (p?.authorTitleAmbiguous) return preserve(raw, PERIODICAL_AUTHOR_AMBIGUOUS);
   if (sourceType === "foreign") return p ? preserve(raw, PERIODICAL_AMBIGUOUS) : null;
   if (sourceType === "foreign_journal_article") {
     if (!p) return null; // Existing consecutive-pagination path.

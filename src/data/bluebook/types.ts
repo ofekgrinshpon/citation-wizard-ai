@@ -230,6 +230,8 @@ export interface ForeignPeriodicalFields {
   place?: string;
   /** Cover/publication date exactly as supplied (season/month range allowed). */
   date?: string;
+  /** Supplied volume (issue mode only); rendered before the periodical per R16.4. */
+  volume?: string;
   /** Explicit issue designation used only when no cover date was supplied. */
   issue?: string;
   section?: string;
