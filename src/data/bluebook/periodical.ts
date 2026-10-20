@@ -35,13 +35,12 @@ export interface PeriodicalParse {
   authorTitleAmbiguous: boolean;
 }
 
-const authorLike = (s: string) => /^[\p{Lu}]/u.test(s) && !/\d/.test(s) && s.split(/\s+/).length <= 8;
-const NAME_TOKEN = /^(?:(?:\p{Lu}\.){1,3}|\p{Lu}[\p{Ll}'’]+(?:-\p{Lu}[\p{Ll}'’]+)?|Jr\.|Sr\.|II|III|IV)$/u;
-/** Structural personal-name shape only: each author is 2–4 name tokens (given + family). */
-const personalName = (s: string) => s.split(/\s+(?:&|and)\s+/).every((n) => {
-  const t = n.trim().split(/\s+/);
-  return t.length >= 2 && t.length <= 4 && t.every((x) => NAME_TOKEN.test(x));
-});
+/**
+ * Author/title boundary is NEVER inferred from capitalization or name shape.
+ * Only explicit labels establish an author: "Author: A, Title: T" or
+ * "Author: A, <Designation>[, Title: T]". "Title: T" labels a whole title.
+ */
+const LABELLED = /^Author:\s*(.+?)(?:,\s+(Editorial|Opinion|Op-Ed|Letter to the Editor))?(?:,\s+Title:\s*(.+))?$/i;
 
 export function extractPeriodical(raw: string): PeriodicalParse | null {
   const text = raw.trim().replace(/\.$/, "");
@@ -70,23 +69,27 @@ export function extractPeriodical(raw: string): PeriodicalParse | null {
   const rest = tail.trim();
   if (rest) f.unparsedRemainder = rest;
 
-  const parts = head ? head.split(/,\s+/) : [];
+  const h = head.trim();
+  const parts = h ? h.split(/,\s+/) : [];
   let authorTitleAmbiguous = false;
-  if (parts.length && DESIGNATION.test(parts[0])) {
+  const lab = h.match(LABELLED);
+  if (/^Author:/i.test(h)) {
+    if (!lab || (!lab[2] && !lab[3]) || /\bTitle:/i.test(lab[1])) return null; // Malformed labels: not this grammar.
+    f.authors = lab[1].trim();
+    if (lab[2]) f.designation = lab[2];
+    if (lab[3]) f.title = lab[3].trim();
+  } else if (/^Title:/i.test(h)) {
+    const t = h.replace(/^Title:\s*/i, "").trim();
+    if (!t) return null;
+    f.title = t;
+  } else if (parts.length && DESIGNATION.test(parts[0])) {
     f.designation = parts[0];
     if (parts.length > 1) f.title = parts.slice(1).join(", ");
-  } else if (parts.length > 1 && authorLike(parts[0]) && !personalName(parts[0])) {
-    // Never claim an uncertain name-like heading as an identified author.
+  } else if (parts.length > 1) {
+    // Unlabelled comma-split heading: author vs title cannot be established.
     authorTitleAmbiguous = true;
-    f.title = head.trim();
-  } else if (parts.length > 1 && DESIGNATION.test(parts[1]) && authorLike(parts[0])) {
-    f.authors = parts[0];
-    f.designation = parts[1];
-    if (parts.length > 2) f.title = parts.slice(2).join(", ");
-  } else if (parts.length > 1 && authorLike(parts[0])) {
-    f.authors = parts[0];
-    f.title = parts.slice(1).join(", ");
-  } else if (head) f.title = head.trim();
+    f.title = h;
+  } else if (h) f.title = h;
 
   const articleSignal = !full;
   const newspaperSignal = !!(f.place || f.section || f.designation);
