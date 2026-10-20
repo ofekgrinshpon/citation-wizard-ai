@@ -8,6 +8,7 @@ import ts from "typescript";
 import { describe, expect, it, vi } from "vitest";
 import * as articles from "../../supabase/functions/_shared/hebrewArticleEvidence";
 import * as dockets from "../../supabase/functions/_shared/caseTypePrefixes";
+import * as pastedCitation from "../../supabase/functions/_shared/pastedCitation";
 import * as hosts from "../../supabase/functions/_shared/trustedHosts";
 import * as caseLawQuery from "../../supabase/functions/_shared/caseLawQuery";
 import * as ranges from "../../supabase/functions/_shared/hebrewNumberRange";
@@ -250,6 +251,7 @@ async function runHandler(options: { raw?: string; rawInputNull?: boolean; recor
     "../_shared/costTelemetry.ts": { trackedFetch: fetchProvider, withCostTelemetry: (_name: string, fn: () => unknown) => fn(), setTelemetryFromBody: () => {}, recordZeroWork: zero },
     "../_shared/hebrewArticleEvidence.ts": articles,
     "../_shared/caseTypePrefixes.ts": dockets,
+    "../_shared/pastedCitation.ts": pastedCitation,
     "../_shared/trustedHosts.ts": hosts,
     "../_shared/caseLawQuery.ts": caseLawQuery,
     "../_shared/hebrewNumberRange.ts": ranges,
@@ -423,9 +425,9 @@ describe("article boundary through the real edge handler", () => {
     expect(r.calls.map(c => c.stage)).toEqual(["article_retrieval_tier1", "biblio_fallback"]);
   });
 
-  it("keeps the existing exact-case cache route free and unchanged", async () => {
+  it("keeps the jurisdiction-identified exact-case cache route free and unchanged", async () => {
     const citation = 'בג״ץ 1308/17 **עיריית סלואד** נ׳ **הכנסת** (נבו 9.6.2020).';
-    const r = await runHandler({ raw: "1308/17", label: "פסיקה (מאגר)", cached: [{ source_name: "1308/17", full_citation: citation, source_type: "case_law_database" }] });
+    const r = await runHandler({ raw: "בג״ץ 1308/17", label: "פסיקה (מאגר)", cached: [{ source_name: "בג״ץ 1308/17", full_citation: citation, source_type: "case_law_database" }] });
     expect(r.body.content).toBe(citation);
     expect(r.calls).toHaveLength(0);
     expect(r.rpc).not.toHaveBeenCalled();

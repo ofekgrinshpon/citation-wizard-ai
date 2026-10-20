@@ -41,6 +41,8 @@ import { renderUsUnreportedLocal } from "@/lib/usUnreportedLocal";
 import { renderUnpublishedLocal } from "@/lib/unpublishedWorkLocal";
 import { renderPeriodicalLocal } from "@/lib/periodicalLocal";
 import { renderBookLocal } from "@/lib/bookLocal";
+import { citationManualChoice, preparePastedCitation, readPastedCitationSafety, pastedCaseRequest, renderPastedCaseResponse } from "@/lib/pastedCitationAdapter";
+import type { CitationManualChoice, PastedCitationContract } from "../../supabase/functions/_shared/pastedCitation";
 import { citationDiagnosticBody, observeCitationDiagnostic, type CitationDiagnosticActivation } from "@/lib/citationDiagnostic";
 
 interface ForeignLookupResponse {
@@ -142,6 +144,7 @@ export interface CitationRunRetry extends CitationRunRecovery {
 }
 
 export interface RunCitationOptions {
+  manualChoice?: CitationManualChoice | null;
   rawInput: string;
   /** Prevent dispatch/delivery after row edits, navigation or account changes. */
   isResultCurrent?: () => boolean;
@@ -160,6 +163,7 @@ export interface RunCitationOptions {
 }
 
 export interface RunCitationResult {
+  pastedCitation?: PastedCitationContract;
   /** Full engine reply (may include explanation / warning lines). */
   reply: string;
   /** The citation line only. */
@@ -204,6 +208,13 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
   }
   const rawInput = opts.rawInput.trim();
 
+  const pasted = preparePastedCitation(opts.rawInput, opts.manualChoice ?? citationManualChoice(opts.overrideType));
+  if (pasted.local && pasted.contract.route === "preserve") {
+    const sourceType = opts.overrideType ?? pasted.detection?.sourceType ?? "foreign";
+    return { ...pasted.local, pastedCitation: pasted.contract, sourceType, sourceLabel: SOURCE_TYPE_LABELS[sourceType],
+      telemetry: opts.telemetry, fromVerifiedStore: false, status: "warning" };
+  }
+
   const inputCheck = validateCitationInput(rawInput);
   if (!inputCheck.valid) {
     throw new CitationRunError({
@@ -220,6 +231,8 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
   let sourceType: SourceType;
   if (opts.overrideType) {
     sourceType = opts.overrideType;
+  } else if (pasted.contract.sourceKind === "case" && pasted.contract.route === "foreign") {
+    sourceType = pasted.detection?.sourceType ?? (pasted.contract.jurisdiction === "US" ? "foreign_case_us" : "foreign_case_other");
   } else {
     const resolved = await resolveSourceType(normalized, opts.telemetry);
     sourceType = resolved.sourceType;
@@ -242,6 +255,7 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
       verifiedMatch = null;
     }
   }
+  if (opts.isResultCurrent && !opts.isResultCurrent()) throw new CitationRunError({ code: "CITATION_INPUT_CHANGED", userMessage: "הקלט או החשבון השתנו. התוצאה לא נשמרה." });
 
   const cachedArticle = verifiedMatch && suppliedArticle
     ? renderForeignArticleCache(normalized, verifiedMatch.full_citation) : null;
@@ -275,6 +289,12 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
   }
 
   // Stage 4: statutes go through the shared adapter. A manual statute choice
+  if (pasted.local && !(pasted.detection?.fields as { opinionFormat?: string } | undefined)?.opinionFormat) {
+    const warnings = pasted.detection ? renderForeignDetection(pasted.detection)?.warnings ?? [] : [];
+    reportZeroWork(opts.telemetry, "local_foreign_formatter", "deterministic");
+    return { ...pasted.local, pastedCitation: pasted.contract, sourceType, sourceLabel, telemetry: opts.telemetry,
+      fromVerifiedStore: false, status: warnings.length ? "warning" : "valid", warningMsg: warnings[0] };
+  }
   // is never crossed by a contradicting detection (honest mismatch instead).
   const statutePrep = !isPinpoint ? prepareForeignStatute(sourceType, normalized, { manual: !!opts.overrideType }) : null;
 
@@ -368,6 +388,8 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
   }
 
   // 2) Pinpoint + known master source → feed the verified details as a hint.
+  const caseRequest = pastedCaseRequest(opts.rawInput, pasted.contract);
+  if (caseRequest) foreignLookupRequest = caseRequest;
   if (verifiedMatch && !isHebrewArticle && isPinpoint) {
     const category = getVerifiedCategoryLabel(
       classifyVerifiedSource({
@@ -384,8 +406,9 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
   // successor. Retrying never repeats classification, verified-store search,
   // or the deterministic routing decisions above.
   const preparedBody = {
-    messages: [{ role: "user", content: prompt }],
-    ...(isHebrewArticle ? { rawInput: normalized } : {}),
+    rawInput: opts.rawInput,
+    pastedCitation: pasted.contract,
+    messages: [{ role: "user", content: (pasted.contract.manualChoice ? `[סיווג שיפוט ידני: ${JSON.stringify(pasted.contract.manualChoice)}]\n` : "") + prompt }],
     requestId: crypto.randomUUID(),
     ...telemetryBody(opts.telemetry),
     ...(foreignLookupRequest ? { foreignLookup: foreignLookupRequest } : {}),
@@ -434,6 +457,13 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
   }
 
   function renderPreparedResponse(data: ({ content?: string } & Record<string, unknown>) | null): RunCitationResult {
+    const safety = readPastedCitationSafety(pasted.contract, data);
+    if (safety) return { ...safety, pastedCitation: pasted.contract, telemetry: opts.telemetry, sourceType,
+      sourceLabel, fromVerifiedStore: false, status: "warning" };
+    const caseResult = (data?.foreignLookup as ForeignLookupResponse | undefined)?.disambiguation?.length ? null
+      : renderPastedCaseResponse(pasted.contract, caseRequest, data?.foreignLookup);
+    if (caseResult) return { ...caseResult, pastedCitation: pasted.contract, telemetry: opts.telemetry, sourceType, sourceLabel,
+      fromVerifiedStore: false, status: caseResult.warningMsg ? "warning" : "valid" };
     const rejectUnusableResponse = (code: string, userMessage: string): never => {
       // A transport-successful response is not proof of usable citation output.
       // Rechecking this unchanged row only re-renders the retained response; it
@@ -452,6 +482,9 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
     // User-supplied identity anchors win; grounded lookup fields fill the gaps;
     // anything ungrounded stays [חסר: …] via the existing renderer behavior.
     const fl = (data as { foreignLookup?: ForeignLookupResponse } | null)?.foreignLookup;
+    if (caseRequest && fl?.identity?.matched && fl.fields && !Object.keys(fl.fields).some(k => ["caseName", "court", "reporter", "year", "firstPage", "neutral", "docket"].includes(k))) {
+      rejectUnusableResponse("EMPTY_RESPONSE", "השרת החזיר תשובה ללא אזכור שניתן להציג. לא תופעל בקשה נוספת והחזר שימוש לא אושר.");
+    }
     // Stage 4: a typed statute request is terminal — the typed response (or
     // its absence) is rendered from supplied fields; model content is ignored.
     if (statutePrep?.request) {

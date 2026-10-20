@@ -308,7 +308,7 @@ describe("source identity and wizard attribution", () => {
     // telemetry remains the per-call third argument, including explicit retries.
     // Recovery adds only an optional request ID to the success continuation.
     // Stage 4 adds only the optional manual-choice flag and typed-result marker.
-    expect(s).toMatch(/callAPI = async \(userMessage: string, history: Message\[\], telemetry\?: CostTelemetry, article\?: \{ sourceType: SourceType; rawInput: string; manual\?: boolean \}, onSuccess\?: \(reply: string, isCurrent: \(\) => boolean, historyRequestId\?: string, typed\?: boolean\) => Promise<void> \| void\)/);
+    expect(s).toMatch(/callAPI = async \(userMessage: string, history: Message\[\], telemetry\?: CostTelemetry, article\?: \{ sourceType: SourceType; rawInput: string; manual\?: boolean; manualChoice\?: CitationManualChoice \| null \}, onSuccess\?: \(reply: string, isCurrent: \(\) => boolean, historyRequestId\?: string, typed\?: boolean\) => Promise<void> \| void\)/);
   });
 
   it("delayed verify of A after submission B keeps A (closure semantics)", () => {

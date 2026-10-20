@@ -65,6 +65,8 @@ import { renderUsUnreportedLocal } from "@/lib/usUnreportedLocal";
 import { renderUnpublishedLocal } from "@/lib/unpublishedWorkLocal";
 import { renderPeriodicalLocal } from "@/lib/periodicalLocal";
 import { renderBookLocal } from "@/lib/bookLocal";
+import { citationManualChoice, preparePastedCitation, readPastedCitationSafety, pastedCaseRequest, renderPastedCaseResponse } from "@/lib/pastedCitationAdapter";
+import type { CitationManualChoice } from "../../supabase/functions/_shared/pastedCitation";
 
 interface PendingVerification {
   lawName: string;
@@ -276,7 +278,7 @@ const Index = () => {
     );
   }
 
-  const callAPI = async (userMessage: string, history: Message[], telemetry?: CostTelemetry, article?: { sourceType: SourceType; rawInput: string; manual?: boolean }, onSuccess?: (reply: string, isCurrent: () => boolean, historyRequestId?: string, typed?: boolean) => Promise<void> | void) => {
+  const callAPI = async (userMessage: string, history: Message[], telemetry?: CostTelemetry, article?: { sourceType: SourceType; rawInput: string; manual?: boolean; manualChoice?: CitationManualChoice | null }, onSuccess?: (reply: string, isCurrent: () => boolean, historyRequestId?: string, typed?: boolean) => Promise<void> | void) => {
     // Bind to the render that started the outer handler, not whichever account
     // happens to be current after asynchronous classification/cache work.
     const scope = { accountId: user?.id, projectId, mode };
@@ -288,6 +290,15 @@ const Index = () => {
     const isCurrent = () => citationRevision.current === revision &&
       citationScope.current.accountId === scope.accountId && citationScope.current.projectId === scope.projectId && citationScope.current.mode === scope.mode;
     const requestId = crypto.randomUUID();
+    const pasted = preparePastedCitation(article?.rawInput ?? userMessage,
+      article?.manualChoice ?? (article?.manual ? citationManualChoice(article.sourceType) : null));
+    if (pasted.local) {
+      if (pasted.contract.route !== "preserve") reportZeroWork(telemetry, "local_foreign_formatter", "deterministic");
+      if (!isCurrent()) throw Object.assign(new Error("CITATION_RETRY_STALE"), { handled: true });
+      await onSuccess?.(pasted.local.reply, isCurrent, undefined, true);
+      if (!isCurrent()) throw Object.assign(new Error("CITATION_RETRY_STALE"), { handled: true });
+      return pasted.local.reply;
+    }
     const articleFields = articleRequestFields(article?.sourceType, article?.rawInput);
     const unreported = article ? (renderUsUnreportedLocal(article.sourceType, article.rawInput) ?? renderUnpublishedLocal(article.sourceType, article.rawInput) ?? renderPeriodicalLocal(article.sourceType, article.rawInput) ?? renderBookLocal(article.sourceType, article.rawInput)) : null;
     if (unreported) {
@@ -309,6 +320,7 @@ const Index = () => {
       return local.reply;
     }
     const statuteRequest = statutePrep?.request ?? null;
+    const caseRequest = pastedCaseRequest(article?.rawInput ?? userMessage, pasted.contract);
     let completed = false;
     const execute = async (retry?: CitationRetryDescriptor): Promise<string> => {
       const { data, errorInfo } = retry
@@ -318,12 +330,15 @@ const Index = () => {
         {
           messages: [
             ...history.map((m) => ({ role: m.role, content: m.content })),
-            { role: "user", content: userMessage },
+            { role: "user", content: (pasted.contract.manualChoice ? `[סיווג שיפוט ידני: ${JSON.stringify(pasted.contract.manualChoice)}]\n` : "") + userMessage },
           ],
           requestId,
           ...telemetryBody(telemetry),
           ...articleFields,
+          rawInput: article?.rawInput ?? userMessage,
+          pastedCitation: pasted.contract,
           ...(statuteRequest ? { foreignLookup: statuteRequest } : {}),
+          ...(caseRequest ? { foreignLookup: caseRequest } : {}),
         },
         { projectId, isCitationResultCurrent: isCurrent },
       );
@@ -365,11 +380,15 @@ const Index = () => {
       // A typed statute request is terminal: render the typed response (or its
       // absence) from supplied fields; never display generic model content.
       if (statutePrep && statuteRequest) reply = renderForeignStatuteLookup(statutePrep, data?.foreignLookup).reply;
+      const safety = readPastedCitationSafety(pasted.contract, data);
+      const caseResult = renderPastedCaseResponse(pasted.contract, caseRequest, data?.foreignLookup);
+      if (caseResult) reply = caseResult.reply;
+      if (safety) reply = safety.reply;
       if (!completed) {
         completed = true;
         const historyRequestId = typeof data?.requestId === "string" &&
           ["available", "unconfirmed"].includes(String(data.recoveryAvailability)) ? data.requestId : undefined;
-        await onSuccess?.(reply, isCurrent, historyRequestId, !!statuteRequest);
+        await onSuccess?.(reply, isCurrent, historyRequestId, !!statuteRequest || !!safety || !!caseRequest);
       }
       if (!isCurrent()) throw Object.assign(new Error("CITATION_RETRY_STALE"), { handled: true });
       return reply;
@@ -732,7 +751,10 @@ const Index = () => {
     // Step 2: Detect source type — hybrid regex + Gemini classifier
     // One telemetry action per wizard submission (attribution only).
     const tel = sourceTelemetry(newTelemetryBatch("uniform_citation"));
-    const resolved = await resolveSourceType(normalized, tel);
+    const pasted = preparePastedCitation(rawText);
+    const resolved = pasted.local || pasted.contract.sourceKind === "case" && pasted.contract.route === "foreign"
+      ? { sourceType: pasted.detection?.sourceType ?? (pasted.contract.jurisdiction === "US" ? "foreign_case_us" : "foreign_case_other") as SourceType, source: "regex" as const }
+      : await resolveSourceType(normalized, tel);
     const sourceType = resolved.sourceType;
     const sourceLabel = SOURCE_TYPE_LABELS[sourceType];
     if (resolved.source === "llm" && resolved.llm) {
@@ -778,7 +800,7 @@ const Index = () => {
     try {
       const fullRawInput = buildFullRawInput(rawText, messages);
       const isPinpoint = PINPOINT_RE.test(rawText);
-      const verifiedMatch = compatibleArticleCache(sourceType, normalized, await findVerifiedSourceMatch(normalized));
+      const verifiedMatch = pasted.local ? null : compatibleArticleCache(sourceType, normalized, await findVerifiedSourceMatch(normalized));
 
       // Short-circuit only for direct/canonical verified matches — aliases go through suggestion UI
       if (verifiedMatch && !isPinpoint) {
@@ -817,7 +839,7 @@ const Index = () => {
       }
 
       // Check for similar (fuzzy) verified source match
-      if (!isPinpoint) {
+      if (!isPinpoint && !pasted.local) {
         const similarMatch = compatibleArticleCache(sourceType, normalized, verifiedMatch ?? await findSimilarVerifiedSource(normalized));
         if (similarMatch) {
           setPendingSuggestion({
@@ -945,7 +967,7 @@ const Index = () => {
           }
         }
       };
-      await callAPI(prompt, messages, tel, { sourceType, rawInput: normalized }, onCitationSuccess);
+      await callAPI(prompt, messages, tel, { sourceType, rawInput: rawText }, onCitationSuccess);
     } catch (err) {
       if ((err as { message?: string })?.message === "CITATION_RETRY_STALE") { citationStale = true; return; }
 
@@ -1294,7 +1316,7 @@ const Index = () => {
                                 if (plan.warning) toast.message(plan.warning);
                               }
                             };
-                            await callAPI(reclassifiedPrompt, messages.slice(0, i), sourceTelemetry(newTelemetryBatch("uniform_citation")), { sourceType: newType, rawInput: normalizeAbbreviations(rawInput), manual: true }, onCitationSuccess);
+                            await callAPI(reclassifiedPrompt, messages.slice(0, i), sourceTelemetry(newTelemetryBatch("uniform_citation")), { sourceType: newType, rawInput, manual: true, manualChoice: plan?.manualChoice }, onCitationSuccess);
                           } catch (err) {
                             if ((err as { message?: string })?.message === "CITATION_RETRY_STALE") { citationStale = true; return; }
 
