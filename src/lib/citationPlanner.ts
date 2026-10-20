@@ -225,6 +225,7 @@ export function resolveCitationResponse(plan: TypedPlan, data: Record<string, un
   const warnings: string[] = [];
   const messages = {
     binding: "תשובת החיפוש סותרת את הקלט, סוג המקור או השיפוט; הקלט נשמר ללא השלמה.",
+    jurisdiction: "פרטי השיפוט שהוחזרו סותרים את ראיות הערכאה או מקור הפרסום שסופקו או עוגנו; הקלט נשמר ללא השלמה.",
     malformed: "תשובת החיפוש אינה בפורמט נתמך; נשמרו רק הפרטים שסופקו.",
     unavailable: "חיפוש פרטי המקור לא היה זמין; נשמרו רק הפרטים שסופקו.",
     identity: "לא אומתה התאמת המקור לפרטים שסופקו או נמצאו פרטים סותרים; נשמרו רק הפרטים שסופקו.",
@@ -243,6 +244,7 @@ export function resolveCitationResponse(plan: TypedPlan, data: Record<string, un
     if (choices.length > 1) return { kind: "terminal", origin: "disambiguation", resolution: {
       citation: "", reply: `נמצאו כמה פסקי דין אפשריים בשם זה. כדי לא לנחש, בחרו את הנכון והוסיפו את הערכאה או השנה:\n${choices.slice(0, 5).map((o, i) => escapeCitationLiteral(`${i + 1}. ${o.label} (${o.jurisdiction}) — ${o.url}`)).join("\n")}`,
       status: "warning", warningMsg: messages.ambiguous, pastedCitation: contract,
+      completion: accepted,
     } };
   }
   const supplied = req.parsedFields && typeof req.parsedFields === "object" ? req.parsedFields as Record<string, string> : {};
@@ -266,6 +268,8 @@ export function resolveCitationResponse(plan: TypedPlan, data: Record<string, un
   if (rendered?.reply?.includes("⚠️")) warnings.push(rendered.reply.split("⚠️").slice(1).join(" ").trim());
   // Unknown spans remain in the evidence contract and are never lost through partial rendering.
   const citation = rendered?.citation.trim() || escapeCitationLiteral(contract.rawInput);
+  accepted.missing = rendered?.missing ?? contract.missing;
+  accepted.completeness = !accepted.identityConfirmed ? "unconfirmed" : accepted.missing.length ? "partial" : "complete";
   const bits = [...new Set(warnings.filter(Boolean))];
   return { kind: "terminal", origin: kind === "case" ? "case" : kind === "statute" ? "statute" : kind === "journal_article" ? "article" : "merge", resolution: {
     citation, reply: citation + (bits.length ? `\n⚠️ ${bits.join(" ")}` : ""),

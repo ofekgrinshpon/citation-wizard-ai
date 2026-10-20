@@ -99,7 +99,7 @@ export function buildPastedCitation(raw: string, manual: CitationManualChoice | 
   add(/\bBVerfG\b|\bBvR\b/, "DE", "court");
   add(/\bBVerfGE\b/, "DE", "reporter");
   add(/\bU\.\s?S\.(?!\s?C\.)|\bF\.\s?(?:2d|3d|4th|Supp\.)/, "US", "reporter");
-  add(/\b(?:D\. Mass\.|S\.D\.N\.Y\.|\d+(?:st|nd|rd|th) Cir\.)/, "US", "court");
+  add(/\b(?:D\. Mass\.|S\.D\.N\.Y\.|\d+(?:st|nd|rd|th|d) Cir\.)/, "US", "court");
   add(/\bU\.\s?S\.\s?C\.|\bU\.\s?S\.\s?CONST\./, "US", "code");
   add(/\b(?:UKSC|UKHL|UKPC|EWCA|EWHC)\b/, "UK", "court");
   add(/\b(?:WLR|All ER)\b/, "UK", "reporter");

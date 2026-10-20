@@ -1,5 +1,5 @@
 /** Pure acceptance boundary for the existing server extraction envelope. No IO. */
-import { citationBindingText } from "../../supabase/functions/_shared/pastedCitation";
+import { buildPastedCitation, citationBindingText } from "../../supabase/functions/_shared/pastedCitation";
 import { articleFieldMatches, parseForeignArticleInput } from "../../supabase/functions/_shared/foreignArticle";
 
 const record = (v: unknown): Record<string, unknown> => v && typeof v === "object" && !Array.isArray(v) ? v as Record<string, unknown> : {};
@@ -20,12 +20,15 @@ export interface CompletionAcceptance {
   quarantined: string[];
   identityConfirmed: boolean;
   jurisdiction: "US" | "UK" | "OTHER" | null;
-  reason?: "binding" | "malformed" | "unavailable" | "identity" | "ambiguous";
+  missing: string[];
+  conflicts: string[];
+  completeness: "complete" | "partial" | "unconfirmed";
+  reason?: "binding" | "jurisdiction" | "malformed" | "unavailable" | "identity" | "ambiguous";
 }
 /** Older responses need no new version/raw echo, but must carry their existing extraction evidence. */
 export function acceptCitationCompletion(request: Record<string, unknown>, raw: string, response: unknown): CompletionAcceptance {
   const r = record(response), identity = record(r.identity), supplied = record(request.parsedFields);
-  const out: CompletionAcceptance = { fields: {}, provenance: {}, quarantined: [], identityConfirmed: false, jurisdiction: null };
+  const out: CompletionAcceptance = { fields: {}, provenance: {}, quarantined: [], identityConfirmed: false, jurisdiction: null, missing: [], conflicts: [], completeness: "unconfirmed" };
   const fail = (reason: CompletionAcceptance["reason"]) => ({ ...out, reason });
   if (typeof request.rawInput !== "string" || citationBindingText(request.rawInput) !== citationBindingText(raw) ||
     (r.rawInput !== undefined && (typeof r.rawInput !== "string" || citationBindingText(r.rawInput) !== citationBindingText(raw)))) return fail("binding");
@@ -33,6 +36,13 @@ export function acceptCitationCompletion(request: Record<string, unknown>, raw: 
     (request.kind === "statute" && r.statuteResponseVersion !== 1)) return fail("malformed");
   if (r.error !== undefined) return fail("unavailable");
   const jur = identity.jurisdiction ?? r.jurisdiction;
+  if (request.kind === "case") {
+    const evidence = buildPastedCitation(raw).evidence;
+    if (evidence.some(e => e.jurisdiction !== jur)) {
+      out.conflicts.push("supplied_jurisdiction_conflict");
+      return fail("jurisdiction");
+    }
+  }
   if ((r.jurisdiction !== undefined && identity.jurisdiction !== undefined && r.jurisdiction !== identity.jurisdiction) ||
     (["US", "UK"].includes(text(request.jurisdiction)) && jur !== request.jurisdiction) ||
     (request.kind !== "case" && request.jurisdiction === "OTHER" && r.jurisdiction !== "OTHER")) return fail("binding");
@@ -88,5 +98,14 @@ export function acceptCitationCompletion(request: Record<string, unknown>, raw: 
     // Supplied values stay exact; confirmation is not permission to rewrite them.
     if (supplied[key] === undefined) { out.fields[key] = value; out.provenance[key] = p; }
   }
+  if (request.kind === "case") {
+    const evidence = buildPastedCitation([out.fields.court, out.fields.reporter, out.fields.neutral, out.fields.parallel].filter(Boolean).join(" ")).evidence;
+    if (evidence.some(e => e.jurisdiction !== jur)) {
+      out.fields = {}; out.provenance = {}; out.identityConfirmed = false;
+      out.conflicts.push("grounded_jurisdiction_conflict");
+      return fail("jurisdiction");
+    }
+  }
+  out.conflicts.push(...fieldConflicts);
   return out;
 }
