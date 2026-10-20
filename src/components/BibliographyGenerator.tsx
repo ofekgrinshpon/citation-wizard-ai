@@ -1,4 +1,5 @@
 import { CitationRequestStatusLink } from "@/components/CitationRequestStatusLink";
+import { ForeignSourcePicker } from "./ForeignSourcePicker";
 import { newTelemetryBatch, sourceTelemetry, type CostTelemetry } from "@/lib/costTelemetry";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -68,8 +69,9 @@ const CATEGORY_TO_SOURCE_TYPE: Partial<Record<BibSourceCategory, SourceType>> = 
   caselaw_district: "case_law_database",
   caselaw_magistrate: "case_law_database",
   caselaw_specialized: "case_law_database",
-  foreign_caselaw: "foreign_case_us",
-  foreign_legislation: "foreign_statute_us",
+  // Generic foreign categories carry no jurisdiction (never a U.S. default).
+  foreign_caselaw: "foreign_case_other",
+  foreign_legislation: "foreign",
   foreign_books: "foreign_book",
   foreign_articles: "foreign_journal_article",
   foreign_internet: "foreign_internet",
@@ -626,6 +628,7 @@ export function BibliographyGenerator() {
                 onRemove={() => removeReviewItem(item.id)}
                 onPickOption={(opt) => pickDisambiguation(item.id, opt)}
                 onChangeCategory={(cat) => handleChangeCategory(item.id, cat)}
+                accountId={user?.id}
               />
             ))}
           </div>
@@ -754,6 +757,7 @@ function ReviewRow({
   onRemove,
   onPickOption,
   onChangeCategory,
+  accountId,
 }: {
   item: ReviewItem;
   onStartEdit: () => void;
@@ -765,6 +769,7 @@ function ReviewRow({
   onRemove: () => void;
   onPickOption: (opt: string) => void;
   onChangeCategory: (cat: BibSourceCategory) => void;
+  accountId?: string | null;
 }) {
   const hasMissing = item.status === "ok" && /\[חסר:/.test(item.citation);
   const detectedCat = item.sourceTypeOverride
@@ -858,6 +863,10 @@ function ReviewRow({
           הקלט: {item.rawInput}
         </span>
       </div>
+
+      {detectedCat.startsWith("foreign_") && (item.status === "ok" || item.status === "error") && (
+        <ForeignSourcePicker accountId={accountId} itemKey={`bib:${item.id}`} input={item.rawInput} output={item.citation || null} />
+      )}
 
       {/* Body */}
       {item.isEditing ? (
