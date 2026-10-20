@@ -51,7 +51,8 @@ describe("R15.1–15.4(a) books", () => {
     expect(r.warningMsg).toContain("המו״ל המקורי");
   });
   it("pre-1900 edition grammar is declined safely", () => {
-    expect(book("Ana Roe, Quiet Rules (1850)")?.warningMsg).toContain("1900");
+    expect(book("Ana Roe, Quiet Rules (Synthetic Press 1850)")?.warningMsg).toContain("1900");
+    expect(book("Author: Ana Roe; Title: Quiet Rules; Publisher: Synthetic Press; Publisher status: non-original; Year: 1850")?.warningMsg).toContain("1900");
   });
   it("volume at the beginning", () => {
     expect(book("3 Ana Roe, Quiet Rules (2001)")?.citation).toBe("3 ^^Ana Roe, Quiet Rules^^ (2001).");

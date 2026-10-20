@@ -41,7 +41,7 @@ export function renderBookLocal(sourceType: SourceType, raw: string, opts: { def
   }
   if ((sourceType === "foreign_book") !== (p.kind === "book")) return preserve(raw, BOOK_MISMATCH);
   // The existing M2A book grammar keeps precedence, exactly as in detection.
-  const legacy = p.kind === "book" ? extractBook(raw.trim()) : null;
+  const legacy = p.kind === "book" && !p.explicitNew ? extractBook(raw.trim()) : null;
   const reason = legacy ? undefined : p.preserve;
   if (reason) return preserve(raw, BOOK_PRESERVE[reason]);
   const kind = p.kind === "book" ? "book" : "book_chapter";

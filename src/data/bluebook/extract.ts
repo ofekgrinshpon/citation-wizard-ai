@@ -585,7 +585,7 @@ export function detectForeignSource(raw: string): ForeignDetection | null {
   // surfaces as generic foreign "other" (preserved by the local adapter).
   const bw = extractBookWork(text);
   if (bw?.kind === "chapter") return build(bw.preserve ? "other" : "book_chapter", "OTHER", bw.fields);
-  if (bw?.kind === "book" && /;/.test(text) && /^[A-Za-z ]+:\s/.test(text)) return build(bw.preserve ? "other" : "book", "OTHER", bw.fields);
+  if (bw?.kind === "book" && bw.explicitNew) return build(bw.preserve ? "other" : "book", "OTHER", bw.fields);
 
   // 5a. Book chapter (before article/book so "in <Book>" never collapses) — M2A
   const chap = extractBookChapter(text);

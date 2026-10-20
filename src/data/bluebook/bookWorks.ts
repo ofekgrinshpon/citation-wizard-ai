@@ -27,6 +27,8 @@ export interface BookWorkParse {
   preserve?: "ambiguous_pinpoint" | "ambiguous_author" | "publisher_unknown" | "pre1900";
   /** Explicit book/chapter structure (labels, contributors, edition, ", in", ", at", §/¶). */
   signal: boolean;
+  /** Batch-4-only structure (labels, ", at", §/¶, editor-only) that takes precedence over the M2A grammar. */
+  explicitNew?: boolean;
 }
 
 const ROMAN = String.raw`[ivxlcdm]{1,8}`;
@@ -87,14 +89,14 @@ function parseLabelled(text: string): BookWorkParse | null {
   else if (pins[0]) fields.pinpoint = pins[0] as string;
   if (extra.length) fields.unparsedRemainder = extra.join("; ");
   const kind: BookWorkKind = fields.chapterTitle ? "chapter" : "book";
-  const p: BookWorkParse = { kind, fields, signal: true };
+  const p: BookWorkParse = { kind, fields, signal: true, explicitNew: true };
   if (fields.publisher) {
     const st = (f.publisherStatus ?? "").toLowerCase();
     if (/^(?:non-original|not original|reprint)$/.test(st)) fields.publisherStatus = "non-original";
     else if (st === "original") fields.publisherStatus = "original";
     else p.preserve = "publisher_unknown";
   }
-  if (fields.year && /^\d{4}$/.test(fields.year) && +fields.year < 1900) p.preserve ??= "pre1900";
+  if (fields.publisher && fields.year && /^\d{4}$/.test(fields.year) && +fields.year < 1900) p.preserve = "pre1900";
   return p;
 }
 
@@ -104,8 +106,8 @@ function applyParen(fields: BookWorkParse["fields"], paren: Paren): BookWorkPars
   if (paren.translators) fields.translators = paren.translators;
   if (paren.edition) fields.edition = paren.edition;
   if (paren.publisher) fields.publisher = paren.publisher;
-  if (+paren.year < 1900) return "pre1900";
-  return paren.publisher ? "publisher_unknown" : undefined;
+  if (!paren.publisher) return undefined;
+  return +paren.year < 1900 ? "pre1900" : "publisher_unknown";
 }
 
 export function extractBookWork(raw: string): BookWorkParse | null {
@@ -148,8 +150,9 @@ export function extractBookWork(raw: string): BookWorkParse | null {
   let signal = paren.contributors || !!paren.edition;
   const at = head.match(new RegExp(String.raw`^(.+?),\s+at\s+(${PIN}|${SECT})$`));
   const sect = head.match(new RegExp(String.raw`^(.+?)\s+(${SECT})$`));
-  if (at) { head = at[1]; fields.pinpoint = normPin(at[2]); signal = true; }
-  else if (sect) { head = sect[1]; fields.pinpoint = normPin(sect[2]); signal = true; }
+  let explicitNew = false;
+  if (at) { head = at[1]; fields.pinpoint = normPin(at[2]); signal = explicitNew = true; }
+  else if (sect) { head = sect[1]; fields.pinpoint = normPin(sect[2]); signal = explicitNew = true; }
   else {
     // A bare trailing page is a pinpoint only when the remaining title does not
     // itself end in a numeral; bare roman numerals always need ", at".
@@ -158,7 +161,8 @@ export function extractBookWork(raw: string): BookWorkParse | null {
     else if (new RegExp(String.raw`\s(?:${PIN})$`).test(head)) preserve = "ambiguous_pinpoint";
   }
   if (/,/.test(head)) fields.heading = head;
-  else fields.bookTitle = head;
+  else { fields.bookTitle = head; if (paren.editors) explicitNew = true; }
   preserve ??= applyParen(fields, paren);
-  return { kind: "book", fields, preserve, signal };
+  if (preserve === "ambiguous_pinpoint") explicitNew = true;
+  return { kind: "book", fields, preserve, signal, explicitNew };
 }
