@@ -131,6 +131,8 @@ export interface ForeignStatuteFields {
   year?: string;
   regnalYear?: string;
   monarch?: string;
+  /** Supplied-but-unstructured trailing text, kept verbatim with a warning. */
+  unparsedRemainder?: string;
 }
 
 export interface ForeignArticleFields {

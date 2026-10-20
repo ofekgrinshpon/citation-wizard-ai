@@ -8,9 +8,10 @@
  * conflicting/ambiguous evidence is an honest warning state, never a merge.
  */
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { runCitation, CitationRunError } from "@/lib/runCitation";
+import { runCitation } from "@/lib/runCitation";
 import { planForeignLookup } from "@/lib/runCitation";
 import { runForeignLookup, type ForeignLookupInput } from "../../supabase/functions/citation-chat/foreignLookup";
+import { resolveStatuteLookup } from "../../supabase/functions/citation-chat/statuteRoute";
 import { citationTextOnly } from "@/lib/citationSegments";
 
 const boundaries = vi.hoisted(() => ({ invoke: vi.fn(), verified: vi.fn(), zero: vi.fn() }));
@@ -34,14 +35,16 @@ function replay(tiers: Source[][]) {
   return {
     searches,
     lookup: (request: ForeignLookupInput) => runForeignLookup(request, { fetchImpl, apiKey: "offline-only" }),
+    /** The production typed route (statuteRoute.ts), as citation-chat calls it. */
+    route: (request: unknown) => resolveStatuteLookup(request, { fetchImpl, apiKey: "offline-only", runLookup: runForeignLookup }),
   };
 }
 
 /** Wire the real server lookup (mocked transport) behind the real client caller. */
 function wireCaller(tiers: Source[][]) {
   const test = replay(tiers);
-  boundaries.invoke.mockImplementation(async (_name: string, body: { foreignLookup: ForeignLookupInput }) => ({
-    data: { content: "", foreignLookup: await test.lookup(body.foreignLookup) },
+  boundaries.invoke.mockImplementation(async (_name: string, body: { foreignLookup: unknown }) => ({
+    data: { content: "", foreignLookup: await test.route(body.foreignLookup) },
     errorInfo: null,
   }));
   return test;
@@ -237,12 +240,9 @@ describe("client caller — runCitation statute path", () => {
     })).rejects.toMatchObject({ code: "CITATION_INPUT_CHANGED" });
   });
 
-  it("user-supplied statute name with marker-like characters stays literal", async () => {
-    wireCaller([[{
-      title: "Guide Act 1990", url: "https://www.legislation.gov.uk/ukpga/1990/5",
-      snippet: "Guide Act 1990, c. 5. An Act about guides.",
-    }]]);
-    const result = await runCitation({ rawInput: "C## Guide Act", overrideType: "foreign_statute_uk", useVerifiedStore: false });
-    expect(citationTextOnly(result.citation)).toContain("C## Guide Act 1990, c. 5");
+  it("user-supplied statute name with marker-like characters stays literal (local, no request)", async () => {
+    const result = await runCitation({ rawInput: "C## Guide Act 1990", overrideType: "foreign_statute_uk", useVerifiedStore: false });
+    expect(boundaries.invoke).not.toHaveBeenCalled();
+    expect(citationTextOnly(result.citation)).toContain("C## Guide Act 1990");
   });
 });

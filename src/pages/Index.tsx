@@ -60,6 +60,7 @@ import { validateCitationInput } from "@/lib/citationInputValidation";
 import { handleRefundResponse } from "@/lib/refundResponse";
 import { saveCitationHistoryRecord } from "@/lib/citationHistorySave";
 import { articleRequestFields, compatibleArticleCache, renderForeignArticleLookup, type ForeignArticleLookupResponse } from "@/lib/foreignArticleAdapter";
+import { prepareForeignStatute, renderForeignStatuteLookup, renderStatuteLocal } from "@/lib/foreignStatuteAdapter";
 
 interface PendingVerification {
   lawName: string;
@@ -271,7 +272,7 @@ const Index = () => {
     );
   }
 
-  const callAPI = async (userMessage: string, history: Message[], telemetry?: CostTelemetry, article?: { sourceType: SourceType; rawInput: string }, onSuccess?: (reply: string, isCurrent: () => boolean, historyRequestId?: string) => Promise<void> | void) => {
+  const callAPI = async (userMessage: string, history: Message[], telemetry?: CostTelemetry, article?: { sourceType: SourceType; rawInput: string; manual?: boolean }, onSuccess?: (reply: string, isCurrent: () => boolean, historyRequestId?: string, typed?: boolean) => Promise<void> | void) => {
     // Bind to the render that started the outer handler, not whichever account
     // happens to be current after asynchronous classification/cache work.
     const scope = { accountId: user?.id, projectId, mode };
@@ -284,6 +285,17 @@ const Index = () => {
       citationScope.current.accountId === scope.accountId && citationScope.current.projectId === scope.projectId && citationScope.current.mode === scope.mode;
     const requestId = crypto.randomUUID();
     const articleFields = articleRequestFields(article?.sourceType, article?.rawInput);
+    // Stage 4: the same pure statute adapter as runCitation. The effective
+    // (manual) choice is never crossed; a mismatch is answered locally.
+    const statutePrep = article ? prepareForeignStatute(article.sourceType, article.rawInput, { manual: article.manual }) : null;
+    if (statutePrep?.outcome === "mismatch") {
+      const local = renderStatuteLocal(statutePrep);
+      reportZeroWork(telemetry, "local_foreign_formatter", "deterministic");
+      await onSuccess?.(local.reply, isCurrent, undefined, true);
+      if (!isCurrent()) throw Object.assign(new Error("CITATION_RETRY_STALE"), { handled: true });
+      return local.reply;
+    }
+    const statuteRequest = statutePrep?.request ?? null;
     let completed = false;
     const execute = async (retry?: CitationRetryDescriptor): Promise<string> => {
       const { data, errorInfo } = retry
@@ -298,6 +310,7 @@ const Index = () => {
           requestId,
           ...telemetryBody(telemetry),
           ...articleFields,
+          ...(statuteRequest ? { foreignLookup: statuteRequest } : {}),
         },
         { projectId, isCitationResultCurrent: isCurrent },
       );
@@ -336,11 +349,14 @@ const Index = () => {
           ?? renderForeignArticleLookup(articleFields.foreignLookup, { fields: {}, articleResolution: "incomplete" });
         if (rendered) reply = rendered.reply;
       }
+      // A typed statute request is terminal: render the typed response (or its
+      // absence) from supplied fields; never display generic model content.
+      if (statutePrep && statuteRequest) reply = renderForeignStatuteLookup(statutePrep, data?.foreignLookup).reply;
       if (!completed) {
         completed = true;
         const historyRequestId = typeof data?.requestId === "string" &&
           ["available", "unconfirmed"].includes(String(data.recoveryAvailability)) ? data.requestId : undefined;
-        await onSuccess?.(reply, isCurrent, historyRequestId);
+        await onSuccess?.(reply, isCurrent, historyRequestId, !!statuteRequest);
       }
       if (!isCurrent()) throw Object.assign(new Error("CITATION_RETRY_STALE"), { handled: true });
       return reply;
@@ -481,7 +497,7 @@ const Index = () => {
         }
       }
 
-      const onCitationSuccess = async (reply: string, isCurrent: () => boolean, historyRequestId?: string) => {
+      const onCitationSuccess = async (reply: string, isCurrent: () => boolean, historyRequestId?: string, typed?: boolean) => {
         const assistantIndex = newMessages.length;
 
         const validation = validateAIResponse(reply, sourceType as SourceType);
@@ -546,7 +562,7 @@ const Index = () => {
       }
 
       const fullRawInput = buildFullRawInput(rawText, messages);
-      const onCitationSuccess = async (reply: string, isCurrent: () => boolean, historyRequestId?: string) => {
+      const onCitationSuccess = async (reply: string, isCurrent: () => boolean, historyRequestId?: string, typed?: boolean) => {
         const assistantIndex = newMessages.length;
 
         const validation = validateAIResponse(reply, sourceType as SourceType);
@@ -816,7 +832,7 @@ const Index = () => {
         prompt = `${prompt}\n\n══ מקור מאומת (${verifiedCategory}) ══\nהשתמש בפרטים הבאים מהמקור המאומת כדי להשלים את האזכור:\nשם: ${verifiedMatch.source_name}\nאזכור מלא: ${verifiedMatch.full_citation}\n══════════════════════════════════`;
       }
 
-      const onCitationSuccess = async (reply: string, isCurrent: () => boolean, historyRequestId?: string) => {
+      const onCitationSuccess = async (reply: string, isCurrent: () => boolean, historyRequestId?: string, typed?: boolean) => {
         const assistantIndex = newMessages.length;
 
         // Re-classify source type based on AI output (e.g., database → published if פ"ד found)
@@ -829,7 +845,7 @@ const Index = () => {
         let finalReply = reply;
         // The article adapter already validates structured fields. Re-parsing its
         // display markers as generic model text would report false missing fields.
-        if (effectiveSourceType !== "foreign_journal_article") {
+        if (effectiveSourceType !== "foreign_journal_article" && !typed) {
           const validation = validateAIResponse(reply, effectiveSourceType);
           if (!validation.isComplete && validation.missingFields.length > 0) {
             const summary = getMissingFieldsSummary(validation.effectiveSourceType ?? effectiveSourceType, validation.missingFields);
@@ -1265,7 +1281,7 @@ const Index = () => {
                                 if (plan.warning) toast.message(plan.warning);
                               }
                             };
-                            await callAPI(reclassifiedPrompt, messages.slice(0, i), sourceTelemetry(newTelemetryBatch("uniform_citation")), { sourceType: newType, rawInput: normalizeAbbreviations(rawInput) }, onCitationSuccess);
+                            await callAPI(reclassifiedPrompt, messages.slice(0, i), sourceTelemetry(newTelemetryBatch("uniform_citation")), { sourceType: newType, rawInput: normalizeAbbreviations(rawInput), manual: true }, onCitationSuccess);
                           } catch (err) {
                             if ((err as { message?: string })?.message === "CITATION_RETRY_STALE") { citationStale = true; return; }
 
