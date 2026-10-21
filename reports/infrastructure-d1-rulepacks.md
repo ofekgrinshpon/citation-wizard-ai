@@ -38,3 +38,39 @@ Remaining gaps unchanged: no AU/CA/DE/FR templates/completion/replay; book-only 
 - Tests `src/test/rulepackD1CacheOrder.test.ts` (9): 6 disabled (Brown/unanchored.case; book with/without Year/general.book; cache hit and miss) failed on fe373a9e and pass now; 3 enabled cache-hit controls match the frozen legacy runner exactly (one cache read, zero provider).
 - Remaining limit: with no manual type and no foreign-case evidence, the source-type classifier still runs before the gate (the family is unknown until then); the cache is still read only after the gate.
 - Full suite: 201 files, 4,120 passed, 1 skipped, 0 failed. Explicit TypeScript and production Vite build not run manually (not permitted here); automatic build OK.
+
+
+## Bounded AU/CA LOCAL slice — independently gated baseline 56411d7
+
+This section supersedes only the earlier AU/CA **local** capability gaps. It does not implement or claim the approved grounded Perplexity completion/recovery pipeline.
+
+### Enabled exact templates (completion remains null for all six)
+- `au.case.reported`: natural CLR/FCR, separate report year/volume/first page and supplied page/paragraph pinpoint; parties italic, separator punctuation roman; supplied `[No. 2]` retained.
+- `au.case.neutral`: HCA/FCA, bracketed neutral year and number, required valid supplied full day-month-year decision date; bracketed supplied paragraph pinpoint; no guessed date.
+- `au.statute.cth`: Commonwealth Act title + enactment year italic, `(Cth)` and optional typed s/ss, pt/pts, div/divs, sch/schs locators roman. Whole Act complete without locator.
+- `ca.case.scc_neutral`: SCC neutral, optional modern annual-volume S.C.R. parallel; French c. unchanged, full party name roman with procedural-phrase exception.
+- `ca.case.scr`: standalone annual-volume S.C.R. from 1975, SCR alias; separate supplied decision/report years and page/explicit paragraph roles.
+- `ca.statute.federal`: distinct R.S.C. revision-year and S.C. enactment-year forms; official punctuation alias accepted, canonical `R.S.C. 1985, c C-46`; title roman; optional supplied subdivisions.
+
+Authority metadata uses supplied Bluebook 21 R2/R12/R20 and the supplied official v21 T2.2/T2.6 URLs/observed date (2026-10-21). No paid source fetching or live provider/search calls. Product renderer ID `foreign_bluebook_v22` is unchanged and is not an edition certification.
+
+### Shared architecture and actual hosts
+- Pure `citationPure/countryLocal.ts` retains raw UTF-16 capture spans (including repeated equal years), unknown tails, missing fields/conflicts and semantic presentation markers. Alias normalization is render-only; no party/date/identity invention.
+- `rulepackCapability(family, jurisdiction, templateId)` requires exact AU/CA template ID; controlled sibling toggles prove no inherited capability. Local eligibility is separate from lookup: all AU/CA completion remains OFF; actual server handler rejects generic and forged UNKNOWN requests before cache/usage/provider.
+- Shared adapter/planner gives terminal country results in Index initial/manual and runCitation before verified-store/classifier/provider. Unsupported/incomplete/conflicting forms preserve exact input, escaped safely, with actionable warning; genuinely undetermined legacy routes remain.
+- Actual batch and bibliography use the shared runner and exact effective manual choice. Bibliography country regeneration uses original raw input unless explicitly editing, avoiding reinterpreting presentation markers; country statute rows expose their existing classification picker.
+- Index local chat saved/reloaded equality, batch local saved/reloaded equality and repeated bibliography generation tested. Existing book/chapter authoritative C2 replay and all existing Hebrew/style/repeat tests retained. These local persistence checks are **not** authoritative completed AU/CA replay certification.
+
+### Offline commands and evidence
+- `bunx vitest run src/test/foreignStatuteChatHost.test.tsx src/test/rulepackD1Bibliography.test.tsx src/test/citationRowRetry.test.tsx src/test/stageCBatchHost.test.tsx`: 255 passed, zero failed/skipped (before final 6 manual-batch +6 actual-server + additional pure guards).
+- Final `bunx vitest run --maxWorkers=2`: **202 files; 4,210 passed, 1 skipped, 0 failed**. All prior tests retained; frozen baseline fixtures unchanged. Prior assertions were adjusted only where explicitly superseded by six local templates, detected CA evidence, or a now-terminal local route.
+- An earlier unrestricted full run produced an unrelated `cpuLinearity.test.ts` wall-clock scaling failure under worker contention; no test/threshold changed. Bounded-worker full rerun passed the unchanged test.
+- Separate app TypeScript command and production Vite build **not run**: environment explicitly forbids manual project typechecks/builds. Automatic harness compilation reports build OK (final signal inspected separately). Do not equate it with independent production Vite evidence.
+- No live browser/backend E2E, hosted writes or provider calls: actual UI hosts were driven offline with external boundaries mocked, respecting the user's no-DB/no-provider restriction.
+
+### Limits / stop
+- No AU/CA grounded lookup, identity/provenance completion, completed-case/statute retention envelope, or authoritative server final-result recovery. Later independent completion gate must extend the C2 pattern explicitly.
+- No state/provincial forms, FCAFC/other AU courts, other reporters, CanLII/Quicklaw, pre-1975 SCR, regulations/bills or unsupported parallels/tails. Manual subjurisdictions cannot borrow a federal template. Incomplete forms do not search.
+- AU neutral local grammar supports supplied bracketed paragraph pinpoints; other unstructured locators remain raw with warning rather than guessed.
+- DE/FR remain disabled; FR oc./soc. unresolved. No new source families, lookup endpoints, retention schema, deployment/publication, live search/model/provider/DB calls, auth/security/permission/payment/billing/quota/refund changes. Per-run20 checkpoint and disabled daily cap untouched.
+- Stopped after this slice for independent QA, including separately executed app TypeScript/production Vite gates.
