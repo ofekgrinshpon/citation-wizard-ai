@@ -77,3 +77,8 @@
 - [x] Caller-level style/warning/URL preservation (bibliography, batch, chat, research panel), R2.1(a) full-case roman typeface, literal-character escaping — offline tests pass
 - [x] Stage C — shared foreign classification, picker in chat/batch/bibliography, local persistence (offline). Stage D/E not started.
 - [x] Stage 5 batch 4 — books/chapters (editor-only, contributors, explicit publisher status, volume, pinpoints, italic in) — offline tests pass; `reports/stage5-book-coverage.md`
+
+## Infrastructure D1 (offline, stopped for QA)
+- [x] D1 rulepack manifest + shared manual-choice/lookup contract; AU/CA/DE/FR planned/disabled.
+- [ ] D2 AU/CA templates + grounded completion + authoritative replay (not started; awaits D1 QA).
+- [ ] D3 DE/FR templates + completion; FR Cass. oc./soc. table anomaly unresolved.
