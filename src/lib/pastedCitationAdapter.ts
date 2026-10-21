@@ -2,7 +2,7 @@ import { buildPastedCitation, pastedCitationWarning, citationSourceKind, citatio
 import { detectForeignSource, renderForeignDetection } from "@/data/bluebook";
 import { escapeCitationLiteral } from "@/lib/citationSegments";
 import type { SourceType } from "@/data/abbreviations";
-import { isPlannedJurisdiction, rulepackJurisdictionFromId } from "../../supabase/functions/_shared/citationPure/rulepack.ts";
+import { isPlannedJurisdiction, rulepackJurisdictionFromId, rulepackLookupEligible } from "../../supabase/functions/_shared/citationPure/rulepack.ts";
 export function citationManualChoice(type?: SourceType, jurisdictionId?: string, subjurisdiction?: string): CitationManualChoice | null {
   if (!type && !jurisdictionId) return null;
   // Shared rulepack mapping: AU/CA/FR keep their own code (planned/disabled), never US/IL/UNKNOWN.
@@ -30,6 +30,7 @@ export function preparePastedCitation(raw: string, manual: CitationManualChoice 
 }
 export function pastedCaseRequest(raw: string, contract: PastedCitationContract) {
   if (contract.route !== "foreign" || contract.sourceKind !== "case" || raw !== contract.rawInput || isPlannedJurisdiction(contract.jurisdiction) ||
+    !rulepackLookupEligible("case", contract.jurisdiction === "US" || contract.jurisdiction === "UK" ? contract.jurisdiction : "UNKNOWN") ||
     (citationSourceKind(contract.manualChoice?.sourceType) && citationSourceKind(contract.manualChoice?.sourceType) !== "case")) return null;
   const detection = detectForeignSource(raw);
   const parsedFields: Record<string, string> = {};
