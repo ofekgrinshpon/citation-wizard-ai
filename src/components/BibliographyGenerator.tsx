@@ -1,3 +1,4 @@
+import type { CitationManualChoice } from "../../supabase/functions/_shared/pastedCitation";
 import { CitationRequestStatusLink } from "@/components/CitationRequestStatusLink";
 import { ForeignSourcePicker } from "./ForeignSourcePicker";
 import { planForItem, recordGeneration } from "@/lib/foreignClassificationStore";
@@ -162,6 +163,7 @@ export function BibliographyGenerator() {
     isResultCurrent?: () => boolean,
     recovery?: CitationRunRecovery,
     directType?: SourceType,
+    manualChoice?: CitationManualChoice | null,
   ): Promise<Omit<ReviewItem, "id" | "isEditing" | "editValue" | "classificationKey">> => {
     const overrideType = directType ?? (
       sourceTypeHint && sourceTypeHint !== "unknown"
@@ -172,6 +174,7 @@ export function BibliographyGenerator() {
       rawInput,
       isResultCurrent,
       overrideType,
+      ...(manualChoice ? { manualChoice } : {}),
       useVerifiedStore: true,
       telemetry,
     });
@@ -216,9 +219,10 @@ export function BibliographyGenerator() {
     isResultCurrent?: () => boolean,
     recovery?: CitationRunRecovery,
     directType?: SourceType,
+    manualChoice?: CitationManualChoice | null,
   ): Promise<Omit<ReviewItem, "id" | "isEditing" | "editValue" | "classificationKey">> => {
     try {
-      return await lookupOne(rawInput, sourceTypeHint, undefined, isResultCurrent, recovery, directType);
+      return await lookupOne(rawInput, sourceTypeHint, undefined, isResultCurrent, recovery, directType, manualChoice);
     } catch (e) {
       return {
         rawInput,
@@ -400,7 +404,7 @@ export function BibliographyGenerator() {
     setReviewItems((prev) => prev.map((it) => it.id === id
       ? { ...it, status: "loading", completion: undefined, pastedCitation: undefined, isEditing: false, sourceTypeOverride: hint, citationRetry: undefined, requestId: undefined } : it));
     try {
-      const r = await lookupOneSafe(query, hint, job.isCurrent, explicitRetry ?? recovery, plan?.sourceType);
+      const r = await lookupOneSafe(query, hint, job.isCurrent, explicitRetry ?? recovery, plan?.sourceType, plan?.manualChoice);
       if (!job.isCurrent()) return;
       const withPlan = plan && r.status === "ok" && plan.warning
         ? { ...r, warnings: mergeWarnings(r.warnings, plan.warning), warningMsg: r.warningMsg ?? plan.warning } : r;
