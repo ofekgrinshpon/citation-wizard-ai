@@ -393,7 +393,8 @@ export function BibliographyGenerator() {
     const item = reviewItemsRef.current.find((i) => i.id === id);
     if (!item || (explicitRetry && (item.citationRetry !== explicitRetry || hintOverride !== undefined))) return;
     const recovery = hintOverride === undefined ? item.recovery : undefined;
-    const query = explicitRetry || recovery ? item.rawInput : item.editValue?.trim() || item.citation?.trim() || item.rawInput;
+    const countryLocal = item.pastedCitation?.jurisdiction === "AU" || item.pastedCitation?.jurisdiction === "CA";
+    const query = explicitRetry || recovery || (countryLocal && !item.isEditing) ? item.rawInput : item.editValue?.trim() || item.citation?.trim() || item.rawInput;
     if (!query) return;
     const job = rowGuard.begin(id);
     if (!job) return;
@@ -888,7 +889,7 @@ function ReviewRow({
         </span>
       </div>
 
-      {detectedCat.startsWith("foreign_") && (item.status === "ok" || item.status === "error") && (
+      {(detectedCat.startsWith("foreign_") || item.pastedCitation?.jurisdiction === "AU" || item.pastedCitation?.jurisdiction === "CA") && (item.status === "ok" || item.status === "error") && (
         <ForeignSourcePicker accountId={accountId} itemKey={`bib:${item.classificationKey}`} input={item.rawInput}
           onRegenerate={onRetry} />
       )}
