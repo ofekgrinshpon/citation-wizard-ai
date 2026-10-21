@@ -23,7 +23,8 @@ export async function c2CorrectionPayload(mode: C2CorrectionMode) {
   return { ...fixture, response, calls };
 }
 export async function c2Payload(kind: "book" | "book_chapter", rawInput: string, mode: C2Mode) {
-  const { response, calls } = await c1ServerPayload({ kind, jurisdiction: "OTHER", rawInput, parsedFields: { authors: "Jane Doe", bookTitle: "Synthetic Collection", ...(kind === "book_chapter" ? { chapterTitle: "Quiet Rules" } : {}) } }, [C2_DONOR]);
+  const donor = kind === "book_chapter" ? { ...C2_DONOR, title: "Quiet Rules — Jane Doe, Synthetic Collection (2020)", snippet: "Jane Doe, Quiet Rules, in Synthetic Collection (2020)." } : C2_DONOR;
+  const { response, calls } = await c1ServerPayload({ kind, jurisdiction: "OTHER", rawInput, parsedFields: { authors: "Jane Doe", bookTitle: "Synthetic Collection", ...(kind === "book_chapter" ? { chapterTitle: "Quiet Rules" } : {}) } }, [donor]);
   if (mode === "partial" || mode === "no-provenance") delete response.provenance.year;
   if (mode === "supplied-conflict") { response.fields.edition = "3d"; response.grounded.edition = true; response.provenance.edition = { ...response.provenance.year, value: "3d" }; }
   if (mode === "wrong-kind") response.kind = "case";

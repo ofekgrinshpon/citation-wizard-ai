@@ -707,7 +707,7 @@ for (const host of ["bibliography", "footnote"] as const) {
     boundary.classify.mockResolvedValue({ sourceType: type });
     boundary.invoke.mockResolvedValue({ data: { foreignLookup: response, content: "UNSAFE" }, error: null });
     if (host === "bibliography") bibliographyInput(rawInput); else footnoteInput([rawInput]);
-    let result: { completion?: any; citation?: string; output?: string };
+    let result: { completion?: any; citation?: string; output?: string; warnings?: string[] };
     if (host === "bibliography") {
       const button = await screen.findByRole("button", { name: /הוסף הכל לביבליוגרפיה/ });
       await waitFor(() => expect(button).not.toBeDisabled());
@@ -721,7 +721,8 @@ for (const host of ["bibliography", "footnote"] as const) {
     const output = result.citation ?? result.output;
     if (mode === "firstPage-only") {
       expect(boundary.invoke.mock.calls.filter(([name]) => name === "citation-chat")).toHaveLength(0);
-      expect(document.body.textContent).toContain("firstPage");
+      if (host === "bibliography") expect(result.warnings?.join(" ")).toContain("firstPage");
+      else expect(document.body.textContent).toContain("firstPage");
     } else if (mode === "wrong-chapter" || mode === "absent-chapter") {
       expect(result.completion.identityConfirmed).toBe(false); expect(result.completion.fields).toEqual({});
       expect(output).toContain(rawInput);

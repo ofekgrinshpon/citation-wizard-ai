@@ -83,7 +83,7 @@ function parseLabelled(text: string): BookWorkParse | null {
   for (const k of ["authors", "editors", "translators", "bookTitle", "chapterTitle", "volume", "year", "publisher", "originalYear", "firstPage"] as const) {
     if (f[k]) fields[k] = f[k];
   }
-  if (f.edition) fields.edition = f.edition.replace(/\s+ed\.?$/, "");
+  if (f.edition) fields.edition = f.edition;
   const pins = [f.pinpoint && normPin(f.pinpoint), f.section && `§ ${f.section.replace(/^§+\s*/, "")}`, f.paragraph && `¶ ${f.paragraph.replace(/^¶+\s*/, "")}`].filter(Boolean);
   if (pins.length > 1) extra.push(`pinpoint: ${pins.join(" / ")}`);
   else if (pins[0]) fields.pinpoint = pins[0] as string;
