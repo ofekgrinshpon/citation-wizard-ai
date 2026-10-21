@@ -23,7 +23,7 @@ export interface CompletionAcceptance {
   missing: string[];
   conflicts: string[];
   completeness: "complete" | "partial" | "unconfirmed";
-  reason?: "binding" | "jurisdiction" | "malformed" | "unavailable" | "identity" | "ambiguous";
+  reason?: "binding" | "jurisdiction" | "malformed" | "unavailable" | "identity" | "chapter_identity" | "ambiguous";
 }
 /** Older responses need no new version/raw echo, but must carry their existing extraction evidence. */
 export function acceptCitationCompletion(request: Record<string, unknown>, raw: string, response: unknown): CompletionAcceptance {
@@ -49,6 +49,17 @@ export function acceptCitationCompletion(request: Record<string, unknown>, raw: 
   out.jurisdiction = jur === "US" || jur === "UK" || jur === "OTHER" ? jur : null;
   if (Array.isArray(r.disambiguation) && r.disambiguation.length > 1) return fail("ambiguous");
   const anchors = Array.isArray(identity.anchors) ? identity.anchors.filter((v): v is string => typeof v === "string") : [];
+  const sources = Array.isArray(r.sources) ? r.sources.map(record) : [];
+  const chapterSourceMatches = (source: Record<string, unknown>) => {
+    const evidence = ` ${norm(`${text(source.title)} ${text(source.snippet)}`)} `;
+    return [supplied.chapterTitle, supplied.bookTitle].every(v => typeof v === "string" && v.trim().length > 0 && evidence.includes(` ${norm(v)} `));
+  };
+  if (request.kind === "book_chapter" && (
+    !["chapter", "title"].some(prefix => anchors.some(a => norm(a) === norm(`${prefix}:${text(supplied.chapterTitle)}`))) ||
+    !anchors.some(a => norm(a) === norm(`title:${text(supplied.bookTitle)}`)) ||
+    !sources.some(chapterSourceMatches))) {
+    out.conflicts.push("chapter_identity_unconfirmed"); return fail("chapter_identity");
+  }
   // Server splitParties excludes supplied court/year parentheticals.
   const name = text(supplied.caseName).split(/[([]/)[0].trim();
   const identifierArticle = request.kind === "journal_article" && (supplied.doi || supplied.sourceUrl) ? parseForeignArticleInput(raw) : null;
@@ -71,7 +82,6 @@ export function acceptCitationCompletion(request: Record<string, unknown>, raw: 
   if (identityFields.some(key => (identifierArticle ?? supplied)[key] !== undefined && fields[key] !== undefined && citationBindingText(text((identifierArticle ?? supplied)[key])) !== citationBindingText(text(fields[key])))) {
     out.identityConfirmed = false; return fail("identity");
   }
-  const sources = Array.isArray(r.sources) ? r.sources.map(record) : [];
   for (const [key, value] of Object.entries(fields)) {
     // Compatible full bylines confirm an abbreviated supplied byline, but never replace it.
     if (request.kind === "journal_article" && key === "authors" && typeof value === "string" && typeof supplied[key] === "string" && articleFieldMatches(key, supplied[key], value)) continue;
@@ -92,7 +102,8 @@ export function acceptCitationCompletion(request: Record<string, unknown>, raw: 
     if (!fieldsByKind[text(request.kind)].includes(key) || typeof value !== "string" || !value.trim() ||
       fieldConflicts.some(c => c === `conflicting_statute_${key}` || c.startsWith(`${key}:`)) ||
       (supplied[key] !== undefined && citationBindingText(text(supplied[key])) !== citationBindingText(value)) ||
-      grounded[key] !== true || p.value !== value || !bases.has(text(p.basis)) || !urlValid || !source || !meaningful || !recordEvidence || norm(title) !== norm(donorTitle)) {
+      grounded[key] !== true || p.value !== value || !bases.has(text(p.basis)) || !urlValid || !source || !meaningful || !recordEvidence || norm(title) !== norm(donorTitle) ||
+      (request.kind === "book_chapter" && !chapterSourceMatches(source))) {
       out.quarantined.push(key); continue;
     }
     // Supplied values stay exact; confirmation is not permission to rewrite them.

@@ -52,7 +52,7 @@ export interface ForeignLookupResult {
     string,
     { value: string; sourceUrl?: string; sourceTitle?: string; basis: GroundingBasis }
   >;
-  sources: Array<{ url: string; title?: string; tier: "tier1" | "tier2" }>;
+  sources: Array<{ url: string; title?: string; snippet?: string; tier: "tier1" | "tier2" }>;
   identity: {
     matched: boolean;
     anchors: string[];
@@ -1153,9 +1153,17 @@ export async function runForeignLookup(
   const parties = input.kind === "case" ? splitParties(input.rawInput) : null;
   const titleHint = input.kind === "case" ? null : extractTitleHint(input);
   const authorHint = input.kind === "case" ? null : extractAuthorHint(input);
+  const chapterHint = input.kind === "book_chapter" ? input.parsedFields?.chapterTitle : undefined;
 
   const identitySources = sources.filter((s) => {
     const ev = `${s.title ?? ""} ${s.snippet ?? ""} ${s.url}`;
+    // Collection identity does not prove chapter identity. URLs are not title evidence.
+    if (input.kind === "book_chapter") {
+      const text = ` ${normalizeTitle(`${s.title ?? ""} ${s.snippet ?? ""}`)} `;
+      if (!chapterHint || !input.parsedFields?.bookTitle ||
+        !text.includes(` ${normalizeTitle(chapterHint)} `) ||
+        !text.includes(` ${normalizeTitle(input.parsedFields.bookTitle)} `)) return false;
+    }
     if (parties) {
       return textContainsParty(ev, parties[0]) && textContainsParty(ev, parties[1]);
     }
@@ -1180,10 +1188,12 @@ export async function runForeignLookup(
   }
 
   if (identitySources.length === 0) {
+    if (input.kind === "book_chapter") empty.identity.conflicts.push("chapter_identity_unconfirmed");
     empty.identity.conflicts.push("no_identity_matched_source");
     return empty;
   }
   empty.identity.matched = true;
+  if (chapterHint) empty.identity.anchors.push(`chapter:${chapterHint}`);
 
   // ── Identity discovery: resolve jurisdiction from evidence, never guess ──
   if (input.kind === "case" && isUnresolvedJurisdiction(input.jurisdiction)) {

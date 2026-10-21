@@ -312,6 +312,12 @@ export function renderJournalArticle(f: ForeignArticleFields): RenderResult {
 
 const plural = (names: string) => /&|,|\sand\s/.test(names);
 
+/** Presentation only: retain evidence values, normalize only recognized ordinal editions. */
+function bookEdition(value: string): string {
+  const recognized = value.trim().match(/^(\d+(?:st|nd|d|rd|th))(?:\s+ed\.?)?$/i);
+  return recognized ? `${recognized[1]} ed.` : value;
+}
+
 /** R15.2–15.4(a) parenthetical: editors, translators, [non-original publisher] [edition] year. */
 function bookParen(f: ForeignBookFields | ForeignChapterFields, warnings: string[], unrep: string[]): string {
   let publisher = "";
@@ -327,7 +333,7 @@ function bookParen(f: ForeignBookFields | ForeignChapterFields, warnings: string
   const paren = [
     f.editors ? `${f.editors} ed${plural(f.editors) ? "s" : ""}.` : "",
     f.translators ? `${f.translators} trans.` : "",
-    [publisher, f.edition ? `${f.edition} ed.` : "", f.year || miss("שנה")].filter(Boolean).join(" "),
+    [publisher, f.edition ? bookEdition(f.edition) : "", f.year || miss("שנה")].filter(Boolean).join(" "),
   ].filter(Boolean).join(", ");
   return `(${paren})${f.originalYear ? ` (${f.originalYear})` : ""}`;
 }

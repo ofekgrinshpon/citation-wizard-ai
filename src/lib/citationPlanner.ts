@@ -100,7 +100,8 @@ function eligibleBookCompletion(type: SourceType | null, raw: string) {
     (work.kind === "chapter" && !work.fields.chapterTitle)) return null;
   const kind = work.kind === "book" ? "book" : "book_chapter";
   const rendered = renderForeignDetection({ kind, jurisdiction: "OTHER", sourceType: type, fields: work.fields, confidence: "deterministic" });
-  if (!rendered?.missing.length) return null;
+  // Existing book/chapter extractor returns publication year/edition, never chapter firstPage.
+  if (!rendered?.missing.some(field => field === "year" || field === "edition")) return null;
   return { kind, fields: work.fields };
 }
 
@@ -246,6 +247,7 @@ export function resolveCitationResponse(plan: TypedPlan, data: Record<string, un
     malformed: "תשובת החיפוש אינה בפורמט נתמך; נשמרו רק הפרטים שסופקו.",
     unavailable: "חיפוש פרטי המקור לא היה זמין; נשמרו רק הפרטים שסופקו.",
     identity: "לא אומתה התאמת המקור לפרטים שסופקו או נמצאו פרטים סותרים; נשמרו רק הפרטים שסופקו.",
+    chapter_identity: "לא אומתה זהות הפרק המבוקש בנפרד מזהות הספר או האסופה; נשמרו רק הפרטים שסופקו ללא השלמה.",
     ambiguous: "נדרשת בחירה בין כמה פסקי דין",
   };
   if (accepted.reason) warnings.push(messages[accepted.reason]);
