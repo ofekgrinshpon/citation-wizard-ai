@@ -36,11 +36,6 @@ function fixture() {
     return { status: r.status, body: await r.json() };
   } };
 }
-describe("batch A actual server pre-cache route guard", () => {
-  it("actual server rederives manual family conflict rather than trusting forged client sourceKind", async () => {
-    const raw = "Brown v. Board of Education"; const h = fixture();
-    const r = await h.invoke({ rawInput: raw, messages: [{ role: "user", content: raw }],
-      pastedCitation: { ...pasted.buildPastedCitation(raw), sourceKind: "book", manualChoice: { sourceType: "foreign_book" } },
 import { RULEPACK_MANIFEST } from "../../supabase/functions/_shared/citationPure/rulepack";
 import { CHAT_HOST, planCitationEvidence, planLocalCitation, planTypedRequest } from "@/lib/citationPlanner";
 import type { SourceType } from "@/data/abbreviations";
