@@ -123,6 +123,11 @@ describe("chat page — typed statute request through initial send and regenerat
       expect(latest().pastedCitation.rawInput).toBe(input);
       expect(latest().content).not.toContain("UNSAFE");
       if (mode === "matching") expect(latest().completion.fields.year).toBe("2020");
+      if (kind === "book_chapter" && mode === "matching") {
+        expect(latest().completion.missing).toContain("firstPage");
+        expect(latest().completion.fields.firstPage).toBeUndefined();
+        expect(latest().completion.completeness).toBe("partial");
+      }
       if (mode === "supplied-conflict") expect(latest().content).toContain("2d");
       await act(async () => fireEvent.click(screen.getByRole("button", { name: `regen-${type}` })));
       expect(latest().completion).toEqual(runner.completion);

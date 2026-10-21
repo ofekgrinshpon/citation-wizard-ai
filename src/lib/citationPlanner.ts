@@ -6,8 +6,7 @@
  * through runCitation. Pure: no network, storage, telemetry, billing,
  * request ids, retries or UI. Hosts keep owning all IO and stale handling.
  *
- * Host behaviour that currently differs is declared explicitly as
- * capabilities (see CHAT_HOST / RUNNER_HOST) — never silently unified.
+ * Hosts retain their IO/context ownership; existing typed planning is shared.
  */
 import { acceptCitationCompletion } from "@/lib/citationCompletion";
 import { escapeCitationLiteral } from "@/lib/citationSegments";
@@ -28,7 +27,7 @@ import { renderBookLocal } from "@/lib/bookLocal";
 import { extractBookWork } from "@/data/bluebook/bookWorks";
 import { preparePastedCitation, pastedCaseRequest, readPastedCitationSafety, renderPastedCaseResponse } from "@/lib/pastedCitationAdapter";
 
-/** Explicit, declared differences between hosts. Batch C may reconcile them. */
+/** Local rendering controls; only host identity differs after bounded C2 parity. */
 export interface CitationHostCapabilities {
   host: "chat" | "runner";
   /** Pasted local render waits for the opinion-format (US unreported) formatter. */
@@ -185,7 +184,7 @@ export interface TypedPlan {
   articleRequest: { parsedFields: Record<string, string> } | null;
   /** The single foreignLookup body field (case > statute > article/other). */
   foreignLookup: Record<string, unknown> | null;
-  /** Chat only: article rawInput field from articleRequestFields. */
+  /** Existing article rawInput field from articleRequestFields. */
   extraBody: Record<string, unknown>;
 }
 

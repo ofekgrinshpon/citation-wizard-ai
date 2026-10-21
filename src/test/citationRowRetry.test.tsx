@@ -725,6 +725,12 @@ for (const host of ["bibliography", "footnote"] as const) for (const [kind, base
       expect(localStorage.getItem("footnote_cells_row-project")).not.toContain('"completion"');
     }
     expect(expected.completion).toBeDefined();
+    if (kind === "book_chapter" && mode === "matching") {
+      expect(expected.completion?.fields.year).toBe("2020");
+      expect(expected.completion?.missing).toContain("firstPage");
+      expect(expected.completion?.completeness).toBe("partial");
+      expect(expected.completion?.fields.firstPage).toBeUndefined();
+    }
     expect(document.body.textContent).not.toContain("UNSAFE");
     expect(boundary.invoke).toHaveBeenCalledTimes(1);
     expect(requestAt(0).foreignLookup).toMatchObject({ kind, jurisdiction: "OTHER", rawInput });
@@ -747,3 +753,26 @@ it.each(["book", "book_chapter"] as const)("C2 %s retained response/retry uses p
   expect(boundary.invoke).toHaveBeenCalledTimes(2);
   expect(boundary.classify).toHaveBeenCalledTimes(1);
 });
+
+for (const host of ["bibliography", "footnote"] as const) {
+  it.each([
+    ["Author: Jane Doe; Book: Synthetic Collection; Year: 2020", "foreign_book"],
+    ["Author: Jane Doe; Chapter: Quiet Rules; Collection: Synthetic Collection; First page: 12; Year: 2020", "foreign_book_chapter"],
+    ["Hidden Costs, Courts and Memory, in Synthetic Collection 12 (Jane Doe ed., 2020)", "foreign_book_chapter"],
+    ["Catch 22 (Jane Doe ed., 2020)", "foreign_book"],
+    ["Title 2020 (Jane Doe ed., 2020)", "foreign_book"],
+    ["Synthetic work needing details", "foreign_book"],
+  ] as const)(`C2 actual ${host} complete/ambiguous %s is zero completion IO`, async (raw, type) => {
+    boundary.classify.mockResolvedValue({ sourceType: type });
+    if (host === "bibliography") {
+      bibliographyInput(raw);
+      await waitFor(() => expect(screen.getByRole("button", { name: /הוסף הכל לביבליוגרפיה/ })).not.toBeDisabled());
+    } else {
+      footnoteInput([raw]);
+      await waitFor(() => expect(boundary.card.mock.calls.some(([c]) => c.output)).toBe(true));
+    }
+    expect(boundary.invoke.mock.calls.filter(([name]) => name === "citation-chat")).toHaveLength(0);
+    expect(fetch).not.toHaveBeenCalled();
+    if (raw.startsWith("Catch") || raw.startsWith("Title")) expect(document.body.textContent).toContain(raw);
+  });
+}

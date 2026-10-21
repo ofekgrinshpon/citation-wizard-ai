@@ -265,7 +265,7 @@ describe("legacy standalone article adapter", () => {
     expect(adapter.mergeForeignArticleCache("Warren & Brandeis, The Right to Privacy", cached.full_citation)).not.toContain("201–203");
   });
 
-  it.each(["foreign_case_us", "foreign_book", "foreign_book_chapter", "article_in_book"] as const)("keeps the %s request payload, history, telemetry and return behavior unchanged", async (sourceType) => {
+  it.each(["foreign_case_us", "article_in_book"] as const)("keeps the %s request payload, history, telemetry and return behavior unchanged", async (sourceType) => {
     const h = harness();
     const reply = await h.callAPI("unchanged case prompt", history, tel, { sourceType, rawInput: "Unchanged source" });
     expect(h.invokeFunction).toHaveBeenCalledWith("citation-chat", expect.objectContaining({
@@ -276,6 +276,14 @@ describe("legacy standalone article adapter", () => {
     expect(reply).toContain("910 F.3d 649");
     expect(h.provider).not.toHaveBeenCalled();
     expect(adapter.compatibleArticleCache("foreign_book", "Any book", cached)).toBe(cached);
+  });
+  it.each(["foreign_book", "foreign_book_chapter"] as const)("C2 anchorless %s preserves locally rather than sending unrelated generic text", async sourceType => {
+    const h = harness();
+    const reply = await h.callAPI("unchanged case prompt", history, tel, { sourceType, rawInput: "Unchanged source" });
+    expect(reply).toContain("Unchanged source"); expect(reply).toContain("עוגני");
+    expect(reply).not.toContain("910 F.3d 649");
+    expect(h.invokeFunction).not.toHaveBeenCalled(); expect(h.provider).not.toHaveBeenCalled();
+    expect(h.subscription.incrementCount).not.toHaveBeenCalled();
   });
 
   it("adds only rawInput for Hebrew articles and keeps their content response contract", async () => {
