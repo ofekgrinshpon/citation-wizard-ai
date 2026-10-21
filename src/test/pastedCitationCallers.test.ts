@@ -72,3 +72,31 @@ describe("batch A real runCitation boundary", () => {
     expect(m.classifier).not.toHaveBeenCalled();
   });
 });
+describe("AU/CA QA correction 1: incidental acronyms keep legacy runCitation ownership", () => {
+  const pairs: Array<[string, string, string | undefined]> = [
+    ["Author: Jane Doe; Book: The SCC; Edition: 2nd; Year: 2020", "Author: Jane Doe; Book: The Zed; Edition: 2nd; Year: 2020", "foreign_book"],
+    ["Author: Jane Doe; Book: The HCA; Edition: 2nd; Year: 2020", "Author: Jane Doe; Book: The Zed; Edition: 2nd; Year: 2020", "foreign_book"],
+    ["HCA Holdings v. Cedar, 347 U.S. 483, 490 (1954)", "Acme Holdings v. Cedar, 347 U.S. 483, 490 (1954)", undefined],
+    ["SCC Holdings v. Cedar, 347 U.S. 483, 490 (1954)", "Acme Holdings v. Cedar, 347 U.S. 483, 490 (1954)", undefined],
+  ];
+  it.each(pairs)("%s matches legacy control (cold and warm cache)", async (raw, control, overrideType) => {
+    for (const warm of [false, true]) {
+      m.cache.mockResolvedValue(warm ? { full_citation: "CACHED", source_name: "unrelated cached source", verification_status: "verified" } : null);
+      vi.clearAllMocks(); m.cache.mockResolvedValue(warm ? { full_citation: "CACHED", source_name: "unrelated cached source", verification_status: "verified" } : null);
+      const a = await runCitation({ rawInput: raw, overrideType: overrideType as never });
+      const aCache = m.cache.mock.calls.length, aInvoke = m.invoke.mock.calls.length;
+      vi.clearAllMocks(); m.cache.mockResolvedValue(warm ? { full_citation: "CACHED", source_name: "unrelated cached source", verification_status: "verified" } : null);
+      const b = await runCitation({ rawInput: control, overrideType: overrideType as never });
+      expect(a.pastedCitation?.conflicts ?? []).not.toContain("manual_family_conflict");
+      expect(a.status).toBe(b.status);
+      expect(a.warningMsg).toBe(b.warningMsg);
+      expect(a.citation.replace(/SCC|HCA/g, "X")).toBe(b.citation.replace(/Zed|Acme/g, "X").replace(/X Holdings/, "X Holdings"));
+      expect(m.cache.mock.calls.length).toBe(aCache); expect(m.invoke.mock.calls.length).toBe(aInvoke);
+    }
+  });
+  it("strong AU case anchor with wrong manual foreign_book still stops with zero IO", async () => {
+    const r = await runCitation({ rawInput: "Wattle v Harbour (2020) 270 CLR 10, 14 (Austl.).", overrideType: "foreign_book" });
+    expect(r.citation).toBe("Wattle v Harbour (2020) 270 CLR 10, 14 (Austl.).");
+    expect(m.invoke).not.toHaveBeenCalled(); expect(m.cache).not.toHaveBeenCalled(); expect(m.classifier).not.toHaveBeenCalled();
+  });
+});

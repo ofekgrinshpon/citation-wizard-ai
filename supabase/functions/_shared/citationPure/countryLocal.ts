@@ -8,17 +8,26 @@ export interface CountryAst {
   fields: Record<string, CountryField>; unknownSpans: InputSpan[]; missing: string[]; conflicts: string[];
   complete: boolean;
 }
-const AU = /\b(?:CLR|FCR|HCA|FCA|FCAFC|Cth)\b|\(Austl\.\)/;
-const CA = /(?<![A-Za-z.])(?:SCC|CanLII|Quicklaw|R\.?S\.?C\.?|S\.?C\.?R\.?)(?![A-Za-z])|(?<![A-Za-z.])S\.C\.|\(Can\.\)/;
+/** Structural anchors only: an incidental acronym (e.g. "The SCC", "HCA Holdings") is not country evidence. */
+export const AU_REPORTER_ANCHOR = /\(\d{4}\)\s+\d+\s+(?:CLR|FCR)\s+\d+/;
+export const AU_NEUTRAL_ANCHOR = /\[\d{4}\]\s+(?:HCA|FCA|FCAFC)\s+\d+/;
+export const AU_CODE_ANCHOR = /\b\d{4}\s*\(Cth\)|\(Austl\.\)\s*\.?\s*$/;
+export const CA_NEUTRAL_ANCHOR = /\b\d{4}\s+(?:SCC|CanLII)\s+\d+|\bQuicklaw\b/;
+export const CA_REPORTER_ANCHOR = /\[\d{4}\]\s+\d+\s+(?:S\.C\.R\.|SCR)\s+\d+/;
+export const CA_CODE_ANCHOR = /(?<![A-Za-z.])(?:R\.?S\.?C\.?|S\.C\.),?\s+\d{4},\s*c\.?\s+[A-Za-z0-9]|\(Can\.\)\s*\.?\s*$/;
+const AU = new RegExp([AU_REPORTER_ANCHOR, AU_NEUTRAL_ANCHOR, AU_CODE_ANCHOR].map(r => r.source).join('|'));
+const CA = new RegExp([CA_NEUTRAL_ANCHOR, CA_REPORTER_ANCHOR, CA_CODE_ANCHOR].map(r => r.source).join('|'));
 const NUMS = String.raw`\d+(?:\s*[–-]\s*\d+)?(?:\s*,\s*\d+(?:\s*[–-]\s*\d+)?)*`;
 const LOC_NUMBER = String.raw`\d+[A-Za-z]?(?:\([\da-z]+\))*(?:\s*[–-]\s*\d+[A-Za-z]?(?:\([\da-z]+\))*)?`;
 const LOC_UNIT = String.raw`(?:s|ss|pt|pts|div|divs|sch|schs)\.?`;
-const LOC = new RegExp(String.raw`^${LOC_UNIT}\s+${LOC_NUMBER}(?:\s*(?:,|and)\s*(?:${LOC_UNIT}\s+)?${LOC_NUMBER})*$`);
+const LOC_GROUP = String.raw`${LOC_UNIT}\s+${LOC_NUMBER}(?:\s*(?:,|and)\s*(?:${LOC_UNIT}\s+)?${LOC_NUMBER})*`;
+/** Typed unit/number groups; distinct units may follow each other without commas (pt 2 div 3 s 4). */
+const LOC = new RegExp(String.raw`^${LOC_GROUP}(?:\s+${LOC_GROUP})*$`);
 /** Recognize country+family even when incomplete; a compatible manual choice is not supplied identity. */
 export function parseCountryLocal(raw: string, manual: CitationManualChoice | null = null): CountryAst | null {
   const au = AU.test(raw), ca = CA.test(raw);
   const mj = manual?.jurisdiction ?? rulepackJurisdictionFromId(manual?.jurisdictionId);
-  const caseShape = /\s(?:v\.?|c\.)\s/u.test(raw.split(',')[0]) || /\b(?:CLR|FCR|HCA|FCA|FCAFC|SCC|SCR|CanLII|Quicklaw)\b|S\.C\.R\./.test(raw);
+  const caseShape = /\s(?:v\.?|c\.)\s/u.test(raw.split(',')[0]) || [AU_REPORTER_ANCHOR, AU_NEUTRAL_ANCHOR, CA_NEUTRAL_ANCHOR, CA_REPORTER_ANCHOR].some(r => r.test(raw));
   const statuteShape = /\b(?:Act|Cth|R\.?S\.?C\.?)\b|\bS\.C\./.test(raw);
   const mk = manual?.sourceType?.startsWith('foreign_case_') ? 'case' : manual?.sourceType?.startsWith('foreign_statute_') || manual?.sourceType === 'primary_legislation' ? 'statute' : null;
   if (!au && !ca && !((mj === 'AU' || mj === 'CA') && (caseShape || statuteShape || mk))) return null;
@@ -68,7 +77,7 @@ export function parseCountryLocal(raw: string, manual: CitationManualChoice | nu
   } else if (jurisdiction === 'AU') {
     match(/^(?<statuteName>.+?\bAct)\s+(?<enactmentYear>\d{4})\s*\((?<code>Cth)\)(?:\s+(?<subdivisions>.*))?$/, 'au.statute.cth');
   } else {
-    match(/^(?<statuteName>.+?\bAct),\s*(?<code>R\.?S\.?C\.?|S\.?C\.?),?\s+(?<revisionYear>\d{4}),\s*c\.?\s+(?<chapter>[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*)(?:,?\s+(?<subdivisions>.*))?$/, 'ca.statute.federal');
+    match(/^(?<statuteName>[^,]*[^,\s]),\s*(?<code>R\.?S\.?C\.?|S\.?C\.?),?\s+(?<revisionYear>\d{4}),\s*c\.?\s+(?<chapter>[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*)(?:,?\s+(?<subdivisions>.*))?$/, 'ca.statute.federal');
   }
   if (ast.templateId === 'ca.statute.federal' && /^S/.test(ast.fields.code?.value ?? '')) {
     ast.fields.enactmentYear = ast.fields.revisionYear;
@@ -101,7 +110,7 @@ export function renderCountryLocal(ast: CountryAst) {
       case 'au.case.neutral': citation = `${italic(f('caseName'))} [${e('neutralYear')}] ${e('court')} ${e('neutralNumber')} (${e('decisionDate')})${f('paragraph') ? ` [${e('paragraph')}]` : ''} (Austl.).`; break;
       case 'au.statute.cth': citation = `${italic(`${f('statuteName')} ${f('enactmentYear')}`)} (Cth)${f('subdivisions') ? ` ${e('subdivisions')}` : ''} (Austl.).`; break;
       case 'ca.case.scc_neutral': citation = `${caName()}, ${e('neutralYear')} SCC ${e('neutralNumber')}${f('reporterYear') ? `, [${e('reporterYear')}] ${e('reporterVolume')} S.C.R. ${e('firstPage')}` : ''}${paragraph || page} (Can.).`; break;
-      case 'ca.case.scr': citation = `${caName()}${f('decisionYear') ? ` (${e('decisionYear')})` : ''}, [${e('reporterYear')}] ${e('reporterVolume')} S.C.R. ${e('firstPage')}${paragraph || page} (Can.).`; break;
+      case 'ca.case.scr': citation = `${caName()}${f('decisionYear') && f('decisionYear') !== f('reporterYear') ? ` (${e('decisionYear')})` : ''}, [${e('reporterYear')}] ${e('reporterVolume')} S.C.R. ${e('firstPage')}${paragraph || page} (Can.).`; break;
       case 'ca.statute.federal': citation = `${e('statuteName')}, ${/^R/.test(f('code')) ? 'R.S.C.' : 'S.C.'} ${e(/^R/.test(f('code')) ? 'revisionYear' : 'enactmentYear')}, c ${e('chapter')}${f('subdivisions') ? `, ${e('subdivisions')}` : ''} (Can.).`; break;
     }
   }
