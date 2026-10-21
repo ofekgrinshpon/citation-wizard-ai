@@ -1674,7 +1674,21 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
   };
   const completeResponse = async (response: Response) => {
     const body = await response.clone().json();
-    const result = citationRecoveryResult(body);
+    // Trusted lookup delivery only: snippets are discovery evidence, not part
+    // of the approved retention envelope. Reject every other unexpected key;
+    // never repair arbitrary invalid fields or change the live response.
+    const foreign = body.foreignLookup;
+    const projectSources = foreign && ["book", "book_chapter"].includes(foreign.kind) && Array.isArray(foreign.sources);
+    const knownSources = projectSources && foreign.sources.every((source: unknown) =>
+      source !== null && typeof source === "object" && !Array.isArray(source) &&
+      Object.keys(source).every(key => ["url", "title", "tier", "snippet"].includes(key)) &&
+      (!("snippet" in source) || typeof source.snippet === "string"));
+    const retainedBody = knownSources ? { ...body, foreignLookup: { ...foreign,
+      sources: foreign.sources.map((source: Record<string, unknown>) => ({
+        url: source.url, ...("title" in source ? { title: source.title } : {}), tier: source.tier,
+      })),
+    } } : body;
+    const result = citationRecoveryResult(retainedBody);
     const completion = await usageGuard?.finish("succeeded", "citation_delivered", result ?? undefined);
     const recoveryAvailability = !usageGuard ? "unavailable" : completion?.confirmed ? "available" : "unconfirmed";
     const headers = new Headers(response.headers);
