@@ -21,6 +21,8 @@ import type { SourceType } from "@/data/abbreviations";
 type ReviewStatus = "ok" | "needs_choice" | "error" | "loading";
 
 interface ReviewItem {
+  completion?: import("@/lib/runCitation").RunCitationResult["completion"];
+  pastedCitation?: import("@/lib/runCitation").RunCitationResult["pastedCitation"];
   id: string;
   rawInput: string;
   status: ReviewStatus;
@@ -186,6 +188,7 @@ export function BibliographyGenerator() {
         citation: "",
         isVerified: false,
         options: [],
+        completion: result.completion, pastedCitation: result.pastedCitation,
         errorMsg: result.reply || "לא הוחזר אזכור",
         // Disambiguation/locally unusable success is already delivered. Keep
         // its exact result; the generic action may not start another paid call.
@@ -198,6 +201,7 @@ export function BibliographyGenerator() {
       status: "ok",
       citation,
       isVerified: result.fromVerifiedStore,
+      completion: result.completion, pastedCitation: result.pastedCitation,
       options: [],
       warningMsg: result.warningMsg ?? warnings[0],
       warnings,
@@ -372,7 +376,7 @@ export function BibliographyGenerator() {
         const v = it.editValue.trim();
         if (!v) return it;
         if (v === it.citation) return { ...it, isEditing: false };
-        return { ...it, isEditing: false, citation: v, status: "ok", isVerified: false, options: [], errorMsg: undefined, warningMsg: undefined, warnings: undefined, citationRetry: undefined, requestId: undefined, recovery: undefined };
+        return { ...it, isEditing: false, citation: v, status: "ok", isVerified: false, options: [], errorMsg: undefined, warningMsg: undefined, warnings: undefined, completion: undefined, pastedCitation: undefined, citationRetry: undefined, requestId: undefined, recovery: undefined };
       }),
     );
   };
@@ -422,7 +426,7 @@ export function BibliographyGenerator() {
       const v = it.editValue?.trim();
       if (!v) return { ...it, isEditing: false };
       if (v === it.citation) return { ...it, isEditing: false };
-      return { ...it, isEditing: false, citation: v, status: "ok" as ReviewStatus, isVerified: false, options: [], errorMsg: undefined, warningMsg: undefined, warnings: undefined, citationRetry: undefined, requestId: undefined, recovery: undefined };
+      return { ...it, isEditing: false, citation: v, status: "ok" as ReviewStatus, isVerified: false, options: [], errorMsg: undefined, warningMsg: undefined, warnings: undefined, completion: undefined, pastedCitation: undefined, citationRetry: undefined, requestId: undefined, recovery: undefined };
     });
     if (flushed !== reviewItems) setReviewItems(flushed);
 
@@ -443,6 +447,7 @@ export function BibliographyGenerator() {
         sourceTypeOverride: it.sourceTypeOverride,
         warnings: mergeWarnings(it.warnings, it.warningMsg),
         classificationKey: it.classificationKey,
+        completion: it.completion, pastedCitation: it.pastedCitation,
       })),
     );
     const dupes = ready.length - added;
