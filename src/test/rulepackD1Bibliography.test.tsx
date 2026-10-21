@@ -98,7 +98,7 @@ describe("AU/CA QA 29db8bb: labelled literature country suffix through actual bi
     const a = await intake(`Author: Jane Doe; Edition: 2nd; Year: 2020; Book: Literature ${suffix}`);
     const c = await intake("Author: Jane Doe; Edition: 2nd; Year: 2020; Book: Literature");
     expect(a.r.pastedCitation?.conflicts ?? []).not.toContain("manual_family_conflict");
-    expect(a.r.pastedCitation?.jurisdiction ?? null).not.toMatch(/^(AU|CA)$/);
+    expect(["AU", "CA"]).not.toContain(a.r.pastedCitation?.jurisdiction);
     expect([a.r.status, a.r.warningMsg]).toEqual([c.r.status, c.r.warningMsg]);
     expect(a.r.citation.replace(` ${suffix}`, "")).toBe(c.r.citation);
     expect(a.counts).toEqual(c.counts); expect(fetch).not.toHaveBeenCalled();
