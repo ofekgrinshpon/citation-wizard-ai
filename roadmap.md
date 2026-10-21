@@ -1,6 +1,7 @@
 # Roadmap — research → memo → draft handoff (legal-research-v2)
 
 ## Unified pasted-citation infrastructure batch A (offline only)
+- [ ] Narrow C2 correction at a66d3c56: rendering-only edition suffix, distinct chapter evidence, skip unsupported-only missing fields; offline actual-host/full gates and report; no D/live/deployment.
 - [x] Bounded C2 at 3d11a3e4: eligible existing book/chapter completion unified across chat/runner; actual-host semantic parity; 3,879 passed / 1 skipped; report and automatic compilation OK; no expansion D/deployment.
 - [ ] C2 independent gate: separate explicit app TypeScript/Vite commands blocked by environment prohibition; report records automatic compilation and offline coverage, awaiting independent QA.
 - [x] C1 independent gate supplied by user: 3,899 passed / 4 skipped, 64 probes, app TypeScript and explicit Vite build passed on reviewed baseline.
