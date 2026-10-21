@@ -198,6 +198,15 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
     prompt = `[סיווג אוטומטי: ${sourceLabel}]\n${buildEnginePromptHint(sourceType)}${normalized}`;
   }
 
+  // D1: the disabled-capability decision precedes any verified-store access.
+  const planInput = { evidence, sourceType, input: normalized, isPinpoint, manual: !!opts.overrideType };
+  const gate = planCapabilityGate(planInput);
+  if (gate) {
+    reportZeroWork(opts.telemetry, "local_foreign_formatter", "deterministic");
+    observeCitationDiagnostic(opts.diagnostic, rawInput, "deterministic");
+    return { sourceType, sourceLabel, ...gate.resolution, telemetry: opts.telemetry, fromVerifiedStore: false };
+  }
+
   // 1) Verified-source store first — a direct hit costs no credit.
   let verifiedMatch: VerifiedSourceMatch | null = null;
   if (opts.useVerifiedStore !== false) {
@@ -241,7 +250,6 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
   }
 
   // Batch B: shared pure planner — terminal local outcomes, then the bound typed request.
-  const planInput = { evidence, sourceType, input: normalized, isPinpoint, manual: !!opts.overrideType };
   const local = planLocalCitation(planInput, RUNNER_HOST);
   if ("resolution" in local) {
     if (local.origin === "unreported_local" && opts.isResultCurrent && !opts.isResultCurrent()) {
