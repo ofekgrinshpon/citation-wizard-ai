@@ -494,17 +494,18 @@ describe("Stage 4 typed statute requests through the real edge handler", () => {
     const now = Date.now();
     const record: CitationRecoveryRecord = { requestId: "fixture-request-0001", retryOfRequestId: null,
       status: "succeeded", availability: "available", createdAt: new Date(now).toISOString(), expiresAt: new Date(now + 86400000).toISOString(),
-      input: { rawInput: f.raw, messages: [{ role: "user", content: `[סיווג אוטומטי: ספר לועזי]\n${f.raw}` }], foreignLookup: foreign, batchId: null },
-      result: r.body, refundReceipt: { status: "retained", refunded: false, units_refunded: 0, request_id: "fixture-request-0001" } };
+      input: recovery.citationRecoveryInput({ rawInput: f.raw, messages: [{ role: "user", content: `[סיווג אוטומטי: ספר לועזי]\n${f.raw}` }], foreignLookup: foreign, batchId: null }),
+      result: recovery.citationRecoveryResult(r.body), refundReceipt: { status: "retained", refunded: false, units_refunded: 0, request_id: "fixture-request-0001" } };
+    expect(record.input).not.toBeNull(); expect(record.result).not.toBeNull();
     const fresh = resolveCitationResponse(plan, r.body, CHAT_HOST);
     if (fresh.kind !== "terminal") throw new Error("Expected terminal fresh resolution");
     const rpcCount = r.rpc.mock.calls.length;
-    const recovery = renderCitationRecovery(record, now);
-    expect(recovery?.completion).toEqual(fresh.resolution.completion);
-    expect(recovery?.plainText).toContain(f.output);
+    const recovered = renderCitationRecovery(record, now);
+    expect(recovered?.completion).toEqual(fresh.resolution.completion);
+    expect(recovered?.plainText).toContain(f.output);
     for (const [key, value] of Object.entries(f.local)) {
-      expect(recovery?.completion?.suppliedFields?.[key]?.value).toBe(value);
-      expect(recovery?.completion?.provenance).not.toHaveProperty(key);
+      expect(recovered?.completion?.suppliedFields?.[key]?.value).toBe(value);
+      expect(recovered?.completion?.provenance).not.toHaveProperty(key);
     }
     expect(record.requestId).toBe("fixture-request-0001");
     expect(r.rpc).toHaveBeenCalledTimes(rpcCount);
