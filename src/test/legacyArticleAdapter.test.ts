@@ -63,7 +63,7 @@ function harness(options: { rawInput?: string; sourceType?: abbreviations.Source
   const toast = { error: vi.fn(), info: vi.fn() };
   const handleRefundResponse = vi.fn();
   const citationRetryRef = { current: null as { descriptor: unknown; run: () => Promise<string>; isCurrent: () => boolean } | null };
-  const retryCitationFunction = vi.fn(async () => ({ data: { content: "Recovered exact citation from the failed request" }, errorInfo: null }));
+  const retryCitationFunction = vi.fn(async (_descriptor?: unknown) => ({ data: { content: "Recovered exact citation from the failed request" }, errorInfo: null }));
   const setCitationRetry = vi.fn();
   const setCitationStatus = vi.fn();
   const citationRevision = { current: 0 };
