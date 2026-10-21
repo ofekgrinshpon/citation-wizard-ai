@@ -17,6 +17,8 @@ const bases = new Set(["official_record", "structured_metadata", "publisher_meta
 export interface CompletionAcceptance {
   fields: Record<string, string>;
   provenance: Record<string, unknown>;
+  /** Transient exact supplied local source fields, separate from provider-added fields. */
+  suppliedFields?: Record<string, { value: string; spans: Array<{ start: number; end: number }> }>;
   quarantined: string[];
   identityConfirmed: boolean;
   jurisdiction: "US" | "UK" | "OTHER" | null;

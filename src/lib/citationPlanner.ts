@@ -111,7 +111,7 @@ function eligibleBookCompletion(type: SourceType | null, raw: string) {
     if (value && k !== "unparsedRemainder" && suppliedLookupFieldsMatch(raw, kind, { [k]: value })) wire[k] = value;
   }
   if (!wire.authors || !wire.bookTitle || (kind === "book_chapter" && !wire.chapterTitle)) return null;
-  return { kind, fields: work.fields, wire };
+  return { kind, fields: work.fields, wire, suppliedFields: work.suppliedFields };
 }
 
 /** Phase 2 — terminal local outcomes (render or preserve). Null → continue to typed planning. */
@@ -198,7 +198,9 @@ export interface TypedPlan {
   extraBody: Record<string, unknown>;
   /** Complete local parsed fields (book/chapter) used for rendering; never sent on the wire. */
   localFields?: Record<string, string>;
+  localSourceFields?: CompletionAcceptanceFields;
 }
+type CompletionAcceptanceFields = NonNullable<ReturnType<typeof acceptCitationCompletion>["suppliedFields"]>;
 
 /** Phase 3 — the existing bound typed request, or an explicitly declared legacy handoff. */
 export function planTypedRequest(p: LocalPlanInput & { statutePrep: StatutePreparation | null; canonicalRaw: string }, _caps: CitationHostCapabilities): TypedPlan {
@@ -208,6 +210,7 @@ export function planTypedRequest(p: LocalPlanInput & { statutePrep: StatutePrepa
   let articleRequest: TypedPlan["articleRequest"] = null;
   let extraBody: Record<string, unknown> = {};
   let localFields: Record<string, string> | undefined;
+  let localSourceFields: CompletionAcceptanceFields | undefined;
   // Keep the existing Israeli article raw field; foreign articles share their DOI adapter.
   if (st === "article") extraBody = { ...articleRequestFields(st, p.input) };
   if (p.statutePrep?.request) {
@@ -222,6 +225,7 @@ export function planTypedRequest(p: LocalPlanInput & { statutePrep: StatutePrepa
       const parsedFields: Record<string, string> = plan.kind === "journal_article" ? parseForeignArticleInput(p.input) : {};
       if (bookCompletion) {
         Object.assign(parsedFields, bookCompletion.wire);
+        localSourceFields = bookCompletion.suppliedFields;
         localFields = {};
         for (const [k, v] of Object.entries(bookCompletion.fields as Record<string, unknown>)) if (typeof v === "string" && v.trim()) localFields[k] = v.trim();
       } else if (detection) for (const [k, v] of Object.entries(detection.fields as Record<string, unknown>)) {
@@ -239,7 +243,7 @@ export function planTypedRequest(p: LocalPlanInput & { statutePrep: StatutePrepa
   if (caseRequest) articleRequest = null;
   const typed = !!(foreignLookup || p.statutePrep?.request);
   return { kind: typed ? "typed" : "legacy", evidence: p.evidence, sourceType: st, statutePrep: p.statutePrep, caseRequest, articleRequest, foreignLookup, extraBody,
-    ...(localFields && !caseRequest ? { localFields } : {}) };
+    ...(localFields && !caseRequest ? { localFields, localSourceFields } : {}) };
 }
 
 export type ResponseResolution =
@@ -255,7 +259,8 @@ export function resolveCitationResponse(plan: TypedPlan, data: Record<string, un
   if (plan.kind === "legacy" || !plan.foreignLookup) return { kind: "legacy" };
   const req = plan.foreignLookup;
   const response = data?.foreignLookup;
-  const accepted = acceptCitationCompletion(req, contract.rawInput, response);
+  const accepted = acceptCitationCompletion({ ...req, parsedFields: { ...(req.parsedFields as Record<string, string> ?? {}), ...(plan.localFields ?? {}) } }, contract.rawInput, response);
+  if (plan.localSourceFields) accepted.suppliedFields = plan.localSourceFields;
   const st = plan.sourceType;
   const warnings: string[] = [];
   const messages = {
