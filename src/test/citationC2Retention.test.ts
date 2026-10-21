@@ -36,7 +36,14 @@ beforeEach(() => {
 });
 afterEach(() => vi.unstubAllGlobals());
 
-async function vertical(f: { id: string; raw: string; type: "foreign_book" | "foreign_book_chapter" }, mode = "complete") {
+// Emulates JSONB object-order loss without changing array order or JSON values.
+function reorderObjects(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(reorderObjects);
+  if (value && typeof value === "object") return Object.fromEntries(Object.keys(value).sort().reverse()
+    .map(key => [key, reorderObjects((value as Record<string, unknown>)[key])]));
+  return value;
+}
+async function vertical(f: { id: string; raw: string; type: "foreign_book" | "foreign_book_chapter" }, mode = "complete", jsonb = false) {
   const plan = c2WirePlan(f);
   const request = plan.foreignLookup;
   if (!request) throw new Error("Missing request");
@@ -66,11 +73,11 @@ async function vertical(f: { id: string; raw: string; type: "foreign_book" | "fo
   let status = "unknown";
   const rpc = vi.fn(async (name: string, args: Record<string, unknown>) => {
     if (name === "begin_citation_request") {
-      retainedInput = args._recovery_input;
+      retainedInput = jsonb ? reorderObjects(args._recovery_input) : args._recovery_input;
       return { data: { ok: true, execute: true, status: "in_progress", request_id: args._request_id, retry_of_request_id: null, attempt_token: "offline-attempt" }, error: null };
     }
     if (name === "finish_citation_request") {
-      status = String(args._outcome); retainedResult = args._result;
+      status = String(args._outcome); retainedResult = jsonb ? reorderObjects(args._result) : args._result;
       return { data: { ok: true, status, result_stored: status === "succeeded" }, error: null };
     }
     if (name !== "read_citation_recovery") throw new Error("Unexpected mutation");
@@ -142,6 +149,24 @@ async function vertical(f: { id: string; raw: string; type: "foreign_book" | "fo
 }
 
 describe("C2 real retention → recovery → history", () => {
+  it.each([...C2_WIRE.map(f => ({ ...f, mode: "complete" })), { ...C2_WIRE[2], id: "snippet-only", mode: "snippet-only" }])
+    ("JSONB nested key reordering keeps $id authoritative citation and history", async f => {
+      const h = await vertical(f, f.mode, true);
+      expect(h.body.recoveryAvailability).toBe("available");
+      const record = await readCitationRecovery(owner, requestId);
+      if (!record) throw new Error("Missing recovery");
+      const rendered = renderCitationRecovery(record);
+      expect(rendered?.formattedOutput).toBe(h.body.content);
+      expect(splitCitationWarnings(rendered?.formattedOutput ?? "").warnings).toEqual(splitCitationWarnings(h.body.content).warnings);
+      if (!rendered) throw new Error("Missing rendered result");
+      await saveRecoveredCitationHistory({ requestId, projectId: "project-one", expectedAccountId: owner, formattedOutput: rendered.formattedOutput });
+      expect(h.writes[0]).toMatchObject({ formatted_output: h.body.content, raw_input: f.raw, citation_request_id: requestId, project_id: "project-one" });
+      expect(JSON.stringify(h.retainedResult)).not.toContain('"snippet"');
+      expect(h.rpc.mock.calls[1][1]).toMatchObject({ _outcome: "succeeded", _reason: "citation_delivered" });
+      expect(h.lookup).toHaveBeenCalledTimes(1); expect(h.search).toHaveBeenCalledTimes(1);
+      expect(h.rpc.mock.calls.map(([name]) => name)).toEqual(["begin_citation_request", "finish_citation_request", "read_citation_recovery", "read_citation_recovery"]);
+      expect(fetch).not.toHaveBeenCalled();
+    });
   it.each(C2_WIRE)("$id keeps fresh semantic fields through actual retention and save", async f => {
     const h = await vertical(f);
     expect(h.body.recoveryAvailability).toBe("available");
