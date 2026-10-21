@@ -3,6 +3,8 @@ import { renderBook } from "@/data/bluebook/render";
 import { CHAT_HOST, RUNNER_HOST, planCitationEvidence, planLocalCitation, planTypedRequest, resolveCitationResponse } from "@/lib/citationPlanner";
 import { citationManualChoice } from "@/lib/pastedCitationAdapter";
 import { acceptCitationCompletion } from "@/lib/citationCompletion";
+import { extractBookWork } from "@/data/bluebook/bookWorks";
+import { c1ServerPayload } from "./fixtures/c1ServerPayload";
 import { C2_CORRECTION_MODES, c2CorrectionPayload, c2CorrectionFixture } from "./fixtures/c2BookPayload";
 
 function plan(mode: typeof C2_CORRECTION_MODES[number], caps = CHAT_HOST) {
@@ -52,6 +54,32 @@ describe("narrow C2 corrections — real extraction and shared resolution", () =
     response.identity.anchors = ["title:Synthetic Collection", "author:Jane Doe"];
     const result = acceptCitationCompletion({ kind: "book_chapter", jurisdiction: "OTHER", rawInput, parsedFields: { chapterTitle: "Quiet Rules", bookTitle: "Synthetic Collection", authors: "Jane Doe" } }, rawInput, response);
     expect(result.identityConfirmed).toBe(false); expect(result.fields).toEqual({});
+  });
+  it("a matched chapter cannot donate fields from a collection-only sibling source", async () => {
+    const { response, rawInput } = await c2CorrectionPayload("edition-chapter");
+    response.sources.push({ title: "Jane Doe, Synthetic Collection (2020)", url: "https://press.example.edu/collection", tier: "tier1" });
+    response.provenance.edition = { ...response.provenance.edition, sourceTitle: "Jane Doe, Synthetic Collection (2020)", sourceUrl: "https://press.example.edu/collection" };
+    const accepted = acceptCitationCompletion({ kind: "book_chapter", jurisdiction: "OTHER", rawInput, parsedFields: { chapterTitle: "Quiet Rules", bookTitle: "Synthetic Collection", authors: "Jane Doe" } }, rawInput, response);
+    expect(accepted.identityConfirmed).toBe(true); expect(accepted.fields.year).toBe("2020");
+    expect(accepted.fields.edition).toBeUndefined(); expect(accepted.quarantined).toContain("edition");
+  });
+  it("matching chapter and collection but contradictory author stays unconfirmed", async () => {
+    const { rawInput, donor } = c2CorrectionFixture("edition-chapter");
+    const { response, calls } = await c1ServerPayload({ kind: "book_chapter", jurisdiction: "OTHER", rawInput, parsedFields: { chapterTitle: "Quiet Rules", bookTitle: "Synthetic Collection", authors: "Jane Doe" } }, [{ ...donor, title: donor.title.replace("Jane Doe", "Ana Roe"), snippet: donor.snippet.replace("Jane Doe", "Ana Roe") }]);
+    expect(response.identity.matched).toBe(false); expect(response.fields).toEqual({});
+    expect(calls).toEqual(["https://api.perplexity.ai/search"]);
+  });
+  it("missing bibliographic firstPage with a supplied pinpoint never turns pinpoint into lookup evidence", () => {
+    const f = c2CorrectionFixture("firstPage-only");
+    const raw = f.rawInput + "; Pinpoint: 15";
+    const local = planLocalCitation({ evidence: planCitationEvidence(raw, citationManualChoice(f.type)), sourceType: f.type, input: raw, isPinpoint: false, manual: true }, CHAT_HOST);
+    expect("resolution" in local).toBe(true);
+    if ("resolution" in local) expect(local.resolution.reply).toContain("firstPage");
+    expect(extractBookWork(raw)?.fields).toMatchObject({ pinpoint: "15" });
+    expect(extractBookWork(raw)?.fields.firstPage).toBeUndefined();
+  });
+  it.each(["2nd ed.", "Special ed.", "C## Guide: x^^2 & A**B <edition>"])("labelled edition %s stays exact in supplied parsed fields", edition => {
+    expect(extractBookWork(`Author: Jane Doe; Book: Synthetic Collection; Edition: ${edition}; Year: 2020`)?.fields.edition).toBe(edition);
   });
   it.each([["2nd", "2nd ed."], ["2d", "2d ed."], ["2nd ed.", "2nd ed."], ["2nd ed", "2nd ed."], ["Special revisited edition", "Special revisited edition"]])("recognized/unknown edition %s renders without changing the field", (edition, expected) => {
     const fields = { authors: "Jane Doe", bookTitle: "Synthetic Collection", edition, year: "2020" };
