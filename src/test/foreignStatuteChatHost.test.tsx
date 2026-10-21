@@ -11,7 +11,7 @@ import { runForeignLookup } from "../../supabase/functions/citation-chat/foreign
 import { resolveStatuteLookup } from "../../supabase/functions/citation-chat/statuteRoute";
 import { c1ServerPayload, C1_REDIGI } from "./fixtures/c1ServerPayload";
 import { runCitation } from "@/lib/runCitation";
-import { C2_BOOK, C2_CHAPTER, C2_MODES, c2Payload } from "./fixtures/c2BookPayload";
+import { C2_BOOK, C2_CHAPTER, C2_MODES, c2Payload, C2_CORRECTION_MODES, c2CorrectionPayload } from "./fixtures/c2BookPayload";
 
 const m = vi.hoisted(() => ({
   invoke: vi.fn(), classify: vi.fn(), recordGeneration: vi.fn(), bubble: vi.fn(),
@@ -108,6 +108,30 @@ beforeEach(() => {
 const CORNELL_1983 = { title: "42 U.S.C. § 1983 - Civil action for deprivation of rights", url: "https://www.law.cornell.edu/uscode/text/42/1983", snippet: "Civil Rights Act — 42 U.S.C. § 1983 (2018)." };
 
 describe("chat page — typed statute request through initial send and regeneration", () => {
+  it.each(C2_CORRECTION_MODES)("C2 correction actual Index initial/manual %s", async mode => {
+    const { rawInput, type, response } = await c2CorrectionPayload(mode);
+    m.classify.mockResolvedValue({ sourceType: type, source: "regex" });
+    m.invoke.mockResolvedValue({ data: { foreignLookup: response, content: "UNSAFE" }, errorInfo: null });
+    await mountChat(); await send(rawInput);
+    const latest = () => m.bubble.mock.calls.map(([msg]) => msg).filter(msg => msg.role === "assistant").at(-1);
+    const check = () => {
+      if (mode === "firstPage-only") {
+        expect(m.invoke).not.toHaveBeenCalled(); expect(latest().content).toContain("firstPage");
+      } else if (mode === "wrong-chapter" || mode === "absent-chapter") {
+        expect(latest().completion.identityConfirmed).toBe(false); expect(latest().completion.fields).toEqual({});
+        expect(latest().content).toContain(rawInput); expect(latest().content).toContain("פרק");
+      } else {
+        expect(latest().content).toContain("(2nd ed. 2020)"); expect(latest().content).not.toContain("ed. ed.");
+        expect(latest().completion.provenance.edition.value).toBe("2nd ed.");
+        if (mode === "partial-chapter") expect(latest().completion.missing).toContain("firstPage");
+      }
+      expect(latest().content).not.toContain("UNSAFE");
+    };
+    await waitFor(() => expect(latest()).toBeDefined()); check();
+    await act(async () => fireEvent.click(screen.getByRole("button", { name: `regen-${type}` })));
+    check(); expect(m.invoke).toHaveBeenCalledTimes(mode === "firstPage-only" ? 0 : 2);
+    expect(localStorage.getItem("legal_app_free_text_messages")).not.toContain('"completion"');
+  });
   for (const [kind, base, type] of [["book", C2_BOOK, "foreign_book"], ["book_chapter", C2_CHAPTER, "foreign_book_chapter"]] as const) {
     it.each(C2_MODES)(`C2 actual ${kind} initial/manual %s uses shared safe completion`, async mode => {
       const input = base + (mode === "supplied-conflict" ? "; Edition: 2d" : "");

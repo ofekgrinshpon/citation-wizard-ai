@@ -264,7 +264,7 @@ describe("Bluebook M2B — grounded foreign lookup", () => {
         kind: "book_chapter",
         jurisdiction: "US",
         rawInput: "Richard Posner, Some Economics of Labor Law, in The Economics of Law",
-        parsedFields: { chapterTitle: "Some Economics of Labor Law", authors: "Richard Posner" },
+        parsedFields: { chapterTitle: "Some Economics of Labor Law", bookTitle: "The Economics of Law", authors: "Richard Posner" },
       },
       [
         [

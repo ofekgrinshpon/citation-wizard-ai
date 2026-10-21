@@ -96,8 +96,8 @@ describe("C1 existing extraction envelope acceptance", () => {
   it.each(["statute", "book", "book_chapter"] as const)("existing %s server construction stays bounded and only adds supported fields", async kind => {
     const statute = kind === "statute";
     const input = statute ? "Civil Rights Act § 1983" : "Author: Jane Doe; " + (kind === "book" ? "Book: Synthetic Collection" : "Chapter: Quiet Rules; Collection: Synthetic Collection");
-    const parsedFields = statute ? { statuteName: "Civil Rights Act", section: "1983" } : { bookTitle: "Synthetic Collection", authors: "Jane Doe" };
-    const donor = statute ? { title: "Civil Rights Act — 42 U.S.C. § 1983 (2018)", snippet: "Civil Rights Act — 42 U.S.C. § 1983 (2018).", url: "https://www.law.cornell.edu/uscode/text/42/1983" } : { title: "Synthetic Collection — Jane Doe (2020)", snippet: "Jane Doe, Synthetic Collection (2020).", url: "https://press.example.edu/collection" };
+    const parsedFields = statute ? { statuteName: "Civil Rights Act", section: "1983" } : { bookTitle: "Synthetic Collection", authors: "Jane Doe", ...(kind === "book_chapter" ? { chapterTitle: "Quiet Rules" } : {}) };
+    const donor = statute ? { title: "Civil Rights Act — 42 U.S.C. § 1983 (2018)", snippet: "Civil Rights Act — 42 U.S.C. § 1983 (2018).", url: "https://www.law.cornell.edu/uscode/text/42/1983" } : { title: "Quiet Rules — Synthetic Collection — Jane Doe (2020)", snippet: "Jane Doe, Quiet Rules, in Synthetic Collection (2020).", url: "https://press.example.edu/collection" };
     const request = { kind, jurisdiction: statute ? "US" as const : "OTHER" as const, rawInput: input, parsedFields };
     const { response, calls } = await c1ServerPayload(request, [donor]);
     const accepted = acceptCitationCompletion({ ...request, ...(statute ? { statuteResponseVersion: 1 } : {}) }, input, response);

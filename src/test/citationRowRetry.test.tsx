@@ -10,7 +10,7 @@ import { UniformCitationPanel } from "@/components/legal-research/UniformCitatio
 import { FootnoteReviewCard } from "@/components/FootnoteReviewCard";
 import { c1ServerPayload } from "./fixtures/c1ServerPayload";
 import { CitationRunError, runCitation } from "@/lib/runCitation";
-import { C2_BOOK, C2_CHAPTER, C2_MODES, c2Payload } from "./fixtures/c2BookPayload";
+import { C2_BOOK, C2_CHAPTER, C2_MODES, c2Payload, C2_CORRECTION_MODES, c2CorrectionPayload } from "./fixtures/c2BookPayload";
 
 const boundary = vi.hoisted(() => ({
   invoke: vi.fn(), getSession: vi.fn(), getUser: vi.fn(), refreshSession: vi.fn(),
@@ -700,6 +700,41 @@ it.each(["bibliography", "footnote"])("C1 actual %s host uses real server partia
     await waitFor(() => expect(boundary.sync.mock.calls.at(-1)?.[0][0].completion).toEqual(expected.completion));
   }
 });
+
+for (const host of ["bibliography", "footnote"] as const) {
+  it.each(C2_CORRECTION_MODES)(`C2 correction actual ${host} %s`, async mode => {
+    const { rawInput, type, response } = await c2CorrectionPayload(mode);
+    boundary.classify.mockResolvedValue({ sourceType: type });
+    boundary.invoke.mockResolvedValue({ data: { foreignLookup: response, content: "UNSAFE" }, error: null });
+    if (host === "bibliography") bibliographyInput(rawInput); else footnoteInput([rawInput]);
+    let result: { completion?: any; citation?: string; output?: string; warnings?: string[] };
+    if (host === "bibliography") {
+      const button = await screen.findByRole("button", { name: /הוסף הכל לביבליוגרפיה/ });
+      await waitFor(() => expect(button).not.toBeDisabled());
+      boundary.addEntries.mockReturnValue(1); await act(async () => fireEvent.click(button));
+      const row = boundary.addEntries.mock.calls.at(-1)?.[0][0]; result = { ...row, citation: row.fullCitation };
+    } else {
+      await waitFor(() => expect(boundary.card.mock.calls.some(([c]) => c.output)).toBe(true));
+      result = boundary.card.mock.calls.map(([c]) => c).filter(c => c.output).at(-1);
+      expect(localStorage.getItem("footnote_cells_row-project")).not.toContain('"completion"');
+    }
+    const output = result.citation ?? result.output;
+    if (mode === "firstPage-only") {
+      expect(boundary.invoke.mock.calls.filter(([name]) => name === "citation-chat")).toHaveLength(0);
+      if (host === "bibliography") expect(result.warnings?.join(" ")).toContain("firstPage");
+      else expect(document.body.textContent).toContain("firstPage");
+    } else if (mode === "wrong-chapter" || mode === "absent-chapter") {
+      expect(result.completion.identityConfirmed).toBe(false); expect(result.completion.fields).toEqual({});
+      expect(output).toContain(rawInput);
+    } else {
+      expect(output).toContain("(2nd ed. 2020)"); expect(output).not.toContain("ed. ed.");
+      expect(result.completion.provenance.edition.value).toBe("2nd ed.");
+      if (mode === "partial-chapter") expect(result.completion.missing).toContain("firstPage");
+    }
+    if (mode !== "firstPage-only") expect(boundary.invoke).toHaveBeenCalledTimes(1);
+    expect(document.body.textContent).not.toContain("UNSAFE");
+  });
+}
 
 for (const host of ["bibliography", "footnote"] as const) for (const [kind, base, type] of [["book", C2_BOOK, "foreign_book"], ["book_chapter", C2_CHAPTER, "foreign_book_chapter"]] as const) {
   it.each(C2_MODES)(`C2 actual ${host} ${kind} %s retains safe transient completion`, async mode => {
