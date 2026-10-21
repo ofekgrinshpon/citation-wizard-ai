@@ -1,7 +1,9 @@
 /** Batch A: pure supplied-text evidence, shared by browser and server. No I/O or identity claims. */
 import { CASE_DOCKET_RE, findBareDocket } from "./caseTypePrefixes.ts";
+import { LOOKUP_JURISDICTIONS, PLANNED_RULEPACK_WARNING, isManualChoiceJurisdiction, isPlannedJurisdiction, readRulepackVersion } from "./citationPure/rulepack.ts";
 export const PASTED_CITATION_VERSION = 1 as const;
-export type CitationJurisdiction = "IL" | "US" | "UK" | "DE" | "UNKNOWN";
+/** D1: AU/CA/FR are recorded (never cast to US/IL/UNKNOWN); their rulepacks are planned/disabled. */
+export type CitationJurisdiction = "IL" | "US" | "UK" | "DE" | "AU" | "CA" | "FR" | "UNKNOWN";
 export interface InputSpan { start: number; end: number }
 export interface SuppliedField {
   value: string | null;
@@ -98,6 +100,8 @@ export function buildPastedCitation(raw: string, manual: CitationManualChoice | 
   // Bounded explicit signals, not a country dictionary or language detector.
   add(/\bBVerfG\b|\bBvR\b/, "DE", "court");
   add(/\bBVerfGE\b/, "DE", "reporter");
+  add(/\bBGH\b/, "DE", "court");
+  add(/\bBGH(?:Z|St)\b/, "DE", "reporter");
   add(/\bU\.\s?S\.(?!\s?C\.)|\bF\.\s?(?:2d|3d|4th|Supp\.)/, "US", "reporter");
   add(/\b(?:D\. Mass\.|S\.D\.N\.Y\.|\d+(?:st|nd|rd|th|d) Cir\.)/, "US", "court");
   add(/\bU\.\s?S\.\s?C\.|\bU\.\s?S\.\s?CONST\./, "US", "code");
@@ -139,6 +143,7 @@ export function buildPastedCitation(raw: string, manual: CitationManualChoice | 
   // literature/statute helpers retain their more precise subtype ambiguity gates.
   if (manualKind && sourceKind && manualKind !== sourceKind && (manualKind === "case" || sourceKind === "case")) conflicts.push("manual_source_kind_conflict");
   const unsupported = jurisdiction === "DE" ? ["formatter_DE_not_supported"] :
+    isPlannedJurisdiction(jurisdiction) ? [`rulepack_planned_disabled:${jurisdiction}`] :
     manual?.jurisdiction === "UNKNOWN" && (manual.jurisdictionId || manual.subjurisdiction) && caseInput ? ["jurisdiction_formatter_unknown"] : [];
   const route = conflicts.length || unsupported.length || (!!bare && detected === "UNKNOWN" && !foreignShape)
     ? "preserve" : detected === "IL" ? "israeli" : detected !== "UNKNOWN" || foreignShape || manual?.foreign ? "foreign" : "existing";
@@ -163,7 +168,8 @@ export function buildPastedCitation(raw: string, manual: CitationManualChoice | 
     missing, conflicts, unsupported, identityVerified: false, route };
 }
 export function pastedCitationWarning(c: PastedCitationContract): string {
-  return c.conflicts.includes("manual_source_kind_conflict") ? "סוג המקור שנבחר ופרטי המקור שסופקו סותרים זה את זה; הקלט נשמר ללא השלמה."
+  return c.conflicts.length === 0 && c.unsupported.some(u => u.startsWith("rulepack_planned_disabled:")) ? PLANNED_RULEPACK_WARNING
+    : c.conflicts.includes("manual_source_kind_conflict") ? "סוג המקור שנבחר ופרטי המקור שסופקו סותרים זה את זה; הקלט נשמר ללא השלמה."
     : c.conflicts.length ? "הסיווג שנבחר או פרטי השיפוט סותרים את הקלט; נשמר המקור שסופק ללא השלמה."
     : c.unsupported.length ? "עיצוב האזכור בתחום השיפוט שזוהה אינו נתמך; הקלט נשמר, וזהות המקור לא אומתה."
     : "חסרה ראיה לתחום השיפוט או לפרטי המקור; הקלט נשמר ללא אימות. יש לציין ערכאה או תחום שיפוט.";
@@ -180,7 +186,7 @@ export function guardPastedCitationRequest(body: { messages: Array<{ role: strin
   if (manualLine) { try { retainedChoice = JSON.parse(manualLine); } catch { /* malformed choice is not evidence */ } }
   const choice = wire?.version === 1 ? wire.manualChoice : retainedChoice;
   const manual = choice && typeof choice === "object" && !Array.isArray(choice) ? {
-    ...(typeof choice.jurisdiction === "string" && ["IL", "US", "UK", "DE", "UNKNOWN"].includes(choice.jurisdiction) ? { jurisdiction: choice.jurisdiction } : {}),
+    ...(isManualChoiceJurisdiction(choice.jurisdiction) ? { jurisdiction: choice.jurisdiction } : {}),
     ...(typeof choice.subjurisdiction === "string" && choice.subjurisdiction.length <= 200 ? { subjurisdiction: choice.subjurisdiction } : {}),
     ...(typeof choice.jurisdictionId === "string" && choice.jurisdictionId.length <= 200 ? { jurisdictionId: choice.jurisdictionId } : {}),
     ...(typeof choice.sourceType === "string" && choice.sourceType.length <= 200 ? { sourceType: choice.sourceType } : {}),
@@ -206,6 +212,13 @@ export function guardPastedCitationRequest(body: { messages: Array<{ role: strin
     (c.sourceKind && lookup.kind !== c.sourceKind) || (citationSourceKind(manual?.sourceType) && lookup.kind !== citationSourceKind(manual?.sourceType)) ||
     !suppliedLookupFieldsMatch(raw, String(lookup.kind), lookup.parsedFields ?? {}))) {
     c.route = "preserve"; c.conflicts.push("lookup_source_binding_conflict");
+  }
+  if (lookup && typeof lookup === "object" && !Array.isArray(lookup) && lookup.jurisdiction !== undefined &&
+    !(LOOKUP_JURISDICTIONS as readonly unknown[]).includes(lookup.jurisdiction)) {
+    c.route = "preserve"; c.conflicts.push("lookup_jurisdiction_unsupported");
+  }
+  if (wire && readRulepackVersion((wire as { rulepackVersion?: unknown }).rulepackVersion) === "unsupported") {
+    c.route = "preserve"; c.conflicts.push("rulepack_version_unsupported");
   }
   if (lookup && typeof lookup.rawInput === "string") {
     const lookupEvidence = buildPastedCitation(lookup.rawInput);

@@ -52,6 +52,12 @@ vi.mock("@/components/MessageBubble", () => ({
         })}>regen-israel</button>
       )}
       {onChangeSourceType && (
+        <button type="button" onClick={() => onChangeSourceType("foreign_case_other", {
+          itemKey: "chat:0", sourceType: "foreign_case_other", supported: true, effectiveKey: "au-eff", inputFingerprint: "au-fp",
+          manualChoice: { jurisdiction: "AU", jurisdictionId: "t2:australia", sourceType: "foreign_case_other", foreign: true },
+        })}>regen-au</button>
+      )}
+      {onChangeSourceType && (
         <button type="button" onClick={() => onChangeSourceType("foreign_statute_uk", {
           itemKey: "chat:0", sourceType: "foreign_statute_uk", supported: true, effectiveKey: "eff", inputFingerprint: "fp",
         })}>regen-uk</button>
@@ -294,6 +300,22 @@ describe("chat page — typed statute request through initial send and regenerat
     await act(async () => { fireEvent.click(screen.getByRole("button", { name: "regen-israel" })); });
     expect(screen.getByTestId("bubble-assistant")).toHaveTextContent("סותרים");
     expect(m.invoke).not.toHaveBeenCalled();
+  });
+  it("D1 AU manual regeneration preserves raw with planned-pack warning and zero IO", async () => {
+    const input = "Mabo v. Queensland";
+    m.invoke.mockResolvedValue({ data: { content: "UNSAFE MODEL OUTPUT" }, errorInfo: null });
+    await mountChat(); await send(input);
+    await waitFor(() => expect(screen.getByTestId("bubble-assistant")).toHaveTextContent(input));
+    const calls = m.invoke.mock.calls.length;
+    await act(async () => { fireEvent.click(screen.getByRole("button", { name: "regen-au" })); });
+    expect(m.invoke).toHaveBeenCalledTimes(calls);
+    expect(screen.getByTestId("bubble-assistant")).toHaveTextContent("מתוכננים אך עדיין אינם זמינים");
+    expect(screen.getByTestId("bubble-assistant")).not.toHaveTextContent("UNSAFE MODEL OUTPUT");
+  });
+  it("D1 natural BGH docket initial send stays local with zero IO", async () => {
+    await mountChat(); await send("BGH, Urteil vom 12. März 2020 – VI ZR 123/19");
+    await waitFor(() => expect(screen.getByTestId("bubble-assistant")).toHaveTextContent("VI ZR 123/19"));
+    expect(m.invoke).not.toHaveBeenCalled(); expect(m.classify).not.toHaveBeenCalled();
   });
   it("batch A incomplete US-shaped case uses typed request in initial/manual chat and ignores generic output", async () => {
     const input = "Brown v. Board of Education";
