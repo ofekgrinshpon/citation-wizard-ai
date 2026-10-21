@@ -15,12 +15,25 @@ export interface CountryAst {
  */
 export const AU_REPORTER_ANCHOR = /\(\d{4}\)\s+\d+\s+(?:CLR|FCR)\b/;
 export const AU_NEUTRAL_ANCHOR = /\[\d{4}\]\s+(?:HCA|FCA|FCAFC)\b/;
-export const AU_CODE_ANCHOR = /\((?:Cth)\)|\(Austl\.\)\s*\.?\s*$/;
+export const AU_CODE_ANCHOR = /\((?:Cth)\)/;
+export const AU_SUFFIX_ANCHOR = /\(Austl\.\)\s*\.?\s*$/;
 export const CA_NEUTRAL_ANCHOR = /\b\d{4}\s+(?:SCC|CanLII)\b/;
 export const CA_REPORTER_ANCHOR = /\[\d{4}\]\s+\d+\s+(?:S\.C\.R\.|SCR\b)/;
-export const CA_CODE_ANCHOR = /(?<![A-Za-z.])(?:R\.?S\.?C\.?|S\.C\.),?\s+\d{4}\b|\(Can\.\)\s*\.?\s*$/;
-const AU = new RegExp([AU_REPORTER_ANCHOR, AU_NEUTRAL_ANCHOR, AU_CODE_ANCHOR].map(r => r.source).join('|'));
-const CA = new RegExp([CA_NEUTRAL_ANCHOR, CA_REPORTER_ANCHOR, CA_CODE_ANCHOR].map(r => r.source).join('|'));
+export const CA_CODE_ANCHOR = /(?<![A-Za-z.])(?:R\.?S\.?C\.?|S\.C\.),?\s+\d{4}\b/;
+export const CA_SUFFIX_ANCHOR = /\(Can\.\)\s*\.?\s*$/;
+const LIT_LABEL = /^(?:Authors?|Book|Title|Book title|Chapter|Chapter title|Article|Article title|Journal|Edition|Year|Original year|Editors?|Translators?|Publisher|Volume|Pages?|First page|Pinpoint)\s*:\s*\S/i;
+/**
+ * Well-formed labelled literature ("Author: …; Book: …; Year: …"): every ;-segment is a known literature
+ * label with a value. A trailing country suffix there is only part of a field value, not jurisdiction
+ * evidence. Structural legal anchors are still evaluated; only the bare suffix is discounted.
+ */
+export function isLabelledLiterature(raw: string): boolean {
+  const parts = raw.trim().replace(/[.;]\s*$/, '').split(';').map(p => p.trim());
+  return parts.length >= 2 && parts.every(p => LIT_LABEL.test(p)) && parts.some(p => /^(?:Book|Book title|Title|Chapter|Article|Journal)\s*:/i.test(p));
+}
+const any = (rs: RegExp[], raw: string) => rs.some(r => r.test(raw));
+export const auEvidence = (raw: string) => any([AU_REPORTER_ANCHOR, AU_NEUTRAL_ANCHOR, AU_CODE_ANCHOR], raw) || (!isLabelledLiterature(raw) && AU_SUFFIX_ANCHOR.test(raw));
+export const caEvidence = (raw: string) => any([CA_NEUTRAL_ANCHOR, CA_REPORTER_ANCHOR, CA_CODE_ANCHOR], raw) || (!isLabelledLiterature(raw) && CA_SUFFIX_ANCHOR.test(raw));
 /** Missing final element named by the recognized-but-incomplete structure (never a guessed value). */
 function partialMissing(s: string, jurisdiction: 'AU' | 'CA', family: 'case' | 'statute'): string[] {
   if (family === 'case') {
@@ -38,7 +51,7 @@ const LOC_GROUP = String.raw`${LOC_UNIT}\s+${LOC_NUMBER}(?:\s*(?:,|and)\s*(?:${L
 const LOC = new RegExp(String.raw`^${LOC_GROUP}(?:\s+${LOC_GROUP})*$`);
 /** Recognize country+family even when incomplete; a compatible manual choice is not supplied identity. */
 export function parseCountryLocal(raw: string, manual: CitationManualChoice | null = null): CountryAst | null {
-  const au = AU.test(raw), ca = CA.test(raw);
+  const au = auEvidence(raw), ca = caEvidence(raw);
   const mj = manual?.jurisdiction ?? rulepackJurisdictionFromId(manual?.jurisdictionId);
   const caseShape = /\s(?:v\.?|c\.)\s/u.test(raw.split(',')[0]) || [AU_REPORTER_ANCHOR, AU_NEUTRAL_ANCHOR, CA_NEUTRAL_ANCHOR, CA_REPORTER_ANCHOR].some(r => r.test(raw));
   const statuteShape = /\b(?:Act|Cth|R\.?S\.?C\.?)\b|\bS\.C\./.test(raw);

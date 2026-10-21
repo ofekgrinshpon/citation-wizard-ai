@@ -136,3 +136,39 @@ describe("AU/CA QA 852985d: partial structures and incidental titles in actual r
       expect(m.cache).not.toHaveBeenCalled(); expect(m.classifier).not.toHaveBeenCalled(); expect(m.invoke).not.toHaveBeenCalled();
     });
 });
+
+describe("AU/CA QA 29db8bb: country suffix inside labelled literature (frozen D1 references)", () => {
+  const OK = "האזכור עוצב לפי הפרטים שסופקו; זהות הספר, המהדורה והעמודים לא אומתו.";
+  it.each([
+    ["Author: Jane Doe; Edition: 2nd; Year: 2020; Book: Literature (Can.)", "^^Jane Doe, Literature (Can.)^^ (2nd ed. 2020)."],
+    ["Author: Jane Doe; Edition: 2nd; Year: 2020; Book: Literature (Austl.)", "^^Jane Doe, Literature (Austl.)^^ (2nd ed. 2020)."],
+  ])("%s formats as the legacy book", async (raw, out) => {
+    const r = await runCitation({ rawInput: raw, overrideType: "foreign_book" });
+    expect(r.citation).toBe(out); expect(r.warningMsg).toBe(OK);
+    expect(r.pastedCitation?.conflicts ?? []).not.toContain("manual_family_conflict");
+    expect([m.cache.mock.calls.length, m.classifier.mock.calls.length, m.invoke.mock.calls.length]).toEqual([1, 0, 0]);
+  });
+  it("incomplete labelled book with (Can.) keeps the legacy lookup; malformed reply retains raw", async () => {
+    const raw = "Author: Jane Doe; Book: Literature (Can.)";
+    m.invoke.mockResolvedValue({ data: { foreignLookup: { malformed: true } }, errorInfo: null });
+    const r = await runCitation({ rawInput: raw, overrideType: "foreign_book" });
+    expect(r.citation).toBe(raw);
+    expect(r.warningMsg).toBe("תשובת החיפוש אינה בפורמט נתמך; נשמרו רק הפרטים שסופקו.");
+    expect([m.cache.mock.calls.length, m.classifier.mock.calls.length, m.invoke.mock.calls.length]).toEqual([1, 0, 1]);
+  });
+  it.each([
+    "Wattle v Harbour (2020) 270 CLR 10, 14 (Austl.). Book: Literature",
+    "Book: Literature; Wattle v Harbour (2020) 270 CLR 10, 14 (Austl.).",
+    "Author: Jane Doe; Book: Maple v. Cedar, 2020 SCC 12 (Can.)",
+  ])("adversarial legal anchor with stray labels + manual book stays terminal zero IO: %s", async raw => {
+    const r = await runCitation({ rawInput: raw, overrideType: "foreign_book" });
+    expect(r.citation).toBe(raw);
+    expect([m.cache.mock.calls.length, m.classifier.mock.calls.length, m.invoke.mock.calls.length]).toEqual([0, 0, 0]);
+  });
+  it("true case name ending (Can.) without literature labels is Canadian and preserved locally", async () => {
+    const raw = "Maple v. Cedar (Can.).";
+    const r = await runCitation({ rawInput: raw });
+    expect(r.citation).toBe(raw); expect(r.pastedCitation?.jurisdiction).toBe("CA");
+    expect([m.cache.mock.calls.length, m.classifier.mock.calls.length, m.invoke.mock.calls.length]).toEqual([0, 0, 0]);
+  });
+});
