@@ -1,6 +1,7 @@
 # Roadmap — research → memo → draft handoff (legal-research-v2)
 
 ## Unified pasted-citation infrastructure batch A (offline only)
+- [ ] Final bounded C2 recovery correction at be955a5b: reparse exact bound raw book/chapter input; retain original year/publisher/section; actual-handler/recovery caller regressions and offline gates; no D/live/deployment.
 - [x] Narrow C2 wire correction at 2e4b11a6: complete local fields/exact spans separate from raw-bound wire; actual-handler/four-host gates; focused 432 / full 3,941 passed, 1 skipped; automatic compilation OK; explicit TS/Vite remain independent blockers; no D/live/deployment.
 - [x] Narrow C2 correction at a66d3c56: edition presentation with exact evidence, distinct chapter/collection donors, unsupported-only missing fields local; focused 408 and full 3,915 passed / 1 skipped; report; no D/live/deployment.
 - [x] Bounded C2 at 3d11a3e4: eligible existing book/chapter completion unified across chat/runner; actual-host semantic parity; 3,879 passed / 1 skipped; report and automatic compilation OK; no expansion D/deployment.
