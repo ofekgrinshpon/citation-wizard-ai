@@ -47,25 +47,29 @@ const enabled = (e: Omit<RulepackEntry, "status" | "rendererId" | "jurisdictionI
 const planned = (e: Omit<RulepackEntry, "status" | "rendererId" | "completion" | "subjurisdiction"> & Partial<RulepackEntry>): RulepackEntry =>
   ({ status: "planned_disabled", rendererId: null, completion: null, subjurisdiction: null, ...e });
 
+/** Array frozen; entry status is read at decision time (tests toggle and restore it). */
 export const RULEPACK_MANIFEST: readonly RulepackEntry[] = Object.freeze([
   // Existing routes (migrated, unchanged behavior).
-  enabled({ id: "us.case", jurisdiction: "US", jurisdictionId: "us", family: "case", template: "reported/unreported US decision", authority: { work: B21, edition: "21", rules: ["R10", "R10.8.1"] }, requiredFields: ["caseName", "volume", "reporter", "firstPage", "year"], completion: { kind: "case", jurisdiction: "US" } }),
+  enabled({ id: "us.case.reported", jurisdiction: "US", jurisdictionId: "us", family: "case", template: "reported US decision", authority: { work: B21, edition: "21", rules: ["R10"] }, requiredFields: ["caseName", "volume", "reporter", "firstPage", "year"], completion: { kind: "case", jurisdiction: "US" } }),
+  enabled({ id: "us.case.unreported", jurisdiction: "US", jurisdictionId: "us", family: "case", template: "US unreported/slip/pending decision (local only)", authority: { work: B21, edition: "21", rules: ["R10.8.1"] }, requiredFields: ["caseName", "docket", "court", "decisionDate"], completion: null, notes: "Database identifier optional; no reporter volume/page." }),
+  enabled({ id: "us.constitution", jurisdiction: "US", jurisdictionId: "us", family: "constitution", template: "U.S./state constitution provision (local only)", authority: { work: B21, edition: "21", rules: ["R11"] }, requiredFields: ["jurisdiction", "division"], completion: null }),
   enabled({ id: "us.statute", jurisdiction: "US", jurisdictionId: "us", family: "statute", template: "U.S.C. code section", authority: { work: B21, edition: "21", rules: ["R12"] }, requiredFields: ["titleNumber", "code", "section", "year"], completion: { kind: "statute", jurisdiction: "US" } }),
   enabled({ id: "uk.case", jurisdiction: "UK", jurisdictionId: "t2:united-kingdom", subjurisdiction: "t2:united-kingdom/england-and-wales", family: "case", template: "UK neutral/reported decision", authority: { work: B21, edition: "21", rules: ["T2.43"] }, requiredFields: ["caseName"], completion: { kind: "case", jurisdiction: "UK" } }),
   enabled({ id: "uk.statute", jurisdiction: "UK", jurisdictionId: "t2:united-kingdom", family: "statute", template: "UK Act (year, chapter)", authority: { work: B21, edition: "21", rules: ["T2.43"] }, requiredFields: ["statuteName", "year"], completion: { kind: "statute", jurisdiction: "UK" } }),
   enabled({ id: "unanchored.case", jurisdiction: "UNANCHORED", family: "case", template: "case-shaped input without jurisdiction anchor (lookup resolves US/UK only)", authority: { work: B21, edition: "21", rules: ["R10"] }, requiredFields: ["caseName"], completion: { kind: "case", jurisdiction: "UNKNOWN" }, notes: "Lookup may only ground US/UK identity; never a country claim." }),
   ...(["book", "book_chapter", "journal_article"] as const).map(family => enabled({ id: `general.${family}`, jurisdiction: "GENERAL", family, template: family, authority: { work: B21, edition: "21", rules: family === "journal_article" ? ["R16"] : ["R15"] }, requiredFields: family === "book_chapter" ? ["chapterTitle", "bookTitle"] : family === "book" ? ["bookTitle"] : ["articleTitle", "journal"], completion: { kind: family, jurisdiction: "OTHER" } })),
-  ...(["unpublished_manuscript", "thesis", "newspaper", "internet", "constitution"] as const).map(family => enabled({ id: `general.${family}`, jurisdiction: "GENERAL", family, template: family, authority: { work: B21, edition: "21", rules: family === "newspaper" ? ["R16.6"] : family === "internet" ? ["R18"] : family === "constitution" ? ["R11"] : ["R17.2"] }, requiredFields: [], completion: null, notes: "Local formatting only." })),
+  ...(["unpublished_manuscript", "thesis", "newspaper", "internet"] as const).map(family => enabled({ id: `general.${family}`, jurisdiction: "GENERAL", family, template: family, authority: { work: B21, edition: "21", rules: family === "newspaper" ? ["R16.6"] : family === "internet" ? ["R18"] : ["R17.2"] }, requiredFields: [], completion: null, notes: "Local formatting only." })),
   // Planned, disabled: specifications only (no template, no completion).
   planned({ id: "au.case.reported", jurisdiction: "AU", jurisdictionId: "t2:australia", family: "case", template: "CLR / FCR reported case", authority: { work: B21, edition: "21", rules: ["T2.2"], url: `${T2}t2-2-australia`, observed: OBS }, requiredFields: ["caseName", "year", "volume", "reporter", "firstPage"], exclusions: [], notes: "T2.2 italicizes party names." }),
   planned({ id: "au.case.neutral", jurisdiction: "AU", jurisdictionId: "t2:australia", family: "case", template: "HCA / FCA neutral citation with supplied date", authority: { work: B21, edition: "21", rules: ["T2.2"], url: `${T2}t2-2-australia`, observed: OBS }, requiredFields: ["caseName", "year", "court", "neutral", "decisionDate"], exclusions: [] }),
   planned({ id: "au.statute.cth", jurisdiction: "AU", jurisdictionId: "t2:australia", family: "statute", template: "Commonwealth Act (Cth)", authority: { work: B21, edition: "21", rules: ["T2.2"], url: `${T2}t2-2-australia`, observed: OBS }, requiredFields: ["statuteName", "year", "section"], exclusions: ["state/territory statutes"], notes: "T2.2 italicizes statute title and year." }),
-  planned({ id: "ca.case.scc", jurisdiction: "CA", jurisdictionId: "t2:canada", family: "case", template: "SCC neutral / modern S.C.R. parallel", authority: { work: B21, edition: "21", rules: ["T2.6"], url: `${T2}t2-6-canada`, observed: OBS }, requiredFields: ["caseName", "year", "neutral"], exclusions: ["provincial courts"] }),
+  planned({ id: "ca.case.scc_neutral", jurisdiction: "CA", jurisdictionId: "t2:canada", family: "case", template: "SCC neutral citation (optional modern S.C.R. parallel)", authority: { work: B21, edition: "21", rules: ["T2.6"], url: `${T2}t2-6-canada`, observed: OBS }, requiredFields: ["caseName", "year", "neutral"], exclusions: ["provincial courts"] }),
+  planned({ id: "ca.case.scr", jurisdiction: "CA", jurisdictionId: "t2:canada", family: "case", template: "standalone modern S.C.R. report", authority: { work: B21, edition: "21", rules: ["T2.6"], url: `${T2}t2-6-canada`, observed: OBS }, requiredFields: ["caseName", "year", "reporterVolume", "reporter", "firstPage"], exclusions: ["provincial courts"] }),
   planned({ id: "ca.statute.federal", jurisdiction: "CA", jurisdictionId: "t2:canada", family: "statute", template: "R.S.C. / S.C. federal statute", authority: { work: B21, edition: "21", rules: ["T2.6"], url: `${T2}t2-6-canada`, observed: OBS }, requiredFields: ["statuteName", "code", "year", "chapter"], exclusions: ["provincial statutes"] }),
   planned({ id: "de.case.reported", jurisdiction: "DE", jurisdictionId: "t2:germany-federal-republic-of", family: "case", template: "BGH / BVerfG reported (BGHZ, BVerfGE)", authority: { work: B21, edition: "21", rules: ["T2.14", "R20"], url: `${T2}t2-14-germany-federal-republic-of`, observed: OBS }, requiredFields: ["court", "decisionDate", "reporter", "volume", "firstPage"], exclusions: [], notes: "Expanded reporter small caps; court identity roman." }),
   planned({ id: "de.case.unpublished", jurisdiction: "DE", jurisdictionId: "t2:germany-federal-republic-of", family: "case", template: "BGH unpublished decision by docket", authority: { work: B21, edition: "21", rules: ["T2.14", "R20"], url: `${T2}t2-14-germany-federal-republic-of`, observed: OBS }, requiredFields: ["court", "decisionDate", "docket"], exclusions: [] }),
   planned({ id: "de.statute.code", jurisdiction: "DE", jurisdictionId: "t2:germany-federal-republic-of", family: "statute", template: "BGB / HGB code provision", authority: { work: B21, edition: "21", rules: ["T2.14", "R20"], url: `${T2}t2-14-germany-federal-republic-of`, observed: OBS }, requiredFields: ["code", "section"], exclusions: ["Länder law"], notes: "Code identity small caps (R20)." }),
-  planned({ id: "fr.case.cass", jurisdiction: "FR", jurisdictionId: "t2:france-republic-of", family: "case", template: "Cass. selected civ./crim. chambers with Bull.", authority: { work: B21, edition: "21", rules: ["T2.13", "R20"], url: `${T2}t2-13-france-republic-of`, observed: OBS }, requiredFields: ["court", "decisionDate", "reporter", "volume", "firstPage"], exclusions: ["Cass. oc./soc. — source table anomaly unresolved"] }),
+  planned({ id: "fr.case.cass", jurisdiction: "FR", jurisdictionId: "t2:france-republic-of", family: "case", template: "Cass. selected civ./crim. chambers with Bull.", authority: { work: B21, edition: "21", rules: ["T2.13", "R20"], url: `${T2}t2-13-france-republic-of`, observed: OBS }, requiredFields: ["court", "chamber", "decisionDate", "reporter", "bulletinPart", "decisionNumber"], exclusions: ["Cass. oc./soc. — source table anomaly unresolved"] }),
   planned({ id: "fr.statute.code", jurisdiction: "FR", jurisdictionId: "t2:france-republic-of", family: "statute", template: "Code civil / Code de commerce article", authority: { work: B21, edition: "21", rules: ["T2.13", "R20"], url: `${T2}t2-13-france-republic-of`, observed: OBS }, requiredFields: ["code", "section"], exclusions: [] }),
 ]);
 
@@ -100,3 +104,22 @@ export function readRulepackVersion(v: unknown): "current" | "legacy" | "unsuppo
   return v === undefined ? "legacy" : v === RULEPACK_MANIFEST_VERSION ? "current" : "unsupported";
 }
 export const PLANNED_RULEPACK_WARNING = "כללי האזכור לתחום השיפוט שנבחר מתוכננים אך עדיין אינם זמינים; הקלט נשמר ללא השלמה וללא חיפוש. ניתן לעצב ידנית או לבחור תחום שיפוט נתמך.";
+
+const GENERAL_FAMILIES = new Set(["book", "book_chapter", "journal_article", "unpublished_manuscript", "thesis", "newspaper", "internet"]);
+/**
+ * The single capability decision used by planner and server: an enabled entry
+ * for (family, jurisdiction) permits local formatting; its completion permits
+ * typed lookup. General literature is jurisdiction-independent; case
+ * jurisdictions other than US/UK resolve to the unanchored entry.
+ */
+export function rulepackCapability(family: string, jurisdiction: string): { local: boolean; lookup: boolean; lookupJurisdiction: LookupJurisdiction | null } {
+  const scope = GENERAL_FAMILIES.has(family) ? "GENERAL" : jurisdiction === "US" || jurisdiction === "UK" ? jurisdiction
+    : family === "case" && (jurisdiction === "OTHER" || jurisdiction === "UNKNOWN") ? "UNANCHORED" : null;
+  const entries = scope ? RULEPACK_MANIFEST.filter(e => e.status === "enabled" && e.jurisdiction === scope && e.family === family) : [];
+  const completion = entries.find(e => e.completion)?.completion ?? null;
+  return { local: entries.length > 0, lookup: !!completion, lookupJurisdiction: completion?.jurisdiction ?? null };
+}
+export function isGeneralFamily(family: string | null | undefined): boolean {
+  return !!family && GENERAL_FAMILIES.has(family);
+}
+export const DISABLED_RULEPACK_WARNING = "תבנית האזכור לסוג המקור ולתחום השיפוט אינה זמינה; הקלט נשמר ללא השלמה וללא חיפוש.";
