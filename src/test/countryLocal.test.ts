@@ -95,3 +95,5 @@ it.each([
 it('repeated equal years bind exact original occurrence', () => { const a = ast('Maple v Cedar (2020), [2020] 2 SCR 100'); expect(a.fields.decisionYear.spans[0].start).not.toBe(a.fields.reporterYear.spans[0].start); });
 
 it('SC enactment year is not an RSC revision year', () => { const a = ast('Synthetic Records Act, S.C. 2020, c 8'); expect(a.fields.enactmentYear.value).toBe('2020'); expect(a.fields.revisionYear).toBeUndefined(); });
+
+it('state/provincial manual subjurisdiction never borrows federal template', async () => { const raw = fixtures[0].raw; const r = await runCitation({rawInput:raw,manualChoice:{jurisdiction:'AU',jurisdictionId:'t2:australia',subjurisdiction:'t2:australia/nsw',sourceType:'foreign_case_other'}}); expect(citationToPlain(r.citation)).toBe(raw); zero(); });

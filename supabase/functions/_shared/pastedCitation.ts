@@ -178,7 +178,7 @@ export function buildPastedCitation(raw: string, manual: CitationManualChoice | 
     evidence, candidates, manualChoice: manual, fields, unknownSpans,
     classification: conflicts.length ? "conflicting" : detected === "IL" ? "identified_israeli" : detected !== "UNKNOWN" ? "identified_foreign" : "ambiguous",
     formatter: unsupported.length ? "unsupported" : jurisdiction === "UNKNOWN" ? "unknown" : "existing_route",
-    missing: country?.missing ?? missing, conflicts, unsupported, identityVerified: false, route: country && !country.complete ? "preserve" : route };
+    missing: country?.missing ?? missing, conflicts, unsupported, identityVerified: false, route: conflicts.length || country && !country.complete ? "preserve" : route };
 }
 export function pastedCitationWarning(c: PastedCitationContract): string {
   return c.conflicts.length === 0 && c.unsupported.some(u => u.startsWith("rulepack_planned_disabled:")) ? PLANNED_RULEPACK_WARNING
@@ -203,8 +203,8 @@ export function guardPastedCitationRequest(body: { messages: Array<{ role: strin
   const idJurisdiction = typeof objectChoice?.jurisdictionId === "string" && objectChoice.jurisdictionId.length <= 200
     ? rulepackJurisdictionFromId(objectChoice.jurisdictionId) : null;
   const codeMalformed = objectChoice?.jurisdiction !== undefined && !isManualChoiceJurisdiction(objectChoice.jurisdiction);
-  const codeMismatch = !!idJurisdiction && isManualChoiceJurisdiction(objectChoice?.jurisdiction) && objectChoice!.jurisdiction !== idJurisdiction;
-  const manualJurisdiction = idJurisdiction ?? (isManualChoiceJurisdiction(objectChoice?.jurisdiction) ? objectChoice!.jurisdiction : undefined);
+  const codeMismatch = !!idJurisdiction && isManualChoiceJurisdiction(objectChoice?.jurisdiction) && objectChoice?.jurisdiction !== idJurisdiction;
+  const manualJurisdiction = idJurisdiction ?? (isManualChoiceJurisdiction(objectChoice?.jurisdiction) ? objectChoice?.jurisdiction : undefined);
   const manual = objectChoice ? {
     ...(manualJurisdiction ? { jurisdiction: manualJurisdiction } : {}),
     ...(typeof choice.subjurisdiction === "string" && choice.subjurisdiction.length <= 200 ? { subjurisdiction: choice.subjurisdiction } : {}),

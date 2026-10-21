@@ -26,6 +26,7 @@ export function parseCountryLocal(raw: string, manual: CitationManualChoice | nu
   const family = caseShape ? 'case' : statuteShape ? 'statute' : mk ?? 'case';
   const ast: CountryAst = { raw, jurisdiction, family, templateId: null, fields: {}, unknownSpans: [], missing: [], conflicts: [], complete: false };
   if (au && ca) ast.conflicts.push('mixed_countries');
+  if (manual?.subjurisdiction || manual?.jurisdictionId?.includes('/')) ast.conflicts.push('unsupported_subjurisdiction');
   if (mj && mj !== 'UNKNOWN' && mj !== jurisdiction) ast.conflicts.push('manual_country_conflict');
   if (mk && mk !== family || manual?.sourceType && !['foreign', 'unknown'].includes(manual.sourceType) && !mk) ast.conflicts.push('manual_family_conflict');
   const s = raw.trim().replace(/\.$/, '').replace(/\s*\((?:Austl|Can)\.\)$/, '').trim();

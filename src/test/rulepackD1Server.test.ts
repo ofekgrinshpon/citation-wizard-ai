@@ -130,3 +130,13 @@ describe("D1 manifest is the decision source (planner + server)", () => {
     expect(c.route).toBe("preserve"); expect(c.conflicts).toContain("rulepack_lookup_disabled");
   });
 });
+
+import { COUNTRY_LOCAL_FIXTURES } from "./fixtures/countryLocalFixtures";
+describe("six local country templates actual handler never completes", () => {
+  it.each(COUNTRY_LOCAL_FIXTURES)("$id rejects generic and forged unanchored lookups before usage", async f => {
+    for (const foreignLookup of [undefined,{enabled:true,kind:f.id.includes("case")?"case":"statute",jurisdiction:"UNKNOWN",rawInput:f.raw,parsedFields:{}}]) {
+      const h = fixture(); const r = await h.invoke({rawInput:f.raw,messages:[{role:"user",content:f.raw}],foreignLookup});
+      expect(r.body.pastedCitation.route).toBe("preserve"); expect(r.body.pastedCitation.rawInput).toBe(f.raw); noSideEffects(h);
+    }
+  });
+});
