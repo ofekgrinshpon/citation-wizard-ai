@@ -64,7 +64,7 @@
 ### Correction gates and remaining limits
 - New exact regression matrix before implementation: **28 failed / 177 passed**, reproducing all three defects through shared/server and actual hosts.
 - Final focused eight-file suite: **408 passed / 1 skipped / 0 failed**.
-- Full suite after correction: **191 files; 3,909 passed / 1 skipped / 0 failed**; final additional donor/pinpoint/supplied-edition tests are recorded in the final full gate below.
-- Automatic compilation: **build OK at 2026-10-21T00:41:04Z**. Separate explicit app TypeScript/Vite commands remain unavailable under the environment's manual-command prohibition, not claimed as independently run.
+- Final full suite including donor/pinpoint/supplied-edition tests: **191 files; 3,915 passed / 1 skipped / 0 failed**; tested code revision `dbb795c1aefdafceab1b039acbefa1b7382cb2aa` (final revision adds this gate record).
+- Automatic compilation: **build OK at 2026-10-21T00:41:49Z**. Separate explicit app TypeScript/Vite commands remain unavailable under the environment's manual-command prohibition, not claimed as independently run.
 - Strong chapter evidence uses existing returned title/snippet text. Records without that evidence fail closed even if a URL looks plausible or the collection matches; no new page-inspection identity strategy was added. Exact normalized occurrence is not full-text legal identity verification. Bibliographic firstPage extraction remains unsupported; complete edition data is not promised.
 - No deployment, live calls, DB/data/schema/auth/security/permission/payment changes, provider/search strategy expansion, quota/settings changes or D. Stop for independent QA; explicit app TypeScript/Vite gates remain external blockers.
