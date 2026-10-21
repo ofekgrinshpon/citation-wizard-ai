@@ -24,6 +24,9 @@ import { buildEnginePromptHint } from "@/lib/citationValidation";
 import * as statuteRoute from "../../supabase/functions/citation-chat/statuteRoute";
 import { CITATION_RULES } from "@/data/citationEngine";
 import { C2_WIRE, c2WirePayload } from "./fixtures/c2WirePayload";
+import { renderCitationRecovery } from "@/lib/renderCitationRecovery";
+import { CHAT_HOST, resolveCitationResponse } from "@/lib/citationPlanner";
+import type { CitationRecoveryRecord } from "@/lib/citationRecoveryApi";
 
 const natural = "המאמר של דפנה ברק־ארז על כתיבה שיפוטית, בעמודים 291 עד 293.";
 const right = 'דפנה ברק-ארז "כתיבה שיפוטית" משפטים מו 269 (תשע״ז)';
@@ -488,6 +491,25 @@ describe("Stage 4 typed statute requests through the real edge handler", () => {
     expect(r.calls).toHaveLength(0);
     expect(r.rpc.mock.calls.filter(([n]) => n === "begin_citation_request")).toHaveLength(1);
     expect(r.rpc.mock.calls.filter(([n]) => n === "finish_citation_request")).toHaveLength(1);
+    const now = Date.now();
+    const record: CitationRecoveryRecord = { requestId: "fixture-request-0001", retryOfRequestId: null,
+      status: "succeeded", availability: "available", createdAt: new Date(now).toISOString(), expiresAt: new Date(now + 86400000).toISOString(),
+      input: { rawInput: f.raw, messages: [{ role: "user", content: `[סיווג אוטומטי: ספר לועזי]\n${f.raw}` }], foreignLookup: foreign, batchId: null },
+      result: r.body, refundReceipt: { status: "retained", refunded: false, units_refunded: 0, request_id: "fixture-request-0001" } };
+    const fresh = resolveCitationResponse(plan, r.body, CHAT_HOST);
+    if (fresh.kind !== "terminal") throw new Error("Expected terminal fresh resolution");
+    const rpcCount = r.rpc.mock.calls.length;
+    const recovery = renderCitationRecovery(record, now);
+    expect(recovery?.completion).toEqual(fresh.resolution.completion);
+    expect(recovery?.plainText).toContain(f.output);
+    for (const [key, value] of Object.entries(f.local)) {
+      expect(recovery?.completion?.suppliedFields?.[key]?.value).toBe(value);
+      expect(recovery?.completion?.provenance).not.toHaveProperty(key);
+    }
+    expect(record.requestId).toBe("fixture-request-0001");
+    expect(r.rpc).toHaveBeenCalledTimes(rpcCount);
+    expect(r.lookupSpy).toHaveBeenCalledTimes(1);
+    expect(r.calls).toHaveLength(0);
   });
   it.each(["extra", "raw", "value", "kind", "jurisdiction"])("C2 wire forged %s rejected before cache/usage/lookup/gateway", async mode => {
     const f = C2_WIRE[0];

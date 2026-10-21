@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import type { CitationRecoveryRecord } from "@/lib/citationRecoveryApi";
 import { citationRecoveryDeadline, renderCitationRecovery, recoveryInputText, recoveryInputTruncated, recoveryPlainText, RECOVERY_TEXT_LIMIT } from "@/lib/renderCitationRecovery";
+import { C2_WIRE, c2WirePayload } from "./fixtures/c2WirePayload";
 
 const now = Date.UTC(2026, 9, 13, 12);
 function record(patch: Partial<CitationRecoveryRecord> = {}): CitationRecoveryRecord {
@@ -15,6 +16,33 @@ function article(): CitationRecoveryRecord {
 }
 
 describe("pure recovery renderer", () => {
+  it.each(["raw", "kind", "manual", "wire", "forged_local", "provider_local"])("C2 retained %s cannot manufacture supplied fields", async mode => {
+    const f = C2_WIRE[0];
+    const { plan, response } = await c2WirePayload(f);
+    const request = structuredClone(plan.foreignLookup);
+    if (!request) throw new Error("Missing request");
+    const r = record({ input: { rawInput: f.raw, messages: [{ role: "user", content: f.raw }], foreignLookup: request, batchId: null },
+      result: { foreignLookup: structuredClone(response) as unknown as Record<string, unknown> } });
+    if (mode === "raw") request.rawInput = "Author: Jane Doe; Book: Other Collection; Original year: 1901";
+    if (mode === "kind") request.kind = "book_chapter";
+    if (mode === "manual" && r.input) r.input.messages[0].content = `[סיווג שיפוט ידני: {"sourceType":"foreign_case_us","jurisdiction":"US"}]\n${f.raw}`;
+    if (mode === "wire") request.parsedFields = { ...(request.parsedFields as object), year: "2099" };
+    if (mode === "forged_local") Object.assign(request, { localFields: { originalYear: "2099", publisher: "Forged Press" }, localSourceFields: { originalYear: { value: "2099", spans: [] } } });
+    if (mode === "provider_local" && r.result?.foreignLookup) r.result.foreignLookup.fields = { ...response.fields, originalYear: "2099", publisher: "Forged Press" };
+    const fetch = vi.fn(() => { throw new Error("No recovery IO"); });
+    vi.stubGlobal("fetch", fetch);
+    try {
+      const rendered = renderCitationRecovery(r, now);
+      expect(rendered?.plainText).toContain("1901");
+      expect(rendered?.plainText).not.toContain("2099");
+      expect(rendered?.plainText).not.toContain("Forged Press");
+      if (["raw", "kind", "manual", "wire"].includes(mode)) {
+        expect(rendered?.warning).toContain("אינם תואמים");
+        expect(rendered?.completion).toBeUndefined();
+      } else expect(rendered?.completion?.suppliedFields?.originalYear?.value).toBe("1901");
+      expect(fetch).not.toHaveBeenCalled();
+    } finally { vi.unstubAllGlobals(); }
+  });
   it("renders structured-only articles from original parsed fields and existing deterministic formatters", () => {
     const fetch = vi.fn(() => { throw new Error("No network"); });
     vi.stubGlobal("fetch", fetch);
