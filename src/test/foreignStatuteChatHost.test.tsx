@@ -137,7 +137,7 @@ describe("chat page — typed statute request through initial send and regenerat
       expect(localStorage.getItem("legal_app_free_text_messages")).not.toContain('"completion"');
     });
   }
-  it("C2 stale manual change ignores the previous completion and makes no replacement IO for a conflict", async () => {
+  it("C2 stale input change ignores the previous completion without replacement IO", async () => {
     let release: ((r: unknown) => void) | undefined;
     m.classify.mockResolvedValue({ sourceType: "foreign_book", source: "regex" });
     m.invoke.mockImplementationOnce(() => new Promise(resolve => { release = resolve; }));

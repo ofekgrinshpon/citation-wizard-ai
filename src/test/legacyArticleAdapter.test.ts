@@ -16,6 +16,7 @@ import * as telemetry from "@/lib/costTelemetry";
 import * as citationUtils from "@/lib/citationUtils";
 import { validateCitationInput } from "@/lib/citationInputValidation";
 import { runForeignLookup, type ForeignLookupInput } from "../../supabase/functions/citation-chat/foreignLookup";
+import { C2_BOOK, C2_CHAPTER, c2Payload } from "./fixtures/c2BookPayload";
 
 // Execute the actual nested Index handlers in the real Vitest/jsdom setup.
 // Only their UI/service boundaries are injected; request and response logic,
@@ -100,6 +101,28 @@ beforeEach(() => vi.stubGlobal("fetch", vi.fn(() => { throw new Error("Unmocked 
 afterEach(() => vi.unstubAllGlobals());
 
 describe("legacy standalone article adapter", () => {
+  it.each(["book", "book_chapter"] as const)("C2 actual Index %s retry retains the plan and applies transient metadata only once", async kind => {
+    const rawInput = kind === "book" ? C2_BOOK : C2_CHAPTER;
+    const sourceType = kind === "book" ? "foreign_book" : "foreign_book_chapter";
+    const descriptor = { failedRequestId: "failed-request-parent", handle: "fixture-handle", refundConfirmed: false, refundStatus: "deferred" };
+    const h = harness({ rawInput, sourceType, errorInfo: { code: "AI_REFUSED", message: "Failed", citationRetry: descriptor } });
+    await h.handleSend();
+    const offer = h.citationRetryRef.current;
+    expect(offer).toBeDefined();
+    const { response } = await c2Payload(kind, rawInput, "matching");
+    h.retryCitationFunction.mockResolvedValue({ data: { foreignLookup: response, content: "UNSAFE" }, errorInfo: null } as never);
+    if (!offer) return;
+    await offer.run(); await offer.run();
+    // Actual Index button owns the double-submit lock; continuation stays once-only.
+    expect(h.invokeFunction).toHaveBeenCalledTimes(1);
+    expect(h.resolveSourceType).toHaveBeenCalledTimes(1);
+    expect(h.retryCitationFunction.mock.calls.every(([d]) => d === descriptor)).toBe(true);
+    const messages = last(h.state.setMessages.mock.calls)[0];
+    expect(last(messages) as unknown).toMatchObject({ completion: { fields: { year: "2020" } }, pastedCitation: { rawInput } });
+    expect(h.insert).toHaveBeenCalledTimes(1);
+    expect(JSON.stringify(h.insert.mock.calls)).not.toContain('"completion"');
+    expect(h.provider).not.toHaveBeenCalled();
+  });
   it("explicit retry reuses the saved success continuation once, preserving history/verification without classifying again", async () => {
     const descriptor = { failedRequestId: "failed-request-parent", handle: "fixture-handle", refundConfirmed: false, refundStatus: "deferred",
       refundReceipt: { status: "deferred", refunded: false, units_refunded: 0, request_id: "failed-request-parent" } };
