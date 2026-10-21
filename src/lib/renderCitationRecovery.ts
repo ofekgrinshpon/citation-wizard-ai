@@ -7,7 +7,9 @@ import { renderForeignArticleLookup } from "@/lib/foreignArticleAdapter";
 import { renderForeignStatuteLookup, statutePreparationFromRequest } from "@/lib/foreignStatuteAdapter";
 import type { CitationRecoveryRecord } from "@/lib/citationRecoveryApi";
 import { CITATION_FIELD_KEYS } from "../../supabase/functions/_shared/citationRecovery";
-import { planCitationEvidence, resolveCitationResponse, RUNNER_HOST, type TypedPlan } from "@/lib/citationPlanner";
+import { guardPastedCitationRequest } from "../../supabase/functions/_shared/pastedCitation";
+import { escapeCitationLiteral } from "@/lib/citationSegments";
+import { planCitationEvidence, planLocalCitation, planTypedRequest, resolveCitationResponse, RUNNER_HOST, type TypedPlan, type CitationResolution } from "@/lib/citationPlanner";
 
 export const RECOVERY_RETENTION_MS = 24 * 60 * 60 * 1000;
 export const RECOVERY_TEXT_LIMIT = 50_000;
@@ -23,6 +25,8 @@ export interface RenderedCitationRecovery {
   structured: boolean;
   truncated: boolean;
   warning: string | null;
+  /** Transient only; never persisted or treated as provider evidence. */
+  completion?: CitationResolution["completion"];
 }
 
 /** Strip invisible execution/control and direction-override characters. HTML is
@@ -115,6 +119,34 @@ export function renderCitationRecovery(record: CitationRecoveryRecord, now = Dat
     if (!fields(request.parsedFields)) return null;
     const jur = request.jurisdiction === "US" || request.jurisdiction === "UK" ? request.jurisdiction : "OTHER";
     const sourceType = toSourceType(request.kind as ForeignSourceKind, jur);
+    if (request.kind === "book" || request.kind === "book_chapter") {
+      const preserve = () => {
+        const warning = "הקלט המקורי, סוג המקור או הבחירה הידנית אינם תואמים לבקשה שנשמרה; הקלט נשמר ללא השלמה.";
+        return output(`${escapeCitationLiteral(raw)}\n⚠️ ${warning}`, sourceType, true, warning);
+      };
+      // Recompute from the same original text, never retained localFields or
+      // returned provider fields. The existing server guard checks wrappers,
+      // manual constraints and the unchanged raw-bound field allowlist.
+      const bound = guardPastedCitationRequest({ messages: record.input?.messages ?? [], rawInput: raw, foreignLookup: request });
+      if (request.rawInput !== raw || bound.rawInput !== raw || bound.route === "preserve") return preserve();
+      const evidence = planCitationEvidence(raw, bound.manualChoice);
+      if (evidence.preserve) return preserve();
+      const input = { evidence, sourceType, input: raw, isPinpoint: false, manual: !!bound.manualChoice };
+      const local = planLocalCitation(input, RUNNER_HOST);
+      if ("resolution" in local) return preserve();
+      const rebuilt = planTypedRequest({ ...input, canonicalRaw: raw, statutePrep: local.statutePrep }, RUNNER_HOST);
+      const projected = fields(rebuilt.foreignLookup?.parsedFields);
+      const retained = fields(request.parsedFields);
+      if (rebuilt.kind !== "typed" || rebuilt.foreignLookup?.kind !== request.kind || rebuilt.foreignLookup?.jurisdiction !== request.jurisdiction ||
+          !projected || !retained || Object.keys(projected).length !== Object.keys(retained).length ||
+          Object.entries(projected).some(([key, value]) => retained[key] !== value)) return preserve();
+      // Keep the retained operation and request identity; only locally parsed
+      // fields/spans are rebuilt. This is resolution, not dispatch or retry.
+      const resolved = resolveCitationResponse({ ...rebuilt, foreignLookup: request }, { ...record.result }, RUNNER_HOST);
+      if (resolved.kind !== "terminal") return preserve();
+      const rendered = output(resolved.resolution.reply, sourceType, true, resolved.resolution.warningMsg ?? null);
+      return rendered ? { ...rendered, completion: resolved.resolution.completion } : null;
+    }
     const prep = request.kind === "statute" ? statutePreparationFromRequest(request) : null;
     const plan: TypedPlan = { kind: "typed", evidence: planCitationEvidence(raw, null), sourceType,
       statutePrep: prep, caseRequest: null, articleRequest: request.kind === "journal_article" ? { parsedFields: fields(request.parsedFields) ?? {} } : null,

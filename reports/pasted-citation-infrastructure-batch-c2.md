@@ -91,3 +91,25 @@
 - Latest automatic compilation: **build OK at 2026-10-21T00:54:42Z** after correcting fixture typing. Explicit standalone app TypeScript/Vite production commands were **not run**, because environment instructions prohibit manual builds/typechecks; automatic compilation is not claimed as those requested independent gates.
 - Existing extractor still completes only supported year/edition fields, not bibliographic firstPage or intended pinpoints. Unknown spans/raw input remain preserved; no new search/extraction grammar, request kind, country or D work.
 - No live calls, deployment/publication, DB/data/schema/auth/security/permissions/payment changes, usage/refund/billing/quota/limit/settings changes or purchases. Per-run checkpoint configuration unchanged; credits were not measured. Stop for independent QA.
+
+## Final bounded C2 recovery correction
+
+### Baseline and implementation
+- Verified baseline `be955a5b6d8a957ef834d3287c5f73f3570994e8`; tested code revision `41faeeaf942a5f3ffcdadbb90dce99be032123a7` before this documentation update.
+- Only bound typed book/chapter recovery changes: `renderCitationRecovery` invokes the existing pure request guard, then the shared evidence/local/typed planner on the exact original raw input before the existing response resolver. It does not reconstitute user fields from provider data or injected retained local metadata.
+- Original raw must exactly equal retained lookup raw; existing documented message wrappers must bind to that raw. Recomputed projected fields/kind/jurisdiction must match the retained operation, and retained manual constraints must not contradict it. Failure returns original input plus a specific binding warning without dispatch or completion promotion.
+- Locally reparsed `originalYear: 1901`, `publisher: Synthetic Press`, `publisherStatus: non-original`, and `section: 4.2` survive alongside grounded publication year/edition. They remain supplied fields with original spans, not provider provenance. Existing selected range, chapter-firstPage eligibility, separate chapter identity and display-only edition normalization remain unchanged.
+- Optional completion metadata on the pure renderer's return value is transient only; no storage model, persisted record, schema, request ID or UI layout changes. Existing account/project/route stale ownership stays in the recovery page/API.
+
+### Actual offline evidence
+- Four original wire fixtures now run actual planner → synthetic production extractor → mocked actual citation-chat handler → recovery renderer and compare full completion metadata with fresh shared resolution. Tests assert one original lookup/begin/finish pair and no additional calls during recovery; zero generic gateway calls. Original supplied components have no provider provenance.
+- Actual recovery page tests cover the three requested local semantic losses and pending typed-result account/project switches. Existing caller stale guards hide/drop results without retry, save, acknowledgement or provider calls. These are offline rendered-host tests, not live browser/provider trials.
+- Negative retained raw, kind, manual-source, unrelated wire value, injected local metadata and ungrounded provider-local field controls preserve/reject or quarantine safely, with zero recovery network IO. Existing recovery API/backend and complete planner regression gates remain passing.
+- Focused gate: **7 files; 317 passed, 1 skipped, 0 failed**. Full gate: **192 files; 3,952 passed, 1 skipped, 0 failed**.
+- Latest automatic compilation: **build OK at 2026-10-21T01:06:55Z**. Explicit app TypeScript and Vite production commands were not run: higher-priority environment instructions prohibit manual builds/typechecks. Automatic compilation is not a substitute for those independent requested gates.
+
+### Exact remaining limitations and stop
+- No pre-edit fail-before run; user supplied the independent reproduction, and post-edit tests exercise actual handler and recovery hosts.
+- Existing recovery result allowlist rejects current synthetic extractor sources carrying additive `snippet` metadata. This pre-existing retention-envelope compatibility gap was not changed under this render-only correction: the vertical test passes the actual handler's typed response to the renderer (input passes existing retention validation), while page tests mock retained records. It does not claim this turn proved those synthetic responses could be newly persisted through `citationRecoveryResult`.
+- Historical unbound recovery compatibility remains unchanged. Incomplete, unsafe or no-longer-eligible retained book/chapter operations preserve locally rather than gain a new request. No new metadata persistence.
+- No deployment, live calls, database/auth/security/payment/settings/usage/refund/quota/limit changes, new sources/countries/providers or D. Per-run checkpoint configuration unchanged; credits not measured. Stop for independent QA and explicit TypeScript/Vite gates.

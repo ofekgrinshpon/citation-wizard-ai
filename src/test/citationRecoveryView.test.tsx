@@ -4,6 +4,7 @@ import { MemoryRouter, useNavigate } from "react-router-dom";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import CitationRecovery from "@/pages/CitationRecovery";
 import type { CitationRecoveryRecord } from "@/lib/citationRecoveryApi";
+import { C2_WIRE, c2WirePayload } from "./fixtures/c2WirePayload";
 
 const mocks = vi.hoisted(() => ({
   user: { id: "account-a" } as { id: string } | null,
@@ -64,6 +65,7 @@ const saveButton = () => screen.getByRole("button", { name: "שמירה בהיס
 
 beforeEach(() => {
   vi.clearAllMocks();
+  mocks.list.mockReset();
   mocks.user = { id: "account-a" }; mocks.sessionUser = "account-a"; mocks.loading = false;
   mocks.project = { id: "project-a", name: "פרויקט א" }; mocks.listeners.clear();
   mocks.getSession.mockImplementation(async () => ({ data: { session: mocks.sessionUser ? { user: { id: mocks.sessionUser } } : null }, error: null }));
@@ -81,6 +83,34 @@ beforeEach(() => {
 afterEach(() => { cleanup(); vi.useRealTimers(); vi.unstubAllGlobals(); });
 
 describe("read-only citation recovery view", () => {
+  it.each(C2_WIRE.filter(f => f.id !== "C"))("C2 $id actual recovery page retains local supplied semantics without dispatch", async f => {
+    const { plan, response } = await c2WirePayload(f);
+    mocks.list.mockResolvedValue({ requests: [record({ input: { rawInput: f.raw, messages: [{ role: "user", content: f.raw }], foreignLookup: plan.foreignLookup, batchId: null },
+      result: { foreignLookup: response as unknown as Record<string, unknown> } })], nextCursor: null });
+    view();
+    const article = await screen.findByRole("article", { name: `בקשה ${ID}` });
+    expect(article.textContent).toContain(f.output);
+    expect(article.textContent).toContain("2020");
+    expect(mocks.prepare).not.toHaveBeenCalled(); expect(mocks.retry).not.toHaveBeenCalled();
+    expect(mocks.save).not.toHaveBeenCalled(); expect(mocks.ack).not.toHaveBeenCalled();
+    expect(fetch).not.toHaveBeenCalled();
+  });
+  it.each(["account", "project"])("C2 %s mismatch discards pending typed recovery without additional work", async scope => {
+    const f = C2_WIRE[1];
+    const { plan, response } = await c2WirePayload(f);
+    const pending = deferred<{ requests: CitationRecoveryRecord[]; nextCursor: null }>();
+    mocks.list.mockReturnValueOnce(pending.promise).mockResolvedValueOnce({ requests: [], nextCursor: null });
+    const ui = view();
+    await waitFor(() => expect(mocks.list).toHaveBeenCalledTimes(1));
+    if (scope === "account") { mocks.user = { id: "account-b" }; mocks.sessionUser = "account-b"; }
+    else mocks.project = { id: "project-b", name: "פרויקט ב" };
+    ui.rerender(<MemoryRouter><CitationRecovery /></MemoryRouter>);
+    await act(async () => pending.resolve({ requests: [record({ input: { rawInput: f.raw, messages: [{ role: "user", content: f.raw }], foreignLookup: plan.foreignLookup, batchId: null },
+      result: { foreignLookup: response as unknown as Record<string, unknown> } })], nextCursor: null }));
+    await waitFor(() => expect(screen.queryByRole("article", { name: `בקשה ${ID}` })).not.toBeInTheDocument());
+    expect(mocks.prepare).not.toHaveBeenCalled(); expect(mocks.retry).not.toHaveBeenCalled();
+    expect(mocks.save).not.toHaveBeenCalled(); expect(mocks.ack).not.toHaveBeenCalled(); expect(fetch).not.toHaveBeenCalled();
+  });
   it("requires auth and does not read anything while signed out or hydrating", async () => {
     mocks.user = null;
     const ui = view();
