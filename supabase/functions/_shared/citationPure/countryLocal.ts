@@ -25,7 +25,7 @@ const CA = new RegExp([CA_NEUTRAL_ANCHOR, CA_REPORTER_ANCHOR, CA_CODE_ANCHOR].ma
 function partialMissing(s: string, jurisdiction: 'AU' | 'CA', family: 'case' | 'statute'): string[] {
   if (family === 'case') {
     if (jurisdiction === 'AU') return /\[\d{4}\]\s+(?:HCA|FCA|FCAFC)\s*$/.test(s) ? ['neutralNumber'] : /(?:CLR|FCR)\s*$/.test(s) ? ['firstPage'] : [];
-    return /\bSCC\s*$/.test(s) ? ['neutralNumber'] : /(?:S\.C\.R\.|SCR)\s*$/.test(s) ? ['firstPage'] : [];
+    return /\bSCC\s*$/.test(s) ? ['neutralNumber'] : /(?:S\.C\.R\.?|SCR)\s*$/.test(s) ? ['firstPage'] : [];
   }
   if (jurisdiction === 'AU') return /\bAct\s*\(Cth\)/.test(s) ? ['enactmentYear'] : [];
   return /(?:R\.?S\.?C\.?|S\.C\.),?\s+\d{4}\s*$/.test(s) ? ['chapter'] : [];
