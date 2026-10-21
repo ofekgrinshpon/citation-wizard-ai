@@ -1,0 +1,3910 @@
+[
+ {
+  "raw": "Brown v. Board of Education, 347 U.S. 483 (1954)",
+  "contract": {
+   "version": 1,
+   "rawInput": "Brown v. Board of Education, 347 U.S. 483 (1954)",
+   "fingerprint": "pc1:48:2e85c98f",
+   "sourceKind": "case",
+   "jurisdiction": "US",
+   "subjurisdiction": null,
+   "subjurisdictionEvidence": [],
+   "evidence": [
+    {
+     "jurisdiction": "US",
+     "signal": "reporter",
+     "span": {
+      "start": 33,
+      "end": 37
+     }
+    }
+   ],
+   "candidates": {
+    "court": [],
+    "reporter": [
+     {
+      "value": "U.S.",
+      "state": "supplied",
+      "provenance": "supplied_text",
+      "spans": [
+       {
+        "start": 33,
+        "end": 37
+       }
+      ]
+     }
+    ],
+    "docket": []
+   },
+   "fields": {
+    "caseName": {
+     "value": "Brown v. Board of Education",
+     "state": "supplied",
+     "provenance": "existing_parser",
+     "spans": [
+      {
+       "start": 0,
+       "end": 27
+      }
+     ]
+    },
+    "court": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "reporter": {
+     "value": "U.S.",
+     "state": "supplied",
+     "provenance": "existing_parser",
+     "spans": [
+      {
+       "start": 33,
+       "end": 37
+      }
+     ]
+    },
+    "docket": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "year": {
+     "value": "1954",
+     "state": "supplied",
+     "provenance": "existing_parser",
+     "spans": [
+      {
+       "start": 43,
+       "end": 47
+      }
+     ]
+    },
+    "decisionDate": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "volume": {
+     "value": "347",
+     "state": "supplied",
+     "provenance": "existing_parser",
+     "spans": [
+      {
+       "start": 29,
+       "end": 32
+      }
+     ]
+    },
+    "firstPage": {
+     "value": "483",
+     "state": "supplied",
+     "provenance": "existing_parser",
+     "spans": [
+      {
+       "start": 38,
+       "end": 41
+      }
+     ]
+    }
+   },
+   "unknownSpans": [
+    {
+     "start": 27,
+     "end": 29
+    },
+    {
+     "start": 32,
+     "end": 33
+    },
+    {
+     "start": 37,
+     "end": 38
+    },
+    {
+     "start": 41,
+     "end": 43
+    },
+    {
+     "start": 47,
+     "end": 48
+    }
+   ],
+   "classification": "identified_foreign",
+   "formatter": "existing_route",
+   "missing": [],
+   "conflicts": [],
+   "unsupported": [],
+   "identityVerified": false,
+   "route": "foreign"
+  },
+  "hosts": [
+   {
+    "local": {
+     "origin": "pasted_local",
+     "resolution": {
+      "citation": "Brown v. Board of Education, 347 U.S. 483 (1954).",
+      "reply": "Brown v. Board of Education, 347 U.S. 483 (1954).\n⚠️ עוצב לפי הפרטים שסופקו; זהות המקור לא אומתה.",
+      "pastedCitation": {
+       "version": 1,
+       "rawInput": "Brown v. Board of Education, 347 U.S. 483 (1954)",
+       "fingerprint": "pc1:48:2e85c98f",
+       "sourceKind": "case",
+       "jurisdiction": "US",
+       "subjurisdiction": null,
+       "subjurisdictionEvidence": [],
+       "evidence": [
+        {
+         "jurisdiction": "US",
+         "signal": "reporter",
+         "span": {
+          "start": 33,
+          "end": 37
+         }
+        }
+       ],
+       "candidates": {
+        "court": [],
+        "reporter": [
+         {
+          "value": "U.S.",
+          "state": "supplied",
+          "provenance": "supplied_text",
+          "spans": [
+           {
+            "start": 33,
+            "end": 37
+           }
+          ]
+         }
+        ],
+        "docket": []
+       },
+       "manualChoice": null,
+       "fields": {
+        "caseName": {
+         "value": "Brown v. Board of Education",
+         "state": "supplied",
+         "provenance": "existing_parser",
+         "spans": [
+          {
+           "start": 0,
+           "end": 27
+          }
+         ]
+        },
+        "court": {
+         "value": null,
+         "state": "unknown",
+         "provenance": "none",
+         "spans": []
+        },
+        "reporter": {
+         "value": "U.S.",
+         "state": "supplied",
+         "provenance": "existing_parser",
+         "spans": [
+          {
+           "start": 33,
+           "end": 37
+          }
+         ]
+        },
+        "docket": {
+         "value": null,
+         "state": "unknown",
+         "provenance": "none",
+         "spans": []
+        },
+        "year": {
+         "value": "1954",
+         "state": "supplied",
+         "provenance": "existing_parser",
+         "spans": [
+          {
+           "start": 43,
+           "end": 47
+          }
+         ]
+        },
+        "decisionDate": {
+         "value": null,
+         "state": "unknown",
+         "provenance": "none",
+         "spans": []
+        },
+        "volume": {
+         "value": "347",
+         "state": "supplied",
+         "provenance": "existing_parser",
+         "spans": [
+          {
+           "start": 29,
+           "end": 32
+          }
+         ]
+        },
+        "firstPage": {
+         "value": "483",
+         "state": "supplied",
+         "provenance": "existing_parser",
+         "spans": [
+          {
+           "start": 38,
+           "end": 41
+          }
+         ]
+        }
+       },
+       "unknownSpans": [
+        {
+         "start": 27,
+         "end": 29
+        },
+        {
+         "start": 32,
+         "end": 33
+        },
+        {
+         "start": 37,
+         "end": 38
+        },
+        {
+         "start": 41,
+         "end": 43
+        },
+        {
+         "start": 47,
+         "end": 48
+        }
+       ],
+       "classification": "identified_foreign",
+       "formatter": "existing_route",
+       "missing": [],
+       "conflicts": [],
+       "unsupported": [],
+       "identityVerified": false,
+       "route": "foreign"
+      },
+      "status": "valid"
+     }
+    }
+   },
+   {
+    "local": {
+     "origin": "pasted_local",
+     "resolution": {
+      "citation": "Brown v. Board of Education, 347 U.S. 483 (1954).",
+      "reply": "Brown v. Board of Education, 347 U.S. 483 (1954).\n⚠️ עוצב לפי הפרטים שסופקו; זהות המקור לא אומתה.",
+      "pastedCitation": {
+       "version": 1,
+       "rawInput": "Brown v. Board of Education, 347 U.S. 483 (1954)",
+       "fingerprint": "pc1:48:2e85c98f",
+       "sourceKind": "case",
+       "jurisdiction": "US",
+       "subjurisdiction": null,
+       "subjurisdictionEvidence": [],
+       "evidence": [
+        {
+         "jurisdiction": "US",
+         "signal": "reporter",
+         "span": {
+          "start": 33,
+          "end": 37
+         }
+        }
+       ],
+       "candidates": {
+        "court": [],
+        "reporter": [
+         {
+          "value": "U.S.",
+          "state": "supplied",
+          "provenance": "supplied_text",
+          "spans": [
+           {
+            "start": 33,
+            "end": 37
+           }
+          ]
+         }
+        ],
+        "docket": []
+       },
+       "manualChoice": null,
+       "fields": {
+        "caseName": {
+         "value": "Brown v. Board of Education",
+         "state": "supplied",
+         "provenance": "existing_parser",
+         "spans": [
+          {
+           "start": 0,
+           "end": 27
+          }
+         ]
+        },
+        "court": {
+         "value": null,
+         "state": "unknown",
+         "provenance": "none",
+         "spans": []
+        },
+        "reporter": {
+         "value": "U.S.",
+         "state": "supplied",
+         "provenance": "existing_parser",
+         "spans": [
+          {
+           "start": 33,
+           "end": 37
+          }
+         ]
+        },
+        "docket": {
+         "value": null,
+         "state": "unknown",
+         "provenance": "none",
+         "spans": []
+        },
+        "year": {
+         "value": "1954",
+         "state": "supplied",
+         "provenance": "existing_parser",
+         "spans": [
+          {
+           "start": 43,
+           "end": 47
+          }
+         ]
+        },
+        "decisionDate": {
+         "value": null,
+         "state": "unknown",
+         "provenance": "none",
+         "spans": []
+        },
+        "volume": {
+         "value": "347",
+         "state": "supplied",
+         "provenance": "existing_parser",
+         "spans": [
+          {
+           "start": 29,
+           "end": 32
+          }
+         ]
+        },
+        "firstPage": {
+         "value": "483",
+         "state": "supplied",
+         "provenance": "existing_parser",
+         "spans": [
+          {
+           "start": 38,
+           "end": 41
+          }
+         ]
+        }
+       },
+       "unknownSpans": [
+        {
+         "start": 27,
+         "end": 29
+        },
+        {
+         "start": 32,
+         "end": 33
+        },
+        {
+         "start": 37,
+         "end": 38
+        },
+        {
+         "start": 41,
+         "end": 43
+        },
+        {
+         "start": 47,
+         "end": 48
+        }
+       ],
+       "classification": "identified_foreign",
+       "formatter": "existing_route",
+       "missing": [],
+       "conflicts": [],
+       "unsupported": [],
+       "identityVerified": false,
+       "route": "foreign"
+      },
+      "status": "valid"
+     }
+    }
+   }
+  ],
+  "server": {
+   "route": "foreign",
+   "conflicts": [],
+   "unsupported": [],
+   "jurisdiction": "US"
+  }
+ },
+ {
+  "raw": "Brown v. Board of Education",
+  "type": "foreign_case_us",
+  "contract": {
+   "version": 1,
+   "rawInput": "Brown v. Board of Education",
+   "fingerprint": "pc1:27:61380884",
+   "sourceKind": "case",
+   "jurisdiction": "US",
+   "subjurisdiction": null,
+   "subjurisdictionEvidence": [],
+   "evidence": [],
+   "candidates": {
+    "court": [],
+    "reporter": [],
+    "docket": []
+   },
+   "fields": {
+    "caseName": {
+     "value": "Brown v. Board of Education",
+     "state": "supplied",
+     "provenance": "existing_parser",
+     "spans": [
+      {
+       "start": 0,
+       "end": 27
+      }
+     ]
+    },
+    "court": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "reporter": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "docket": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "year": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "decisionDate": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "volume": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "firstPage": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    }
+   },
+   "unknownSpans": [],
+   "classification": "ambiguous",
+   "formatter": "existing_route",
+   "missing": [
+    "year",
+    "reporter",
+    "jurisdiction_evidence"
+   ],
+   "conflicts": [],
+   "unsupported": [],
+   "identityVerified": false,
+   "route": "foreign"
+  },
+  "hosts": [
+   {
+    "typed": {
+     "kind": "typed",
+     "foreignLookup": {
+      "enabled": true,
+      "kind": "case",
+      "jurisdiction": "US",
+      "rawInput": "Brown v. Board of Education",
+      "parsedFields": {
+       "caseName": "Brown v. Board of Education"
+      }
+     },
+     "extraBody": {}
+    }
+   },
+   {
+    "typed": {
+     "kind": "typed",
+     "foreignLookup": {
+      "enabled": true,
+      "kind": "case",
+      "jurisdiction": "US",
+      "rawInput": "Brown v. Board of Education",
+      "parsedFields": {
+       "caseName": "Brown v. Board of Education"
+      }
+     },
+     "extraBody": {}
+    }
+   }
+  ],
+  "server": {
+   "route": "foreign",
+   "conflicts": [],
+   "unsupported": [],
+   "jurisdiction": "US"
+  }
+ },
+ {
+  "raw": "Brown v. Board of Education",
+  "contract": {
+   "version": 1,
+   "rawInput": "Brown v. Board of Education",
+   "fingerprint": "pc1:27:61380884",
+   "sourceKind": "case",
+   "jurisdiction": "UNKNOWN",
+   "subjurisdiction": null,
+   "subjurisdictionEvidence": [],
+   "evidence": [],
+   "candidates": {
+    "court": [],
+    "reporter": [],
+    "docket": []
+   },
+   "fields": {
+    "caseName": {
+     "value": "Brown v. Board of Education",
+     "state": "supplied",
+     "provenance": "existing_parser",
+     "spans": [
+      {
+       "start": 0,
+       "end": 27
+      }
+     ]
+    },
+    "court": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "reporter": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "docket": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "year": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "decisionDate": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "volume": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "firstPage": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    }
+   },
+   "unknownSpans": [],
+   "classification": "ambiguous",
+   "formatter": "unknown",
+   "missing": [
+    "year",
+    "reporter",
+    "jurisdiction_evidence"
+   ],
+   "conflicts": [],
+   "unsupported": [],
+   "identityVerified": false,
+   "route": "foreign"
+  },
+  "hosts": [
+   {
+    "typed": {
+     "kind": "typed",
+     "foreignLookup": {
+      "enabled": true,
+      "kind": "case",
+      "jurisdiction": "UNKNOWN",
+      "rawInput": "Brown v. Board of Education",
+      "parsedFields": {
+       "caseName": "Brown v. Board of Education"
+      }
+     },
+     "extraBody": {}
+    }
+   },
+   {
+    "typed": {
+     "kind": "typed",
+     "foreignLookup": {
+      "enabled": true,
+      "kind": "case",
+      "jurisdiction": "UNKNOWN",
+      "rawInput": "Brown v. Board of Education",
+      "parsedFields": {
+       "caseName": "Brown v. Board of Education"
+      }
+     },
+     "extraBody": {}
+    }
+   }
+  ],
+  "server": {
+   "route": "foreign",
+   "conflicts": [],
+   "unsupported": [],
+   "jurisdiction": "UNKNOWN"
+  }
+ },
+ {
+  "raw": "R (Miller) v. Secretary of State [2017] UKSC 5",
+  "contract": {
+   "version": 1,
+   "rawInput": "R (Miller) v. Secretary of State [2017] UKSC 5",
+   "fingerprint": "pc1:46:b07bc11a",
+   "sourceKind": "case",
+   "jurisdiction": "UK",
+   "subjurisdiction": null,
+   "subjurisdictionEvidence": [],
+   "evidence": [
+    {
+     "jurisdiction": "UK",
+     "signal": "court",
+     "span": {
+      "start": 40,
+      "end": 44
+     }
+    }
+   ],
+   "candidates": {
+    "court": [
+     {
+      "value": "UKSC",
+      "state": "supplied",
+      "provenance": "supplied_text",
+      "spans": [
+       {
+        "start": 40,
+        "end": 44
+       }
+      ]
+     }
+    ],
+    "reporter": [],
+    "docket": []
+   },
+   "fields": {
+    "caseName": {
+     "value": "R (Miller) v. Secretary of State",
+     "state": "supplied",
+     "provenance": "existing_parser",
+     "spans": [
+      {
+       "start": 0,
+       "end": 32
+      }
+     ]
+    },
+    "court": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "reporter": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "docket": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "year": {
+     "value": "2017",
+     "state": "supplied",
+     "provenance": "existing_parser",
+     "spans": [
+      {
+       "start": 34,
+       "end": 38
+      }
+     ]
+    },
+    "decisionDate": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "volume": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "firstPage": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "neutral": {
+     "value": "UKSC 5",
+     "state": "supplied",
+     "provenance": "existing_parser",
+     "spans": [
+      {
+       "start": 40,
+       "end": 46
+      }
+     ]
+    }
+   },
+   "unknownSpans": [
+    {
+     "start": 32,
+     "end": 34
+    },
+    {
+     "start": 38,
+     "end": 40
+    }
+   ],
+   "classification": "identified_foreign",
+   "formatter": "existing_route",
+   "missing": [
+    "reporter"
+   ],
+   "conflicts": [],
+   "unsupported": [],
+   "identityVerified": false,
+   "route": "foreign"
+  },
+  "hosts": [
+   {
+    "local": {
+     "origin": "pasted_local",
+     "resolution": {
+      "citation": "R (Miller) v. Secretary of State [2017] UKSC 5.",
+      "reply": "R (Miller) v. Secretary of State [2017] UKSC 5.\n⚠️ עוצב לפי הפרטים שסופקו; זהות המקור לא אומתה.",
+      "pastedCitation": {
+       "version": 1,
+       "rawInput": "R (Miller) v. Secretary of State [2017] UKSC 5",
+       "fingerprint": "pc1:46:b07bc11a",
+       "sourceKind": "case",
+       "jurisdiction": "UK",
+       "subjurisdiction": null,
+       "subjurisdictionEvidence": [],
+       "evidence": [
+        {
+         "jurisdiction": "UK",
+         "signal": "court",
+         "span": {
+          "start": 40,
+          "end": 44
+         }
+        }
+       ],
+       "candidates": {
+        "court": [
+         {
+          "value": "UKSC",
+          "state": "supplied",
+          "provenance": "supplied_text",
+          "spans": [
+           {
+            "start": 40,
+            "end": 44
+           }
+          ]
+         }
+        ],
+        "reporter": [],
+        "docket": []
+       },
+       "manualChoice": null,
+       "fields": {
+        "caseName": {
+         "value": "R (Miller) v. Secretary of State",
+         "state": "supplied",
+         "provenance": "existing_parser",
+         "spans": [
+          {
+           "start": 0,
+           "end": 32
+          }
+         ]
+        },
+        "court": {
+         "value": null,
+         "state": "unknown",
+         "provenance": "none",
+         "spans": []
+        },
+        "reporter": {
+         "value": null,
+         "state": "unknown",
+         "provenance": "none",
+         "spans": []
+        },
+        "docket": {
+         "value": null,
+         "state": "unknown",
+         "provenance": "none",
+         "spans": []
+        },
+        "year": {
+         "value": "2017",
+         "state": "supplied",
+         "provenance": "existing_parser",
+         "spans": [
+          {
+           "start": 34,
+           "end": 38
+          }
+         ]
+        },
+        "decisionDate": {
+         "value": null,
+         "state": "unknown",
+         "provenance": "none",
+         "spans": []
+        },
+        "volume": {
+         "value": null,
+         "state": "unknown",
+         "provenance": "none",
+         "spans": []
+        },
+        "firstPage": {
+         "value": null,
+         "state": "unknown",
+         "provenance": "none",
+         "spans": []
+        },
+        "neutral": {
+         "value": "UKSC 5",
+         "state": "supplied",
+         "provenance": "existing_parser",
+         "spans": [
+          {
+           "start": 40,
+           "end": 46
+          }
+         ]
+        }
+       },
+       "unknownSpans": [
+        {
+         "start": 32,
+         "end": 34
+        },
+        {
+         "start": 38,
+         "end": 40
+        }
+       ],
+       "classification": "identified_foreign",
+       "formatter": "existing_route",
+       "missing": [
+        "reporter"
+       ],
+       "conflicts": [],
+       "unsupported": [],
+       "identityVerified": false,
+       "route": "foreign"
+      },
+      "status": "valid"
+     }
+    }
+   },
+   {
+    "local": {
+     "origin": "pasted_local",
+     "resolution": {
+      "citation": "R (Miller) v. Secretary of State [2017] UKSC 5.",
+      "reply": "R (Miller) v. Secretary of State [2017] UKSC 5.\n⚠️ עוצב לפי הפרטים שסופקו; זהות המקור לא אומתה.",
+      "pastedCitation": {
+       "version": 1,
+       "rawInput": "R (Miller) v. Secretary of State [2017] UKSC 5",
+       "fingerprint": "pc1:46:b07bc11a",
+       "sourceKind": "case",
+       "jurisdiction": "UK",
+       "subjurisdiction": null,
+       "subjurisdictionEvidence": [],
+       "evidence": [
+        {
+         "jurisdiction": "UK",
+         "signal": "court",
+         "span": {
+          "start": 40,
+          "end": 44
+         }
+        }
+       ],
+       "candidates": {
+        "court": [
+         {
+          "value": "UKSC",
+          "state": "supplied",
+          "provenance": "supplied_text",
+          "spans": [
+           {
+            "start": 40,
+            "end": 44
+           }
+          ]
+         }
+        ],
+        "reporter": [],
+        "docket": []
+       },
+       "manualChoice": null,
+       "fields": {
+        "caseName": {
+         "value": "R (Miller) v. Secretary of State",
+         "state": "supplied",
+         "provenance": "existing_parser",
+         "spans": [
+          {
+           "start": 0,
+           "end": 32
+          }
+         ]
+        },
+        "court": {
+         "value": null,
+         "state": "unknown",
+         "provenance": "none",
+         "spans": []
+        },
+        "reporter": {
+         "value": null,
+         "state": "unknown",
+         "provenance": "none",
+         "spans": []
+        },
+        "docket": {
+         "value": null,
+         "state": "unknown",
+         "provenance": "none",
+         "spans": []
+        },
+        "year": {
+         "value": "2017",
+         "state": "supplied",
+         "provenance": "existing_parser",
+         "spans": [
+          {
+           "start": 34,
+           "end": 38
+          }
+         ]
+        },
+        "decisionDate": {
+         "value": null,
+         "state": "unknown",
+         "provenance": "none",
+         "spans": []
+        },
+        "volume": {
+         "value": null,
+         "state": "unknown",
+         "provenance": "none",
+         "spans": []
+        },
+        "firstPage": {
+         "value": null,
+         "state": "unknown",
+         "provenance": "none",
+         "spans": []
+        },
+        "neutral": {
+         "value": "UKSC 5",
+         "state": "supplied",
+         "provenance": "existing_parser",
+         "spans": [
+          {
+           "start": 40,
+           "end": 46
+          }
+         ]
+        }
+       },
+       "unknownSpans": [
+        {
+         "start": 32,
+         "end": 34
+        },
+        {
+         "start": 38,
+         "end": 40
+        }
+       ],
+       "classification": "identified_foreign",
+       "formatter": "existing_route",
+       "missing": [
+        "reporter"
+       ],
+       "conflicts": [],
+       "unsupported": [],
+       "identityVerified": false,
+       "route": "foreign"
+      },
+      "status": "valid"
+     }
+    }
+   }
+  ],
+  "server": {
+   "route": "foreign",
+   "conflicts": [],
+   "unsupported": [],
+   "jurisdiction": "UK"
+  }
+ },
+ {
+  "raw": "Donoghue v. Stevenson [1932] AC 562 (HL)",
+  "type": "foreign_case_other",
+  "jid": "t2:united-kingdom",
+  "contract": {
+   "version": 1,
+   "rawInput": "Donoghue v. Stevenson [1932] AC 562 (HL)",
+   "fingerprint": "pc1:40:caaf6cea",
+   "sourceKind": "case",
+   "jurisdiction": "UK",
+   "subjurisdiction": null,
+   "subjurisdictionEvidence": [],
+   "evidence": [],
+   "candidates": {
+    "court": [],
+    "reporter": [],
+    "docket": []
+   },
+   "fields": {
+    "caseName": {
+     "value": "Donoghue v. Stevenson",
+     "state": "supplied",
+     "provenance": "existing_parser",
+     "spans": [
+      {
+       "start": 0,
+       "end": 21
+      }
+     ]
+    },
+    "court": {
+     "value": "HL",
+     "state": "supplied",
+     "provenance": "existing_parser",
+     "spans": [
+      {
+       "start": 37,
+       "end": 39
+      }
+     ]
+    },
+    "reporter": {
+     "value": "AC",
+     "state": "supplied",
+     "provenance": "existing_parser",
+     "spans": [
+      {
+       "start": 29,
+       "end": 31
+      }
+     ]
+    },
+    "docket": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "year": {
+     "value": "1932",
+     "state": "supplied",
+     "provenance": "existing_parser",
+     "spans": [
+      {
+       "start": 23,
+       "end": 27
+      }
+     ]
+    },
+    "decisionDate": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "volume": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "firstPage": {
+     "value": "562",
+     "state": "supplied",
+     "provenance": "existing_parser",
+     "spans": [
+      {
+       "start": 32,
+       "end": 35
+      }
+     ]
+    }
+   },
+   "unknownSpans": [
+    {
+     "start": 21,
+     "end": 23
+    },
+    {
+     "start": 27,
+     "end": 29
+    },
+    {
+     "start": 31,
+     "end": 32
+    },
+    {
+     "start": 35,
+     "end": 37
+    },
+    {
+     "start": 39,
+     "end": 40
+    }
+   ],
+   "classification": "ambiguous",
+   "formatter": "existing_route",
+   "missing": [
+    "jurisdiction_evidence"
+   ],
+   "conflicts": [],
+   "unsupported": [],
+   "identityVerified": false,
+   "route": "foreign"
+  },
+  "hosts": [
+   {
+    "local": {
+     "origin": "pasted_local",
+     "resolution": {
+      "citation": "Donoghue v. Stevenson [1932] AC 562 (HL).",
+      "reply": "Donoghue v. Stevenson [1932] AC 562 (HL).\n⚠️ עוצב לפי הפרטים שסופקו; זהות המקור לא אומתה.",
+      "pastedCitation": {
+       "version": 1,
+       "rawInput": "Donoghue v. Stevenson [1932] AC 562 (HL)",
+       "fingerprint": "pc1:40:caaf6cea",
+       "sourceKind": "case",
+       "jurisdiction": "UK",
+       "subjurisdiction": null,
+       "subjurisdictionEvidence": [],
+       "evidence": [],
+       "candidates": {
+        "court": [],
+        "reporter": [],
+        "docket": []
+       },
+       "manualChoice": {
+        "jurisdiction": "UK",
+        "sourceType": "foreign_case_other",
+        "foreign": true,
+        "jurisdictionId": "t2:united-kingdom"
+       },
+       "fields": {
+        "caseName": {
+         "value": "Donoghue v. Stevenson",
+         "state": "supplied",
+         "provenance": "existing_parser",
+         "spans": [
+          {
+           "start": 0,
+           "end": 21
+          }
+         ]
+        },
+        "court": {
+         "value": "HL",
+         "state": "supplied",
+         "provenance": "existing_parser",
+         "spans": [
+          {
+           "start": 37,
+           "end": 39
+          }
+         ]
+        },
+        "reporter": {
+         "value": "AC",
+         "state": "supplied",
+         "provenance": "existing_parser",
+         "spans": [
+          {
+           "start": 29,
+           "end": 31
+          }
+         ]
+        },
+        "docket": {
+         "value": null,
+         "state": "unknown",
+         "provenance": "none",
+         "spans": []
+        },
+        "year": {
+         "value": "1932",
+         "state": "supplied",
+         "provenance": "existing_parser",
+         "spans": [
+          {
+           "start": 23,
+           "end": 27
+          }
+         ]
+        },
+        "decisionDate": {
+         "value": null,
+         "state": "unknown",
+         "provenance": "none",
+         "spans": []
+        },
+        "volume": {
+         "value": null,
+         "state": "unknown",
+         "provenance": "none",
+         "spans": []
+        },
+        "firstPage": {
+         "value": "562",
+         "state": "supplied",
+         "provenance": "existing_parser",
+         "spans": [
+          {
+           "start": 32,
+           "end": 35
+          }
+         ]
+        }
+       },
+       "unknownSpans": [
+        {
+         "start": 21,
+         "end": 23
+        },
+        {
+         "start": 27,
+         "end": 29
+        },
+        {
+         "start": 31,
+         "end": 32
+        },
+        {
+         "start": 35,
+         "end": 37
+        },
+        {
+         "start": 39,
+         "end": 40
+        }
+       ],
+       "classification": "ambiguous",
+       "formatter": "existing_route",
+       "missing": [
+        "jurisdiction_evidence"
+       ],
+       "conflicts": [],
+       "unsupported": [],
+       "identityVerified": false,
+       "route": "foreign"
+      },
+      "status": "valid"
+     }
+    }
+   },
+   {
+    "local": {
+     "origin": "pasted_local",
+     "resolution": {
+      "citation": "Donoghue v. Stevenson [1932] AC 562 (HL).",
+      "reply": "Donoghue v. Stevenson [1932] AC 562 (HL).\n⚠️ עוצב לפי הפרטים שסופקו; זהות המקור לא אומתה.",
+      "pastedCitation": {
+       "version": 1,
+       "rawInput": "Donoghue v. Stevenson [1932] AC 562 (HL)",
+       "fingerprint": "pc1:40:caaf6cea",
+       "sourceKind": "case",
+       "jurisdiction": "UK",
+       "subjurisdiction": null,
+       "subjurisdictionEvidence": [],
+       "evidence": [],
+       "candidates": {
+        "court": [],
+        "reporter": [],
+        "docket": []
+       },
+       "manualChoice": {
+        "jurisdiction": "UK",
+        "sourceType": "foreign_case_other",
+        "foreign": true,
+        "jurisdictionId": "t2:united-kingdom"
+       },
+       "fields": {
+        "caseName": {
+         "value": "Donoghue v. Stevenson",
+         "state": "supplied",
+         "provenance": "existing_parser",
+         "spans": [
+          {
+           "start": 0,
+           "end": 21
+          }
+         ]
+        },
+        "court": {
+         "value": "HL",
+         "state": "supplied",
+         "provenance": "existing_parser",
+         "spans": [
+          {
+           "start": 37,
+           "end": 39
+          }
+         ]
+        },
+        "reporter": {
+         "value": "AC",
+         "state": "supplied",
+         "provenance": "existing_parser",
+         "spans": [
+          {
+           "start": 29,
+           "end": 31
+          }
+         ]
+        },
+        "docket": {
+         "value": null,
+         "state": "unknown",
+         "provenance": "none",
+         "spans": []
+        },
+        "year": {
+         "value": "1932",
+         "state": "supplied",
+         "provenance": "existing_parser",
+         "spans": [
+          {
+           "start": 23,
+           "end": 27
+          }
+         ]
+        },
+        "decisionDate": {
+         "value": null,
+         "state": "unknown",
+         "provenance": "none",
+         "spans": []
+        },
+        "volume": {
+         "value": null,
+         "state": "unknown",
+         "provenance": "none",
+         "spans": []
+        },
+        "firstPage": {
+         "value": "562",
+         "state": "supplied",
+         "provenance": "existing_parser",
+         "spans": [
+          {
+           "start": 32,
+           "end": 35
+          }
+         ]
+        }
+       },
+       "unknownSpans": [
+        {
+         "start": 21,
+         "end": 23
+        },
+        {
+         "start": 27,
+         "end": 29
+        },
+        {
+         "start": 31,
+         "end": 32
+        },
+        {
+         "start": 35,
+         "end": 37
+        },
+        {
+         "start": 39,
+         "end": 40
+        }
+       ],
+       "classification": "ambiguous",
+       "formatter": "existing_route",
+       "missing": [
+        "jurisdiction_evidence"
+       ],
+       "conflicts": [],
+       "unsupported": [],
+       "identityVerified": false,
+       "route": "foreign"
+      },
+      "status": "valid"
+     }
+    }
+   }
+  ],
+  "server": {
+   "route": "foreign",
+   "conflicts": [],
+   "unsupported": [],
+   "jurisdiction": "UK"
+  }
+ },
+ {
+  "raw": "17 U.S.C. §512 (2018)",
+  "type": "foreign_statute_us",
+  "contract": {
+   "version": 1,
+   "rawInput": "17 U.S.C. §512 (2018)",
+   "fingerprint": "pc1:21:1cef35f3",
+   "sourceKind": "statute",
+   "jurisdiction": "US",
+   "subjurisdiction": null,
+   "subjurisdictionEvidence": [],
+   "evidence": [
+    {
+     "jurisdiction": "US",
+     "signal": "code",
+     "span": {
+      "start": 3,
+      "end": 9
+     }
+    }
+   ],
+   "candidates": {
+    "court": [],
+    "reporter": [],
+    "docket": []
+   },
+   "fields": {
+    "caseName": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "court": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "reporter": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "docket": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "year": {
+     "value": "2018",
+     "state": "supplied",
+     "provenance": "existing_parser",
+     "spans": [
+      {
+       "start": 16,
+       "end": 20
+      }
+     ]
+    },
+    "decisionDate": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "volume": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "firstPage": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "titleNumber": {
+     "value": "17",
+     "state": "supplied",
+     "provenance": "existing_parser",
+     "spans": [
+      {
+       "start": 0,
+       "end": 2
+      }
+     ]
+    },
+    "code": {
+     "value": "U.S.C.",
+     "state": "supplied",
+     "provenance": "existing_parser",
+     "spans": [
+      {
+       "start": 3,
+       "end": 9
+      }
+     ]
+    },
+    "section": {
+     "value": "512",
+     "state": "supplied",
+     "provenance": "existing_parser",
+     "spans": [
+      {
+       "start": 11,
+       "end": 14
+      }
+     ]
+    }
+   },
+   "unknownSpans": [
+    {
+     "start": 2,
+     "end": 3
+    },
+    {
+     "start": 9,
+     "end": 11
+    },
+    {
+     "start": 14,
+     "end": 16
+    },
+    {
+     "start": 20,
+     "end": 21
+    }
+   ],
+   "classification": "identified_foreign",
+   "formatter": "existing_route",
+   "missing": [],
+   "conflicts": [],
+   "unsupported": [],
+   "identityVerified": false,
+   "route": "foreign"
+  },
+  "hosts": [
+   {
+    "local": {
+     "origin": "deterministic",
+     "resolution": {
+      "reply": "17 U.S.C. § 512 (2018).",
+      "citation": "17 U.S.C. § 512 (2018).",
+      "sourceType": "foreign_statute_us",
+      "sourceLabel": "חוק אמריקני (36.2)",
+      "status": "valid"
+     }
+    }
+   },
+   {
+    "local": {
+     "origin": "deterministic",
+     "resolution": {
+      "reply": "17 U.S.C. § 512 (2018).",
+      "citation": "17 U.S.C. § 512 (2018).",
+      "sourceType": "foreign_statute_us",
+      "sourceLabel": "חוק אמריקני (36.2)",
+      "status": "valid"
+     }
+    }
+   }
+  ],
+  "server": {
+   "route": "foreign",
+   "conflicts": [],
+   "unsupported": [],
+   "jurisdiction": "US"
+  }
+ },
+ {
+  "raw": "Human Rights Act 1998, c. 42",
+  "type": "foreign_statute_uk",
+  "contract": {
+   "version": 1,
+   "rawInput": "Human Rights Act 1998, c. 42",
+   "fingerprint": "pc1:28:89623fad",
+   "sourceKind": "statute",
+   "jurisdiction": "UK",
+   "subjurisdiction": null,
+   "subjurisdictionEvidence": [],
+   "evidence": [],
+   "candidates": {
+    "court": [],
+    "reporter": [],
+    "docket": []
+   },
+   "fields": {
+    "caseName": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "court": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "reporter": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "docket": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "year": {
+     "value": "1998",
+     "state": "supplied",
+     "provenance": "existing_parser",
+     "spans": [
+      {
+       "start": 17,
+       "end": 21
+      }
+     ]
+    },
+    "decisionDate": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "volume": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "firstPage": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "statuteName": {
+     "value": "Human Rights Act",
+     "state": "supplied",
+     "provenance": "existing_parser",
+     "spans": [
+      {
+       "start": 0,
+       "end": 16
+      }
+     ]
+    },
+    "chapter": {
+     "value": "42",
+     "state": "supplied",
+     "provenance": "existing_parser",
+     "spans": [
+      {
+       "start": 26,
+       "end": 28
+      }
+     ]
+    }
+   },
+   "unknownSpans": [
+    {
+     "start": 16,
+     "end": 17
+    },
+    {
+     "start": 21,
+     "end": 26
+    }
+   ],
+   "classification": "ambiguous",
+   "formatter": "existing_route",
+   "missing": [],
+   "conflicts": [],
+   "unsupported": [],
+   "identityVerified": false,
+   "route": "foreign"
+  },
+  "hosts": [
+   {
+    "local": {
+     "origin": "deterministic",
+     "resolution": {
+      "reply": "Human Rights Act 1998, c. 42.",
+      "citation": "Human Rights Act 1998, c. 42.",
+      "sourceType": "foreign_statute_uk",
+      "sourceLabel": "חוק אנגלי (36.3)",
+      "status": "valid"
+     }
+    }
+   },
+   {
+    "local": {
+     "origin": "deterministic",
+     "resolution": {
+      "reply": "Human Rights Act 1998, c. 42.",
+      "citation": "Human Rights Act 1998, c. 42.",
+      "sourceType": "foreign_statute_uk",
+      "sourceLabel": "חוק אנגלי (36.3)",
+      "status": "valid"
+     }
+    }
+   }
+  ],
+  "server": {
+   "route": "foreign",
+   "conflicts": [],
+   "unsupported": [],
+   "jurisdiction": "UK"
+  }
+ },
+ {
+  "raw": "Copyright Act",
+  "type": "foreign_statute_us",
+  "contract": {
+   "version": 1,
+   "rawInput": "Copyright Act",
+   "fingerprint": "pc1:13:a542d5b6",
+   "sourceKind": null,
+   "jurisdiction": "US",
+   "subjurisdiction": null,
+   "subjurisdictionEvidence": [],
+   "evidence": [],
+   "candidates": {
+    "court": [],
+    "reporter": [],
+    "docket": []
+   },
+   "fields": {
+    "caseName": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "court": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "reporter": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "docket": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "year": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "decisionDate": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "volume": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "firstPage": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    }
+   },
+   "unknownSpans": [
+    {
+     "start": 0,
+     "end": 13
+    }
+   ],
+   "classification": "ambiguous",
+   "formatter": "existing_route",
+   "missing": [],
+   "conflicts": [],
+   "unsupported": [],
+   "identityVerified": false,
+   "route": "foreign"
+  },
+  "hosts": [
+   {
+    "typed": {
+     "kind": "typed",
+     "foreignLookup": {
+      "enabled": true,
+      "statuteResponseVersion": 1,
+      "kind": "statute",
+      "jurisdiction": "US",
+      "rawInput": "Copyright Act",
+      "parsedFields": {
+       "statuteName": "Copyright Act"
+      }
+     },
+     "extraBody": {}
+    }
+   },
+   {
+    "typed": {
+     "kind": "typed",
+     "foreignLookup": {
+      "enabled": true,
+      "statuteResponseVersion": 1,
+      "kind": "statute",
+      "jurisdiction": "US",
+      "rawInput": "Copyright Act",
+      "parsedFields": {
+       "statuteName": "Copyright Act"
+      }
+     },
+     "extraBody": {}
+    }
+   }
+  ],
+  "server": {
+   "route": "foreign",
+   "conflicts": [],
+   "unsupported": [],
+   "jurisdiction": "US"
+  }
+ },
+ {
+  "raw": "Author: Jane Doe; Book: Synthetic Collection; Original year: 1901",
+  "type": "foreign_book",
+  "contract": {
+   "version": 1,
+   "rawInput": "Author: Jane Doe; Book: Synthetic Collection; Original year: 1901",
+   "fingerprint": "pc1:65:1c32349",
+   "sourceKind": "book",
+   "jurisdiction": "UNKNOWN",
+   "subjurisdiction": null,
+   "subjurisdictionEvidence": [],
+   "evidence": [],
+   "candidates": {
+    "court": [],
+    "reporter": [],
+    "docket": []
+   },
+   "fields": {
+    "caseName": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "court": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "reporter": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "docket": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "year": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "decisionDate": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "volume": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "firstPage": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "authors": {
+     "value": "Jane Doe",
+     "state": "supplied",
+     "provenance": "existing_parser",
+     "spans": [
+      {
+       "start": 8,
+       "end": 16
+      }
+     ]
+    },
+    "bookTitle": {
+     "value": "Synthetic Collection",
+     "state": "supplied",
+     "provenance": "existing_parser",
+     "spans": [
+      {
+       "start": 24,
+       "end": 44
+      }
+     ]
+    },
+    "originalYear": {
+     "value": "1901",
+     "state": "supplied",
+     "provenance": "existing_parser",
+     "spans": [
+      {
+       "start": 61,
+       "end": 65
+      }
+     ]
+    }
+   },
+   "unknownSpans": [
+    {
+     "start": 0,
+     "end": 8
+    },
+    {
+     "start": 16,
+     "end": 24
+    },
+    {
+     "start": 44,
+     "end": 61
+    }
+   ],
+   "classification": "ambiguous",
+   "formatter": "unknown",
+   "missing": [],
+   "conflicts": [],
+   "unsupported": [],
+   "identityVerified": false,
+   "route": "foreign"
+  },
+  "hosts": [
+   {
+    "typed": {
+     "kind": "typed",
+     "foreignLookup": {
+      "enabled": true,
+      "kind": "book",
+      "jurisdiction": "OTHER",
+      "rawInput": "Author: Jane Doe; Book: Synthetic Collection; Original year: 1901",
+      "parsedFields": {
+       "authors": "Jane Doe",
+       "bookTitle": "Synthetic Collection"
+      }
+     },
+     "extraBody": {}
+    }
+   },
+   {
+    "typed": {
+     "kind": "typed",
+     "foreignLookup": {
+      "enabled": true,
+      "kind": "book",
+      "jurisdiction": "OTHER",
+      "rawInput": "Author: Jane Doe; Book: Synthetic Collection; Original year: 1901",
+      "parsedFields": {
+       "authors": "Jane Doe",
+       "bookTitle": "Synthetic Collection"
+      }
+     },
+     "extraBody": {}
+    }
+   }
+  ],
+  "server": {
+   "route": "foreign",
+   "conflicts": [],
+   "unsupported": [],
+   "jurisdiction": "UNKNOWN"
+  }
+ },
+ {
+  "raw": "Jane Doe, Hidden Costs, 12 Yale L.J. 34 (2020)",
+  "type": "foreign_journal_article",
+  "contract": {
+   "version": 1,
+   "rawInput": "Jane Doe, Hidden Costs, 12 Yale L.J. 34 (2020)",
+   "fingerprint": "pc1:46:48445c6b",
+   "sourceKind": "journal_article",
+   "jurisdiction": "UNKNOWN",
+   "subjurisdiction": null,
+   "subjurisdictionEvidence": [],
+   "evidence": [],
+   "candidates": {
+    "court": [],
+    "reporter": [],
+    "docket": []
+   },
+   "fields": {
+    "caseName": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "court": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "reporter": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "docket": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "year": {
+     "value": "2020",
+     "state": "supplied",
+     "provenance": "existing_parser",
+     "spans": [
+      {
+       "start": 41,
+       "end": 45
+      }
+     ]
+    },
+    "decisionDate": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "volume": {
+     "value": "12",
+     "state": "supplied",
+     "provenance": "existing_parser",
+     "spans": [
+      {
+       "start": 24,
+       "end": 26
+      }
+     ]
+    },
+    "firstPage": {
+     "value": "34",
+     "state": "supplied",
+     "provenance": "existing_parser",
+     "spans": [
+      {
+       "start": 37,
+       "end": 39
+      }
+     ]
+    },
+    "authors": {
+     "value": "Jane Doe",
+     "state": "supplied",
+     "provenance": "existing_parser",
+     "spans": [
+      {
+       "start": 0,
+       "end": 8
+      }
+     ]
+    },
+    "articleTitle": {
+     "value": "Hidden Costs",
+     "state": "supplied",
+     "provenance": "existing_parser",
+     "spans": [
+      {
+       "start": 10,
+       "end": 22
+      }
+     ]
+    },
+    "journal": {
+     "value": "Yale L.J.",
+     "state": "supplied",
+     "provenance": "existing_parser",
+     "spans": [
+      {
+       "start": 27,
+       "end": 36
+      }
+     ]
+    }
+   },
+   "unknownSpans": [
+    {
+     "start": 8,
+     "end": 10
+    },
+    {
+     "start": 22,
+     "end": 24
+    },
+    {
+     "start": 26,
+     "end": 27
+    },
+    {
+     "start": 36,
+     "end": 37
+    },
+    {
+     "start": 39,
+     "end": 41
+    },
+    {
+     "start": 45,
+     "end": 46
+    }
+   ],
+   "classification": "ambiguous",
+   "formatter": "unknown",
+   "missing": [],
+   "conflicts": [],
+   "unsupported": [],
+   "identityVerified": false,
+   "route": "foreign"
+  },
+  "hosts": [
+   {
+    "local": {
+     "origin": "deterministic",
+     "resolution": {
+      "reply": "Jane Doe, ##Hidden Costs##, 12 ^^Yale L.J.^^ 34 (2020).",
+      "citation": "Jane Doe, ##Hidden Costs##, 12 ^^Yale L.J.^^ 34 (2020).",
+      "sourceType": "foreign_journal_article",
+      "sourceLabel": "מאמר לועזי בכתב עת (36.7)",
+      "status": "valid"
+     }
+    }
+   },
+   {
+    "local": {
+     "origin": "deterministic",
+     "resolution": {
+      "reply": "Jane Doe, ##Hidden Costs##, 12 ^^Yale L.J.^^ 34 (2020).",
+      "citation": "Jane Doe, ##Hidden Costs##, 12 ^^Yale L.J.^^ 34 (2020).",
+      "sourceType": "foreign_journal_article",
+      "sourceLabel": "מאמר לועזי בכתב עת (36.7)",
+      "status": "valid"
+     }
+    }
+   }
+  ],
+  "server": {
+   "route": "foreign",
+   "conflicts": [],
+   "unsupported": [],
+   "jurisdiction": "UNKNOWN"
+  }
+ },
+ {
+  "raw": "BVerfG, Urteil vom 15. Januar 1958, 1 BvR 400/51, BVerfGE 7, 198",
+  "contract": {
+   "version": 1,
+   "rawInput": "BVerfG, Urteil vom 15. Januar 1958, 1 BvR 400/51, BVerfGE 7, 198",
+   "fingerprint": "pc1:64:2efad5d8",
+   "sourceKind": "case",
+   "jurisdiction": "DE",
+   "subjurisdiction": null,
+   "subjurisdictionEvidence": [],
+   "evidence": [
+    {
+     "jurisdiction": "DE",
+     "signal": "court",
+     "span": {
+      "start": 0,
+      "end": 6
+     }
+    },
+    {
+     "jurisdiction": "DE",
+     "signal": "court",
+     "span": {
+      "start": 38,
+      "end": 41
+     }
+    },
+    {
+     "jurisdiction": "DE",
+     "signal": "reporter",
+     "span": {
+      "start": 50,
+      "end": 57
+     }
+    }
+   ],
+   "candidates": {
+    "court": [
+     {
+      "value": "BVerfG",
+      "state": "supplied",
+      "provenance": "supplied_text",
+      "spans": [
+       {
+        "start": 0,
+        "end": 6
+       }
+      ]
+     },
+     {
+      "value": "BvR",
+      "state": "supplied",
+      "provenance": "supplied_text",
+      "spans": [
+       {
+        "start": 38,
+        "end": 41
+       }
+      ]
+     }
+    ],
+    "reporter": [
+     {
+      "value": "BVerfGE",
+      "state": "supplied",
+      "provenance": "supplied_text",
+      "spans": [
+       {
+        "start": 50,
+        "end": 57
+       }
+      ]
+     }
+    ],
+    "docket": [
+     {
+      "value": "400/51",
+      "state": "supplied",
+      "provenance": "supplied_text",
+      "spans": [
+       {
+        "start": 42,
+        "end": 48
+       }
+      ]
+     }
+    ]
+   },
+   "fields": {
+    "caseName": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "court": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "reporter": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "docket": {
+     "value": "400/51",
+     "state": "supplied",
+     "provenance": "supplied_text",
+     "spans": [
+      {
+       "start": 42,
+       "end": 48
+      }
+     ]
+    },
+    "year": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "decisionDate": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "volume": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "firstPage": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    }
+   },
+   "unknownSpans": [
+    {
+     "start": 6,
+     "end": 38
+    },
+    {
+     "start": 41,
+     "end": 42
+    },
+    {
+     "start": 48,
+     "end": 50
+    },
+    {
+     "start": 57,
+     "end": 64
+    }
+   ],
+   "classification": "identified_foreign",
+   "formatter": "unsupported",
+   "missing": [
+    "caseName",
+    "year",
+    "reporter"
+   ],
+   "conflicts": [],
+   "unsupported": [
+    "formatter_DE_not_supported"
+   ],
+   "identityVerified": false,
+   "route": "preserve"
+  },
+  "hosts": [
+   {
+    "preserve": {
+     "citation": "BVerfG, Urteil vom 15. Januar 1958, 1 BvR 400/51, BVerfGE 7, 198",
+     "reply": "BVerfG, Urteil vom 15. Januar 1958, 1 BvR 400/51, BVerfGE 7, 198\n⚠️ עיצוב האזכור בתחום השיפוט שזוהה אינו נתמך; הקלט נשמר, וזהות המקור לא אומתה.",
+     "warningMsg": "עיצוב האזכור בתחום השיפוט שזוהה אינו נתמך; הקלט נשמר, וזהות המקור לא אומתה.",
+     "status": "warning",
+     "pastedCitation": {
+      "version": 1,
+      "rawInput": "BVerfG, Urteil vom 15. Januar 1958, 1 BvR 400/51, BVerfGE 7, 198",
+      "fingerprint": "pc1:64:2efad5d8",
+      "sourceKind": "case",
+      "jurisdiction": "DE",
+      "subjurisdiction": null,
+      "subjurisdictionEvidence": [],
+      "evidence": [
+       {
+        "jurisdiction": "DE",
+        "signal": "court",
+        "span": {
+         "start": 0,
+         "end": 6
+        }
+       },
+       {
+        "jurisdiction": "DE",
+        "signal": "court",
+        "span": {
+         "start": 38,
+         "end": 41
+        }
+       },
+       {
+        "jurisdiction": "DE",
+        "signal": "reporter",
+        "span": {
+         "start": 50,
+         "end": 57
+        }
+       }
+      ],
+      "candidates": {
+       "court": [
+        {
+         "value": "BVerfG",
+         "state": "supplied",
+         "provenance": "supplied_text",
+         "spans": [
+          {
+           "start": 0,
+           "end": 6
+          }
+         ]
+        },
+        {
+         "value": "BvR",
+         "state": "supplied",
+         "provenance": "supplied_text",
+         "spans": [
+          {
+           "start": 38,
+           "end": 41
+          }
+         ]
+        }
+       ],
+       "reporter": [
+        {
+         "value": "BVerfGE",
+         "state": "supplied",
+         "provenance": "supplied_text",
+         "spans": [
+          {
+           "start": 50,
+           "end": 57
+          }
+         ]
+        }
+       ],
+       "docket": [
+        {
+         "value": "400/51",
+         "state": "supplied",
+         "provenance": "supplied_text",
+         "spans": [
+          {
+           "start": 42,
+           "end": 48
+          }
+         ]
+        }
+       ]
+      },
+      "manualChoice": null,
+      "fields": {
+       "caseName": {
+        "value": null,
+        "state": "unknown",
+        "provenance": "none",
+        "spans": []
+       },
+       "court": {
+        "value": null,
+        "state": "unknown",
+        "provenance": "none",
+        "spans": []
+       },
+       "reporter": {
+        "value": null,
+        "state": "unknown",
+        "provenance": "none",
+        "spans": []
+       },
+       "docket": {
+        "value": "400/51",
+        "state": "supplied",
+        "provenance": "supplied_text",
+        "spans": [
+         {
+          "start": 42,
+          "end": 48
+         }
+        ]
+       },
+       "year": {
+        "value": null,
+        "state": "unknown",
+        "provenance": "none",
+        "spans": []
+       },
+       "decisionDate": {
+        "value": null,
+        "state": "unknown",
+        "provenance": "none",
+        "spans": []
+       },
+       "volume": {
+        "value": null,
+        "state": "unknown",
+        "provenance": "none",
+        "spans": []
+       },
+       "firstPage": {
+        "value": null,
+        "state": "unknown",
+        "provenance": "none",
+        "spans": []
+       }
+      },
+      "unknownSpans": [
+       {
+        "start": 6,
+        "end": 38
+       },
+       {
+        "start": 41,
+        "end": 42
+       },
+       {
+        "start": 48,
+        "end": 50
+       },
+       {
+        "start": 57,
+        "end": 64
+       }
+      ],
+      "classification": "identified_foreign",
+      "formatter": "unsupported",
+      "missing": [
+       "caseName",
+       "year",
+       "reporter"
+      ],
+      "conflicts": [],
+      "unsupported": [
+       "formatter_DE_not_supported"
+      ],
+      "identityVerified": false,
+      "route": "preserve"
+     }
+    }
+   },
+   {
+    "preserve": {
+     "citation": "BVerfG, Urteil vom 15. Januar 1958, 1 BvR 400/51, BVerfGE 7, 198",
+     "reply": "BVerfG, Urteil vom 15. Januar 1958, 1 BvR 400/51, BVerfGE 7, 198\n⚠️ עיצוב האזכור בתחום השיפוט שזוהה אינו נתמך; הקלט נשמר, וזהות המקור לא אומתה.",
+     "warningMsg": "עיצוב האזכור בתחום השיפוט שזוהה אינו נתמך; הקלט נשמר, וזהות המקור לא אומתה.",
+     "status": "warning",
+     "pastedCitation": {
+      "version": 1,
+      "rawInput": "BVerfG, Urteil vom 15. Januar 1958, 1 BvR 400/51, BVerfGE 7, 198",
+      "fingerprint": "pc1:64:2efad5d8",
+      "sourceKind": "case",
+      "jurisdiction": "DE",
+      "subjurisdiction": null,
+      "subjurisdictionEvidence": [],
+      "evidence": [
+       {
+        "jurisdiction": "DE",
+        "signal": "court",
+        "span": {
+         "start": 0,
+         "end": 6
+        }
+       },
+       {
+        "jurisdiction": "DE",
+        "signal": "court",
+        "span": {
+         "start": 38,
+         "end": 41
+        }
+       },
+       {
+        "jurisdiction": "DE",
+        "signal": "reporter",
+        "span": {
+         "start": 50,
+         "end": 57
+        }
+       }
+      ],
+      "candidates": {
+       "court": [
+        {
+         "value": "BVerfG",
+         "state": "supplied",
+         "provenance": "supplied_text",
+         "spans": [
+          {
+           "start": 0,
+           "end": 6
+          }
+         ]
+        },
+        {
+         "value": "BvR",
+         "state": "supplied",
+         "provenance": "supplied_text",
+         "spans": [
+          {
+           "start": 38,
+           "end": 41
+          }
+         ]
+        }
+       ],
+       "reporter": [
+        {
+         "value": "BVerfGE",
+         "state": "supplied",
+         "provenance": "supplied_text",
+         "spans": [
+          {
+           "start": 50,
+           "end": 57
+          }
+         ]
+        }
+       ],
+       "docket": [
+        {
+         "value": "400/51",
+         "state": "supplied",
+         "provenance": "supplied_text",
+         "spans": [
+          {
+           "start": 42,
+           "end": 48
+          }
+         ]
+        }
+       ]
+      },
+      "manualChoice": null,
+      "fields": {
+       "caseName": {
+        "value": null,
+        "state": "unknown",
+        "provenance": "none",
+        "spans": []
+       },
+       "court": {
+        "value": null,
+        "state": "unknown",
+        "provenance": "none",
+        "spans": []
+       },
+       "reporter": {
+        "value": null,
+        "state": "unknown",
+        "provenance": "none",
+        "spans": []
+       },
+       "docket": {
+        "value": "400/51",
+        "state": "supplied",
+        "provenance": "supplied_text",
+        "spans": [
+         {
+          "start": 42,
+          "end": 48
+         }
+        ]
+       },
+       "year": {
+        "value": null,
+        "state": "unknown",
+        "provenance": "none",
+        "spans": []
+       },
+       "decisionDate": {
+        "value": null,
+        "state": "unknown",
+        "provenance": "none",
+        "spans": []
+       },
+       "volume": {
+        "value": null,
+        "state": "unknown",
+        "provenance": "none",
+        "spans": []
+       },
+       "firstPage": {
+        "value": null,
+        "state": "unknown",
+        "provenance": "none",
+        "spans": []
+       }
+      },
+      "unknownSpans": [
+       {
+        "start": 6,
+        "end": 38
+       },
+       {
+        "start": 41,
+        "end": 42
+       },
+       {
+        "start": 48,
+        "end": 50
+       },
+       {
+        "start": 57,
+        "end": 64
+       }
+      ],
+      "classification": "identified_foreign",
+      "formatter": "unsupported",
+      "missing": [
+       "caseName",
+       "year",
+       "reporter"
+      ],
+      "conflicts": [],
+      "unsupported": [
+       "formatter_DE_not_supported"
+      ],
+      "identityVerified": false,
+      "route": "preserve"
+     }
+    }
+   }
+  ],
+  "server": {
+   "route": "preserve",
+   "conflicts": [
+    "request_text_conflict"
+   ],
+   "unsupported": [
+    "formatter_DE_not_supported"
+   ],
+   "jurisdiction": "DE"
+  }
+ },
+ {
+  "raw": "Smith v. Jones C## Guide: x^^2 & A**B",
+  "type": "foreign_case_other",
+  "contract": {
+   "version": 1,
+   "rawInput": "Smith v. Jones C## Guide: x^^2 & A**B",
+   "fingerprint": "pc1:37:e85b9cb1",
+   "sourceKind": "case",
+   "jurisdiction": "UNKNOWN",
+   "subjurisdiction": null,
+   "subjurisdictionEvidence": [],
+   "evidence": [],
+   "candidates": {
+    "court": [],
+    "reporter": [],
+    "docket": []
+   },
+   "fields": {
+    "caseName": {
+     "value": "Smith v. Jones C## Guide: x^^2 & A**B",
+     "state": "supplied",
+     "provenance": "existing_parser",
+     "spans": [
+      {
+       "start": 0,
+       "end": 37
+      }
+     ]
+    },
+    "court": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "reporter": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "docket": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "year": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "decisionDate": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "volume": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "firstPage": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    }
+   },
+   "unknownSpans": [],
+   "classification": "ambiguous",
+   "formatter": "unknown",
+   "missing": [
+    "year",
+    "reporter",
+    "jurisdiction_evidence"
+   ],
+   "conflicts": [],
+   "unsupported": [],
+   "identityVerified": false,
+   "route": "foreign"
+  },
+  "hosts": [
+   {
+    "typed": {
+     "kind": "typed",
+     "foreignLookup": {
+      "enabled": true,
+      "kind": "case",
+      "jurisdiction": "UNKNOWN",
+      "rawInput": "Smith v. Jones C## Guide: x^^2 & A**B",
+      "parsedFields": {
+       "caseName": "Smith v. Jones C## Guide: x^^2 & A**B"
+      }
+     },
+     "extraBody": {}
+    }
+   },
+   {
+    "typed": {
+     "kind": "typed",
+     "foreignLookup": {
+      "enabled": true,
+      "kind": "case",
+      "jurisdiction": "UNKNOWN",
+      "rawInput": "Smith v. Jones C## Guide: x^^2 & A**B",
+      "parsedFields": {
+       "caseName": "Smith v. Jones C## Guide: x^^2 & A**B"
+      }
+     },
+     "extraBody": {}
+    }
+   }
+  ],
+  "server": {
+   "route": "foreign",
+   "conflicts": [],
+   "unsupported": [],
+   "jurisdiction": "UNKNOWN"
+  }
+ },
+ {
+  "raw": "ע\"א 400/51 כהן נ׳ לוי",
+  "contract": {
+   "version": 1,
+   "rawInput": "ע\"א 400/51 כהן נ׳ לוי",
+   "fingerprint": "pc1:21:bda0f801",
+   "sourceKind": "case",
+   "jurisdiction": "IL",
+   "subjurisdiction": null,
+   "subjurisdictionEvidence": [],
+   "evidence": [
+    {
+     "jurisdiction": "IL",
+     "signal": "prefix",
+     "span": {
+      "start": 0,
+      "end": 3
+     }
+    },
+    {
+     "jurisdiction": "IL",
+     "signal": "parties",
+     "span": {
+      "start": 11,
+      "end": 21
+     }
+    }
+   ],
+   "candidates": {
+    "court": [],
+    "reporter": [],
+    "docket": [
+     {
+      "value": "400/51",
+      "state": "supplied",
+      "provenance": "supplied_text",
+      "spans": [
+       {
+        "start": 4,
+        "end": 10
+       }
+      ]
+     }
+    ]
+   },
+   "fields": {
+    "caseName": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "court": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "reporter": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "docket": {
+     "value": "400/51",
+     "state": "supplied",
+     "provenance": "supplied_text",
+     "spans": [
+      {
+       "start": 4,
+       "end": 10
+      }
+     ]
+    },
+    "year": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "decisionDate": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "volume": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "firstPage": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    }
+   },
+   "unknownSpans": [
+    {
+     "start": 3,
+     "end": 4
+    },
+    {
+     "start": 10,
+     "end": 11
+    }
+   ],
+   "classification": "identified_israeli",
+   "formatter": "existing_route",
+   "missing": [
+    "caseName",
+    "year",
+    "reporter"
+   ],
+   "conflicts": [],
+   "unsupported": [],
+   "identityVerified": false,
+   "route": "israeli"
+  },
+  "hosts": [
+   {
+    "typed": {
+     "kind": "legacy",
+     "foreignLookup": null,
+     "extraBody": {}
+    }
+   },
+   {
+    "typed": {
+     "kind": "legacy",
+     "foreignLookup": null,
+     "extraBody": {}
+    }
+   }
+  ],
+  "server": {
+   "route": "israeli",
+   "conflicts": [],
+   "unsupported": [],
+   "jurisdiction": "IL"
+  }
+ },
+ {
+  "raw": "🙂 Brown v. Board of Education, 347 U.S. 483 (1954) — הערה",
+  "contract": {
+   "version": 1,
+   "rawInput": "🙂 Brown v. Board of Education, 347 U.S. 483 (1954) — הערה",
+   "fingerprint": "pc1:58:69422caa",
+   "sourceKind": "case",
+   "jurisdiction": "US",
+   "subjurisdiction": null,
+   "subjurisdictionEvidence": [],
+   "evidence": [
+    {
+     "jurisdiction": "US",
+     "signal": "reporter",
+     "span": {
+      "start": 36,
+      "end": 40
+     }
+    }
+   ],
+   "candidates": {
+    "court": [],
+    "reporter": [
+     {
+      "value": "U.S.",
+      "state": "supplied",
+      "provenance": "supplied_text",
+      "spans": [
+       {
+        "start": 36,
+        "end": 40
+       }
+      ]
+     }
+    ],
+    "docket": []
+   },
+   "fields": {
+    "caseName": {
+     "value": "🙂 Brown v. Board of Education",
+     "state": "supplied",
+     "provenance": "existing_parser",
+     "spans": [
+      {
+       "start": 0,
+       "end": 30
+      }
+     ]
+    },
+    "court": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "reporter": {
+     "value": "U.S.",
+     "state": "supplied",
+     "provenance": "existing_parser",
+     "spans": [
+      {
+       "start": 36,
+       "end": 40
+      }
+     ]
+    },
+    "docket": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "year": {
+     "value": "1954",
+     "state": "supplied",
+     "provenance": "existing_parser",
+     "spans": [
+      {
+       "start": 46,
+       "end": 50
+      }
+     ]
+    },
+    "decisionDate": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "volume": {
+     "value": "347",
+     "state": "supplied",
+     "provenance": "existing_parser",
+     "spans": [
+      {
+       "start": 32,
+       "end": 35
+      }
+     ]
+    },
+    "firstPage": {
+     "value": "483",
+     "state": "supplied",
+     "provenance": "existing_parser",
+     "spans": [
+      {
+       "start": 41,
+       "end": 44
+      }
+     ]
+    },
+    "unparsedRemainder": {
+     "value": "— הערה",
+     "state": "supplied",
+     "provenance": "existing_parser",
+     "spans": [
+      {
+       "start": 52,
+       "end": 58
+      }
+     ]
+    }
+   },
+   "unknownSpans": [
+    {
+     "start": 30,
+     "end": 32
+    },
+    {
+     "start": 35,
+     "end": 36
+    },
+    {
+     "start": 40,
+     "end": 41
+    },
+    {
+     "start": 44,
+     "end": 46
+    },
+    {
+     "start": 50,
+     "end": 58
+    }
+   ],
+   "classification": "identified_foreign",
+   "formatter": "existing_route",
+   "missing": [],
+   "conflicts": [],
+   "unsupported": [],
+   "identityVerified": false,
+   "route": "foreign"
+  },
+  "hosts": [
+   {
+    "local": {
+     "origin": "pasted_local",
+     "resolution": {
+      "citation": "🙂 Brown v. Board of Education, 347 U.S. 483 (1954) — הערה.",
+      "reply": "🙂 Brown v. Board of Education, 347 U.S. 483 (1954) — הערה.\n⚠️ פרטים שסופקו נשמרו כפי שהוזנו, בלי עיצוב או אימות אוטומטי: \"— הערה\". עוצב לפי הפרטים שסופקו; זהות המקור לא אומתה.",
+      "warningMsg": "פרטים שסופקו נשמרו כפי שהוזנו, בלי עיצוב או אימות אוטומטי: \"— הערה\".",
+      "pastedCitation": {
+       "version": 1,
+       "rawInput": "🙂 Brown v. Board of Education, 347 U.S. 483 (1954) — הערה",
+       "fingerprint": "pc1:58:69422caa",
+       "sourceKind": "case",
+       "jurisdiction": "US",
+       "subjurisdiction": null,
+       "subjurisdictionEvidence": [],
+       "evidence": [
+        {
+         "jurisdiction": "US",
+         "signal": "reporter",
+         "span": {
+          "start": 36,
+          "end": 40
+         }
+        }
+       ],
+       "candidates": {
+        "court": [],
+        "reporter": [
+         {
+          "value": "U.S.",
+          "state": "supplied",
+          "provenance": "supplied_text",
+          "spans": [
+           {
+            "start": 36,
+            "end": 40
+           }
+          ]
+         }
+        ],
+        "docket": []
+       },
+       "manualChoice": null,
+       "fields": {
+        "caseName": {
+         "value": "🙂 Brown v. Board of Education",
+         "state": "supplied",
+         "provenance": "existing_parser",
+         "spans": [
+          {
+           "start": 0,
+           "end": 30
+          }
+         ]
+        },
+        "court": {
+         "value": null,
+         "state": "unknown",
+         "provenance": "none",
+         "spans": []
+        },
+        "reporter": {
+         "value": "U.S.",
+         "state": "supplied",
+         "provenance": "existing_parser",
+         "spans": [
+          {
+           "start": 36,
+           "end": 40
+          }
+         ]
+        },
+        "docket": {
+         "value": null,
+         "state": "unknown",
+         "provenance": "none",
+         "spans": []
+        },
+        "year": {
+         "value": "1954",
+         "state": "supplied",
+         "provenance": "existing_parser",
+         "spans": [
+          {
+           "start": 46,
+           "end": 50
+          }
+         ]
+        },
+        "decisionDate": {
+         "value": null,
+         "state": "unknown",
+         "provenance": "none",
+         "spans": []
+        },
+        "volume": {
+         "value": "347",
+         "state": "supplied",
+         "provenance": "existing_parser",
+         "spans": [
+          {
+           "start": 32,
+           "end": 35
+          }
+         ]
+        },
+        "firstPage": {
+         "value": "483",
+         "state": "supplied",
+         "provenance": "existing_parser",
+         "spans": [
+          {
+           "start": 41,
+           "end": 44
+          }
+         ]
+        },
+        "unparsedRemainder": {
+         "value": "— הערה",
+         "state": "supplied",
+         "provenance": "existing_parser",
+         "spans": [
+          {
+           "start": 52,
+           "end": 58
+          }
+         ]
+        }
+       },
+       "unknownSpans": [
+        {
+         "start": 30,
+         "end": 32
+        },
+        {
+         "start": 35,
+         "end": 36
+        },
+        {
+         "start": 40,
+         "end": 41
+        },
+        {
+         "start": 44,
+         "end": 46
+        },
+        {
+         "start": 50,
+         "end": 58
+        }
+       ],
+       "classification": "identified_foreign",
+       "formatter": "existing_route",
+       "missing": [],
+       "conflicts": [],
+       "unsupported": [],
+       "identityVerified": false,
+       "route": "foreign"
+      },
+      "status": "warning"
+     }
+    }
+   },
+   {
+    "local": {
+     "origin": "pasted_local",
+     "resolution": {
+      "citation": "🙂 Brown v. Board of Education, 347 U.S. 483 (1954) — הערה.",
+      "reply": "🙂 Brown v. Board of Education, 347 U.S. 483 (1954) — הערה.\n⚠️ פרטים שסופקו נשמרו כפי שהוזנו, בלי עיצוב או אימות אוטומטי: \"— הערה\". עוצב לפי הפרטים שסופקו; זהות המקור לא אומתה.",
+      "warningMsg": "פרטים שסופקו נשמרו כפי שהוזנו, בלי עיצוב או אימות אוטומטי: \"— הערה\".",
+      "pastedCitation": {
+       "version": 1,
+       "rawInput": "🙂 Brown v. Board of Education, 347 U.S. 483 (1954) — הערה",
+       "fingerprint": "pc1:58:69422caa",
+       "sourceKind": "case",
+       "jurisdiction": "US",
+       "subjurisdiction": null,
+       "subjurisdictionEvidence": [],
+       "evidence": [
+        {
+         "jurisdiction": "US",
+         "signal": "reporter",
+         "span": {
+          "start": 36,
+          "end": 40
+         }
+        }
+       ],
+       "candidates": {
+        "court": [],
+        "reporter": [
+         {
+          "value": "U.S.",
+          "state": "supplied",
+          "provenance": "supplied_text",
+          "spans": [
+           {
+            "start": 36,
+            "end": 40
+           }
+          ]
+         }
+        ],
+        "docket": []
+       },
+       "manualChoice": null,
+       "fields": {
+        "caseName": {
+         "value": "🙂 Brown v. Board of Education",
+         "state": "supplied",
+         "provenance": "existing_parser",
+         "spans": [
+          {
+           "start": 0,
+           "end": 30
+          }
+         ]
+        },
+        "court": {
+         "value": null,
+         "state": "unknown",
+         "provenance": "none",
+         "spans": []
+        },
+        "reporter": {
+         "value": "U.S.",
+         "state": "supplied",
+         "provenance": "existing_parser",
+         "spans": [
+          {
+           "start": 36,
+           "end": 40
+          }
+         ]
+        },
+        "docket": {
+         "value": null,
+         "state": "unknown",
+         "provenance": "none",
+         "spans": []
+        },
+        "year": {
+         "value": "1954",
+         "state": "supplied",
+         "provenance": "existing_parser",
+         "spans": [
+          {
+           "start": 46,
+           "end": 50
+          }
+         ]
+        },
+        "decisionDate": {
+         "value": null,
+         "state": "unknown",
+         "provenance": "none",
+         "spans": []
+        },
+        "volume": {
+         "value": "347",
+         "state": "supplied",
+         "provenance": "existing_parser",
+         "spans": [
+          {
+           "start": 32,
+           "end": 35
+          }
+         ]
+        },
+        "firstPage": {
+         "value": "483",
+         "state": "supplied",
+         "provenance": "existing_parser",
+         "spans": [
+          {
+           "start": 41,
+           "end": 44
+          }
+         ]
+        },
+        "unparsedRemainder": {
+         "value": "— הערה",
+         "state": "supplied",
+         "provenance": "existing_parser",
+         "spans": [
+          {
+           "start": 52,
+           "end": 58
+          }
+         ]
+        }
+       },
+       "unknownSpans": [
+        {
+         "start": 30,
+         "end": 32
+        },
+        {
+         "start": 35,
+         "end": 36
+        },
+        {
+         "start": 40,
+         "end": 41
+        },
+        {
+         "start": 44,
+         "end": 46
+        },
+        {
+         "start": 50,
+         "end": 58
+        }
+       ],
+       "classification": "identified_foreign",
+       "formatter": "existing_route",
+       "missing": [],
+       "conflicts": [],
+       "unsupported": [],
+       "identityVerified": false,
+       "route": "foreign"
+      },
+      "status": "warning"
+     }
+    }
+   }
+  ],
+  "server": {
+   "route": "foreign",
+   "conflicts": [],
+   "unsupported": [],
+   "jurisdiction": "US"
+  }
+ },
+ {
+  "raw": "Smith v. Jones",
+  "type": "foreign_case_other",
+  "jid": "t2:brazil",
+  "contract": {
+   "version": 1,
+   "rawInput": "Smith v. Jones",
+   "fingerprint": "pc1:14:5d0e828b",
+   "sourceKind": "case",
+   "jurisdiction": "UNKNOWN",
+   "subjurisdiction": null,
+   "subjurisdictionEvidence": [],
+   "evidence": [],
+   "candidates": {
+    "court": [],
+    "reporter": [],
+    "docket": []
+   },
+   "fields": {
+    "caseName": {
+     "value": "Smith v. Jones",
+     "state": "supplied",
+     "provenance": "existing_parser",
+     "spans": [
+      {
+       "start": 0,
+       "end": 14
+      }
+     ]
+    },
+    "court": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "reporter": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "docket": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "year": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "decisionDate": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "volume": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    },
+    "firstPage": {
+     "value": null,
+     "state": "unknown",
+     "provenance": "none",
+     "spans": []
+    }
+   },
+   "unknownSpans": [],
+   "classification": "ambiguous",
+   "formatter": "unsupported",
+   "missing": [
+    "year",
+    "reporter",
+    "jurisdiction_evidence"
+   ],
+   "conflicts": [],
+   "unsupported": [
+    "jurisdiction_formatter_unknown"
+   ],
+   "identityVerified": false,
+   "route": "preserve"
+  },
+  "hosts": [
+   {
+    "preserve": {
+     "citation": "Smith v. Jones",
+     "reply": "Smith v. Jones\n⚠️ עיצוב האזכור בתחום השיפוט שזוהה אינו נתמך; הקלט נשמר, וזהות המקור לא אומתה.",
+     "warningMsg": "עיצוב האזכור בתחום השיפוט שזוהה אינו נתמך; הקלט נשמר, וזהות המקור לא אומתה.",
+     "status": "warning",
+     "pastedCitation": {
+      "version": 1,
+      "rawInput": "Smith v. Jones",
+      "fingerprint": "pc1:14:5d0e828b",
+      "sourceKind": "case",
+      "jurisdiction": "UNKNOWN",
+      "subjurisdiction": null,
+      "subjurisdictionEvidence": [],
+      "evidence": [],
+      "candidates": {
+       "court": [],
+       "reporter": [],
+       "docket": []
+      },
+      "manualChoice": {
+       "jurisdiction": "UNKNOWN",
+       "sourceType": "foreign_case_other",
+       "foreign": true,
+       "jurisdictionId": "t2:brazil"
+      },
+      "fields": {
+       "caseName": {
+        "value": "Smith v. Jones",
+        "state": "supplied",
+        "provenance": "existing_parser",
+        "spans": [
+         {
+          "start": 0,
+          "end": 14
+         }
+        ]
+       },
+       "court": {
+        "value": null,
+        "state": "unknown",
+        "provenance": "none",
+        "spans": []
+       },
+       "reporter": {
+        "value": null,
+        "state": "unknown",
+        "provenance": "none",
+        "spans": []
+       },
+       "docket": {
+        "value": null,
+        "state": "unknown",
+        "provenance": "none",
+        "spans": []
+       },
+       "year": {
+        "value": null,
+        "state": "unknown",
+        "provenance": "none",
+        "spans": []
+       },
+       "decisionDate": {
+        "value": null,
+        "state": "unknown",
+        "provenance": "none",
+        "spans": []
+       },
+       "volume": {
+        "value": null,
+        "state": "unknown",
+        "provenance": "none",
+        "spans": []
+       },
+       "firstPage": {
+        "value": null,
+        "state": "unknown",
+        "provenance": "none",
+        "spans": []
+       }
+      },
+      "unknownSpans": [],
+      "classification": "ambiguous",
+      "formatter": "unsupported",
+      "missing": [
+       "year",
+       "reporter",
+       "jurisdiction_evidence"
+      ],
+      "conflicts": [],
+      "unsupported": [
+       "jurisdiction_formatter_unknown"
+      ],
+      "identityVerified": false,
+      "route": "preserve"
+     }
+    }
+   },
+   {
+    "preserve": {
+     "citation": "Smith v. Jones",
+     "reply": "Smith v. Jones\n⚠️ עיצוב האזכור בתחום השיפוט שזוהה אינו נתמך; הקלט נשמר, וזהות המקור לא אומתה.",
+     "warningMsg": "עיצוב האזכור בתחום השיפוט שזוהה אינו נתמך; הקלט נשמר, וזהות המקור לא אומתה.",
+     "status": "warning",
+     "pastedCitation": {
+      "version": 1,
+      "rawInput": "Smith v. Jones",
+      "fingerprint": "pc1:14:5d0e828b",
+      "sourceKind": "case",
+      "jurisdiction": "UNKNOWN",
+      "subjurisdiction": null,
+      "subjurisdictionEvidence": [],
+      "evidence": [],
+      "candidates": {
+       "court": [],
+       "reporter": [],
+       "docket": []
+      },
+      "manualChoice": {
+       "jurisdiction": "UNKNOWN",
+       "sourceType": "foreign_case_other",
+       "foreign": true,
+       "jurisdictionId": "t2:brazil"
+      },
+      "fields": {
+       "caseName": {
+        "value": "Smith v. Jones",
+        "state": "supplied",
+        "provenance": "existing_parser",
+        "spans": [
+         {
+          "start": 0,
+          "end": 14
+         }
+        ]
+       },
+       "court": {
+        "value": null,
+        "state": "unknown",
+        "provenance": "none",
+        "spans": []
+       },
+       "reporter": {
+        "value": null,
+        "state": "unknown",
+        "provenance": "none",
+        "spans": []
+       },
+       "docket": {
+        "value": null,
+        "state": "unknown",
+        "provenance": "none",
+        "spans": []
+       },
+       "year": {
+        "value": null,
+        "state": "unknown",
+        "provenance": "none",
+        "spans": []
+       },
+       "decisionDate": {
+        "value": null,
+        "state": "unknown",
+        "provenance": "none",
+        "spans": []
+       },
+       "volume": {
+        "value": null,
+        "state": "unknown",
+        "provenance": "none",
+        "spans": []
+       },
+       "firstPage": {
+        "value": null,
+        "state": "unknown",
+        "provenance": "none",
+        "spans": []
+       }
+      },
+      "unknownSpans": [],
+      "classification": "ambiguous",
+      "formatter": "unsupported",
+      "missing": [
+       "year",
+       "reporter",
+       "jurisdiction_evidence"
+      ],
+      "conflicts": [],
+      "unsupported": [
+       "jurisdiction_formatter_unknown"
+      ],
+      "identityVerified": false,
+      "route": "preserve"
+     }
+    }
+   }
+  ],
+  "server": {
+   "route": "preserve",
+   "conflicts": [],
+   "unsupported": [
+    "jurisdiction_formatter_unknown"
+   ],
+   "jurisdiction": "UNKNOWN"
+  }
+ }
+]
