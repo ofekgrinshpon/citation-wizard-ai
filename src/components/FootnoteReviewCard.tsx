@@ -7,6 +7,8 @@ import { toForeignIdentity, isForeignSourceType } from "@/data/bluebook/types";
 import { ForeignSourcePicker } from "./ForeignSourcePicker";
 
 export interface ReviewCardCell {
+  completion?: import("@/lib/citationCompletion").CompletionAcceptance;
+  pastedCitation?: import("../../supabase/functions/_shared/pastedCitation").PastedCitationContract;
   id: number;
   input: string;
   output: string | null;

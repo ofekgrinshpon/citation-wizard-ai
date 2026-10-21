@@ -112,6 +112,7 @@ export interface RunCitationOptions {
 }
 
 export interface RunCitationResult {
+  completion?: import("@/lib/citationCompletion").CompletionAcceptance;
   pastedCitation?: PastedCitationContract;
   /** Full engine reply (may include explanation / warning lines). */
   reply: string;

@@ -47,7 +47,7 @@ export function articleRequestFields(sourceType?: SourceType, rawInput?: string)
 export function renderForeignArticleLookup(
   request: Pick<ForeignArticleRequest, "parsedFields">,
   result?: ForeignArticleLookupResponse | null,
-): { citation: string; reply: string; status: "valid" | "warning"; warningMsg?: string } | null {
+): { citation: string; reply: string; status: "valid" | "warning"; warningMsg?: string; missing?: string[] } | null {
   if (!result?.fields || !(result.articleResolution || (result.identity?.matched && Object.keys(result.fields).length))) return null;
   const fields = { ...result.fields, ...request.parsedFields };
   if (result.identity?.matched && result.articleResolution !== "conflict") {
@@ -67,6 +67,7 @@ export function renderForeignArticleLookup(
   }
   if (rendered.missing.length) warnings.push(`חסרים פרטים: ${getMissingFieldsSummary("foreign_journal_article", rendered.missing)}`);
   return {
+    missing: rendered.missing,
     citation: rendered.citation,
     reply: warnings.length ? `${rendered.citation}\n⚠️ ${warnings.join(" ")}` : rendered.citation,
     status: warnings.length || rendered.missing.length ? "warning" : "valid",

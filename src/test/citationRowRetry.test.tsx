@@ -16,6 +16,7 @@ const boundary = vi.hoisted(() => ({
   classify: vi.fn(), verified: vi.fn(), insert: vi.fn(),
   toast: Object.assign(vi.fn(), { error: vi.fn(), success: vi.fn(), message: vi.fn(), info: vi.fn() }),
   user: { id: "initial" } as { id: string } | null,
+  addEntries: vi.fn(), sync: vi.fn(), card: vi.fn(),
 }));
 vi.mock("@/integrations/supabase/client", () => ({ supabase: {
   functions: { invoke: boundary.invoke },
@@ -38,13 +39,19 @@ vi.mock("@/hooks/useAuth", () => ({ useAuth: () => ({ user: boundary.user, isAdm
 vi.mock("@/hooks/useProjects", () => ({ useProjects: () => ({ currentProject: { id: "row-project" } }) }));
 vi.mock("@/hooks/useOffice", () => ({ useOffice: () => ({ isOfficeAddin: false, hasDocumentAccess: false }) }));
 vi.mock("@/hooks/useBibliography", () => ({
-  useBibliography: () => ({ sortedEntries: [], addEntries: vi.fn(), removeEntry: vi.fn(), clearAll: vi.fn(), syncFootnoteEntries: vi.fn() }),
+  useBibliography: () => ({ sortedEntries: [], addEntries: boundary.addEntries, removeEntry: vi.fn(), clearAll: vi.fn(), syncFootnoteEntries: boundary.sync }),
   CATEGORY_LABELS: {}, classifyCitation: () => ({ sourceType: "unknown", language: "hebrew" }),
 }));
 vi.mock("sonner", () => ({ toast: boundary.toast }));
 vi.mock("@/components/VerifiedAutocomplete", () => ({ VerifiedAutocomplete: ({ value, onChange, disabled }: { value: string; onChange: (value: string) => void; disabled: boolean }) =>
   <input aria-label="מקור" value={value} disabled={disabled} onChange={(event) => onChange(event.target.value)} /> }));
 vi.mock("@/components/FormattedCitation", () => ({ FormattedCitation: ({ text }: { text: string }) => <span>{text}</span> }));
+vi.mock("@/components/FootnoteReviewCard", async original => {
+  const actual = await original<typeof import("@/components/FootnoteReviewCard")>();
+  return { ...actual, FootnoteReviewCard: (props: React.ComponentProps<typeof actual.FootnoteReviewCard>) => {
+    boundary.card(props.cell); return <actual.FootnoteReviewCard {...props} />;
+  } };
+});
 
 const rawA = 'ע"א 1234/22 פלוני נגד אלמוני';
 const rawB = 'ע"א 4567/23 לוי נגד כהן';
@@ -673,4 +680,22 @@ it.each(["bibliography", "footnote"])("C1 actual %s host uses real server partia
   expect(document.body.textContent).toContain(expected.warningMsg);
   expect(document.body.textContent).not.toContain("UNSAFE");
   expect(boundary.invoke).toHaveBeenCalledTimes(1);
+  expect(expected.completion?.fields.reporter).toBe("U.S.");
+  expect(expected.completion?.missing).toContain("year");
+  if (mode === "bibliography") {
+    boundary.addEntries.mockReturnValue(1);
+    await act(async () => fireEvent.click(screen.getByRole("button", { name: /הוסף הכל לביבליוגרפיה/ })));
+    const row = boundary.addEntries.mock.calls.at(-1)?.[0][0];
+    expect(row.completion).toEqual(expected.completion);
+    expect(row.pastedCitation).toEqual(expected.pastedCitation);
+  } else {
+    const cell = boundary.card.mock.calls.map(([c]) => c).find(c => c.completion);
+    expect(cell.completion).toEqual(expected.completion);
+    expect(cell.pastedCitation).toEqual(expected.pastedCitation);
+    expect(localStorage.getItem("footnote_cells_row-project")).not.toContain('"completion"');
+    boundary.insert.mockResolvedValue({ data: null, error: null });
+    await act(async () => fireEvent.click(screen.getByRole("button", { name: /אשר הכל/ })));
+    await act(async () => fireEvent.click(screen.getByRole("button", { name: /בנה רשימה סופית/ })));
+    await waitFor(() => expect(boundary.sync.mock.calls.at(-1)?.[0][0].completion).toEqual(expected.completion));
+  }
 });

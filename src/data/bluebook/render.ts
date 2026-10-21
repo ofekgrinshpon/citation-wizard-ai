@@ -163,8 +163,10 @@ export function renderUsCase(f: ForeignCaseFields): RenderResult {
       f.pinpoint ? `, at *${f.pinpoint}` : ""
     }`;
   } else {
-    core = `${miss("כרך/מאגר")} ${miss("מקור פרסום")} ${miss("עמוד")}`;
-    warnings.push("לא אותר מקור פרסום (reporter) — אין להשלים מידע שאינו מאומת.");
+    core = `${f.volume || miss("כרך/מאגר")} ${f.reporter || miss("מקור פרסום")} ${f.firstPage ? pageSpan(f.firstPage, f.pinpoint) : miss("עמוד")}`;
+    if (f.parallel) core += `, ${f.parallel}`;
+    if (!f.reporter) warnings.push("לא אותר מקור פרסום (reporter) — אין להשלים מידע שאינו מאומת.");
+    if (!f.firstPage) warnings.push("חסר עמוד פתיחה; נשמרו פרטי הפרסום שאומתו ללא השלמת עמוד.");
   }
 
   if (f.paragraph) core += ` ¶ ${f.paragraph}`;

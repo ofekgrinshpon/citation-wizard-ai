@@ -20,6 +20,8 @@ import { normalizeHebrewNumberRanges } from "@/lib/hebrewNumberRange";
 interface Message {
   role: "user" | "assistant";
   content: string;
+  completion?: import("@/lib/citationCompletion").CompletionAcceptance;
+  pastedCitation?: import("../../supabase/functions/_shared/pastedCitation").PastedCitationContract;
 }
 
 /** Extract rule number from a 📐 line */

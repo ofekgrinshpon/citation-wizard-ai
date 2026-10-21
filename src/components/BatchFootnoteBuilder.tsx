@@ -26,6 +26,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { activeCitationDiagnostic, citationDiagnosticCandidate, prepareCitationDiagnostic } from "@/lib/citationDiagnostic";
 
 interface FootnoteCell {
+  completion?: RunCitationResult["completion"];
+  pastedCitation?: RunCitationResult["pastedCitation"];
   id: number;
   /** Stable through display-number changes and row removal. */
   key: string;
@@ -85,7 +87,7 @@ function loadCells(projectId: string | undefined): FootnoteCell[] {
     const raw = localStorage.getItem(getCellsKey(projectId));
     if (raw) {
       const parsed = JSON.parse(raw) as FootnoteCell[];
-      if (Array.isArray(parsed) && parsed.length > 0) return parsed.map(c => ({ ...c, key: c.key || crypto.randomUUID(), citationRetry: undefined, requestId: undefined, recovery: undefined, status: c.status === "loading" ? "empty" : c.status }));
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed.map(c => ({ ...c, key: c.key || crypto.randomUUID(), citationRetry: undefined, requestId: undefined, recovery: undefined, completion: undefined, pastedCitation: undefined, status: c.status === "loading" ? "empty" : c.status }));
     }
   } catch {}
   return Array.from({ length: 5 }, (_, i) => createCell(i + 1));
@@ -136,7 +138,7 @@ export function BatchFootnoteBuilder({}: BatchProps) {
 
   useEffect(() => {
     // Retry authority and retained engine/render context must stay in memory.
-    const savedCells = cells.map(({ citationRetry: _retry, recovery: _recovery, requestId: _requestId, ...cell }) => cell);
+    const savedCells = cells.map(({ citationRetry: _retry, recovery: _recovery, requestId: _requestId, completion: _completion, pastedCitation: _pasted, ...cell }) => cell);
     localStorage.setItem(getCellsKey(projectId), JSON.stringify(savedCells));
   }, [cells, projectId]);
 
@@ -155,7 +157,7 @@ export function BatchFootnoteBuilder({}: BatchProps) {
     if (cell) rowGuard.invalidate(cell.key);
     setCells((prev) =>
       prev.map((c) =>
-        c.id === id ? { ...c, input: value, status: "empty", verifiedCitation: undefined, citationRetry: undefined, requestId: undefined, recovery: undefined } : c
+        c.id === id ? { ...c, input: value, status: "empty", completion: undefined, pastedCitation: undefined, verifiedCitation: undefined, citationRetry: undefined, requestId: undefined, recovery: undefined } : c
       )
     );
   }, [rowGuard]);
@@ -165,7 +167,7 @@ export function BatchFootnoteBuilder({}: BatchProps) {
     if (cell) rowGuard.invalidate(cell.key);
     setCells((prev) =>
       prev.map((c) =>
-        c.id === id ? { ...c, output: citation, status: "verified", verifiedCitation: citation, citationRetry: undefined, requestId: undefined, recovery: undefined } : c
+        c.id === id ? { ...c, output: citation, status: "verified", completion: undefined, pastedCitation: undefined, verifiedCitation: citation, citationRetry: undefined, requestId: undefined, recovery: undefined } : c
       )
     );
   }, [rowGuard]);
@@ -229,6 +231,8 @@ export function BatchFootnoteBuilder({}: BatchProps) {
   const applyResultToCell = (c: FootnoteCell, res: RunCitationResult): FootnoteCell => ({
     ...c,
     output: res.reply,
+    completion: res.completion,
+    pastedCitation: res.pastedCitation,
     telemetry: res.telemetry,
     status: res.status,
     warningMsg: res.status === "warning" ? res.warningMsg : undefined,
@@ -264,7 +268,7 @@ export function BatchFootnoteBuilder({}: BatchProps) {
     setCells((prev) =>
       prev.map((c) =>
         c.input.trim() && c.status !== "verified"
-          ? { ...c, status: "loading", output: null, errorMsg: undefined, approved: false, citationRetry: undefined, requestId: undefined }
+          ? { ...c, status: "loading", completion: undefined, pastedCitation: undefined, output: null, errorMsg: undefined, approved: false, citationRetry: undefined, requestId: undefined }
           : c
       )
     );
@@ -331,7 +335,7 @@ export function BatchFootnoteBuilder({}: BatchProps) {
     const job = rowGuard.begin(cell.key);
     if (!job) return;
     setCells((prev) => prev.map((c) => c.key === cell.key
-      ? { ...c, status: "loading", output: null, errorMsg: undefined, approved: false, citationRetry: undefined, requestId: undefined } : c));
+      ? { ...c, status: "loading", completion: undefined, pastedCitation: undefined, output: null, errorMsg: undefined, approved: false, citationRetry: undefined, requestId: undefined } : c));
     // Explicit regeneration uses the effective foreign classification (if set).
     const plan = explicitRetry || cell.recovery ? null : planForItem(user?.id, `batch:${cell.key}`, cell.input);
     try {
@@ -357,7 +361,7 @@ export function BatchFootnoteBuilder({}: BatchProps) {
     const cell = cellsRef.current.find((c) => c.id === id);
     if (cell) rowGuard.invalidate(cell.key);
     setCells((prev) => {
-      const updated = prev.map((c) => (c.id === id ? { ...c, output: value, approved: false, citationRetry: undefined, requestId: undefined, recovery: undefined } : c));
+      const updated = prev.map((c) => (c.id === id ? { ...c, output: value, completion: undefined, pastedCitation: undefined, approved: false, citationRetry: undefined, requestId: undefined, recovery: undefined } : c));
       return applyRepeatCitationRules(updated);
     });
   }, [rowGuard]);
@@ -366,7 +370,7 @@ export function BatchFootnoteBuilder({}: BatchProps) {
     const cell = cellsRef.current.find((c) => c.id === id);
     if (cell) rowGuard.invalidate(cell.key);
     setCells((prev) =>
-      prev.map((c) => (c.id === id ? { ...c, sourceTypeOverride: t, approved: false, citationRetry: undefined, requestId: undefined, recovery: undefined } : c))
+      prev.map((c) => (c.id === id ? { ...c, sourceTypeOverride: t, completion: undefined, pastedCitation: undefined, approved: false, citationRetry: undefined, requestId: undefined, recovery: undefined } : c))
     );
   }, [rowGuard]);
 
@@ -509,7 +513,7 @@ export function BatchFootnoteBuilder({}: BatchProps) {
           // Styles and warnings travel to the bibliography; identity checks
           // above stay on the plain reading.
           const { citation, warnings } = splitCitationWarnings(extractCitationPresentation(cell.output!));
-          return { rawInput: cell.input, fullCitation: citation, ...(warnings.length ? { warnings } : {}) };
+          return { rawInput: cell.input, fullCitation: citation, completion: cell.completion, pastedCitation: cell.pastedCitation, ...(warnings.length ? { warnings } : {}) };
         });
 
       const syncedCount = bibliography.syncFootnoteEntries(bibItems);

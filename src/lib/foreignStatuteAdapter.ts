@@ -51,6 +51,7 @@ export interface StatutePreparation {
 }
 
 export interface StatuteRenderResult {
+  missing?: string[];
   citation: string;
   reply: string;
   status: "valid" | "warning";
@@ -233,6 +234,7 @@ function build(prep: StatutePreparation, fields: Record<string, StatuteFieldValu
   const citation = rendered?.citation.trim() ? rendered.citation : escapeCitationLiteral(prep.rawInput);
   if (rendered?.missing.length) warnings.push(`חסרים פרטים: ${getMissingFieldsSummary(prep.sourceType, rendered.missing)}`);
   return {
+    missing: rendered?.missing,
     citation,
     reply: warnings.length ? `${citation}\n⚠️ ${warnings.join(" ")}` : citation,
     status: warnings.length ? "warning" : "valid",

@@ -2003,6 +2003,24 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
             }));
           }
         }
+        // Existing typed book/chapter requests are terminal even when discovery
+        // is unavailable or unmatched. Settlement stays with completeResponse;
+        // no generic generation, resend or new refund policy is introduced.
+        if (flKind === "book" || flKind === "book_chapter") {
+          const result: ForeignLookupResult = foreignLookupResult ?? {
+            kind: flKind, jurisdiction: flJur, fields: {}, grounded: {}, provenance: {}, sources: [],
+            identity: { matched: false, anchors: [], conflicts: [] },
+            diagnostics: { tier1Queried: !!pplxKey, tier2Fired: false },
+            error: pplxKey ? "lookup_failed" : "missing_perplexity_credentials",
+          };
+          const warning = result.error
+            ? "חיפוש פרטי הספר או הפרק לא היה זמין; הקלט נשמר ללא השלמה."
+            : "לא אומתה התאמת הספר או הפרק לפרטים שסופקו; הקלט נשמר ללא השלמה.";
+          return completeResponse(new Response(JSON.stringify({ content: `${flRaw}\n⚠️ ${warning}`, foreignLookup: result,
+            ...diagnosticEnvelope(result.error ? "lookup_failed" : "lookup_complete") }), {
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          }));
+        }
       }
     }
 

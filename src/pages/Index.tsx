@@ -45,6 +45,8 @@ import { ReLexLogo } from "@/components/ReLexLogo";
 interface Message {
   role: "user" | "assistant";
   content: string;
+  completion?: import("@/lib/citationCompletion").CompletionAcceptance;
+  pastedCitation?: import("../../supabase/functions/_shared/pastedCitation").PastedCitationContract;
 }
 
 import { applyYearPreferences, isLegislationInput, extractLawNameFromInput, extractCitationFromResponse, type YearPreferences } from "@/lib/citationUtils";
@@ -245,7 +247,7 @@ const Index = () => {
   useEffect(() => {
     try {
       const savedMessages = localStorage.getItem(getProjectKey(LS_KEY_MESSAGES_PREFIX, projectId));
-      setMessages(savedMessages ? JSON.parse(savedMessages) : []);
+      setMessages(savedMessages ? JSON.parse(savedMessages).map(({ role, content }: Message) => ({ role, content })) : []);
     } catch { setMessages([]); }
     setInput(localStorage.getItem(getProjectKey(LS_KEY_INPUT_PREFIX, projectId)) || "");
     setPendingVerification(null);
@@ -263,7 +265,7 @@ const Index = () => {
 
   // Persist messages to localStorage
   useEffect(() => {
-    localStorage.setItem(getProjectKey(LS_KEY_MESSAGES_PREFIX, projectId), JSON.stringify(messages));
+    localStorage.setItem(getProjectKey(LS_KEY_MESSAGES_PREFIX, projectId), JSON.stringify(messages.map(({ role, content }) => ({ role, content }))));
   }, [messages, projectId]);
 
   useEffect(() => {
@@ -279,7 +281,7 @@ const Index = () => {
     );
   }
 
-  const callAPI = async (userMessage: string, history: Message[], telemetry?: CostTelemetry, article?: { sourceType: SourceType; rawInput: string; manual?: boolean; manualChoice?: CitationManualChoice | null }, onSuccess?: (reply: string, isCurrent: () => boolean, historyRequestId?: string, typed?: boolean) => Promise<void> | void) => {
+  const callAPI = async (userMessage: string, history: Message[], telemetry?: CostTelemetry, article?: { sourceType: SourceType; rawInput: string; manual?: boolean; manualChoice?: CitationManualChoice | null }, onSuccess?: (reply: string, isCurrent: () => boolean, historyRequestId?: string, typed?: boolean, resolution?: import("@/lib/citationPlanner").CitationResolution) => Promise<void> | void) => {
     // Bind to the render that started the outer handler, not whichever account
     // happens to be current after asynchronous classification/cache work.
     const scope = { accountId: user?.id, projectId, mode };
@@ -301,7 +303,7 @@ const Index = () => {
     if ("resolution" in local) {
       if (local.origin !== "preserve") reportZeroWork(telemetry, "local_foreign_formatter", "deterministic");
       if (local.origin !== "statute_local" && !isCurrent()) throw Object.assign(new Error("CITATION_RETRY_STALE"), { handled: true });
-      await onSuccess?.(local.resolution.reply, isCurrent, undefined, true);
+      await onSuccess?.(local.resolution.reply, isCurrent, undefined, true, local.resolution);
       if (!isCurrent()) throw Object.assign(new Error("CITATION_RETRY_STALE"), { handled: true });
       return local.resolution.reply;
     }
@@ -365,7 +367,7 @@ const Index = () => {
         completed = true;
         const historyRequestId = typeof data?.requestId === "string" &&
           ["available", "unconfirmed"].includes(String(data.recoveryAvailability)) ? data.requestId : undefined;
-        await onSuccess?.(reply, isCurrent, historyRequestId, !!statuteRequest || !!safety || !!caseRequest);
+        await onSuccess?.(reply, isCurrent, historyRequestId, !!statuteRequest || !!safety || !!caseRequest, resolved.kind === "terminal" ? resolved.resolution : undefined);
       }
       if (!isCurrent()) throw Object.assign(new Error("CITATION_RETRY_STALE"), { handled: true });
       return reply;
@@ -506,7 +508,7 @@ const Index = () => {
         }
       }
 
-      const onCitationSuccess = async (reply: string, isCurrent: () => boolean, historyRequestId?: string, typed?: boolean) => {
+      const onCitationSuccess = async (reply: string, isCurrent: () => boolean, historyRequestId?: string, typed?: boolean, resolution?: import("@/lib/citationPlanner").CitationResolution) => {
         const assistantIndex = newMessages.length;
 
         const validation = validateAIResponse(reply, sourceType as SourceType);
@@ -518,7 +520,7 @@ const Index = () => {
           }
         }
 
-        setMessages([...newMessages, { role: "assistant", content: finalReply }]);
+        setMessages([...newMessages, { role: "assistant", content: finalReply, completion: resolution?.completion, pastedCitation: resolution?.pastedCitation }]);
         setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: sourceType as SourceType }));
         setMessageRawInputs((prev) => ({ ...prev, [assistantIndex]: rawText }));
         // Credit already charged server-side by citation-chat (no frontend double-charge).
@@ -571,7 +573,7 @@ const Index = () => {
       }
 
       const fullRawInput = buildFullRawInput(rawText, messages);
-      const onCitationSuccess = async (reply: string, isCurrent: () => boolean, historyRequestId?: string, typed?: boolean) => {
+      const onCitationSuccess = async (reply: string, isCurrent: () => boolean, historyRequestId?: string, typed?: boolean, resolution?: import("@/lib/citationPlanner").CitationResolution) => {
         const assistantIndex = newMessages.length;
 
         const validation = validateAIResponse(reply, sourceType as SourceType);
@@ -583,7 +585,7 @@ const Index = () => {
           }
         }
 
-        setMessages([...newMessages, { role: "assistant", content: finalReply }]);
+        setMessages([...newMessages, { role: "assistant", content: finalReply, completion: resolution?.completion, pastedCitation: resolution?.pastedCitation }]);
         setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: sourceType as SourceType }));
         setMessageRawInputs((prev) => ({ ...prev, [assistantIndex]: rawText }));
         // Credit already charged server-side by citation-chat (no frontend double-charge).
@@ -656,9 +658,9 @@ const Index = () => {
         const engineHint = buildEnginePromptHint(sourceType as SourceType);
         prompt = `[סיווג אוטומטי: ${sourceLabel}]\n${engineHint}${normalized}`;
       }
-      const onCitationSuccess = async (reply: string, isCurrent: () => boolean, historyRequestId?: string) => {
+      const onCitationSuccess = async (reply: string, isCurrent: () => boolean, historyRequestId?: string, _typed?: boolean, resolution?: import("@/lib/citationPlanner").CitationResolution) => {
         const assistantIndex = messages.length;
-        setMessages((prev) => [...prev, { role: "assistant", content: reply }]);
+        setMessages((prev) => [...prev, { role: "assistant", content: reply, completion: resolution?.completion, pastedCitation: resolution?.pastedCitation }]);
         setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: sourceType }));
         setMessageRawInputs((prev) => ({ ...prev, [assistantIndex]: rawInput }));
         // Credit already charged server-side by citation-chat (no frontend double-charge).
@@ -844,7 +846,7 @@ const Index = () => {
         prompt = `${prompt}\n\n══ מקור מאומת (${verifiedCategory}) ══\nהשתמש בפרטים הבאים מהמקור המאומת כדי להשלים את האזכור:\nשם: ${verifiedMatch.source_name}\nאזכור מלא: ${verifiedMatch.full_citation}\n══════════════════════════════════`;
       }
 
-      const onCitationSuccess = async (reply: string, isCurrent: () => boolean, historyRequestId?: string, typed?: boolean) => {
+      const onCitationSuccess = async (reply: string, isCurrent: () => boolean, historyRequestId?: string, typed?: boolean, resolution?: import("@/lib/citationPlanner").CitationResolution) => {
         const assistantIndex = newMessages.length;
 
         // Re-classify source type based on AI output (e.g., database → published if פ"ד found)
@@ -867,7 +869,7 @@ const Index = () => {
           }
         }
 
-        setMessages([...newMessages, { role: "assistant", content: finalReply }]);
+        setMessages([...newMessages, { role: "assistant", content: finalReply, completion: resolution?.completion, pastedCitation: resolution?.pastedCitation }]);
         setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: effectiveSourceType }));
         setMessageRawInputs((prev) => ({ ...prev, [assistantIndex]: rawText }));
         // Credit already charged server-side by citation-chat (no frontend double-charge).
@@ -1241,9 +1243,9 @@ const Index = () => {
                                 });
                               }
                             } else {
-                              const onCitationSuccess = async (reply: string, isCurrent: () => boolean, historyRequestId?: string) => {
+                              const onCitationSuccess = async (reply: string, isCurrent: () => boolean, historyRequestId?: string, _typed?: boolean, resolution?: import("@/lib/citationPlanner").CitationResolution) => {
                                 const assistantIndex = updatedMessages.length;
-                                setMessages([...updatedMessages, { role: "assistant", content: reply }]);
+                                setMessages([...updatedMessages, { role: "assistant", content: reply, completion: resolution?.completion, pastedCitation: resolution?.pastedCitation }]);
                                 setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: sourceType as SourceType }));
                                 setMessageRawInputs((prev) => ({ ...prev, [assistantIndex]: newContent }));
 
@@ -1281,10 +1283,10 @@ const Index = () => {
                             const engineHint = buildEnginePromptHint(newType);
                             // IMPORTANT: include [סיווג אוטומטי: ...] so the backend routes to the right Perplexity branch
                             const reclassifiedPrompt = `[סיווג אוטומטי: ${newLabel}]\n[תיקון סיווג: המשתמש ציין שמדובר ב${newLabel}]\n${engineHint}[כלל רלוונטי: ${getEngineRuleReference(newType)}]\n${rawInput}`;
-                            const onCitationSuccess = async (reply: string, isCurrent: () => boolean, historyRequestId?: string) => {
+                            const onCitationSuccess = async (reply: string, isCurrent: () => boolean, historyRequestId?: string, _typed?: boolean, resolution?: import("@/lib/citationPlanner").CitationResolution) => {
                               setMessages((prev) => {
                                 const updated = [...prev];
-                                updated[i] = { role: "assistant", content: reply };
+                                updated[i] = { role: "assistant", content: reply, completion: resolution?.completion, pastedCitation: resolution?.pastedCitation };
                                 return updated;
                               });
                               // Only this explicit, successful generation may vouch for the choice.
@@ -1312,7 +1314,7 @@ const Index = () => {
                           setCitationStatus(null);
                           setMessages((prev) => {
                             const updated = [...prev];
-                            updated[i] = { ...updated[i], content: newContent };
+                            updated[i] = { ...updated[i], content: newContent, completion: undefined, pastedCitation: undefined };
                             return updated;
                           });
                           toast.success("האזכור עודכן בהצלחה");

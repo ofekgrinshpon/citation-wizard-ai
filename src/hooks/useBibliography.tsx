@@ -4,7 +4,12 @@ import { citationTextOnly } from "@/lib/citationSegments";
 import { useState, useCallback, useEffect, createContext, useContext } from "react";
 import { useProjects } from "@/hooks/useProjects";
 
-export interface BibliographyEntry {
+interface TransientCompletion {
+  completion?: import("@/lib/runCitation").RunCitationResult["completion"];
+  pastedCitation?: import("@/lib/runCitation").RunCitationResult["pastedCitation"];
+}
+
+export interface BibliographyEntry extends TransientCompletion {
   id: string;
   rawInput: string;
   fullCitation: string;
@@ -326,8 +331,8 @@ export function sortBibliography(entries: BibliographyEntry[]): BibliographyEntr
 interface BibliographyContextValue {
   entries: BibliographyEntry[];
   addEntry: (rawInput: string, fullCitation: string, from: "footnote" | "manual") => boolean;
-  addEntries: (items: { rawInput: string; fullCitation: string; isVerified?: boolean; sourceTypeOverride?: BibSourceCategory; warnings?: string[]; classificationKey?: string }[], from?: "footnote" | "manual") => number;
-  syncFootnoteEntries: (items: { rawInput: string; fullCitation: string; warnings?: string[] }[]) => number;
+  addEntries: (items: (TransientCompletion & { rawInput: string; fullCitation: string; isVerified?: boolean; sourceTypeOverride?: BibSourceCategory; warnings?: string[]; classificationKey?: string })[], from?: "footnote" | "manual") => number;
+  syncFootnoteEntries: (items: (TransientCompletion & { rawInput: string; fullCitation: string; warnings?: string[] })[]) => number;
   removeEntry: (id: string) => void;
   clearAll: () => void;
   sortedEntries: BibliographyEntry[];
@@ -343,7 +348,7 @@ function loadBibEntries(projectId: string | undefined): BibliographyEntry[] {
     const raw = localStorage.getItem(key);
     if (raw) {
       const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed)) return rebuildBibliographyEntries(parsed);
+      if (Array.isArray(parsed)) return rebuildBibliographyEntries(parsed.map(({ completion: _completion, pastedCitation: _pasted, ...entry }: BibliographyEntry) => entry));
     }
   } catch {}
   return [];
@@ -378,7 +383,7 @@ export function BibliographyProvider({ children }: { children: React.ReactNode }
 
   useEffect(() => {
     const key = projectId ? `${BIB_STORAGE_PREFIX}_${projectId}` : BIB_STORAGE_PREFIX;
-    localStorage.setItem(key, JSON.stringify(entries));
+    localStorage.setItem(key, JSON.stringify(entries.map(({ completion: _completion, pastedCitation: _pasted, ...entry }) => entry)));
   }, [entries, projectId]);
 
   const isDuplicate = useCallback(
@@ -413,7 +418,7 @@ export function BibliographyProvider({ children }: { children: React.ReactNode }
   );
 
   const addEntries = useCallback(
-    (items: { rawInput: string; fullCitation: string; isVerified?: boolean; sourceTypeOverride?: BibSourceCategory; warnings?: string[]; classificationKey?: string }[], from: "footnote" | "manual" = "manual"): number => {
+    (items: (TransientCompletion & { rawInput: string; fullCitation: string; isVerified?: boolean; sourceTypeOverride?: BibSourceCategory; warnings?: string[]; classificationKey?: string })[], from: "footnote" | "manual" = "manual"): number => {
       let count = 0;
       setEntries((prev) => {
         const next = [...prev];
@@ -430,6 +435,7 @@ export function BibliographyProvider({ children }: { children: React.ReactNode }
             addedFrom: from,
             addedAt: Date.now(),
             isVerified: item.isVerified,
+            completion: item.completion, pastedCitation: item.pastedCitation,
             manualCategory,
             ...(item.warnings?.length ? { warnings: [...item.warnings] } : {}),
             ...(item.classificationKey ? { classificationKey: item.classificationKey } : {}),
@@ -444,12 +450,13 @@ export function BibliographyProvider({ children }: { children: React.ReactNode }
     [isDuplicate]
   );
 
-  const syncFootnoteEntries = useCallback((items: { rawInput: string; fullCitation: string; warnings?: string[] }[]) => {
+  const syncFootnoteEntries = useCallback((items: (TransientCompletion & { rawInput: string; fullCitation: string; warnings?: string[] })[]) => {
     const normalizedItems = rebuildBibliographyEntries(
       items.map((item) => ({
         id: crypto.randomUUID(),
         rawInput: item.rawInput,
         fullCitation: item.fullCitation,
+        completion: item.completion, pastedCitation: item.pastedCitation,
         ...(item.warnings?.length ? { warnings: [...item.warnings] } : {}),
         addedFrom: "footnote" as const,
         addedAt: Date.now(),

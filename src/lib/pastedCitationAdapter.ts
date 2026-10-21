@@ -39,6 +39,13 @@ export function pastedCaseRequest(raw: string, contract: PastedCitationContract)
     const name = raw.match(/^\s*(.+?\s+v(?:s)?\.?\s+.+?)(?:\s*[,([]\s*(?:\d|\[)|\s*\(|\s*\[|$)/);
     if (name) parsedFields.caseName = name[1].trim().replace(/[,\s]+$/, "");
   }
+  // An explicit decision parenthetical is structure, not part of the parties.
+  const decision = raw.match(/\(([^()]+?)\s+((?:17|18|19|20)\d{2})\)\s*$/);
+  if (decision && contract.evidence.some(e => e.signal === "court" && e.span.start >= (decision.index ?? raw.length))) {
+    parsedFields.caseName = parsedFields.caseName?.split(/\s*\(/)[0].trim() ?? "";
+    parsedFields.court = decision[1];
+    parsedFields.year = decision[2];
+  }
   return { enabled: true, kind: "case" as const, jurisdiction: contract.jurisdiction === "US" || contract.jurisdiction === "UK" ? contract.jurisdiction : "UNKNOWN", rawInput: raw, parsedFields };
 }
 export function renderPastedCaseResponse(contract: PastedCitationContract, request: ReturnType<typeof pastedCaseRequest>, response: unknown) {
