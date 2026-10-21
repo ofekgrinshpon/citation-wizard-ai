@@ -81,11 +81,11 @@ describe("AU/CA QA correction 1: incidental acronyms keep legacy runCitation own
   ];
   it.each(pairs)("%s matches legacy control (cold and warm cache)", async (raw, control, overrideType) => {
     for (const warm of [false, true]) {
-      m.cache.mockResolvedValue(warm ? { full_citation: "CACHED", verification_status: "verified" } : null);
-      vi.clearAllMocks(); m.cache.mockResolvedValue(warm ? { full_citation: "CACHED", verification_status: "verified" } : null);
+      m.cache.mockResolvedValue(warm ? { full_citation: "CACHED", source_name: "unrelated cached source", verification_status: "verified" } : null);
+      vi.clearAllMocks(); m.cache.mockResolvedValue(warm ? { full_citation: "CACHED", source_name: "unrelated cached source", verification_status: "verified" } : null);
       const a = await runCitation({ rawInput: raw, overrideType: overrideType as never });
       const aCache = m.cache.mock.calls.length, aInvoke = m.invoke.mock.calls.length;
-      vi.clearAllMocks(); m.cache.mockResolvedValue(warm ? { full_citation: "CACHED", verification_status: "verified" } : null);
+      vi.clearAllMocks(); m.cache.mockResolvedValue(warm ? { full_citation: "CACHED", source_name: "unrelated cached source", verification_status: "verified" } : null);
       const b = await runCitation({ rawInput: control, overrideType: overrideType as never });
       expect(a.pastedCitation?.conflicts ?? []).not.toContain("manual_family_conflict");
       expect(a.status).toBe(b.status);
