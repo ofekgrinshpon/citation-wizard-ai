@@ -1,7 +1,7 @@
 /** Batch A: pure supplied-text evidence, shared by browser and server. No I/O or identity claims. */
 import { CASE_DOCKET_RE, findBareDocket } from "./caseTypePrefixes.ts";
 import { LOOKUP_JURISDICTIONS, PLANNED_RULEPACK_WARNING, isGeneralFamily, isManualChoiceJurisdiction, isPlannedJurisdiction, readRulepackVersion, rulepackCapability, rulepackJurisdictionFromId } from "./citationPure/rulepack.ts";
-import { parseCountryLocal, AU_REPORTER_ANCHOR, AU_NEUTRAL_ANCHOR, AU_CODE_ANCHOR, CA_NEUTRAL_ANCHOR, CA_REPORTER_ANCHOR, CA_CODE_ANCHOR } from "./citationPure/countryLocal.ts";
+import { parseCountryLocal, AU_REPORTER_ANCHOR, AU_NEUTRAL_ANCHOR, AU_CODE_ANCHOR, CA_NEUTRAL_ANCHOR, CA_REPORTER_ANCHOR, CA_CODE_ANCHOR, AU_SUFFIX_ANCHOR, CA_SUFFIX_ANCHOR, isLabelledLiterature } from "./citationPure/countryLocal.ts";
 export const PASTED_CITATION_VERSION = 1 as const;
 /** D1: AU/CA/FR are recorded (never cast to US/IL/UNKNOWN); their rulepacks are planned/disabled. */
 export type CitationJurisdiction = "IL" | "US" | "UK" | "DE" | "AU" | "CA" | "FR" | "UNKNOWN";
@@ -114,6 +114,7 @@ export function buildPastedCitation(raw: string, manual: CitationManualChoice | 
   add(CA_NEUTRAL_ANCHOR, "CA", "court");
   add(CA_REPORTER_ANCHOR, "CA", "reporter");
   add(CA_CODE_ANCHOR, "CA", "code");
+  if (!isLabelledLiterature(raw)) { add(AU_SUFFIX_ANCHOR, "AU", "code"); add(CA_SUFFIX_ANCHOR, "CA", "code"); }
   const country = parseCountryLocal(raw, manual);
   const prefixed = raw.match(CASE_DOCKET_RE);
   if (prefixed) {
