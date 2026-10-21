@@ -68,7 +68,7 @@ const LABELS: Record<string, string> = {
   section: "section", paragraph: "paragraph",
 };
 
-function parseLabelled(text: string): BookWorkParse | null {
+function parseLabelled(text: string, offset = 0): BookWorkParse | null {
   const segs = text.split(/;\s*/).map((s) => s.trim()).filter(Boolean);
   if (segs.length < 2) return null;
   const kv = segs.map((s) => s.match(/^([A-Za-z ]+?):\s*(.*)$/));
@@ -83,7 +83,7 @@ function parseLabelled(text: string): BookWorkParse | null {
     else {
       f[key] = m[2].trim();
       const segmentStart = text.indexOf(s);
-      const start = segmentStart + s.indexOf(":") + 1 + (s.slice(s.indexOf(":") + 1).length - s.slice(s.indexOf(":") + 1).trimStart().length);
+      const start = offset + segmentStart + s.indexOf(":") + 1 + (s.slice(s.indexOf(":") + 1).length - s.slice(s.indexOf(":") + 1).trimStart().length);
       suppliedFields[key] = { value: f[key], spans: [{ start, end: start + f[key].length }] };
     }
   });
@@ -121,7 +121,7 @@ function applyParen(fields: BookWorkParse["fields"], paren: Paren): BookWorkPars
 export function extractBookWork(raw: string): BookWorkParse | null {
   const text = raw.trim().replace(/\.$/, "");
   if (!text || /[\u0590-\u05FF]/.test(text) || /https?:|\bv\.\s/.test(text)) return null;
-  if (/^[A-Za-z ]+:\s/.test(text) && text.includes(";")) return parseLabelled(text);
+  if (/^[A-Za-z ]+:\s/.test(text) && text.includes(";")) return parseLabelled(text, raw.indexOf(text));
   const m = text.match(/^(.+?)\s*\(([^()]+)\)(.*)$/);
   if (!m) return null;
   const [, pre, parenRaw, tailRaw] = m;

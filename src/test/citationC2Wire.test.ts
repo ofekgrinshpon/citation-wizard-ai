@@ -12,6 +12,8 @@ describe("C2 complete local fields versus bound lookup projection", () => {
     expect(req.parsedFields).not.toHaveProperty("originalYear");
     expect(req.parsedFields).not.toHaveProperty("publisher");
     expect(req.parsedFields).not.toHaveProperty("publisherStatus");
+    if (f.id === "C") expect(req.parsedFields).toHaveProperty("pinpoint", "214-216");
+    if (f.id === "D") expect(req.parsedFields).not.toHaveProperty("pinpoint");
     const resolved = resolveCitationResponse(plan, { foreignLookup: response }, CHAT_HOST);
     if (resolved.kind !== "terminal") throw new Error("Expected safe terminal completion");
     expect(resolved.resolution.citation).toContain(f.output);
@@ -25,5 +27,13 @@ describe("C2 complete local fields versus bound lookup projection", () => {
     }
     expect(calls).toEqual(["https://api.perplexity.ai/search"]);
     expect(resolved.resolution.pastedCitation?.rawInput).toBe(f.raw);
+  });
+  it("retains original-input span offsets with leading whitespace", async () => {
+    const f = { ...C2_WIRE[2], raw: "  " + C2_WIRE[2].raw + "  " };
+    const { plan } = await c2WirePayload(f);
+    const field = plan.localSourceFields?.pinpoint;
+    expect(field?.value).toBe("214-216");
+    expect(field?.spans).toHaveLength(1);
+    for (const span of field?.spans ?? []) expect(f.raw.slice(span.start, span.end)).toBe("214-216");
   });
 });

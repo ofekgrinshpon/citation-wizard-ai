@@ -18,6 +18,9 @@ export async function c2WirePayload(f: typeof C2_WIRE[number]) {
   const plan = c2WirePlan(f);
   const chapter = f.type === "foreign_book_chapter";
   const donor = { title: `${chapter ? "Quiet Rules — " : ""}Jane Doe, Synthetic Collection (2nd ed. 2020)`, snippet: `Jane Doe, ${chapter ? "Quiet Rules, in " : ""}Synthetic Collection (2nd ed. 2020).`, url: "https://press.example.edu/collection/quiet-rules" };
-  const { response, calls } = await c1ServerPayload(plan.foreignLookup as Parameters<typeof c1ServerPayload>[0], [donor]);
+  const request = plan.foreignLookup;
+  if (!request) throw new Error("Missing book lookup");
+  const { response, calls } = await c1ServerPayload({ kind: chapter ? "book_chapter" : "book", jurisdiction: "OTHER", rawInput: f.raw,
+    parsedFields: request.parsedFields as Record<string, string> }, [donor]);
   return { plan, response, calls };
 }

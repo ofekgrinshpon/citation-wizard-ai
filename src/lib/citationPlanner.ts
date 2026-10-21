@@ -107,7 +107,7 @@ function eligibleBookCompletion(type: SourceType | null, raw: string) {
   // Everything else (originalYear, publisher/status, normalized pinpoint/section) stays local.
   const wire: Record<string, string> = {};
   for (const [k, v] of Object.entries(work.fields as Record<string, unknown>)) {
-    const value = typeof v === "string" ? v.trim() : "";
+    const value = work.suppliedFields?.[k]?.value ?? (typeof v === "string" ? v.trim() : "");
     if (value && k !== "unparsedRemainder" && suppliedLookupFieldsMatch(raw, kind, { [k]: value })) wire[k] = value;
   }
   if (!wire.authors || !wire.bookTitle || (kind === "book_chapter" && !wire.chapterTitle)) return null;
@@ -259,7 +259,8 @@ export function resolveCitationResponse(plan: TypedPlan, data: Record<string, un
   if (plan.kind === "legacy" || !plan.foreignLookup) return { kind: "legacy" };
   const req = plan.foreignLookup;
   const response = data?.foreignLookup;
-  const accepted = acceptCitationCompletion({ ...req, parsedFields: { ...(req.parsedFields as Record<string, string> ?? {}), ...(plan.localFields ?? {}) } }, contract.rawInput, response);
+  const boundSupplied = req.parsedFields && typeof req.parsedFields === "object" ? req.parsedFields as Record<string, string> : {};
+  const accepted = acceptCitationCompletion({ ...req, parsedFields: { ...boundSupplied, ...(plan.localFields ?? {}) } }, contract.rawInput, response);
   if (plan.localSourceFields) accepted.suppliedFields = plan.localSourceFields;
   const st = plan.sourceType;
   const warnings: string[] = [];
