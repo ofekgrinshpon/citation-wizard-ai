@@ -70,6 +70,7 @@ async function vertical(f: { id: string; raw: string; type: "foreign_book" | "fo
   });
   let retainedInput: unknown = null;
   let retainedResult: unknown = null;
+  let retainedRequestId = requestId;
   let status = "unknown";
   const rpc = vi.fn(async (name: string, args: Record<string, unknown>) => {
     if (name === "begin_citation_request") {
@@ -82,10 +83,10 @@ async function vertical(f: { id: string; raw: string; type: "foreign_book" | "fo
     }
     if (name !== "read_citation_recovery") throw new Error("Unexpected mutation");
     const created = Date.now() - 1000;
-    return { data: { requests: [{ requestId, retryOfRequestId: null, status, availability: "available",
+    return { data: { requests: [{ requestId: retainedRequestId, retryOfRequestId: null, status, availability: "available",
       createdAt: new Date(created).toISOString(), expiresAt: new Date(created + recovery.CITATION_RECOVERY_TTL_MS).toISOString(),
       input: retainedInput, result: retainedResult,
-      refundReceipt: { status: "retained", refunded: false, units_refunded: 0, request_id: requestId },
+      refundReceipt: { status: "retained", refunded: false, units_refunded: 0, request_id: retainedRequestId },
     }], nextCursor: null }, error: null };
   });
   const authClient = { auth: { getClaims: async () => ({ data: { claims: { sub: owner } }, error: null }) }, rpc,
@@ -116,7 +117,8 @@ async function vertical(f: { id: string; raw: string; type: "foreign_book" | "fo
     };
   };
   const response = await makeHandler(chatCode)({ citationRequestVersion: 3, requestId, rawInput: f.raw,
-    messages: [{ role: "user", content: f.raw }], foreignLookup: request,
+    messages: mode === "message-order" ? [{ role: "user", content: "Earlier unrelated context" }, { role: "user", content: f.raw }]
+      : [{ role: "user", content: f.raw }], foreignLookup: request,
     content: "CLIENT INJECTED CONTENT", bookFinal: "CLIENT INJECTED FLAG" });
   const body = await response.json();
   const endpoint = makeHandler(readCode);
@@ -136,6 +138,7 @@ async function vertical(f: { id: string; raw: string; type: "foreign_book" | "fo
     return chain;
   });
   return { plan, body, response, rpc, search, lookup, writes, retainedResult, donor,
+    mutateRequestId: (value: string) => { retainedRequestId = value; },
     mutateResult: (mutate: (result: recovery.CitationRecoveryResult) => void) => {
       const result = recovery.citationRecoveryResult(retainedResult);
       if (!result) throw new Error("Invalid result");
@@ -166,7 +169,35 @@ describe("C2 real retention → recovery → history", () => {
       expect(h.lookup).toHaveBeenCalledTimes(1); expect(h.search).toHaveBeenCalledTimes(1);
       expect(h.rpc.mock.calls.map(([name]) => name)).toEqual(["begin_citation_request", "finish_citation_request", "read_citation_recovery", "read_citation_recovery"]);
       expect(fetch).not.toHaveBeenCalled();
+      await expect(saveRecoveredCitationHistory({ requestId, projectId: "other-project", expectedAccountId: owner,
+        formattedOutput: rendered.formattedOutput })).rejects.toThrow("CITATION_HISTORY_DESTINATION_MISMATCH");
     });
+  it.each(["raw", "manual", "kind", "arrays", "request"])("JSONB normalized changed %s binding cannot replay or save original final", async mode => {
+    const h = await vertical(C2_WIRE[2], mode === "arrays" ? "message-order" : "snippet-only", true);
+    if (mode === "request") h.mutateRequestId("changed-retained-request");
+    else h.mutateInput(input => {
+      if (mode === "raw") input.rawInput += " ";
+      if (mode === "manual") input.messages[0].content = `[סיווג שיפוט ידני: {"sourceType":"foreign_case_us","jurisdiction":"US"}]\n${C2_WIRE[2].raw}`;
+      if (mode === "kind" && input.foreignLookup) input.foreignLookup.kind = "book";
+      if (mode === "arrays") input.messages.reverse();
+    });
+    if (mode === "request") {
+      await expect(readCitationRecovery(owner, requestId)).rejects.toThrow();
+    } else {
+      const record = await readCitationRecovery(owner, requestId);
+      if (!record) throw new Error("Missing recovery");
+      const rendered = renderCitationRecovery(record);
+      expect(rendered?.formattedOutput).not.toBe(h.body.content);
+      expect(rendered?.warning).toBeTruthy();
+    }
+    await expect(saveRecoveredCitationHistory({ requestId, projectId: "project-one", expectedAccountId: owner,
+      formattedOutput: h.body.content })).rejects.toThrow();
+    expect(h.writes).toHaveLength(0);
+    expect(h.lookup).toHaveBeenCalledTimes(1); expect(h.search).toHaveBeenCalledTimes(1);
+    expect(h.rpc.mock.calls.filter(([name]) => name === "begin_citation_request")).toHaveLength(1);
+    expect(h.rpc.mock.calls.filter(([name]) => name === "finish_citation_request")).toHaveLength(1);
+    expect(fetch).not.toHaveBeenCalled();
+  });
   it.each(C2_WIRE)("$id keeps fresh semantic fields through actual retention and save", async f => {
     const h = await vertical(f);
     expect(h.body.recoveryAvailability).toBe("available");
