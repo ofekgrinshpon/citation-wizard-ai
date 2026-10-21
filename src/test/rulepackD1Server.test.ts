@@ -79,6 +79,13 @@ function withDisabled<T>(ids: string[], fn: () => T): T {
   for (const e of entries) (e as { status: string }).status = "planned_disabled";
   try { return fn(); } finally { entries.forEach((e, i) => { (e as { status: string }).status = prior[i]; }); }
 }
+async function withDisabledAsync<T>(ids: string[], fn: () => Promise<T>): Promise<T> {
+  const entries = RULEPACK_MANIFEST.filter(e => ids.includes(e.id));
+  expect(entries).toHaveLength(ids.length);
+  const prior = entries.map(e => e.status);
+  for (const e of entries) (e as { status: string }).status = "planned_disabled";
+  try { return await fn(); } finally { entries.forEach((e, i) => { (e as { status: string }).status = prior[i]; }); }
+}
 function plan(raw: string, type: SourceType | null) {
   const ev = planCitationEvidence(raw, null);
   if (ev.preserve) return { preserve: true, foreignLookup: null };
@@ -113,7 +120,7 @@ describe("D1 manifest is the decision source (planner + server)", () => {
     { ids: ["us.statute"], foreignLookup: { enabled: true, kind: "statute", jurisdiction: "US", rawInput: "Copyright Act", parsedFields: { statuteName: "Copyright Act" } }, raw: "Copyright Act" },
   ])("actual handler rejects disabled $ids before usage/cache/provider", async ({ ids, foreignLookup, raw }) => {
     const h = fixture();
-    const r = await withDisabled(ids, () => h.invoke({ rawInput: raw, messages: [{ role: "user", content: raw }], foreignLookup }));
+    const r = await withDisabledAsync(ids, () => h.invoke({ rawInput: raw, messages: [{ role: "user", content: raw }], foreignLookup }));
     expect(r.body.pastedCitation.conflicts).toContain("rulepack_lookup_disabled");
     noSideEffects(h);
   });
