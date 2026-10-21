@@ -93,3 +93,5 @@ it.each([
  'Wattle v Harbour (2020) 270 CLR 10 ע"א 1234/20 כהן נ׳ לוי',
 ])('mixed country/Israeli evidence cannot be erased %s', async raw => { const r = await runCitation({rawInput:raw}); expect(citationToPlain(r.citation)).toBe(raw); expect(r.pastedCitation?.conflicts.length).toBeGreaterThan(0); zero(); });
 it('repeated equal years bind exact original occurrence', () => { const a = ast('Maple v Cedar (2020), [2020] 2 SCR 100'); expect(a.fields.decisionYear.spans[0].start).not.toBe(a.fields.reporterYear.spans[0].start); });
+
+it('SC enactment year is not an RSC revision year', () => { const a = ast('Synthetic Records Act, S.C. 2020, c 8'); expect(a.fields.enactmentYear.value).toBe('2020'); expect(a.fields.revisionYear).toBeUndefined(); });

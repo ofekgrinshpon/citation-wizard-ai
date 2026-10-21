@@ -11,7 +11,9 @@ export interface CountryAst {
 const AU = /\b(?:CLR|FCR|HCA|FCA|FCAFC|Cth)\b|\(Austl\.\)/;
 const CA = /(?<![A-Za-z.])(?:SCC|CanLII|Quicklaw|R\.?S\.?C\.?|S\.?C\.?R\.?)(?![A-Za-z])|(?<![A-Za-z.])S\.C\.|\(Can\.\)/;
 const NUMS = String.raw`\d+(?:\s*[–-]\s*\d+)?(?:\s*,\s*\d+(?:\s*[–-]\s*\d+)?)*`;
-const LOC = new RegExp(String.raw`^(?:(?:s|ss|pt|pts|div|divs|sch|schs)\.?\s+\d+[A-Za-z]?(?:\([\da-z]+\))*(?:\s*[–-]\s*\d+[A-Za-z]?(?:\([\da-z]+\))*)?(?:\s*(?:,|and)\s*(?:\d+[A-Za-z]?(?:\([\da-z]+\))*(?:\s*[–-]\s*\d+[A-Za-z]?(?:\([\da-z]+\))*)?|(?:s|ss|pt|pts|div|divs|sch|schs)\.?\s+\d+[A-Za-z]?(?:\([\da-z]+\))*))*)$`);
+const LOC_NUMBER = String.raw`\d+[A-Za-z]?(?:\([\da-z]+\))*(?:\s*[–-]\s*\d+[A-Za-z]?(?:\([\da-z]+\))*)?`;
+const LOC_UNIT = String.raw`(?:s|ss|pt|pts|div|divs|sch|schs)\.?`;
+const LOC = new RegExp(String.raw`^${LOC_UNIT}\s+${LOC_NUMBER}(?:\s*(?:,|and)\s*(?:${LOC_UNIT}\s+)?${LOC_NUMBER})*$`);
 /** Recognize country+family even when incomplete; a compatible manual choice is not supplied identity. */
 export function parseCountryLocal(raw: string, manual: CitationManualChoice | null = null): CountryAst | null {
   const au = AU.test(raw), ca = CA.test(raw);
@@ -67,6 +69,10 @@ export function parseCountryLocal(raw: string, manual: CitationManualChoice | nu
   } else {
     match(/^(?<statuteName>.+?\bAct),\s*(?<code>R\.?S\.?C\.?|S\.?C\.?),?\s+(?<revisionYear>\d{4}),\s*c\.?\s+(?<chapter>[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*)(?:,?\s+(?<subdivisions>.*))?$/, 'ca.statute.federal');
   }
+  if (ast.templateId === 'ca.statute.federal' && /^S/.test(ast.fields.code?.value ?? '')) {
+    ast.fields.enactmentYear = ast.fields.revisionYear;
+    delete ast.fields.revisionYear;
+  }
   if (family === 'case' && ast.templateId && !/\s(?:v\.?|c\.)\s|^(?:In re|Ex parte)\s/.test(ast.fields.caseName?.value ?? '')) ast.conflicts.push('ambiguous_parties');
   const subdivisions = ast.fields.subdivisions;
   if (subdivisions && !LOC.test(subdivisions.value)) ast.conflicts.push('unsupported_subdivisions_or_tail');
@@ -83,8 +89,7 @@ export function renderCountryLocal(ast: CountryAst) {
   const italic = (s: string) => `##${escapeCitationLiteral(s)}##`;
   const caName = () => {
     const n = f('caseName');
-    const m = /^(In re|Ex parte)\s/.exec(n);
-    return m ? `${italic(m[1])}${escapeCitationLiteral(n.slice(m[1].length))}` : escapeCitationLiteral(n);
+    return escapeCitationLiteral(n).replace(/(^|\s)(In re|Ex parte|ex rel\.)(?=\s|$)/g, (_m, pre: string, phrase: string) => `${pre}##${phrase}##`);
   };
   let citation = escapeCitationLiteral(ast.raw);
   if (eligible) {
@@ -96,7 +101,7 @@ export function renderCountryLocal(ast: CountryAst) {
       case 'au.statute.cth': citation = `${italic(`${f('statuteName')} ${f('enactmentYear')}`)} (Cth)${f('subdivisions') ? ` ${e('subdivisions')}` : ''} (Austl.).`; break;
       case 'ca.case.scc_neutral': citation = `${caName()}, ${e('neutralYear')} SCC ${e('neutralNumber')}${f('reporterYear') ? `, [${e('reporterYear')}] ${e('reporterVolume')} S.C.R. ${e('firstPage')}` : ''}${paragraph || page} (Can.).`; break;
       case 'ca.case.scr': citation = `${caName()}${f('decisionYear') ? ` (${e('decisionYear')})` : ''}, [${e('reporterYear')}] ${e('reporterVolume')} S.C.R. ${e('firstPage')}${paragraph || page} (Can.).`; break;
-      case 'ca.statute.federal': citation = `${e('statuteName')}, ${/^R/.test(f('code')) ? 'R.S.C.' : 'S.C.'} ${e('revisionYear')}, c ${e('chapter')}${f('subdivisions') ? `, ${e('subdivisions')}` : ''} (Can.).`; break;
+      case 'ca.statute.federal': citation = `${e('statuteName')}, ${/^R/.test(f('code')) ? 'R.S.C.' : 'S.C.'} ${e(/^R/.test(f('code')) ? 'revisionYear' : 'enactmentYear')}, c ${e('chapter')}${f('subdivisions') ? `, ${e('subdivisions')}` : ''} (Can.).`; break;
     }
   }
   const warningMsg = eligible ? 'עוצב לפי הפרטים שסופקו; זהות המקור לא אומתה.' : ast.missing.includes('decisionDate') ? 'חסר תאריך מלא של פסק הדין; הוסיפו יום, חודש ושנה. הקלט נשמר ללא חיפוש.' : 'התבנית אינה זמינה, חסרה או מכילה פרטים סותרים/לא נתמכים; בדקו את פרטי המקור. הקלט נשמר ללא חיפוש.';
