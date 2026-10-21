@@ -26,6 +26,7 @@ import { renderPeriodicalLocal } from "@/lib/periodicalLocal";
 import { renderBookLocal } from "@/lib/bookLocal";
 import { extractBookWork } from "@/data/bluebook/bookWorks";
 import { preparePastedCitation, pastedCaseRequest, readPastedCitationSafety, renderPastedCaseResponse } from "@/lib/pastedCitationAdapter";
+import { suppliedLookupFieldsMatch } from "../../supabase/functions/_shared/pastedCitation";
 
 /** Local rendering controls; only host identity differs after bounded C2 parity. */
 export interface CitationHostCapabilities {
@@ -102,7 +103,15 @@ function eligibleBookCompletion(type: SourceType | null, raw: string) {
   const rendered = renderForeignDetection({ kind, jurisdiction: "OTHER", sourceType: type, fields: work.fields, confidence: "deterministic" });
   // Existing book/chapter extractor returns publication year/edition, never chapter firstPage.
   if (!rendered?.missing.some(field => field === "year" || field === "edition")) return null;
-  return { kind, fields: work.fields };
+  // Wire projection: only server-allowed lookup keys whose exact value is in the canonical input.
+  // Everything else (originalYear, publisher/status, normalized pinpoint/section) stays local.
+  const wire: Record<string, string> = {};
+  for (const [k, v] of Object.entries(work.fields as Record<string, unknown>)) {
+    const value = typeof v === "string" ? v.trim() : "";
+    if (value && k !== "unparsedRemainder" && suppliedLookupFieldsMatch(raw, kind, { [k]: value })) wire[k] = value;
+  }
+  if (!wire.authors || !wire.bookTitle || (kind === "book_chapter" && !wire.chapterTitle)) return null;
+  return { kind, fields: work.fields, wire };
 }
 
 /** Phase 2 — terminal local outcomes (render or preserve). Null → continue to typed planning. */
@@ -187,6 +196,8 @@ export interface TypedPlan {
   foreignLookup: Record<string, unknown> | null;
   /** Existing article rawInput field from articleRequestFields. */
   extraBody: Record<string, unknown>;
+  /** Complete local parsed fields (book/chapter) used for rendering; never sent on the wire. */
+  localFields?: Record<string, string>;
 }
 
 /** Phase 3 — the existing bound typed request, or an explicitly declared legacy handoff. */
@@ -196,6 +207,7 @@ export function planTypedRequest(p: LocalPlanInput & { statutePrep: StatutePrepa
   let foreignLookup: Record<string, unknown> | null = null;
   let articleRequest: TypedPlan["articleRequest"] = null;
   let extraBody: Record<string, unknown> = {};
+  let localFields: Record<string, string> | undefined;
   // Keep the existing Israeli article raw field; foreign articles share their DOI adapter.
   if (st === "article") extraBody = { ...articleRequestFields(st, p.input) };
   if (p.statutePrep?.request) {
@@ -208,7 +220,11 @@ export function planTypedRequest(p: LocalPlanInput & { statutePrep: StatutePrepa
       : planForeignLookup(st, p.input, detection);
     if (plan && plan.kind !== "statute") {
       const parsedFields: Record<string, string> = plan.kind === "journal_article" ? parseForeignArticleInput(p.input) : {};
-      if (detection || bookCompletion) for (const [k, v] of Object.entries((bookCompletion?.fields ?? detection?.fields) as Record<string, unknown>)) {
+      if (bookCompletion) {
+        Object.assign(parsedFields, bookCompletion.wire);
+        localFields = {};
+        for (const [k, v] of Object.entries(bookCompletion.fields as Record<string, unknown>)) if (typeof v === "string" && v.trim()) localFields[k] = v.trim();
+      } else if (detection) for (const [k, v] of Object.entries(detection.fields as Record<string, unknown>)) {
         if (typeof v === "string" && v.trim()) parsedFields[k] = v.trim();
         else if (Array.isArray(v) && v.length && v.every((x) => typeof x === "string")) parsedFields[k] = v.join(", ");
       }
@@ -222,7 +238,8 @@ export function planTypedRequest(p: LocalPlanInput & { statutePrep: StatutePrepa
   if (caseRequest) foreignLookup = caseRequest;
   if (caseRequest) articleRequest = null;
   const typed = !!(foreignLookup || p.statutePrep?.request);
-  return { kind: typed ? "typed" : "legacy", evidence: p.evidence, sourceType: st, statutePrep: p.statutePrep, caseRequest, articleRequest, foreignLookup, extraBody };
+  return { kind: typed ? "typed" : "legacy", evidence: p.evidence, sourceType: st, statutePrep: p.statutePrep, caseRequest, articleRequest, foreignLookup, extraBody,
+    ...(localFields && !caseRequest ? { localFields } : {}) };
 }
 
 export type ResponseResolution =
@@ -266,7 +283,8 @@ export function resolveCitationResponse(plan: TypedPlan, data: Record<string, un
       completion: accepted,
     } };
   }
-  const supplied = req.parsedFields && typeof req.parsedFields === "object" ? req.parsedFields as Record<string, string> : {};
+  const wireSupplied = req.parsedFields && typeof req.parsedFields === "object" ? req.parsedFields as Record<string, string> : {};
+  const supplied = { ...wireSupplied, ...(plan.localFields ?? {}) };
   let rendered: { citation: string; reply?: string; missing?: string[]; warnings?: string[] } | null = null;
   const kind = req.kind as ForeignSourceKind;
   const jur = accepted.jurisdiction ?? (req.jurisdiction === "US" || req.jurisdiction === "UK" ? req.jurisdiction : "OTHER");
