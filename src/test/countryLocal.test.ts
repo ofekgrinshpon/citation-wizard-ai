@@ -97,3 +97,46 @@ it('repeated equal years bind exact original occurrence', () => { const a = ast(
 it('SC enactment year is not an RSC revision year', () => { const a = ast('Synthetic Records Act, S.C. 2020, c 8'); expect(a.fields.enactmentYear.value).toBe('2020'); expect(a.fields.revisionYear).toBeUndefined(); });
 
 it('state/provincial manual subjurisdiction never borrows federal template', async () => { const raw = fixtures[0].raw; const r = await runCitation({rawInput:raw,manualChoice:{jurisdiction:'AU',jurisdictionId:'t2:australia',subjurisdiction:'t2:australia/nsw',sourceType:'foreign_case_other'}}); expect(citationToPlain(r.citation)).toBe(raw); zero(); });
+
+describe("AU/CA local-slice QA corrections", () => {
+  it.each([
+    "Author: Jane Doe; Book: The SCC; Edition: 2nd; Year: 2020",
+    "Author: Jane Doe; Book: The HCA; Edition: 2nd; Year: 2020",
+    "HCA Holdings v. Cedar, 347 U.S. 483, 490 (1954)",
+    "SCC Holdings v. Cedar, 347 U.S. 483, 490 (1954)",
+  ])("incidental acronym is not country evidence: %s", (raw) => {
+    expect(parseCountryLocal(raw)).toBeNull();
+  });
+  it("strong AU case anchor with wrong manual book still conflicts", () => {
+    const ast = parseCountryLocal("Wattle v Harbour (2020) 270 CLR 10, 14 (Austl.).", { jurisdiction: "UNKNOWN", sourceType: "foreign_book", foreign: true } as never)!;
+    expect(ast.conflicts).toContain("manual_family_conflict");
+  });
+  it.each([
+    ["Criminal Code, R.S.C. 1985, c C-46 (Can.).", "Criminal Code, R.S.C. 1985, c C-46 (Can.)."],
+    ["Loi synthétique, R.S.C. 1985, c C-46 (Can.).", "Loi synthétique, R.S.C. 1985, c C-46 (Can.)."],
+    ["Criminal Code, R.S.C., 1985, c. C-46 (Can.).", "Criminal Code, R.S.C. 1985, c C-46 (Can.)."],
+  ])("CA federal statute without English Act suffix: %s", (raw, out) => {
+    const ast = parseCountryLocal(raw)!;
+    expect(ast.complete).toBe(true);
+    expect(renderCountryLocal(ast).citation).toBe(out);
+  });
+  it.each([
+    "Synthetic Records Act 2020 (Cth) pt 2 div 3 s 4 sch 1 (Austl.).",
+    "Synthetic Records Act 2020 (Cth) pts 2–3 divs 4–5 schs 1–2 (Austl.).",
+  ])("AU comma-less unit chain is complete and lossless: %s", (raw) => {
+    const ast = parseCountryLocal(raw)!;
+    expect(ast.complete).toBe(true);
+    expect(renderCountryLocal(ast).citation).toBe(`##Synthetic Records Act 2020## (Cth) ${raw.match(/\(Cth\) (.*) \(Austl/)![1]} (Austl.).`);
+  });
+  it("AU unit chain with arbitrary tail still preserves", () => {
+    expect(parseCountryLocal("Synthetic Records Act 2020 (Cth) pt 2 foo 3 (Austl.).")!.complete).toBe(false);
+  });
+  it("CA SCR omits equal decision year but keeps AST roles; distinct year stays", () => {
+    const ast = parseCountryLocal("Maple v. Cedar (2020), [2020] 2 S.C.R. 100, 104 (Can.).")!;
+    expect(ast.fields.decisionYear.value).toBe("2020");
+    expect(ast.fields.reporterYear.value).toBe("2020");
+    expect(ast.fields.decisionYear.spans[0].start).not.toBe(ast.fields.reporterYear.spans[0].start);
+    expect(renderCountryLocal(ast).citation).toBe("Maple v. Cedar, [2020] 2 S.C.R. 100, 104 (Can.).");
+    expect(renderCountryLocal(parseCountryLocal("Maple v. Cedar (2019), [2020] 2 S.C.R. 100, 104 (Can.).")!).citation).toBe("Maple v. Cedar (2019), [2020] 2 S.C.R. 100, 104 (Can.).");
+  });
+});
