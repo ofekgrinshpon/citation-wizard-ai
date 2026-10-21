@@ -4,7 +4,7 @@
 - Verified clean source baseline: `3d11a3e46dbd833580535a1c2acf05bfe3e7b550`.
 - User-supplied independent C1 gate: 3,899 passed, 4 skipped, 64 probes, app TypeScript and explicit Vite build passed. These are external baseline results, not this sandbox's test count.
 - Tested C2 source before report: `155cfe5fbb939bba278ac7a2860b5125b7f2820b`; final platform-managed revision includes report/roadmap changes.
-- Production changes are limited to shared planner eligibility/request planning and Index's typed-success flag. No server lookup code, provider strategy, model settings, wire envelope, legal rules, taxonomy or UI layout was changed.
+- Initial C2 changes were limited to shared planning and Index's typed-success flag. The bounded correction below additionally tightens existing chapter identity matching/acceptance and edition presentation; provider strategy, model settings, legal rules, taxonomy and UI layout remain unchanged.
 
 ## Exact enabled routes
 - Index initial submission and explicit manual regeneration now plan existing `foreignLookup.kind=book` and `book_chapter` requests through the same pure `planTypedRequest` as runCitation, BatchFootnoteBuilder and BibliographyGenerator.
@@ -15,7 +15,7 @@
 - Index marks every shared typed plan as typed when applying the saved continuation, avoiding generic post-response validation on grounded book/chapter replies. Callback metadata, stale guards, success-once continuation and retry transport ownership remain unchanged.
 
 ## Semantic acceptance and partials
-- C1 resolver/acceptance is unchanged: request/input/kind/jurisdiction binding, identity anchors, grounded fields, exact provenance values and meaningful donor evidence remain mandatory. No ideal payload was substituted for server output.
+- C1 request/input/kind/jurisdiction binding, grounded fields, exact provenance values and meaningful donor evidence remain mandatory. The correction adds distinct chapter/collection evidence requirements; no ideal payload was substituted for server output.
 - Fixtures run the real `runForeignLookup` extractor against synthetic mocked Search evidence. Mutated failure fixtures start from those real envelopes.
 - Book `Author: Jane Doe; Book: Synthetic Collection` accepts grounded year 2020 from the matching donor. Chapter `Author: Jane Doe; Chapter: Quiet Rules; Collection: Synthetic Collection` keeps grounded year 2020 while firstPage stays missing with an explicit warning; no page is inferred.
 - A supplied edition 2d is never replaced by found 3d; unrelated grounded year remains useful. Wrong kind/jurisdiction/raw, unmatched/error/missing-key, multiple candidates, missing/mismatched provenance terminate safely without generic content or another operation.
@@ -44,3 +44,27 @@
 - Existing case/article/book/chapter server envelopes lack mandatory raw echoes; retained request binding and existing identity evidence remain the C1 compatibility boundary. Unbound historical recovery remains its documented display-only compatibility branch, not newly verified identity.
 - No deployment/publication, backend/database/data/schema/auth/security/permission/payment changes, purchases, live provider/model/research calls, menu changes or unrelated Hebrew fixes. Daily cap/per-run checkpoint settings were not changed; actual credits were not measured here.
 - Stop after C2 for independent QA, including the separate explicit TypeScript/Vite gates; expansion D remains unstarted.
+
+## Independently reproduced C2 correction
+
+### Reviewed baseline and three boundaries
+- Verified clean baseline `a66d3c56fabc2112a068dd0d5c7df35ae02c8d76`.
+- **Edition suffix:** shared book/chapter parenthetical rendering recognizes numeric ordinal values (`2nd`, `2d`, etc.) with or without one canonical `ed.` suffix, emitting exactly one suffix. Unknown edition text stays literal, with existing escaping; no arbitrary suffix stripping or new edition inference. Labelled parsing now retains the exact supplied edition instead of stripping `ed.` indiscriminately. Lookup `fields.edition` and `provenance.edition.value` remain `2nd ed.`; only presentation normalizes it.
+- **Chapter identity:** existing server identity-source filter requires both exact normalized chapter and collection text in the same returned title/snippet, not the URL or collection alone. Existing author matching remains required. A successful chapter response adds `chapter:<supplied title>` only after matching. Wrong/absent chapter evidence yields unmatched, empty additions and explicit `chapter_identity_unconfirmed`; no new searches or extraction grammar.
+- **Client acceptance:** shared resolver requires distinct matching chapter and collection anchors and same-source chapter/collection evidence, and rechecks each field's provenance donor for both identities. Legacy `title:<chapter>` plus `title:<collection>` anchors remain acceptable when source evidence proves both. Old collection-only matched envelopes fail closed with a chapter-specific warning. Matching a valid chapter does not license additions from a sibling collection-only donor. Existing field/kind/raw/jurisdiction/conflict checks remain.
+- **Eligibility:** real `extractWorkFromEvidence` book/chapter branch returns only year/edition publication metadata. Shared planner now requires at least one missing field supported by that extractor. Existing renderer marks year as required but not edition: missing edition alone is not a new reason to search. FirstPage-only chapters stay on the existing local renderer with `firstPage` missing marker/warning. Missing year can still use one operation and leave firstPage honestly missing. Neither bibliographic firstPage nor user pinpoint is inferred/searched; a supplied pinpoint cannot become firstPage.
+
+### Actual-host and compatibility evidence
+- Exact new fixtures run the production lookup constructor with mocked donor `Jane Doe, Synthetic Collection (2nd ed. 2020)` and the specified wrong chapter/collection record. No forged positive identity envelopes.
+- Actual Index initial and same-family manual regeneration, real batch cells/review cards and bibliography review/add objects assert single-suffix rendering, unchanged provenance, wrong/absent chapter unconfirmed with original input retained, firstPage-only zero completion requests, and missing-year useful partial completion with exactly one existing top-level operation per action.
+- Positive chapter fixtures in earlier tests were corrected to contain real requested chapter evidence; existing assertions were retained. C1 B9 now explicitly supplies both known chapter and collection titles. Collection-only envelopes are separately tested as rejected, not treated as successful completion.
+- Correction matrix production-extractor calls remain one existing Search fetch, no page fetch; no claim of a universal cost cap. Actual host firstPage-only tests assert zero citation operations (zero-work telemetry remains separate). No IO/claims/refunds/retry ownership changes.
+- Existing transient metadata/storage stripping, manual/account/project stale guards, retry request IDs, typed server terminal failures, grounded partials, unknown-span preservation, HTML/marker escaping, Hebrew precedence and foreign docket protections remain covered by focused/full offline suites.
+
+### Correction gates and remaining limits
+- New exact regression matrix before implementation: **28 failed / 177 passed**, reproducing all three defects through shared/server and actual hosts.
+- Final focused eight-file suite: **408 passed / 1 skipped / 0 failed**.
+- Full suite after correction: **191 files; 3,909 passed / 1 skipped / 0 failed**; final additional donor/pinpoint/supplied-edition tests are recorded in the final full gate below.
+- Automatic compilation: **build OK at 2026-10-21T00:41:04Z**. Separate explicit app TypeScript/Vite commands remain unavailable under the environment's manual-command prohibition, not claimed as independently run.
+- Strong chapter evidence uses existing returned title/snippet text. Records without that evidence fail closed even if a URL looks plausible or the collection matches; no new page-inspection identity strategy was added. Exact normalized occurrence is not full-text legal identity verification. Bibliographic firstPage extraction remains unsupported; complete edition data is not promised.
+- No deployment, live calls, DB/data/schema/auth/security/permission/payment changes, provider/search strategy expansion, quota/settings changes or D. Stop for independent QA; explicit app TypeScript/Vite gates remain external blockers.
