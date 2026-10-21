@@ -3,21 +3,24 @@ import { detectForeignSource, renderForeignDetection } from "@/data/bluebook";
 import { escapeCitationLiteral } from "@/lib/citationSegments";
 import type { SourceType } from "@/data/abbreviations";
 import { isPlannedJurisdiction, rulepackJurisdictionFromId, rulepackLookupEligible } from "../../supabase/functions/_shared/citationPure/rulepack.ts";
+import { parseCountryLocal, renderCountryLocal } from "../../supabase/functions/_shared/citationPure/countryLocal.ts";
 export function citationManualChoice(type?: SourceType, jurisdictionId?: string, subjurisdiction?: string): CitationManualChoice | null {
   if (!type && !jurisdictionId) return null;
   // Shared rulepack mapping: AU/CA/FR keep their own code (planned/disabled), never US/IL/UNKNOWN.
-  const jurisdiction = jurisdictionId ? rulepackJurisdictionFromId(jurisdictionId)! : type === "foreign_case_us" || type === "foreign_statute_us" ? "US"
+  const jurisdiction = jurisdictionId ? (rulepackJurisdictionFromId(jurisdictionId) ?? "UNKNOWN") : type === "foreign_case_us" || type === "foreign_statute_us" ? "US"
     : type === "foreign_statute_uk" ? "UK" : type?.startsWith("case_law_") ? "IL" : "UNKNOWN";
   return { jurisdiction, sourceType: type, foreign: type?.startsWith("foreign"), ...(jurisdictionId ? { jurisdictionId } : {}), ...(subjurisdiction ? { subjurisdiction } : {}) };
 }
 export function preparePastedCitation(raw: string, manual: CitationManualChoice | null = null) {
-  const detection = detectForeignSource(raw);
+  const country = parseCountryLocal(raw, manual);
+  const detection = country ? null : detectForeignSource(raw);
   const contract = buildPastedCitation(raw, manual, detection ? { kind: detection.kind, fields: detection.fields as Record<string, unknown> } : undefined);
   if (manual?.subjurisdiction && !["t2:united-kingdom/england-and-wales"].includes(manual.subjurisdiction) && contract.jurisdiction === "UK") {
     contract.route = "preserve"; contract.formatter = "unsupported"; contract.unsupported.push("subjurisdiction_formatter_not_supported");
   }
   const preserved = () => ({ citation: escapeCitationLiteral(raw), reply: `${escapeCitationLiteral(raw)}\n⚠️ ${pastedCitationWarning(contract)}`, warningMsg: pastedCitationWarning(contract) });
-  if (contract.route === "preserve") return { contract, local: preserved(), detection };
+  if (contract.route === "preserve") return { contract, local: country && !contract.conflicts.length && !contract.unsupported.length ? renderCountryLocal(country) : preserved(), detection, country };
+  if (country) return { contract, local: renderCountryLocal(country), detection, country };
   // Only complete supported case forms. Existing literature ambiguity gates stay authoritative.
   const rendered = detection?.kind === "case" && detection.confidence === "deterministic" &&
     (!manual?.sourceType || manual.sourceType === detection.sourceType) ? renderForeignDetection(detection) : null;
@@ -26,10 +29,10 @@ export function preparePastedCitation(raw: string, manual: CitationManualChoice 
     reply: `${rendered.citation}\n⚠️ ${[...rendered.warnings, "עוצב לפי הפרטים שסופקו; זהות המקור לא אומתה."].join(" ")}`,
     warningMsg: rendered.warnings[0] ?? "זהות המקור לא אומתה.",
   } : null;
-  return { contract, local, detection };
+  return { contract, local, detection, country };
 }
 export function pastedCaseRequest(raw: string, contract: PastedCitationContract) {
-  if (contract.route !== "foreign" || contract.sourceKind !== "case" || raw !== contract.rawInput || isPlannedJurisdiction(contract.jurisdiction) ||
+  if (contract.route !== "foreign" || contract.sourceKind !== "case" || raw !== contract.rawInput || (contract.jurisdiction === "AU" || contract.jurisdiction === "CA" || isPlannedJurisdiction(contract.jurisdiction)) ||
     !rulepackLookupEligible("case", contract.jurisdiction === "US" || contract.jurisdiction === "UK" ? contract.jurisdiction : "UNKNOWN") ||
     (citationSourceKind(contract.manualChoice?.sourceType) && citationSourceKind(contract.manualChoice?.sourceType) !== "case")) return null;
   const detection = detectForeignSource(raw);

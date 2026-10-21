@@ -870,3 +870,15 @@ for (const host of ["bibliography", "footnote"] as const) {
     if (raw.startsWith("Catch") || raw.startsWith("Title")) expect(document.body.textContent).toContain(raw);
   });
 }
+
+import { COUNTRY_LOCAL_FIXTURES } from "./fixtures/countryLocalFixtures";
+describe("AU/CA actual BatchFootnoteBuilder local slice", () => {
+  it.each(COUNTRY_LOCAL_FIXTURES)("$id actual initial and repeated generation bypass warm cache", async f => {
+    boundary.verified.mockResolvedValue({full_citation:"UNSAFE CACHE",verification_status:"verified"});
+    footnoteInput([f.raw]);
+    await waitFor(() => expect(screen.getAllByText(f.output).length).toBeGreaterThan(0));
+    fireEvent.click(screen.getByRole("button", {name:/הפק מחדש/}));
+    await waitFor(() => expect(screen.getAllByText(f.output).length).toBeGreaterThan(0));
+    expect(boundary.classify).not.toHaveBeenCalled(); expect(boundary.verified).not.toHaveBeenCalled(); expect(boundary.invoke).not.toHaveBeenCalled(); expect(fetch).not.toHaveBeenCalled();
+  });
+});

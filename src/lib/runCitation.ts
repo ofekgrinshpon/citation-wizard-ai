@@ -167,6 +167,13 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
       telemetry: opts.telemetry, fromVerifiedStore: false, status: "warning" };
   }
 
+  // AU/CA routes are terminal before normalization, classifier or verified-store access.
+  if (pasted.country && pasted.local) {
+    const sourceType: SourceType = pasted.country.family === "case" ? "foreign_case_other" : "foreign";
+    const local = planLocalCitation({ evidence, sourceType, input: opts.rawInput, isPinpoint: false, manual: !!opts.manualChoice || !!opts.overrideType }, RUNNER_HOST);
+    if ("resolution" in local) return { ...local.resolution, sourceType, sourceLabel: SOURCE_TYPE_LABELS[sourceType], fromVerifiedStore: false, status: "warning", telemetry: opts.telemetry };
+  }
+
   const inputCheck = validateCitationInput(rawInput);
   if (!inputCheck.valid) {
     throw new CitationRunError({

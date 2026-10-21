@@ -40,7 +40,7 @@ export function useForeignClassification(args: { accountId: string | null | unde
   return {
     record: rec,
     effective,
-    support: supportFor(effective),
+    support: supportFor(effective, input),
     stale: isOutputStale(rec),
     plan: planGeneration(rec, input),
     setOverride: (patch: ClassificationOverrides) => commit((r) => applyOverride(r, patch)),

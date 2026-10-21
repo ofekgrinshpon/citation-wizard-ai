@@ -97,6 +97,7 @@ const OPINION = (d: ForeignDetection | null | undefined) => !!(d?.fields as { op
 export function planLocalCitation(p: LocalPlanInput, caps: CitationHostCapabilities): { origin: LocalOrigin; resolution: CitationResolution } | { origin: null; statutePrep: StatutePreparation | null } {
   const { pasted } = p.evidence;
   const st = p.sourceType;
+  if (pasted.country && pasted.local) return { origin: pasted.contract.route === "preserve" ? "preserve" : "deterministic", resolution: { ...pasted.local, status: "warning", pastedCitation: pasted.contract, sourceType: pasted.country.family === "case" ? "foreign_case_other" : "foreign" } };
   const gate = planCapabilityGate(p);
   if (gate) return gate;
   if (pasted.local && !(caps.pastedLocalDefersOpinionFormat && OPINION(pasted.detection))) {
@@ -150,6 +151,7 @@ export function planLocalCitation(p: LocalPlanInput, caps: CitationHostCapabilit
  */
 export function planCapabilityGate(p: LocalPlanInput): { origin: LocalOrigin; resolution: CitationResolution } | null {
   const { pasted } = p.evidence;
+  if (pasted.country && pasted.local) return { origin: pasted.contract.route === "preserve" ? "preserve" : "deterministic", resolution: { ...pasted.local, status: "warning", pastedCitation: pasted.contract, sourceType: pasted.country.family === "case" ? "foreign_case_other" : "foreign" } };
   const disabled = (): { origin: LocalOrigin; resolution: CitationResolution } => {
     const citation = escapeCitationLiteral(pasted.contract.rawInput);
     return { origin: "preserve", resolution: { citation, reply: `${citation}\n⚠️ ${DISABLED_RULEPACK_WARNING}`, status: "warning", warningMsg: DISABLED_RULEPACK_WARNING, pastedCitation: pasted.contract } };
@@ -192,6 +194,7 @@ export function planForeignLookup(sourceType: SourceType, raw: string, detection
   return plan && rulepackLookupEligible(plan.kind, plan.jurisdiction) ? plan : null;
 }
 function planForeignLookupRoute(sourceType: SourceType, raw: string, detection: ForeignDetection | null): { kind: ForeignSourceKind; jurisdiction: "US" | "UK" | "OTHER" | "UNKNOWN" } | null {
+  if (preparePastedCitation(raw).country) return null;
   const identity = toForeignIdentity(sourceType);
   const caseShaped = FOREIGN_CASE_SHAPE.test(raw);
   if (identity?.kind === "statute") return identity.jurisdiction === "US" || identity.jurisdiction === "UK" ? { kind: "statute", jurisdiction: identity.jurisdiction } : null;

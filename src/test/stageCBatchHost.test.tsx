@@ -227,14 +227,13 @@ describe("BatchFootnoteBuilder — explicit regeneration", () => {
     expect(fetchSpy).not.toHaveBeenCalled();
     expect(supabase.functions.invoke).not.toHaveBeenCalled();
   });
-  it("unsupported Canada choice is generated generically (not US) and flagged", async () => {
+  it("Canada SCC choice is locally supported (not US) and flagged as partial", async () => {
     choose("t2:canada");
     render(<BatchFootnoteBuilder />);
     await act(async () => { fireEvent.click(screen.getByRole("button", { name: /הפק מחדש$/ })); });
     await waitFor(() => expect(b.runCitation).toHaveBeenCalledTimes(1));
     expect(b.runCitation.mock.calls[0][0].overrideType).toBe("foreign_case_other");
-    await waitFor(() => expect(screen.getByText(/עדיין לא נתמך בעיצוב האוטומטי: האזכור הופק/)).toBeInTheDocument());
-    expect(screen.getByTestId("foreign-support").dataset.status).toBe("unsupported");
+    expect(screen.getByTestId("foreign-support").dataset.status).toBe("renderer_partial");
   });
   it("editing the output by hand never certifies the classification", async () => {
     choose("us");

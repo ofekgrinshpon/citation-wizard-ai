@@ -1,6 +1,7 @@
 /** Batch A: pure supplied-text evidence, shared by browser and server. No I/O or identity claims. */
 import { CASE_DOCKET_RE, findBareDocket } from "./caseTypePrefixes.ts";
 import { LOOKUP_JURISDICTIONS, PLANNED_RULEPACK_WARNING, isGeneralFamily, isManualChoiceJurisdiction, isPlannedJurisdiction, readRulepackVersion, rulepackCapability, rulepackJurisdictionFromId } from "./citationPure/rulepack.ts";
+import { parseCountryLocal } from "./citationPure/countryLocal.ts";
 export const PASTED_CITATION_VERSION = 1 as const;
 /** D1: AU/CA/FR are recorded (never cast to US/IL/UNKNOWN); their rulepacks are planned/disabled. */
 export type CitationJurisdiction = "IL" | "US" | "UK" | "DE" | "AU" | "CA" | "FR" | "UNKNOWN";
@@ -107,6 +108,13 @@ export function buildPastedCitation(raw: string, manual: CitationManualChoice | 
   add(/\bU\.\s?S\.\s?C\.|\bU\.\s?S\.\s?CONST\./, "US", "code");
   add(/\b(?:UKSC|UKHL|UKPC|EWCA|EWHC)\b/, "UK", "court");
   add(/\b(?:WLR|All ER)\b/, "UK", "reporter");
+  add(/\b(?:CLR|FCR)\b/, "AU", "reporter");
+  add(/\b(?:HCA|FCA|FCAFC)\b/, "AU", "court");
+  add(/\bCth\b|\(Austl\.\)/, "AU", "code");
+  add(/\bSCC\b|\bCanLII\b|\bQuicklaw\b/, "CA", "court");
+  add(/\bSCR\b|S\.C\.R\./, "CA", "reporter");
+  add(/(?<![A-Za-z.])R\.?S\.?C\.?\b|(?<![A-Za-z.])S\.C\.|\(Can\.\)/, "CA", "code");
+  const country = parseCountryLocal(raw, manual);
   const prefixed = raw.match(CASE_DOCKET_RE);
   if (prefixed) {
     const start = prefixed.index ?? 0;
@@ -137,7 +145,7 @@ export function buildPastedCitation(raw: string, manual: CitationManualChoice | 
   const foreignShape = /[A-Za-z][^\n]*?\s+v(?:s)?\.?\s+[A-Za-z]/.test(raw);
   const caseInput = !!prefixed || !!bare || foreignShape || evidence.some(e => e.signal === "court" || e.signal === "reporter");
   // Existing parsed literature can contain numbers/case titles without becoming a decision.
-  const sourceKind = parser?.kind ?? (caseInput ? "case" : evidence.some(e => e.signal === "code") ? "statute" : null);
+  const sourceKind = country?.family ?? parser?.kind ?? (caseInput ? "case" : evidence.some(e => e.signal === "code") ? "statute" : null);
   const manualKind = citationSourceKind(manual?.sourceType);
   // This foundation gates decision-vs-other-family crossings only. Existing
   // literature/statute helpers retain their more precise subtype ambiguity gates.
@@ -148,6 +156,10 @@ export function buildPastedCitation(raw: string, manual: CitationManualChoice | 
     manual?.jurisdiction === "UNKNOWN" && (manual.jurisdictionId || manual.subjurisdiction) && caseInput ? ["jurisdiction_formatter_unknown"] : [];
   const route = conflicts.length || unsupported.length || (!!bare && detected === "UNKNOWN" && !foreignShape)
     ? "preserve" : detected === "IL" ? "israeli" : detected !== "UNKNOWN" || foreignShape || manual?.foreign ? "foreign" : "existing";
+  if (country) {
+    for (const [key, f] of Object.entries(country.fields)) fields[key] = { value: f.value, state: "supplied", provenance: "supplied_text", spans: f.spans };
+    if (country.conflicts.length) { conflicts.push(...country.conflicts); }
+  }
   const missing = caseInput ? ["caseName", "year", "reporter"].filter(k => fields[k]?.state !== "supplied") : [];
   if (caseInput && detected === "UNKNOWN") missing.push("jurisdiction_evidence");
   const covered = [...evidence.map(e => e.span), ...Object.entries(fields).filter(([k]) => k !== "unparsedRemainder").flatMap(([,f]) => f.spans)].sort((a,b) => a.start-b.start);
@@ -166,7 +178,7 @@ export function buildPastedCitation(raw: string, manual: CitationManualChoice | 
     evidence, candidates, manualChoice: manual, fields, unknownSpans,
     classification: conflicts.length ? "conflicting" : detected === "IL" ? "identified_israeli" : detected !== "UNKNOWN" ? "identified_foreign" : "ambiguous",
     formatter: unsupported.length ? "unsupported" : jurisdiction === "UNKNOWN" ? "unknown" : "existing_route",
-    missing, conflicts, unsupported, identityVerified: false, route };
+    missing: country?.missing ?? missing, conflicts, unsupported, identityVerified: false, route: country && !country.complete ? "preserve" : route };
 }
 export function pastedCitationWarning(c: PastedCitationContract): string {
   return c.conflicts.length === 0 && c.unsupported.some(u => u.startsWith("rulepack_planned_disabled:")) ? PLANNED_RULEPACK_WARNING
@@ -224,6 +236,7 @@ export function guardPastedCitationRequest(body: { messages: Array<{ role: strin
     c.route = "preserve"; c.conflicts.push("lookup_source_binding_conflict");
   }
   if (lookup && typeof lookup === "object" && !Array.isArray(lookup)) {
+    if (c.jurisdiction === "AU" || c.jurisdiction === "CA") { c.route = "preserve"; c.conflicts.push("rulepack_lookup_disabled"); }
     // Same capability decision as the planner: only an enabled manifest completion may reach usage/cache/provider.
     if (!(LOOKUP_JURISDICTIONS as readonly unknown[]).includes(lookup.jurisdiction)) { c.route = "preserve"; c.conflicts.push("lookup_jurisdiction_unsupported"); }
     else if (!rulepackCapability(String(lookup.kind), String(lookup.jurisdiction)).lookup) { c.route = "preserve"; c.conflicts.push("rulepack_lookup_disabled"); }
@@ -242,5 +255,6 @@ export function guardPastedCitationRequest(body: { messages: Array<{ role: strin
   if (manual?.subjurisdiction && c.jurisdiction === "UK" && manual.subjurisdiction !== "t2:united-kingdom/england-and-wales") {
     c.route = "preserve"; c.formatter = "unsupported"; c.unsupported.push("subjurisdiction_formatter_not_supported");
   }
+  if (c.jurisdiction === "AU" || c.jurisdiction === "CA") { c.route = "preserve"; c.unsupported.push("country_local_only_completion_disabled"); }
   return c;
 }

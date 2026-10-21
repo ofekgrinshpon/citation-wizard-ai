@@ -92,11 +92,11 @@ describe("batch B before/after differential — runner (Batch/Bibliography share
       // text, status, labels, provenance (pastedCitation), warnings, source type
       // C1 deliberately replaces ungrounded typed-case acceptance and local
       // book presentation; all other before/after result parity remains exact.
-      const changedCase = ["US case incomplete", "unsupported manual Canada"].includes(fx.name) && rname !== "safety_mismatch";
+      const changedCase = ["US case incomplete", "unsupported manual Canada"].includes(fx.name) && (rname !== "safety_mismatch" || fx.name === "unsupported manual Canada");
       const changedBook = ["book", "chapter labelled"].includes(fx.name);
       if (changedCase) {
         const result = after.ok as { citation: string; reply: string; status: string; pastedCitation?: unknown };
-        expect(result.citation).toBe(fx.raw);
+        expect(result.citation).toBe(fx.name === "unsupported manual Canada" ? `${fx.raw} (Can.).` : fx.raw);
         expect(result.status).toBe("warning");
         expect(result.reply).not.toMatch(/UNSAFE|ע"א 400\/51/);
         expect(result.pastedCitation).toEqual(planCitationEvidence(fx.raw, citationManualChoice(fx.type)).pasted.contract);

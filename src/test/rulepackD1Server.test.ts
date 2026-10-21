@@ -59,7 +59,7 @@ describe("D1 actual handler: manual jurisdiction id/code validation", () => {
       pastedCitation: { ...pasted.buildPastedCitation(RAW), manualChoice: choice }, foreignLookup: lookup });
     expect(r.body.pastedCitation.route).toBe("preserve");
     expect(r.body.pastedCitation.rawInput).toBe(RAW);
-    if (mode === "omitted") expect(r.body.pastedCitation.unsupported).toContain(`rulepack_planned_disabled:${j}`);
+    if (mode === "omitted") expect(r.body.pastedCitation.unsupported).toContain(j === "FR" ? `rulepack_planned_disabled:${j}` : "country_local_only_completion_disabled");
     if (mode === "contradictory US") expect(r.body.pastedCitation.conflicts).toContain("manual_jurisdiction_id_mismatch");
     if (mode === "malformed") expect(r.body.pastedCitation.conflicts).toContain("manual_jurisdiction_malformed");
     noSideEffects(h);
