@@ -1,6 +1,7 @@
 # Roadmap — research → memo → draft handoff (legal-research-v2)
 
 ## Unified pasted-citation infrastructure batch A (offline only)
+- [x] Narrow C2 JSONB binding correction at de9f47d9: recursive canonical v2 checksum, exact-v1 compatibility; five fail-before/pass-after vertical/history cases; 615 focused / 4,028 full passed, 1 skipped; automatic compilation OK, explicit TS/Vite unrun; no deployment/live/DB changes.
 - [x] Focused C2 authoritative book/chapter replay at 58231607: shared pure server/client rendering; authenticated, version/input/request-bound existing-content replay; 599 focused / 3,994 full passed, 1 skipped; automatic compilation OK, explicit TS/Vite unrun; no deployment/live/DB changes.
 - [x] Narrow C2 retention-envelope correction at 1ce326a0: trusted source snippet projection; real UsageGuard → endpoint/API → history; 17 new / 416 focused / 3,969 full passed, 1 skipped; explicit TS/Vite remain external gates; no live/deployment/DB changes.
 - [x] Final bounded C2 recovery correction at be955a5b: exact raw reparse and wire/manual checks; original year/publisher/section retained; focused 317 / full 3,952 passed, 1 skipped; automatic compilation OK; explicit TS/Vite independent gate and pre-existing retention-envelope compatibility remain documented; no D/live/deployment.

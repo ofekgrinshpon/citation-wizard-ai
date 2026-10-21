@@ -92,19 +92,58 @@ export function resolveBookCompletion(request: Record<string, unknown>, raw: str
     warningMsg: bits[0], sourceType: type as "foreign_book" | "foreign_book_chapter", completion: accepted };
 }
 
-const PREFIX = "relex:book-final:1\n";
+const PREFIX = "relex:book-final:2\n";
+const LEGACY_PREFIX = "relex:book-final:1\n";
+/** Exact JSON-value serialization: object order is immaterial, array order is not.
+ * Reject values JSON.stringify would silently drop/coerce or invoke via getters. */
+export function canonicalBookContext(value: unknown): string {
+  const ancestors = new Set<object>();
+  const serialize = (item: unknown): string => {
+    if (item === null) return "null";
+    if (typeof item === "string" || typeof item === "boolean") return JSON.stringify(item);
+    if (typeof item === "number" && Number.isFinite(item) && !Object.is(item, -0)) return JSON.stringify(item);
+    if (typeof item !== "object" || !item || ancestors.has(item)) throw new TypeError("INVALID_BOOK_CONTEXT_JSON");
+    const array = Array.isArray(item);
+    const prototype = Object.getPrototypeOf(item);
+    if (!array && prototype !== Object.prototype && prototype !== null) throw new TypeError("INVALID_BOOK_CONTEXT_JSON");
+    const keys = Reflect.ownKeys(item);
+    if (keys.some(key => typeof key !== "string")) throw new TypeError("INVALID_BOOK_CONTEXT_JSON");
+    const properties = Object.getOwnPropertyDescriptors(item);
+    if (array) {
+      if (keys.length !== item.length + 1 || Array.from({ length: item.length }, (_, i) => String(i)).some(key => !properties[key]))
+        throw new TypeError("INVALID_BOOK_CONTEXT_JSON");
+    }
+    for (const key of keys) {
+      if (array && key === "length") continue;
+      const descriptor = properties[String(key)];
+      if (!descriptor || !descriptor.enumerable || !("value" in descriptor)) throw new TypeError("INVALID_BOOK_CONTEXT_JSON");
+    }
+    ancestors.add(item);
+    try {
+      if (array) return "[" + Array.from({ length: item.length }, (_, i) => serialize(properties[String(i)].value)).join(",") + "]";
+      return "{" + Object.keys(properties).sort().map(key => JSON.stringify(key) + ":" + serialize(properties[key].value)).join(",") + "}";
+    } finally { ancestors.delete(item); }
+  };
+  return serialize(value);
+}
 /** This checksum only binds context / detects version drift; it is NOT a signature. */
 function contextKey(input: CitationRecoveryInput, requestId: string) {
-  return rawCitationFingerprint(JSON.stringify([requestId, input.messages, input.rawInput, input.foreignLookup]));
+  return rawCitationFingerprint(canonicalBookContext([requestId, input.messages, input.rawInput, input.foreignLookup]));
 }
 export function frameBookFinal(input: CitationRecoveryInput, requestId: string, reply: string): string {
   return PREFIX + JSON.stringify([contextKey(input, requestId), reply]);
 }
 export function readBookFinal(content: unknown, input: CitationRecoveryInput, requestId: string): { reply: string; citation: string; warnings: string[] } | null {
-  if (typeof content !== "string" || !content.startsWith(PREFIX) || !boundBookCompletion(input)) return null;
+  if (typeof content !== "string" || (!content.startsWith(PREFIX) && !content.startsWith(LEGACY_PREFIX))) return null;
   try {
-    const frame: unknown = JSON.parse(content.slice(PREFIX.length));
-    if (!Array.isArray(frame) || frame.length !== 2 || frame[0] !== contextKey(input, requestId) || typeof frame[1] !== "string" || !frame[1].trim()) return null;
+    const canonicalKey = contextKey(input, requestId); // Validate JSON shapes for both versions.
+    if (!boundBookCompletion(input)) return null;
+    const legacy = content.startsWith(LEGACY_PREFIX);
+    // v1 accepts only its original exact serialization. Lost insertion order
+    // cannot be reconstructed safely; never accept arbitrary v1 mismatches.
+    const key = legacy ? rawCitationFingerprint(JSON.stringify([requestId, input.messages, input.rawInput, input.foreignLookup])) : canonicalKey;
+    const frame: unknown = JSON.parse(content.slice(legacy ? LEGACY_PREFIX.length : PREFIX.length));
+    if (!Array.isArray(frame) || frame.length !== 2 || frame[0] !== key || typeof frame[1] !== "string" || !frame[1].trim()) return null;
     return { reply: frame[1], ...splitCitationWarnings(frame[1]) };
   } catch { return null; }
 }
