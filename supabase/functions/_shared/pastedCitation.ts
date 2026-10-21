@@ -1,7 +1,7 @@
 /** Batch A: pure supplied-text evidence, shared by browser and server. No I/O or identity claims. */
 import { CASE_DOCKET_RE, findBareDocket } from "./caseTypePrefixes.ts";
 import { LOOKUP_JURISDICTIONS, PLANNED_RULEPACK_WARNING, isGeneralFamily, isManualChoiceJurisdiction, isPlannedJurisdiction, readRulepackVersion, rulepackCapability, rulepackJurisdictionFromId } from "./citationPure/rulepack.ts";
-import { parseCountryLocal } from "./citationPure/countryLocal.ts";
+import { parseCountryLocal, AU_REPORTER_ANCHOR, AU_NEUTRAL_ANCHOR, AU_CODE_ANCHOR, CA_NEUTRAL_ANCHOR, CA_REPORTER_ANCHOR, CA_CODE_ANCHOR } from "./citationPure/countryLocal.ts";
 export const PASTED_CITATION_VERSION = 1 as const;
 /** D1: AU/CA/FR are recorded (never cast to US/IL/UNKNOWN); their rulepacks are planned/disabled. */
 export type CitationJurisdiction = "IL" | "US" | "UK" | "DE" | "AU" | "CA" | "FR" | "UNKNOWN";
@@ -108,12 +108,12 @@ export function buildPastedCitation(raw: string, manual: CitationManualChoice | 
   add(/\bU\.\s?S\.\s?C\.|\bU\.\s?S\.\s?CONST\./, "US", "code");
   add(/\b(?:UKSC|UKHL|UKPC|EWCA|EWHC)\b/, "UK", "court");
   add(/\b(?:WLR|All ER)\b/, "UK", "reporter");
-  add(/\b(?:CLR|FCR)\b/, "AU", "reporter");
-  add(/\b(?:HCA|FCA|FCAFC)\b/, "AU", "court");
-  add(/\bCth\b|\(Austl\.\)/, "AU", "code");
-  add(/\bSCC\b|\bCanLII\b|\bQuicklaw\b/, "CA", "court");
-  add(/\bSCR\b|S\.C\.R\./, "CA", "reporter");
-  add(/(?<![A-Za-z.])R\.?S\.?C\.?\b|(?<![A-Za-z.])S\.C\.|\(Can\.\)/, "CA", "code");
+  add(AU_REPORTER_ANCHOR, "AU", "reporter");
+  add(AU_NEUTRAL_ANCHOR, "AU", "court");
+  add(AU_CODE_ANCHOR, "AU", "code");
+  add(CA_NEUTRAL_ANCHOR, "CA", "court");
+  add(CA_REPORTER_ANCHOR, "CA", "reporter");
+  add(CA_CODE_ANCHOR, "CA", "code");
   const country = parseCountryLocal(raw, manual);
   const prefixed = raw.match(CASE_DOCKET_RE);
   if (prefixed) {
