@@ -635,11 +635,16 @@ describe("AU/CA QA 29db8bb: labelled literature country suffix through actual In
     ["Author: Jane Doe; Edition: 2nd; Year: 2020; Book: Literature (Can.)", "Jane Doe, Literature (Can.) (2nd ed. 2020)."],
     ["Author: Jane Doe; Edition: 2nd; Year: 2020; Book: Literature (Austl.)", "Jane Doe, Literature (Austl.) (2nd ed. 2020)."],
   ])("%s initial + manual foreign_book regeneration match frozen D1 book", async (raw, plain) => {
+    // Legacy initial path: the existing source-type step resolves the labelled book (D1 ownership).
+    m.classify.mockResolvedValue({ sourceType: "foreign_book", source: "regex" });
     await mountChat(); await send(raw);
-    await waitFor(() => expect(screen.getByTestId("bubble-assistant")).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByTestId("bubble-assistant")).toHaveTextContent(plain));
     expect(screen.getByTestId("bubble-assistant").textContent).not.toContain("סותר");
+    const classified = m.classify.mock.calls.length;
     await act(async () => fireEvent.click(screen.getByRole("button", { name: "regen-foreign_book" })));
     await waitFor(() => expect(screen.getByTestId("bubble-assistant")).toHaveTextContent(plain));
-    expect(m.invoke).not.toHaveBeenCalled(); expect(m.classify).not.toHaveBeenCalled(); expect(fetch).not.toHaveBeenCalled();
+    expect(screen.getByTestId("bubble-assistant").textContent).not.toContain("סותר");
+    expect(m.classify.mock.calls.length).toBe(classified);
+    expect(m.invoke).not.toHaveBeenCalled(); expect(fetch).not.toHaveBeenCalled();
   });
 });
