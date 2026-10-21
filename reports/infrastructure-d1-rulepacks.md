@@ -32,3 +32,9 @@
 Fail-before: the 32 new correction tests run against a8ab09: 31 failed, 1 passed (the legacy US control). Full suite after: 200 files, 4,111 passed / 1 skipped / 0 failed. Earlier D1 frozen differential fixture unchanged. Explicit app TypeScript and Vite production build not run (environment); automatic build status only.
 
 Remaining gaps unchanged: no AU/CA/DE/FR templates/completion/replay; book-only authoritative replay; Bibliography initial intake has no classification plan (unchanged); manifest entries are mutable objects inside a frozen array solely so tests can toggle and restore them.
+
+## Correction: capability gate before verified-store cache (on fe373a9e)
+- `planCapabilityGate` (pure, in `src/lib/citationPlanner.ts`) holds the effective family/jurisdiction manifest decision plus typed-completion eligibility; `planLocalCitation` reuses it, and `runCitation` calls it before `findVerifiedSourceMatch`, so a disabled entry preserves raw input with `DISABLED_RULEPACK_WARNING` and zero cache/classifier/provider calls.
+- Tests `src/test/rulepackD1CacheOrder.test.ts` (9): 6 disabled (Brown/unanchored.case; book with/without Year/general.book; cache hit and miss) failed on fe373a9e and pass now; 3 enabled cache-hit controls match the frozen legacy runner exactly (one cache read, zero provider).
+- Remaining limit: with no manual type and no foreign-case evidence, the source-type classifier still runs before the gate (the family is unknown until then); the cache is still read only after the gate.
+- Full suite: 201 files, 4,120 passed, 1 skipped, 0 failed. Explicit TypeScript and production Vite build not run manually (not permitted here); automatic build OK.

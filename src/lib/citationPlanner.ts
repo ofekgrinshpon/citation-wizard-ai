@@ -97,11 +97,8 @@ const OPINION = (d: ForeignDetection | null | undefined) => !!(d?.fields as { op
 export function planLocalCitation(p: LocalPlanInput, caps: CitationHostCapabilities): { origin: LocalOrigin; resolution: CitationResolution } | { origin: null; statutePrep: StatutePreparation | null } {
   const { pasted } = p.evidence;
   const st = p.sourceType;
-  const disabled = (): { origin: LocalOrigin; resolution: CitationResolution } => {
-    const citation = escapeCitationLiteral(pasted.contract.rawInput);
-    return { origin: "preserve", resolution: { citation, reply: `${citation}\n⚠️ ${DISABLED_RULEPACK_WARNING}`, status: "warning", warningMsg: DISABLED_RULEPACK_WARNING, pastedCitation: pasted.contract } };
-  };
-  if (!rulepackAllowsLocal(p)) return disabled();
+  const gate = planCapabilityGate(p);
+  if (gate) return gate;
   if (pasted.local && !(caps.pastedLocalDefersOpinionFormat && OPINION(pasted.detection))) {
     const warnings = pasted.detection ? renderForeignDetection(pasted.detection)?.warnings ?? [] : [];
     return { origin: "pasted_local", resolution: { ...pasted.local, pastedCitation: pasted.contract,
@@ -109,9 +106,6 @@ export function planLocalCitation(p: LocalPlanInput, caps: CitationHostCapabilit
   }
   const statutePrep = st && !p.isPinpoint ? prepareForeignStatute(st, p.input, { manual: p.manual }) : null;
   const bookCompletion = !p.isPinpoint ? eligibleBookCompletion(st, p.input) : null;
-  // Typed lookups are decided by the same manifest capability.
-  if (statutePrep?.request && !rulepackLookupEligible("statute", statutePrep.request.jurisdiction)) return disabled();
-  if (bookCompletion && !rulepackLookupEligible(bookCompletion.kind, "OTHER")) return disabled();
   const unreported = st && !p.isPinpoint ? (renderUsUnreportedLocal(st, p.input) ?? renderUnpublishedLocal(st, p.input) ??
     renderPeriodicalLocal(st, p.input) ?? (bookCompletion ? null : renderBookLocal(st, p.input, caps.bookDefersToDeterministic ? { deferToDeterministic: true } : undefined))) : null;
   if (unreported) return { origin: "unreported_local", resolution: { reply: unreported.reply, citation: unreported.citation, status: "warning", warningMsg: unreported.warningMsg } };
@@ -147,6 +141,28 @@ export function planLocalCitation(p: LocalPlanInput, caps: CitationHostCapabilit
     return { origin: "preserve", resolution: { citation, reply: `${citation}\n⚠️ ${warningMsg}`, status: "warning", warningMsg, pastedCitation: p.evidence.pasted.contract } };
   }
   return { origin: null, statutePrep };
+}
+
+/**
+ * Pure capability gate (no IO): the effective family/jurisdiction manifest
+ * decision plus typed-completion eligibility. Hosts call it before any
+ * verified-store cache/provider access; planLocalCitation reuses it.
+ */
+export function planCapabilityGate(p: LocalPlanInput): { origin: LocalOrigin; resolution: CitationResolution } | null {
+  const { pasted } = p.evidence;
+  const disabled = (): { origin: LocalOrigin; resolution: CitationResolution } => {
+    const citation = escapeCitationLiteral(pasted.contract.rawInput);
+    return { origin: "preserve", resolution: { citation, reply: `${citation}\n⚠️ ${DISABLED_RULEPACK_WARNING}`, status: "warning", warningMsg: DISABLED_RULEPACK_WARNING, pastedCitation: pasted.contract } };
+  };
+  if (!rulepackAllowsLocal(p)) return disabled();
+  const st = p.sourceType;
+  if (!st || p.isPinpoint) return null;
+  // Typed lookups are decided by the same manifest capability.
+  const statutePrep = prepareForeignStatute(st, p.input, { manual: p.manual });
+  if (statutePrep?.request && !rulepackLookupEligible("statute", statutePrep.request.jurisdiction)) return disabled();
+  const bookCompletion = eligibleBookCompletion(st, p.input);
+  if (bookCompletion && !rulepackLookupEligible(bookCompletion.kind, "OTHER")) return disabled();
+  return null;
 }
 
 /** Shared manifest capability for the effective family/jurisdiction of a foreign input. */
