@@ -28,7 +28,10 @@ vi.mock("@/hooks/useProjects", () => ({ useProjects: () => ({ currentProject: { 
 vi.mock("sonner", () => ({ toast: b.toast }));
 
 import { BibliographyGenerator } from "@/components/BibliographyGenerator";
-import { BibliographyProvider } from "@/hooks/useBibliography";
+import { BibliographyProvider, useBibliography } from "@/hooks/useBibliography";
+import { c1ServerPayload } from "./fixtures/c1ServerPayload";
+import { buildPastedCitation } from "../../supabase/functions/_shared/pastedCitation";
+import { acceptCitationCompletion } from "@/lib/citationCompletion";
 import { renderForeignCitation } from "@/data/bluebook";
 
 const ARTICLE = "Ronald H. Coase, ##The Problem of Social Cost##, 3 ^^J.L. & Econ.^^ 1 (1960).";
@@ -58,6 +61,28 @@ beforeEach(() => {
 afterEach(() => { cleanup(); vi.unstubAllGlobals(); });
 
 describe("BibliographyGenerator — fresh intake → commit → reload → copy", () => {
+  it("retains completion in the real provider entry but strips it from storage and reload", async () => {
+    const rawInput = "Brown v. Board of Education";
+    const req = { kind: "case", jurisdiction: "UNKNOWN", rawInput, parsedFields: { caseName: rawInput } };
+    const { response } = await c1ServerPayload(req);
+    const completion = acceptCitationCompletion(req, rawInput, response);
+    const pastedCitation = buildPastedCitation(rawInput);
+    b.runCitation.mockResolvedValue({ reply: "Brown v. Board of Education, 347 U.S. 483 (1954).", citation: "Brown v. Board of Education, 347 U.S. 483 (1954).", status: "valid", sourceType: "foreign_case_us", sourceLabel: "x", fromVerifiedStore: false, completion, pastedCitation });
+    const captured: unknown[] = [];
+    function Probe() { captured.push(useBibliography().entries); return null; }
+    render(<TooltipProvider><BibliographyProvider><Probe /><BibliographyGenerator /></BibliographyProvider></TooltipProvider>);
+    fireEvent.change(screen.getByRole("textbox"), { target: { value: rawInput } });
+    await act(async () => fireEvent.click(screen.getByRole("button", { name: /שלח לבדיקה/ })));
+    await act(async () => fireEvent.click(await screen.findByRole("button", { name: /הוסף הכל לביבליוגרפיה/ })));
+    expect(captured.at(-1)).toEqual([expect.objectContaining({ completion, pastedCitation })]);
+    const stored = JSON.parse(localStorage.getItem("bibliography_entries_bib-project") ?? "[]");
+    expect(stored).toHaveLength(1);
+    expect(stored[0]).not.toHaveProperty("completion");
+    expect(stored[0]).not.toHaveProperty("pastedCitation");
+    cleanup();
+    render(<BibliographyProvider><Probe /></BibliographyProvider>);
+    expect(captured.at(-1)).toEqual([expect.not.objectContaining({ completion })]);
+  });
   it("keeps italic/small caps and the reply-only warning through save, reload and export", async () => {
     // Real runCitation shape: warning only in reply/warningMsg, not in citation.
     b.runCitation.mockResolvedValue({
