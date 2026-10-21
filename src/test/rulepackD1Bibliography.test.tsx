@@ -62,9 +62,9 @@ describe("actual BibliographyGenerator regeneration with a disabled-country manu
   });
 });
 
-import { COUNTRY_LOCAL_FIXTURES, COUNTRY_LOCAL_QA_FIXTURES } from "./fixtures/countryLocalFixtures";
+import { COUNTRY_LOCAL_FIXTURES, COUNTRY_LOCAL_QA_FIXTURES, COUNTRY_PARTIAL_FIXTURES } from "./fixtures/countryLocalFixtures";
 describe("AU/CA actual bibliography local slice", () => {
-  it.each([...COUNTRY_LOCAL_FIXTURES, ...COUNTRY_LOCAL_QA_FIXTURES])("$id initial and exact manual regeneration bypass warm cache", async f => {
+  it.each([...COUNTRY_LOCAL_FIXTURES, ...COUNTRY_LOCAL_QA_FIXTURES, ...COUNTRY_PARTIAL_FIXTURES])("$id initial and exact manual regeneration bypass warm cache", async f => {
     b.cache.mockResolvedValue({ full_citation:"UNSAFE CACHE", verification_status:"verified" });
     render(<TooltipProvider><BibliographyProvider><BibliographyGenerator /></BibliographyProvider></TooltipProvider>);
     fireEvent.change(screen.getByRole("textbox"), { target: { value:f.raw } });
