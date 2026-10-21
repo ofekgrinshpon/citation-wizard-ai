@@ -50,6 +50,9 @@ async function vertical(f: typeof C2_WIRE[number], mode = "complete") {
     if (mode === "forged-field") Object.assign(result.fields, { secret: "invalid" });
     if (mode === "forged-source") Object.assign(result.sources[0], { document: "invalid" });
     if (mode === "invalid-snippet") Object.assign(result.sources[0], { snippet: { text: "invalid" } });
+    if (mode === "invalid-provenance") Object.assign(result.provenance.year, { document: "invalid" });
+    if (mode === "invalid-identity") Object.assign(result.identity, { matched: "true" });
+    if (mode === "invalid-tier") Object.assign(result.sources[0], { tier: "forged" });
     return result;
   });
   let retainedInput: unknown = null;
@@ -73,7 +76,10 @@ async function vertical(f: typeof C2_WIRE[number], mode = "complete") {
     }], nextCursor: null }, error: null };
   });
   const authClient = { auth: { getClaims: async () => ({ data: { claims: { sub: owner } }, error: null }) }, rpc,
-    from: () => { throw new Error("Unexpected cache/table access"); } };
+    from: () => {
+      const chain = { select: () => chain, eq: () => chain, or: () => chain, limit: async () => ({ data: [], error: null }) };
+      return chain;
+    } };
   const makeHandler = (code: string) => {
     let handler: ((req: Request) => Promise<Response>) | undefined;
     const require = (path: string) => {
@@ -114,7 +120,12 @@ async function vertical(f: typeof C2_WIRE[number], mode = "complete") {
       } };
     return chain;
   });
-  return { plan, body, response, rpc, search, lookup, writes, retainedResult, donor };
+  return { plan, body, response, rpc, search, lookup, writes, retainedResult, donor,
+    mutateInput: (mutate: (input: recovery.CitationRecoveryInput) => void) => {
+      const input = recovery.citationRecoveryInput(retainedInput);
+      if (!input) throw new Error("Invalid fixture input");
+      mutate(input); retainedInput = input;
+    } };
 }
 
 describe("C2 real retention → recovery → history", () => {
@@ -164,7 +175,7 @@ describe("C2 real retention → recovery → history", () => {
     expect(h.writes[0]).not.toHaveProperty("is_verified");
     expect(h.search).toHaveBeenCalledTimes(1);
   });
-  it.each(["forged-field", "forged-source", "invalid-snippet"])("%s retains invalid-result failure settlement", async mode => {
+  it.each(["forged-field", "forged-source", "invalid-snippet", "invalid-provenance", "invalid-identity", "invalid-tier"])("%s retains invalid-result failure settlement", async mode => {
     const h = await vertical(C2_WIRE[0], mode);
     expect(h.body.recoveryAvailability).toBe("unconfirmed");
     expect(h.response.headers.get("X-Usage-Status")).toBe("unconfirmed");
@@ -172,6 +183,23 @@ describe("C2 real retention → recovery → history", () => {
     expect(h.rpc.mock.calls[1][1]).toMatchObject({ _outcome: "unknown", _reason: "recovery_result_invalid", _result: null });
     await expect(saveRecoveredCitationHistory({ requestId, projectId: null, expectedAccountId: owner, formattedOutput: "forged" })).rejects.toThrow("CITATION_RECOVERY_UNAVAILABLE");
     expect(h.writes).toHaveLength(0); expect(h.lookup).toHaveBeenCalledTimes(1);
+  });
+  it.each(["raw", "kind", "manual"])("retained %s mismatch cannot promote completion", async mode => {
+    const h = await vertical(C2_WIRE[0]);
+    h.mutateInput(input => {
+      if (!input.foreignLookup) throw new Error("Missing input");
+      if (mode === "raw") input.foreignLookup.rawInput = "Author: Jane Doe; Book: Other Collection; Original year: 1901";
+      if (mode === "kind") input.foreignLookup.kind = "book_chapter";
+      if (mode === "manual") input.messages[0].content = `[סיווג שיפוט ידני: {"sourceType":"foreign_case_us","jurisdiction":"US"}]\n${C2_WIRE[0].raw}`;
+    });
+    const record = await readCitationRecovery(owner, requestId);
+    if (!record) throw new Error("Missing recovery");
+    const rendered = renderCitationRecovery(record);
+    expect(rendered?.completion).toBeUndefined();
+    expect(rendered?.warning).toBeTruthy();
+    expect(rendered?.plainText).toContain("1901");
+    expect(h.lookup).toHaveBeenCalledTimes(1); expect(h.search).toHaveBeenCalledTimes(1);
+    expect(h.rpc.mock.calls.map(([name]) => name)).toEqual(["begin_citation_request", "finish_citation_request", "read_citation_recovery"]);
   });
   it("unchanged account and stale-scope guards prevent recovery writes", async () => {
     const h = await vertical(C2_WIRE[0]);
