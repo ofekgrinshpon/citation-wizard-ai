@@ -100,3 +100,39 @@ describe("AU/CA QA correction 1: incidental acronyms keep legacy runCitation own
     expect(m.invoke).not.toHaveBeenCalled(); expect(m.cache).not.toHaveBeenCalled(); expect(m.classifier).not.toHaveBeenCalled();
   });
 });
+
+describe("AU/CA QA 852985d: partial structures and incidental titles in actual runCitation", () => {
+  const PARTIAL = ["Wattle v Harbour [2020] FCA", "Wattle v Harbour (2020) 270 CLR", "Maple v. Cedar, 2020 SCC", "Maple v. Cedar, [2020] 2 S.C.R.",
+    "Criminal Code, R.S.C. 1985", "Synthetic Records Act, S.C. 2020", "Synthetic Records Act (Cth)"];
+  const warmEntry = { full_citation: "CACHED", source_name: "unrelated cached source", verification_status: "verified" };
+  it.each(PARTIAL.flatMap(raw => [false, true].flatMap(warm => [undefined, /v\.? /.test(raw) ? "foreign_case_other" : "foreign_statute_us"].map(o => ({ raw, warm, o })))))(
+    "$raw warm=$warm manual=$o preserves with zero IO", async ({ raw, warm, o }) => {
+      if (warm) m.cache.mockResolvedValue(warmEntry);
+      const r = await runCitation({ rawInput: raw, overrideType: o as never });
+      expect(citationToPlain(r.citation)).toBe(raw); expect(r.status).toBe("warning");
+      expect(m.cache).not.toHaveBeenCalled(); expect(m.classifier).not.toHaveBeenCalled(); expect(m.invoke).not.toHaveBeenCalled();
+    });
+  it.each([
+    ["Author: Jane Doe; Book: Quicklaw Studies; Edition: 2nd; Year: 2020", "Author: Jane Doe; Book: Zedlaw Studies; Edition: 2nd; Year: 2020", "Quicklaw", "Zedlaw"],
+    ["Author: Jane Doe; Book: CanLII Guide; Edition: 2nd; Year: 2020", "Author: Jane Doe; Book: ZedLII Guide; Edition: 2nd; Year: 2020", "CanLII", "ZedLII"],
+    ["Author: Jane Doe; Book: Cth Practice; Edition: 2nd; Year: 2020", "Author: Jane Doe; Book: Zed Practice; Edition: 2nd; Year: 2020", "Cth", "Zed"],
+  ])("%s keeps general literature parity with control", async (raw, control, tok, ctok) => {
+    for (const warm of [false, true]) {
+      vi.clearAllMocks(); m.cache.mockResolvedValue(warm ? warmEntry : null);
+      const a = await runCitation({ rawInput: raw, overrideType: "foreign_book" });
+      const counts = [m.cache.mock.calls.length, m.classifier.mock.calls.length, m.invoke.mock.calls.length];
+      vi.clearAllMocks(); m.cache.mockResolvedValue(warm ? warmEntry : null);
+      const b = await runCitation({ rawInput: control, overrideType: "foreign_book" });
+      expect(a.pastedCitation?.conflicts ?? []).not.toContain("manual_family_conflict");
+      expect([a.status, a.warningMsg]).toEqual([b.status, b.warningMsg]);
+      expect(a.citation.split(tok).join("X")).toBe(b.citation.split(ctok).join("X"));
+      expect([m.cache.mock.calls.length, m.classifier.mock.calls.length, m.invoke.mock.calls.length]).toEqual(counts);
+    }
+  });
+  it.each(["Wattle v Harbour [2020] FCA 123 (4 March 2020) (Austl.).", "Maple v. Cedar, 2020 SCC 12, para. 8 (Can.).", "Synthetic Records Act 2020 (Cth) ss 4–6 (Austl.).", "Criminal Code, R.S.C. 1985, c C-46 (Can.)."])(
+    "complete %s with wrong manual foreign_book stays terminal with zero IO", async raw => {
+      const r = await runCitation({ rawInput: raw, overrideType: "foreign_book" });
+      expect(r.citation).toBe(raw);
+      expect(m.cache).not.toHaveBeenCalled(); expect(m.classifier).not.toHaveBeenCalled(); expect(m.invoke).not.toHaveBeenCalled();
+    });
+});

@@ -140,3 +140,28 @@ describe("AU/CA local-slice QA corrections", () => {
     expect(renderCountryLocal(parseCountryLocal("Maple v. Cedar (2019), [2020] 2 S.C.R. 100, 104 (Can.).")!).citation).toBe("Maple v. Cedar (2019), [2020] 2 S.C.R. 100, 104 (Can.).");
   });
 });
+
+describe("AU/CA partial recognition vs complete eligibility (QA 852985d)", () => {
+  it.each([
+    ["Wattle v Harbour [2020] FCA", "AU", "case", "neutralNumber"],
+    ["Wattle v Harbour (2020) 270 CLR", "AU", "case", "firstPage"],
+    ["Maple v. Cedar, 2020 SCC", "CA", "case", "neutralNumber"],
+    ["Maple v. Cedar, [2020] 2 S.C.R.", "CA", "case", "firstPage"],
+    ["Criminal Code, R.S.C. 1985", "CA", "statute", "chapter"],
+    ["Synthetic Records Act, S.C. 2020", "CA", "statute", "chapter"],
+    ["Synthetic Records Act (Cth)", "AU", "statute", "enactmentYear"],
+  ])("%s → %s %s incomplete, missing %s, raw preserved", (raw, j, fam, miss) => {
+    const ast = parseCountryLocal(raw)!;
+    expect(ast).not.toBeNull();
+    expect([ast.jurisdiction, ast.family, ast.complete]).toEqual([j, fam, false]);
+    expect(ast.missing).toContain(miss);
+    const out = renderCountryLocal(ast);
+    expect(out.citation).toBe(raw); expect(out.warningMsg).toContain("הקלט נשמר ללא חיפוש");
+  });
+  it.each([
+    "Author: Jane Doe; Book: Quicklaw Studies; Edition: 2nd; Year: 2020",
+    "Author: Jane Doe; Book: CanLII Guide; Edition: 2nd; Year: 2020",
+    "Author: Jane Doe; Book: Cth Practice; Edition: 2nd; Year: 2020",
+    "Author: Jane Doe; Book: FCA and CLR Basics; Edition: 2nd; Year: 2020",
+  ])("title-only country token is not evidence: %s", raw => expect(parseCountryLocal(raw)).toBeNull());
+});
