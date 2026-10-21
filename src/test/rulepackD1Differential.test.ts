@@ -37,7 +37,7 @@ function snapshot() {
       if (ev.preserve) return { preserve: ev.preserve };
       const input = { evidence: ev, sourceType: type ?? ev.pasted.detection?.sourceType ?? null, input: raw, isPinpoint: false, manual: !!type };
       const local = planLocalCitation(input, caps);
-      if (local.origin) return { local };
+      if ("resolution" in local) return { local };
       const typed = planTypedRequest({ ...input, statutePrep: local.statutePrep, canonicalRaw: raw }, caps);
       return { typed: { kind: typed.kind, foreignLookup: typed.foreignLookup, extraBody: typed.extraBody } };
     });
