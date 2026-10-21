@@ -8,15 +8,28 @@ export interface CountryAst {
   fields: Record<string, CountryField>; unknownSpans: InputSpan[]; missing: string[]; conflicts: string[];
   complete: boolean;
 }
-/** Structural anchors only: an incidental acronym (e.g. "The SCC", "HCA Holdings") is not country evidence. */
-export const AU_REPORTER_ANCHOR = /\(\d{4}\)\s+\d+\s+(?:CLR|FCR)\s+\d+/;
-export const AU_NEUTRAL_ANCHOR = /\[\d{4}\]\s+(?:HCA|FCA|FCAFC)\s+\d+/;
-export const AU_CODE_ANCHOR = /\b\d{4}\s*\(Cth\)|\(Austl\.\)\s*\.?\s*$/;
-export const CA_NEUTRAL_ANCHOR = /\b\d{4}\s+(?:SCC|CanLII)\s+\d+|\bQuicklaw\b/;
-export const CA_REPORTER_ANCHOR = /\[\d{4}\]\s+\d+\s+(?:S\.C\.R\.|SCR)\s+\d+/;
-export const CA_CODE_ANCHOR = /(?<![A-Za-z.])(?:R\.?S\.?C\.?|S\.C\.),?\s+\d{4},\s*c\.?\s+[A-Za-z0-9]|\(Can\.\)\s*\.?\s*$/;
+/**
+ * Structural recognition anchors: identify AU/CA + family from typed citation structure even when the
+ * final number/page/chapter/year is missing. Template completeness is decided separately by the
+ * template regexes below. Incidental acronyms ("The SCC", "HCA Holdings", "Quicklaw Studies") are not evidence.
+ */
+export const AU_REPORTER_ANCHOR = /\(\d{4}\)\s+\d+\s+(?:CLR|FCR)\b/;
+export const AU_NEUTRAL_ANCHOR = /\[\d{4}\]\s+(?:HCA|FCA|FCAFC)\b/;
+export const AU_CODE_ANCHOR = /\((?:Cth)\)|\(Austl\.\)\s*\.?\s*$/;
+export const CA_NEUTRAL_ANCHOR = /\b\d{4}\s+(?:SCC|CanLII)\b/;
+export const CA_REPORTER_ANCHOR = /\[\d{4}\]\s+\d+\s+(?:S\.C\.R\.|SCR\b)/;
+export const CA_CODE_ANCHOR = /(?<![A-Za-z.])(?:R\.?S\.?C\.?|S\.C\.),?\s+\d{4}\b|\(Can\.\)\s*\.?\s*$/;
 const AU = new RegExp([AU_REPORTER_ANCHOR, AU_NEUTRAL_ANCHOR, AU_CODE_ANCHOR].map(r => r.source).join('|'));
 const CA = new RegExp([CA_NEUTRAL_ANCHOR, CA_REPORTER_ANCHOR, CA_CODE_ANCHOR].map(r => r.source).join('|'));
+/** Missing final element named by the recognized-but-incomplete structure (never a guessed value). */
+function partialMissing(s: string, jurisdiction: 'AU' | 'CA', family: 'case' | 'statute'): string[] {
+  if (family === 'case') {
+    if (jurisdiction === 'AU') return /\[\d{4}\]\s+(?:HCA|FCA|FCAFC)\s*$/.test(s) ? ['neutralNumber'] : /(?:CLR|FCR)\s*$/.test(s) ? ['firstPage'] : [];
+    return /\bSCC\s*$/.test(s) ? ['neutralNumber'] : /(?:S\.C\.R\.|SCR)\s*$/.test(s) ? ['firstPage'] : [];
+  }
+  if (jurisdiction === 'AU') return /\bAct\s*\(Cth\)/.test(s) ? ['enactmentYear'] : [];
+  return /(?:R\.?S\.?C\.?|S\.C\.),?\s+\d{4}\s*$/.test(s) ? ['chapter'] : [];
+}
 const NUMS = String.raw`\d+(?:\s*[–-]\s*\d+)?(?:\s*,\s*\d+(?:\s*[–-]\s*\d+)?)*`;
 const LOC_NUMBER = String.raw`\d+[A-Za-z]?(?:\([\da-z]+\))*(?:\s*[–-]\s*\d+[A-Za-z]?(?:\([\da-z]+\))*)?`;
 const LOC_UNIT = String.raw`(?:s|ss|pt|pts|div|divs|sch|schs)\.?`;
@@ -87,7 +100,7 @@ export function parseCountryLocal(raw: string, manual: CitationManualChoice | nu
   const subdivisions = ast.fields.subdivisions;
   if (subdivisions && !LOC.test(subdivisions.value)) ast.conflicts.push('unsupported_subdivisions_or_tail');
   if (coveredEnd < s.length) ast.unknownSpans.push({ start: base + coveredEnd, end: base + s.length });
-  if (!ast.templateId) ast.missing.push('supported_template');
+  if (!ast.templateId) ast.missing.push(...partialMissing(s, jurisdiction, family), 'supported_template');
   ast.complete = !!ast.templateId && !ast.missing.length && !ast.conflicts.length && !ast.unknownSpans.length;
   return ast;
 }
