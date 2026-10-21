@@ -1,6 +1,6 @@
 /** Batch A: pure supplied-text evidence, shared by browser and server. No I/O or identity claims. */
 import { CASE_DOCKET_RE, findBareDocket } from "./caseTypePrefixes.ts";
-import { LOOKUP_JURISDICTIONS, PLANNED_RULEPACK_WARNING, isGeneralFamily, isManualChoiceJurisdiction, isPlannedJurisdiction, readRulepackVersion, rulepackJurisdictionFromId, rulepackLookupEligible } from "./citationPure/rulepack.ts";
+import { LOOKUP_JURISDICTIONS, PLANNED_RULEPACK_WARNING, isGeneralFamily, isManualChoiceJurisdiction, isPlannedJurisdiction, readRulepackVersion, rulepackCapability, rulepackJurisdictionFromId } from "./citationPure/rulepack.ts";
 export const PASTED_CITATION_VERSION = 1 as const;
 /** D1: AU/CA/FR are recorded (never cast to US/IL/UNKNOWN); their rulepacks are planned/disabled. */
 export type CitationJurisdiction = "IL" | "US" | "UK" | "DE" | "AU" | "CA" | "FR" | "UNKNOWN";
@@ -226,7 +226,7 @@ export function guardPastedCitationRequest(body: { messages: Array<{ role: strin
   if (lookup && typeof lookup === "object" && !Array.isArray(lookup)) {
     // Same capability decision as the planner: only an enabled manifest completion may reach usage/cache/provider.
     if (!(LOOKUP_JURISDICTIONS as readonly unknown[]).includes(lookup.jurisdiction)) { c.route = "preserve"; c.conflicts.push("lookup_jurisdiction_unsupported"); }
-    else if (!rulepackLookupEligible(String(lookup.kind), String(lookup.jurisdiction))) { c.route = "preserve"; c.conflicts.push("rulepack_lookup_disabled"); }
+    else if (!rulepackCapability(String(lookup.kind), String(lookup.jurisdiction)).lookup) { c.route = "preserve"; c.conflicts.push("rulepack_lookup_disabled"); }
   }
   if (wire && readRulepackVersion((wire as { rulepackVersion?: unknown }).rulepackVersion) === "unsupported") {
     c.route = "preserve"; c.conflicts.push("rulepack_version_unsupported");

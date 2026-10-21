@@ -96,6 +96,7 @@ export function enabledRulepack(jurisdiction: string, family: string): RulepackE
   return RULEPACK_MANIFEST.find(e => e.status === "enabled" && e.jurisdiction === jurisdiction && e.family === family) ?? null;
 }
 /** Existing typed-lookup eligibility, expressed through the manifest. */
+/** Planner wire-plan eligibility: an enabled completion with exactly this wire jurisdiction. */
 export function rulepackLookupEligible(kind: string, jurisdiction: string): boolean {
   return RULEPACK_MANIFEST.some(e => e.status === "enabled" && e.completion?.kind === kind && e.completion.jurisdiction === jurisdiction);
 }
