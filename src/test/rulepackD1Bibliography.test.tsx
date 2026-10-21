@@ -81,3 +81,22 @@ describe("AU/CA actual bibliography local slice", () => {
     expect(b.cache).not.toHaveBeenCalled(); expect(b.invoke).not.toHaveBeenCalled(); expect(fetch).not.toHaveBeenCalled();
   });
 });
+
+describe("AU/CA QA 29db8bb: labelled literature country suffix through actual bibliography", () => {
+  it.each([
+    ["Author: Jane Doe; Edition: 2nd; Year: 2020; Book: Literature (Can.)", "^^Jane Doe, Literature (Can.)^^ (2nd ed. 2020)."],
+    ["Author: Jane Doe; Edition: 2nd; Year: 2020; Book: Literature (Austl.)", "^^Jane Doe, Literature (Austl.)^^ (2nd ed. 2020)."],
+  ])("%s manual foreign_book regeneration matches frozen D1", async (raw, out) => {
+    render(<TooltipProvider><BibliographyProvider><BibliographyGenerator /></BibliographyProvider></TooltipProvider>);
+    fireEvent.change(screen.getByRole("textbox"), { target: { value: raw } });
+    await act(async () => fireEvent.click(screen.getByRole("button", { name: /שלח לבדיקה/ })));
+    const regen = await screen.findByRole("button", { name: "regen-picker" });
+    const manualChoice = citationManualChoice("foreign_book");
+    b.plan.mockImplementation((_a: string, itemKey: string) => ({ itemKey, sourceType: "foreign_book", manualChoice, supported: true, effectiveKey: "e", inputFingerprint: "f" }));
+    b.cache.mockClear(); b.invoke.mockClear();
+    await act(async () => fireEvent.click(regen));
+    const r = await b.run.mock.results.at(-1)?.value;
+    expect(r.citation).toBe(out); expect(r.pastedCitation?.conflicts ?? []).not.toContain("manual_family_conflict");
+    expect(b.invoke).not.toHaveBeenCalled(); expect(fetch).not.toHaveBeenCalled();
+  });
+});
