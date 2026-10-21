@@ -27,6 +27,7 @@ import { renderBookLocal } from "@/lib/bookLocal";
 import { eligibleBookCompletion, resolveBookCompletion } from "../../supabase/functions/_shared/citationPure/bookFinal.ts";
 import { preparePastedCitation, pastedCaseRequest, readPastedCitationSafety, renderPastedCaseResponse } from "@/lib/pastedCitationAdapter";
 import { suppliedLookupFieldsMatch } from "../../supabase/functions/_shared/pastedCitation";
+import { rulepackLookupEligible } from "../../supabase/functions/_shared/citationPure/rulepack.ts";
 
 /** Local rendering controls; only host identity differs after bounded C2 parity. */
 export interface CitationHostCapabilities {
@@ -148,6 +149,11 @@ export function extractForeignCaseName(raw: string): string | null {
 }
 /** A case-shaped input without an explicit US/UK anchor goes out as UNKNOWN. */
 export function planForeignLookup(sourceType: SourceType, raw: string, detection: ForeignDetection | null): { kind: ForeignSourceKind; jurisdiction: "US" | "UK" | "OTHER" | "UNKNOWN" } | null {
+  const plan = planForeignLookupRoute(sourceType, raw, detection);
+  // D1: typed lookup eligibility is expressed by the enabled rulepack manifest only.
+  return plan && rulepackLookupEligible(plan.kind, plan.jurisdiction) ? plan : null;
+}
+function planForeignLookupRoute(sourceType: SourceType, raw: string, detection: ForeignDetection | null): { kind: ForeignSourceKind; jurisdiction: "US" | "UK" | "OTHER" | "UNKNOWN" } | null {
   const identity = toForeignIdentity(sourceType);
   const caseShaped = FOREIGN_CASE_SHAPE.test(raw);
   if (identity?.kind === "statute") return identity.jurisdiction === "US" || identity.jurisdiction === "UK" ? { kind: "statute", jurisdiction: identity.jurisdiction } : null;

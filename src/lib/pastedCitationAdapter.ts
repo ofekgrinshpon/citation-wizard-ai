@@ -2,12 +2,11 @@ import { buildPastedCitation, pastedCitationWarning, citationSourceKind, citatio
 import { detectForeignSource, renderForeignDetection } from "@/data/bluebook";
 import { escapeCitationLiteral } from "@/lib/citationSegments";
 import type { SourceType } from "@/data/abbreviations";
+import { isPlannedJurisdiction, rulepackJurisdictionFromId } from "../../supabase/functions/_shared/citationPure/rulepack.ts";
 export function citationManualChoice(type?: SourceType, jurisdictionId?: string, subjurisdiction?: string): CitationManualChoice | null {
   if (!type && !jurisdictionId) return null;
-  const jurisdiction = jurisdictionId === "us" || jurisdictionId?.startsWith("us:") ? "US"
-    : jurisdictionId === "t2:united-kingdom" || jurisdictionId?.startsWith("t2:united-kingdom/") ? "UK"
-    : jurisdictionId === "t2:germany-federal-republic-of" || jurisdictionId?.startsWith("t2:germany-federal-republic-of/") ? "DE" : jurisdictionId === "t2:israel" ? "IL"
-    : jurisdictionId ? "UNKNOWN" : type === "foreign_case_us" || type === "foreign_statute_us" ? "US"
+  // Shared rulepack mapping: AU/CA/FR keep their own code (planned/disabled), never US/IL/UNKNOWN.
+  const jurisdiction = jurisdictionId ? rulepackJurisdictionFromId(jurisdictionId)! : type === "foreign_case_us" || type === "foreign_statute_us" ? "US"
     : type === "foreign_statute_uk" ? "UK" : type?.startsWith("case_law_") ? "IL" : "UNKNOWN";
   return { jurisdiction, sourceType: type, foreign: type?.startsWith("foreign"), ...(jurisdictionId ? { jurisdictionId } : {}), ...(subjurisdiction ? { subjurisdiction } : {}) };
 }
@@ -30,7 +29,7 @@ export function preparePastedCitation(raw: string, manual: CitationManualChoice 
   return { contract, local, detection };
 }
 export function pastedCaseRequest(raw: string, contract: PastedCitationContract) {
-  if (contract.route !== "foreign" || contract.sourceKind !== "case" || raw !== contract.rawInput ||
+  if (contract.route !== "foreign" || contract.sourceKind !== "case" || raw !== contract.rawInput || isPlannedJurisdiction(contract.jurisdiction) ||
     (citationSourceKind(contract.manualChoice?.sourceType) && citationSourceKind(contract.manualChoice?.sourceType) !== "case")) return null;
   const detection = detectForeignSource(raw);
   const parsedFields: Record<string, string> = {};
