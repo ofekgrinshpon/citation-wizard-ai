@@ -221,6 +221,8 @@ describe("batch B pure planner contract", () => {
   it("declared capability differences are explicit", () => {
     expect(CHAT_HOST).not.toEqual(RUNNER_HOST);
     expect(RUNNER_HOST.groundedMerge && CHAT_HOST.groundedMerge).toBe(true);
-    expect(RUNNER_HOST.typedRequestBuilder).toBe("runner_foreign_lookup");
+    const { host: _chat, ...chatCapabilities } = CHAT_HOST;
+    const { host: _runner, ...runnerCapabilities } = RUNNER_HOST;
+    expect(chatCapabilities).toEqual(runnerCapabilities);
   });
 });

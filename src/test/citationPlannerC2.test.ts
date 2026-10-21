@@ -2,12 +2,13 @@ import { describe, expect, it, vi } from "vitest";
 import { CHAT_HOST, RUNNER_HOST, planCitationEvidence, planLocalCitation, planTypedRequest, resolveCitationResponse } from "@/lib/citationPlanner";
 import type { SourceType } from "@/data/abbreviations";
 import { c1ServerPayload } from "./fixtures/c1ServerPayload";
+import { citationManualChoice } from "@/lib/pastedCitationAdapter";
 
 export const book = "Author: Jane Doe; Book: Synthetic Collection";
 export const chapter = "Author: Jane Doe; Chapter: Quiet Rules; Collection: Synthetic Collection";
 const donor = { title: "Synthetic Collection — Jane Doe (2020)", snippet: "Jane Doe, Synthetic Collection (2020).", url: "https://press.example.edu/collection" };
 const plan = (raw: string, type: SourceType, caps = CHAT_HOST) => {
-  const evidence = planCitationEvidence(raw, null);
+  const evidence = planCitationEvidence(raw, citationManualChoice(type));
   const input = { evidence, sourceType: type, input: raw, isPinpoint: false, manual: false };
   const local = evidence.preserve ? { origin: "preserve", resolution: evidence.preserve } : planLocalCitation(input, caps);
   return "resolution" in local ? { local } : { typed: planTypedRequest({ ...input, canonicalRaw: raw, statutePrep: local.statutePrep }, caps) };
