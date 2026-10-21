@@ -70,7 +70,8 @@ describe("D1 effective manual choice (fail-before: new countries were cast to UN
   });
   it.each(NEW)("$j override through actual runCitation: raw preserved, zero provider/cache/classifier", async ({ j, id, sub, raw, type }) => {
     const r = await runCitation({ rawInput: raw, overrideType: type, manualChoice: citationManualChoice(type, id, sub) });
-    expect(citationToPlain(r.citation)).toBe(j === "AU" ? `${raw} (Austl.).` : raw);
+    expect(citationToPlain(r.citation)).toBe(raw);
+    if (j === "AU") expect(r.pastedCitation?.conflicts).toContain("unsupported_subjurisdiction");
     expect(r.status).toBe("warning"); if (j === "FR") expect(r.warningMsg).toBe(PLANNED_RULEPACK_WARNING);
     expect(r.pastedCitation?.jurisdiction).toBe(j);
     expect(m.invoke).not.toHaveBeenCalled(); expect(m.cache).not.toHaveBeenCalled(); expect(m.classifier).not.toHaveBeenCalled();
