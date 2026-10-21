@@ -106,12 +106,12 @@ describe("C1 existing extraction envelope acceptance", () => {
     expect(calls.filter(c => c === "https://api.perplexity.ai/search")).toHaveLength(1);
     expect(calls).toHaveLength(1);
   });
-  it("chat book/chapter typed request enablement remains deferred", () => {
+  it("C2 anchorless book/chapter direct typed planning cannot manufacture identity", () => {
     for (const type of ["foreign_book", "foreign_book_chapter"] as const) {
       expect(plan("Synthetic work needing details", type, CHAT_HOST).foreignLookup).toBeNull();
-      expect(plan("Synthetic work needing details", type, RUNNER_HOST).foreignLookup?.kind).toBe(type === "foreign_book" ? "book" : "book_chapter");
+      expect(plan("Synthetic work needing details", type, RUNNER_HOST).foreignLookup).toBeNull();
     }
-    expect(CHAT_HOST.typedRequestBuilder).toBe("chat_article_fields");
+    expect(CHAT_HOST.host).toBe("chat");
   });
   it("bound retained partial response renders exactly like the shared resolver without IO", async () => {
     const { response } = await c1ServerPayload({ kind: "case", jurisdiction: "UNKNOWN", rawInput: raw, parsedFields: { caseName: raw } });

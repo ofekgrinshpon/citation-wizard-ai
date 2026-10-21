@@ -16,6 +16,7 @@ import * as telemetry from "@/lib/costTelemetry";
 import * as citationUtils from "@/lib/citationUtils";
 import { validateCitationInput } from "@/lib/citationInputValidation";
 import { runForeignLookup, type ForeignLookupInput } from "../../supabase/functions/citation-chat/foreignLookup";
+import { C2_BOOK, C2_CHAPTER, c2Payload } from "./fixtures/c2BookPayload";
 
 // Execute the actual nested Index handlers in the real Vitest/jsdom setup.
 // Only their UI/service boundaries are injected; request and response logic,
@@ -62,7 +63,7 @@ function harness(options: { rawInput?: string; sourceType?: abbreviations.Source
   const toast = { error: vi.fn(), info: vi.fn() };
   const handleRefundResponse = vi.fn();
   const citationRetryRef = { current: null as { descriptor: unknown; run: () => Promise<string>; isCurrent: () => boolean } | null };
-  const retryCitationFunction = vi.fn(async () => ({ data: { content: "Recovered exact citation from the failed request" }, errorInfo: null }));
+  const retryCitationFunction = vi.fn(async (_descriptor?: unknown) => ({ data: { content: "Recovered exact citation from the failed request" }, errorInfo: null }));
   const setCitationRetry = vi.fn();
   const setCitationStatus = vi.fn();
   const citationRevision = { current: 0 };
@@ -100,6 +101,28 @@ beforeEach(() => vi.stubGlobal("fetch", vi.fn(() => { throw new Error("Unmocked 
 afterEach(() => vi.unstubAllGlobals());
 
 describe("legacy standalone article adapter", () => {
+  it.each(["book", "book_chapter"] as const)("C2 actual Index %s retry retains the plan and applies transient metadata only once", async kind => {
+    const rawInput = kind === "book" ? C2_BOOK : C2_CHAPTER;
+    const sourceType = kind === "book" ? "foreign_book" : "foreign_book_chapter";
+    const descriptor = { failedRequestId: "failed-request-parent", handle: "fixture-handle", refundConfirmed: false, refundStatus: "deferred" };
+    const h = harness({ rawInput, sourceType, errorInfo: { code: "AI_REFUSED", message: "Failed", citationRetry: descriptor } });
+    await h.handleSend();
+    const offer = h.citationRetryRef.current;
+    expect(offer).toBeDefined();
+    const { response } = await c2Payload(kind, rawInput, "matching");
+    h.retryCitationFunction.mockResolvedValue({ data: { foreignLookup: response, content: "UNSAFE" }, errorInfo: null } as never);
+    if (!offer) return;
+    await offer.run(); await offer.run();
+    // Actual Index button owns the double-submit lock; continuation stays once-only.
+    expect(h.invokeFunction).toHaveBeenCalledTimes(1);
+    expect(h.resolveSourceType).toHaveBeenCalledTimes(1);
+    expect(h.retryCitationFunction.mock.calls.every(([d]) => d === descriptor)).toBe(true);
+    const messages = last(h.state.setMessages.mock.calls)[0];
+    expect(last(messages) as unknown).toMatchObject({ completion: { fields: { year: "2020" } }, pastedCitation: { rawInput } });
+    expect(h.insert).toHaveBeenCalledTimes(1);
+    expect(JSON.stringify(h.insert.mock.calls)).not.toContain('"completion"');
+    expect(h.provider).not.toHaveBeenCalled();
+  });
   it("explicit retry reuses the saved success continuation once, preserving history/verification without classifying again", async () => {
     const descriptor = { failedRequestId: "failed-request-parent", handle: "fixture-handle", refundConfirmed: false, refundStatus: "deferred",
       refundReceipt: { status: "deferred", refunded: false, units_refunded: 0, request_id: "failed-request-parent" } };
@@ -265,7 +288,7 @@ describe("legacy standalone article adapter", () => {
     expect(adapter.mergeForeignArticleCache("Warren & Brandeis, The Right to Privacy", cached.full_citation)).not.toContain("201–203");
   });
 
-  it.each(["foreign_case_us", "foreign_book", "foreign_book_chapter", "article_in_book"] as const)("keeps the %s request payload, history, telemetry and return behavior unchanged", async (sourceType) => {
+  it.each(["foreign_case_us", "article_in_book"] as const)("keeps the %s request payload, history, telemetry and return behavior unchanged", async (sourceType) => {
     const h = harness();
     const reply = await h.callAPI("unchanged case prompt", history, tel, { sourceType, rawInput: "Unchanged source" });
     expect(h.invokeFunction).toHaveBeenCalledWith("citation-chat", expect.objectContaining({
@@ -276,6 +299,14 @@ describe("legacy standalone article adapter", () => {
     expect(reply).toContain("910 F.3d 649");
     expect(h.provider).not.toHaveBeenCalled();
     expect(adapter.compatibleArticleCache("foreign_book", "Any book", cached)).toBe(cached);
+  });
+  it.each(["foreign_book", "foreign_book_chapter"] as const)("C2 anchorless %s preserves locally rather than sending unrelated generic text", async sourceType => {
+    const h = harness();
+    const reply = await h.callAPI("unchanged case prompt", history, tel, { sourceType, rawInput: "Unchanged source" });
+    expect(reply).toContain("Unchanged source"); expect(reply).toContain("עוגני");
+    expect(reply).not.toContain("910 F.3d 649");
+    expect(h.invokeFunction).not.toHaveBeenCalled(); expect(h.provider).not.toHaveBeenCalled();
+    expect(h.subscription.incrementCount).not.toHaveBeenCalled();
   });
 
   it("adds only rawInput for Hebrew articles and keeps their content response contract", async () => {

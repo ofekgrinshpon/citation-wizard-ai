@@ -367,7 +367,7 @@ const Index = () => {
         completed = true;
         const historyRequestId = typeof data?.requestId === "string" &&
           ["available", "unconfirmed"].includes(String(data.recoveryAvailability)) ? data.requestId : undefined;
-        await onSuccess?.(reply, isCurrent, historyRequestId, !!statuteRequest || !!safety || !!caseRequest, resolved.kind === "terminal" ? resolved.resolution : undefined);
+        await onSuccess?.(reply, isCurrent, historyRequestId, plan.kind === "typed" || !!statuteRequest || !!safety || !!caseRequest, resolved.kind === "terminal" ? resolved.resolution : undefined);
       }
       if (!isCurrent()) throw Object.assign(new Error("CITATION_RETRY_STALE"), { handled: true });
       return reply;

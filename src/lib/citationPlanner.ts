@@ -6,8 +6,7 @@
  * through runCitation. Pure: no network, storage, telemetry, billing,
  * request ids, retries or UI. Hosts keep owning all IO and stale handling.
  *
- * Host behaviour that currently differs is declared explicitly as
- * capabilities (see CHAT_HOST / RUNNER_HOST) — never silently unified.
+ * Hosts retain their IO/context ownership; existing typed planning is shared.
  */
 import { acceptCitationCompletion } from "@/lib/citationCompletion";
 import { escapeCitationLiteral } from "@/lib/citationSegments";
@@ -25,9 +24,10 @@ import { renderUsUnreportedLocal } from "@/lib/usUnreportedLocal";
 import { renderUnpublishedLocal } from "@/lib/unpublishedWorkLocal";
 import { renderPeriodicalLocal } from "@/lib/periodicalLocal";
 import { renderBookLocal } from "@/lib/bookLocal";
+import { extractBookWork } from "@/data/bluebook/bookWorks";
 import { preparePastedCitation, pastedCaseRequest, readPastedCitationSafety, renderPastedCaseResponse } from "@/lib/pastedCitationAdapter";
 
-/** Explicit, declared differences between hosts. Batch C may reconcile them. */
+/** Local rendering controls; only host identity differs after bounded C2 parity. */
 export interface CitationHostCapabilities {
   host: "chat" | "runner";
   /** Pasted local render waits for the opinion-format (US unreported) formatter. */
@@ -36,8 +36,6 @@ export interface CitationHostCapabilities {
   bookDefersToDeterministic: boolean;
   /** Generic deterministic foreign renderer runs before statute local. */
   deterministicForeignRender: boolean;
-  /** Typed request builder: chat article fields only vs runner planForeignLookup (article/book/chapter/case). */
-  typedRequestBuilder: "chat_article_fields" | "runner_foreign_lookup";
   /** Article typed response falls back to an "incomplete" render when absent. */
   articleIncompleteFallback: boolean;
   /** Multiple case candidates are surfaced as a disambiguation choice. */
@@ -50,12 +48,12 @@ export interface CitationHostCapabilities {
 
 export const CHAT_HOST: CitationHostCapabilities = Object.freeze({
   host: "chat", pastedLocalDefersOpinionFormat: true, bookDefersToDeterministic: false,
-  deterministicForeignRender: true, typedRequestBuilder: "chat_article_fields", articleIncompleteFallback: true,
+  deterministicForeignRender: true, articleIncompleteFallback: true,
   caseDisambiguation: true, groundedMerge: true, rejectEmptyCaseFields: false,
 });
 export const RUNNER_HOST: CitationHostCapabilities = Object.freeze({
   host: "runner", pastedLocalDefersOpinionFormat: true, bookDefersToDeterministic: false,
-  deterministicForeignRender: true, typedRequestBuilder: "runner_foreign_lookup", articleIncompleteFallback: true,
+  deterministicForeignRender: true, articleIncompleteFallback: true,
   caseDisambiguation: true, groundedMerge: true, rejectEmptyCaseFields: false,
 });
 
@@ -93,6 +91,19 @@ export interface LocalPlanInput {
 
 const OPINION = (d: ForeignDetection | null | undefined) => !!(d?.fields as { opinionFormat?: string } | undefined)?.opinionFormat;
 
+/** Existing explicit structure only: manual family/name shape cannot create identity anchors. */
+function eligibleBookCompletion(type: SourceType | null, raw: string) {
+  if (type !== "foreign_book" && type !== "foreign_book_chapter") return null;
+  const work = extractBookWork(raw);
+  if (!work || work.preserve || work.fields.unparsedRemainder || !work.explicitNew ||
+    (work.kind === "book") !== (type === "foreign_book") || !work.fields.authors || !work.fields.bookTitle ||
+    (work.kind === "chapter" && !work.fields.chapterTitle)) return null;
+  const kind = work.kind === "book" ? "book" : "book_chapter";
+  const rendered = renderForeignDetection({ kind, jurisdiction: "OTHER", sourceType: type, fields: work.fields, confidence: "deterministic" });
+  if (!rendered?.missing.length) return null;
+  return { kind, fields: work.fields };
+}
+
 /** Phase 2 — terminal local outcomes (render or preserve). Null → continue to typed planning. */
 export function planLocalCitation(p: LocalPlanInput, caps: CitationHostCapabilities): { origin: LocalOrigin; resolution: CitationResolution } | { origin: null; statutePrep: StatutePreparation | null } {
   const { pasted } = p.evidence;
@@ -103,8 +114,9 @@ export function planLocalCitation(p: LocalPlanInput, caps: CitationHostCapabilit
       status: warnings.length ? "warning" : "valid", warningMsg: warnings[0] } };
   }
   const statutePrep = st && !p.isPinpoint ? prepareForeignStatute(st, p.input, { manual: p.manual }) : null;
+  const bookCompletion = !p.isPinpoint ? eligibleBookCompletion(st, p.input) : null;
   const unreported = st && !p.isPinpoint ? (renderUsUnreportedLocal(st, p.input) ?? renderUnpublishedLocal(st, p.input) ??
-    renderPeriodicalLocal(st, p.input) ?? renderBookLocal(st, p.input, caps.bookDefersToDeterministic ? { deferToDeterministic: true } : undefined)) : null;
+    renderPeriodicalLocal(st, p.input) ?? (bookCompletion ? null : renderBookLocal(st, p.input, caps.bookDefersToDeterministic ? { deferToDeterministic: true } : undefined))) : null;
   if (unreported) return { origin: "unreported_local", resolution: { reply: unreported.reply, citation: unreported.citation, status: "warning", warningMsg: unreported.warningMsg } };
   if (caps.deterministicForeignRender && st && !p.isPinpoint && isForeignSourceType(st) && statutePrep?.outcome !== "mismatch") {
     const suppliedArticle = st === "foreign_journal_article";
@@ -131,6 +143,11 @@ export function planLocalCitation(p: LocalPlanInput, caps: CitationHostCapabilit
   if (statutePrep && statutePrep.outcome !== "lookup") {
     const r = renderStatuteLocal(statutePrep);
     return { origin: "statute_local", resolution: { ...r, status: r.status === "warning" ? "warning" : "valid" } };
+  }
+  if ((st === "foreign_book" || st === "foreign_book_chapter") && !p.isPinpoint && !bookCompletion) {
+    const citation = escapeCitationLiteral(p.evidence.pasted.contract.rawInput);
+    const warningMsg = "לא סופקו עוגני מחבר וכותרת מובחנים ובטוחים להשלמת הספר או הפרק; הקלט נשמר ללא חיפוש.";
+    return { origin: "preserve", resolution: { citation, reply: `${citation}\n⚠️ ${warningMsg}`, status: "warning", warningMsg, pastedCitation: p.evidence.pasted.contract } };
   }
   return { origin: null, statutePrep };
 }
@@ -167,30 +184,30 @@ export interface TypedPlan {
   articleRequest: { parsedFields: Record<string, string> } | null;
   /** The single foreignLookup body field (case > statute > article/other). */
   foreignLookup: Record<string, unknown> | null;
-  /** Chat only: article rawInput field from articleRequestFields. */
+  /** Existing article rawInput field from articleRequestFields. */
   extraBody: Record<string, unknown>;
 }
 
 /** Phase 3 — the existing bound typed request, or an explicitly declared legacy handoff. */
-export function planTypedRequest(p: LocalPlanInput & { statutePrep: StatutePreparation | null; canonicalRaw: string }, caps: CitationHostCapabilities): TypedPlan {
+export function planTypedRequest(p: LocalPlanInput & { statutePrep: StatutePreparation | null; canonicalRaw: string }, _caps: CitationHostCapabilities): TypedPlan {
   const { pasted } = p.evidence;
   const st = p.sourceType;
   let foreignLookup: Record<string, unknown> | null = null;
   let articleRequest: TypedPlan["articleRequest"] = null;
   let extraBody: Record<string, unknown> = {};
-  if (caps.typedRequestBuilder === "chat_article_fields") {
-    const fields = articleRequestFields(st ?? undefined, st ? p.input : undefined);
-    extraBody = { ...fields };
-    if (fields.foreignLookup) { foreignLookup = { ...fields.foreignLookup }; articleRequest = fields.foreignLookup; }
-    if (p.statutePrep?.request) foreignLookup = { ...p.statutePrep.request };
-  } else if (p.statutePrep?.request) {
+  // Keep the existing Israeli article raw field; foreign articles share their DOI adapter.
+  if (st === "article") extraBody = { ...articleRequestFields(st, p.input) };
+  if (p.statutePrep?.request) {
     foreignLookup = { ...p.statutePrep.request };
   } else if (st && !p.isPinpoint && isForeignSourceType(st)) {
     const detection = detectForeignSource(p.input);
-    const plan = planForeignLookup(st, p.input, detection);
+    const bookCompletion = eligibleBookCompletion(st, p.input);
+    const plan = st === "foreign_book" || st === "foreign_book_chapter"
+      ? bookCompletion ? { kind: bookCompletion.kind as ForeignSourceKind, jurisdiction: "OTHER" as const } : null
+      : planForeignLookup(st, p.input, detection);
     if (plan && plan.kind !== "statute") {
       const parsedFields: Record<string, string> = plan.kind === "journal_article" ? parseForeignArticleInput(p.input) : {};
-      if (detection) for (const [k, v] of Object.entries(detection.fields as Record<string, unknown>)) {
+      if (detection || bookCompletion) for (const [k, v] of Object.entries((bookCompletion?.fields ?? detection?.fields) as Record<string, unknown>)) {
         if (typeof v === "string" && v.trim()) parsedFields[k] = v.trim();
         else if (Array.isArray(v) && v.length && v.every((x) => typeof x === "string")) parsedFields[k] = v.join(", ");
       }
@@ -202,7 +219,7 @@ export function planTypedRequest(p: LocalPlanInput & { statutePrep: StatutePrepa
   }
   const caseRequest = pastedCaseRequest(p.canonicalRaw, pasted.contract);
   if (caseRequest) foreignLookup = caseRequest;
-  if (caseRequest && caps.typedRequestBuilder === "runner_foreign_lookup") articleRequest = null;
+  if (caseRequest) articleRequest = null;
   const typed = !!(foreignLookup || p.statutePrep?.request);
   return { kind: typed ? "typed" : "legacy", evidence: p.evidence, sourceType: st, statutePrep: p.statutePrep, caseRequest, articleRequest, foreignLookup, extraBody };
 }

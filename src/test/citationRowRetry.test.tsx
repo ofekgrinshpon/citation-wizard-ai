@@ -10,6 +10,7 @@ import { UniformCitationPanel } from "@/components/legal-research/UniformCitatio
 import { FootnoteReviewCard } from "@/components/FootnoteReviewCard";
 import { c1ServerPayload } from "./fixtures/c1ServerPayload";
 import { CitationRunError, runCitation } from "@/lib/runCitation";
+import { C2_BOOK, C2_CHAPTER, C2_MODES, c2Payload } from "./fixtures/c2BookPayload";
 
 const boundary = vi.hoisted(() => ({
   invoke: vi.fn(), getSession: vi.fn(), getUser: vi.fn(), refreshSession: vi.fn(),
@@ -699,3 +700,79 @@ it.each(["bibliography", "footnote"])("C1 actual %s host uses real server partia
     await waitFor(() => expect(boundary.sync.mock.calls.at(-1)?.[0][0].completion).toEqual(expected.completion));
   }
 });
+
+for (const host of ["bibliography", "footnote"] as const) for (const [kind, base, type] of [["book", C2_BOOK, "foreign_book"], ["book_chapter", C2_CHAPTER, "foreign_book_chapter"]] as const) {
+  it.each(C2_MODES)(`C2 actual ${host} ${kind} %s retains safe transient completion`, async mode => {
+    const rawInput = base + (mode === "supplied-conflict" ? "; Edition: 2d" : "");
+    const { response, calls } = await c2Payload(kind, rawInput, mode);
+    boundary.classify.mockResolvedValue({ sourceType: type });
+    boundary.invoke.mockResolvedValue({ data: { content: "UNSAFE", foreignLookup: response }, error: null });
+    const expected = await runCitation({ rawInput, useVerifiedStore: false });
+    boundary.invoke.mockClear();
+    if (host === "bibliography") bibliographyInput(rawInput); else footnoteInput([rawInput]);
+    if (host === "bibliography") {
+      const button = await screen.findByRole("button", { name: /הוסף הכל לביבליוגרפיה/ });
+      await waitFor(() => expect(button).not.toBeDisabled());
+      boundary.addEntries.mockReturnValue(1);
+      await act(async () => fireEvent.click(button));
+      expect(boundary.addEntries.mock.calls.at(-1)?.[0][0].completion).toEqual(expected.completion);
+      expect(boundary.addEntries.mock.calls.at(-1)?.[0][0].pastedCitation.rawInput).toBe(rawInput);
+    } else {
+      await waitFor(() => expect(boundary.card.mock.calls.some(([c]) => c.completion)).toBe(true));
+      const cell = boundary.card.mock.calls.map(([c]) => c).find(c => c.completion);
+      expect(cell.completion).toEqual(expected.completion);
+      expect(cell.pastedCitation.rawInput).toBe(rawInput);
+      expect(localStorage.getItem("footnote_cells_row-project")).not.toContain('"completion"');
+    }
+    expect(expected.completion).toBeDefined();
+    if (kind === "book_chapter" && mode === "matching") {
+      expect(expected.completion?.fields.year).toBe("2020");
+      expect(expected.completion?.missing).toContain("firstPage");
+      expect(expected.completion?.completeness).toBe("partial");
+      expect(expected.completion?.fields.firstPage).toBeUndefined();
+    }
+    expect(document.body.textContent).not.toContain("UNSAFE");
+    expect(boundary.invoke).toHaveBeenCalledTimes(1);
+    expect(requestAt(0).foreignLookup).toMatchObject({ kind, jurisdiction: "OTHER", rawInput });
+    expect(calls).toEqual(["https://api.perplexity.ai/search"]);
+  });
+}
+
+it.each(["book", "book_chapter"] as const)("C2 %s retained response/retry uses prepared binding without duplicate prework", async kind => {
+  const rawInput = kind === "book" ? C2_BOOK : C2_CHAPTER;
+  const type = kind === "book" ? "foreign_book" : "foreign_book_chapter";
+  boundary.classify.mockResolvedValue({ sourceType: type });
+  const { response } = await c2Payload(kind, rawInput, "matching");
+  const failed = await runCitation({ rawInput }).catch(e => e as CitationRunError) as CitationRunError;
+  expect(failed.citationRetry).toBeDefined();
+  const initial = requestAt(0);
+  boundary.invoke.mockResolvedValue({ data: { foreignLookup: response }, error: null });
+  const result = await failed.citationRetry?.retry();
+  expect(result?.completion?.fields.year).toBe("2020");
+  expect(executionBody(requestAt(1))).toEqual(executionBody(initial));
+  expect(boundary.invoke).toHaveBeenCalledTimes(2);
+  expect(boundary.classify).toHaveBeenCalledTimes(1);
+});
+
+for (const host of ["bibliography", "footnote"] as const) {
+  it.each([
+    ["Author: Jane Doe; Book: Synthetic Collection; Year: 2020", "foreign_book"],
+    ["Author: Jane Doe; Chapter: Quiet Rules; Collection: Synthetic Collection; First page: 12; Year: 2020", "foreign_book_chapter"],
+    ["Hidden Costs, Courts and Memory, in Synthetic Collection 12 (Jane Doe ed., 2020)", "foreign_book_chapter"],
+    ["Catch 22 (Jane Doe ed., 2020)", "foreign_book"],
+    ["Title 2020 (Jane Doe ed., 2020)", "foreign_book"],
+    ["Synthetic work needing details", "foreign_book"],
+  ] as const)(`C2 actual ${host} complete/ambiguous %s is zero completion IO`, async (raw, type) => {
+    boundary.classify.mockResolvedValue({ sourceType: type });
+    if (host === "bibliography") {
+      bibliographyInput(raw);
+      await waitFor(() => expect(screen.getByRole("button", { name: /הוסף הכל לביבליוגרפיה/ })).not.toBeDisabled());
+    } else {
+      footnoteInput([raw]);
+      await waitFor(() => expect(boundary.card.mock.calls.some(([c]) => c.output)).toBe(true));
+    }
+    expect(boundary.invoke.mock.calls.filter(([name]) => name === "citation-chat")).toHaveLength(0);
+    expect(fetch).not.toHaveBeenCalled();
+    if (raw.startsWith("Catch") || raw.startsWith("Title")) expect(document.body.textContent).toContain(raw);
+  });
+}

@@ -11,6 +11,7 @@ import { runForeignLookup } from "../../supabase/functions/citation-chat/foreign
 import { resolveStatuteLookup } from "../../supabase/functions/citation-chat/statuteRoute";
 import { c1ServerPayload, C1_REDIGI } from "./fixtures/c1ServerPayload";
 import { runCitation } from "@/lib/runCitation";
+import { C2_BOOK, C2_CHAPTER, C2_MODES, c2Payload } from "./fixtures/c2BookPayload";
 
 const m = vi.hoisted(() => ({
   invoke: vi.fn(), classify: vi.fn(), recordGeneration: vi.fn(), bubble: vi.fn(),
@@ -107,6 +108,49 @@ beforeEach(() => {
 const CORNELL_1983 = { title: "42 U.S.C. § 1983 - Civil action for deprivation of rights", url: "https://www.law.cornell.edu/uscode/text/42/1983", snippet: "Civil Rights Act — 42 U.S.C. § 1983 (2018)." };
 
 describe("chat page — typed statute request through initial send and regeneration", () => {
+  for (const [kind, base, type] of [["book", C2_BOOK, "foreign_book"], ["book_chapter", C2_CHAPTER, "foreign_book_chapter"]] as const) {
+    it.each(C2_MODES)(`C2 actual ${kind} initial/manual %s uses shared safe completion`, async mode => {
+      const input = base + (mode === "supplied-conflict" ? "; Edition: 2d" : "");
+      const { response, calls } = await c2Payload(kind, input, mode);
+      m.classify.mockResolvedValue({ sourceType: type, source: "regex" });
+      m.invoke.mockResolvedValue({ data: { foreignLookup: response, content: "UNSAFE" }, errorInfo: null });
+      const runner = await runCitation({ rawInput: input, overrideType: type, useVerifiedStore: false });
+      m.invoke.mockClear();
+      await mountChat(); await send(input);
+      const latest = () => m.bubble.mock.calls.map(([msg]) => msg).filter(msg => msg.role === "assistant").at(-1);
+      await waitFor(() => expect(latest()?.completion).toBeDefined());
+      expect(latest().completion).toEqual(runner.completion);
+      expect(latest().pastedCitation.rawInput).toBe(input);
+      expect(latest().content).not.toContain("UNSAFE");
+      if (mode === "matching") expect(latest().completion.fields.year).toBe("2020");
+      if (kind === "book_chapter" && mode === "matching") {
+        expect(latest().completion.missing).toContain("firstPage");
+        expect(latest().completion.fields.firstPage).toBeUndefined();
+        expect(latest().completion.completeness).toBe("partial");
+      }
+      if (mode === "supplied-conflict") expect(latest().content).toContain("2d");
+      await act(async () => fireEvent.click(screen.getByRole("button", { name: `regen-${type}` })));
+      expect(latest().completion).toEqual(runner.completion);
+      expect(m.invoke).toHaveBeenCalledTimes(2);
+      for (const [, body] of m.invoke.mock.calls) expect(body.foreignLookup).toMatchObject({ kind, rawInput: input, jurisdiction: "OTHER", parsedFields: { authors: "Jane Doe", bookTitle: "Synthetic Collection" } });
+      expect(calls).toEqual(["https://api.perplexity.ai/search"]);
+      expect(localStorage.getItem("legal_app_free_text_messages")).not.toContain('"completion"');
+    });
+  }
+  it("C2 stale input change ignores the previous completion without replacement IO", async () => {
+    let release: ((r: unknown) => void) | undefined;
+    m.classify.mockResolvedValue({ sourceType: "foreign_book", source: "regex" });
+    m.invoke.mockImplementationOnce(() => new Promise(resolve => { release = resolve; }));
+    await mountChat();
+    fireEvent.change(screen.getByLabelText("citation-input"), { target: { value: C2_BOOK } });
+    fireEvent.click(document.querySelector(".btn-send") as HTMLButtonElement);
+    await waitFor(() => expect(m.invoke).toHaveBeenCalledTimes(1));
+    fireEvent.change(screen.getByLabelText("citation-input"), { target: { value: "400/51" } });
+    const { response } = await c2Payload("book", C2_BOOK, "matching");
+    await act(async () => release?.({ data: { foreignLookup: response }, errorInfo: null }));
+    expect(m.bubble.mock.calls.map(([msg]) => msg).filter(msg => msg.role === "assistant" && msg.completion)).toHaveLength(0);
+    expect(m.invoke).toHaveBeenCalledTimes(1);
+  });
   it.each(["partial", "crossed"])("ReDigi %s initial/manual retains the actual message metadata without persisting it", async mode => {
     const raw = "Capitol Records, LLC v. ReDigi Inc.";
     const input = raw + (mode === "crossed" ? " (2d Cir. 2018)" : "");
