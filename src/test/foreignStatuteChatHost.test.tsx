@@ -140,7 +140,10 @@ describe("chat page — typed statute request through initial send and regenerat
     check();
     expect(m.invoke).toHaveBeenCalledTimes(2);
     for (const key of Object.keys(localStorage)) {
-      if (key.startsWith("relex_messages")) expect(localStorage.getItem(key)).not.toContain('"completion"');
+      if (key.startsWith("legal_app_free_text_messages")) {
+        expect(localStorage.getItem(key)).not.toContain('"completion"');
+        expect(localStorage.getItem(key)).not.toContain('"pastedCitation"');
+      }
     }
     if (mode === "crossed") {
       expect(m.invoke.mock.calls[0][1].foreignLookup).toMatchObject({ jurisdiction: "US", parsedFields: { caseName: raw, court: "2d Cir.", year: "2018" } });

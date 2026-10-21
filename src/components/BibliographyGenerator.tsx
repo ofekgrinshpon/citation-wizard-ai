@@ -354,7 +354,7 @@ export function BibliographyGenerator() {
   };
 
   const pickDisambiguation = (id: string, chosen: string) => {
-    updateItem(id, { status: "ok", citation: cleanCitation(chosen), editValue: cleanCitation(chosen), options: [] });
+    updateItem(id, { status: "ok", citation: cleanCitation(chosen), editValue: cleanCitation(chosen), options: [], completion: undefined, pastedCitation: undefined });
   };
 
   const startEdit = (id: string) => {
@@ -398,7 +398,7 @@ export function BibliographyGenerator() {
     const plan = hintOverride === undefined && !explicitRetry && !recovery
       ? planForItem(user?.id, `bib:${item.classificationKey}`, query) : null;
     setReviewItems((prev) => prev.map((it) => it.id === id
-      ? { ...it, status: "loading", isEditing: false, sourceTypeOverride: hint, citationRetry: undefined, requestId: undefined } : it));
+      ? { ...it, status: "loading", completion: undefined, pastedCitation: undefined, isEditing: false, sourceTypeOverride: hint, citationRetry: undefined, requestId: undefined } : it));
     try {
       const r = await lookupOneSafe(query, hint, job.isCurrent, explicitRetry ?? recovery, plan?.sourceType);
       if (!job.isCurrent()) return;

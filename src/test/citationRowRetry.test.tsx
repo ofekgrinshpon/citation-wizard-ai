@@ -693,6 +693,7 @@ it.each(["bibliography", "footnote"])("C1 actual %s host uses real server partia
     expect(cell.completion).toEqual(expected.completion);
     expect(cell.pastedCitation).toEqual(expected.pastedCitation);
     expect(localStorage.getItem("footnote_cells_row-project")).not.toContain('"completion"');
+    boundary.insert.mockResolvedValue({ data: null, error: null });
     await act(async () => fireEvent.click(screen.getByRole("button", { name: /אשר הכל/ })));
     await act(async () => fireEvent.click(screen.getByRole("button", { name: /בנה רשימה סופית/ })));
     await waitFor(() => expect(boundary.sync.mock.calls.at(-1)?.[0][0].completion).toEqual(expected.completion));

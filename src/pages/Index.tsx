@@ -247,7 +247,7 @@ const Index = () => {
   useEffect(() => {
     try {
       const savedMessages = localStorage.getItem(getProjectKey(LS_KEY_MESSAGES_PREFIX, projectId));
-      setMessages(savedMessages ? JSON.parse(savedMessages) : []);
+      setMessages(savedMessages ? JSON.parse(savedMessages).map(({ role, content }: Message) => ({ role, content })) : []);
     } catch { setMessages([]); }
     setInput(localStorage.getItem(getProjectKey(LS_KEY_INPUT_PREFIX, projectId)) || "");
     setPendingVerification(null);
