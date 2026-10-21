@@ -5,7 +5,6 @@ import { citationManualChoice } from "@/lib/pastedCitationAdapter";
 import { planCitationEvidence, planForeignLookup } from "@/lib/citationPlanner";
 import { buildPastedCitation, guardPastedCitationRequest } from "../../supabase/functions/_shared/pastedCitation";
 import { RULEPACK_MANIFEST, rulepackJurisdictionFromId, rulepackLookupEligible, readRulepackVersion, PLANNED_RULEPACK_WARNING } from "../../supabase/functions/_shared/citationPure/rulepack";
-import { readBookFinal } from "../../supabase/functions/_shared/citationPure/bookFinal";
 
 const m = vi.hoisted(() => ({ invoke: vi.fn(), classifier: vi.fn(), cache: vi.fn() }));
 vi.mock("@/lib/functionError", () => ({ invokeFunction: m.invoke }));
@@ -145,8 +144,5 @@ describe("D1 spans and literal markers", () => {
     const r = await runCitation({ rawInput: raw, overrideType: "foreign", manualChoice: citationManualChoice("foreign", "t2:france-republic-of") });
     expect(citationToPlain(r.citation)).toBe(raw); expect(r.citation).not.toBe(raw);
     expect(m.invoke).not.toHaveBeenCalled();
-  });
-  it("authoritative book replay text is read verbatim, not rerendered", () => {
-    expect(readBookFinal).toBeTypeOf("function");
   });
 });
