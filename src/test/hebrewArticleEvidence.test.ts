@@ -495,7 +495,7 @@ describe("Stage 4 typed statute requests through the real edge handler", () => {
     const record: CitationRecoveryRecord = { requestId: "fixture-request-0001", retryOfRequestId: null,
       status: "succeeded", availability: "available", createdAt: new Date(now).toISOString(), expiresAt: new Date(now + 86400000).toISOString(),
       input: recovery.citationRecoveryInput({ rawInput: f.raw, messages: [{ role: "user", content: `[סיווג אוטומטי: ספר לועזי]\n${f.raw}` }], foreignLookup: foreign, batchId: null }),
-      result: recovery.citationRecoveryResult(r.body), refundReceipt: { status: "retained", refunded: false, units_refunded: 0, request_id: "fixture-request-0001" } };
+      result: { foreignLookup: r.body.foreignLookup }, refundReceipt: { status: "retained", refunded: false, units_refunded: 0, request_id: "fixture-request-0001" } };
     expect(record.input).not.toBeNull(); expect(record.result).not.toBeNull();
     const fresh = resolveCitationResponse(plan, r.body, CHAT_HOST);
     if (fresh.kind !== "terminal") throw new Error("Expected terminal fresh resolution");

@@ -65,6 +65,7 @@ const saveButton = () => screen.getByRole("button", { name: "שמירה בהיס
 
 beforeEach(() => {
   vi.clearAllMocks();
+  mocks.list.mockReset();
   mocks.user = { id: "account-a" }; mocks.sessionUser = "account-a"; mocks.loading = false;
   mocks.project = { id: "project-a", name: "פרויקט א" }; mocks.listeners.clear();
   mocks.getSession.mockImplementation(async () => ({ data: { session: mocks.sessionUser ? { user: { id: mocks.sessionUser } } : null }, error: null }));
@@ -106,7 +107,7 @@ describe("read-only citation recovery view", () => {
     ui.rerender(<MemoryRouter><CitationRecovery /></MemoryRouter>);
     await act(async () => pending.resolve({ requests: [record({ input: { rawInput: f.raw, messages: [{ role: "user", content: f.raw }], foreignLookup: plan.foreignLookup, batchId: null },
       result: { foreignLookup: response as unknown as Record<string, unknown> } })], nextCursor: null }));
-    expect(screen.queryByRole("article", { name: `בקשה ${ID}` })).not.toBeInTheDocument();
+    await waitFor(() => expect(screen.queryByRole("article", { name: `בקשה ${ID}` })).not.toBeInTheDocument());
     expect(mocks.prepare).not.toHaveBeenCalled(); expect(mocks.retry).not.toHaveBeenCalled();
     expect(mocks.save).not.toHaveBeenCalled(); expect(mocks.ack).not.toHaveBeenCalled(); expect(fetch).not.toHaveBeenCalled();
   });
