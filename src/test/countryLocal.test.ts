@@ -81,3 +81,15 @@ it('literal markers and HTML remain literal inside semantic party italics', asyn
 it('neutral year and full decision year remain independent', () => { const a = ast('Wattle v Harbour [2020] HCA 1 (4 March 2021)'); expect(a.fields.neutralYear.value).toBe('2020'); expect(a.fields.decisionYear.value).toBe('2021'); });
 it('page and explicit paragraph roles remain separate', () => { expect(ast(fixtures[4].raw).fields.pagePinpoint.value).toBe('104'); expect(ast(fixtures[4].raw).fields.paragraph).toBeUndefined(); });
 it('incomplete country choice stops legacy', async () => { const r = await runCitation({ rawInput:'Wattle v Harbour', manualChoice:citationManualChoice('foreign_case_other','t2:australia') }); expect(r.citation).toBe('Wattle v Harbour'); zero(); });
+
+it.each([
+ 'Synthetic Records Act 2020 (Cth) pts 2–3, divs 4–6, schs 1–2',
+ 'Synthetic Records Act 2020 (Cth) ss 4(1)(a)–6(2), 8',
+ 'Synthetic Records Act, S.C. 2020, c 8, pt 2, div 3, sch 1',
+])("typed nested subdivision stays supplied: %s", async raw => { expect(citationToPlain((await runCitation({rawInput:raw})).citation)).toBe(`${raw} (${raw.includes('Cth')?'Austl.':'Can.'}).`); zero(); });
+it.each([
+ 'Wattle v Harbour (2020) 270 CLR 10 347 U.S. 483 (1954)',
+ 'Maple v Cedar, 2020 SCC 12 R v Smith [2001] UKHL 1',
+ 'Wattle v Harbour (2020) 270 CLR 10 ע"א 1234/20 כהן נ׳ לוי',
+])('mixed country/Israeli evidence cannot be erased %s', async raw => { const r = await runCitation({rawInput:raw}); expect(citationToPlain(r.citation)).toBe(raw); expect(r.pastedCitation?.conflicts.length).toBeGreaterThan(0); zero(); });
+it('repeated equal years bind exact original occurrence', () => { const a = ast('Maple v Cedar (2020), [2020] 2 SCR 100'); expect(a.fields.decisionYear.spans[0].start).not.toBe(a.fields.reporterYear.spans[0].start); });
