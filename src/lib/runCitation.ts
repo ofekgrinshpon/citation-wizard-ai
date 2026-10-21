@@ -42,7 +42,7 @@ import { renderUnpublishedLocal } from "@/lib/unpublishedWorkLocal";
 import { renderPeriodicalLocal } from "@/lib/periodicalLocal";
 import { renderBookLocal } from "@/lib/bookLocal";
 import { citationManualChoice } from "@/lib/pastedCitationAdapter";
-import { planCitationEvidence, planLocalCitation, planTypedRequest, resolveCitationResponse, RUNNER_HOST } from "@/lib/citationPlanner";
+import { planCapabilityGate, planCitationEvidence, planLocalCitation, planTypedRequest, resolveCitationResponse, RUNNER_HOST } from "@/lib/citationPlanner";
 import type { CitationManualChoice, PastedCitationContract } from "../../supabase/functions/_shared/pastedCitation";
 import { citationDiagnosticBody, observeCitationDiagnostic, type CitationDiagnosticActivation } from "@/lib/citationDiagnostic";
 
