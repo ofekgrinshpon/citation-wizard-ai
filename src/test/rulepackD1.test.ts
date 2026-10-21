@@ -64,13 +64,14 @@ describe("D1 effective manual choice (fail-before: new countries were cast to UN
     const manual = citationManualChoice(type, id);
     expect(manual?.jurisdiction).toBe(j);
     const c = buildPastedCitation(raw, manual);
-    expect(c.route).toBe(j === "AU" ? "foreign" : "preserve");
+    // QA correction 2: complete federal RSC title without an English "Act" suffix is a supported CA local statute.
+    expect(c.route).toBe(j === "FR" ? "preserve" : "foreign");
     if (j === "FR") expect(c.unsupported).toContain(`rulepack_planned_disabled:${j}`);
     expect(c.jurisdiction).toBe(j);
   });
   it.each(NEW)("$j override through actual runCitation: raw preserved, zero provider/cache/classifier", async ({ j, id, sub, raw, type }) => {
     const r = await runCitation({ rawInput: raw, overrideType: type, manualChoice: citationManualChoice(type, id, sub) });
-    expect(citationToPlain(r.citation)).toBe(raw);
+    expect(citationToPlain(r.citation)).toBe(j === "CA" ? "Criminal Code, R.S.C. 1985, c C-46, s 718 (Can.)." : raw);
     if (j === "AU") expect(r.pastedCitation?.conflicts).toContain("unsupported_subjurisdiction");
     expect(r.status).toBe("warning"); if (j === "FR") expect(r.warningMsg).toBe(PLANNED_RULEPACK_WARNING);
     expect(r.pastedCitation?.jurisdiction).toBe(j);
