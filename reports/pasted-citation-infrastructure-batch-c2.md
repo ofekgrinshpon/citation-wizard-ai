@@ -68,3 +68,26 @@
 - Automatic compilation: **build OK at 2026-10-21T00:41:49Z**. Separate explicit app TypeScript/Vite commands remain unavailable under the environment's manual-command prohibition, not claimed as independently run.
 - Strong chapter evidence uses existing returned title/snippet text. Records without that evidence fail closed even if a URL looks plausible or the collection matches; no new page-inspection identity strategy was added. Exact normalized occurrence is not full-text legal identity verification. Bibliographic firstPage extraction remains unsupported; complete edition data is not promised.
 - No deployment, live calls, DB/data/schema/auth/security/permission/payment changes, provider/search strategy expansion, quota/settings changes or D. Stop for independent QA; explicit app TypeScript/Vite gates remain external blockers.
+
+## Narrow C2 planner-to-server wire correction
+
+### Baseline and separation
+- Verified clean baseline `2e4b11a6c27b6e060c7b73b4428e673b1b04e43c`; prior edition, chapter-identity and extractor-eligibility corrections retained.
+- Shared book/chapter planning now keeps complete local parsed fields separately from `foreignLookup.parsedFields`. The wire projection uses the existing server `suppliedLookupFieldsMatch` allowlist/check unchanged, omits unsupported keys, and requires raw-bound author/book/chapter anchors. No server binding gates or allowlist were modified.
+- `originalYear`, publisher identity/status, selected section/paragraph and normalized display pinpoint stay local for rendering and conflict acceptance; they do not become provider-search fields. Exact labelled values and original-input spans survive in transient `completion.suppliedFields`, independently of provider-added `fields`/`provenance`. Leading whitespace offsets are tested.
+- Exact supplied `214-216` is projected as `pinpoint: "214-216"`, never its displayed `214–216`; selected `Section: 4.2` remains local and renders as `§ 4.2`, never fabricated as a raw-bound `§4.2` request value. User-selected pinpoints are neither searched nor inferred.
+- Resolver validates donor additions against the complete local supplied fields, not merely the smaller wire projection, then gives local fields precedence in rendering. All four exact inputs retain supplied semantics while accepting grounded year/edition. Unsupported/unsafe identity projection stays on existing local render/preserve paths; no invalid request or generic escape is introduced.
+
+### Actual boundaries tested
+- `citationC2Wire.test.ts`: actual planner output and production lookup extraction for A original year 1901; B Synthetic Press/non-original; C chapter firstPage 12/pinpoint 214-216; D section 4.2. Exactly one existing synthetic Search fetch, no extra page/provider call.
+- `hebrewArticleEvidence.test.ts`: each actual planner-generated request enters the actual citation-chat handler with mocked lookup/usage/gateway dependencies. Each passes exact preflight, performs one lookup and one begin/finish pair, and performs zero generic gateway calls. Lookup spy checks the exact forwarded planner fields. These are handler acceptance tests, not live provider tests.
+- Negative actual-handler controls: forged unsupported extra field, different raw citation, unrelated year value, crossed source kind and US-evidence/UK-declared jurisdiction all preserve before cache, usage or lookup/gateway.
+- Actual Index initial/manual, runCitation, BatchFootnoteBuilder review result and BibliographyGenerator add callback retain exact local supplied metadata and accepted donor provenance. Display respects original year/publisher/range/section; stored chat/footnote payloads still omit transient metadata.
+- No disconnected ideal positive request fixtures; positive lookup envelopes use the real existing extraction constructor with synthetic donors. No pre-edit fail-before run was performed in this turn; independently reproduced failures came from the user, and post-change actual-handler/host gates demonstrate correction.
+
+### Final offline gates and limits
+- Focused eight-file gate: **432 passed, 1 skipped, 0 failed**.
+- Full final gate: **192 files passed; 3,941 passed, 1 skipped, 0 failed**. Tested source revision `a5d5984da460ac04462f6b9a9bcf02add8df8613`; subsequent report/roadmap changes are documentation-only.
+- Latest automatic compilation: **build OK at 2026-10-21T00:54:42Z** after correcting fixture typing. Explicit standalone app TypeScript/Vite production commands were **not run**, because environment instructions prohibit manual builds/typechecks; automatic compilation is not claimed as those requested independent gates.
+- Existing extractor still completes only supported year/edition fields, not bibliographic firstPage or intended pinpoints. Unknown spans/raw input remain preserved; no new search/extraction grammar, request kind, country or D work.
+- No live calls, deployment/publication, DB/data/schema/auth/security/permissions/payment changes, usage/refund/billing/quota/limit/settings changes or purchases. Per-run checkpoint configuration unchanged; credits were not measured. Stop for independent QA.

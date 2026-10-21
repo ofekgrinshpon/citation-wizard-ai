@@ -29,6 +29,8 @@ export interface BookWorkParse {
   signal: boolean;
   /** Batch-4-only structure (labels, ", at", §/¶, editor-only) that takes precedence over the M2A grammar. */
   explicitNew?: boolean;
+  /** Exact labelled values before display normalization, with original-input spans. */
+  suppliedFields?: Record<string, { value: string; spans: Array<{ start: number; end: number }> }>;
 }
 
 const ROMAN = String.raw`[ivxlcdm]{1,8}`;
@@ -66,18 +68,24 @@ const LABELS: Record<string, string> = {
   section: "section", paragraph: "paragraph",
 };
 
-function parseLabelled(text: string): BookWorkParse | null {
+function parseLabelled(text: string, offset = 0): BookWorkParse | null {
   const segs = text.split(/;\s*/).map((s) => s.trim()).filter(Boolean);
   if (segs.length < 2) return null;
   const kv = segs.map((s) => s.match(/^([A-Za-z ]+?):\s*(.*)$/));
   if (!kv[0] || !LABELS[kv[0][1].toLowerCase()]) return null;
   const f: Record<string, string> = {};
+  const suppliedFields: NonNullable<BookWorkParse["suppliedFields"]> = {};
   const extra: string[] = [];
   segs.forEach((s, i) => {
     const m = kv[i];
     const key = m && LABELS[m[1].toLowerCase()];
     if (!m || !key || !m[2].trim() || f[key]) extra.push(s);
-    else f[key] = m[2].trim();
+    else {
+      f[key] = m[2].trim();
+      const segmentStart = text.indexOf(s);
+      const start = offset + segmentStart + s.indexOf(":") + 1 + (s.slice(s.indexOf(":") + 1).length - s.slice(s.indexOf(":") + 1).trimStart().length);
+      suppliedFields[key] = { value: f[key], spans: [{ start, end: start + f[key].length }] };
+    }
   });
   const fields: BookWorkParse["fields"] = {};
   for (const k of ["authors", "editors", "translators", "bookTitle", "chapterTitle", "volume", "year", "publisher", "originalYear", "firstPage"] as const) {
@@ -89,7 +97,7 @@ function parseLabelled(text: string): BookWorkParse | null {
   else if (pins[0]) fields.pinpoint = pins[0] as string;
   if (extra.length) fields.unparsedRemainder = extra.join("; ");
   const kind: BookWorkKind = fields.chapterTitle ? "chapter" : "book";
-  const p: BookWorkParse = { kind, fields, signal: true, explicitNew: true };
+  const p: BookWorkParse = { kind, fields, signal: true, explicitNew: true, suppliedFields };
   if (fields.publisher) {
     const st = (f.publisherStatus ?? "").toLowerCase();
     if (/^(?:non-original|not original|reprint)$/.test(st)) fields.publisherStatus = "non-original";
@@ -113,7 +121,7 @@ function applyParen(fields: BookWorkParse["fields"], paren: Paren): BookWorkPars
 export function extractBookWork(raw: string): BookWorkParse | null {
   const text = raw.trim().replace(/\.$/, "");
   if (!text || /[\u0590-\u05FF]/.test(text) || /https?:|\bv\.\s/.test(text)) return null;
-  if (/^[A-Za-z ]+:\s/.test(text) && text.includes(";")) return parseLabelled(text);
+  if (/^[A-Za-z ]+:\s/.test(text) && text.includes(";")) return parseLabelled(text, raw.indexOf(text));
   const m = text.match(/^(.+?)\s*\(([^()]+)\)(.*)$/);
   if (!m) return null;
   const [, pre, parenRaw, tailRaw] = m;

@@ -12,6 +12,7 @@ import { resolveStatuteLookup } from "../../supabase/functions/citation-chat/sta
 import { c1ServerPayload, C1_REDIGI } from "./fixtures/c1ServerPayload";
 import { runCitation } from "@/lib/runCitation";
 import { C2_BOOK, C2_CHAPTER, C2_MODES, c2Payload, C2_CORRECTION_MODES, c2CorrectionPayload } from "./fixtures/c2BookPayload";
+import { C2_WIRE, c2WirePayload } from "./fixtures/c2WirePayload";
 
 const m = vi.hoisted(() => ({
   invoke: vi.fn(), classify: vi.fn(), recordGeneration: vi.fn(), bubble: vi.fn(),
@@ -108,6 +109,26 @@ beforeEach(() => {
 const CORNELL_1983 = { title: "42 U.S.C. § 1983 - Civil action for deprivation of rights", url: "https://www.law.cornell.edu/uscode/text/42/1983", snippet: "Civil Rights Act — 42 U.S.C. § 1983 (2018)." };
 
 describe("chat page — typed statute request through initial send and regeneration", () => {
+  it.each(C2_WIRE)("C2 wire $id actual Index initial/manual preserves local fields", async f => {
+    const { response } = await c2WirePayload(f);
+    m.classify.mockResolvedValue({ sourceType: f.type, source: "regex" });
+    m.invoke.mockResolvedValue({ data: { foreignLookup: response, content: "UNSAFE" }, errorInfo: null });
+    await mountChat(); await send(f.raw);
+    const latest = () => m.bubble.mock.calls.map(([msg]) => msg).filter(msg => msg.role === "assistant").at(-1);
+    const check = () => {
+      expect(latest().content).toContain(f.output);
+      expect(latest().content).not.toContain("UNSAFE");
+      expect(latest().completion.fields.year).toBe("2020");
+      expect(latest().completion.provenance.edition.value).toBe("2nd ed.");
+      expect(latest().pastedCitation.rawInput).toBe(f.raw);
+      for (const [key, value] of Object.entries(f.local)) expect(latest().completion.suppliedFields[key].value).toBe(value);
+    };
+    await waitFor(() => expect(latest()?.completion).toBeDefined()); check();
+    await act(async () => fireEvent.click(screen.getByRole("button", { name: `regen-${f.type}` })));
+    check(); expect(m.invoke).toHaveBeenCalledTimes(2);
+    for (const [, body] of m.invoke.mock.calls) expect(body.foreignLookup.parsedFields).not.toHaveProperty("publisher");
+    expect(localStorage.getItem("legal_app_free_text_messages")).not.toContain('"suppliedFields"');
+  });
   it.each(C2_CORRECTION_MODES)("C2 correction actual Index initial/manual %s", async mode => {
     const { rawInput, type, response } = await c2CorrectionPayload(mode);
     m.classify.mockResolvedValue({ sourceType: type, source: "regex" });

@@ -23,6 +23,7 @@ import { articleLookupFallback, runForeignLookup as actualForeignLookup, type Fo
 import { buildEnginePromptHint } from "@/lib/citationValidation";
 import * as statuteRoute from "../../supabase/functions/citation-chat/statuteRoute";
 import { CITATION_RULES } from "@/data/citationEngine";
+import { C2_WIRE, c2WirePayload } from "./fixtures/c2WirePayload";
 
 const natural = "המאמר של דפנה ברק־ארז על כתיבה שיפוטית, בעמודים 291 עד 293.";
 const right = 'דפנה ברק-ארז "כתיבה שיפוטית" משפטים מו 269 (תשע״ז)';
@@ -210,11 +211,14 @@ async function runHandler(options: { raw?: string; rawInputNull?: boolean; recor
     : name === "finish_citation_request" ? { ok: true, status: args._outcome, result_stored: args._outcome === "succeeded", refunded: args._outcome === "failed", refund_receipt: fixtureReceipt(String(args._request_id), args._outcome === "failed") }
     : { ok: true }, error: null })));
   const zero = vi.fn();
+  const lookupSpy = vi.fn();
+  const cacheSpy = vi.fn();
   const roleRead = vi.fn(async () => options.roleFails ? { data: null, error: { message: "fixture-only" } } : { data: options.admin ? { role: "admin" } : null, error: null });
   const client = {
     auth: { getClaims: async () => ({ data: { claims: { sub: "test-user" } }, error: null }) },
     rpc,
     from: () => {
+      cacheSpy();
       const chain = { select: () => chain, eq: () => chain, or: () => chain, abortSignal: () => chain,
         limit: async () => ({ data: options.cached || [] }), maybeSingle: roleRead };
       return chain;
@@ -263,6 +267,7 @@ async function runHandler(options: { raw?: string; rawInputNull?: boolean; recor
     "../_shared/citationDiagnostic.ts": diagnostic,
     "../_shared/citationDiagnosticGate.ts": diagnosticGate,
     "./foreignLookup.ts": { runForeignLookup: async (input: ForeignLookupInput, deps: LookupDeps) => {
+      lookupSpy(input);
       if (options.foreignThrows) throw new Error("Mock lookup boundary failed");
       if (!options.realForeign) return options.foreignResult;
       return actualForeignLookup(input, { ...deps, fetchImpl: (async (_url: unknown, init?: RequestInit, meta?: { stage?: string }) => {
@@ -283,7 +288,7 @@ async function runHandler(options: { raw?: string; rawInputNull?: boolean; recor
   const label = options.label || "מאמר";
   const message = `[סיווג אוטומטי: ${label}]\n${label === "מאמר" ? buildEnginePromptHint("article") : ""}${raw}`;
   const response = await handler!(new Request("https://local.test/citation-chat", { method: "POST", headers: { Authorization: "Bearer mock-token", "Content-Type": "application/json" }, body: JSON.stringify({ citationRequestVersion: options.version === null ? undefined : options.version ?? 3, requestId: options.requestId === null ? undefined : options.requestId ?? "fixture-request-0001", ...(options.batchId !== undefined ? { batchId: options.batchId } : {}), ...(options.retryOfRequestId !== undefined ? { retryOfRequestId: options.retryOfRequestId } : {}), ...(options.preflightOnly ? {} : { messages: [{ role: "user", content: message }], rawInput: options.rawInputNull ? null : raw }), ...(options.foreign ? { foreignLookup: options.foreign } : {}), ...(options.diagnostic ? { citationDiagnostic: options.diagnostic } : {}) }) }));
-  return { body: await response.json(), status: response.status, usageStatus: response.headers.get("X-Usage-Status"), calls, rpc, zero, roleRead, claimClients };
+  return { body: await response.json(), status: response.status, usageStatus: response.headers.get("X-Usage-Status"), calls, rpc, zero, roleRead, claimClients, lookupSpy, cacheSpy };
 }
 
 describe("article boundary through the real edge handler", () => {
@@ -470,6 +475,35 @@ describe("article boundary through the real edge handler", () => {
 });
 
 describe("Stage 4 typed statute requests through the real edge handler", () => {
+  it.each(C2_WIRE)("C2 wire $id actual planner into actual handler", async f => {
+    const { plan, response } = await c2WirePayload(f);
+    const foreign = plan.foreignLookup;
+    if (!foreign) throw new Error("Missing typed plan");
+    const r = await runHandler({ raw: f.raw, label: "ספר לועזי", foreign, foreignResult: response as unknown as Record<string, unknown> });
+    expect(r.status).toBe(200);
+    expect(r.body.pastedCitation?.conflicts ?? []).not.toContain("lookup_source_binding_conflict");
+    expect(r.body.foreignLookup.identity.matched).toBe(true);
+    expect(r.lookupSpy).toHaveBeenCalledTimes(1);
+    expect(r.lookupSpy).toHaveBeenCalledWith({ kind: foreign.kind, jurisdiction: foreign.jurisdiction, rawInput: f.raw, parsedFields: foreign.parsedFields });
+    expect(r.calls).toHaveLength(0);
+    expect(r.rpc.mock.calls.filter(([n]) => n === "begin_citation_request")).toHaveLength(1);
+    expect(r.rpc.mock.calls.filter(([n]) => n === "finish_citation_request")).toHaveLength(1);
+  });
+  it.each(["extra", "raw", "value", "kind", "jurisdiction"])("C2 wire forged %s rejected before cache/usage/lookup/gateway", async mode => {
+    const f = C2_WIRE[0];
+    const { plan } = await c2WirePayload(f);
+    const foreign = structuredClone(plan.foreignLookup) as Record<string, unknown>;
+    if (mode === "extra") foreign.parsedFields = { ...(foreign.parsedFields as object), originalYear: "1901" };
+    if (mode === "raw") foreign.rawInput = "Author: Other; Book: Different";
+    if (mode === "value") foreign.parsedFields = { ...(foreign.parsedFields as object), year: "2099" };
+    if (mode === "kind") foreign.kind = "case";
+    // A real US anchor, unlike OTHER literature, proves a jurisdiction contradiction.
+    const raw = mode === "jurisdiction" ? "Brown v. Board of Education, 347 U.S. 483 (1954)" : f.raw;
+    if (mode === "jurisdiction") Object.assign(foreign, { kind: "case", jurisdiction: "UK", rawInput: raw, parsedFields: { caseName: "Brown v. Board of Education" } });
+    const r = await runHandler({ raw, label: "ספר לועזי", foreign });
+    expect(r.body.pastedCitation.route).toBe("preserve");
+    expect(r.cacheSpy).not.toHaveBeenCalled(); expect(r.lookupSpy).not.toHaveBeenCalled(); expect(r.rpc).not.toHaveBeenCalled(); expect(r.calls).toHaveLength(0);
+  });
   it.each(["book", "book_chapter"].flatMap(kind => ["unmatched", "error", "thrown", "missing_key"].map(mode => [kind, mode])))("C1 %s %s never invokes generic gateway", async (kind, mode) => {
     const raw = "Author: Jane Doe; Book: Synthetic Collection";
     const foreign = { enabled: true, kind, jurisdiction: "OTHER", rawInput: raw, parsedFields: { authors: "Jane Doe", bookTitle: "Synthetic Collection" } };

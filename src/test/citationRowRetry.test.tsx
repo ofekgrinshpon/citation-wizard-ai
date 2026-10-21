@@ -11,6 +11,7 @@ import { FootnoteReviewCard } from "@/components/FootnoteReviewCard";
 import { c1ServerPayload } from "./fixtures/c1ServerPayload";
 import { CitationRunError, runCitation } from "@/lib/runCitation";
 import { C2_BOOK, C2_CHAPTER, C2_MODES, c2Payload, C2_CORRECTION_MODES, c2CorrectionPayload } from "./fixtures/c2BookPayload";
+import { C2_WIRE, c2WirePayload } from "./fixtures/c2WirePayload";
 
 const boundary = vi.hoisted(() => ({
   invoke: vi.fn(), getSession: vi.fn(), getUser: vi.fn(), refreshSession: vi.fn(),
@@ -732,6 +733,35 @@ for (const host of ["bibliography", "footnote"] as const) {
       if (mode === "partial-chapter") expect(result.completion.missing).toContain("firstPage");
     }
     if (mode !== "firstPage-only") expect(boundary.invoke).toHaveBeenCalledTimes(1);
+    expect(document.body.textContent).not.toContain("UNSAFE");
+  });
+}
+
+for (const host of ["bibliography", "footnote"] as const) {
+  it.each(C2_WIRE)(`C2 wire actual ${host} $id retains supplied fields`, async f => {
+    const { response } = await c2WirePayload(f);
+    boundary.classify.mockResolvedValue({ sourceType: f.type });
+    boundary.invoke.mockResolvedValue({ data: { foreignLookup: response, content: "UNSAFE" }, error: null });
+    const runner = await runCitation({ rawInput: f.raw, overrideType: f.type, useVerifiedStore: false });
+    boundary.invoke.mockClear();
+    if (host === "bibliography") bibliographyInput(f.raw); else footnoteInput([f.raw]);
+    let result: { completion?: typeof runner.completion; output?: string; fullCitation?: string; pastedCitation?: typeof runner.pastedCitation };
+    if (host === "bibliography") {
+      const button = await screen.findByRole("button", { name: /הוסף הכל לביבליוגרפיה/ });
+      await waitFor(() => expect(button).not.toBeDisabled());
+      boundary.addEntries.mockReturnValue(1); await act(async () => fireEvent.click(button));
+      result = boundary.addEntries.mock.calls.at(-1)?.[0][0];
+    } else {
+      await waitFor(() => expect(boundary.card.mock.calls.some(([c]) => c.completion)).toBe(true));
+      result = boundary.card.mock.calls.map(([c]) => c).filter(c => c.completion).at(-1);
+      expect(localStorage.getItem("footnote_cells_row-project")).not.toContain('"suppliedFields"');
+    }
+    expect(result.completion).toEqual(runner.completion);
+    expect(result.pastedCitation?.rawInput).toBe(f.raw);
+    expect(result.fullCitation ?? result.output).toContain(f.output);
+    expect(result.completion?.fields.year).toBe("2020");
+    for (const [key, value] of Object.entries(f.local)) expect(result.completion?.suppliedFields?.[key].value).toBe(value);
+    expect(boundary.invoke).toHaveBeenCalledTimes(1);
     expect(document.body.textContent).not.toContain("UNSAFE");
   });
 }
