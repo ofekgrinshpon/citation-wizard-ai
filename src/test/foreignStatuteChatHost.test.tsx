@@ -638,10 +638,12 @@ describe("AU/CA QA 29db8bb: labelled literature country suffix through actual In
     // Legacy initial path: the existing source-type step resolves the labelled book (D1 ownership).
     m.classify.mockResolvedValue({ sourceType: "foreign_book", source: "regex" });
     await mountChat(); await send(raw);
+    await act(() => new Promise(r => setTimeout(r, 300))); // let the pending intake settle
     await waitFor(() => expect(screen.getByTestId("bubble-assistant")).toHaveTextContent(plain), { timeout: 5000 });
     expect(screen.getByTestId("bubble-assistant").textContent).not.toContain("סותר");
     const classified = m.classify.mock.calls.length;
     await act(async () => fireEvent.click(screen.getByRole("button", { name: "regen-foreign_book" })));
+    await act(() => new Promise(r => setTimeout(r, 300))); // let the pending intake settle
     await waitFor(() => expect(screen.getByTestId("bubble-assistant")).toHaveTextContent(plain), { timeout: 5000 });
     expect(screen.getByTestId("bubble-assistant").textContent).not.toContain("סותר");
     expect(m.classify.mock.calls.length).toBe(classified);
