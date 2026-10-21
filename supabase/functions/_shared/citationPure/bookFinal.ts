@@ -50,8 +50,12 @@ export function boundBookCompletion(input: CitationRecoveryInput) {
 }
 
 const missingLabels: Record<string, Record<string, string>> = {
-  foreign_book: { authors: "שמות המחברים – ברישיות מוקטנות (small caps) (כלל 36.6)", bookTitle: "שם הספר – ברישיות מוקטנות (כלל 36.6)", year: "שנת פרסום הספר (כלל 36.6)" },
-  foreign_book_chapter: { authors: "שמות המחברים – כללי 36.7 (כלל 36.8)", bookTitle: "שם הספר – ברישיות מוקטנות (כלל 36.6) (כלל 36.8)", firstPage: "עמוד תחילת המאמר בספר (כלל 36.8)", year: "שנת פרסום הספר (כלל 36.8)" },
+  // Preserve all labels accepted by the legacy caller contract, even for optional
+  // components explicitly passed as missing. These labels do not define eligibility.
+  foreign_book: { authors: "שמות המחברים – ברישיות מוקטנות (small caps) (כלל 36.6)", bookTitle: "שם הספר – ברישיות מוקטנות (כלל 36.6)", year: "שנת פרסום הספר (כלל 36.6)",
+    volume: "מספר הכרך – לפני שם המחבר (כלל 36.6)", subtitle: "שם משני (אחרי נקודתיים) (כלל 36.6)", pinpoint: "הפניה ספציפית – לפני הסוגריים (כלל 36.6)", edition: "פרטי מהדורה (3d ed. וכו') (כלל 36.6)", editor: "שם העורך – לפני eds. (כלל 36.6)", translator: "שם המתרגם – לפני trans. (כלל 36.6)", publisher: "מוציא לאור – רק אם פורסם לפני 1900 או על ידי גורם שאינו המוציא לאור המקורי (כלל 36.6)" },
+  foreign_book_chapter: { authors: "שמות המחברים – כללי 36.7 (כלל 36.8)", bookTitle: "שם הספר – ברישיות מוקטנות (כלל 36.6) (כלל 36.8)", firstPage: "עמוד תחילת המאמר בספר (כלל 36.8)", year: "שנת פרסום הספר (כלל 36.8)",
+    articleTitle: "שם המאמר – באותיות מוטות (כלל 36.7) (כלל 36.8)", pinpoint: "הפניה ספציפית (אחרי פסיק) (כלל 36.8)", editor: "שמות עורכי הספר (כלל 36.8)" },
 };
 export function bookMissingSummary(type: string, missing: string[]): string {
   const descriptions = missing.map(k => missingLabels[type]?.[k]).filter(Boolean);
