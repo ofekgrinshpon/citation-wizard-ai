@@ -83,20 +83,24 @@ describe("AU/CA actual bibliography local slice", () => {
 });
 
 describe("AU/CA QA 29db8bb: labelled literature country suffix through actual bibliography", () => {
-  it.each([
-    ["Author: Jane Doe; Edition: 2nd; Year: 2020; Book: Literature (Can.)", "^^Jane Doe, Literature (Can.)^^ (2nd ed. 2020)."],
-    ["Author: Jane Doe; Edition: 2nd; Year: 2020; Book: Literature (Austl.)", "^^Jane Doe, Literature (Austl.)^^ (2nd ed. 2020)."],
-  ])("%s manual foreign_book regeneration matches frozen D1", async (raw, out) => {
+  // Warning rows expose no picker in the bibliography; the relevant path is initial intake parity with a no-suffix control.
+  async function intake(raw: string) {
+    cleanup(); b.cache.mockClear(); b.invoke.mockClear();
     render(<TooltipProvider><BibliographyProvider><BibliographyGenerator /></BibliographyProvider></TooltipProvider>);
     fireEvent.change(screen.getByRole("textbox"), { target: { value: raw } });
+    const before = b.run.mock.calls.length;
     await act(async () => fireEvent.click(screen.getByRole("button", { name: /שלח לבדיקה/ })));
-    const regen = await screen.findByRole("button", { name: "regen-picker" });
-    const manualChoice = citationManualChoice("foreign_book");
-    b.plan.mockImplementation((_a: string, itemKey: string) => ({ itemKey, sourceType: "foreign_book", manualChoice, supported: true, effectiveKey: "e", inputFingerprint: "f" }));
-    b.cache.mockClear(); b.invoke.mockClear();
-    await act(async () => fireEvent.click(regen));
-    const r = await b.run.mock.results.at(-1)?.value;
-    expect(r.citation).toBe(out); expect(r.pastedCitation?.conflicts ?? []).not.toContain("manual_family_conflict");
-    expect(b.invoke).not.toHaveBeenCalled(); expect(fetch).not.toHaveBeenCalled();
+    await waitFor(() => expect(b.run.mock.results.length).toBeGreaterThan(before));
+    const r = await b.run.mock.results[before].value;
+    return { r, counts: [b.cache.mock.calls.length, b.invoke.mock.calls.length] };
+  }
+  it.each(["(Can.)", "(Austl.)"])("Book: Literature %s matches the no-suffix control", async suffix => {
+    const a = await intake(`Author: Jane Doe; Edition: 2nd; Year: 2020; Book: Literature ${suffix}`);
+    const c = await intake("Author: Jane Doe; Edition: 2nd; Year: 2020; Book: Literature");
+    expect(a.r.pastedCitation?.conflicts ?? []).not.toContain("manual_family_conflict");
+    expect(a.r.pastedCitation?.jurisdiction ?? null).not.toMatch(/^(AU|CA)$/);
+    expect([a.r.status, a.r.warningMsg]).toEqual([c.r.status, c.r.warningMsg]);
+    expect(a.r.citation.replace(` ${suffix}`, "")).toBe(c.r.citation);
+    expect(a.counts).toEqual(c.counts); expect(fetch).not.toHaveBeenCalled();
   });
 });
