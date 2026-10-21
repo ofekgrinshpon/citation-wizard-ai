@@ -80,5 +80,8 @@
 
 ## Infrastructure D1 (offline, stopped for QA)
 - [x] D1 rulepack manifest + shared manual-choice/lookup contract; AU/CA/DE/FR planned/disabled.
-- [ ] D2 AU/CA templates + grounded completion + authoritative replay (not started; awaits D1 QA).
+- [x] D1 independent gate supplied on 56411d7: full regression, actual hosts, TypeScript and production build.
+- [x] Bounded AU/CA LOCAL slice: six exact templates, shared actual hosts, local saved/reloaded and zero-IO guards; 4,210 passed / 1 skipped / 0 failed (202 files); report updated; no completion/deployment.
+- [ ] AU/CA local independent QA gate: separate app TypeScript/production Vite unavailable under manual-command prohibition; completion awaits owner gate.
+- [ ] D2 AU/CA grounded completion + authoritative replay (not authorized in local slice; awaits independent QA).
 - [ ] D3 DE/FR templates + completion; FR Cass. oc./soc. table anomaly unresolved.

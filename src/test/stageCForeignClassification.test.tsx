@@ -157,7 +157,7 @@ describe("override lifecycle + persistence", () => {
     expect(changed.needsReview).toBe(true);
     expect(computeEffective(changed.detected, changed.overrides).scalars.jurisdiction).toBe(CA);
     expect(keepAfterInputChange(changed).needsReview).toBe(false);
-    expect(computeEffective(resetOverrides(changed).detected, {}).scalars.jurisdiction).toBeUndefined();
+    expect(computeEffective(resetOverrides(changed).detected, {}).scalars.jurisdiction).toBe(CA);
   });
   it("stale: only explicit generation with the exact effective key + input certifies; async old plan cannot clear newer choice", () => {
     let r = createRecord("k", "Example Act 2020, c. 7");
@@ -241,7 +241,8 @@ describe("picker UI — deterministic, local, zero network", () => {
     fireEvent.click(screen.getByRole("button", { name: "החלטה בהליך שיפוטי או מעין־שיפוטי" }));
     fireEvent.change(screen.getByRole("combobox", { name: /תחום שיפוט/ }), { target: { value: CA } });
     expect(screen.getByTestId("foreign-effective").textContent).toContain("Canada");
-    expect(screen.getByTestId("foreign-stale")).toBeInTheDocument();
+    // An identical detected-country choice is not a changed effective plan.
+    expect(screen.queryByTestId("foreign-stale")).toBeNull();
     unmount();
     const r2 = render(card(cell(), regen));
     expect(screen.getByTestId("foreign-effective").textContent).toContain("Canada");
@@ -252,7 +253,7 @@ describe("picker UI — deterministic, local, zero network", () => {
     fireEvent.click(screen.getByRole("button", { name: "השאר את הבחירה" }));
     expect(screen.queryByTestId("foreign-needs-review")).toBeNull();
     fireEvent.click(screen.getByRole("button", { name: "חזרה לזיהוי האוטומטי" }));
-    expect(screen.getByTestId("foreign-effective").textContent).not.toContain("Canada");
+    expect(screen.getByTestId("foreign-effective").textContent).toContain("Canada");
     expect(regen).not.toHaveBeenCalled();
     noNetwork();
   });

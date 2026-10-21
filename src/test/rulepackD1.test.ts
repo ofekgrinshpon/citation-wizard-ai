@@ -25,14 +25,14 @@ const NEW = [
 ] as const;
 
 describe("D1 manifest", () => {
-  it("only existing routes are enabled; AU/CA/DE/FR are planned and disabled with v21 authority", () => {
+  it("existing routes plus six AU/CA local-only templates; DE/FR remain disabled with v21 authority", () => {
     const enabledJ = new Set(RULEPACK_MANIFEST.filter(e => e.status === "enabled").map(e => e.jurisdiction));
-    expect([...enabledJ].sort()).toEqual(["GENERAL", "UK", "UNANCHORED", "US"]);
+    expect([...enabledJ].sort()).toEqual(["AU", "CA", "GENERAL", "UK", "UNANCHORED", "US"]);
     for (const j of ["AU", "CA", "DE", "FR"]) {
       const e = RULEPACK_MANIFEST.filter(x => x.jurisdiction === j);
       expect(e.length).toBeGreaterThan(0);
       for (const x of e) {
-        expect(x.status).toBe("planned_disabled"); expect(x.completion).toBeNull(); expect(x.rendererId).toBeNull();
+        expect(x.status).toBe(j === "AU" || j === "CA" ? "enabled" : "planned_disabled"); expect(x.completion).toBeNull(); expect(x.rendererId).toBe(j === "AU" || j === "CA" ? "foreign_bluebook_v22" : null);
         expect(x.authority.edition).toBe("21"); expect(x.authority.url).toMatch(/\/bluebook\/v21\/tables\/t2-foreign-jurisdictions\//);
         expect(x.authority.observed).toBe("2026-10-21");
       }
@@ -64,14 +64,15 @@ describe("D1 effective manual choice (fail-before: new countries were cast to UN
     const manual = citationManualChoice(type, id);
     expect(manual?.jurisdiction).toBe(j);
     const c = buildPastedCitation(raw, manual);
-    expect(c.route).toBe("preserve");
-    expect(c.unsupported).toContain(`rulepack_planned_disabled:${j}`);
+    expect(c.route).toBe(j === "AU" ? "foreign" : "preserve");
+    if (j === "FR") expect(c.unsupported).toContain(`rulepack_planned_disabled:${j}`);
     expect(c.jurisdiction).toBe(j);
   });
   it.each(NEW)("$j override through actual runCitation: raw preserved, zero provider/cache/classifier", async ({ j, id, sub, raw, type }) => {
     const r = await runCitation({ rawInput: raw, overrideType: type, manualChoice: citationManualChoice(type, id, sub) });
     expect(citationToPlain(r.citation)).toBe(raw);
-    expect(r.status).toBe("warning"); expect(r.warningMsg).toBe(PLANNED_RULEPACK_WARNING);
+    if (j === "AU") expect(r.pastedCitation?.conflicts).toContain("unsupported_subjurisdiction");
+    expect(r.status).toBe("warning"); if (j === "FR") expect(r.warningMsg).toBe(PLANNED_RULEPACK_WARNING);
     expect(r.pastedCitation?.jurisdiction).toBe(j);
     expect(m.invoke).not.toHaveBeenCalled(); expect(m.cache).not.toHaveBeenCalled(); expect(m.classifier).not.toHaveBeenCalled();
     expect(fetch).not.toHaveBeenCalled();
@@ -84,7 +85,7 @@ describe("D1 effective manual choice (fail-before: new countries were cast to UN
   });
   it("new-country choice never yields a typed lookup request", () => {
     const ev = planCitationEvidence("Mabo v Queensland (No 2) (1992) 175 CLR 1", citationManualChoice("foreign_case_other", "t2:australia"));
-    expect(ev.preserve).not.toBeNull();
+    expect(ev.pasted.local?.citation).toBe("##Mabo v Queensland (No 2)## (1992) 175 CLR 1 (Austl.).");
     expect(planForeignLookup("foreign_case_other", "Mabo v Queensland", null)).toEqual({ kind: "case", jurisdiction: "UNKNOWN" });
   });
 });
@@ -94,7 +95,7 @@ describe("D1 actual server guard", () => {
   it.each(NEW)("$j retained manual choice is recognized server-side and preserves", ({ j, raw }) => {
     const c = guardPastedCitationRequest({ messages: msg(raw, { jurisdiction: j, sourceType: "foreign", foreign: true }), rawInput: raw });
     expect(c.manualChoice?.jurisdiction).toBe(j);
-    expect(c.route).toBe("preserve"); expect(c.unsupported).toContain(`rulepack_planned_disabled:${j}`);
+    expect(c.route).toBe("preserve"); expect(c.unsupported).toContain(j === "FR" ? `rulepack_planned_disabled:${j}` : "country_local_only_completion_disabled");
   });
   it("unknown manual jurisdiction strings are dropped, not cast", () => {
     const c = guardPastedCitationRequest({ messages: msg("Smith v. Jones", { jurisdiction: "NZ" }), rawInput: "Smith v. Jones" });
@@ -160,7 +161,7 @@ describe("D1 manifest metadata accuracy", () => {
     expect(byId("us.case.unreported")?.completion).toBeNull();
   });
   it("CA neutral and standalone S.C.R. are distinct; FR Bulletin needs part/decision number", () => {
-    expect(byId("ca.case.scc_neutral")?.requiredFields).toContain("neutral");
+    expect(byId("ca.case.scc_neutral")?.requiredFields).toContain("neutralNumber");
     expect(byId("ca.case.scr")?.requiredFields).not.toContain("neutral");
     const fr = byId("fr.case.cass")!;
     expect(fr.requiredFields).toEqual(expect.arrayContaining(["bulletinPart", "decisionNumber"]));

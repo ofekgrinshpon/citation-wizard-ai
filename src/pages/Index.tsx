@@ -732,7 +732,7 @@ const Index = () => {
     const tel = sourceTelemetry(newTelemetryBatch("uniform_citation"));
     const pasted = preparePastedCitation(rawText);
     const resolved = pasted.local || pasted.contract.sourceKind === "case" && pasted.contract.route === "foreign"
-      ? { sourceType: pasted.detection?.sourceType ?? (pasted.contract.jurisdiction === "US" ? "foreign_case_us" : "foreign_case_other") as SourceType, source: "regex" as const }
+      ? { sourceType: pasted.country ? (pasted.country.family === "case" ? "foreign_case_other" : "foreign") : pasted.detection?.sourceType ?? (pasted.contract.jurisdiction === "US" ? "foreign_case_us" : "foreign_case_other") as SourceType, source: "regex" as const }
       : await resolveSourceType(normalized, tel);
     const sourceType = resolved.sourceType;
     const sourceLabel = SOURCE_TYPE_LABELS[sourceType];
@@ -1210,7 +1210,7 @@ const Index = () => {
                             }
 
                             // Check verified sources first
-                            const verifiedMatch = compatibleArticleCache(sourceType, normalized, await findVerifiedSourceMatch(normalized));
+                            const verifiedMatch = preparePastedCitation(newContent).country ? null : compatibleArticleCache(sourceType, normalized, await findVerifiedSourceMatch(normalized));
                             if (verifiedMatch) {
                               const normalizedSourceName = normalizeAbbreviations(verifiedMatch.source_name).toLowerCase();
                               const comparableInput = sourceType === "foreign_journal_article" ? normalized.toLowerCase() : normalized;

@@ -10,6 +10,10 @@ import { afterAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { runForeignLookup } from "../../supabase/functions/citation-chat/foreignLookup";
 import { resolveStatuteLookup } from "../../supabase/functions/citation-chat/statuteRoute";
 import { c1ServerPayload, C1_REDIGI } from "./fixtures/c1ServerPayload";
+import { COUNTRY_LOCAL_FIXTURES } from "./fixtures/countryLocalFixtures";
+import { findVerifiedSourceMatch } from "@/lib/verifiedSources";
+import { saveCitationHistoryRecord } from "@/lib/citationHistorySave";
+import { cleanup } from "@testing-library/react";
 import { runCitation } from "@/lib/runCitation";
 import { C2_BOOK, C2_CHAPTER, C2_MODES, c2Payload, C2_CORRECTION_MODES, c2CorrectionPayload } from "./fixtures/c2BookPayload";
 import { C2_WIRE, c2WirePayload, c2AuthoritativePayload } from "./fixtures/c2WirePayload";
@@ -67,6 +71,11 @@ vi.mock("@/components/MessageBubble", () => ({
           itemKey: "chat:0", sourceType: "foreign_case_us", supported: true, effectiveKey: "us-case-eff", inputFingerprint: "us-case-fp",
         })}>regen-us-case</button>
       )}
+      {onChangeSourceType && <button type="button" onClick={() => {
+        const j = /Cth|Austl|CLR|FCA|HCA/.test(msg.content) ? "AU" : "CA";
+        const type = /Act/.test(msg.content) ? "foreign" : "foreign_case_other";
+        onChangeSourceType(type, { itemKey:"chat:0", sourceType:type, supported:true, effectiveKey:"country", inputFingerprint:"raw", manualChoice: { jurisdiction:j, jurisdictionId:j === "AU" ? "t2:australia" : "t2:canada", sourceType:type, foreign:true } });
+      }}>regen-country</button>}
       {onChangeSourceType && (["foreign_unpublished_manuscript", "foreign_thesis", "foreign", "foreign_newspaper", "foreign_journal_article", "foreign_book", "foreign_book_chapter"] as const).map((t) => (
         <button key={t} type="button" onClick={() => onChangeSourceType(t, {
           itemKey: "chat:0", sourceType: t, supported: t !== "foreign", effectiveKey: `eff-${t}`, inputFingerprint: `fp-${t}`,
@@ -301,7 +310,7 @@ describe("chat page — typed statute request through initial send and regenerat
     expect(screen.getByTestId("bubble-assistant")).toHaveTextContent("סותרים");
     expect(m.invoke).not.toHaveBeenCalled();
   });
-  it("D1 AU manual regeneration preserves raw with planned-pack warning and zero IO", async () => {
+  it("AU incomplete manual regeneration preserves raw with local-only warning and zero IO", async () => {
     const input = "Mabo v. Queensland";
     m.invoke.mockResolvedValue({ data: { content: "UNSAFE MODEL OUTPUT" }, errorInfo: null });
     await mountChat(); await send(input);
@@ -309,7 +318,7 @@ describe("chat page — typed statute request through initial send and regenerat
     const calls = m.invoke.mock.calls.length;
     await act(async () => { fireEvent.click(screen.getByRole("button", { name: "regen-au" })); });
     expect(m.invoke).toHaveBeenCalledTimes(calls);
-    expect(screen.getByTestId("bubble-assistant")).toHaveTextContent("מתוכננים אך עדיין אינם זמינים");
+    expect(screen.getByTestId("bubble-assistant")).toHaveTextContent("הקלט נשמר ללא חיפוש");
     expect(screen.getByTestId("bubble-assistant")).not.toHaveTextContent("UNSAFE MODEL OUTPUT");
   });
   it("D1 natural BGH docket initial send stays local with zero IO", async () => {
@@ -602,3 +611,21 @@ vi.mock("@/lib/citationPlanner", async (original) => {
   };
 });
 afterAll(() => { expect(plannerHosts.has("chat")).toBe(true); expect(plannerHosts.has("chat:resolve")).toBe(true); });
+
+// Actual Index initial/manual and local saved chat replay; only IO boundaries mocked.
+describe("AU/CA actual Index local slice", () => {
+  it.each(COUNTRY_LOCAL_FIXTURES)("$id initial, manual, repeat and saved replay skip warm cache", async f => {
+    vi.mocked(findVerifiedSourceMatch).mockResolvedValue({ full_citation:"UNSAFE CACHE", verification_status:"verified" } as never);
+    await mountChat(); await send(f.raw);
+    await waitFor(() => expect(screen.getByTestId("bubble-assistant")).toHaveTextContent(f.output));
+    await act(async () => fireEvent.click(screen.getByRole("button", {name:"regen-country"})));
+    expect(screen.getByTestId("bubble-assistant")).toHaveTextContent(f.output);
+    expect(m.invoke).not.toHaveBeenCalled(); expect(m.classify).not.toHaveBeenCalled(); expect(findVerifiedSourceMatch).not.toHaveBeenCalled();
+    const saved = vi.mocked(saveCitationHistoryRecord).mock.calls[0]?.[0];
+    expect(saved?.raw_input).toBe(f.raw); expect(saved?.formatted_output).toContain(f.output);
+    const content = screen.getByTestId("bubble-assistant").textContent;
+    cleanup(); await mountChat();
+    expect(screen.getByTestId("bubble-assistant").textContent).toBe(content);
+    expect(m.invoke).not.toHaveBeenCalled(); expect(fetch).not.toHaveBeenCalled();
+  });
+});

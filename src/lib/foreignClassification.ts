@@ -5,6 +5,8 @@
  * model text. Detection confidence is NOT legal validity; `support` only
  * reports existing renderer coverage and `validity` is never asserted.
  */
+import { parseCountryLocal } from "../../supabase/functions/_shared/citationPure/countryLocal.ts";
+import { rulepackJurisdictionFromId, rulepackCapability } from "../../supabase/functions/_shared/citationPure/rulepack.ts";
 import { detectForeignSource } from "@/data/bluebook/extract";
 import type { SourceType } from "@/data/abbreviations";
 import { citationManualChoice } from "@/lib/pastedCitationAdapter";
@@ -123,6 +125,14 @@ export function detectClassification(raw: string): DetectedClassification {
   const text = (raw ?? "").trim();
   const scalars: DetectedClassification["scalars"] = {};
   const multi: DetectedClassification["multi"] = {};
+  const country = parseCountryLocal(raw);
+  if (country) {
+    const family = country.family === "case" ? "decision" : "normative_instrument";
+    scalars.family = ev(family, "high", [`country:${country.jurisdiction}`]);
+    scalars.subtype = ev(country.family === "case" ? "decision.judgment" : "normative_instrument.statute", "high", [`country:${country.jurisdiction}`]);
+    scalars.jurisdiction = ev(country.jurisdiction === "AU" ? "t2:australia" : "t2:canada", "high", [`supplied_country:${country.jurisdiction}`]);
+    return { version: CLASSIFICATION_VERSION, taxonomy: TAXONOMY_VERSION, inputFingerprint: fingerprintInput(text), scalars, multi };
+  }
   let d = text ? detectForeignSource(text) : null;
   const withoutUrl = text.replace(/,?\s*https?:\/\/\S+\s*$/i, "").trim();
   if ((!d || d.kind === "internet") && withoutUrl && withoutUrl !== text) {
@@ -266,6 +276,9 @@ export function engineRouteFor(e: EffectiveClassification): { sourceType: Source
   const fam = e.scalars.family;
   const jur = e.scalars.subjurisdiction ?? e.scalars.jurisdiction;
   if (e.otherUnidentified || !fam) return { sourceType: "foreign", supported: false };
+  const country = rulepackJurisdictionFromId(jur);
+  if ((country === "AU" || country === "CA") && sub === "decision.judgment") return { sourceType: "foreign_case_other", supported: false };
+  if ((country === "AU" || country === "CA") && sub === "normative_instrument.statute") return { sourceType: "foreign", supported: false };
   if (sub === "decision.judgment" && underUs(jur)) return { sourceType: "foreign_case_us", supported: true };
   if (sub === "decision.judgment" && underUk(jur)) return { sourceType: "foreign_case_other", supported: true };
   if (sub === "normative_instrument.statute" && underUs(jur)) return { sourceType: "foreign_statute_us", supported: true };
@@ -284,11 +297,14 @@ export function engineRouteFor(e: EffectiveClassification): { sourceType: Source
   return { sourceType: "foreign", supported: false };
 }
 
-export function supportFor(e: EffectiveClassification): SupportReport {
+export function supportFor(e: EffectiveClassification, raw?: string): SupportReport {
   if (e.otherUnidentified || !e.scalars.family) {
     return { status: "unidentified", validity: "not_assessed", message: "סוג המקור לא זוהה. הקלט נשמר וניתן לערוך ולייצא אותו." };
   }
-  return engineRouteFor(e).supported
+  const route = engineRouteFor(e);
+  const choice = citationManualChoice(route.sourceType, e.scalars.jurisdiction, e.scalars.subjurisdiction);
+  const country = raw && (choice?.jurisdiction === "AU" || choice?.jurisdiction === "CA") ? parseCountryLocal(raw, choice) : null;
+  return (country ? country.complete && rulepackCapability(country.family, country.jurisdiction, country.templateId ?? "unsupported").local : route.supported)
     ? { status: "renderer_partial", validity: "not_assessed", message: "קיימת תמיכה חלקית בעיצוב האוטומטי. יש לבדוק את האזכור ידנית." }
     : { status: "unsupported", validity: "not_assessed", message: "שילוב זה עדיין לא נתמך בעיצוב האוטומטי. הנתונים נשמרים לעריכה ולייצוא." };
 }
@@ -312,10 +328,13 @@ export function planGeneration(rec: ClassificationRecord | undefined, input: str
   const detected = detectClassification(input);
   const eff = computeEffective(detected, rec.overrides);
   const route = engineRouteFor(eff);
+  const manualChoice = citationManualChoice(route.sourceType, eff.scalars.jurisdiction, eff.scalars.subjurisdiction);
+  const country = parseCountryLocal(input, manualChoice);
+  if (country && (manualChoice?.jurisdiction === "AU" || manualChoice?.jurisdiction === "CA")) route.supported = country.complete && rulepackCapability(country.family, country.jurisdiction, country.templateId ?? "unsupported").local;
   return {
     itemKey: rec.itemKey,
     sourceType: route.sourceType,
-    manualChoice: citationManualChoice(route.sourceType, eff.scalars.jurisdiction, eff.scalars.subjurisdiction),
+    manualChoice,
     supported: route.supported,
     ...(route.supported ? {} : { warning: UNSUPPORTED_GENERATION_WARNING }),
     effectiveKey: effectiveKey(eff),

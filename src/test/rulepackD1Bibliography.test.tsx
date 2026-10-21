@@ -61,3 +61,23 @@ describe("actual BibliographyGenerator regeneration with a disabled-country manu
     expect(b.invoke).not.toHaveBeenCalled(); expect(b.cache).not.toHaveBeenCalled();
   });
 });
+
+import { COUNTRY_LOCAL_FIXTURES } from "./fixtures/countryLocalFixtures";
+describe("AU/CA actual bibliography local slice", () => {
+  it.each(COUNTRY_LOCAL_FIXTURES)("$id initial and exact manual regeneration bypass warm cache", async f => {
+    b.cache.mockResolvedValue({ full_citation:"UNSAFE CACHE", verification_status:"verified" });
+    render(<TooltipProvider><BibliographyProvider><BibliographyGenerator /></BibliographyProvider></TooltipProvider>);
+    fireEvent.change(screen.getByRole("textbox"), { target: { value:f.raw } });
+    const before = b.run.mock.calls.length;
+    await act(async () => fireEvent.click(screen.getByRole("button", {name:/שלח לבדיקה/})));
+    const regen = await screen.findByRole("button", {name:"regen-picker"});
+    expect((await b.run.mock.results[before].value).citation).toBe(f.output);
+    const type = f.id.includes("case") ? "foreign_case_other" : "foreign";
+    const manualChoice = citationManualChoice(type, f.j === "AU" ? "t2:australia" : "t2:canada");
+    b.plan.mockImplementation((_a:string,itemKey:string) => ({itemKey,sourceType:type,manualChoice,supported:true,effectiveKey:"e",inputFingerprint:"f"}));
+    await act(async () => fireEvent.click(regen));
+    expect(b.run.mock.calls.at(-1)?.[0].manualChoice).toEqual(manualChoice);
+    expect((await b.run.mock.results.at(-1)?.value).citation).toBe(f.output);
+    expect(b.cache).not.toHaveBeenCalled(); expect(b.invoke).not.toHaveBeenCalled(); expect(fetch).not.toHaveBeenCalled();
+  });
+});

@@ -227,14 +227,13 @@ describe("BatchFootnoteBuilder — explicit regeneration", () => {
     expect(fetchSpy).not.toHaveBeenCalled();
     expect(supabase.functions.invoke).not.toHaveBeenCalled();
   });
-  it("unsupported Canada choice is generated generically (not US) and flagged", async () => {
+  it("Canada SCC choice is locally supported (not US) and flagged as partial", async () => {
     choose("t2:canada");
     render(<BatchFootnoteBuilder />);
     await act(async () => { fireEvent.click(screen.getByRole("button", { name: /הפק מחדש$/ })); });
     await waitFor(() => expect(b.runCitation).toHaveBeenCalledTimes(1));
     expect(b.runCitation.mock.calls[0][0].overrideType).toBe("foreign_case_other");
-    await waitFor(() => expect(screen.getByText(/עדיין לא נתמך בעיצוב האוטומטי: האזכור הופק/)).toBeInTheDocument());
-    expect(screen.getByTestId("foreign-support").dataset.status).toBe("unsupported");
+    expect(screen.getByTestId("foreign-support").dataset.status).toBe("renderer_partial");
   });
   it("editing the output by hand never certifies the classification", async () => {
     choose("us");
@@ -255,3 +254,22 @@ vi.mock("@/lib/citationPlanner", async (original) => {
   };
 });
 afterAll(() => { expect(plannerHosts.has("runner")).toBe(true); });
+
+import { COUNTRY_LOCAL_FIXTURES } from "./fixtures/countryLocalFixtures";
+import { findVerifiedSourceMatch } from "@/lib/verifiedSources";
+import { citationToPlain } from "@/lib/citationRichText";
+describe("six country templates actual batch manual generation and saved reload", () => {
+  it.each(COUNTRY_LOCAL_FIXTURES)("$id carries exact compatible choice, saves and reloads styled output", async f => {
+    localStorage.setItem("footnote_cells_row-project", JSON.stringify([{id:1,key:"k1",input:f.raw,output:"old",status:"warning",detectedType:"foreign_case_other"}]));
+    saveRecord("u1", applyOverride(createRecord("batch:k1",f.raw), {scalars:{family:f.id.includes("case")?"decision":"normative_instrument", subtype:f.id.includes("case")?"decision.judgment":"normative_instrument.statute",jurisdiction:f.j === "AU"?"t2:australia":"t2:canada"}}));
+    const actual = await vi.importActual<typeof import("@/lib/runCitation")>("@/lib/runCitation"); b.runCitation.mockImplementation(actual.runCitation);
+    render(<BatchFootnoteBuilder />);
+    await act(async () => fireEvent.click(screen.getByRole("button",{name:"הפקה מחדש לפי הסיווג"})));
+    const result = await b.runCitation.mock.results[0].value;
+    expect(result.citation).toBe(f.output); expect(b.runCitation.mock.calls[0][0].manualChoice.jurisdiction).toBe(f.j);
+    expect(findVerifiedSourceMatch).not.toHaveBeenCalled(); expect(fetchSpy).not.toHaveBeenCalled(); expect(supabase.functions.invoke).not.toHaveBeenCalled();
+    const saved = JSON.parse(localStorage.getItem("footnote_cells_row-project") ?? "[]"); expect(saved[0].output).toBe(result.reply);
+    cleanup(); render(<BatchFootnoteBuilder />);
+    expect(document.body.textContent).toContain(citationToPlain(f.output)); expect(b.runCitation).toHaveBeenCalledTimes(1);
+  });
+});

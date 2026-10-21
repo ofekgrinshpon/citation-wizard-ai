@@ -59,7 +59,7 @@ describe("D1 actual handler: manual jurisdiction id/code validation", () => {
       pastedCitation: { ...pasted.buildPastedCitation(RAW), manualChoice: choice }, foreignLookup: lookup });
     expect(r.body.pastedCitation.route).toBe("preserve");
     expect(r.body.pastedCitation.rawInput).toBe(RAW);
-    if (mode === "omitted") expect(r.body.pastedCitation.unsupported).toContain(`rulepack_planned_disabled:${j}`);
+    if (mode === "omitted") expect(r.body.pastedCitation.unsupported).toContain(j === "FR" ? `rulepack_planned_disabled:${j}` : "country_local_only_completion_disabled");
     if (mode === "contradictory US") expect(r.body.pastedCitation.conflicts).toContain("manual_jurisdiction_id_mismatch");
     if (mode === "malformed") expect(r.body.pastedCitation.conflicts).toContain("manual_jurisdiction_malformed");
     noSideEffects(h);
@@ -128,5 +128,15 @@ describe("D1 manifest is the decision source (planner + server)", () => {
     const c = pasted.guardPastedCitationRequest({ messages: [{ role: "user", content: "Copyright Act" }], rawInput: "Copyright Act",
       foreignLookup: { enabled: true, kind: "statute", jurisdiction: "OTHER", rawInput: "Copyright Act", parsedFields: {} } });
     expect(c.route).toBe("preserve"); expect(c.conflicts).toContain("rulepack_lookup_disabled");
+  });
+});
+
+import { COUNTRY_LOCAL_FIXTURES } from "./fixtures/countryLocalFixtures";
+describe("six local country templates actual handler never completes", () => {
+  it.each(COUNTRY_LOCAL_FIXTURES)("$id rejects generic and forged unanchored lookups before usage", async f => {
+    for (const foreignLookup of [undefined,{enabled:true,kind:f.id.includes("case")?"case":"statute",jurisdiction:"UNKNOWN",rawInput:f.raw,parsedFields:{}}]) {
+      const h = fixture(); const r = await h.invoke({rawInput:f.raw,messages:[{role:"user",content:f.raw}],foreignLookup});
+      expect(r.body.pastedCitation.route).toBe("preserve"); expect(r.body.pastedCitation.rawInput).toBe(f.raw); noSideEffects(h);
+    }
   });
 });
