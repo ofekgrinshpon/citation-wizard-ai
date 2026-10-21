@@ -1,6 +1,6 @@
 /** Batch A: pure supplied-text evidence, shared by browser and server. No I/O or identity claims. */
 import { CASE_DOCKET_RE, findBareDocket } from "./caseTypePrefixes.ts";
-import { LOOKUP_JURISDICTIONS, PLANNED_RULEPACK_WARNING, isManualChoiceJurisdiction, isPlannedJurisdiction, readRulepackVersion } from "./citationPure/rulepack.ts";
+import { LOOKUP_JURISDICTIONS, PLANNED_RULEPACK_WARNING, isGeneralFamily, isManualChoiceJurisdiction, isPlannedJurisdiction, readRulepackVersion, rulepackCapability, rulepackJurisdictionFromId } from "./citationPure/rulepack.ts";
 export const PASTED_CITATION_VERSION = 1 as const;
 /** D1: AU/CA/FR are recorded (never cast to US/IL/UNKNOWN); their rulepacks are planned/disabled. */
 export type CitationJurisdiction = "IL" | "US" | "UK" | "DE" | "AU" | "CA" | "FR" | "UNKNOWN";
@@ -143,7 +143,8 @@ export function buildPastedCitation(raw: string, manual: CitationManualChoice | 
   // literature/statute helpers retain their more precise subtype ambiguity gates.
   if (manualKind && sourceKind && manualKind !== sourceKind && (manualKind === "case" || sourceKind === "case")) conflicts.push("manual_source_kind_conflict");
   const unsupported = jurisdiction === "DE" ? ["formatter_DE_not_supported"] :
-    isPlannedJurisdiction(jurisdiction) ? [`rulepack_planned_disabled:${jurisdiction}`] :
+    // Disabled country packs block country-scoped families only; enabled general literature keeps its template.
+    isPlannedJurisdiction(jurisdiction) && !(isGeneralFamily(manualKind ?? sourceKind) && sourceKind !== "case") ? [`rulepack_planned_disabled:${jurisdiction}`] :
     manual?.jurisdiction === "UNKNOWN" && (manual.jurisdictionId || manual.subjurisdiction) && caseInput ? ["jurisdiction_formatter_unknown"] : [];
   const route = conflicts.length || unsupported.length || (!!bare && detected === "UNKNOWN" && !foreignShape)
     ? "preserve" : detected === "IL" ? "israeli" : detected !== "UNKNOWN" || foreignShape || manual?.foreign ? "foreign" : "existing";
@@ -185,14 +186,23 @@ export function guardPastedCitationRequest(body: { messages: Array<{ role: strin
   let retainedChoice: CitationManualChoice | null = null;
   if (manualLine) { try { retainedChoice = JSON.parse(manualLine); } catch { /* malformed choice is not evidence */ } }
   const choice = wire?.version === 1 ? wire.manualChoice : retainedChoice;
-  const manual = choice && typeof choice === "object" && !Array.isArray(choice) ? {
-    ...(isManualChoiceJurisdiction(choice.jurisdiction) ? { jurisdiction: choice.jurisdiction } : {}),
+  // The jurisdiction id resolves through the shared runtime mapping; a supplied code must agree with it.
+  const objectChoice = choice && typeof choice === "object" && !Array.isArray(choice) ? choice : null;
+  const idJurisdiction = typeof objectChoice?.jurisdictionId === "string" && objectChoice.jurisdictionId.length <= 200
+    ? rulepackJurisdictionFromId(objectChoice.jurisdictionId) : null;
+  const codeMalformed = objectChoice?.jurisdiction !== undefined && !isManualChoiceJurisdiction(objectChoice.jurisdiction);
+  const codeMismatch = !!idJurisdiction && isManualChoiceJurisdiction(objectChoice?.jurisdiction) && objectChoice!.jurisdiction !== idJurisdiction;
+  const manualJurisdiction = idJurisdiction ?? (isManualChoiceJurisdiction(objectChoice?.jurisdiction) ? objectChoice!.jurisdiction : undefined);
+  const manual = objectChoice ? {
+    ...(manualJurisdiction ? { jurisdiction: manualJurisdiction } : {}),
     ...(typeof choice.subjurisdiction === "string" && choice.subjurisdiction.length <= 200 ? { subjurisdiction: choice.subjurisdiction } : {}),
     ...(typeof choice.jurisdictionId === "string" && choice.jurisdictionId.length <= 200 ? { jurisdictionId: choice.jurisdictionId } : {}),
     ...(typeof choice.sourceType === "string" && choice.sourceType.length <= 200 ? { sourceType: choice.sourceType } : {}),
     ...(typeof choice.foreign === "boolean" ? { foreign: choice.foreign } : {}),
   } : null;
   const c = buildPastedCitation(raw, manual);
+  if (codeMalformed) { c.route = "preserve"; c.conflicts.push("manual_jurisdiction_malformed"); }
+  if (codeMismatch) { c.route = "preserve"; c.conflicts.push("manual_jurisdiction_id_mismatch"); }
   if (body.rawInput != null && (typeof body.rawInput !== "string" || citationBindingText(body.rawInput) !== citationBindingText(raw))) {
     c.route = "preserve"; c.conflicts.push("request_text_conflict");
   }
@@ -213,9 +223,10 @@ export function guardPastedCitationRequest(body: { messages: Array<{ role: strin
     !suppliedLookupFieldsMatch(raw, String(lookup.kind), lookup.parsedFields ?? {}))) {
     c.route = "preserve"; c.conflicts.push("lookup_source_binding_conflict");
   }
-  if (lookup && typeof lookup === "object" && !Array.isArray(lookup) && lookup.jurisdiction !== undefined &&
-    !(LOOKUP_JURISDICTIONS as readonly unknown[]).includes(lookup.jurisdiction)) {
-    c.route = "preserve"; c.conflicts.push("lookup_jurisdiction_unsupported");
+  if (lookup && typeof lookup === "object" && !Array.isArray(lookup)) {
+    // Same capability decision as the planner: only an enabled manifest completion may reach usage/cache/provider.
+    if (!(LOOKUP_JURISDICTIONS as readonly unknown[]).includes(lookup.jurisdiction)) { c.route = "preserve"; c.conflicts.push("lookup_jurisdiction_unsupported"); }
+    else if (!rulepackCapability(String(lookup.kind), String(lookup.jurisdiction)).lookup) { c.route = "preserve"; c.conflicts.push("rulepack_lookup_disabled"); }
   }
   if (wire && readRulepackVersion((wire as { rulepackVersion?: unknown }).rulepackVersion) === "unsupported") {
     c.route = "preserve"; c.conflicts.push("rulepack_version_unsupported");

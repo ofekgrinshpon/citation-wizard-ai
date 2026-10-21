@@ -27,7 +27,7 @@ import { renderBookLocal } from "@/lib/bookLocal";
 import { eligibleBookCompletion, resolveBookCompletion } from "../../supabase/functions/_shared/citationPure/bookFinal.ts";
 import { preparePastedCitation, pastedCaseRequest, readPastedCitationSafety, renderPastedCaseResponse } from "@/lib/pastedCitationAdapter";
 import { suppliedLookupFieldsMatch } from "../../supabase/functions/_shared/pastedCitation";
-import { rulepackLookupEligible } from "../../supabase/functions/_shared/citationPure/rulepack.ts";
+import { DISABLED_RULEPACK_WARNING, rulepackCapability, rulepackLookupEligible } from "../../supabase/functions/_shared/citationPure/rulepack.ts";
 
 /** Local rendering controls; only host identity differs after bounded C2 parity. */
 export interface CitationHostCapabilities {
@@ -97,6 +97,11 @@ const OPINION = (d: ForeignDetection | null | undefined) => !!(d?.fields as { op
 export function planLocalCitation(p: LocalPlanInput, caps: CitationHostCapabilities): { origin: LocalOrigin; resolution: CitationResolution } | { origin: null; statutePrep: StatutePreparation | null } {
   const { pasted } = p.evidence;
   const st = p.sourceType;
+  const disabled = (): { origin: LocalOrigin; resolution: CitationResolution } => {
+    const citation = escapeCitationLiteral(pasted.contract.rawInput);
+    return { origin: "preserve", resolution: { citation, reply: `${citation}\n⚠️ ${DISABLED_RULEPACK_WARNING}`, status: "warning", warningMsg: DISABLED_RULEPACK_WARNING, pastedCitation: pasted.contract } };
+  };
+  if (!rulepackAllowsLocal(p)) return disabled();
   if (pasted.local && !(caps.pastedLocalDefersOpinionFormat && OPINION(pasted.detection))) {
     const warnings = pasted.detection ? renderForeignDetection(pasted.detection)?.warnings ?? [] : [];
     return { origin: "pasted_local", resolution: { ...pasted.local, pastedCitation: pasted.contract,
@@ -104,6 +109,9 @@ export function planLocalCitation(p: LocalPlanInput, caps: CitationHostCapabilit
   }
   const statutePrep = st && !p.isPinpoint ? prepareForeignStatute(st, p.input, { manual: p.manual }) : null;
   const bookCompletion = !p.isPinpoint ? eligibleBookCompletion(st, p.input) : null;
+  // Typed lookups are decided by the same manifest capability.
+  if (statutePrep?.request && !rulepackLookupEligible("statute", statutePrep.request.jurisdiction)) return disabled();
+  if (bookCompletion && !rulepackLookupEligible(bookCompletion.kind, "OTHER")) return disabled();
   const unreported = st && !p.isPinpoint ? (renderUsUnreportedLocal(st, p.input) ?? renderUnpublishedLocal(st, p.input) ??
     renderPeriodicalLocal(st, p.input) ?? (bookCompletion ? null : renderBookLocal(st, p.input, caps.bookDefersToDeterministic ? { deferToDeterministic: true } : undefined))) : null;
   if (unreported) return { origin: "unreported_local", resolution: { reply: unreported.reply, citation: unreported.citation, status: "warning", warningMsg: unreported.warningMsg } };
@@ -139,6 +147,20 @@ export function planLocalCitation(p: LocalPlanInput, caps: CitationHostCapabilit
     return { origin: "preserve", resolution: { citation, reply: `${citation}\n⚠️ ${warningMsg}`, status: "warning", warningMsg, pastedCitation: p.evidence.pasted.contract } };
   }
   return { origin: null, statutePrep };
+}
+
+/** Shared manifest capability for the effective family/jurisdiction of a foreign input. */
+function rulepackAllowsLocal(p: LocalPlanInput): boolean {
+  const st = p.sourceType;
+  if (st && !isForeignSourceType(st)) return true;
+  const { contract, detection } = p.evidence.pasted;
+  const identity = st ? toForeignIdentity(st) : null;
+  const family = identity && identity.kind !== "other" ? identity.kind : detection?.kind;
+  if (!family || family === "other") return true;
+  const jurisdiction = contract.jurisdiction === "US" || contract.jurisdiction === "UK" ? contract.jurisdiction
+    : identity && identity.kind === family ? identity.jurisdiction : detection?.jurisdiction ?? "UNKNOWN";
+  const cap = rulepackCapability(family, jurisdiction);
+  return cap.local && (family !== "case" || contract.route !== "foreign" || cap.lookup);
 }
 
 /** "X v. Y" shape (any common-law jurisdiction). */

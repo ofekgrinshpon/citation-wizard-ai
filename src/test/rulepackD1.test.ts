@@ -146,3 +146,25 @@ describe("D1 spans and literal markers", () => {
     expect(m.invoke).not.toHaveBeenCalled();
   });
 });
+
+describe("D1 manifest metadata accuracy", () => {
+  const byId = (id: string) => RULEPACK_MANIFEST.find(e => e.id === id);
+  it("constitution is US-scoped, not general", () => {
+    expect(byId("general.constitution")).toBeUndefined();
+    expect(byId("us.constitution")).toMatchObject({ jurisdiction: "US", status: "enabled", completion: null });
+  });
+  it("US reported and unreported templates have distinct required fields", () => {
+    expect(byId("us.case.reported")?.requiredFields).toEqual(expect.arrayContaining(["volume", "reporter", "firstPage"]));
+    expect(byId("us.case.unreported")?.requiredFields).not.toEqual(expect.arrayContaining(["volume"]));
+    expect(byId("us.case.unreported")?.requiredFields).toEqual(expect.arrayContaining(["docket", "decisionDate"]));
+    expect(byId("us.case.unreported")?.completion).toBeNull();
+  });
+  it("CA neutral and standalone S.C.R. are distinct; FR Bulletin needs part/decision number", () => {
+    expect(byId("ca.case.scc_neutral")?.requiredFields).toContain("neutral");
+    expect(byId("ca.case.scr")?.requiredFields).not.toContain("neutral");
+    const fr = byId("fr.case.cass")!;
+    expect(fr.requiredFields).toEqual(expect.arrayContaining(["bulletinPart", "decisionNumber"]));
+    expect(fr.requiredFields).not.toEqual(expect.arrayContaining(["volume"]));
+    expect(fr.requiredFields).not.toEqual(expect.arrayContaining(["firstPage"]));
+  });
+});
