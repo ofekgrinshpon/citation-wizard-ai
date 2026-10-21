@@ -21,3 +21,14 @@
 - Planned-country literature (e.g. a book with manual AU) is preserved rather than formatted under general rules — deliberate conservative choice, revisit with QA.
 - DE keeps its legacy `formatter_DE_not_supported` code/warning text for output parity.
 - No deployment, live calls, DB/schema/auth/security/billing/limit changes.
+
+## Correction (on a8ab09c1) — independently reproduced defects
+1. BibliographyGenerator regeneration now passes the effective `plan.manualChoice` (not only sourceType) through `lookupOneSafe`/`lookupOne` to runCitation. Recovery retries keep their retained operation. 8 actual-component cases (AU/CA/DE/FR × case/statute) preserve raw with zero cache/provider.
+2. General literature restored: a planned-country choice blocks only country-scoped families; enabled general families (book, chapter, journal, newspaper, manuscript, thesis, internet) keep their template unless the text is a real case (manual-family conflict still terminal). 18 AU/CA/FR × six-family cases match a fixture captured by running the same test in an extracted b36df130 tree (output, markup, warnings, cache/provider counts).
+3. `rulepackCapability(family, jurisdiction)` is the shared decision: planner preserves before local renders, book/chapter completion, statute requests and case requests when the entry is disabled; `pastedCaseRequest` and `planForeignLookup` use it as well; the server rejects lookups without an enabled completion (`rulepack_lookup_disabled`) before UsageGuard/cache/provider. 9 planner + 3 handler toggle-and-restore tests, plus a missing-entry rejection.
+4. Server manual choice: `jurisdictionId` resolves through `rulepackJurisdictionFromId`; omitted code uses it, a contradictory code → `manual_jurisdiction_id_mismatch`, a malformed code → `manual_jurisdiction_malformed`; all preserve raw. 9 actual-handler cases with zero usage/cache/provider; legacy US control still routes.
+5. Manifest metadata: `us.constitution` (not general); `us.case.reported` vs `us.case.unreported` (local only, docket/date, no volume/page); `ca.case.scc_neutral` vs `ca.case.scr`; `fr.case.cass` requires chamber/bulletinPart/decisionNumber; oc./soc. still excluded. AGENTS rule restored: identity must match an official record path consistent with the extracted citation.
+
+Fail-before: the 32 new correction tests run against a8ab09: 31 failed, 1 passed (the legacy US control). Full suite after: 200 files, 4,111 passed / 1 skipped / 0 failed. Earlier D1 frozen differential fixture unchanged. Explicit app TypeScript and Vite production build not run (environment); automatic build status only.
+
+Remaining gaps unchanged: no AU/CA/DE/FR templates/completion/replay; book-only authoritative replay; Bibliography initial intake has no classification plan (unchanged); manifest entries are mutable objects inside a frozen array solely so tests can toggle and restore them.
