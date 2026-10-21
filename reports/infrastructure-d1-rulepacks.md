@@ -74,3 +74,10 @@ Authority metadata uses supplied Bluebook 21 R2/R12/R20 and the supplied officia
 - AU neutral local grammar supports supplied bracketed paragraph pinpoints; other unstructured locators remain raw with warning rather than guessed.
 - DE/FR remain disabled; FR oc./soc. unresolved. No new source families, lookup endpoints, retention schema, deployment/publication, live search/model/provider/DB calls, auth/security/permission/payment/billing/quota/refund changes. Per-run20 checkpoint and disabled daily cap untouched.
 - Stopped after this slice for independent QA, including separately executed app TypeScript/production Vite gates.
+
+## AU/CA local-slice QA corrections (baseline 491f1e75)
+1. Country evidence is now structural only (`*_ANCHOR` regexes in `countryLocal.ts`, shared by `pastedCitation.ts` signals): AU `(yyyy) v CLR|FCR p`, `[yyyy] HCA|FCA|FCAFC n`, `yyyy (Cth)`, trailing `(Austl.)`; CA `yyyy SCC|CanLII n`, Quicklaw, `[yyyy] v S.C.R. p`, `R.S.C.|S.C. yyyy, c X`, trailing `(Can.)`. Incidental SCC/HCA in book titles or US party names keep legacy output, warnings and cache ownership; strong AU/CA anchors with a wrong manual book still conflict-stop with zero IO.
+2. CA federal statute title is any nonempty comma-free original title (e.g. Criminal Code, Loi synthétique); series/year/chapter anchors unchanged. The D1 CA manual fixture `Criminal Code, RSC 1985, c C-46, s 718` now formats locally (expectation updated, superseded by this correction).
+3. AU locators accept whitespace-separated known unit groups (`pt 2 div 3 s 4 sch 1`); unknown tails still preserve.
+4. CA SCR omits the decision year when equal to the reporter year; AST keeps both roles/spans.
+Tests: 14 new targeted tests fail on 491f1e75 and pass now; 5 new fixtures run through actual Index, Batch and bibliography hosts. Full: 202 files, 4,242 passed, 1 skipped, 0 failed. Separate TypeScript/Vite build not run manually (environment rule); automatic build is checked.
