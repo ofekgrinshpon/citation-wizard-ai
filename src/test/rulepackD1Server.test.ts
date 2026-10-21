@@ -140,3 +140,19 @@ describe("six local country templates actual handler never completes", () => {
     }
   });
 });
+
+describe("AU/CA partial structures at actual server entry (QA 852985d)", () => {
+  const PARTIAL = ["Wattle v Harbour [2020] FCA", "Wattle v Harbour (2020) 270 CLR", "Maple v. Cedar, 2020 SCC", "Maple v. Cedar, [2020] 2 S.C.R.",
+    "Criminal Code, R.S.C. 1985", "Synthetic Records Act, S.C. 2020", "Synthetic Records Act (Cth)"];
+  it.each(PARTIAL.flatMap(raw => (["generic", "UNKNOWN", "US"] as const).map(mode => ({ raw, mode }))))("$raw via $mode stops before usage/cache/provider", async ({ raw, mode }) => {
+    const h = fixture();
+    const body: Record<string, unknown> = { rawInput: raw, messages: [{ role: "user", content: raw }] };
+    if (mode !== "generic") Object.assign(body, { pastedCitation: pasted.buildPastedCitation(raw),
+      foreignLookup: { enabled: true, kind: /v\.? /.test(raw) ? "case" : "statute", jurisdiction: mode, rawInput: raw, parsedFields: { caseName: raw } } });
+    const r = await h.invoke(body);
+    expect(r.body.pastedCitation.route).toBe("preserve");
+    expect(r.body.pastedCitation.rawInput).toBe(raw);
+    expect(r.body.pastedCitation.jurisdiction).toBe(/Austl|Cth|CLR|FCA/.test(raw) ? "AU" : "CA");
+    noSideEffects(h);
+  });
+});

@@ -81,3 +81,6 @@ Authority metadata uses supplied Bluebook 21 R2/R12/R20 and the supplied officia
 3. AU locators accept whitespace-separated known unit groups (`pt 2 div 3 s 4 sch 1`); unknown tails still preserve.
 4. CA SCR omits the decision year when equal to the reporter year; AST keeps both roles/spans.
 Tests: 14 new targeted tests fail on 491f1e75 and pass now; 5 new fixtures run through actual Index, Batch and bibliography hosts. Full: 202 files, 4,242 passed, 1 skipped, 0 failed. Separate TypeScript/Vite build not run manually (environment rule); automatic build is checked.
+
+## Partial-structure recognition correction (baseline 852985df)
+Recognition anchors (`countryLocal.ts`, shared by `pastedCitation.ts`) now identify AU/CA + family from typed prefixes even when the final number/page/chapter/year is missing (`[yyyy] FCA`, `(yyyy) v CLR`, `yyyy SCC`, `[yyyy] v S.C.R.`, `R.S.C. yyyy`, `S.C. yyyy`, `(Cth)`); template regexes alone decide completeness. Incomplete inputs keep raw, list the missing element plus `supported_template`, and stop before cache/classifier/usage/provider, including forged UNKNOWN/US server lookups. Bare `Quicklaw` is no longer evidence; title-only tokens (Quicklaw, CanLII, Cth, FCA/CLR) keep general-literature parity. Tests: 62 new checks fail on 852985df and pass now; full suite 202 files, 4,315 passed, 1 skipped, 0 failed.

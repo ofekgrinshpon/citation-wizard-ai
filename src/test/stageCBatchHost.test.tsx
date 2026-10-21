@@ -255,11 +255,11 @@ vi.mock("@/lib/citationPlanner", async (original) => {
 });
 afterAll(() => { expect(plannerHosts.has("runner")).toBe(true); });
 
-import { COUNTRY_LOCAL_FIXTURES, COUNTRY_LOCAL_QA_FIXTURES } from "./fixtures/countryLocalFixtures";
+import { COUNTRY_LOCAL_FIXTURES, COUNTRY_LOCAL_QA_FIXTURES, COUNTRY_PARTIAL_FIXTURES } from "./fixtures/countryLocalFixtures";
 import { findVerifiedSourceMatch } from "@/lib/verifiedSources";
 import { citationToPlain } from "@/lib/citationRichText";
 describe("six country templates actual batch manual generation and saved reload", () => {
-  it.each([...COUNTRY_LOCAL_FIXTURES, ...COUNTRY_LOCAL_QA_FIXTURES])("$id carries exact compatible choice, saves and reloads styled output", async f => {
+  it.each([...COUNTRY_LOCAL_FIXTURES, ...COUNTRY_LOCAL_QA_FIXTURES, ...COUNTRY_PARTIAL_FIXTURES])("$id carries exact compatible choice, saves and reloads styled output", async f => {
     localStorage.setItem("footnote_cells_row-project", JSON.stringify([{id:1,key:"k1",input:f.raw,output:"old",status:"warning",detectedType:"foreign_case_other"}]));
     saveRecord("u1", applyOverride(createRecord("batch:k1",f.raw), {scalars:{family:f.id.includes("case")?"decision":"normative_instrument", subtype:f.id.includes("case")?"decision.judgment":"normative_instrument.statute",jurisdiction:f.j === "AU"?"t2:australia":"t2:canada"}}));
     const actual = await vi.importActual<typeof import("@/lib/runCitation")>("@/lib/runCitation"); b.runCitation.mockImplementation(actual.runCitation);

@@ -10,7 +10,7 @@ import { afterAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { runForeignLookup } from "../../supabase/functions/citation-chat/foreignLookup";
 import { resolveStatuteLookup } from "../../supabase/functions/citation-chat/statuteRoute";
 import { c1ServerPayload, C1_REDIGI } from "./fixtures/c1ServerPayload";
-import { COUNTRY_LOCAL_FIXTURES, COUNTRY_LOCAL_QA_FIXTURES } from "./fixtures/countryLocalFixtures";
+import { COUNTRY_LOCAL_FIXTURES, COUNTRY_LOCAL_QA_FIXTURES, COUNTRY_PARTIAL_FIXTURES } from "./fixtures/countryLocalFixtures";
 import { findVerifiedSourceMatch } from "@/lib/verifiedSources";
 import { saveCitationHistoryRecord } from "@/lib/citationHistorySave";
 import { cleanup } from "@testing-library/react";
@@ -614,7 +614,7 @@ afterAll(() => { expect(plannerHosts.has("chat")).toBe(true); expect(plannerHost
 
 // Actual Index initial/manual and local saved chat replay; only IO boundaries mocked.
 describe("AU/CA actual Index local slice", () => {
-  it.each([...COUNTRY_LOCAL_FIXTURES, ...COUNTRY_LOCAL_QA_FIXTURES])("$id initial, manual, repeat and saved replay skip warm cache", async f => {
+  it.each([...COUNTRY_LOCAL_FIXTURES, ...COUNTRY_LOCAL_QA_FIXTURES, ...COUNTRY_PARTIAL_FIXTURES])("$id initial, manual, repeat and saved replay skip warm cache", async f => {
     vi.mocked(findVerifiedSourceMatch).mockResolvedValue({ full_citation:"UNSAFE CACHE", verification_status:"verified" } as never);
     await mountChat(); await send(f.raw);
     await waitFor(() => expect(screen.getByTestId("bubble-assistant")).toHaveTextContent(f.output));

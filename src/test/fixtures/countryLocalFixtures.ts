@@ -15,3 +15,9 @@ export const COUNTRY_LOCAL_QA_FIXTURES = [
   { id: 'au.statute.cth.ranges', j: 'AU', raw: 'Synthetic Records Act 2020 (Cth) pts 2–3 divs 4–5 schs 1–2 (Austl.).', output: '##Synthetic Records Act 2020## (Cth) pts 2–3 divs 4–5 schs 1–2 (Austl.).' },
   { id: 'ca.case.scr.equal_year', j: 'CA', raw: 'Maple v. Cedar (2020), [2020] 2 S.C.R. 100, 104 (Can.).', output: 'Maple v. Cedar, [2020] 2 S.C.R. 100, 104 (Can.).' },
 ] as const;
+
+/** QA 852985d: recognized-but-incomplete structures; output is the untouched raw input. */
+export const COUNTRY_PARTIAL_FIXTURES = [
+  { id: 'partial.ca.statute.rsc', j: 'CA', raw: 'Criminal Code, R.S.C. 1985', output: 'Criminal Code, R.S.C. 1985' },
+  { id: 'partial.au.case.neutral', j: 'AU', raw: 'Wattle v Harbour [2020] FCA', output: 'Wattle v Harbour [2020] FCA' },
+] as const;
