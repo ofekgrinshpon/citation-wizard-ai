@@ -78,6 +78,8 @@ import {
 } from "../_shared/trustedHosts.ts";
 import { normalizeHebrewNumberRanges } from "../_shared/hebrewNumberRange.ts";
 import { runForeignLookup, articleLookupFallback, type ForeignLookupResult } from "./foreignLookup.ts";
+import { boundBookCompletion, resolveBookCompletion, frameBookFinal } from "../_shared/citationPure/bookFinal.ts";
+import type { CitationRecoveryInput } from "../_shared/citationRecovery.ts";
 import { isStatuteLookupRequest, validateStatuteRequest, resolveStatuteLookup } from "./statuteRoute.ts";
 import { guardPastedCitationRequest, pastedCitationWarning, type PastedCitationContract } from "../_shared/pastedCitation.ts";
 import { createCitationDiagnosticCollector } from "../_shared/citationDiagnostic.ts";
@@ -1666,6 +1668,7 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
   } : {};
   let usageGuard: CitationUsageGuard | null = null;
   let pastedContract: PastedCitationContract | null = null;
+  let bookInput: CitationRecoveryInput | null = null;
   const refundIfCharged = async (reason: string) => {
     const settlement = await usageGuard?.finish("failed", reason);
     return { refunded: settlement?.refunded === true,
@@ -1688,7 +1691,19 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
         url: source.url, ...("title" in source ? { title: source.title } : {}), tier: source.tier,
       })),
     } } : body;
-    const result = citationRecoveryResult(retainedBody);
+    let result = citationRecoveryResult(retainedBody);
+    // Content authority is the existing service-owned terminal write, not a
+    // client flag. Validate the unchanged structured shape first, then compute
+    // once with full live evidence. Never salvage a malformed result via text.
+    const book = bookInput && boundBookCompletion(bookInput);
+    if (result && book && creditRequestId && foreign && ["book", "book_chapter"].includes(foreign.kind)) {
+      const localFields = Object.fromEntries(Object.entries(book.local.fields).filter((entry): entry is [string, string] => typeof entry[1] === "string"));
+      const final = resolveBookCompletion(book.request, book.raw, foreign, localFields, book.local.suppliedFields, book.bound.missing);
+      body.content = final.reply;
+      // No new evidence fields: retain the framed final text plus only the
+      // already-approved structured metadata. Live metadata stays transient.
+      result = citationRecoveryResult({ ...result, content: frameBookFinal(bookInput, creditRequestId, final.reply) });
+    }
     const completion = await usageGuard?.finish("succeeded", "citation_delivered", result ?? undefined);
     const recoveryAvailability = !usageGuard ? "unavailable" : completion?.confirmed ? "available" : "unconfirmed";
     const headers = new Headers(response.headers);
@@ -1793,6 +1808,7 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
         status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+    bookInput = recoveryInput;
     // Stage 4: a malformed typed statute request is invalid input, rejected
     // before any usage claim (existing invalid-input semantics, no new refund).
     const statuteRequest = isStatuteLookupRequest(foreignLookupRequest);

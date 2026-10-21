@@ -4,6 +4,7 @@
  */
 
 import { detectForeignSource, type ForeignDetection } from "./extract";
+import { renderBookFields } from "../../../supabase/functions/_shared/citationPure/bookFinal.ts";
 import { escapeCitationLiteral, unescapeCitationLiteral } from "@/lib/citationSegments";
 import {
   renderBook,
@@ -68,6 +69,7 @@ function plainResult(r: RenderResult | null): RenderResult | null {
  * stored, already-marked citations must pass plain text to detection.
  */
 export function renderForeignDetection(d: ForeignDetection): RenderResult | null {
+  if (d.kind === "book" || d.kind === "book_chapter") return renderBookFields(d.kind, { ...d.fields });
   return plainResult(renderDetectionFields(d.kind, d.jurisdiction, literalFields(d.fields)));
 }
 

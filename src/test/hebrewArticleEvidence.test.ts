@@ -21,6 +21,7 @@ import * as diagnosticGate from "../../supabase/functions/_shared/citationDiagno
 import { buildForeignArticleRequest } from "@/lib/foreignArticleAdapter";
 import { articleLookupFallback, runForeignLookup as actualForeignLookup, type ForeignLookupInput, type LookupDeps } from "../../supabase/functions/citation-chat/foreignLookup";
 import { buildEnginePromptHint } from "@/lib/citationValidation";
+import * as bookFinal from "../../supabase/functions/_shared/citationPure/bookFinal";
 import * as statuteRoute from "../../supabase/functions/citation-chat/statuteRoute";
 import { CITATION_RULES } from "@/data/citationEngine";
 import { C2_WIRE, c2WirePayload } from "./fixtures/c2WirePayload";
@@ -279,6 +280,7 @@ async function runHandler(options: { raw?: string; rawInputNull?: boolean; recor
       }) as typeof fetch });
     }, articleLookupFallback },
     "./statuteRoute.ts": statuteRoute,
+    "../_shared/citationPure/bookFinal.ts": bookFinal,
   };
   runInContext(options.compiledEntrypoint || compiled, createContext({ exports: {}, require: (name: string) => {
     if (!(name in modules)) throw new Error(`Unexpected real module boundary: ${name}`);

@@ -398,7 +398,7 @@ describe("Bluebook M2B — grounded foreign lookup", () => {
     expect(rendered!.citation).toContain("##In re## Capitol Records, LLC,");
   });
 
-  it("B18: single formatter — no foreign renderer exists in edge functions", () => {
+  it("B18: single formatter — only the shared pure implementation exists in edge functions", () => {
     const root = join(__dirname, "..", "..", "supabase", "functions");
     const offenders: string[] = [];
     const walk = (dir: string) => {
@@ -414,7 +414,9 @@ describe("Bluebook M2B — grounded foreign lookup", () => {
       }
     };
     walk(root);
-    expect(offenders).toEqual([]);
+    expect(offenders).toEqual([join(root, "_shared", "citationPure", "render.ts")]);
+    expect(readFileSync(join(__dirname, "..", "data", "bluebook", "render.ts"), "utf8").trim())
+      .toBe('export * from "../../../supabase/functions/_shared/citationPure/render.ts";');
   });
 
   it("helper: party normalization handles Inc./LLC/punctuation", () => {

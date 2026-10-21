@@ -6,9 +6,12 @@ import { toSourceType, type ForeignFields, type ForeignJurisdiction, type Foreig
 import { renderForeignArticleLookup } from "@/lib/foreignArticleAdapter";
 import { renderForeignStatuteLookup, statutePreparationFromRequest } from "@/lib/foreignStatuteAdapter";
 import type { CitationRecoveryRecord } from "@/lib/citationRecoveryApi";
+import { isAuthenticatedRecoveryRecord } from "@/lib/citationRecoveryApi";
 import { CITATION_FIELD_KEYS } from "../../supabase/functions/_shared/citationRecovery";
 import { guardPastedCitationRequest } from "../../supabase/functions/_shared/pastedCitation";
 import { escapeCitationLiteral } from "@/lib/citationSegments";
+import { hasBookFinalFrame, readBookFinal } from "../../supabase/functions/_shared/citationPure/bookFinal.ts";
+import { citationRecoveryResult } from "../../supabase/functions/_shared/citationRecovery.ts";
 import { planCitationEvidence, planLocalCitation, planTypedRequest, resolveCitationResponse, RUNNER_HOST, type TypedPlan, type CitationResolution } from "@/lib/citationPlanner";
 
 export const RECOVERY_RETENTION_MS = 24 * 60 * 60 * 1000;
@@ -140,6 +143,16 @@ export function renderCitationRecovery(record: CitationRecoveryRecord, now = Dat
       if (rebuilt.kind !== "typed" || rebuilt.foreignLookup?.kind !== request.kind || rebuilt.foreignLookup?.jurisdiction !== request.jurisdiction ||
           !projected || !retained || Object.keys(projected).length !== Object.keys(retained).length ||
           Object.entries(projected).some(([key, value]) => retained[key] !== value)) return preserve();
+      // Only versioned server-owned content read from retention may replay.
+      // Binding runs first; plain/legacy content never bypasses strict fields.
+      if (hasBookFinalFrame(record.result.content)) {
+        const valid = citationRecoveryResult(record.result);
+        const foreign = valid?.foreignLookup;
+        const replay = isAuthenticatedRecoveryRecord(record) && valid && record.input && foreign?.kind === request.kind && foreign?.jurisdiction === request.jurisdiction
+          ? readBookFinal(valid.content, record.input, record.requestId) : null;
+        if (!replay) return preserve();
+        return output(replay.reply, sourceType, true, replay.warnings[0] ?? null);
+      }
       // Keep the retained operation and request identity; only locally parsed
       // fields/spans are rebuilt. This is resolution, not dispatch or retry.
       const resolved = resolveCitationResponse({ ...rebuilt, foreignLookup: request }, { ...record.result }, RUNNER_HOST);
