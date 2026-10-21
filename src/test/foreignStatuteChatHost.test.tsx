@@ -643,7 +643,10 @@ describe("AU/CA QA 29db8bb: labelled literature country suffix through actual In
     await waitFor(() => expect(screen.getByTestId("bubble-assistant")).toHaveTextContent(plain));
     expect(screen.getByTestId("bubble-assistant").textContent).not.toContain("סותר");
     const classified = m.classify.mock.calls.length;
+    console.log("DBG1 ok");
     await act(async () => fireEvent.click(screen.getByRole("button", { name: "regen-foreign_book" })));
+    await new Promise(r => setTimeout(r, 300));
+    console.log("DBG2", JSON.stringify(m.bubble.mock.calls.map(c => [c[0].role, String(c[0].content).slice(0,60)])));
     await waitFor(() => expect(screen.getByTestId("bubble-assistant")).toHaveTextContent(plain));
     expect(screen.getByTestId("bubble-assistant").textContent).not.toContain("סותר");
     expect(m.classify.mock.calls.length).toBe(classified);
