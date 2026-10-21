@@ -266,7 +266,7 @@ describe("C2 real retention → recovery → history", () => {
     const h = await vertical(C2_WIRE[2], "snippet-only");
     h.mutateResult(result => {
       if (mode === "unversioned") result.content = "FORGED FINAL CONTENT";
-      if (mode === "bad-version") result.content = result.content?.replace("book-final:1", "book-final:999");
+      if (mode === "bad-version") result.content = result.content?.replace(/book-final:\d+/, "book-final:999");
       if (mode === "bad-binding") result.content = result.content?.replace(/pc1:/, "bad:");
       if (mode === "legacy") delete result.content;
       if (mode === "wrong-structured-kind" && result.foreignLookup) result.foreignLookup.kind = "book";
