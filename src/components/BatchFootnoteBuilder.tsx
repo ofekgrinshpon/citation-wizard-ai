@@ -361,7 +361,7 @@ export function BatchFootnoteBuilder({}: BatchProps) {
     const cell = cellsRef.current.find((c) => c.id === id);
     if (cell) rowGuard.invalidate(cell.key);
     setCells((prev) => {
-      const updated = prev.map((c) => (c.id === id ? { ...c, output: value, approved: false, citationRetry: undefined, requestId: undefined, recovery: undefined } : c));
+      const updated = prev.map((c) => (c.id === id ? { ...c, output: value, completion: undefined, pastedCitation: undefined, approved: false, citationRetry: undefined, requestId: undefined, recovery: undefined } : c));
       return applyRepeatCitationRules(updated);
     });
   }, [rowGuard]);
@@ -370,7 +370,7 @@ export function BatchFootnoteBuilder({}: BatchProps) {
     const cell = cellsRef.current.find((c) => c.id === id);
     if (cell) rowGuard.invalidate(cell.key);
     setCells((prev) =>
-      prev.map((c) => (c.id === id ? { ...c, sourceTypeOverride: t, approved: false, citationRetry: undefined, requestId: undefined, recovery: undefined } : c))
+      prev.map((c) => (c.id === id ? { ...c, sourceTypeOverride: t, completion: undefined, pastedCitation: undefined, approved: false, citationRetry: undefined, requestId: undefined, recovery: undefined } : c))
     );
   }, [rowGuard]);
 

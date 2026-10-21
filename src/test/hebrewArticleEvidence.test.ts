@@ -470,10 +470,9 @@ describe("article boundary through the real edge handler", () => {
 });
 
 describe("Stage 4 typed statute requests through the real edge handler", () => {
-  it.each(["book", "book_chapter"])("C1 %s unmatched/error/throw/missing key never invokes generic gateway", async kind => {
+  it.each(["book", "book_chapter"].flatMap(kind => ["unmatched", "error", "thrown", "missing_key"].map(mode => [kind, mode])))("C1 %s %s never invokes generic gateway", async (kind, mode) => {
     const raw = "Author: Jane Doe; Book: Synthetic Collection";
     const foreign = { enabled: true, kind, jurisdiction: "OTHER", rawInput: raw, parsedFields: { authors: "Jane Doe", bookTitle: "Synthetic Collection" } };
-    for (const mode of ["unmatched", "error", "thrown", "missing_key"]) {
       const r = await runHandler({ raw, label: "ספר לועזי", foreign,
         foreignResult: { kind, jurisdiction: "OTHER", fields: {}, grounded: {}, provenance: {}, sources: [], identity: { matched: false, anchors: [], conflicts: [] }, diagnostics: { tier1Queried: true, tier2Fired: false }, ...(mode === "error" ? { error: "lookup_failed" } : {}) },
         foreignThrows: mode === "thrown", noPplx: mode === "missing_key" });
@@ -484,7 +483,6 @@ describe("Stage 4 typed statute requests through the real edge handler", () => {
       expect(r.body.content).toContain("⚠️");
       expect(r.rpc.mock.calls.filter(([n]) => n === "begin_citation_request")).toHaveLength(1);
       expect(r.rpc.mock.calls.filter(([n]) => n === "finish_citation_request").map(([, args]) => args._outcome)).toEqual(["succeeded"]);
-    }
   });
   const raw = "Civil Rights Act § 1983";
   const statute = { enabled: true, statuteResponseVersion: 1, kind: "statute", jurisdiction: "US", rawInput: raw, parsedFields: { statuteName: "Civil Rights Act", section: "1983" } };

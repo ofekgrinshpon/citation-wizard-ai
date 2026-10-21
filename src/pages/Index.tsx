@@ -46,7 +46,7 @@ interface Message {
   role: "user" | "assistant";
   content: string;
   completion?: import("@/lib/citationCompletion").CompletionAcceptance;
-  pastedCitation?: PastedCitationContract;
+  pastedCitation?: import("../../supabase/functions/_shared/pastedCitation").PastedCitationContract;
 }
 
 import { applyYearPreferences, isLegislationInput, extractLawNameFromInput, extractCitationFromResponse, type YearPreferences } from "@/lib/citationUtils";

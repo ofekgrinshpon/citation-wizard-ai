@@ -9,11 +9,11 @@ import { MemoryRouter } from "react-router-dom";
 import { afterAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { runForeignLookup } from "../../supabase/functions/citation-chat/foreignLookup";
 import { resolveStatuteLookup } from "../../supabase/functions/citation-chat/statuteRoute";
-import { c1ServerPayload } from "./fixtures/c1ServerPayload";
+import { c1ServerPayload, C1_REDIGI } from "./fixtures/c1ServerPayload";
 import { runCitation } from "@/lib/runCitation";
 
 const m = vi.hoisted(() => ({
-  invoke: vi.fn(), classify: vi.fn(), recordGeneration: vi.fn(),
+  invoke: vi.fn(), classify: vi.fn(), recordGeneration: vi.fn(), bubble: vi.fn(),
 }));
 
 vi.mock("@/hooks/useAuth", () => ({ useAuth: () => ({ user: { id: "acct-1" }, isAdmin: false, loading: false, signOut: vi.fn() }) }));
@@ -40,7 +40,7 @@ vi.mock("@/lib/citationHistorySave", () => ({ saveCitationHistoryRecord: vi.fn()
 vi.mock("@/lib/foreignClassificationStore", () => ({ recordGeneration: m.recordGeneration, clearItemsWithPrefix: vi.fn() }));
 vi.mock("sonner", () => ({ toast: Object.assign(vi.fn(), { error: vi.fn(), info: vi.fn(), success: vi.fn(), warning: vi.fn(), message: vi.fn() }) }));
 vi.mock("@/components/MessageBubble", () => ({
-  MessageBubble: ({ msg, onChangeSourceType }: { msg: { role: string; content: string }; onChangeSourceType?: (t: string, p: unknown) => void }) => (
+  MessageBubble: ({ msg, onChangeSourceType }: { msg: { role: string; content: string }; onChangeSourceType?: (t: string, p: unknown) => void }) => (m.bubble(msg),
     <div data-testid={`bubble-${msg.role}`}>
       <span>{msg.content}</span>
       {onChangeSourceType && (
@@ -107,6 +107,45 @@ beforeEach(() => {
 const CORNELL_1983 = { title: "42 U.S.C. § 1983 - Civil action for deprivation of rights", url: "https://www.law.cornell.edu/uscode/text/42/1983", snippet: "Civil Rights Act — 42 U.S.C. § 1983 (2018)." };
 
 describe("chat page — typed statute request through initial send and regeneration", () => {
+  it.each(["partial", "crossed"])("ReDigi %s initial/manual retains the actual message metadata without persisting it", async mode => {
+    const raw = "Capitol Records, LLC v. ReDigi Inc.";
+    const input = raw + (mode === "crossed" ? " (2d Cir. 2018)" : "");
+    const { response } = await c1ServerPayload({ kind: "case", jurisdiction: "UNKNOWN", rawInput: input, parsedFields: { caseName: raw } }, [C1_REDIGI]);
+    if (mode === "partial") delete response.provenance.firstPage;
+    else { response.jurisdiction = "UK"; response.identity.jurisdiction = "UK"; }
+    m.invoke.mockResolvedValue({ data: { foreignLookup: response, content: "UNSAFE" }, errorInfo: null });
+    await mountChat(); await send(input);
+    const latest = () => m.bubble.mock.calls.map(([msg]) => msg).filter(msg => msg.role === "assistant").at(-1);
+    await waitFor(() => expect(latest()?.completion).toBeDefined());
+    const check = () => {
+      const msg = latest();
+      expect(msg.pastedCitation.rawInput).toBe(input);
+      expect(msg.pastedCitation.unknownSpans).toBeDefined();
+      if (mode === "partial") {
+        expect(msg.content).toContain("910 F.3d [חסר: עמוד]");
+        expect(msg.content).not.toContain("לא אותר מקור פרסום");
+        expect(msg.completion.fields).toMatchObject({ volume: "910", reporter: "F.3d" });
+        expect(msg.completion.provenance.reporter.value).toBe("F.3d");
+        expect(msg.completion.missing).toContain("firstPage");
+        expect(msg.completion.completeness).toBe("partial");
+      } else {
+        expect(msg.content).toContain(input);
+        expect(msg.completion.identityConfirmed).toBe(false);
+        expect(msg.completion.conflicts).toContain("supplied_jurisdiction_conflict");
+        expect(msg.completion.fields).toEqual({});
+      }
+    };
+    check();
+    await act(async () => { fireEvent.click(screen.getByRole("button", { name: "regen-us-case" })); });
+    check();
+    expect(m.invoke).toHaveBeenCalledTimes(2);
+    for (const key of Object.keys(localStorage)) {
+      if (key.startsWith("relex_messages")) expect(localStorage.getItem(key)).not.toContain('"completion"');
+    }
+    if (mode === "crossed") {
+      expect(m.invoke.mock.calls[0][1].foreignLookup).toMatchObject({ jurisdiction: "US", parsedFields: { caseName: raw, court: "2d Cir.", year: "2018" } });
+    }
+  });
   it("C1 real server partial fields have identical initial/manual chat and runner output with one call each", async () => {
     const input = "Brown v. Board of Education";
     const { response } = await c1ServerPayload({ kind: "case", jurisdiction: "UNKNOWN", rawInput: input, parsedFields: { caseName: input } });
