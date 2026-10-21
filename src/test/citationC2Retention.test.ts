@@ -7,6 +7,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import * as recovery from "../../supabase/functions/_shared/citationRecovery";
 import * as usage from "../../supabase/functions/_shared/citationUsageGuard";
 import * as pasted from "../../supabase/functions/_shared/pastedCitation";
+import * as bookFinal from "../../supabase/functions/_shared/citationPure/bookFinal";
+import { splitCitationWarnings } from "@/lib/citationSegments";
 import * as prefixes from "../../supabase/functions/_shared/caseTypePrefixes";
 import * as statute from "../../supabase/functions/citation-chat/statuteRoute";
 import { runForeignLookup, articleLookupFallback } from "../../supabase/functions/citation-chat/foreignLookup";
@@ -34,7 +36,7 @@ beforeEach(() => {
 });
 afterEach(() => vi.unstubAllGlobals());
 
-async function vertical(f: typeof C2_WIRE[number], mode = "complete") {
+async function vertical(f: { id: string; raw: string; type: "foreign_book" | "foreign_book_chapter" }, mode = "complete") {
   const plan = c2WirePlan(f);
   const request = plan.foreignLookup;
   if (!request) throw new Error("Missing request");
@@ -45,6 +47,10 @@ async function vertical(f: typeof C2_WIRE[number], mode = "complete") {
   const search = vi.fn(async () => new Response(JSON.stringify({ results: [donor] })));
   const lookup = vi.fn(async (input: Parameters<typeof runForeignLookup>[0]) => {
     const result = await runForeignLookup(input, { apiKey: "offline", fetchImpl: search });
+    if (mode === "unmatched") { result.identity.matched = false; result.identity.conflicts.push("unmatched"); }
+    if (mode === "error") result.error = "lookup_failed";
+    if (mode === "missing-key") result.error = "missing_perplexity_credentials";
+    if (mode === "thrown") throw new Error("offline lookup failure");
     if (mode === "partial") { delete result.fields.edition; delete result.grounded.edition; delete result.provenance.edition; }
     if (mode === "conflict") result.identity.conflicts.push("year:2020/2019");
     if (mode === "forged-field") Object.assign(result.fields, { secret: "invalid" });
@@ -90,6 +96,7 @@ async function vertical(f: typeof C2_WIRE[number], mode = "complete") {
       if (path.includes("pastedCitation")) return pasted;
       if (path.includes("caseTypePrefixes")) return prefixes;
       if (path.includes("statuteRoute")) return statute;
+      if (path.includes("citationPure/bookFinal")) return bookFinal;
       if (path.includes("foreignLookup")) return { runForeignLookup: lookup, articleLookupFallback };
       if (path.includes("costTelemetry")) return { withCostTelemetry: (_: unknown, fn: () => unknown) => fn(), setTelemetryFromBody: () => {}, trackedFetch: search };
       if (path.includes("citationDiagnosticGate")) return { isCitationDiagnosticPreflight: () => false };
@@ -102,7 +109,8 @@ async function vertical(f: typeof C2_WIRE[number], mode = "complete") {
     };
   };
   const response = await makeHandler(chatCode)({ citationRequestVersion: 3, requestId, rawInput: f.raw,
-    messages: [{ role: "user", content: f.raw }], foreignLookup: request });
+    messages: [{ role: "user", content: f.raw }], foreignLookup: request,
+    content: "CLIENT INJECTED CONTENT", bookFinal: "CLIENT INJECTED FLAG" });
   const body = await response.json();
   const endpoint = makeHandler(readCode);
   client.invoke.mockImplementation(async (_: string, options: { body: unknown }) => {
@@ -121,6 +129,11 @@ async function vertical(f: typeof C2_WIRE[number], mode = "complete") {
     return chain;
   });
   return { plan, body, response, rpc, search, lookup, writes, retainedResult, donor,
+    mutateResult: (mutate: (result: recovery.CitationRecoveryResult) => void) => {
+      const result = recovery.citationRecoveryResult(retainedResult);
+      if (!result) throw new Error("Invalid result");
+      mutate(result); retainedResult = result;
+    },
     mutateInput: (mutate: (input: recovery.CitationRecoveryInput) => void) => {
       const input = recovery.citationRecoveryInput(retainedInput);
       if (!input) throw new Error("Invalid fixture input");
@@ -137,7 +150,7 @@ describe("C2 real retention → recovery → history", () => {
     const finish = h.rpc.mock.calls.find(([name]) => name === "finish_citation_request")?.[1];
     expect(finish).toMatchObject({ _outcome: "succeeded", _reason: "citation_delivered", _request_id: requestId });
     expect(h.body.foreignLookup.sources[0].snippet).toBe(h.donor.snippet);
-    expect(h.retainedResult).toEqual({ content: "", foreignLookup: { ...h.body.foreignLookup,
+    expect(h.retainedResult).toEqual({ content: expect.any(String), foreignLookup: { ...h.body.foreignLookup,
       sources: [{ url: h.donor.url, title: h.donor.title, tier: "tier1" }],
     } });
     expect(recovery.citationRecoveryResult(h.retainedResult)).toEqual(h.retainedResult);
@@ -146,7 +159,9 @@ describe("C2 real retention → recovery → history", () => {
     const record = await readCitationRecovery(owner, requestId);
     if (!record) throw new Error("Missing recovery");
     const rendered = renderCitationRecovery(record);
-    expect(rendered?.completion).toEqual(fresh.resolution.completion);
+    expect(rendered?.formattedOutput).toBe(fresh.resolution.reply);
+    expect(h.body.content).toBe(fresh.resolution.reply);
+    expect(rendered?.completion).toBeUndefined();
     expect(rendered?.plainText).toContain(f.output);
     if (!rendered) throw new Error("Missing render");
     await expect(saveRecoveredCitationHistory({ requestId, projectId: "project-one", expectedAccountId: owner,
@@ -160,7 +175,7 @@ describe("C2 real retention → recovery → history", () => {
     await expect(saveRecoveredCitationHistory({ requestId, projectId: "other-project", expectedAccountId: owner,
       formattedOutput: rendered.formattedOutput })).rejects.toThrow("CITATION_HISTORY_DESTINATION_MISMATCH");
   });
-  it.each(["partial", "conflict", "snippet-only"])("%s stays honestly partial/unconfirmed after projection", async mode => {
+  it.each(["partial", "conflict", "snippet-only", "unmatched", "error", "missing-key", "thrown"])("%s stays honestly partial/unconfirmed after projection", async mode => {
     const h = await vertical(C2_WIRE[2], mode);
     expect(h.body.recoveryAvailability).toBe("available");
     const record = await readCitationRecovery(owner, requestId);
@@ -168,8 +183,11 @@ describe("C2 real retention → recovery → history", () => {
     const rendered = renderCitationRecovery(record);
     const fresh = resolveCitationResponse(h.plan, { foreignLookup: h.body.foreignLookup }, CHAT_HOST);
     if (fresh.kind !== "terminal") throw new Error("Not terminal");
-    if (mode !== "snippet-only") expect(rendered?.completion).toEqual(fresh.resolution.completion);
-    else { expect(fresh.resolution.completion?.identityConfirmed).toBe(true); expect(rendered?.completion?.identityConfirmed).toBe(false); expect(rendered?.warning).toBeTruthy(); }
+    expect(rendered?.formattedOutput).toBe(fresh.resolution.reply);
+    expect(h.body.content).toBe(fresh.resolution.reply);
+    expect(splitCitationWarnings(rendered?.formattedOutput ?? "").warnings).toEqual(splitCitationWarnings(fresh.resolution.reply).warnings);
+    expect(rendered?.completion).toBeUndefined();
+    if (mode === "snippet-only") expect(fresh.resolution.completion?.identityConfirmed).toBe(true);
     if (!rendered) throw new Error("Missing render");
     await saveRecoveredCitationHistory({ requestId, projectId: null, expectedAccountId: owner, formattedOutput: rendered.formattedOutput });
     expect(h.writes[0]).not.toHaveProperty("is_verified");
@@ -200,6 +218,71 @@ describe("C2 real retention → recovery → history", () => {
     expect(rendered?.plainText).toContain("1901");
     expect(h.lookup).toHaveBeenCalledTimes(1); expect(h.search).toHaveBeenCalledTimes(1);
     expect(h.rpc.mock.calls.map(([name]) => name)).toEqual(["begin_citation_request", "finish_citation_request", "read_citation_recovery"]);
+  });
+  it("snippet-only chapter without firstPage keeps final missing warning and grounded year", async () => {
+    const h = await vertical({ id: "chapter-partial", raw: "Author: Jane Doe; Chapter: Quiet Rules; Collection: Synthetic Collection", type: "foreign_book_chapter" }, "snippet-only");
+    const fresh = resolveCitationResponse(h.plan, h.body, CHAT_HOST);
+    if (fresh.kind !== "terminal") throw new Error("Not terminal");
+    expect(fresh.resolution.completion?.missing).toContain("firstPage");
+    expect(fresh.resolution.completion?.fields).toMatchObject({ year: "2020", edition: "2nd ed." });
+    const record = await readCitationRecovery(owner, requestId);
+    if (!record) throw new Error("Missing recovery");
+    const rendered = renderCitationRecovery(record);
+    expect(rendered?.formattedOutput).toBe(fresh.resolution.reply);
+    expect(rendered?.formattedOutput).toContain("חסרים פרטים");
+    expect(rendered?.formattedOutput).toContain("(2nd ed. 2020)");
+    if (!rendered) throw new Error("Missing render");
+    await saveRecoveredCitationHistory({ requestId, projectId: null, expectedAccountId: owner, formattedOutput: rendered.formattedOutput });
+    expect(JSON.stringify(h.retainedResult)).not.toContain('"snippet"');
+    expect(h.rpc.mock.calls.filter(([name]) => name === "begin_citation_request")).toHaveLength(1);
+    expect(h.lookup).toHaveBeenCalledTimes(1);
+  });
+  it.each(["unversioned", "bad-version", "bad-binding", "wrong-structured-kind", "invalid-structured", "legacy"])("%s content never bypasses legacy validation", async mode => {
+    const h = await vertical(C2_WIRE[2], "snippet-only");
+    h.mutateResult(result => {
+      if (mode === "unversioned") result.content = "FORGED FINAL CONTENT";
+      if (mode === "bad-version") result.content = result.content?.replace("book-final:1", "book-final:999");
+      if (mode === "bad-binding") result.content = result.content?.replace(/pc1:/, "bad:");
+      if (mode === "legacy") delete result.content;
+      if (mode === "wrong-structured-kind" && result.foreignLookup) result.foreignLookup.kind = "book";
+      if (mode === "invalid-structured" && result.foreignLookup) result.foreignLookup.identity = { matched: "forged" };
+    });
+    if (mode === "invalid-structured") {
+      const record = await readCitationRecovery(owner, requestId);
+      expect(record?.availability).toBe("unavailable");
+      expect(record?.result).toBeNull();
+      await expect(saveRecoveredCitationHistory({ requestId, projectId: null, expectedAccountId: owner, formattedOutput: "forged" })).rejects.toThrow("CITATION_RECOVERY_UNAVAILABLE");
+      expect(h.writes).toHaveLength(0); return;
+    }
+    const record = await readCitationRecovery(owner, requestId);
+    if (!record) throw new Error("Missing recovery");
+    const rendered = renderCitationRecovery(record);
+    expect(rendered?.formattedOutput).not.toContain("FORGED FINAL CONTENT");
+    expect(rendered?.formattedOutput).not.toContain("(2nd ed. 2020)");
+    expect(rendered?.warning).toBeTruthy();
+    expect(h.lookup).toHaveBeenCalledTimes(1);
+  });
+  it("expired final output cannot replay or save", async () => {
+    const h = await vertical(C2_WIRE[2], "snippet-only");
+    const record = await readCitationRecovery(owner, requestId);
+    if (!record) throw new Error("Missing recovery");
+    expect(renderCitationRecovery(record, Date.parse(record.expiresAt))).toBeNull();
+    expect(h.writes).toHaveLength(0);
+  });
+  it("client constructed or parsed copies cannot gain authoritative replay origin", async () => {
+    const h = await vertical(C2_WIRE[2], "snippet-only");
+    const record = await readCitationRecovery(owner, requestId);
+    if (!record) throw new Error("Missing recovery");
+    expect(renderCitationRecovery(record)?.formattedOutput).toBe(h.body.content);
+    const forged = structuredClone(record);
+    expect(renderCitationRecovery(forged)?.formattedOutput).not.toContain("(2nd ed. 2020)");
+    expect(renderCitationRecovery(forged)?.warning).toBeTruthy();
+    expect(h.body.content).not.toContain("CLIENT INJECTED");
+    const conflict = resolveCitationResponse(h.plan, { ...h.body, foreignLookup: { ...h.body.foreignLookup,
+      identity: { ...h.body.foreignLookup.identity, matched: false } }, content: h.body.content }, CHAT_HOST);
+    if (conflict.kind !== "terminal") throw new Error("Not terminal");
+    expect(conflict.resolution.completion?.identityConfirmed).toBe(false);
+    expect(conflict.resolution.reply).not.toContain("(2nd ed. 2020)");
   });
   it("unchanged account and stale-scope guards prevent recovery writes", async () => {
     const h = await vertical(C2_WIRE[0]);

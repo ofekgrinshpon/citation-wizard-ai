@@ -7,6 +7,7 @@
 
 import { CITATION_RULES, type CitationRuleSet, validateCitation, getRequiredFields } from "@/data/citationEngine";
 import { type SourceType, RULE_REFERENCES } from "@/data/abbreviations";
+import { bookMissingSummary } from "../../supabase/functions/_shared/citationPure/bookFinal.ts";
 
 // Map abbreviation.ts source types to citationEngine keys
 const ENGINE_KEY_MAP: Record<SourceType, string> = {
@@ -581,6 +582,7 @@ export function getMissingFieldsSummary(
   missingFields: string[]
 ): string {
   if (missingFields.length === 0) return "";
+  if (sourceType === "foreign_book" || sourceType === "foreign_book_chapter") return bookMissingSummary(sourceType, missingFields);
 
   // Never surface an internal field key to the user.
   const labelFor = (field: string, fromRuleSet?: string): string =>

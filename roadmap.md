@@ -1,6 +1,7 @@
 # Roadmap — research → memo → draft handoff (legal-research-v2)
 
 ## Unified pasted-citation infrastructure batch A (offline only)
+- [ ] Focused C2 authoritative book/chapter final-text replay at 58231607: shared server/client pure rendering, content-only retention compatibility, offline vertical/host gates; no deployment/live/DB changes.
 - [x] Narrow C2 retention-envelope correction at 1ce326a0: trusted source snippet projection; real UsageGuard → endpoint/API → history; 17 new / 416 focused / 3,969 full passed, 1 skipped; explicit TS/Vite remain external gates; no live/deployment/DB changes.
 - [x] Final bounded C2 recovery correction at be955a5b: exact raw reparse and wire/manual checks; original year/publisher/section retained; focused 317 / full 3,952 passed, 1 skipped; automatic compilation OK; explicit TS/Vite independent gate and pre-existing retention-envelope compatibility remain documented; no D/live/deployment.
 - [x] Narrow C2 wire correction at 2e4b11a6: complete local fields/exact spans separate from raw-bound wire; actual-handler/four-host gates; focused 432 / full 3,941 passed, 1 skipped; automatic compilation OK; explicit TS/Vite remain independent blockers; no D/live/deployment.

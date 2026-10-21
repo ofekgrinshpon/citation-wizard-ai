@@ -22,6 +22,10 @@ export interface CitationRecoveryRecord {
 }
 export interface CitationRecoveryQuery { requestId?: string; parentRequestId?: string; cursor?: string; limit?: number }
 export interface CitationRecoveryPage { requests: CitationRecoveryRecord[]; nextCursor: string | null }
+// Transient origin boundary, never serialized or accepted from caller data.
+// Only a successful owner/session-scoped recovery read marks a record.
+const authenticatedRecoveryRecords = new WeakSet<object>();
+export const isAuthenticatedRecoveryRecord = (record: CitationRecoveryRecord): boolean => authenticatedRecoveryRecords.has(record);
 export class CitationRecoveryError extends Error {
   constructor(readonly code: "CITATION_RETRY_STALE" | "CITATION_RECOVERY_UNAVAILABLE" | "CITATION_RECOVERY_INVALID_RESPONSE" | "CITATION_RECOVERY_INPUT_UNAVAILABLE") {
     super(code); this.name = "CitationRecoveryError";
@@ -137,7 +141,9 @@ export class CitationRecoveryApi {
     } catch { await this.session(accountId, isCurrent); return fail("CITATION_RECOVERY_UNAVAILABLE"); }
     await this.session(accountId, isCurrent);
     if (response.error) return fail("CITATION_RECOVERY_UNAVAILABLE");
-    return parseCitationRecoveryPage(response.data, snapshot);
+    const page = parseCitationRecoveryPage(response.data, snapshot);
+    page.requests.forEach(record => authenticatedRecoveryRecords.add(record));
+    return page;
   }
 
   async read(accountId: string, requestId: string, isCurrent: () => boolean = () => true): Promise<CitationRecoveryRecord | null> {

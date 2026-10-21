@@ -24,7 +24,7 @@ import { renderUsUnreportedLocal } from "@/lib/usUnreportedLocal";
 import { renderUnpublishedLocal } from "@/lib/unpublishedWorkLocal";
 import { renderPeriodicalLocal } from "@/lib/periodicalLocal";
 import { renderBookLocal } from "@/lib/bookLocal";
-import { extractBookWork } from "@/data/bluebook/bookWorks";
+import { eligibleBookCompletion, resolveBookCompletion } from "../../supabase/functions/_shared/citationPure/bookFinal.ts";
 import { preparePastedCitation, pastedCaseRequest, readPastedCitationSafety, renderPastedCaseResponse } from "@/lib/pastedCitationAdapter";
 import { suppliedLookupFieldsMatch } from "../../supabase/functions/_shared/pastedCitation";
 
@@ -91,28 +91,6 @@ export interface LocalPlanInput {
 }
 
 const OPINION = (d: ForeignDetection | null | undefined) => !!(d?.fields as { opinionFormat?: string } | undefined)?.opinionFormat;
-
-/** Existing explicit structure only: manual family/name shape cannot create identity anchors. */
-function eligibleBookCompletion(type: SourceType | null, raw: string) {
-  if (type !== "foreign_book" && type !== "foreign_book_chapter") return null;
-  const work = extractBookWork(raw);
-  if (!work || work.preserve || work.fields.unparsedRemainder || !work.explicitNew ||
-    (work.kind === "book") !== (type === "foreign_book") || !work.fields.authors || !work.fields.bookTitle ||
-    (work.kind === "chapter" && !work.fields.chapterTitle)) return null;
-  const kind = work.kind === "book" ? "book" : "book_chapter";
-  const rendered = renderForeignDetection({ kind, jurisdiction: "OTHER", sourceType: type, fields: work.fields, confidence: "deterministic" });
-  // Existing book/chapter extractor returns publication year/edition, never chapter firstPage.
-  if (!rendered?.missing.some(field => field === "year" || field === "edition")) return null;
-  // Wire projection: only server-allowed lookup keys whose exact value is in the canonical input.
-  // Everything else (originalYear, publisher/status, normalized pinpoint/section) stays local.
-  const wire: Record<string, string> = {};
-  for (const [k, v] of Object.entries(work.fields as Record<string, unknown>)) {
-    const value = work.suppliedFields?.[k]?.value ?? (typeof v === "string" ? v.trim() : "");
-    if (value && k !== "unparsedRemainder" && suppliedLookupFieldsMatch(raw, kind, { [k]: value })) wire[k] = value;
-  }
-  if (!wire.authors || !wire.bookTitle || (kind === "book_chapter" && !wire.chapterTitle)) return null;
-  return { kind, fields: work.fields, wire, suppliedFields: work.suppliedFields };
-}
 
 /** Phase 2 — terminal local outcomes (render or preserve). Null → continue to typed planning. */
 export function planLocalCitation(p: LocalPlanInput, caps: CitationHostCapabilities): { origin: LocalOrigin; resolution: CitationResolution } | { origin: null; statutePrep: StatutePreparation | null } {
@@ -259,6 +237,13 @@ export function resolveCitationResponse(plan: TypedPlan, data: Record<string, un
   if (plan.kind === "legacy" || !plan.foreignLookup) return { kind: "legacy" };
   const req = plan.foreignLookup;
   const response = data?.foreignLookup;
+  if (req.kind === "book" || req.kind === "book_chapter") {
+    const resolution = resolveBookCompletion(req, contract.rawInput, response, plan.localFields ?? {}, plan.localSourceFields, contract.missing);
+    // Adopt server final content only after the same full-evidence resolver
+    // proves exact parity. Arbitrary client text cannot override a conflict.
+    if (typeof data?.content === "string" && data.content === resolution.reply) resolution.reply = data.content;
+    return { kind: "terminal", origin: "merge", resolution: { ...resolution, sourceLabel: SOURCE_TYPE_LABELS[resolution.sourceType], pastedCitation: contract } };
+  }
   const boundSupplied = req.parsedFields && typeof req.parsedFields === "object" ? req.parsedFields as Record<string, string> : {};
   const accepted = acceptCitationCompletion({ ...req, parsedFields: { ...boundSupplied, ...(plan.localFields ?? {}) } }, contract.rawInput, response);
   if (plan.localSourceFields) accepted.suppliedFields = plan.localSourceFields;
