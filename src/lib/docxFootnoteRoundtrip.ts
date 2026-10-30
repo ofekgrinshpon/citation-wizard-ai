@@ -138,6 +138,9 @@ export async function inspectDocxFootnotes(input: ArrayBuffer): Promise<DocxFoot
   const contentTypes = xmlDocument(textFile(files, "[Content_Types].xml"));
   if (!Array.from(contentTypes.getElementsByTagName("Override")).some(e => e.getAttribute("PartName") === "/word/document.xml" && e.getAttribute("ContentType") === "application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml")) invalid();
   const bodyDoc = xmlDocument(body), notesDoc = xmlDocument(xml);
+  const MC="http://schemas.openxmlformats.org/markup-compatibility/2006";
+  if([bodyDoc,notesDoc].some(doc=>doc.getElementsByTagNameNS(MC,"AlternateContent").length))
+    fail("מסמך עם ענפי תוכן חלופיים של Word אינו נתמך. לא ניתן לקבוע אילו הפניות להערות פעילות.");
   if (bodyDoc.documentElement.namespaceURI !== W || notesDoc.documentElement.namespaceURI !== W || notesDoc.documentElement.nodeName !== "w:footnotes") invalid();
   // Do not attempt to rewrite numbering fields, revisions, endnotes, cross-references, or custom marks.
   for (const doc of [bodyDoc, notesDoc]) {

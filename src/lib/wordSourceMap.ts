@@ -7,7 +7,7 @@ import { rawCitationFingerprint } from '../../supabase/functions/_shared/pastedC
 import { extractWorkIdentifiers } from '../../supabase/functions/_shared/workIdentifiers';
 
 /** Versioned LOCAL deterministic mapping. No semantic-model endpoint or invented source boundaries. */
-export interface WordSourceIdentity { key: string; kind: 'case' | 'doi' | 'journal_article'; provenance: 'supplied_identifier'; verified: false; pinpoint: string }
+export interface WordSourceIdentity { key: string; kind: 'case' | 'doi' | 'journal_article'; provenance: 'supplied_identifier'; verified: false; pinpoint: string; pinpointKind: "page" | "paragraph" | null }
 export interface WordMappedSource { sourceId: string; start: number; end: number; input: string; crossesRuns: boolean; identity: WordSourceIdentity | null }
 export interface WordSourceMap { version: 1; noteId: string; fingerprint: string; kind: 'mapped' | 'protected' | 'unresolved'; sources: WordMappedSource[]; reason?: string }
 
@@ -19,7 +19,7 @@ export function wordSourceIdentity(raw: string): WordSourceIdentity | null {
   const plain = citationTextOnly(raw).trim();
   const identifiers = extractWorkIdentifiers(plain);
   if (!identifiers.conflicts.length && identifiers.doi && !identifiers.text && !identifiers.sourceUrl)
-    return {kind:'doi',key:`doi:${identifiers.doi}`,provenance:'supplied_identifier',verified:false,pinpoint:''};
+    return {kind:'doi',key:`doi:${identifiers.doi}`,provenance:'supplied_identifier',verified:false,pinpoint:'',pinpointKind:null};
   if (/[א-ת]/u.test(plain)) {
     const request=createHebrewArticleRequest(plain),fields=request.supplied;
     const result={request,fields,provenance:{},conflicts:[],matched:false};
@@ -29,18 +29,22 @@ export function wordSourceIdentity(raw: string): WordSourceIdentity | null {
       normalizeArticleText(citationTextOnly(rendered))===normalizeArticleText(plain) &&
       (!request.pinpoint || /^\d+(?:[-–]\d+)?$/.test(request.pinpoint))) {
       return {kind:'journal_article',key:JSON.stringify(['IL-journal',...['author','articleTitle','journalName','volume','notebook','firstPage','year','hebrewYear'].map(k=>fields[k as keyof typeof fields]??'')]),
-        provenance:'supplied_identifier',verified:false,pinpoint:request.pinpoint};
+        provenance:'supplied_identifier',verified:false,pinpoint:request.pinpoint,pinpointKind:request.pinpoint?"page":null};
     }
   }
   const prepared = preparePastedCitation(plain), d = prepared.detection;
   if (!d || d.kind !== 'case' || d.confidence !== 'deterministic' || !prepared.local || prepared.contract.conflicts.length || prepared.contract.route === 'preserve') return null;
   const f = d.fields as Record<string, unknown>;
-  if (f.unparsedRemainder || !f.caseName || !f.year || (!f.neutral && !(f.volume && f.reporter && f.firstPage))) return null;
+  if (f.parallel || f.unparsedRemainder || !f.caseName || !f.year || (!f.neutral && !(f.volume && f.reporter && f.firstPage))) return null;
+  // Parallel reporters may carry additional locators; a single short suffix
+  // cannot preserve them, so the guard above retains their full citation.
   const tuple = [d.jurisdiction,...['caseName','year','court','neutral','volume','reporter','firstPage','docket','decisionDate','parallel'].map(k => String(f[k] ?? '').trim())];
+  if(f.pinpoint && f.paragraph || f.starPinpoint)return null;
   const pinpoint = String(f.pinpoint ?? f.paragraph ?? '').trim();
+  const pinpointKind = pinpoint ? (f.paragraph ? 'paragraph' as const : 'page' as const) : null;
   // Unhandled pinpoint syntax must not disappear in a repeated form.
   if (pinpoint && !/^\d+(?:[-–]\d+)?$/.test(pinpoint)) return null;
-  return {kind:'case',key:JSON.stringify(tuple),provenance:'supplied_identifier',verified:false,pinpoint};
+  return {kind:'case',key:JSON.stringify(tuple),provenance:'supplied_identifier',verified:false,pinpoint,pinpointKind};
 }
 
 export function mapWordSources(note: DocxFootnote, explanations: readonly ExplanationSpan[]): WordSourceMap {

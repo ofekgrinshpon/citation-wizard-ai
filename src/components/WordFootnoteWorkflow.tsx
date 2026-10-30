@@ -130,7 +130,12 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
     const selected = rows.filter(row => row.end > row.start && row.input.trim() && (!row.crossesRuns || row.allowFormattingNormalization) && !blockedNotes.current.has(noteKey(row)) && (onlyId === undefined ? !row.output && row.status !== "error" : row.id === onlyId));
     if (!selected.length) return;
     lock.current = true; setBusy(true); setError(""); setNotice("");
-    setRows(old=>old.map(r=>({...r,approved:false,output:r.repeatProposal?(r.fullOutput??r.output):r.output,repeatProposal:false})));
+    setRows(old=>{
+      let next=old;
+      for(const row of selected)next=invalidateWordDependents(next,session.notes.map(n=>n.id),row.noteId,row.start);
+      const selectedIds=new Set(selected.map(row=>row.id));
+      return next.map(row=>selectedIds.has(row.id)?{...row,approved:false,output:row.repeatProposal?(row.fullOutput??row.output):row.output,repeatProposal:false}:row);
+    });
     const version = epoch.current;
     const owner = scope;
     const isCurrent = () => version === epoch.current && owner === currentScope.current;

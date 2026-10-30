@@ -39,3 +39,25 @@ it('does not shorten title-only similarities, mismatched output identities, and 
  const x=setup([A,A]);x.rows[1].output=B;x.rows[1].fullOutput=B;expect(proposeWordRepeats(x.session,x.rows,[])[1].output).toBe(B);
  x.rows[1].output=A;x.rows[1].fullOutput=A;x.rows[1].approved=true;expect(proposeWordRepeats(x.session,x.rows,[])[1]).toMatchObject({output:'שם.',approved:false});
 });
+
+it('retains paragraph locators instead of silently converting them to pages',()=>{
+ const value='Sample v Example [2020] UKSC 12 [23]';expect(wordSourceIdentity(value)).toMatchObject({pinpoint:'23',pinpointKind:'paragraph'});
+ const {session,rows}=setup([value,value]);expect(proposeWordRepeats(session,rows,[])[1].output).toBe("שם, בפס' 23.");
+});
+it('preserves independently approved full citations when an earlier source changes',()=>{
+ const {session,rows}=setup([A,A,B]);const prepared=proposeWordRepeats(session,rows,[]).map(r=>({...r,approved:true}));
+ const changed=invalidateWordDependents(prepared,session.notes.map(n=>n.id),rows[0].noteId,rows[0].start);
+ expect(changed[1]).toMatchObject({output:A,approved:false,repeatProposal:false});
+ expect(changed[2]).toMatchObject({output:B,approved:true});
+});
+
+it('keeps protected unchanged references in the note context as barriers',()=>{
+ const {session,rows}=setup([A+'; '+B,A]);
+ const protection=[{noteId:session.notes[0].id,start:A.length+2,end:A.length+2+B.length}];
+ expect(proposeWordRepeats(session,rows,protection)[1].output).toBe(A);
+ const target=setup([A,A+'; '+B]);target.rows[1]={...target.rows[1],end:A.length,input:A,output:A,fullOutput:A};
+ expect(proposeWordRepeats(target.session,target.rows,[{noteId:target.session.notes[1].id,start:A.length+2,end:A.length+2+B.length}])[1].output).toBe(A);
+});
+it('keeps parallel reporters with secondary locators full instead of silently dropping a pinpoint',()=>{
+ const value='Example v. Sample, 100 A.2d 200, 205, 50 N.Y.2d 1, 5 (1980)';expect(wordSourceIdentity(value)).toBeNull();const {session,rows}=setup([value,value]);expect(proposeWordRepeats(session,rows,[])[1].output).toBe(value);
+});

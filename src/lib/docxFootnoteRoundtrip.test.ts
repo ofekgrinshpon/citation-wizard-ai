@@ -181,4 +181,10 @@ describe('DOCX selective footnote round trip',()=>{
   expect((await inspectDocxFootnotes(await z.generateAsync({type:'arraybuffer'}))).documentOrder!.every(n=>n.number===null)).toBe(true);
  });
 
+ it('rejects compatibility alternatives instead of counting or sending inactive footnote branches',async()=>{
+  const z=await JSZip.loadAsync(await fixture());
+  z.file('word/document.xml',`<w:document xmlns:w="${W}" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"><w:body><mc:AlternateContent><mc:Choice Requires="w"><w:p><w:r><w:footnoteReference w:id="7"/></w:r></w:p></mc:Choice><mc:Fallback><w:p><w:r><w:footnoteReference w:id="42"/></w:r></w:p></mc:Fallback></mc:AlternateContent></w:body></w:document>`);
+  await expect(inspectDocxFootnotes(await z.generateAsync({type:'arraybuffer'}))).rejects.toThrow('ענפי תוכן חלופיים');
+ });
+
 });
