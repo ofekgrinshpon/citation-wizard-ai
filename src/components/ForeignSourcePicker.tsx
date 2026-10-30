@@ -78,6 +78,9 @@ export interface ForeignClassificationSnapshot {
 }
 
 interface Props {
+  /** Document workflows keep classification and source text in mounted memory only. */
+  transient?: boolean;
+  initialRecord?: ClassificationRecord;
   accountId: string | null | undefined;
   itemKey: string;
   input: string;
@@ -92,8 +95,8 @@ interface Props {
  * restoring are local and deterministic — never a network call. Generation
  * happens only through the host's explicit action.
  */
-export function ForeignSourcePicker({ accountId, itemKey, input, onRegenerate, onChange, regenerateDisabled }: Props) {
-  const c = useForeignClassification({ accountId, itemKey, input });
+export function ForeignSourcePicker({ accountId, itemKey, input, onRegenerate, onChange, regenerateDisabled, transient, initialRecord }: Props) {
+  const c = useForeignClassification({ accountId, itemKey, input, transient, initialRecord });
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [showOptionalJur, setShowOptionalJur] = useState(false);

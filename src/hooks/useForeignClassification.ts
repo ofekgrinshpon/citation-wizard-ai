@@ -17,24 +17,24 @@ import { loadRecord, saveRecord, subscribeClassification } from "@/lib/foreignCl
  * Local, deterministic classification state for one item. Every action is
  * synchronous and offline: no invoke/fetch/provider call is ever made.
  */
-export function useForeignClassification(args: { accountId: string | null | undefined; itemKey: string; input: string }) {
-  const { accountId, itemKey, input } = args;
-  const [rec, setRec] = useState<ClassificationRecord>(() => reconcileRecord(loadRecord(accountId, itemKey), itemKey, input));
+export function useForeignClassification(args: { accountId: string | null | undefined; itemKey: string; input: string; transient?: boolean; initialRecord?: ClassificationRecord }) {
+  const { accountId, itemKey, input, transient = false, initialRecord } = args;
+  const [rec, setRec] = useState<ClassificationRecord>(() => reconcileRecord(transient ? initialRecord : loadRecord(accountId, itemKey), itemKey, input));
 
   useEffect(() => {
-    const next = reconcileRecord(loadRecord(accountId, itemKey), itemKey, input);
+    const next = reconcileRecord(transient ? initialRecord : loadRecord(accountId, itemKey), itemKey, input);
     setRec(next);
-    saveRecord(accountId, next);
-  }, [accountId, itemKey, input]);
+    if (!transient) saveRecord(accountId, next);
+  }, [accountId, itemKey, input, transient]);
 
   // A host's explicit generation recorded provenance: re-read.
   useEffect(() => subscribeClassification((acct, key) => {
-    if (acct === (accountId || "anon") && key === itemKey) setRec(reconcileRecord(loadRecord(accountId, itemKey), itemKey, input));
-  }), [accountId, itemKey, input]);
+    if (!transient && acct === (accountId || "anon") && key === itemKey) setRec(reconcileRecord(transient ? initialRecord : loadRecord(accountId, itemKey), itemKey, input));
+  }), [accountId, itemKey, input, transient]);
 
   const commit = useCallback((f: (r: ClassificationRecord) => ClassificationRecord) => {
-    setRec((prev) => { const next = f(prev); saveRecord(accountId, next); return next; });
-  }, [accountId]);
+    setRec((prev) => { const next = f(prev); if (!transient) saveRecord(accountId, next); return next; });
+  }, [accountId, transient]);
 
   const effective = useMemo(() => computeEffective(rec.detected, rec.overrides), [rec]);
   return {

@@ -1,0 +1,45 @@
+import type { DocxFootnote } from "./docxFootnoteRoundtrip";
+export interface ExplanationSpan { start: number; end: number }
+export type WordFootnotePlan =
+  | { kind: "candidate"; start: number; end: number; input: string; crossesRuns: boolean }
+  | { kind: "protected" | "unresolved"; reason: string };
+
+/** Conservative ambiguity screen, NOT a source parser or proof of source identity.
+ * The existing engine returns one citation, without source-to-document offsets.
+ * Never split a mixed note by punctuation and pretend the pieces are verified sources.
+ */
+export function hasMultipleSourceSignals(text: string): boolean {
+  return /[;؛\n\r]/u.test(text.trim().replace(/[;؛]+$/u, ""))
+    || (text.match(/\b(?:18|19|20)\d{2}\b/g)?.length ?? 0) > 1
+    || (text.match(/https?:\/\/|\bdoi\s*:/gi)?.length ?? 0) > 1
+    || (text.match(/\b\d{1,7}[-/]\d{2,4}(?:[-/]\d{2,4})?\b/g)?.length ?? 0) > 1
+    || /(?:ראו גם|וכן ראו|להשוואה ראו|see also|but see|accord)\s/iu.test(text);
+}
+export function planWordFootnote(note: DocxFootnote, protectedSpans: readonly ExplanationSpan[]): WordFootnotePlan {
+  const spans = [...protectedSpans].sort((a,b) => a.start-b.start);
+  let cursor = 0;
+  const gaps: ExplanationSpan[] = [];
+  for (const span of spans) {
+    const splitsPair = (at: number) => at > 0 && at < note.text.length && /[\uD800-\uDBFF]/u.test(note.text[at-1]) && /[\uDC00-\uDFFF]/u.test(note.text[at]);
+    if (!Number.isInteger(span.start) || !Number.isInteger(span.end) || span.start < cursor || span.end <= span.start || span.end > note.text.length || splitsPair(span.start) || splitsPair(span.end))
+      throw new Error("סימוני ההסבר חופפים או אינם תואמים לטקסט המקורי.");
+    gaps.push({start:cursor,end:span.start}); cursor = span.end;
+  }
+  gaps.push({start:cursor,end:note.text.length});
+  // Keep boundary whitespace and separator punctuation in their ORIGINAL positions.
+  const meaningful = gaps.map(gap => {
+    const raw = note.text.slice(gap.start,gap.end);
+    const left = raw.match(/^[\s,;؛:–—-]*/u)![0].length;
+    const right = raw.slice(left).match(/[\s,;؛:–—-]*$/u)![0].length;
+    return {start:gap.start+left,end:gap.end-right,input:raw};
+  }).filter(gap => gap.end > gap.start);
+  if (!meaningful.length) return {kind:"protected",reason:"כל תוכן ההערה מוגן או ריק. לא תישלח בקשה וההערה תישאר ללא שינוי."};
+  if (meaningful.length !== 1) return {kind:"unresolved",reason:"נותרו כמה קטעים נפרדים סביב ההסברים. המנוע מחזיר אזכור אחד ואינו ממפה כמה מקורות למקומם במסמך. ההערה לא תישלח ותישאר ללא שינוי."};
+  const gap = meaningful[0];
+  const content = note.text.slice(gap.start,gap.end);
+  if (hasMultipleSourceSignals(content)) return {kind:"unresolved",reason:"ייתכן שיש כאן כמה מקורות או פסקאות. עדיין אין מיפוי בטוח של כמה תוצאות למקומן בהערה; ההערה לא תישלח ותישאר ללא שינוי."};
+  const ranges = note.editableRanges.filter(range => range.end > gap.start && range.start < gap.end);
+  if (!ranges.length || gap.start < ranges[0].start || gap.end > ranges[ranges.length-1].end || ranges.some((range,i) => i > 0 && range.start !== ranges[i-1].end))
+    return {kind:"unresolved",reason:"לא ניתן להחליף את התוכן בתוך פסקה אחת בבטחה. ההערה תישאר ללא שינוי."};
+  return {kind:"candidate",...gap,crossesRuns:ranges.length>1};
+}

@@ -168,9 +168,6 @@ export function FootnoteReviewCard({
     <details className="border-t border-border pt-3 text-sm">
       <summary className="cursor-pointer rounded py-1 text-primary focus-visible:outline focus-visible:outline-2">אפשרויות בדיקה נוספות</summary>
       <div className="mt-3 space-y-3">
-        <label className="block">נוסח לבדיקה חוזרת<input aria-label={`נוסח לבדיקה חוזרת לאזכור ${cell.id}`} value={cell.input} disabled={disabled || isLoading}
-          onChange={event => onInputChange(cell.id, event.target.value)} className="mt-1 min-h-11 w-full rounded-lg border border-border bg-background px-3" /></label>
-        <p className="text-xs text-muted-foreground">שינוי כאן משפיע על הבדיקה בלבד; הקטע שנבחר במסמך נשאר אותו קטע.</p>
         <label className="block">סוג המקור<select aria-label={`סוג המקור לאזכור ${cell.id}`} value={activeType} disabled={disabled || isLoading}
           onChange={event => onSourceTypeChange(cell.id, event.target.value as SourceType)} className="mt-1 min-h-11 w-full rounded-lg border border-border bg-background px-3">
           <option value="unknown">זיהוי אוטומטי</option>

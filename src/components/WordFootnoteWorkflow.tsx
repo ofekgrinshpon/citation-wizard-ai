@@ -1,3 +1,7 @@
+import { ForeignSourcePicker } from "./ForeignSourcePicker";
+import { isForeignSourceType } from "@/data/bluebook/types";
+import type { GenerationPlan, ClassificationRecord } from "@/lib/foreignClassification";
+import { planWordFootnote, hasMultipleSourceSignals } from "@/lib/wordFootnotePlan";
 import { CitationRequestStatusLink } from "./CitationRequestStatusLink";
 import { WordNoteSelection } from "./WordNoteSelection";
 import { useEffect, useRef, useState } from "react";
@@ -11,10 +15,10 @@ import { inspectDocxFootnotes, embedApprovedFootnotes } from "@/lib/docxFootnote
 
 type Session = Awaited<ReturnType<typeof inspectDocxFootnotes>>;
 type Span = { noteId: string; start: number; end: number };
-type Row = ReviewCardCell & { noteId: string; originalText: string; start: number; end: number; crossesRuns?: boolean; allowFormattingNormalization?: boolean };
+type Row = ReviewCardCell & { classification?: GenerationPlan | null; classificationRecord?: ClassificationRecord; noteId: string; originalText: string; start: number; end: number; crossesRuns?: boolean; allowFormattingNormalization?: boolean };
 const button = "min-h-11 rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
 const primaryButton = `${button} border-primary bg-primary text-primary-foreground hover:bg-primary/90`;
-const steps = ["בחירת מסמך", "בחירת אזכורים", "בדיקת תיקונים", "הורדת עותק"];
+const steps = ["בחירת מסמך", "טקסט הסבר שלא לשנות", "בדיקת תיקונים", "הורדת עותק"];
 
 /** Files and extracted text live only in this mounted panel, never localStorage.
  * Generation uses the existing server protocol. Import/export never call providers.
@@ -32,7 +36,7 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
   const [rows, setRows] = useState<Row[]>([]);
   const [protectedSpans, setProtectedSpans] = useState<Span[]>([]);
   const [selection, setSelection] = useState<Span | null>(null);
-  const nextRowId = useRef(1);
+
   const [busy, setBusy] = useState(false);
   useEffect(() => { onBusyChange?.(busy); return () => onBusyChange?.(false); }, [busy, onBusyChange]);
   const [error, setError] = useState("");
@@ -52,7 +56,7 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
     epoch.current++;
     setStep(0); setActiveNote(0); setEditingRow(null);
     lock.current = false;
-    setBusy(false); setSession(null); setRows([]); setProtectedSpans([]); setSelection(null); nextRowId.current = 1; setFilename(""); setError(""); setNotice("");
+    setBusy(false); setSession(null); setRows([]); setProtectedSpans([]); setSelection(null); setFilename(""); setError(""); setNotice("");
     if (inputRef.current) inputRef.current.value = "";
   };
   const invalidate = () => { epoch.current++; };
@@ -70,7 +74,10 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
       const inspected = await inspectDocxFootnotes(await file.arrayBuffer());
       if (version !== epoch.current || owner !== currentScope.current) return;
       setSession(inspected); setFilename(file.name); setStep(1);
-      setRows([]);
+      setRows(inspected.notes.flatMap((note, index) => {
+        const plan = planWordFootnote(note, []);
+        return plan.kind === "candidate" ? [{id:index+1,noteId:note.id,originalText:note.text,...plan,output:null,status:"empty" as const,approved:false}] : [];
+      }));
       setNotice("");
     } catch (e) {
       if (version === epoch.current) setError(e instanceof Error ? e.message : "לא ניתן לקרוא את המסמך.");
@@ -86,34 +93,28 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
     }
     setSelection(old => old?.noteId === noteId && old.start === start && old.end === end ? old : { noteId, start, end }); setError("");
   };
-  const markSelection = (kind: "citation" | "explanation", replaceId?: number) => {
-    if (lock.current || !selection || !session) return;
-    if ((kind === "explanation" && protectedSpans.length >= 1000) || (kind === "citation" && replaceId === undefined && rows.length >= 1000)) {
-      setError("ניתן לסמן עד 1,000 אזכורים ועד 1,000 קטעי הסבר במסמך."); return;
-    }
-    const note = session.notes.find(n => n.id === selection.noteId)!;
-    if (protectedSpans.some(s => overlaps(s, selection)) || rows.some(r => r.id !== replaceId && overlaps(r, selection))) {
-      setError("הבחירה חופפת לאזכור או לטקסט הסבר שכבר סומנו. שנו את הגבולות או הסירו את הסימון הקודם."); return;
-    }
-    if (kind === "explanation") {
-      setProtectedSpans(old => [...old, selection]); setSelection(null); setError(""); return;
-    }
-    if (blockedNotes.current.has(noteKey({ noteId: note.id, originalText: note.text }))) {
-      setError("קיימת בקשה שלא הושלמה להערה זו. בדקו את מצב הבקשה לפני ניסיון נוסף."); return;
-    }
-    const ranges = note.editableRanges.filter(range => range.end > selection.start && range.start < selection.end);
-    const covered = ranges.length > 0 && selection.start >= ranges[0].start && selection.end <= ranges[ranges.length - 1].end
-      && ranges.every((range, i) => i === 0 || range.start === ranges[i - 1].end);
-    if (!covered) { setError("הקטע חוצה פסקאות או מבנה שאינו נתמך. סמנו אזכור בתוך פסקה אחת; לא נשלחה בקשת בדיקה."); return; }
-    const updated = { ...selection, originalText: note.text, input: note.text.slice(selection.start, selection.end),
-      output: null, status: "empty" as const, approved: false, crossesRuns: ranges.length > 1, allowFormattingNormalization: false,
-      errorMsg: undefined, warningMsg: undefined, requestId: undefined };
-    setRows(old => replaceId === undefined ? [...old, { id: nextRowId.current++, ...updated }] : old.map(r => r.id === replaceId ? { ...r, ...updated } : r));
+  const updateProtection = (next: Span[], noteId: string) => {
+    if (lock.current || !session) return;
+    const note = session.notes.find(n => n.id === noteId)!;
+    const plan = planWordFootnote(note, next.filter(s => s.noteId === noteId));
+    epoch.current++;
+    setProtectedSpans(next);
+    setRows(old => [...old.filter(row => row.noteId !== noteId), ...(plan.kind === "candidate" ? [{
+      id:session.notes.indexOf(note)+1,noteId,originalText:note.text,...plan,
+      output:null,status:"empty" as const,approved:false,allowFormattingNormalization:false,
+    }] : [])].sort((a,b) => a.id-b.id));
     setSelection(null); setEditingRow(null); setError(""); setNotice("");
+  };
+  const markSelection = () => {
+    if (lock.current || !selection || !session) return;
+    if (protectedSpans.length >= 1000 && editingRow === null) { setError("ניתן לסמן עד 1,000 קטעי הסבר."); return; }
+    const remaining = protectedSpans.filter((_, index) => index !== editingRow);
+    if (remaining.some(span => overlaps(span, selection))) { setError("הבחירה חופפת לטקסט הסבר שכבר סומן."); return; }
+    updateProtection([...remaining, selection], selection.noteId);
   };
   const changeRow = (id: number, update: Partial<Row>) => {
     if (lock.current) return;
-    setRows(old => old.map(row => row.id === id ? { ...row, ...update, approved: false,
+    setRows(old => old.map(row => row.id === id ? { ...row, ...update, approved: false, completion: undefined, pastedCitation: undefined,
       ...(blockedNotes.current.has(noteKey(row)) ? { status: "error" as const, requestId: blockedNotes.current.get(noteKey(row))!.requestId, errorMsg: blockedNotes.current.get(noteKey(row))!.message } : {}) } : row));
   };
   const generate = async (onlyId?: number) => {
@@ -132,13 +133,17 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
       setRows(old => old.map(r => r.id === row.id ? { ...r, status: "loading", approved: false } : r));
       blockedNotes.current.set(noteKey(row), { message: "בקשה זו עדיין בטיפול. אין ליצור ניסיון נוסף לפני בירור התוצאה." });
       try {
-        const result = await runCitation({ rawInput: row.input, overrideType: row.sourceTypeOverride,
+        const result = await runCitation({ rawInput: row.input, overrideType: row.classification?.sourceType ?? row.sourceTypeOverride, manualChoice: row.classification?.manualChoice,
           projectId: currentProject?.id, useVerifiedStore: true, isResultCurrent: isCurrent,
           telemetry: sourceTelemetry(batch) });
         if (owner === currentScope.current) blockedNotes.current.delete(noteKey(row));
         if (!isCurrent()) break;
+        if (hasMultipleSourceSignals(citationTextOnly(result.citation))) {
+          setRows(old => old.map(r => r.id === row.id ? {...r,output:null,status:"error",approved:false,errorMsg:"התוצאה עשויה לכלול כמה מקורות. נדרש טיפול נוסף; ההערה תישאר ללא שינוי."} : r));
+          continue;
+        }
         setRows(old => old.map(r => r.id === row.id ? { ...r, output: result.citation,
-          status: result.status, detectedType: result.sourceType, warningMsg: result.warningMsg, errorMsg: undefined, approved: false } : r));
+          completion: result.completion, pastedCitation: result.pastedCitation, status: row.classification?.warning ? "warning" : result.status, detectedType: result.sourceType, warningMsg: [result.warningMsg, row.classification?.warning].filter(Boolean).join(" · ") || undefined, errorMsg: undefined, approved: false } : r));
       } catch (e) {
         const failure = e && typeof e === "object" ? e as { requestId?: string; userMessage?: string } : {};
         const requestId = failure.requestId;
@@ -184,6 +189,7 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
     return text;
   };
   const note = session?.notes[activeNote];
+  const activePlan = note ? planWordFootnote(note, protectedSpans.filter(span => span.noteId === note.id)) : null;
   const noteRows = rows.filter(row => row.noteId === note?.id);
   const readyCount = rows.filter(row => row.input.trim() && (!row.crossesRuns || row.allowFormattingNormalization)
     && !row.output && row.status !== "error" && !blockedNotes.current.has(noteKey(row))).length;
@@ -203,13 +209,13 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
   return <section aria-label="תיקון הערות שוליים במסמך Word" dir="rtl" className="overflow-hidden rounded-2xl border border-border bg-card text-foreground">
     <header className="space-y-2 border-b border-border p-4 sm:p-6">
       <h3 className="text-xl font-bold">תיקון אזכורים במסמך Word</h3>
-      <p className="text-sm leading-6 text-muted-foreground">בחרו מה לבדוק, אשרו את התיקונים והורידו עותק חדש. שאר הטקסט יישאר כפי שהוא.</p>
+      <p className="text-sm leading-6 text-muted-foreground">ההערות מוכנות לבדיקה. סמנו דברי הסבר אם יש, אשרו תיקונים והורידו עותק חדש.</p>
     </header>
     <nav aria-label="שלבי תיקון המסמך" className="border-b border-border bg-muted/30 p-3 sm:px-6">
       <ol className="grid grid-cols-2 gap-2 sm:grid-cols-4">
         {steps.map((label, index) => <li key={label}>
           <button type="button" aria-current={step === index ? "step" : undefined}
-            disabled={busy || (index > 0 && !session) || (index === 2 && !rows.length) || (index === 3 && !approvedCount)}
+            disabled={busy || (index > 0 && !session) || (index === 2 && !session?.notes.length) || (index === 3 && !approvedCount)}
             onClick={() => goToStep(index)} className={`flex min-h-11 w-full items-center gap-2 rounded-lg px-2 py-2 text-right text-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary disabled:opacity-50 ${step === index ? "bg-primary/10 font-semibold text-primary" : "text-muted-foreground"}`}>
             <span aria-hidden="true" className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs ${step === index ? "bg-primary text-primary-foreground" : "border border-border bg-background"}`}>{index + 1}</span>{label}
           </button>
@@ -249,10 +255,10 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
           </div>
         </details>
         {!session.notes.length && <p>לא נמצאו הערות שאפשר לערוך בבטחה. המסמך נשאר ללא שינוי. אפשר לבחור מסמך אחר או להמשיך בהזנה ידנית.</p>}
-        {step === 1 && <p className="text-sm leading-6">סמנו בתוך ההערה אזכור שתרצו לבדוק, ואז הוסיפו אותו לרשימה. <strong>טקסט שלא בחרתם יישאר ללא שינוי.</strong></p>}
+        {step === 1 && <p className="text-sm leading-6">אין חובה לסמן דבר. <strong>בלי סימוני הסבר, כל תוכן ההערה נשלח למנוע האזכור.</strong> אם יש דברי הסבר, סמנו אותם כדי שלא יישלחו ולא ישתנו. הערות שדורשות פיצול בטוח יישארו ללא שינוי.</p>}
         {step === 2 && <div className="space-y-3 rounded-xl bg-primary/5 p-4">
-          <p className="text-sm">נבחרו {rows.length} אזכורים. הבדיקה שולחת רק את האזכורים שבחרתם ומשתמשת במכסת החשבון.</p>
-          <button type="button" className={primaryButton} disabled={busy || !readyCount} onClick={() => void generate()}>{busy ? "הבדיקה מתבצעת…" : readyCount ? `בדוק ${readyCount} אזכורים` : "אין אזכורים נוספים לבדיקה"}</button>
+          <p className="text-sm">מתוכננות עד {readyCount} בקשות לבדיקת הערות. דברי הסבר מוגנים אינם נשלחים. זה אינו מספר המקורות או הבטחה למספר חיובים: המנוע הקיים קובע את פעולות האיתור וההשלמה ואת השימוש במכסת החשבון.</p>
+          <button type="button" className={primaryButton} disabled={busy || !readyCount} onClick={() => void generate()}>{busy ? "הבדיקה מתבצעת…" : readyCount ? `בדוק ${readyCount} הערות` : "אין הערות נוספות לבדיקה"}</button>
           {rows.some(row => row.crossesRuns && !row.allowFormattingNormalization) && <p className="text-sm text-amber-900">חלק מהאזכורים כוללים כמה עיצובים. לפני בדיקתם נדרש אישור שינוי העיצוב בכרטיס האזכור.</p>}
         </div>}
         {step === 3 && <div className="space-y-3 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-emerald-950">
@@ -266,7 +272,7 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
             <label className="min-w-0 flex-1 text-sm font-medium">הערה לבדיקה
               <select aria-label="בחירת הערה" disabled={busy} value={activeNote} onChange={event => goToNote(Number(event.target.value))}
                 className="mt-1 min-h-11 w-full rounded-lg border border-border bg-background px-3 text-base focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary">
-                {session.notes.map((item, index) => <option key={item.id} value={index}>{index + 1} מתוך {session.notes.length} · {rows.filter(row => row.noteId === item.id).length} אזכורים נבחרו</option>)}
+                {session.notes.map((item, index) => <option key={item.id} value={index}>{index + 1} מתוך {session.notes.length} · {rows.some(row => row.noteId === item.id) ? "מועמדת לבדיקה" : "נשארת ללא שינוי"}</option>)}
               </select>
             </label>
             <div className="flex justify-between gap-2 sm:justify-start">
@@ -279,47 +285,46 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
               spans={[...noteRows.map(row => ({ ...row, kind: "citation" as const })), ...protectedSpans.filter(span => span.noteId === note.id).map(span => ({ ...span, kind: "explanation" as const }))]}
               onSelect={(start, end) => selectSpan(note.id, start, end)} />
             <div className="space-y-3 rounded-xl bg-muted/40 p-3">
-              <p className="text-sm" role="status">{editingRow !== null ? "סמנו מחדש את הטקסט של האזכור, ואז שמרו את הבחירה." : "אפשר לבחור כמה אזכורים באותה הערה, אחד בכל פעם."}</p>
+              <p className="text-sm" role="status">{editingRow !== null ? "סמנו מחדש את דברי ההסבר ושמרו." : "סימון הסבר הוא רשות. הטקסט המוגן יישאר במקומו המקורי."}</p>
               {selection?.noteId === note.id && <p className="break-words text-sm"><strong>הקטע שנבחר: </strong>{note.text.slice(selection.start, selection.end)}</p>}
               <div className="flex flex-wrap gap-2">
-                <button type="button" className={primaryButton} disabled={busy || selection?.noteId !== note.id} onClick={() => markSelection("citation", editingRow ?? undefined)}>{editingRow === null ? "הוסף לרשימת הבדיקה" : "שמור את הבחירה החדשה"}</button>
-                {editingRow !== null && <button type="button" className={button} disabled={busy} onClick={() => { setEditingRow(null); setSelection(null); }}>בטל שינוי בחירה</button>}
+                <button type="button" className={primaryButton} disabled={busy || selection?.noteId !== note.id} onClick={markSelection}>{editingRow === null ? "זה טקסט הסבר — לא לשנות" : "שמור סימון הסבר"}</button>
+                {editingRow !== null && <button type="button" className={button} disabled={busy} onClick={() => {setEditingRow(null);setSelection(null);}}>בטל שינוי</button>}
               </div>
-              <details className="text-sm">
-                <summary className="cursor-pointer py-2 focus-visible:outline focus-visible:outline-2">אפשרויות סימון נוספות</summary>
-                <p className="pb-2 text-muted-foreground">הגנת הסבר היא רשות בלבד: היא מונעת בחירה שלו לתיקון גם בהמשך. גם טקסט שלא סומן נשאר ללא שינוי.</p>
-                <div className="flex flex-wrap gap-2">
-                  <button type="button" className={button} disabled={busy || editingRow !== null || selection?.noteId !== note.id} onClick={() => markSelection("explanation")}>הגן על הקטע כהסבר</button>
-                  <button type="button" className={button} disabled={busy} onClick={() => selectSpan(note.id, 0, note.text.length)}>בחר את כל ההערה</button>
-                </div>
-              </details>
             </div>
-            {noteRows.length > 0 && <div className="space-y-2"><h5 className="text-sm font-semibold">נבחרו לבדיקה בהערה זו</h5>{noteRows.map(row => <div key={row.id} className="space-y-3 rounded-lg border border-blue-200 bg-blue-50/40 p-3">
-              <p className="break-words text-sm"><strong>אזכור {row.id}: </strong>{row.originalText.slice(row.start, row.end)}</p>
+            {protectedSpans.map((span,index) => span.noteId === note.id && <div key={`${span.start}:${span.end}`} className="space-y-2 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-950">
+              <p className="break-words">הסבר מוגן: {note.text.slice(span.start,span.end)}</p>
               <div className="flex flex-wrap gap-2">
-                <button type="button" aria-label={`שינוי הבחירה באזכור ${row.id}`} className={button} disabled={busy} onClick={() => { setEditingRow(row.id); setSelection(null); }}>שינוי הבחירה</button>
-                <button type="button" aria-label={`הסר אזכור ${row.id} מהרשימה`} className={button} disabled={busy} onClick={() => { setRows(old => old.filter(item => item.id !== row.id)); setEditingRow(null); setSelection(null); }}>הסר מהרשימה</button>
+                <button type="button" aria-label={`שינוי הסבר ${index+1}`} className={button} disabled={busy} onClick={() => {setEditingRow(index);setSelection(null);}}>שינוי הסימון</button>
+                <button type="button" aria-label={`הסר הגנה ${index+1}`} className={button} disabled={busy} onClick={() => updateProtection(protectedSpans.filter((_,i) => i !== index),note.id)}>הסר הגנה</button>
               </div>
+            </div>)}
+            {noteRows.map(row => <div key={row.id} className="space-y-2">
+              <p className="text-sm font-medium">התוכן שיישלח לבדיקה</p><p className="whitespace-pre-wrap break-words rounded-lg bg-blue-50 p-3 text-sm text-blue-950">{row.input}</p>
               {formattingConsent(row)}
-            </div>)}</div>}
-            {protectedSpans.filter(span => span.noteId === note.id).map(span => <div key={`${span.start}:${span.end}`} className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-950">
-              <p className="min-w-0 flex-1 break-words">הסבר מוגן: {note.text.slice(span.start, span.end)}</p>
-              <button type="button" aria-label={`הסר הגנה מהקטע ${note.text.slice(span.start, span.end)}`} className={button} disabled={busy} onClick={() => setProtectedSpans(old => old.filter(item => item !== span))}>הסר הגנה</button>
             </div>)}
           </>}
+          {activePlan && activePlan.kind !== "candidate" && <div role="status" className="space-y-2 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-950">
+            <p className="font-semibold">{activePlan.kind === "protected" ? "לא נדרש שינוי" : "דורש טיפול נוסף"}</p><p>{activePlan.reason}</p>
+          </div>}
           {blockedNotes.current.has(noteKey({ noteId: note.id, originalText: note.text })) && <div className="space-y-2 rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-950">
             <p>יש בקשה שטרם הושלמה בהערה הזו. לא נשלח אותה שוב אוטומטית. סגירה והעלאה מחדש לא יאפשרו בדיקה נוספת לפני בירור התוצאה.</p>
             <CitationRequestStatusLink requestId={blockedNotes.current.get(noteKey({ noteId: note.id, originalText: note.text }))?.requestId} />
           </div>}
           {step === 2 && <>
-            {!noteRows.length && <p className="text-sm">לא נבחרו אזכורים בהערה זו. אפשר לעבור להערה אחרת או לחזור לבחירת אזכורים.</p>}
+            <p className="text-sm text-muted-foreground">התוצאה היא הצעה לבדיקה ולא אישור לדיוק משפטי. השוו למקור לפני אישור.</p>
             {noteRows.map(row => <div key={row.id} className="space-y-3">
               {formattingConsent(row)}
+              {isForeignSourceType(row.sourceTypeOverride ?? row.detectedType ?? "unknown") && <fieldset disabled={busy}><ForeignSourcePicker transient
+                key={`${row.id}:${row.sourceTypeOverride}`} initialRecord={row.classificationRecord} accountId={user?.id} itemKey={`word:${row.id}`} input={row.input} regenerateDisabled={busy}
+                onChange={({plan,record}) => {
+                  if ((row.classification?.effectiveKey ?? "") !== (plan?.effectiveKey ?? "")) changeRow(row.id,{classification:plan,classificationRecord:record,output:null,status:"empty"});
+                }} /></fieldset>}
               <FootnoteReviewCard cell={row} wordOriginal={row.originalText.slice(row.start, row.end)} disabled={busy}
                 regenerationDisabled={row.status === "error" || blockedNotes.current.has(noteKey(row)) || (row.crossesRuns && !row.allowFormattingNormalization)} hideRemove
-                onInputChange={(id, input) => changeRow(id, { input, output: null, status: "empty" })}
+                onInputChange={() => { /* Input is derived exclusively from unprotected document text. */ }}
                 onOutputChange={(id, output) => changeRow(id, { output })}
-                onSourceTypeChange={(id, sourceTypeOverride) => changeRow(id, { sourceTypeOverride, output: null, status: "empty" })}
+                onSourceTypeChange={(id, sourceTypeOverride) => changeRow(id, { sourceTypeOverride, classification:null, classificationRecord:undefined, output: null, status: "empty" })}
                 onApproveToggle={(id, approved) => { if (!lock.current) setRows(old => old.map(item => item.id === id ? { ...item, approved: (!item.crossesRuns || !!item.allowFormattingNormalization) && !!item.output && item.status !== "error" && approved } : item)); }}
                 onRegenerate={id => { if (rows.find(item => item.id === id)?.status !== "error") void generate(id); }} onRemove={() => {}} />
             </div>)}
@@ -332,7 +337,7 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
         </div>}
         <footer className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-4">
           <button type="button" className={button} disabled={busy} onClick={() => goToStep(step - 1)}>חזרה ל{steps[step - 1]}</button>
-          {step === 1 && <button type="button" className={primaryButton} disabled={busy || !rows.length} onClick={() => goToStep(2)}>המשך לבדיקת {rows.length} אזכורים</button>}
+          {step === 1 && <button type="button" className={primaryButton} disabled={busy || !session.notes.length} onClick={() => goToStep(2)}>המשך לבדיקת ההערות</button>}
           {step === 2 && <button type="button" className={primaryButton} disabled={busy || !approvedCount} onClick={() => goToStep(3)}>המשך להורדה · {approvedCount} אושרו</button>}
         </footer>
       </>}
