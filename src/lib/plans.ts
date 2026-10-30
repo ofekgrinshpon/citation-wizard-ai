@@ -1,4 +1,5 @@
-// Single source of truth for plan metadata (public UX + internal accounting).
+// Existing account plan metadata. New citation-only offers live in citationOffers.ts.
+// Do not relabel or reset existing accounts when introducing a future offer.
 // Backend uses _plan_credits / _plan_window_limit / _plan_reset_mode / _plan_period_length.
 //
 // PRODUCT RULE: `includedUnits` / `windowUnits` are INTERNAL accounting values.
@@ -158,8 +159,8 @@ export const PLANS: Record<PlanId, PlanMeta> = {
   },
 };
 
-/** Plans offered publicly for new purchase, in display order. */
-export const PUBLIC_PLAN_ORDER: PlanId[] = ["trial", "week", "month", "semester"];
+/** Legacy catalogue order; no paid plan here is currently offered for purchase. */
+export const PUBLIC_PLAN_ORDER: PlanId[] = ["trial"];
 
 /** Purchasable usage add-ons ("תוספת שימוש"). Unit values are internal. */
 export const TOPUP_PACKS = [

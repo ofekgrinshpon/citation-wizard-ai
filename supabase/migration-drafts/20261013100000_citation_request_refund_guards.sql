@@ -256,6 +256,7 @@ DECLARE
   use_legacy integer := 0;
   is_admin boolean;
   paid boolean;
+  per_source boolean;
   expired boolean;
   now_ts timestamptz := now();
   win_start timestamptz;
@@ -354,6 +355,19 @@ BEGIN
 
   is_admin := (prof.plan = 'admin') OR private.has_role(_user_id, 'admin'::public.app_role);
   paid := public._plan_is_paid(prof.plan);
+  -- Future versioned citation-only plans: never reinterpret legacy account IDs.
+  -- This draft does NOT install plan helpers, grant paid cycles or enable purchase.
+  per_source := prof.plan IN ('citation_weekly_v1', 'citation_monthly_v1');
+  IF per_source AND (paid IS DISTINCT FROM true OR COALESCE(public._plan_window_limit(prof.plan), 0) <= 0) THEN
+    RETURN jsonb_build_object('ok', false, 'execute', false, 'error', 'PLAN_INTEGRATION_REQUIRED');
+  END IF;
+  -- Only a future authenticated payment-event adapter may set these bounds.
+  -- Missing/future/invalid cycles fail closed. Clock passage never grants units.
+  IF per_source AND (prof.billing_period_started_at IS NULL OR prof.billing_period_ends_at IS NULL
+      OR prof.billing_period_started_at > now_ts
+      OR prof.billing_period_ends_at <= prof.billing_period_started_at) THEN
+    RETURN jsonb_build_object('ok', false, 'execute', false, 'error', 'PAID_CYCLE_REQUIRED');
+  END IF;
   expired := paid AND prof.billing_period_ends_at IS NOT NULL AND prof.billing_period_ends_at <= now_ts;
   win_start := prof.window_started_at;
   win_used := COALESCE(prof.window_units_used, 0);
@@ -366,7 +380,7 @@ BEGIN
 
   -- Batch size is server-owned. A failed/refunded anchor cannot fund new work.
   -- Old owner-created ledger metadata is deliberately not trusted for free slots.
-  IF _batch_id IS NOT NULL THEN
+  IF _batch_id IS NOT NULL AND NOT per_source THEN
     SELECT a.* INTO anchor FROM public.citation_usage_requests a
      WHERE a.user_id = _user_id AND a.batch_id = _batch_id
        AND a.charged_units = 1 AND a.batch_anchor_request_id = a.request_id
@@ -390,7 +404,7 @@ BEGIN
     NULL;
   ELSIF win_avail >= amount AND period_avail >= amount THEN
     use_included := amount;
-  ELSIF paid AND (GREATEST(0, prof.topup_credits_remaining) + GREATEST(0, prof.legacy_bonus_remaining)) >= amount THEN
+  ELSIF paid AND NOT per_source AND (GREATEST(0, prof.topup_credits_remaining) + GREATEST(0, prof.legacy_bonus_remaining)) >= amount THEN
     use_topup := LEAST(GREATEST(0, prof.topup_credits_remaining), amount);
     use_legacy := amount - use_topup;
   ELSE
@@ -401,14 +415,14 @@ BEGIN
     RETURN jsonb_build_object('ok', false, 'execute', false, 'error', 'INSUFFICIENT_CREDITS',
       'block_reason', block, 'required', amount, 'window_reset_at', win_start + interval '5 hours',
       'plan_ends_at', prof.billing_period_ends_at, 'can_use_topup', false,
-      'can_purchase_topup', paid AND NOT expired,
+      'can_purchase_topup', paid AND NOT expired AND NOT per_source,
       'remaining_included', prof.included_credits_remaining, 'remaining_topup', prof.topup_credits_remaining);
   END IF;
 
   INSERT INTO public.citation_usage_requests
     (user_id, request_id, fingerprint, batch_id, retry_of_request_id, batch_anchor_request_id, charged_units, state, attempt_token)
   VALUES (_user_id, _request_id, _fingerprint, _batch_id, _retry_of_request_id,
-    CASE WHEN _batch_id IS NULL THEN NULL WHEN amount = 1 THEN _request_id ELSE anchor.request_id END,
+    CASE WHEN per_source OR _batch_id IS NULL THEN NULL WHEN amount = 1 THEN _request_id ELSE anchor.request_id END,
     amount, 'in_progress', token);
   INSERT INTO public.citation_recovery_payloads(user_id, request_id, input, expires_at)
     SELECT user_id, request_id, _recovery_input, created_at + interval '24 hours'
@@ -433,8 +447,8 @@ BEGIN
     jsonb_build_object('operation_type', 'citation-chat', 'plan', prof.plan,
       'bucket', CASE WHEN use_included > 0 THEN 'included' WHEN use_topup > 0 THEN 'topup'
                     WHEN use_legacy > 0 THEN 'legacy_bonus' ELSE 'none' END,
-      'batch_id', _batch_id, 'group_size', CASE WHEN _batch_id IS NULL THEN NULL ELSE 5 END,
-      'batch_anchor_request_id', CASE WHEN _batch_id IS NULL THEN NULL WHEN amount = 1 THEN _request_id ELSE anchor.request_id END,
+      'batch_id', _batch_id, 'group_size', CASE WHEN per_source THEN 1 WHEN _batch_id IS NULL THEN NULL ELSE 5 END,
+      'batch_anchor_request_id', CASE WHEN per_source OR _batch_id IS NULL THEN NULL WHEN amount = 1 THEN _request_id ELSE anchor.request_id END,
       'window_started_at', win_start, 'window_units_used_after', prof.window_units_used,
       'billing_period_started_at', prof.billing_period_started_at));
 

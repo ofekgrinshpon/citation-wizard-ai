@@ -9,6 +9,25 @@ this replacement over previously installed signatures would leave unsafe or
 ambiguous overloads and is unsupported; any real catalog transition requires a
 separately reviewed migration. Frozen revision-1/2/3 packets remain untouched.
 
+## Citation-only offer adaptation (2026-10-30, still unexecuted)
+
+The selected future offers are `citation_weekly_v1` (ILS 39, 100 source units per
+weekly paid cycle) and `citation_monthly_v1` (ILS 65, 250 source units per calendar
+month paid cycle). They are **not** aliases for existing `week`/`month` profiles.
+See [the integration boundary](README.citation-only-offers.md).
+
+The five-item grouping described below is retained for legacy plans only. New
+versioned plans skip anchor lookup, retain batch ID solely for execution binding,
+write a null billing anchor and group_size=1, and settle each paid source request
+through the existing independent refund path. They cannot spend legacy top-ups.
+No new refund/retry mechanism is introduced. New-plan claims fail closed while
+plan helpers are unconfigured or paid-cycle bounds are missing/invalid/future.
+Existing identity replay precedes these checks so recovery remains read-only.
+
+This does not create subscriptions, install plan IDs, grant entitlements, set a
+short-window policy, or validate a payment event. Old SQL fixtures and source
+checks do not prove concurrency or payment-cycle behavior for the new plans.
+
 ## V1 delegation removed from new execution; deployment still required
 
 This candidate replaces the V1 execution entrypoint with a static HTTP 410

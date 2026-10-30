@@ -63,12 +63,24 @@ describe("usage SQL review draft (static checks, no database)", () => {
     expect(begin).toContain("'INSUFFICIENT_CREDITS'");
     expect(begin).toContain("win_avail >= amount AND period_avail >= amount");
   });
-  it("fixes batch size at five and excludes old user-created batch metadata", () => {
+  it("preserves legacy batch size at five and excludes old user-created batch metadata", () => {
     expect(begin).not.toContain("_group_size");
     expect(begin).toContain("member.batch_anchor_request_id = a.request_id) < 5");
     expect(begin).toContain("a.state <> 'failed'");
     expect(begin).toContain("paid_anchor.amount < 0");
     expect(begin).not.toContain("metadata->>'batch_id'");
+  });
+  it("isolates future per-source charges from legacy batch refunds without activating plans", () => {
+    expect(begin).toContain("per_source := prof.plan IN ('citation_weekly_v1', 'citation_monthly_v1')");
+    expect(begin).toContain("IF _batch_id IS NOT NULL AND NOT per_source THEN");
+    expect(begin.match(/CASE WHEN per_source OR _batch_id IS NULL THEN NULL WHEN amount = 1 THEN _request_id ELSE anchor.request_id END/g)).toHaveLength(2);
+    expect(begin).toContain("'group_size', CASE WHEN per_source THEN 1 WHEN _batch_id IS NULL THEN NULL ELSE 5 END");
+    expect(begin).toContain("ELSIF paid AND NOT per_source AND");
+    expect(begin).toContain("PLAN_INTEGRATION_REQUIRED");
+    expect(begin).toContain("PAID_CYCLE_REQUIRED");
+    for (const guard of ['prof.billing_period_started_at IS NULL', 'prof.billing_period_ends_at IS NULL', 'prof.billing_period_started_at > now_ts', 'prof.billing_period_ends_at <= prof.billing_period_started_at']) expect(begin).toContain(guard);
+    expect(begin.indexOf("'replayed', true")).toBeLessThan(begin.indexOf('PLAN_INTEGRATION_REQUIRED'));
+    expect(begin).not.toMatch(/interval '30 days'|included_credits_remaining\s*=\s*(100|250)/);
   });
   it("never lets owner reason mint a new refund", () => {
     const owner = body("refund_credits");
