@@ -1,7 +1,7 @@
 import { ForeignSourcePicker } from "./ForeignSourcePicker";
 import { isForeignSourceType } from "@/data/bluebook/types";
 import type { GenerationPlan, ClassificationRecord } from "@/lib/foreignClassification";
-import { planWordFootnote, hasMultipleSourceSignals } from "@/lib/wordFootnotePlan";
+import { planWordFootnote, hasMultipleSourceSignals, isUnboundRepeatReference } from "@/lib/wordFootnotePlan";
 import { CitationRequestStatusLink } from "./CitationRequestStatusLink";
 import { WordNoteSelection } from "./WordNoteSelection";
 import { useEffect, useRef, useState } from "react";
@@ -138,8 +138,8 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
           telemetry: sourceTelemetry(batch) });
         if (owner === currentScope.current) blockedNotes.current.delete(noteKey(row));
         if (!isCurrent()) break;
-        if (hasMultipleSourceSignals(citationTextOnly(result.citation))) {
-          setRows(old => old.map(r => r.id === row.id ? {...r,output:null,status:"error",approved:false,errorMsg:"התוצאה עשויה לכלול כמה מקורות. נדרש טיפול נוסף; ההערה תישאר ללא שינוי."} : r));
+        if (hasMultipleSourceSignals(citationTextOnly(result.citation)) || isUnboundRepeatReference(citationTextOnly(result.citation))) {
+          setRows(old => old.map(r => r.id === row.id ? {...r,output:null,status:"error",approved:false,errorMsg:"התוצאה עשויה לכלול כמה מקורות או הפניה למקור קודם שלא קושר. נדרש טיפול נוסף; ההערה תישאר ללא שינוי."} : r));
           continue;
         }
         setRows(old => old.map(r => r.id === row.id ? { ...r, output: result.citation,

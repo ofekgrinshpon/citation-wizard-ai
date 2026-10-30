@@ -15,6 +15,13 @@ export function hasMultipleSourceSignals(text: string): boolean {
     || (text.match(/\b\d{1,7}[-/]\d{2,4}(?:[-/]\d{2,4})?\b/g)?.length ?? 0) > 1
     || /(?:ראו גם|וכן ראו|להשוואה ראו|see also|but see|accord)\s/iu.test(text);
 }
+/** The runner has no document antecedent/numbering contract. Never resolve
+ * an existing short reference using neighbouring text or a guessed source key.
+ */
+export function isUnboundRepeatReference(text: string): boolean {
+  return /^(?:שם(?:[.,\s]|$)|ibid\b|ibidem\b|id\.)/iu.test(text.trim())
+    || /לעיל\s+(?:ה["״׳']?ש|הערה)|\b(?:supra|infra)\s+(?:note|n\.)/iu.test(text);
+}
 export function planWordFootnote(note: DocxFootnote, protectedSpans: readonly ExplanationSpan[]): WordFootnotePlan {
   const spans = [...protectedSpans].sort((a,b) => a.start-b.start);
   let cursor = 0;
@@ -37,6 +44,7 @@ export function planWordFootnote(note: DocxFootnote, protectedSpans: readonly Ex
   if (meaningful.length !== 1) return {kind:"unresolved",reason:"נותרו כמה קטעים נפרדים סביב ההסברים. המנוע מחזיר אזכור אחד ואינו ממפה כמה מקורות למקומם במסמך. ההערה לא תישלח ותישאר ללא שינוי."};
   const gap = meaningful[0];
   const content = note.text.slice(gap.start,gap.end);
+  if (isUnboundRepeatReference(content)) return {kind:"unresolved",reason:"זו הפניה למקור קודם. אין עדיין קישור מאומת בין ההפניה למקור ולמספור שלו במסמך; ההערה לא תישלח ותישאר ללא שינוי."};
   if (hasMultipleSourceSignals(content)) return {kind:"unresolved",reason:"ייתכן שיש כאן כמה מקורות או פסקאות. עדיין אין מיפוי בטוח של כמה תוצאות למקומן בהערה; ההערה לא תישלח ותישאר ללא שינוי."};
   const ranges = note.editableRanges.filter(range => range.end > gap.start && range.start < gap.end);
   if (!ranges.length || gap.start < ranges[0].start || gap.end > ranges[ranges.length-1].end || ranges.some((range,i) => i > 0 && range.start !== ranges[i-1].end))

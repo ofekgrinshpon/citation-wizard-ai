@@ -41,4 +41,19 @@ describe("automatic Word candidate planning",()=>{
   }
   expect(new Uint8Array(original)).toEqual(copy);
  });
+ it.each(['שם.', "שם, בעמ׳ 12", 'Ibid. at 12', 'Id. at 14', 'Author, supra note 3', 'מחבר, לעיל ה״ש 3'])('preserves an unbound reference without guessing an antecedent: %s',(text)=>{
+  expect(planWordFootnote(note(text),[])).toMatchObject({kind:'unresolved',reason:expect.stringContaining('מקור קודם')});
+ });
+ it.each([
+  ['Author (2020); explanation','Author (2020); '],
+  ['explanation; Author (2020)','; Author (2020)'],
+ ])('accepts one contiguous candidate on either side of protected explanation',(text,input)=>{
+  const start=text.indexOf('explanation');
+  const result=planWordFootnote(note(text),[{start,end:start+'explanation'.length}]);
+  expect(result).toMatchObject({kind:'candidate',input});
+  if(result.kind!=='candidate') throw Error();
+  expect(text.slice(result.start,result.end)).toBe('Author (2020)');
+ });
+
+
 });

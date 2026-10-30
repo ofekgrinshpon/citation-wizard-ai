@@ -72,4 +72,11 @@ describe('Word default engine flow',()=>{
   expect(mocks.run.mock.calls[0][0].rawInput).toBe('Author, Title (2020)');expect(localStorage.length).toBe(0);
  });
 
+ it('does not submit existing unbound repeated citations or approve newly returned ones',async()=>{
+  mocks.inspect.mockResolvedValueOnce({notes:[note('שם, בעמ׳ 12.')],skippedNotes:[]});
+  render(<WordFootnoteWorkflow/>);await upload();expect(screen.getByText(/אין עדיין קישור מאומת/)).toBeInTheDocument();review();expect(mocks.run).not.toHaveBeenCalled();
+  fireEvent.click(screen.getByRole('button',{name:'סגירה וניקוי'}));await upload();review();mocks.run.mockResolvedValue({citation:'Ibid.',status:'valid',sourceType:'book'});generate();
+  await screen.findByText(/הפניה למקור קודם שלא קושר/);expect(screen.getByRole('button',{name:'אשר תיקון לאזכור 1'})).toBeDisabled();
+ });
+
 });
