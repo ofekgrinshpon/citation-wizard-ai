@@ -55,11 +55,17 @@ replay-first handling, terminal-state checks and period-bound refund logic remai
    provider event/cycle constraints and audit receipt. A duplicate paid event
    must not refill quota; a distinct event for the same cycle must not refill it
    either. Stale/overlapping periods and uncertain payment state must not grant.
-3. Cancellation lifecycle: confirmed cancellation stops future renewals without
-   erasing the already-paid period; no later grant absent another authoritative
-   payment. Define cancel-vs-paid-event ordering, immediate cancellation/refund,
-   chargebacks, failed renewal, proration and plan switches with the provider.
-   There is deliberately no fake client cancellation or working webhook here.
+3. Cancellation lifecycle: distinguish stopping automatic renewal from withdrawal,
+   termination and refund rights. Do not assume all cancellations take effect at
+   the paid-period end or that paid access must always remain until then. The
+   future adapter must accept authoritative effective-end and refund events,
+   including an earlier end when applicable, and apply them atomically with audit
+   receipts. No new grant follows merely from elapsed time. Define event ordering,
+   immediate termination/refund, chargebacks, failed renewal, proration and plan
+   switches with the provider and approved policy. Do not reuse the existing
+   seven-day discretionary refund wording as approved policy. Operator identity,
+   VAT treatment and final cancellation/refund policy remain unresolved.
+   There is deliberately no client cancellation action or working webhook here.
 4. New profile-plan constraints and helper support, separate paid-event-only
    reset mode, and review of existing clock-driven `reset_or_renew_credits`.
    Never alias these offers to `billing_period`/`calendar_month`: legacy reset
