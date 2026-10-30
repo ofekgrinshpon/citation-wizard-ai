@@ -952,7 +952,7 @@ export function BatchFootnoteBuilder({}: BatchProps) {
             <span className="text-lg">🏛</span>
             <div>
               <p className="font-semibold text-primary text-xs mb-0.5">
-                העוזר המשפטי האוטומטי
+                אזכורים והערות שוליים
               </p>
               <p className="text-foreground/80">{summary}</p>
             </div>

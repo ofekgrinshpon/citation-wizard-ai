@@ -1,3 +1,4 @@
+import { GuideIllustration } from "@/components/guide/GuideIllustration";
 import { useRef, useEffect, useState, type RefObject } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
@@ -7,13 +8,11 @@ import { GeometricBackground } from "@/components/GeometricBackground";
 import { ContactSection } from "@/components/ContactSection";
 
 import { ChevronDown } from "lucide-react";
-import { CitationPlanOffers } from "@/components/CitationPlanOffers";
-import howItWorksVideo from "@/assets/guide/ReLex_How_It_Works.mp4.asset.json";
-import howItWorksPoster from "@/assets/guide/poster.jpg.asset.json";
+import { LaunchPricing } from "@/components/launch/LaunchPricing";
+import { WordLaunchGuide } from "@/components/launch/WordLaunchGuide";
 import guideCitationImg from "@/assets/guide/citation.jpg.asset.json";
 import guideFootnotesImg from "@/assets/guide/footnotes.jpg.asset.json";
 import guideBibliographyImg from "@/assets/guide/bibliography.jpg.asset.json";
-import guideAssistantImg from "@/assets/guide/assistant.jpg.asset.json";
 
 function useInView(ref: RefObject<HTMLElement | null>, threshold = 0.15) {
   const [visible, setVisible] = useState(false);
@@ -37,23 +36,15 @@ type Capability = {
 
 const capabilities: Capability[] = [
   {
-    title: "העוזר המשפטי",
-    description:
-      "שאלה משפטית בשפה שלכם — תשובה עם הפניות למקורות, והמשך שיחה באותו נושא.",
-    image: guideAssistantImg.url,
-    highlight: true,
-    chips: ["שאלה חופשית", "הפניות למקורות", "המשך שיחה"],
-  },
-  {
     title: "אזכור אחיד",
     description:
-      "מפרטי מקור לאזכור מסודר — לפי כללי האזכור האחיד וה־Bluebook.",
+      "מפרטי מקור לאזכור מסודר לפי כללי האזכור האחיד. תמיכה באנגלית וב־Bluebook בתבניות נתמכות.",
     image: guideCitationImg.url,
   },
   {
     title: "הערות שוליים",
     description:
-      "המקורות שלכם, לפי סדר ההופעה — כולל כללי האזכור החוזר.",
+      "המקורות שלכם, לפי סדר ההופעה — עם אזכור חוזר במקרים נתמכים ובדיקה לפני השימוש.",
     image: guideFootnotesImg.url,
   },
   {
@@ -78,14 +69,7 @@ function CapabilityCard({ cap, index }: { cap: Capability; index: number }) {
       } ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
     >
     
-      <div className="overflow-hidden rounded-xl border border-border bg-muted/40 mb-4">
-        <img
-          src={cap.image}
-          alt={cap.title}
-          className="w-full h-auto object-cover object-top max-h-64 transition-transform duration-500 group-hover:scale-[1.02]"
-          loading="lazy"
-        />
-      </div>
+      <div className="mb-4"><GuideIllustration src={cap.image} alt={cap.title} label={cap.title} /></div>
       <h3 className="text-lg md:text-xl font-bold text-foreground mb-2">
         {cap.title}
       </h3>
@@ -115,6 +99,7 @@ const Landing = () => {
   const howRef = useRef<HTMLDivElement>(null);
   const pricingRef = useRef<HTMLDivElement>(null);
   const contactRef = useRef<HTMLDivElement>(null);
+
 
 
   if (authLoading) {
@@ -160,7 +145,7 @@ const Landing = () => {
           background: "var(--gradient-primary)",
         }}
       >
-        <nav className="w-full h-14 md:h-16 pr-1 md:pr-2 pl-3 md:pl-4 flex items-center gap-2 md:gap-3">
+        <nav className="w-full min-h-14 md:h-16 flex-wrap py-2 md:py-0 pr-1 md:pr-2 pl-3 md:pl-4 flex items-center gap-2 md:gap-3">
           {/* Logo (RTL start, hugs the right edge) */}
           <button
             onClick={scrollToTop}
@@ -174,19 +159,19 @@ const Landing = () => {
           <div className="flex items-center gap-1 md:gap-2">
             <button
               onClick={scrollToHow}
-              className="px-3 md:px-4 py-2 rounded-lg text-xs md:text-sm font-medium text-white/90 hover:text-white hover:bg-white/15 transition-colors"
+              className="px-2 md:px-4 py-2 rounded-lg text-xs md:text-sm font-medium text-white/90 hover:text-white hover:bg-white/15 transition-colors"
             >
               איך זה עובד
             </button>
             <button
               onClick={scrollToPricing}
-              className="px-3 md:px-4 py-2 rounded-lg text-xs md:text-sm font-medium text-white/90 hover:text-white hover:bg-white/15 transition-colors"
+              className="px-2 md:px-4 py-2 rounded-lg text-xs md:text-sm font-medium text-white/90 hover:text-white hover:bg-white/15 transition-colors"
             >
               כמה זה עולה
             </button>
             <button
               onClick={scrollToContact}
-              className="px-3 md:px-4 py-2 rounded-lg text-xs md:text-sm font-medium text-white/90 hover:text-white hover:bg-white/15 transition-colors"
+              className="px-2 md:px-4 py-2 rounded-lg text-xs md:text-sm font-medium text-white/90 hover:text-white hover:bg-white/15 transition-colors"
             >
               יצירת קשר
             </button>
@@ -223,7 +208,7 @@ const Landing = () => {
             <ReLexLogo size={80} />
           </div>
           <p className="text-xl md:text-2xl text-muted-foreground font-medium">
-            העוזר המשפטי האוטומטי שלך
+            אזכורים מסודרים. יותר זמן לכתיבה.
           </p>
           <div className="flex items-center justify-center gap-4 text-xs text-muted-foreground">
             <span className="flex items-center gap-1">⚖️ פסיקה</span>
@@ -238,7 +223,7 @@ const Landing = () => {
               className="landing-cta-btn w-full max-w-xs mx-auto block py-3 rounded-xl font-bold text-sm text-primary-foreground"
               style={{ background: "var(--gradient-primary)" }}
             >
-              התחילו!
+              ליצירת חשבון
             </button>
             <div className="flex items-center justify-center gap-3 text-sm">
               <button
@@ -272,31 +257,21 @@ const Landing = () => {
       <section ref={howRef} className="py-16 px-4 max-w-6xl mx-auto relative z-10">
         <div className="text-center mb-12 space-y-3">
           <h2 className="text-2xl md:text-3xl font-bold text-foreground">
-            כל הדרכים לעבוד עם ReLex
+            מהמקור ועד רשימת המקורות
           </h2>
           <p className="text-muted-foreground text-sm md:text-base max-w-2xl mx-auto">
-            ממחקר משפטי ועד אזכור אחיד, הערות שוליים וביבליוגרפיה — הכל במקום אחד.
+            אזכור אחיד, הערות שוליים וביבליוגרפיה — עם בדיקה שלכם לפני השילוב בעבודה.
           </p>
         </div>
 
-        <div className="mb-12 flex justify-center">
-          <video
-            src={howItWorksVideo.url}
-            controls
-            playsInline
-            preload="metadata"
-            poster={howItWorksPoster.url}
-            className="w-full max-w-4xl rounded-2xl border border-border/60 shadow-xl bg-background"
-            aria-label="סרטון הסבר: איך ReLex עובד"
-          />
-        </div>
-
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {capabilities.map((cap, i) => (
             <CapabilityCard key={cap.title} cap={cap} index={i} />
           ))}
         </div>
+
+        <div className="mt-8"><WordLaunchGuide /></div>
+        <p className="text-center text-sm text-muted-foreground mt-6">התוצאות דורשות בדיקה מול המקורות. אין תמיכה בכל סוג מקור או בכל עיצוב Word.</p>
 
         <div className="text-center mt-16">
           <button
@@ -309,10 +284,18 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Citation-only future offers; no checkout activation. */}
-      <section ref={pricingRef} className="py-16 px-4 max-w-4xl mx-auto relative z-10">
-        <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">מסלולי אזכורים</h2>
-        <CitationPlanOffers />
+      {/* Pricing Section */}
+      <section ref={pricingRef} className="py-16 px-4 max-w-6xl mx-auto relative z-10">
+        <div className="text-center mb-12 space-y-3">
+          <h2 className="text-2xl md:text-3xl font-bold text-foreground">
+            תוכנית שמתאימה לקצב הכתיבה שלך
+          </h2>
+          <p className="text-muted-foreground text-sm md:text-base max-w-2xl mx-auto">
+            שני מסלולים מתוכננים להשקה: שבועי וחודשי, עם מכסת מקורות לכל מחזור חיוב.
+          </p>
+        </div>
+
+        <LaunchPricing />
       </section>
 
       {/* Contact Section */}

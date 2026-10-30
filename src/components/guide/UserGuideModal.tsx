@@ -1,17 +1,15 @@
+import { GuideIllustration } from "@/components/guide/GuideIllustration";
+import { WordLaunchGuide } from "@/components/launch/WordLaunchGuide";
 import { useRef, useState, type KeyboardEvent } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { Play, Maximize2, Clock, Quote, FileText, BookOpen, MessageSquare } from "lucide-react";
-import videoAsset from "@/assets/guide/ReLex_How_It_Works.mp4.asset.json";
-import posterAsset from "@/assets/guide/poster.jpg.asset.json";
+import { Quote, FileText, BookOpen } from "lucide-react";
 import citationImg from "@/assets/guide/citation.jpg.asset.json";
 import footnotesImg from "@/assets/guide/footnotes.jpg.asset.json";
 import bibliographyImg from "@/assets/guide/bibliography.jpg.asset.json";
-import assistantImg from "@/assets/guide/assistant.jpg.asset.json";
 
 type Tool = {
   id: string;
   label: string;
-  time: number;
   title: string;
   benefit: string;
   steps: [string, string][];
@@ -23,9 +21,9 @@ type Tool = {
 
 const TOOLS: Tool[] = [
   {
-    id: "citation", label: "אזכור אחיד", time: 3, Icon: Quote,
+    id: "citation", label: "אזכור אחיד", Icon: Quote,
     title: "מפרטי מקור לאזכור מסודר",
-    benefit: "אזכורים לפי כללי האזכור האחיד וה־Bluebook.",
+    benefit: "אזכורים לפי כללי האזכור האחיד, ובאנגלית לפי תבניות Bluebook נתמכות.",
     steps: [
       ["מזינים את המקור", "כותבים או מדביקים פרטי פסיקה, חקיקה או ספרות."],
       ["שולחים לעיבוד", "המערכת מזהה את סוג המקור ומעצבת את האזכור."],
@@ -36,9 +34,9 @@ const TOOLS: Tool[] = [
     caption: "הקלדה חופשית של פרטי המקור → אזכור מעוצב",
   },
   {
-    id: "footnotes", label: "הערות שוליים", time: 18, Icon: FileText,
+    id: "footnotes", label: "הערות שוליים", Icon: FileText,
     title: "המקורות שלכם, לפי סדר ההופעה",
-    benefit: "בניית הערות שוליים עם כללי האזכור החוזר.",
+    benefit: "בניית הערות שוליים ואזכור חוזר במקרים נתמכים. כשאין ודאות, נשמר אזכור מלא.",
     steps: [
       ["מזינים לפי הסדר", "מוסיפים כל מקור בשורה נפרדת, לפי סדר ההופעה בעבודה."],
       ["בונים טיוטות", "לוחצים על ״בנה טיוטות לבדיקה״. אפשר להוסיף מקורות נוספים."],
@@ -49,7 +47,7 @@ const TOOLS: Tool[] = [
     caption: "מזינים את המקורות בסדר שבו יופיעו בעבודה",
   },
   {
-    id: "bibliography", label: "ביבליוגרפיה", time: 29, Icon: BookOpen,
+    id: "bibliography", label: "ביבליוגרפיה", Icon: BookOpen,
     title: "מרשימת מקורות לביבליוגרפיה",
     benefit: "מיון לפי קטגוריות וסדר אלפביתי, בעברית ובאנגלית.",
     steps: [
@@ -61,43 +59,20 @@ const TOOLS: Tool[] = [
     alt: "מסך הביבליוגרפיה: תיבת רשימת המקורות ושלושת שלבי ההדבקה, הבדיקה והביבליוגרפיה.",
     caption: "רשימה אחת, כל מקור בשורה נפרדת",
   },
-  {
-    id: "assistant", label: "העוזר המשפטי", time: 38, Icon: MessageSquare,
-    title: "שאלה משפטית בשפה שלכם",
-    benefit: "תשובה עם הפניות למקורות, והמשך שיחה באותו נושא.",
-    steps: [
-      ["שואלים שאלה", "מתארים את הסוגיה ואת ההקשר המשפטי שרוצים לברר."],
-      ["קוראים את התשובה", "עוברים על ההסבר ועל ההפניות המצורפות."],
-      ["מעמיקים במקורות", "פותחים את הקישורים, בודקים את המקורות וממשיכים בשאלת המשך."],
-    ],
-    image: assistantImg.url,
-    alt: "קטע מתשובת העוזר המשפטי ב־ReLex, הכולל הסבר והפניות למקורות.",
-    caption: "שאלה חופשית → תשובה עם הפניות למקורות",
-  },
+
 ];
 
-const fmt = (s: number) => `0:${String(Math.floor(s)).padStart(2, "0")}`;
 
 export function UserGuideModal({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
   const [active, setActive] = useState(0);
   const [zoomed, setZoomed] = useState<Tool | null>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
   const handleOpenChange = (next: boolean) => {
     if (!next) {
-      videoRef.current?.pause();
       setZoomed(null);
     }
     onOpenChange(next);
-  };
-
-  const playChapter = (t: number) => {
-    const v = videoRef.current;
-    if (!v) return;
-    v.currentTime = t;
-    v.scrollIntoView({ behavior: "smooth", block: "nearest" });
-    void v.play().catch(() => {});
   };
 
   const onTabKey = (e: KeyboardEvent<HTMLDivElement>) => {
@@ -130,41 +105,18 @@ export function UserGuideModal({ open, onOpenChange }: { open: boolean; onOpenCh
               <DialogTitle className="text-2xl sm:text-3xl font-bold text-foreground" style={{ fontFamily: "inherit" }}>
                 איך ReLex עובד?
               </DialogTitle>
-              <DialogDescription className="text-sm text-muted-foreground">סרטון קצר וארבע דרכים להתחיל.</DialogDescription>
+              <DialogDescription className="text-sm text-muted-foreground">אזכורים, הערות שוליים וביבליוגרפיה — צעד אחר צעד.</DialogDescription>
             </div>
             <div className="hidden sm:block text-2xl font-bold tracking-tight text-primary" dir="ltr" aria-hidden="true">
               Re<span className="text-secondary">Lex</span>
             </div>
           </DialogHeader>
 
-          <section aria-label="סרטון הסבר על ReLex" className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
-            <video
-              ref={videoRef}
-              src={videoAsset.url}
-              poster={posterAsset.url}
-              controls
-              muted
-              playsInline
-              preload="metadata"
-              aria-label="איך ReLex עובד — סרטון הדגמה"
-              className="block w-full aspect-video bg-muted object-contain"
-            />
-            <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-2.5 text-xs text-muted-foreground border-t border-border">
-              <span className="flex items-center gap-1.5">
-                <Clock className="h-3.5 w-3.5 text-secondary" aria-hidden="true" />
-                <strong className="text-foreground font-semibold">היכרות קצרה עם ReLex</strong>
-                <span aria-hidden="true">·</span>
-                <bdi>0:58</bdi>
-              </span>
-              <span>אפשר לקפוץ להדגמה של כל כלי</span>
-            </div>
-          </section>
-
           <section aria-labelledby="guide-tools-heading" className="space-y-3">
             <h3 id="guide-tools-heading" className="text-sm font-semibold text-muted-foreground" style={{ fontFamily: "inherit" }}>
               מה תרצו לעשות?
             </h3>
-            <div role="tablist" aria-label="כלי ReLex" onKeyDown={onTabKey} className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            <div role="tablist" aria-label="כלי ReLex" onKeyDown={onTabKey} className="grid grid-cols-2 sm:grid-cols-3 gap-2">
               {TOOLS.map((t, i) => {
                 const sel = i === active;
                 return (
@@ -213,35 +165,17 @@ export function UserGuideModal({ open, onOpenChange }: { open: boolean; onOpenCh
                       </li>
                     ))}
                   </ol>
-                  <button
-                    onClick={() => playChapter(tool.time)}
-                    aria-label={`לצפייה בהדגמת ${tool.label} בסרטון, מדקה ${fmt(tool.time)}`}
-                    className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-primary-foreground shadow-sm transition hover:brightness-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                    style={{ background: "var(--gradient-primary)" }}
-                  >
-                    <Play className="h-3.5 w-3.5 fill-current" aria-hidden="true" />
-                    <span>לצפייה בהדגמה</span>
-                    <time className="opacity-80 text-xs" dir="ltr">{fmt(tool.time)}</time>
-                  </button>
+
                 </div>
 
                 <figure className="space-y-2">
-                  <button
-                    onClick={() => setZoomed(tool)}
-                    aria-label={`להגדלת צילום המסך: ${tool.label}`}
-                    className="group relative block w-full overflow-hidden rounded-xl border border-border bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                  >
-                    <img src={tool.image} alt={tool.alt} loading="lazy" className="block w-full h-auto max-h-64 object-cover object-top" />
-                    <span className="absolute bottom-2 left-2 inline-flex items-center gap-1 rounded-full bg-card/95 px-2.5 py-1 text-xs font-medium text-foreground shadow-sm border border-border">
-                      <Maximize2 className="h-3 w-3" aria-hidden="true" />
-                      הגדלה
-                    </span>
-                  </button>
+                  <GuideIllustration key={tool.id} src={tool.image} alt={tool.alt} label={tool.label} onZoom={() => setZoomed(tool)} />
                   <figcaption className="text-xs text-muted-foreground">{tool.caption}</figcaption>
                 </figure>
               </div>
             </div>
           </section>
+          <WordLaunchGuide />
         </DialogContent>
       </Dialog>
 

@@ -28,9 +28,11 @@ describe('selected citation-only offers, before payment activation', () => {
     for(const button of screen.getAllByRole('button')) { expect(button).toBeDisabled(); fireEvent.click(button); }
     expect(screen.queryByRole('link')).not.toBeInTheDocument();
   });
-  it('both public offer surfaces use the same disabled component, leaving account metadata separate',()=>{
-    for(const path of ['src/pages/Profile.tsx','src/pages/Landing.tsx']) {
-      const source=readFileSync(path,'utf8');expect(source).toContain('<CitationPlanOffers />');expect(source).not.toContain('PRICING_PLANS');
+  it('both offer presentations consume the canonical catalogue, leaving account metadata separate',()=>{
+    expect(readFileSync('src/pages/Profile.tsx','utf8')).toContain('<CitationPlanOffers />');
+    expect(readFileSync('src/pages/Landing.tsx','utf8')).toContain('<LaunchPricing />');
+    for(const path of ['src/components/CitationPlanOffers.tsx','src/components/launch/LaunchPricing.tsx']) {
+      const source=readFileSync(path,'utf8');expect(source).toContain('CITATION_OFFERS');expect(source).not.toContain('PLANS[');
     }
   });
 });

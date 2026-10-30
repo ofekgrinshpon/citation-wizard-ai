@@ -114,7 +114,7 @@ export function SourcesEmptyState({
           className="inline-flex items-center gap-1.5 rounded-xl border border-border px-4 py-2.5 text-sm text-foreground hover:bg-muted transition-colors"
         >
           <PlayCircle className="w-4 h-4 text-primary" />
-          איך ReLex עובד? (25 שניות)
+          איך ReLex עובד?
           {!seen && (
             <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-primary" />
           )}
