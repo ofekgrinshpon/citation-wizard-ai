@@ -30,6 +30,7 @@ interface Props {
   onRegenerate: (id: number) => void;
   onRemove: (id: number) => void;
   disabled?: boolean;
+  regenerationDisabled?: boolean;
   /** Available only for an explicit retry of a server-confirmed failed request. */
   newAttempt?: { disclosure: string; onRetry: () => void };
   /** Optional per-card copy action (used by the V2 אזכור אחיד review layer). */
@@ -102,6 +103,7 @@ export function FootnoteReviewCard({
   onRegenerate,
   onRemove,
   disabled,
+  regenerationDisabled,
   newAttempt,
   onCopy,
   originLabel,
@@ -248,7 +250,7 @@ export function FootnoteReviewCard({
 
       {foreignScope && isForeignSourceType(activeType) && (
         <ForeignSourcePicker accountId={foreignScope.accountId} itemKey={foreignScope.itemKey} input={cell.input}
-          onRegenerate={() => onRegenerate(cell.id)} regenerateDisabled={disabled || isLoading || !cell.input.trim()} />
+          onRegenerate={() => onRegenerate(cell.id)} regenerateDisabled={disabled || regenerationDisabled || isLoading || !cell.input.trim()} />
       )}
 
       {/* Output */}
@@ -272,7 +274,7 @@ export function FootnoteReviewCard({
             </div>}
             <button
               onClick={() => onRegenerate(cell.id)}
-              disabled={disabled || !cell.input.trim()}
+              disabled={disabled || regenerationDisabled || !cell.input.trim()}
               className="text-[11px] px-2.5 py-1 rounded-md bg-destructive/10 text-destructive hover:bg-destructive/20 disabled:opacity-40 font-medium transition-colors"
             >
               🔄 נסה שוב
@@ -310,7 +312,7 @@ export function FootnoteReviewCard({
       <div className="flex items-center gap-2 flex-wrap">
         <button
           onClick={() => onRegenerate(cell.id)}
-          disabled={disabled || isLoading || !cell.input.trim()}
+          disabled={disabled || regenerationDisabled || isLoading || !cell.input.trim()}
           className="text-[11px] px-2.5 py-1 rounded-md bg-secondary/15 text-secondary hover:bg-secondary/25 disabled:opacity-40 font-medium transition-colors"
         >
           🔄 הפק מחדש

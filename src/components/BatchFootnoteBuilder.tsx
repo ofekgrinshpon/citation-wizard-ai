@@ -1,3 +1,4 @@
+import { WordFootnoteWorkflow } from "./WordFootnoteWorkflow";
 import { newTelemetryBatch, sourceTelemetry, type CostTelemetry } from "@/lib/costTelemetry";
 import { planForItem, recordGeneration } from "@/lib/foreignClassificationStore";
 import type { GenerationPlan } from "@/lib/foreignClassification";
@@ -103,6 +104,8 @@ function loadPhase(projectId: string | undefined): Phase {
 
 
 export function BatchFootnoteBuilder({}: BatchProps) {
+  const [wordMode, setWordMode] = useState(false);
+  const [wordBusy, setWordBusy] = useState(false);
   const { user, isAdmin, isAdminResolved } = useAuth();
   const { currentProject } = useProjects();
   const { isOfficeAddin, hasDocumentAccess } = useOffice();
@@ -636,7 +639,7 @@ export function BatchFootnoteBuilder({}: BatchProps) {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          {hasAnyInput && (
+          {!wordMode && hasAnyInput && (
             <button
               onClick={resetAll}
               className="text-xs text-muted-foreground hover:text-destructive px-2 py-1.5 rounded-lg transition-colors"
@@ -647,6 +650,12 @@ export function BatchFootnoteBuilder({}: BatchProps) {
         </div>
       </div>
 
+      <div className="flex gap-2 mb-4" role="group" aria-label="דרך הזנת הערות">
+        <button type="button" aria-pressed={!wordMode} disabled={globalLoading || finalizing || wordBusy} onClick={() => setWordMode(false)} className="rounded-lg border px-3 py-2">הזנה ידנית</button>
+        <button type="button" aria-pressed={wordMode} disabled={globalLoading || finalizing || wordBusy || pendingIntegrity.length > 0} onClick={() => setWordMode(true)} className="rounded-lg border px-3 py-2">מסמך Word</button>
+      </div>
+      {wordMode && <WordFootnoteWorkflow onBusyChange={setWordBusy} />}
+      <div hidden={wordMode}>
       {/* === INPUT SECTION === */}
       {phase === "input" && (
         <>
@@ -951,6 +960,7 @@ export function BatchFootnoteBuilder({}: BatchProps) {
         </div>
       )}
 
+      </div>
       {/* Publication Integrity Card */}
       {currentIntegrity && (
         <div className="mt-4 animate-fade-in">
