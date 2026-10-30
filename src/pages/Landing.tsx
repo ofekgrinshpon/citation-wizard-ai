@@ -6,9 +6,8 @@ import { ReLexLogo } from "@/components/ReLexLogo";
 import { GeometricBackground } from "@/components/GeometricBackground";
 import { ContactSection } from "@/components/ContactSection";
 
-import { ChevronDown, Check, Sparkles } from "lucide-react";
-import { PLANS, type PlanId } from "@/lib/plans";
-import { UsageLimitsInfoDialog } from "@/components/usage/UsageLimitsInfoDialog";
+import { ChevronDown } from "lucide-react";
+import { CitationPlanOffers } from "@/components/CitationPlanOffers";
 import howItWorksVideo from "@/assets/guide/ReLex_How_It_Works.mp4.asset.json";
 import howItWorksPoster from "@/assets/guide/poster.jpg.asset.json";
 import guideCitationImg from "@/assets/guide/citation.jpg.asset.json";
@@ -109,47 +108,6 @@ function CapabilityCard({ cap, index }: { cap: Capability; index: number }) {
   );
 }
 
-const PRICING_PLANS: { id: PlanId; badge?: string; cta: string; perks: string[] }[] = [
-  {
-    id: "trial",
-    cta: "התחילו בחינם",
-    perks: [
-      "גישה לכלי ReLex",
-      "מכסת שימוש להתנסות",
-      "ללא צורך בכרטיס אשראי",
-    ],
-  },
-  {
-    id: "week",
-    cta: "בחרו שבוע",
-    perks: [
-      "מחקר משפטי, חיפוש מקורות וסיכום פסק דין",
-      "אזכור אחיד, הערות שוליים וביבליוגרפיה",
-      "מכסת שימוש קצרת טווח שמתחדשת כל 5 שעות",
-    ],
-  },
-  {
-    id: "month",
-    badge: "הכי פופולרי",
-    cta: "בחרו חודש",
-    perks: [
-      "כל כלי המחקר והעבודה של ReLex",
-      "מכסה כוללת נדיבה יותר לתקופה",
-      "אפשרות להוספת שימוש בכל עת",
-    ],
-  },
-  {
-    id: "semester",
-    badge: "הכי משתלם",
-    cta: "בחרו סמסטר",
-    perks: [
-      "כל כלי המחקר והעבודה של ReLex",
-      "המכסה הכוללת הגדולה ביותר",
-      "אפשרות להוספת שימוש בכל עת",
-    ],
-  },
-];
-
 const Landing = () => {
   const { user, loading: authLoading } = useAuth();
   const { isOfficeAddin } = useOffice();
@@ -157,7 +115,6 @@ const Landing = () => {
   const howRef = useRef<HTMLDivElement>(null);
   const pricingRef = useRef<HTMLDivElement>(null);
   const contactRef = useRef<HTMLDivElement>(null);
-  const [usageInfoOpen, setUsageInfoOpen] = useState(false);
 
 
   if (authLoading) {
@@ -352,83 +309,10 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Pricing Section */}
-      <section ref={pricingRef} className="py-16 px-4 max-w-6xl mx-auto relative z-10">
-        <div className="text-center mb-12 space-y-3">
-          <h2 className="text-2xl md:text-3xl font-bold text-foreground">
-            תוכנית שמתאימה לקצב המחקר שלך
-          </h2>
-          <p className="text-muted-foreground text-sm md:text-base max-w-2xl mx-auto">
-            בחרו את התקופה שמתאימה לכם. כל התוכניות כוללות את כלי המחקר והעבודה של ReLex,
-            בכפוף למכסת השימוש של התוכנית.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          {PRICING_PLANS.map(({ id, badge, cta, perks }) => {
-            const plan = PLANS[id];
-            const highlight = id === "semester";
-            return (
-              <div
-                key={id}
-                className={`relative rounded-2xl border bg-card p-6 flex flex-col gap-4 transition-all ${
-                  highlight
-                    ? "border-primary shadow-lg shadow-primary/10 scale-[1.02]"
-                    : "border-border hover:border-primary/40"
-                }`}
-              >
-                {badge && (
-                  <div className="absolute -top-3 right-4 flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-primary text-primary-foreground text-[10px] font-bold">
-                    <Sparkles className="w-3 h-3" />
-                    {badge}
-                  </div>
-                )}
-                <div className="space-y-1">
-                  <h3 className="text-lg font-bold text-foreground">{plan.label}</h3>
-                  <p className="text-xs text-muted-foreground">{plan.tagline}</p>
-                </div>
-                <div className="space-y-1">
-                  <div className="text-2xl font-bold text-foreground">{plan.priceLabel}</div>
-                  <div className="text-xs text-primary font-medium">{plan.durationLabel}</div>
-                </div>
-                <ul className="space-y-2 flex-1">
-                  {perks.map((perk, idx) => (
-                    <li key={idx} className="flex items-start gap-2 text-xs text-foreground">
-                      <Check className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
-                      <span>{perk}</span>
-                    </li>
-                  ))}
-                </ul>
-                <button
-                  onClick={() => navigate("/auth?mode=signup")}
-                  className={`w-full py-2.5 rounded-xl font-bold text-sm transition-all ${
-                    highlight
-                      ? "text-primary-foreground landing-cta-btn"
-                      : "border border-primary text-primary hover:bg-primary hover:text-primary-foreground"
-                  }`}
-                  style={highlight ? { background: "var(--gradient-primary)" } : undefined}
-                >
-                  {cta}
-                </button>
-              </div>
-            );
-          })}
-        </div>
-
-        <div className="text-center mt-8 space-y-2">
-          <button
-            type="button"
-            onClick={() => setUsageInfoOpen(true)}
-            className="text-xs font-semibold text-primary hover:underline"
-          >
-            איך מגבלות השימוש עובדות?
-          </button>
-          <p className="text-xs text-muted-foreground">
-            כל התוכניות בבטא הן לתקופה קצובה, ללא חידוש אוטומטי בתשלום. ניתן להוסיף שימוש
-            בתוך תוכנית פעילה.
-          </p>
-        </div>
-        <UsageLimitsInfoDialog open={usageInfoOpen} onOpenChange={setUsageInfoOpen} />
+      {/* Citation-only future offers; no checkout activation. */}
+      <section ref={pricingRef} className="py-16 px-4 max-w-4xl mx-auto relative z-10">
+        <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">מסלולי אזכורים</h2>
+        <CitationPlanOffers />
       </section>
 
       {/* Contact Section */}

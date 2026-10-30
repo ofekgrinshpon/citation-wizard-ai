@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { format } from "date-fns";
-import { PLANS } from "@/lib/plans";
+import { CitationPlanOffers } from "@/components/CitationPlanOffers";
 import { useUsage, WINDOW_LEVEL_LABEL, PERIOD_LEVEL_LABEL } from "@/hooks/useUsage";
 import { UsageLimitsInfoDialog } from "@/components/usage/UsageLimitsInfoDialog";
 import { TopupOptions } from "@/components/usage/TopupOptions";
@@ -327,33 +327,8 @@ const Profile = () => {
               {/* Plan options */}
               {!isAdmin && (
                 <div className="bg-card border border-border rounded-xl p-6">
-                  <h4 className="text-sm font-bold text-foreground mb-3">תוכניות זמינות</h4>
-                  <div className="grid sm:grid-cols-3 gap-3">
-                    {(["week", "month", "semester"] as const).map((id) => {
-                      const p = PLANS[id];
-                      return (
-                        <button
-                          key={id}
-                          type="button"
-                          disabled
-                          aria-describedby="plans-unavailable-note"
-                          className="border border-border rounded-lg p-3 text-right opacity-70 cursor-not-allowed"
-                        >
-                          <div className="font-semibold text-foreground text-sm">{p.label}</div>
-                          <div className="text-xs text-primary mt-0.5">{p.priceLabel}</div>
-                          <div className="text-xs text-muted-foreground mt-1">{p.durationLabel}</div>
-                          <p className="text-[11px] text-muted-foreground mt-2">{p.tagline}</p>
-                        </button>
-                      );
-                    })}
-                  </div>
-                  <p id="plans-unavailable-note" className="text-xs text-foreground mt-3 font-medium">
-                    רכישת מסלול עדיין לא זמינה באתר — הכפתורים יופעלו עם חיבור הסליקה.
-                  </p>
-                  <p className="text-[11px] text-muted-foreground mt-3">
-                    התוכניות הן לתקופה קצובה וללא חידוש אוטומטי. השימוש כפוף למכסה קצרת טווח
-                    המתחדשת כל 5 שעות ולמכסה כוללת לתקופה.
-                  </p>
+                  <h4 className="text-sm font-bold text-foreground mb-3">מסלולי אזכורים — בקרוב</h4>
+                  <CitationPlanOffers />
                 </div>
               )}
 

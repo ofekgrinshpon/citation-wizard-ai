@@ -195,9 +195,9 @@ describe("accessibility", () => {
   it("plan purchase buttons are disabled and described", async () => {
     renderProfile();
     await screen.findByText("שימוש נמוך");
-    const note = screen.getByText(/רכישת מסלול עדיין לא זמינה/);
+    const note = screen.getByText(/המסלולים מוצגים לקראת פתיחת הרכישה/);
     const buttons = document.querySelectorAll(`[aria-describedby="${note.id}"]`);
-    expect(buttons.length).toBe(3);
+    expect(buttons.length).toBe(2);
     buttons.forEach((b) => expect((b as HTMLButtonElement).disabled).toBe(true));
   });
 });
