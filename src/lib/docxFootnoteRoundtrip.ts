@@ -9,7 +9,8 @@ const MAX_FILES = 1000;
 export interface DocxFootnote { readonly id: string; readonly text: string; readonly editableRanges: ReadonlyArray<{ start: number; end: number }>; readonly paragraphRanges: ReadonlyArray<{ start: number; end: number }>; }
 export interface SkippedDocxFootnote { readonly id: string; readonly reason: string; }
 export interface ProtectedFootnoteSpan { id: string; originalText: string; start: number; end: number; }
-export interface DocxFootnoteSession { readonly notes: readonly DocxFootnote[]; readonly skippedNotes: readonly SkippedDocxFootnote[]; readonly skippedCount: number; readonly warnings: readonly string[]; }
+export interface DocxFootnoteOrder { readonly id: string; readonly number: number | null; }
+export interface DocxFootnoteSession { readonly documentOrder?: readonly DocxFootnoteOrder[]; readonly notes: readonly DocxFootnote[]; readonly skippedNotes: readonly SkippedDocxFootnote[]; readonly skippedCount: number; readonly warnings: readonly string[]; }
 export interface ApprovedFootnotePatch { id: string; originalText: string; start: number; end: number; replacement: string; approved: boolean; /** Explicit per-selection consent: replacement inherits the first selected run; other selected text is cleared. */ allowFormattingNormalization?: boolean; }
 interface TextPosition { start: number; end: number; xmlStart: number; xmlEnd: number; text: string; preserveSpace: boolean; }
 interface Internal { files: Map<string, Uint8Array>; xml: string; positions: Map<string, TextPosition[]>; notes: readonly DocxFootnote[]; }
@@ -89,6 +90,40 @@ function textFile(files: Map<string, Uint8Array>, name: string): string {
   try { return new TextDecoder("utf-8", { fatal: true }).decode(bytes); } catch { return invalid(); }
 }
 
+/** Decimal continuous numbering only. Section overrides, page/section restarts,
+ * custom formats and malformed settings are unresolved rather than guessed.
+ * Defaults follow ISO/IEC 29500 numStart/numRestart/numFmt (Microsoft Open XML docs).
+ */
+function documentNumbering(files: Map<string, Uint8Array>, body: Document, order: string[]): readonly DocxFootnoteOrder[] {
+  let start=1, known=true;
+  if(body.getElementsByTagNameNS(W,"footnotePr").length)known=false;
+  for(const anchor of Array.from(body.getElementsByTagNameNS(W,"footnoteReference"))){
+    for(let parent=anchor.parentElement;parent;parent=parent.parentElement){
+      if(["txbxContent","drawing","pict"].includes(parent.localName))known=false;
+    }
+  }
+  if (files.has("word/settings.xml")) {
+    try {
+      const settings=xmlDocument(textFile(files,"word/settings.xml"));
+      if(settings.documentElement.namespaceURI!==W || settings.documentElement.localName!=="settings")known=false;
+      const properties=settings.getElementsByTagNameNS(W,"footnotePr");
+      if(properties.length>1)known=false;
+      if(properties.length===1){
+        const props=properties[0];
+        for(const name of ["numStart","numRestart","numFmt"]){
+          const values=props.getElementsByTagNameNS(W,name);if(values.length>1)known=false;
+          const element=values[0],value=element?.getAttributeNS(W,"val");
+          if(element && !value)known=false;
+          if(name==="numStart" && value){if(!/^\d+$/.test(value)||Number(value)<1||Number(value)>100000)known=false;else start=Number(value);}
+          if(name==="numRestart" && value && value!=="continuous")known=false;
+          if(name==="numFmt" && element && (value!=="decimal" || element.hasAttributeNS(W,"format")))known=false;
+        }
+      }
+    } catch {known=false;}
+  }
+  return Object.freeze(order.map((id,index)=>Object.freeze({id,number:known?start+index:null})));
+}
+
 export async function inspectDocxFootnotes(input: ArrayBuffer): Promise<DocxFootnoteSession> {
   const bytes = new Uint8Array(input.slice(0)); const sizes = preflight(bytes);
   const zip = await JSZip.loadAsync(bytes, { createFolders: false });
@@ -164,7 +199,7 @@ export async function inspectDocxFootnotes(input: ArrayBuffer): Promise<DocxFoot
   if (encountered.size !== order.length || order.some(id => !encountered.has(id))) fail("מיפוי ההערות במסמך אינו חד־משמעי.");
   const notes = Object.freeze(order.filter(id => found.has(id)).map(id => found.get(id)!));
   const skippedNotes = Object.freeze(order.filter(id => skipped.has(id)).map(id => skipped.get(id)!));
-  const session = Object.freeze({notes, skippedNotes, skippedCount:skippedNotes.length, warnings: Object.freeze(["אזכור שחוצה מקטעי עיצוב דורש אישור נפרד: התיקון יקבל את עיצוב המקטע הראשון, והעיצוב המעורב בתוך האזכור לא יישמר.", "אין להחליף אזכור שחוצה פסקאות. טקסט שלא סומן לתיקון והערות שדולגו נשמרים ללא שינוי.", "הקובץ המקורי נשמר ללא שינוי. יש לבדוק את העותק שהורד ב-Word."])});
+  const session = Object.freeze({documentOrder: documentNumbering(files, bodyDoc, order), notes, skippedNotes, skippedCount:skippedNotes.length, warnings: Object.freeze(["אזכור שחוצה מקטעי עיצוב דורש אישור נפרד: התיקון יקבל את עיצוב המקטע הראשון, והעיצוב המעורב בתוך האזכור לא יישמר.", "אין להחליף אזכור שחוצה פסקאות. טקסט שלא סומן לתיקון והערות שדולגו נשמרים ללא שינוי.", "הקובץ המקורי נשמר ללא שינוי. יש לבדוק את העותק שהורד ב-Word."])});
   sessions.set(session, {files, xml, positions, notes}); return session;
 }
 const escapeXml = (s: string) => s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");

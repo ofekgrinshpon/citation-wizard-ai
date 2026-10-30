@@ -14,8 +14,15 @@ export interface RepeatRuleCell {
   output: string | null;
 }
 
-export function applyRepeatCitationRules<T extends RepeatRuleCell>(cells: T[]): T[] {
-  const seen = new Map<string, { index: number; fullCitation: string; isLegislation: boolean; lawName: string }>();
+/** Optional document-bound context; old manual callers retain their exact behaviour. */
+export interface RepeatDocumentContext {
+  sourceKeys: ReadonlyMap<number,string | null>;
+  referenceNumbers: ReadonlyMap<number,number | null>;
+  adjacentToPrevious: ReadonlySet<number>;
+  referenceSuffixes: ReadonlyMap<number,string>;
+}
+export function applyRepeatCitationRules<T extends RepeatRuleCell>(cells: T[], context?: RepeatDocumentContext): T[] {
+  const seen = new Map<string, { index: number | null; fullCitation: string; isLegislation: boolean; lawName: string }>();
   let prevCellKey: string | null = null;
 
   return cells.map((cell, idx) => {
@@ -25,26 +32,27 @@ export function applyRepeatCitationRules<T extends RepeatRuleCell>(cells: T[]): 
     }
 
     const citationOnly = extractCitationOnly(cell.output);
-    const sourceKey = normalizeSourceKey(cell.input || citationOnly);
+    const sourceKey = context ? context.sourceKeys.get(cell.id) : normalizeSourceKey(cell.input || citationOnly);
     if (!sourceKey) {
       prevCellKey = null;
       return cell;
     }
 
     const prior = seen.get(sourceKey);
-    const referenceSuffix = extractReferenceSuffix(cell.input);
+    const referenceSuffix = context ? (context.referenceSuffixes.get(cell.id) ?? "") : extractReferenceSuffix(cell.input);
     const isLegislation = isLegislationInput(cell.input) || isLegislationInput(citationOnly);
 
     if (!prior) {
       const lawName = isLegislation
         ? (extractLawNameFromInput(cell.input) || extractLawNameFromInput(citationOnly))
         : "";
-      seen.set(sourceKey, { index: idx + 1, fullCitation: citationOnly.trim(), isLegislation, lawName });
+      seen.set(sourceKey, { index: context ? (context.referenceNumbers.get(cell.id) ?? null) : idx + 1, fullCitation: citationOnly.trim(), isLegislation, lawName });
       prevCellKey = sourceKey;
       return cell;
     }
 
-    const isAdjacentRepeat = prevCellKey === sourceKey;
+    const isAdjacentRepeat = prevCellKey === sourceKey && (!context || context.adjacentToPrevious.has(cell.id));
+    if (!isAdjacentRepeat && prior.index === null) {prevCellKey=sourceKey;return cell;}
     let nextCitation: string;
 
     if (prior.isLegislation) {

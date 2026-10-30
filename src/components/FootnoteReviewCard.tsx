@@ -34,6 +34,7 @@ interface Props {
   regenerationDisabled?: boolean;
   /** Word review shows the exact selected document text, even if the search input is edited. */
   wordOriginal?: string;
+  wordLabel?: string;
   /** Available only for an explicit retry of a server-confirmed failed request. */
   newAttempt?: { disclosure: string; onRetry: () => void };
   /** Optional per-card copy action (used by the V2 אזכור אחיד review layer). */
@@ -108,6 +109,7 @@ export function FootnoteReviewCard({
   disabled,
   regenerationDisabled,
   wordOriginal,
+  wordLabel,
   newAttempt,
   onCopy,
   originLabel,
@@ -144,7 +146,7 @@ export function FootnoteReviewCard({
 
   if (wordOriginal !== undefined) return <article aria-label={`בדיקת אזכור ${cell.id}`} className={`space-y-4 rounded-xl border p-4 ${isApproved ? "border-emerald-300 bg-emerald-50/30" : "border-border bg-background"}`}>
     <div className="flex flex-wrap items-center justify-between gap-2">
-      <h5 className="font-semibold">אזכור {cell.id}</h5>
+      <h5 className="font-semibold">{wordLabel ?? `אזכור ${cell.id}`}</h5>
       <span className={`rounded-full px-3 py-1 text-xs font-medium ${statusPill.cls}`}>{isLoading ? "בבדיקה…" : isError ? "הבדיקה לא הושלמה" : isApproved ? "אושר לעותק החדש" : cell.output ? "ממתין לאישור שלך" : "מוכן לבדיקה"}</span>
     </div>
     <div className="grid gap-4 md:grid-cols-2">

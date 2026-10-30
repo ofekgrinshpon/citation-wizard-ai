@@ -14,7 +14,7 @@ async function upload(){const f=new File(['synthetic'],'paper.docx');Object.defi
 function select(start:number,end:number){const el=screen.getByLabelText('טקסט מקורי של הערה 1') as HTMLTextAreaElement;el.setSelectionRange(start,end);fireEvent.select(el);}
 function protect(start:number,end:number){select(start,end);fireEvent.click(screen.getByRole('button',{name:/^(זה טקסט הסבר|שמור סימון הסבר)/}));}
 function review(){fireEvent.click(screen.getByRole('button',{name:'המשך לבדיקת ההערות'}));}
-function generate(){fireEvent.click(screen.getByRole('button',{name:/^בדוק \d+ הערות$/}));}
+function generate(){fireEvent.click(screen.getByRole('button',{name:/^בדוק \d+ מקורות$/}));}
 async function result(){await waitFor(()=>expect(screen.getByLabelText('התיקון המוצע לאזכור 1')).toHaveValue('Corrected'));}
 function approve(){fireEvent.click(screen.getByRole('button',{name:'אשר תיקון לאזכור 1'}));}
 function back(){fireEvent.click(screen.getByRole('button',{name:'חזרה לטקסט הסבר שלא לשנות'}));}
@@ -77,6 +77,31 @@ describe('Word default engine flow',()=>{
   render(<WordFootnoteWorkflow/>);await upload();expect(screen.getByText(/אין עדיין קישור מאומת/)).toBeInTheDocument();review();expect(mocks.run).not.toHaveBeenCalled();
   fireEvent.click(screen.getByRole('button',{name:'סגירה וניקוי'}));await upload();review();mocks.run.mockResolvedValue({citation:'Ibid.',status:'valid',sourceType:'book'});generate();
   await screen.findByText(/הפניה למקור קודם שלא קושר/);expect(screen.getByRole('button',{name:'אשר תיקון לאזכור 1'})).toBeDisabled();
+ });
+
+ it('automatically maps and checks two complete sources around protected explanation with separate approvals',async()=>{
+  const a='Brown v. Board of Education, 347 U.S. 483 (1954)',b='Roe v. Wade, 410 U.S. 113 (1973)',explanation=' protected explanation ';
+  const value=a+explanation+b;mocks.inspect.mockResolvedValue({notes:[note(value)],skippedNotes:[]});mocks.run.mockImplementation(async({rawInput}:any)=>({citation:rawInput,status:'valid',sourceType:'book'}));
+  render(<WordFootnoteWorkflow/>);await upload();protect(a.length,a.length+explanation.length);review();
+  expect(screen.getByText(/מתוכננות עד 2 בקשות למקורות מתוך 1 הערות/)).toBeInTheDocument();generate();
+  await waitFor(()=>expect(screen.getByLabelText('התיקון המוצע לאזכור 251')).toHaveValue(b));expect(mocks.run.mock.calls.map(c=>c[0].rawInput)).toEqual([a,b]);
+  approve();expect(screen.getByRole('button',{name:/המשך להורדה · 1 אושרו/})).toBeEnabled();
+  fireEvent.click(screen.getByRole('button',{name:'אשר תיקון לאזכור 251'}));fireEvent.click(screen.getByRole('button',{name:/המשך להורדה/}));fireEvent.click(screen.getByRole('button',{name:/הורדת עותק מתוקן/}));
+  await waitFor(()=>expect(mocks.embed).toHaveBeenCalled());expect(mocks.embed.mock.calls[0][1]).toHaveLength(2);expect(mocks.embed.mock.calls[0][1].map((p:any)=>[p.start,p.end])).toEqual([[0,a.length],[a.length+explanation.length,value.length]]);
+ });
+ it('displays repeated forms before approval and invalidates downstream approval when earlier effective content changes',async()=>{
+  const a='Brown v. Board of Education, 347 U.S. 483 (1954)';const notes=[{...note(a),id:'42'},{...note(a),id:'7'}];
+  mocks.inspect.mockResolvedValue({notes,documentOrder:[{id:'42',number:10},{id:'7',number:11}],skippedNotes:[]});mocks.run.mockImplementation(async({rawInput}:any)=>({citation:rawInput,status:'valid',sourceType:'book'}));
+  render(<WordFootnoteWorkflow/>);await upload();review();generate();await waitFor(()=>expect(mocks.run).toHaveBeenCalledTimes(2));await waitFor(()=>expect(screen.getByRole('button',{name:'הצע אזכורים חוזרים לבדיקה'})).toBeEnabled());
+  fireEvent.click(screen.getByRole('button',{name:'הצע אזכורים חוזרים לבדיקה'}));fireEvent.change(screen.getByLabelText('בחירת הערה'),{target:{value:'1'}});expect(screen.getByLabelText('התיקון המוצע לאזכור 2')).toHaveValue('שם.');
+  fireEvent.click(screen.getByRole('button',{name:'אשר תיקון לאזכור 2'}));expect(screen.getByLabelText('תצוגת הערה 2')).toHaveTextContent('שם.');
+  fireEvent.change(screen.getByLabelText('בחירת הערה'),{target:{value:'0'}});fireEvent.change(screen.getByLabelText('התיקון המוצע לאזכור 1'),{target:{value:'Changed source'}});
+  fireEvent.change(screen.getByLabelText('בחירת הערה'),{target:{value:'1'}});expect(screen.getByLabelText('התיקון המוצע לאזכור 2')).toHaveValue(a);expect(screen.getByRole('button',{name:/המשך להורדה/})).toBeDisabled();
+ });
+ it('offers an exact-offset two-tap alternative without native text selection',async()=>{
+  render(<WordFootnoteWorkflow/>);await upload();fireEvent.click(screen.getByText('סימון בלחיצות — גם בנייד'));fireEvent.click(screen.getByRole('button',{name:'מילה 1: Author,'}));fireEvent.click(screen.getByRole('button',{name:'מילה 2: Title'}));
+  expect(screen.getByText('הקטע שנבחר:',{exact:true}).parentElement).toHaveTextContent('Author, Title');fireEvent.click(screen.getByRole('button',{name:'זה טקסט הסבר — לא לשנות'}));
+  expect(screen.getByText('הסבר מוגן: Author, Title')).toBeInTheDocument();
  });
 
 });

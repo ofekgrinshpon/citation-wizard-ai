@@ -168,4 +168,17 @@ describe('DOCX selective footnote round trip',()=>{
  const session=await inspectDocxFootnotes(await fixture(ordinary+note(42,'old')));expect(session.notes[0].text).toBe('first\n\nlast');expect(session.notes[0].paragraphRanges).toEqual([{start:0,end:5},{start:6,end:6},{start:7,end:11}]);
  });
 
+ it('resolves continuous decimal numbering from settings while retaining skipped slots and never using native IDs',async()=>{
+  const z=await JSZip.loadAsync(await fixture());
+  const settings=(inside:string)=>`<w:settings xmlns:w="${W}"><w:footnotePr>${inside}</w:footnotePr></w:settings>`;
+  z.file('word/settings.xml',settings('<w:numStart w:val="10"/><w:numFmt w:val="decimal"/>'));
+  const s=await inspectDocxFootnotes(await z.generateAsync({type:'arraybuffer'}));expect(s.documentOrder).toEqual([{id:'7',number:10},{id:'42',number:11}]);
+  for(const value of ['<w:numRestart w:val="eachPage"/>','<w:numRestart w:val="eachSect"/>','<w:numFmt w:val="lowerRoman"/>','<w:numStart w:val="0"/>']){
+   z.file('word/settings.xml',settings(value));expect((await inspectDocxFootnotes(await z.generateAsync({type:'arraybuffer'}))).documentOrder!.every(n=>n.number===null)).toBe(true);
+  }
+  z.remove('word/settings.xml');expect((await inspectDocxFootnotes(await z.generateAsync({type:'arraybuffer'}))).documentOrder!.map(n=>n.number)).toEqual([1,2]);
+  z.file('word/document.xml',(await z.file('word/document.xml')!.async('string')).replace('</w:body>','<w:sectPr><w:footnotePr><w:numStart w:val="4"/></w:footnotePr></w:sectPr></w:body>'));
+  expect((await inspectDocxFootnotes(await z.generateAsync({type:'arraybuffer'}))).documentOrder!.every(n=>n.number===null)).toBe(true);
+ });
+
 });

@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface MarkedSpan { start: number; end: number; kind: "citation" | "explanation" }
 
@@ -8,6 +8,9 @@ export function WordNoteSelection({ text, number, spans, disabled, onSelect }: {
   onSelect: (start: number, end: number) => void;
 }) {
   const root = useRef<HTMLDivElement>(null);
+  const [tapStart,setTapStart]=useState<number|null>(null);
+  useEffect(()=>setTapStart(null),[text,disabled]);
+  const words=Array.from(text.matchAll(/\S+/gu));
   useEffect(() => {
     const readSelection = () => {
       const selection = window.getSelection(), element = root.current;
@@ -42,6 +45,17 @@ export function WordNoteSelection({ text, number, spans, disabled, onSelect }: {
       <span><span aria-hidden="true" className="mr-1 inline-block h-3 w-3 border-b-2 border-blue-600 bg-blue-100" /> תוכן לבדיקה</span>
       <span><span aria-hidden="true" className="mr-1 inline-block h-3 w-3 border-b-2 border-dashed border-amber-700 bg-amber-100" /> הסבר מוגן (רשות)</span>
     </div>
+    <details className="text-sm">
+      <summary className="cursor-pointer rounded py-2 text-primary focus-visible:outline focus-visible:outline-2">סימון בלחיצות — גם בנייד</summary>
+      <p className="py-2">לחצו על המילה הראשונה של ההסבר ולאחר מכן על האחרונה. למילה אחת, לחצו עליה פעמיים. אחר כך אשרו שזה טקסט הסבר.</p>
+      <p role="status" className="text-sm">{tapStart===null?"בחרו את המילה הראשונה":"כעת בחרו את המילה האחרונה"}</p>
+      <div className="flex flex-wrap gap-1 rounded-lg border p-2" aria-label="בחירת גבולות הסבר בלחיצות">
+        {words.map((word,index)=><button key={word.index} type="button" aria-label={`מילה ${index+1}: ${word[0]}`} aria-pressed={tapStart===index} disabled={disabled}
+          className="min-h-11 rounded border px-2 py-2 text-base aria-pressed:bg-primary/20 disabled:opacity-50"
+          onClick={()=>{if(tapStart===null){setTapStart(index);return;}const first=words[Math.min(tapStart,index)],last=words[Math.max(tapStart,index)];onSelect(first.index!,last.index!+last[0].length);setTapStart(null);}}>{word[0]}</button>)}
+      </div>
+      {tapStart!==null && <button type="button" className="min-h-11 underline" disabled={disabled} onClick={()=>setTapStart(null)}>בטל בחירת התחלה</button>}
+    </details>
     <details className="text-sm">
       <summary className="cursor-pointer rounded py-2 text-primary focus-visible:outline focus-visible:outline-2">עזרה אופציונלית: סימון במקלדת</summary>
       <p className="mb-2 text-muted-foreground">אפשר לסמן ישירות בטקסט שמעל. אם נוח לכם להשתמש במקלדת: עברו לתיבה, סמנו בעזרת Shift והחצים, ואז עברו באמצעות Tab אל ״זה טקסט הסבר — לא לשנות״.</p>
