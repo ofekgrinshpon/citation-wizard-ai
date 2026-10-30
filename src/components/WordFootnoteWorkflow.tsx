@@ -1,4 +1,5 @@
 import { CitationRequestStatusLink } from "./CitationRequestStatusLink";
+import { WordNoteSelection } from "./WordNoteSelection";
 import { useEffect, useRef, useState } from "react";
 import { FootnoteReviewCard, type ReviewCardCell } from "./FootnoteReviewCard";
 import { useAuth } from "@/hooks/useAuth";
@@ -11,7 +12,9 @@ import { inspectDocxFootnotes, embedApprovedFootnotes } from "@/lib/docxFootnote
 type Session = Awaited<ReturnType<typeof inspectDocxFootnotes>>;
 type Span = { noteId: string; start: number; end: number };
 type Row = ReviewCardCell & { noteId: string; originalText: string; start: number; end: number; crossesRuns?: boolean; allowFormattingNormalization?: boolean };
-const button = "rounded-lg border border-border px-3 py-2 text-sm disabled:opacity-40";
+const button = "min-h-11 rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
+const primaryButton = `${button} border-primary bg-primary text-primary-foreground hover:bg-primary/90`;
+const steps = ["בחירת מסמך", "בחירת אזכורים", "בדיקת תיקונים", "הורדת עותק"];
 
 /** Files and extracted text live only in this mounted panel, never localStorage.
  * Generation uses the existing server protocol. Import/export never call providers.
@@ -21,6 +24,11 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
   const { currentProject } = useProjects();
   const [session, setSession] = useState<Session | null>(null);
   const [filename, setFilename] = useState("");
+  const [step, setStep] = useState(0);
+  const [activeNote, setActiveNote] = useState(0);
+  const [editingRow, setEditingRow] = useState<number | null>(null);
+  const stepHeading = useRef<HTMLHeadingElement>(null);
+  useEffect(() => { stepHeading.current?.focus(); }, [step]);
   const [rows, setRows] = useState<Row[]>([]);
   const [protectedSpans, setProtectedSpans] = useState<Span[]>([]);
   const [selection, setSelection] = useState<Span | null>(null);
@@ -42,6 +50,7 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
 
   const clear = () => {
     epoch.current++;
+    setStep(0); setActiveNote(0); setEditingRow(null);
     lock.current = false;
     setBusy(false); setSession(null); setRows([]); setProtectedSpans([]); setSelection(null); nextRowId.current = 1; setFilename(""); setError(""); setNotice("");
     if (inputRef.current) inputRef.current.value = "";
@@ -60,9 +69,9 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
     try {
       const inspected = await inspectDocxFootnotes(await file.arrayBuffer());
       if (version !== epoch.current || owner !== currentScope.current) return;
-      setSession(inspected); setFilename(file.name);
+      setSession(inspected); setFilename(file.name); setStep(1);
       setRows([]);
-      setNotice("המסמך נקרא במכשיר. סמנו בכל הערה את האזכור לתיקון; שאר הטקסט יישאר ללא שינוי.");
+      setNotice("");
     } catch (e) {
       if (version === epoch.current) setError(e instanceof Error ? e.message : "לא ניתן לקרוא את המסמך.");
     } finally { if (version === epoch.current) { lock.current = false; setBusy(false); } }
@@ -75,7 +84,7 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
     if (!note || start < 0 || end > note.text.length || /[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]/.test(note.text.slice(start, end))) {
       setSelection(null); setError("הבחירה חוצה תו שאינו נתמך. יש לבחור תווים שלמים."); return;
     }
-    setSelection({ noteId, start, end }); setError("");
+    setSelection(old => old?.noteId === noteId && old.start === start && old.end === end ? old : { noteId, start, end }); setError("");
   };
   const markSelection = (kind: "citation" | "explanation", replaceId?: number) => {
     if (lock.current || !selection || !session) return;
@@ -100,7 +109,7 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
       output: null, status: "empty" as const, approved: false, crossesRuns: ranges.length > 1, allowFormattingNormalization: false,
       errorMsg: undefined, warningMsg: undefined, requestId: undefined };
     setRows(old => replaceId === undefined ? [...old, { id: nextRowId.current++, ...updated }] : old.map(r => r.id === replaceId ? { ...r, ...updated } : r));
-    setSelection(null); setError(""); setNotice("");
+    setSelection(null); setEditingRow(null); setError(""); setNotice("");
   };
   const changeRow = (id: number, update: Partial<Row>) => {
     if (lock.current) return;
@@ -174,58 +183,159 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
       text = text.slice(0,row.start) + citationTextOnly(row.output!) + text.slice(row.end);
     return text;
   };
-  return <section aria-label="תיקון הערות שוליים במסמך Word" dir="rtl" className="space-y-4 rounded-xl border border-border p-4">
-    <h4 className="font-semibold">העלאת מסמך Word והטמעת תיקונים</h4>
-    <p className="text-sm text-muted-foreground">סמנו אזכורים לתיקון וטקסט הסבר להגנה. טקסט שלא סומן נשאר ללא שינוי — הוא לא נחשב אוטומטית למקור. רק תיקונים שאושרו יוטמעו בעותק חדש.</p>
-    <p className="text-sm text-muted-foreground">החילוץ וההטמעה מקומיים. בהפקת טיוטות רק טקסט האזכורים שסימנתם יישלח למנגנון הבדיקה הרגיל בכפוף למכסה הקיימת. הסימונים אינם נשמרים לאחר סגירה. אין הבטחה לפריסה זהה או לעמידה בכללי הדגשה.</p>
-    <label className="block">מסמך DOCX<input ref={inputRef} aria-label="מסמך DOCX" type="file" accept=".docx" disabled={busy} onChange={e => void importFile(e.target.files?.[0])} className="block mt-2" /></label>
-    {(session || busy) && <button type="button" className={button} onClick={clear}>סגור מסמך ונקה</button>}
-    {error && <p role="alert" className="text-destructive">{error}</p>}
-    {notice && <p role="status">{notice}</p>}
-    {session && <>
-      <p>{filename} · {session.notes.length} הערות ניתנות לעריכה · {session.skippedNotes?.length ?? 0} הערות דולגו ויישארו במקור.</p>
-      {session.skippedNotes?.map(n => <p key={n.id} className="text-sm">הערה במזהה {n.id} דולגה: {n.reason}</p>)}
-      <p className="text-xs">ניתן לסמן כמה אזכורים וכמה קטעי הסבר בכל הערה. כל אזכור צריך להיות בתוך פסקה אחת. שדות, שינויים במעקב ומבנים מסוכנים עשויים למנוע עיבוד המסמך כולו.</p>
-      {session.notes.map((note, index) => <div key={note.id} className="space-y-2 border-t border-border pt-3">
-        <label className="block">פריט לעריכה {index + 1} (מזהה הערה {note.id}, לא המספור המוצג במסמך): בחרו קטע ואז סמנו את תפקידו
-          <textarea aria-label={`טקסט מקורי של הערה ${index + 1}`} readOnly value={note.text} disabled={busy} className="block w-full min-h-20 rounded border p-2"
-            onSelect={e => selectSpan(note.id,e.currentTarget.selectionStart,e.currentTarget.selectionEnd)} />
-        </label>
-        <button type="button" className={button} disabled={busy} onClick={() => selectSpan(note.id,0,note.text.length)}>בחר את כל ההערה</button>
-        {selection?.noteId === note.id && <div>
-          <p>הקטע שנבחר: {note.text.slice(selection.start,selection.end)}</p>
-          <button type="button" className={button} disabled={busy} onClick={() => markSelection("citation")}>סמן כאזכור לתיקון</button>
-          <button type="button" className={button} disabled={busy} onClick={() => markSelection("explanation")}>סמן כטקסט הסבר מוגן</button>
+  const note = session?.notes[activeNote];
+  const noteRows = rows.filter(row => row.noteId === note?.id);
+  const readyCount = rows.filter(row => row.input.trim() && (!row.crossesRuns || row.allowFormattingNormalization)
+    && !row.output && row.status !== "error" && !blockedNotes.current.has(noteKey(row))).length;
+  const goToStep = (next: number) => {
+    if (lock.current) return;
+    setStep(next); setSelection(null); setEditingRow(null); setError(""); setNotice("");
+  };
+  const goToNote = (index: number) => {
+    if (lock.current) return;
+    setActiveNote(index); setSelection(null); setEditingRow(null); setError("");
+  };
+  const formattingConsent = (row: Row) => row.crossesRuns && <label className="flex items-start gap-3 rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm leading-6 text-amber-950">
+    <input type="checkbox" aria-label={`אישור איחוד עיצוב באזכור ${row.id}`} className="mt-1 h-5 w-5 shrink-0" disabled={busy}
+      checked={!!row.allowFormattingNormalization} onChange={event => changeRow(row.id, { allowFormattingNormalization: event.target.checked })} />
+    <span><strong className="block">האזכור כולל כמה עיצובים</strong>אני מאשר/ת שהתיקון יקבל את עיצוב תחילת הקטע. הדגשות ונטייה בתוך האזכור לא יישמרו לפי מיקומן. העיצוב מחוץ לבחירה לא ישתנה.</span>
+  </label>;
+  return <section aria-label="תיקון הערות שוליים במסמך Word" dir="rtl" className="overflow-hidden rounded-2xl border border-border bg-card text-foreground">
+    <header className="space-y-2 border-b border-border p-4 sm:p-6">
+      <h3 className="text-xl font-bold">תיקון אזכורים במסמך Word</h3>
+      <p className="text-sm leading-6 text-muted-foreground">בחרו מה לבדוק, אשרו את התיקונים והורידו עותק חדש. שאר הטקסט יישאר כפי שהוא.</p>
+    </header>
+    <nav aria-label="שלבי תיקון המסמך" className="border-b border-border bg-muted/30 p-3 sm:px-6">
+      <ol className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+        {steps.map((label, index) => <li key={label}>
+          <button type="button" aria-current={step === index ? "step" : undefined}
+            disabled={busy || (index > 0 && !session) || (index === 2 && !rows.length) || (index === 3 && !approvedCount)}
+            onClick={() => goToStep(index)} className={`flex min-h-11 w-full items-center gap-2 rounded-lg px-2 py-2 text-right text-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary disabled:opacity-50 ${step === index ? "bg-primary/10 font-semibold text-primary" : "text-muted-foreground"}`}>
+            <span aria-hidden="true" className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs ${step === index ? "bg-primary text-primary-foreground" : "border border-border bg-background"}`}>{index + 1}</span>{label}
+          </button>
+        </li>)}
+      </ol>
+    </nav>
+    <div className="space-y-5 p-4 sm:p-6">
+      <input ref={inputRef} aria-label="מסמך DOCX" type="file" accept=".docx" disabled={busy} tabIndex={-1}
+        onChange={event => void importFile(event.target.files?.[0])} className="hidden" />
+      {(session || busy) && <div className="flex flex-col gap-3 rounded-xl border border-border bg-muted/20 p-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
+        <div className="min-w-0 w-full sm:w-auto sm:flex-1"><p className="text-xs text-muted-foreground">{filename ? "המסמך שנבחר" : "קוראים את המסמך…"}</p><p dir="auto" className="break-all text-sm font-semibold">{filename}</p></div>
+        <div className="flex flex-wrap gap-2">
+          <button type="button" className={button} disabled={busy} onClick={() => inputRef.current?.click()}>החלפת מסמך</button>
+          <button type="button" className={button} onClick={clear}>סגירה וניקוי</button>
+        </div>
+        <p className="w-full text-xs text-muted-foreground">החלפה או סגירה ימחקו את הסימונים והתיקונים מהמסך. הקובץ המקורי לא ישתנה.</p>
+      </div>}
+      {error && <p role="alert" className="rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">{error}</p>}
+      {notice && <p role="status" className="rounded-lg bg-emerald-50 p-3 text-sm text-emerald-900">{notice}</p>}
+      <h4 ref={stepHeading} tabIndex={-1} className="text-lg font-semibold outline-none">{steps[step]}</h4>
+      {step === 0 && <div className="space-y-4">
+        <div className="space-y-4 rounded-xl border-2 border-dashed border-primary/25 bg-primary/5 px-4 py-8 text-center">
+          <p className="font-medium">בחרו מסמך Word עם הערות שוליים</p>
+          <p className="text-sm text-muted-foreground">קובץ DOCX, עד 10 MB. קריאת המסמך מתבצעת במכשיר.</p>
+          <button type="button" className={primaryButton} disabled={busy} onClick={() => inputRef.current?.click()}>{session ? "בחירת מסמך אחר" : "בחירת מסמך Word"}</button>
+        </div>
+        {session && <button type="button" className={button} disabled={busy} onClick={() => goToStep(1)}>המשך עם המסמך שנבחר</button>}
+      </div>}
+      {session && step > 0 && <>
+        <details className="rounded-lg border border-border px-3 py-2 text-sm">
+          <summary className="cursor-pointer py-1 focus-visible:outline focus-visible:outline-2">פרטי המסמך · {session.notes.length} הערות לבדיקה{session.skippedNotes?.length ? ` · ${session.skippedNotes.length} נשארו ללא שינוי` : ""}</summary>
+          <div className="space-y-2 pt-3 text-muted-foreground">
+            <p>סדר ההערות כאן הוא סדר הופעתן במסמך; הוא עשוי להיות שונה מהמספר שמוצג ב־Word.</p>
+            {session.skippedNotes?.map(skipped => <p key={skipped.id}>הערה במזהה פנימי {skipped.id}: {skipped.reason}</p>)}
+            {note && <p>המזהה הפנימי של ההערה הפתוחה: {note.id}.</p>}
+            <p>אפשר לתקן אזכור בתוך פסקה אחת. שדות, שינויים במעקב והערות סיום אינם נתמכים. יש לבדוק את העותק ב־Word: הפריסה וההדגשות עשויות להשתנות.</p>
+          </div>
+        </details>
+        {!session.notes.length && <p>לא נמצאו הערות שאפשר לערוך בבטחה. המסמך נשאר ללא שינוי. אפשר לבחור מסמך אחר או להמשיך בהזנה ידנית.</p>}
+        {step === 1 && <p className="text-sm leading-6">סמנו בתוך ההערה אזכור שתרצו לבדוק, ואז הוסיפו אותו לרשימה. <strong>טקסט שלא בחרתם יישאר ללא שינוי.</strong></p>}
+        {step === 2 && <div className="space-y-3 rounded-xl bg-primary/5 p-4">
+          <p className="text-sm">נבחרו {rows.length} אזכורים. הבדיקה שולחת רק את האזכורים שבחרתם ומשתמשת במכסת החשבון.</p>
+          <button type="button" className={primaryButton} disabled={busy || !readyCount} onClick={() => void generate()}>{busy ? "הבדיקה מתבצעת…" : readyCount ? `בדוק ${readyCount} אזכורים` : "אין אזכורים נוספים לבדיקה"}</button>
+          {rows.some(row => row.crossesRuns && !row.allowFormattingNormalization) && <p className="text-sm text-amber-900">חלק מהאזכורים כוללים כמה עיצובים. לפני בדיקתם נדרש אישור שינוי העיצוב בכרטיס האזכור.</p>}
         </div>}
-        {protectedSpans.filter(p => p.noteId === note.id).map(p => <div key={`${p.start}:${p.end}`} className="rounded border p-2">
-          <span>טקסט הסבר מוגן: {note.text.slice(p.start,p.end)}</span>
-          <button type="button" className={button} disabled={busy} onClick={() => setProtectedSpans(old => old.filter(s => s !== p))}>הסר הגנת הסבר</button>
-        </div>)}
-        {blockedNotes.current.has(noteKey({noteId:note.id,originalText:note.text})) && <CitationRequestStatusLink requestId={blockedNotes.current.get(noteKey({noteId:note.id,originalText:note.text}))?.requestId} />}
-        {rows.filter(r => r.noteId === note.id).map(row => <div key={row.id} className="space-y-2 rounded border p-2">
-          <p className="text-xs">אזכור {row.id} — רק הקטע המסומן יוחלף: {row.originalText.slice(row.start,row.end)}</p>
-          <button type="button" className={button} disabled={busy || selection?.noteId !== note.id} onClick={() => markSelection("citation",row.id)}>עדכן גבולות אזכור {row.id} לבחירה</button>
-          <button type="button" className={button} disabled={busy} onClick={() => setRows(old => old.filter(r => r.id !== row.id))}>הסר סימון אזכור {row.id}</button>
-          {row.crossesRuns && <label className="block rounded border p-2 text-sm">
-            <input type="checkbox" aria-label={`אישור איחוד עיצוב באזכור ${row.id}`} disabled={busy} checked={!!row.allowFormattingNormalization} onChange={e => changeRow(row.id,{allowFormattingNormalization:e.target.checked})} />
-            אני מאשר/ת שהאזכור המתוקן יקבל את עיצוב תחילת הקטע שנבחר. הדגשות ונטייה בתוך האזכור לא יישמרו לפי מיקומן; הטקסט שמחוץ לבחירה ועיצובו יישארו ללא שינוי.
-          </label>}
-          <FootnoteReviewCard cell={row} disabled={busy} regenerationDisabled={row.status === "error" || (row.crossesRuns && !row.allowFormattingNormalization)} hideRemove
-            onInputChange={(id,input) => changeRow(id,{input,output:null,status:"empty"})}
-            onOutputChange={(id,output) => changeRow(id,{output})}
-            onSourceTypeChange={(id,sourceTypeOverride) => changeRow(id,{sourceTypeOverride,output:null,status:"empty"})}
-            onApproveToggle={(id,approved) => { if (!lock.current) setRows(old => old.map(r => r.id === id ? {...r,approved:(!r.crossesRuns || !!r.allowFormattingNormalization) && !!r.output && r.status !== "error" && approved} : r)); }}
-            onRegenerate={id => { if (rows.find(r => r.id === id)?.status !== "error") void generate(id); }} onRemove={() => {}} />
-          {row.status === "error" && <p>אין ניסיון חוזר אוטומטי לאחר שגיאה. בדקו את מצב הבקשה.</p>}
-        </div>)}
-        <label className="block">תצוגה מקדימה של כל ההערה — תיקונים מאושרים בלבד
-          <pre aria-label={`תצוגת הערה ${index+1}`} className="whitespace-pre-wrap rounded bg-muted p-2 font-sans">{preview(note.id,note.text)}</pre>
-        </label>
-      </div>)}
-      <div className="flex flex-wrap gap-2">
-        <button type="button" className={button} disabled={busy || !rows.some(r => r.end > r.start && (!r.crossesRuns || r.allowFormattingNormalization) && !r.output && r.status !== "error" && !blockedNotes.current.has(noteKey(r)))} onClick={() => void generate()}>הפק טיוטות לאזכורים שסומנו</button>
-        <button type="button" className={button} disabled={busy || !approvedCount} onClick={() => void download()}>הטמע {approvedCount} תיקונים שאושרו והורד עותק</button>
-      </div>
-    </>}
+        {step === 3 && <div className="space-y-3 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-emerald-950">
+          <p className="text-lg font-semibold">{approvedCount} תיקונים אושרו להורדה</p>
+          <p className="text-sm leading-6">רק התיקונים שאישרתם ייכנסו לעותק החדש. {rows.length - approvedCount > 0 && `${rows.length - approvedCount} אזכורים שלא אושרו יישארו כפי שהם. `}הקובץ המקורי לא ישתנה.</p>
+          <button type="button" className={primaryButton} disabled={busy || !approvedCount} onClick={() => void download()}>הורדת עותק מתוקן ({approvedCount} תיקונים)</button>
+          <p className="text-sm">פתחו את העותק ב־Word ובדקו את הנוסח והעיצוב לפני שימוש.</p>
+        </div>}
+        {note && <div className="space-y-4">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
+            <label className="min-w-0 flex-1 text-sm font-medium">הערה לבדיקה
+              <select aria-label="בחירת הערה" disabled={busy} value={activeNote} onChange={event => goToNote(Number(event.target.value))}
+                className="mt-1 min-h-11 w-full rounded-lg border border-border bg-background px-3 text-base focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary">
+                {session.notes.map((item, index) => <option key={item.id} value={index}>{index + 1} מתוך {session.notes.length} · {rows.filter(row => row.noteId === item.id).length} אזכורים נבחרו</option>)}
+              </select>
+            </label>
+            <div className="flex justify-between gap-2 sm:justify-start">
+              <button type="button" className={button} disabled={busy || activeNote === 0} onClick={() => goToNote(activeNote - 1)}>הערה קודמת</button>
+              <button type="button" className={button} disabled={busy || activeNote === session.notes.length - 1} onClick={() => goToNote(activeNote + 1)}>הערה הבאה</button>
+            </div>
+          </div>
+          {step === 1 && <>
+            <WordNoteSelection key={note.id} text={note.text} number={activeNote + 1} disabled={busy}
+              spans={[...noteRows.map(row => ({ ...row, kind: "citation" as const })), ...protectedSpans.filter(span => span.noteId === note.id).map(span => ({ ...span, kind: "explanation" as const }))]}
+              onSelect={(start, end) => selectSpan(note.id, start, end)} />
+            <div className="space-y-3 rounded-xl bg-muted/40 p-3">
+              <p className="text-sm" role="status">{editingRow !== null ? "סמנו מחדש את הטקסט של האזכור, ואז שמרו את הבחירה." : "אפשר לבחור כמה אזכורים באותה הערה, אחד בכל פעם."}</p>
+              {selection?.noteId === note.id && <p className="break-words text-sm"><strong>הקטע שנבחר: </strong>{note.text.slice(selection.start, selection.end)}</p>}
+              <div className="flex flex-wrap gap-2">
+                <button type="button" className={primaryButton} disabled={busy || selection?.noteId !== note.id} onClick={() => markSelection("citation", editingRow ?? undefined)}>{editingRow === null ? "הוסף לרשימת הבדיקה" : "שמור את הבחירה החדשה"}</button>
+                {editingRow !== null && <button type="button" className={button} disabled={busy} onClick={() => { setEditingRow(null); setSelection(null); }}>בטל שינוי בחירה</button>}
+              </div>
+              <details className="text-sm">
+                <summary className="cursor-pointer py-2 focus-visible:outline focus-visible:outline-2">אפשרויות סימון נוספות</summary>
+                <p className="pb-2 text-muted-foreground">הגנת הסבר היא רשות בלבד: היא מונעת בחירה שלו לתיקון גם בהמשך. גם טקסט שלא סומן נשאר ללא שינוי.</p>
+                <div className="flex flex-wrap gap-2">
+                  <button type="button" className={button} disabled={busy || editingRow !== null || selection?.noteId !== note.id} onClick={() => markSelection("explanation")}>הגן על הקטע כהסבר</button>
+                  <button type="button" className={button} disabled={busy} onClick={() => selectSpan(note.id, 0, note.text.length)}>בחר את כל ההערה</button>
+                </div>
+              </details>
+            </div>
+            {noteRows.length > 0 && <div className="space-y-2"><h5 className="text-sm font-semibold">נבחרו לבדיקה בהערה זו</h5>{noteRows.map(row => <div key={row.id} className="space-y-3 rounded-lg border border-blue-200 bg-blue-50/40 p-3">
+              <p className="break-words text-sm"><strong>אזכור {row.id}: </strong>{row.originalText.slice(row.start, row.end)}</p>
+              <div className="flex flex-wrap gap-2">
+                <button type="button" aria-label={`שינוי הבחירה באזכור ${row.id}`} className={button} disabled={busy} onClick={() => { setEditingRow(row.id); setSelection(null); }}>שינוי הבחירה</button>
+                <button type="button" aria-label={`הסר אזכור ${row.id} מהרשימה`} className={button} disabled={busy} onClick={() => { setRows(old => old.filter(item => item.id !== row.id)); setEditingRow(null); setSelection(null); }}>הסר מהרשימה</button>
+              </div>
+              {formattingConsent(row)}
+            </div>)}</div>}
+            {protectedSpans.filter(span => span.noteId === note.id).map(span => <div key={`${span.start}:${span.end}`} className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-950">
+              <p className="min-w-0 flex-1 break-words">הסבר מוגן: {note.text.slice(span.start, span.end)}</p>
+              <button type="button" aria-label={`הסר הגנה מהקטע ${note.text.slice(span.start, span.end)}`} className={button} disabled={busy} onClick={() => setProtectedSpans(old => old.filter(item => item !== span))}>הסר הגנה</button>
+            </div>)}
+          </>}
+          {blockedNotes.current.has(noteKey({ noteId: note.id, originalText: note.text })) && <div className="space-y-2 rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-950">
+            <p>יש בקשה שטרם הושלמה בהערה הזו. לא נשלח אותה שוב אוטומטית. סגירה והעלאה מחדש לא יאפשרו בדיקה נוספת לפני בירור התוצאה.</p>
+            <CitationRequestStatusLink requestId={blockedNotes.current.get(noteKey({ noteId: note.id, originalText: note.text }))?.requestId} />
+          </div>}
+          {step === 2 && <>
+            {!noteRows.length && <p className="text-sm">לא נבחרו אזכורים בהערה זו. אפשר לעבור להערה אחרת או לחזור לבחירת אזכורים.</p>}
+            {noteRows.map(row => <div key={row.id} className="space-y-3">
+              {formattingConsent(row)}
+              <FootnoteReviewCard cell={row} wordOriginal={row.originalText.slice(row.start, row.end)} disabled={busy}
+                regenerationDisabled={row.status === "error" || blockedNotes.current.has(noteKey(row)) || (row.crossesRuns && !row.allowFormattingNormalization)} hideRemove
+                onInputChange={(id, input) => changeRow(id, { input, output: null, status: "empty" })}
+                onOutputChange={(id, output) => changeRow(id, { output })}
+                onSourceTypeChange={(id, sourceTypeOverride) => changeRow(id, { sourceTypeOverride, output: null, status: "empty" })}
+                onApproveToggle={(id, approved) => { if (!lock.current) setRows(old => old.map(item => item.id === id ? { ...item, approved: (!item.crossesRuns || !!item.allowFormattingNormalization) && !!item.output && item.status !== "error" && approved } : item)); }}
+                onRegenerate={id => { if (rows.find(item => item.id === id)?.status !== "error") void generate(id); }} onRemove={() => {}} />
+            </div>)}
+          </>}
+          {step >= 2 && <details open={step === 3} className="rounded-xl border border-border p-3 text-sm" key={`preview-${step}-${note.id}`}>
+            <summary className="cursor-pointer py-1 font-medium focus-visible:outline focus-visible:outline-2">כך תיראה ההערה בעותק החדש</summary>
+            <p className="mt-2 text-muted-foreground">מוצגים רק תיקונים שאושרו.</p>
+            <pre aria-label={`תצוגת הערה ${activeNote + 1}`} className="mt-3 whitespace-pre-wrap break-words rounded-lg bg-muted/40 p-3 font-sans text-base leading-7">{preview(note.id, note.text)}</pre>
+          </details>}
+        </div>}
+        <footer className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-4">
+          <button type="button" className={button} disabled={busy} onClick={() => goToStep(step - 1)}>חזרה ל{steps[step - 1]}</button>
+          {step === 1 && <button type="button" className={primaryButton} disabled={busy || !rows.length} onClick={() => goToStep(2)}>המשך לבדיקת {rows.length} אזכורים</button>}
+          {step === 2 && <button type="button" className={primaryButton} disabled={busy || !approvedCount} onClick={() => goToStep(3)}>המשך להורדה · {approvedCount} אושרו</button>}
+        </footer>
+      </>}
+    </div>
   </section>;
 }

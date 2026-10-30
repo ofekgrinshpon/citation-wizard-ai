@@ -5,6 +5,7 @@ import { FormattedCitation } from "./FormattedCitation";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toForeignIdentity, isForeignSourceType } from "@/data/bluebook/types";
 import { ForeignSourcePicker } from "./ForeignSourcePicker";
+import { citationTextOnly, escapeCitationLiteral } from "@/lib/citationSegments";
 
 export interface ReviewCardCell {
   completion?: import("@/lib/citationCompletion").CompletionAcceptance;
@@ -31,6 +32,8 @@ interface Props {
   onRemove: (id: number) => void;
   disabled?: boolean;
   regenerationDisabled?: boolean;
+  /** Word review shows the exact selected document text, even if the search input is edited. */
+  wordOriginal?: string;
   /** Available only for an explicit retry of a server-confirmed failed request. */
   newAttempt?: { disclosure: string; onRetry: () => void };
   /** Optional per-card copy action (used by the V2 אזכור אחיד review layer). */
@@ -104,6 +107,7 @@ export function FootnoteReviewCard({
   onRemove,
   disabled,
   regenerationDisabled,
+  wordOriginal,
   newAttempt,
   onCopy,
   originLabel,
@@ -111,11 +115,11 @@ export function FootnoteReviewCard({
   foreignScope,
 }: Props) {
   const [editInput, setEditInput] = useState(false);
-  const [draftOutput, setDraftOutput] = useState(cell.output ?? "");
+  const [draftOutput, setDraftOutput] = useState(wordOriginal !== undefined ? citationTextOnly(cell.output ?? "") : cell.output ?? "");
 
   useEffect(() => {
-    setDraftOutput(cell.output ?? "");
-  }, [cell.output]);
+    setDraftOutput(wordOriginal !== undefined ? citationTextOnly(cell.output ?? "") : cell.output ?? "");
+  }, [cell.output, wordOriginal]);
 
   const activeType: SourceType = cell.sourceTypeOverride ?? cell.detectedType ?? "unknown";
   const foreignIdentity = toForeignIdentity(activeType);
@@ -137,6 +141,47 @@ export function FootnoteReviewCard({
     : cell.status === "warning"
     ? { text: "⚠ דרוש בדיקה", cls: "bg-amber-100 text-amber-700" }
     : { text: "ממתין לאישור", cls: "bg-primary/10 text-primary" };
+
+  if (wordOriginal !== undefined) return <article aria-label={`בדיקת אזכור ${cell.id}`} className={`space-y-4 rounded-xl border p-4 ${isApproved ? "border-emerald-300 bg-emerald-50/30" : "border-border bg-background"}`}>
+    <div className="flex flex-wrap items-center justify-between gap-2">
+      <h5 className="font-semibold">אזכור {cell.id}</h5>
+      <span className={`rounded-full px-3 py-1 text-xs font-medium ${statusPill.cls}`}>{isLoading ? "בבדיקה…" : isError ? "הבדיקה לא הושלמה" : isApproved ? "אושר לעותק החדש" : cell.output ? "ממתין לאישור שלך" : "מוכן לבדיקה"}</span>
+    </div>
+    <div className="grid gap-4 md:grid-cols-2">
+      <div><p className="mb-2 text-sm font-medium">הנוסח במסמך</p><p className="whitespace-pre-wrap break-words rounded-lg bg-muted/40 p-3 text-base leading-7">{wordOriginal}</p></div>
+      <div>
+        <label className="block text-sm font-medium">התיקון המוצע
+          <textarea aria-label={`התיקון המוצע לאזכור ${cell.id}`} value={draftOutput} rows={3} disabled={disabled || isLoading || cell.output === null || isError}
+            placeholder={isLoading ? "בודקים את האזכור…" : "התיקון יופיע לאחר הבדיקה"}
+            onChange={event => { setDraftOutput(event.target.value); onOutputChange(cell.id, escapeCitationLiteral(event.target.value)); }}
+            className="mt-2 w-full resize-y rounded-lg border border-border bg-background p-3 text-base font-normal leading-7 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary disabled:bg-muted/30" />
+        </label>
+      </div>
+    </div>
+    {cell.warningMsg && <p className="rounded-lg bg-amber-50 p-3 text-sm text-amber-950">{cell.warningMsg}</p>}
+    {isError && <div className="space-y-2 text-sm text-destructive"><p>{cell.errorMsg || "הבדיקה לא הושלמה. לא ננסה שוב אוטומטית."}</p><CitationRequestStatusLink requestId={cell.requestId} /></div>}
+    <div className="flex flex-wrap items-center justify-between gap-3">
+      <p className="text-xs text-muted-foreground">עריכת ההצעה מחייבת אישור מחדש.</p>
+      <button type="button" aria-label={`${isApproved ? "בטל אישור" : "אשר תיקון"} לאזכור ${cell.id}`} onClick={() => onApproveToggle(cell.id, !isApproved)} disabled={disabled || isLoading || !cell.output || isError || regenerationDisabled}
+        className={`min-h-11 rounded-lg border px-4 py-2 text-sm font-medium focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-50 ${isApproved ? "border-emerald-300 bg-emerald-50 text-emerald-900" : "border-primary bg-primary text-primary-foreground"}`}>{isApproved ? "בטל אישור" : "אשר תיקון"}</button>
+    </div>
+    <details className="border-t border-border pt-3 text-sm">
+      <summary className="cursor-pointer rounded py-1 text-primary focus-visible:outline focus-visible:outline-2">אפשרויות בדיקה נוספות</summary>
+      <div className="mt-3 space-y-3">
+        <label className="block">נוסח לבדיקה חוזרת<input aria-label={`נוסח לבדיקה חוזרת לאזכור ${cell.id}`} value={cell.input} disabled={disabled || isLoading}
+          onChange={event => onInputChange(cell.id, event.target.value)} className="mt-1 min-h-11 w-full rounded-lg border border-border bg-background px-3" /></label>
+        <p className="text-xs text-muted-foreground">שינוי כאן משפיע על הבדיקה בלבד; הקטע שנבחר במסמך נשאר אותו קטע.</p>
+        <label className="block">סוג המקור<select aria-label={`סוג המקור לאזכור ${cell.id}`} value={activeType} disabled={disabled || isLoading}
+          onChange={event => onSourceTypeChange(cell.id, event.target.value as SourceType)} className="mt-1 min-h-11 w-full rounded-lg border border-border bg-background px-3">
+          <option value="unknown">זיהוי אוטומטי</option>
+          {[...TYPE_OPTIONS, ...FOREIGN_TYPE_OPTIONS.map(option => option.type)].map(type => <option key={type} value={type}>{SOURCE_TYPE_LABELS[type]}</option>)}
+        </select></label>
+        <p className="text-xs text-muted-foreground">בדיקה נוספת משתמשת במכסת החשבון ושולחת את הנוסח לבדיקה.</p>
+        <button type="button" aria-label={`בדוק שוב אזכור ${cell.id}`} disabled={disabled || regenerationDisabled || isLoading || !cell.input.trim()} onClick={() => onRegenerate(cell.id)}
+          className="min-h-11 rounded-lg border border-border px-4 py-2 focus-visible:outline focus-visible:outline-2 disabled:opacity-50">בדוק שוב</button>
+      </div>
+    </details>
+  </article>;
 
   return (
     <div
