@@ -256,3 +256,29 @@ describe('navigation target validation',()=>{
   await expect(inspectDocxFootnotes(await fixture(note(7,'old'),`<w:p><w:r><w:txbxContent><w:p>${field('TOC')}</w:p></w:txbxContent></w:r>${anchor}</w:p>`))).rejects.toThrow('שדה Word');
  });
 });
+
+const paragraphMarkProperties = '<w:rPr><w:rFonts w:ascii="Arial" w:hAnsi="Arial"/><w:rtl/><w:sz w:val="24"/><w:szCs w:val="24"/><w:lang w:val="he-IL"/></w:rPr>';
+const paragraphMarkNote = (id: number, text: string) => note(id,text).replace('<w:pPr><w:bidi/></w:pPr>',`<w:pPr><w:bidi/>${paragraphMarkProperties}</w:pPr>`);
+describe('paragraph-mark run properties',()=>{
+ it('imports 39 notes and preserves all nontext parts through export and reimport',async()=>{
+  const notes=Array.from({length:39},(_,i)=>i<22?paragraphMarkNote(i+1,'old citation').replace('<w:r><w:rPr><w:rtl/></w:rPr><w:t','<w:proofErr w:type="spellStart"/><w:r><w:rPr><w:rtl/></w:rPr><w:t').replace('</w:t></w:r></w:p>','</w:t></w:r><w:proofErr w:type="spellEnd"/></w:p>'):paragraphMarkNote(i+1,'old citation')).join('');
+  const body=`<w:p>${Array.from({length:39},(_,i)=>`<w:r><w:footnoteReference w:id="${i+1}"/></w:r>`).join('')}</w:p>`;
+  const input=await fixture(notes,body),original=new Uint8Array(input).slice();const session=await inspectDocxFootnotes(input);
+  expect(session.notes).toHaveLength(39);expect(session.skippedCount).toBe(0);
+  const output=await embedApprovedFootnotes(session,[{id:'7',originalText:'old citation',start:0,end:3,replacement:'new',approved:true}]);
+  const a=await JSZip.loadAsync(input),b=await JSZip.loadAsync(output);for(const name of Object.keys(a.files))if(name!=='word/footnotes.xml')expect(await b.files[name].async('uint8array')).toEqual(await a.files[name].async('uint8array'));
+  const before=await a.file('word/footnotes.xml')!.async('string'),after=await b.file('word/footnotes.xml')!.async('string');const selected=/<w:footnote w:id="7">[\s\S]*?<\/w:footnote>/.exec(before)![0];
+  expect(after).toBe(before.replace(selected,selected.replace('old citation','new citation')));expect(after.split(paragraphMarkProperties)).toHaveLength(40);expect(new Uint8Array(input)).toEqual(original);
+  const imported=await inspectDocxFootnotes(output.buffer.slice(output.byteOffset,output.byteOffset+output.byteLength) as ArrayBuffer);expect(imported.notes).toHaveLength(39);expect(imported.notes[6].text).toBe('new citation');
+ });
+ it.each([
+  note(7,'old').replace('<w:pPr><w:bidi/></w:pPr>','<w:rPr><w:b/></w:rPr>'),
+  note(7,'old').replace('<w:pPr><w:bidi/></w:pPr>','<w:pPr><w:rPr><w:rPr/></w:rPr></w:pPr>'),
+  note(7,'old').replace('<w:pPr><w:bidi/></w:pPr>','<w:pPr><w:rPr><w:t>hidden</w:t></w:rPr></w:pPr>'),
+  note(7,'old').replace('<w:pPr><w:bidi/></w:pPr>','<w:pPr><w:rPr>hidden</w:rPr></w:pPr>'),
+  note(7,'old').replace('<w:p>', '<w:rPr><w:b/></w:rPr><w:p>'),
+ ])('continues to skip invalid run-property hierarchy %#',async(n)=>{
+  const session=await inspectDocxFootnotes(await fixture(n+note(42,'old')));expect(session.notes.map(n=>n.id)).toEqual(['42']);expect(session.skippedCount).toBe(1);
+  const output=await JSZip.loadAsync(await embedApprovedFootnotes(session,[{id:'42',originalText:'old',start:0,end:3,replacement:'new',approved:true}]));expect(await output.file('word/footnotes.xml')!.async('string')).toContain(n);
+ });
+});

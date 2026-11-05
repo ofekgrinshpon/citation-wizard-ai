@@ -258,7 +258,8 @@ export async function inspectDocxFootnotes(input: ArrayBuffer): Promise<DocxFoot
       const parent = child.parentElement;
       const name = child.localName;
       const expectedParent = name === "p" ? "footnote" : name === "r" || name === "pPr" || name === "proofErr" ? "p" : name === "t" || name === "rPr" || name === "footnoteRef" ? "r" : null;
-      if (expectedParent ? parent?.localName !== expectedParent : !parent || !["pPr","rPr"].includes(parent.localName)) return true;
+      // Run properties also describe paragraph-mark formatting under pPr.
+      if (name === "rPr" ? !parent || !["r", "pPr"].includes(parent.localName) : expectedParent ? parent?.localName !== expectedParent : !parent || !["pPr","rPr"].includes(parent.localName)) return true;
       if (name === "t" && child.children.length) return true;
       return name !== "t" && Array.from(child.childNodes).some(node => node.nodeType === 3 && !!node.textContent?.trim());
     });
