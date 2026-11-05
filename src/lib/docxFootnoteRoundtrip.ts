@@ -124,6 +124,83 @@ function documentNumbering(files: Map<string, Uint8Array>, body: Document, order
   return Object.freeze(order.map((id,index)=>Object.freeze({id,number:known?start+index:null})));
 }
 
+/** Body fields are retained verbatim, never evaluated. Only navigation fields with
+ * balanced cached results and no footnote anchors are eligible. */
+function validatePreservedBodyFields(doc: Document): boolean {
+  const reject = () => fail("שדה Word בגוף המסמך אינו נתמך או שמבנהו אינו בטוח לשימור. נתמכים רק TOC ו־PAGEREF תקינים ללא הפניות להערות בתוכם.");
+  const elements = Array.from(doc.getElementsByTagNameNS(W, "*"));
+  const bookmarks = new Map<string, string>();
+  const ends = new Map<string, number>();
+  for (const e of elements) {
+    if (e.localName === "bookmarkStart") {
+      const name = e.getAttributeNS(W,"name"), id = e.getAttributeNS(W,"id");
+      if (name && id !== null) bookmarks.set(name, bookmarks.has(name) ? "" : id);
+    }
+    if (e.localName === "bookmarkEnd") { const id=e.getAttributeNS(W,"id") || ""; ends.set(id,(ends.get(id)||0)+1); }
+  }
+  const instruction = (text: string): "TOC" | "PAGEREF" => {
+    const code=text.trim();
+    if (/^TOC(?:\s+\\(?:[hzu]|o\s+"[1-9]-[1-9]"|\*\s+MERGEFORMAT))*\s*$/i.test(code)) return "TOC";
+    const match=/^PAGEREF\s+([A-Za-z_][A-Za-z0-9_]*)(?:\s+\\(?:[hp]|\*\s+MERGEFORMAT))*\s*$/i.exec(code);
+    if (match) {
+      const id=bookmarks.get(match[1]);
+      const starts=elements.filter(e=>e.localName==="bookmarkStart" && e.getAttributeNS(W,"id")===id);
+      const end=elements.find(e=>e.localName==="bookmarkEnd" && e.getAttributeNS(W,"id")===id);
+      if (id && /^\d+$/.test(id) && ends.get(id)===1 && starts.length===1 && end && elements.indexOf(starts[0])<elements.indexOf(end)) return "PAGEREF";
+    }
+    return reject();
+  };
+  const stack: Array<{code:string;result:boolean;kind?:string}> = [];
+  let found=false;
+  for (const e of elements) {
+    const current=stack[stack.length-1];
+    if (e.localName==="fldSimple") reject(); // Keep simple fields outside this bounded implementation.
+    if (e.localName==="footnoteReference" && current) reject();
+    if (e.localName==="fldChar") {
+      // Text boxes are separate Word stories; do not balance their fields against the body.
+      for(let ancestor=e.parentElement;ancestor;ancestor=ancestor.parentElement) {
+        if(ancestor.namespaceURI===W && ancestor.localName==="txbxContent") reject();
+      }
+      found=true;
+      if(e.parentElement?.localName!=="r" || e.children.length || e.textContent?.trim()) reject();
+      const type=e.getAttributeNS(W,"fldCharType");
+      if(type==="begin") {
+        if(current && (!current.result || current.kind!=="TOC" || stack.length>1)) reject();
+        stack.push({code:"",result:false});
+      } else if(type==="separate") {
+        if(!current || current.result) reject();
+        current.kind=instruction(current.code); current.result=true;
+        if(stack.length>1 && current.kind!=="PAGEREF") reject();
+      } else if(type==="end") {
+        if(!current?.result) reject();
+        stack.pop();
+      } else reject();
+    } else if(e.localName==="instrText") {
+      if(!current || current.result || e.parentElement?.localName!=="r" || e.children.length) reject();
+      current.code+=e.textContent || "";
+    } else if(e.localName==="t" && current && !current.result) reject();
+  }
+  if(stack.length) reject();
+  return found;
+}
+
+/** Spelling/grammar markers contain no source text. Keep only balanced, empty
+ * paragraph-level markers; unsupported shapes keep the entire note uneditable. */
+function safeProofMarkers(element: Element): boolean {
+  for(const p of Array.from(element.getElementsByTagNameNS(W,"p"))) {
+    const open=new Set<string>();
+    for(const marker of Array.from(p.getElementsByTagNameNS(W,"proofErr"))) {
+      const type=marker.getAttributeNS(W,"type") || "";
+      const match=/^(spell|gram)(Start|End)$/.exec(type);
+      if(marker.parentElement!==p || marker.childNodes.length || !match) return false;
+      if(match[2]==="Start") {if(open.has(match[1])) return false; open.add(match[1]);}
+      else if(!open.delete(match[1])) return false;
+    }
+    if(open.size) return false;
+  }
+  return true;
+}
+
 export async function inspectDocxFootnotes(input: ArrayBuffer): Promise<DocxFootnoteSession> {
   const bytes = new Uint8Array(input.slice(0)); const sizes = preflight(bytes);
   const zip = await JSZip.loadAsync(bytes, { createFolders: false });
@@ -142,12 +219,16 @@ export async function inspectDocxFootnotes(input: ArrayBuffer): Promise<DocxFoot
   if([bodyDoc,notesDoc].some(doc=>doc.getElementsByTagNameNS(MC,"AlternateContent").length))
     fail("מסמך עם ענפי תוכן חלופיים של Word אינו נתמך. לא ניתן לקבוע אילו הפניות להערות פעילות.");
   if (bodyDoc.documentElement.namespaceURI !== W || notesDoc.documentElement.namespaceURI !== W || notesDoc.documentElement.nodeName !== "w:footnotes") invalid();
-  // Do not attempt to rewrite numbering fields, revisions, endnotes, cross-references, or custom marks.
+  // Revisions/endnotes remain unsupported. Navigation fields are validated separately and never rewritten.
   for (const doc of [bodyDoc, notesDoc]) {
-    for (const name of ["ins", "del", "moveFrom", "moveTo", "fldSimple", "fldChar", "instrText", "endnoteReference", "altChunk"]) {
+    for (const name of ["ins", "del", "moveFrom", "moveTo", "endnoteReference", "altChunk"]) {
       if (doc.getElementsByTagNameNS(W, name).length) fail("מסמכים עם שינויים במעקב, שדות, הפניות צולבות או הערות סיום עדיין אינם נתמכים.");
     }
   }
+  for (const name of ["fldSimple", "fldChar", "instrText"]) {
+    if(notesDoc.getElementsByTagNameNS(W,name).length) fail("שדות בתוך הערות שוליים עדיין אינם נתמכים.");
+  }
+  const preservedFields = validatePreservedBodyFields(bodyDoc);
   const anchors = Array.from(bodyDoc.getElementsByTagNameNS(W, "footnoteReference"));
   const order = anchors.map(a => { if (a.hasAttributeNS(W, "customMarkFollows")) fail("סימוני הערות מותאמים אינם נתמכים."); return a.getAttributeNS(W, "id") || ""; });
   if (!order.length || order.length > 250 || new Set(order).size !== order.length) fail("נדרשות 1–250 הערות שוליים בעלות הפניות ייחודיות.");
@@ -172,16 +253,16 @@ export async function inspectDocxFootnotes(input: ArrayBuffer): Promise<DocxFoot
       skip(id, "מבנה ההערה אינו נתמך; ההערה תישמר ללא שינוי."); continue;
     }
     const unsupported = Array.from(element.getElementsByTagName("*")).some(child =>
-      child.namespaceURI !== W || child.prefix !== "w" || !["p", "pPr", "r", "rPr", "t", "footnoteRef", "pStyle", "rStyle", "b", "bCs", "i", "iCs", "rtl", "bidi", "lang", "sz", "szCs", "rFonts", "color", "spacing", "ind", "jc", "keepNext", "keepLines", "widowControl", "contextualSpacing", "vertAlign", "u", "highlight", "noProof"].includes(child.localName));
+      child.namespaceURI !== W || child.prefix !== "w" || !["p", "pPr", "r", "rPr", "t", "footnoteRef", "proofErr", "pStyle", "rStyle", "b", "bCs", "i", "iCs", "rtl", "bidi", "lang", "sz", "szCs", "rFonts", "color", "spacing", "ind", "jc", "keepNext", "keepLines", "widowControl", "contextualSpacing", "vertAlign", "u", "highlight", "noProof"].includes(child.localName));
     const invalidHierarchy = Array.from(element.childNodes).some(node => node.nodeType === 3 && !!node.textContent?.trim()) || Array.from(element.getElementsByTagName("*")).some(child => {
       const parent = child.parentElement;
       const name = child.localName;
-      const expectedParent = name === "p" ? "footnote" : name === "r" || name === "pPr" ? "p" : name === "t" || name === "rPr" || name === "footnoteRef" ? "r" : null;
+      const expectedParent = name === "p" ? "footnote" : name === "r" || name === "pPr" || name === "proofErr" ? "p" : name === "t" || name === "rPr" || name === "footnoteRef" ? "r" : null;
       if (expectedParent ? parent?.localName !== expectedParent : !parent || !["pPr","rPr"].includes(parent.localName)) return true;
       if (name === "t" && child.children.length) return true;
       return name !== "t" && Array.from(child.childNodes).some(node => node.nodeType === 3 && !!node.textContent?.trim());
     });
-    if (unsupported || invalidHierarchy) { skip(id, "הערה בעלת רכיב מורכב (כגון קישור או טבלה) תישמר ללא שינוי."); continue; }
+    if (unsupported || invalidHierarchy || !safeProofMarkers(element)) { skip(id, "הערה בעלת רכיב מורכב (כגון קישור או טבלה) תישמר ללא שינוי."); continue; }
     const list: TextPosition[] = [], paragraphRanges: Array<{start:number;end:number}> = []; let text = "";
     const paragraphMatches = Array.from(match[0].matchAll(/<w:p\b[^>]*\/>|<w:p\b[^>]*>[\s\S]*?<\/w:p>/g));
     if (paragraphMatches.length !== paras.length) { skip(id, "לא ניתן למפות את פסקאות ההערה בבטחה."); continue; }
@@ -202,7 +283,7 @@ export async function inspectDocxFootnotes(input: ArrayBuffer): Promise<DocxFoot
   if (encountered.size !== order.length || order.some(id => !encountered.has(id))) fail("מיפוי ההערות במסמך אינו חד־משמעי.");
   const notes = Object.freeze(order.filter(id => found.has(id)).map(id => found.get(id)!));
   const skippedNotes = Object.freeze(order.filter(id => skipped.has(id)).map(id => skipped.get(id)!));
-  const session = Object.freeze({documentOrder: documentNumbering(files, bodyDoc, order), notes, skippedNotes, skippedCount:skippedNotes.length, warnings: Object.freeze(["אזכור שחוצה מקטעי עיצוב דורש אישור נפרד: התיקון יקבל את עיצוב המקטע הראשון, והעיצוב המעורב בתוך האזכור לא יישמר.", "אין להחליף אזכור שחוצה פסקאות. טקסט שלא סומן לתיקון והערות שדולגו נשמרים ללא שינוי.", "הקובץ המקורי נשמר ללא שינוי. יש לבדוק את העותק שהורד ב-Word."])});
+  const session = Object.freeze({documentOrder: documentNumbering(files, bodyDoc, order), notes, skippedNotes, skippedCount:skippedNotes.length, warnings: Object.freeze([...(preservedFields ? ["תוכן העניינים והפניות העמוד נשמרו ללא חישוב מחדש. לאחר התיקון יש לעדכן שדות ולבדוק עימוד ב-Word."] : []), "אזכור שחוצה מקטעי עיצוב דורש אישור נפרד: התיקון יקבל את עיצוב המקטע הראשון, והעיצוב המעורב בתוך האזכור לא יישמר.", "אין להחליף אזכור שחוצה פסקאות. טקסט שלא סומן לתיקון והערות שדולגו נשמרים ללא שינוי.", "הקובץ המקורי נשמר ללא שינוי. יש לבדוק את העותק שהורד ב-Word."])});
   sessions.set(session, {files, xml, positions, notes}); return session;
 }
 const escapeXml = (s: string) => s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");

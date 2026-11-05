@@ -268,7 +268,8 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
             <p>סדר ההערות כאן הוא סדר הופעתן במסמך; הוא עשוי להיות שונה מהמספר שמוצג ב־Word.</p>
             {session.skippedNotes?.map(skipped => <p key={skipped.id}>הערה במזהה פנימי {skipped.id}: {skipped.reason}</p>)}
             {note && <p>המזהה הפנימי של ההערה הפתוחה: {note.id}.</p>}
-            <p>אפשר לתקן אזכור בתוך פסקה אחת. שדות, שינויים במעקב והערות סיום אינם נתמכים. יש לבדוק את העותק ב־Word: הפריסה וההדגשות עשויות להשתנות.</p>
+            <p>אפשר לתקן אזכור בתוך פסקה אחת. שדות בתוך הערות, שינויים במעקב והערות סיום אינם נתמכים. שדות תוכן עניינים והפניות עמוד בגוף המסמך מותרים רק במבנים שנבדקו.</p>
+            {session.warnings?.map((warning, index) => <p key={`document-warning-${index}`}>{warning}</p>)}
           </div>
         </details>
         {!session.notes.length && <p>לא נמצאו הערות שאפשר לערוך בבטחה. המסמך נשאר ללא שינוי. אפשר לבחור מסמך אחר או להמשיך בהזנה ידנית.</p>}

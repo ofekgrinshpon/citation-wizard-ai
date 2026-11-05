@@ -188,3 +188,71 @@ describe('DOCX selective footnote round trip',()=>{
  });
 
 });
+
+const fieldRun=(xml:string)=>`<w:r>${xml}</w:r>`;
+const field=(code:string,result='3')=>fieldRun('<w:fldChar w:fldCharType="begin"/>')+fieldRun(`<w:instrText xml:space="preserve"> ${code} </w:instrText>`)+fieldRun('<w:fldChar w:fldCharType="separate"/>')+fieldRun(`<w:t>${result}</w:t>`)+fieldRun('<w:fldChar w:fldCharType="end"/>');
+const bookmark='<w:bookmarkStart w:id="90" w:name="_TocExample"/><w:r><w:t>Heading</w:t></w:r><w:bookmarkEnd w:id="90"/>';
+const anchor='<w:r><w:footnoteReference w:id="7"/></w:r>';
+const proofNote=(type='spell')=>note(7,'old citation').replace('<w:r><w:rPr><w:rtl/></w:rPr><w:t',`<w:proofErr w:type="${type}Start"/><w:r><w:rPr><w:rtl/></w:rPr><w:t`).replace('</w:t></w:r></w:p>',`</w:t></w:r><w:proofErr w:type="${type}End"/></w:p>`);
+describe('retained navigation fields and proofing markers',()=>{
+ it('imports 39 synthetic notes including 22 proof-marked notes, preserving all parts except approved text',async()=>{
+  let notes=''; for(let id=1;id<=39;id++) notes+=id<=22?proofNote().replace('w:id="7"',`w:id="${id}"`):note(id,'old citation');
+  const toc=field('TOC \\o "1-3" \\h \\z \\u','Contents').replace(fieldRun('<w:fldChar w:fldCharType="end"/>'),field('PAGEREF _TocExample \\h')+fieldRun('<w:fldChar w:fldCharType="end"/>'));
+  const body=`<w:p>${toc}</w:p><w:p>${bookmark}</w:p><w:p>${Array.from({length:39},(_,i)=>`<w:r><w:footnoteReference w:id="${i+1}"/></w:r>`).join('')}</w:p>`;
+  const z=await JSZip.loadAsync(await fixture(notes,body));z.file('word/footer1.xml',`<w:ftr xmlns:w="${W}"><w:p>${field('PAGE')}</w:p></w:ftr>`);z.file('word/_rels/document.xml.rels','<Relationships/>');
+  const input=await z.generateAsync({type:'arraybuffer'}),original=new Uint8Array(input).slice();
+  const session=await inspectDocxFootnotes(input);expect(session.notes).toHaveLength(39);expect(session.skippedCount).toBe(0);expect(session.warnings.join(' ')).toContain('לעדכן שדות');
+  const output=await embedApprovedFootnotes(session,[{id:'7',originalText:'old citation',start:0,end:3,replacement:'new',approved:true}]);
+  const after=await JSZip.loadAsync(output);for(const name of Object.keys(z.files)) if(name!=='word/footnotes.xml') expect(await after.files[name].async('uint8array')).toEqual(await z.files[name].async('uint8array'));
+  const beforeNotes=await z.file('word/footnotes.xml')!.async('string');expect(await after.file('word/footnotes.xml')!.async('string')).toBe(beforeNotes.replace(proofNote(),proofNote().replace('old citation','new citation')));
+  expect(new Uint8Array(input)).toEqual(original);
+  const again=await inspectDocxFootnotes(output.buffer.slice(output.byteOffset,output.byteOffset+output.byteLength) as ArrayBuffer);expect(again.notes[6].text).toBe('new citation');expect(again.notes).toHaveLength(39);
+ });
+ it('supports split instruction runs and standalone PAGEREF with a unique bookmark',async()=>{
+  const f=field('PAGEREF _TocExample \\p \\h').replace('PAGEREF _TocExample','PAGE</w:instrText></w:r><w:r><w:instrText>REF _TocExample');
+  expect((await inspectDocxFootnotes(await fixture(note(7,'old'),`<w:p>${bookmark}${f}${anchor}</w:p>`))).notes).toHaveLength(1);
+ });
+ it.each(['REF _TocExample','PAGE','DATE','INCLUDETEXT "file"','TOC \\x','PAGEREF missing','TOC \\o "1-3" garbage'])('rejects unsupported instruction %s',async(code)=>{
+  await expect(inspectDocxFootnotes(await fixture(note(7,'old'),`<w:p>${bookmark}${field(code)}${anchor}</w:p>`))).rejects.toThrow('שדה Word');
+ });
+ it.each([
+  field('TOC').replace('<w:fldChar w:fldCharType="end"/>',''),
+  field('TOC').replace('w:fldCharType="separate"','w:fldCharType="begin"'),
+  field('TOC').replace('<w:t>3</w:t>',`<w:t>3</w:t><w:footnoteReference w:id="7"/>`),
+  fieldRun('<w:instrText>TOC</w:instrText>'),
+  '<w:fldSimple w:instr="PAGEREF _TocExample"><w:r><w:t>3</w:t></w:r></w:fldSimple>',
+  field('PAGEREF _TocExample').replace('<w:t>3</w:t>',`<w:t>3</w:t>${field('PAGEREF _TocExample')}`),
+ ])('rejects malformed or unsafe field nesting %#',async(f)=>{
+  await expect(inspectDocxFootnotes(await fixture(note(7,'old'),`<w:p>${bookmark}${f}${anchor}</w:p>`))).rejects.toThrow();
+ });
+ it('rejects duplicate bookmark targets and still blocks fields inside notes',async()=>{
+  await expect(inspectDocxFootnotes(await fixture(note(7,'old'),`<w:p>${bookmark}${bookmark}${field('PAGEREF _TocExample')}${anchor}</w:p>`))).rejects.toThrow();
+  await expect(inspectDocxFootnotes(await fixture(note(7,'old').replace('</w:p>',`${field('TOC')}</w:p>`),`<w:p>${anchor}</w:p>`))).rejects.toThrow('שדות בתוך');
+ });
+ it.each(['spell','gram'])('allows balanced %s markers and preserves them during edits',async(type)=>{
+  const s=await inspectDocxFootnotes(await fixture(proofNote(type),`<w:p>${anchor}</w:p>`));expect(s.skippedCount).toBe(0);
+  const z=await JSZip.loadAsync(await embedApprovedFootnotes(s,[{id:'7',originalText:'old citation',start:0,end:3,replacement:'new',approved:true}]));expect(await z.file('word/footnotes.xml')!.async('string')).toContain(proofNote(type).replace('old citation','new citation'));
+ });
+ it.each([
+  proofNote().replace('<w:proofErr w:type="spellEnd"/>',''),
+  proofNote().replace('spellStart','otherStart'),
+  proofNote().replace('<w:proofErr w:type="spellStart"/>','<w:proofErr w:type="spellStart"><w:r><w:t>hidden</w:t></w:r></w:proofErr>'),
+  proofNote().replace('<w:proofErr w:type="spellStart"/>','<w:r><w:proofErr w:type="spellStart"/></w:r>'),
+ ])('retains malformed proofing note unedited %#',async(n)=>{
+  const s=await inspectDocxFootnotes(await fixture(n+note(42,'old')));expect(s.notes.map(n=>n.id)).toEqual(['42']);expect(s.skippedCount).toBe(1);
+  const z=await JSZip.loadAsync(await embedApprovedFootnotes(s,[{id:'42',originalText:'old',start:0,end:3,replacement:'new',approved:true}]));expect(await z.file('word/footnotes.xml')!.async('string')).toContain(n);
+ });
+});
+
+describe('navigation target validation',()=>{
+ it.each([
+  '<w:bookmarkEnd w:id="90"/><w:bookmarkStart w:id="90" w:name="_TocExample"/>',
+  bookmark.replace(/w:id="90"/g,'w:id="bad"'),
+  bookmark.replace('<w:bookmarkEnd w:id="90"/>',''),
+ ])('rejects malformed bookmark target %#',async(target)=>{
+  await expect(inspectDocxFootnotes(await fixture(note(7,'old'),`<w:p>${target}${field('PAGEREF _TocExample')}${anchor}</w:p>`))).rejects.toThrow('שדה Word');
+ });
+ it('does not balance fields across separate text-box stories',async()=>{
+  await expect(inspectDocxFootnotes(await fixture(note(7,'old'),`<w:p><w:r><w:txbxContent><w:p>${field('TOC')}</w:p></w:txbxContent></w:r>${anchor}</w:p>`))).rejects.toThrow('שדה Word');
+ });
+});

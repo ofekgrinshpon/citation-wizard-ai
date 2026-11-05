@@ -105,3 +105,10 @@ describe('Word default engine flow',()=>{
  });
 
 });
+
+it('shows preserved-navigation field update guidance without making provider calls',async()=>{
+ const warning='תוכן העניינים והפניות העמוד נשמרו ללא חישוב מחדש. לאחר התיקון יש לעדכן שדות ולבדוק עימוד ב-Word.';
+ mocks.inspect.mockResolvedValue({notes:[note()],skippedNotes:[],warnings:[warning]});
+ render(<WordFootnoteWorkflow/>);await upload();expect(screen.getByText(warning)).toBeInTheDocument();
+ expect(screen.getByText(/שדות בתוך הערות/)).toBeInTheDocument();expect(mocks.run).not.toHaveBeenCalled();
+});
