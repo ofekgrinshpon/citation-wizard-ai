@@ -1,5 +1,4 @@
-/** WIP: not wired to export. Unsafe until inherited visibility and vertical
- * alignment have been verified at the actual insertion site. */
+/** Generates runs only; callers must first validate inherited styles at the insertion site. */
 import { parseCitationSegments } from './citationSegments';
 
 const W='http://schemas.openxmlformats.org/wordprocessingml/2006/main';
@@ -28,7 +27,7 @@ export function wordCitationStyledRuns(marked:string,originalProperties:string):
  if(parsed.getElementsByTagName('parsererror').length)throw Error('עיצוב האזכור אינו נתמך; ההערה תישאר ללא שינוי.');
  const root=parsed.documentElement;
  for(const child of Array.from(root.children)){
-  if(child.namespaceURI!==W||child.prefix!=='w'||!safeTags.has(child.localName)||child.children.length||child.textContent?.trim())throw Error('עיצוב האזכור אינו נתמך; ההערה תישאר ללא שינוי.');
+  if(child.namespaceURI!==W||child.prefix!=='w'||!safeTags.has(child.localName)||(['u','highlight'].includes(child.localName)&&child.getAttributeNS(W,'val')!=='none')||child.children.length||child.textContent?.trim())throw Error('עיצוב האזכור אינו נתמך; ההערה תישאר ללא שינוי.');
   if(typography.has(child.localName))root.removeChild(child);
  }
  if(Array.from(root.childNodes).some(n=>n.nodeType===3&&n.textContent?.trim()))throw Error('עיצוב האזכור אינו נתמך; ההערה תישאר ללא שינוי.');

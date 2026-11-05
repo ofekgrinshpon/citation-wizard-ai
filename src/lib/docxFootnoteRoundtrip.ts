@@ -1,3 +1,4 @@
+import { applyStyledParagraph, type StyledParagraphPatch } from './wordStyledParagraph';
 import JSZip from "jszip";
 
 const W = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
@@ -253,7 +254,7 @@ export async function inspectDocxFootnotes(input: ArrayBuffer): Promise<DocxFoot
       skip(id, "מבנה ההערה אינו נתמך; ההערה תישמר ללא שינוי."); continue;
     }
     const unsupported = Array.from(element.getElementsByTagName("*")).some(child =>
-      child.namespaceURI !== W || child.prefix !== "w" || !["p", "pPr", "r", "rPr", "t", "footnoteRef", "proofErr", "pStyle", "rStyle", "b", "bCs", "i", "iCs", "rtl", "bidi", "lang", "sz", "szCs", "rFonts", "color", "spacing", "ind", "jc", "keepNext", "keepLines", "widowControl", "contextualSpacing", "vertAlign", "u", "highlight", "noProof"].includes(child.localName));
+      child.namespaceURI !== W || child.prefix !== "w" || !["p", "pPr", "r", "rPr", "t", "footnoteRef", "proofErr", "pStyle", "rStyle", "b", "bCs", "i", "iCs", "smallCaps", "caps", "rtl", "bidi", "lang", "sz", "szCs", "rFonts", "color", "spacing", "ind", "jc", "keepNext", "keepLines", "widowControl", "contextualSpacing", "vertAlign", "u", "highlight", "noProof"].includes(child.localName));
     const invalidHierarchy = Array.from(element.childNodes).some(node => node.nodeType === 3 && !!node.textContent?.trim()) || Array.from(element.getElementsByTagName("*")).some(child => {
       const parent = child.parentElement;
       const name = child.localName;
@@ -284,7 +285,7 @@ export async function inspectDocxFootnotes(input: ArrayBuffer): Promise<DocxFoot
   if (encountered.size !== order.length || order.some(id => !encountered.has(id))) fail("מיפוי ההערות במסמך אינו חד־משמעי.");
   const notes = Object.freeze(order.filter(id => found.has(id)).map(id => found.get(id)!));
   const skippedNotes = Object.freeze(order.filter(id => skipped.has(id)).map(id => skipped.get(id)!));
-  const session = Object.freeze({documentOrder: documentNumbering(files, bodyDoc, order), notes, skippedNotes, skippedCount:skippedNotes.length, warnings: Object.freeze([...(preservedFields ? ["תוכן העניינים והפניות העמוד נשמרו ללא חישוב מחדש. לאחר התיקון יש לעדכן שדות ולבדוק עימוד ב-Word."] : []), "אזכור שחוצה מקטעי עיצוב דורש אישור נפרד: התיקון יקבל את עיצוב המקטע הראשון, והעיצוב המעורב בתוך האזכור לא יישמר.", "אין להחליף אזכור שחוצה פסקאות. טקסט שלא סומן לתיקון והערות שדולגו נשמרים ללא שינוי.", "הקובץ המקורי נשמר ללא שינוי. יש לבדוק את העותק שהורד ב-Word."])});
+  const session = Object.freeze({documentOrder: documentNumbering(files, bodyDoc, order), notes, skippedNotes, skippedCount:skippedNotes.length, warnings: Object.freeze([...(preservedFields ? ["תוכן העניינים והפניות העמוד נשמרו ללא חישוב מחדש. לאחר התיקון יש לעדכן שדות ולבדוק עימוד ב-Word."] : []), "אזכורים יישמרו רק כאשר ניתן להחיל את עיצובם בבטחה; אחרת ההערה תישאר ללא שינוי.", "אין להחליף אזכור שחוצה פסקאות. טקסט שלא סומן לתיקון והערות שדולגו נשמרים ללא שינוי.", "הקובץ המקורי נשמר ללא שינוי. יש לבדוק את העותק שהורד ב-Word."])});
   sessions.set(session, {files, xml, positions, notes}); return session;
 }
 const escapeXml = (s: string) => s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
@@ -345,3 +346,50 @@ export async function embedApprovedFootnotes(session: DocxFootnoteSession, patch
   for(const [name,bytes] of data.files) out.file(name, name === "word/footnotes.xml" ? result : bytes, {dir:name.endsWith("/")});
   return out.generateAsync({type:"uint8array",compression:"DEFLATE"});
 }
+
+/** Preflight and splice rule-styled citations; no source document mutation. */
+export async function embedStyledFootnotes(session:DocxFootnoteSession,patches:readonly ApprovedFootnotePatch[],protectedSpans:readonly ProtectedFootnoteSpan[]=[]):Promise<Uint8Array>{
+ const data=sessions.get(session);if(!data)fail('המסמך אינו זמין. יש להעלות אותו מחדש.');
+ const selected=patches.filter(p=>p.approved);if(!selected.length||selected.length>1000||protectedSpans.length>1000)fail('יש לאשר מספר תקין של תיקונים.');
+ const styles=data.files.has('word/styles.xml')?textFile(data.files,'word/styles.xml'):null;
+ const protectedByNote=new Map<string,ProtectedFootnoteSpan[]>();
+ for(const span of protectedSpans){
+  const note=data.notes.find(n=>n.id===span.id);
+  if(!note||span.originalText!==note.text||!Number.isInteger(span.start)||!Number.isInteger(span.end)||span.start<0||span.end<=span.start||span.end>note.text.length)fail('ההסבר המוגן אינו תואם להערה המקורית.');
+  const splits=(at:number)=>at>0&&at<note.text.length&&/[\uD800-\uDBFF]/.test(note.text[at-1])&&/[\uDC00-\uDFFF]/.test(note.text[at]);if(splits(span.start)||splits(span.end))fail('הבחירה חוצה תו מורכב. יש לבחור תווים שלמים.');
+  const ranges=protectedByNote.get(span.id)??[];if(ranges.some(r=>r.start<span.end&&span.start<r.end))fail('מקטעי ההסבר המוגנים חופפים.');ranges.push(span);protectedByNote.set(span.id,ranges);
+ }
+ const groups=new Map<string,{xmlStart:number;xmlEnd:number;xml:string;patches:StyledParagraphPatch[]}>();
+ const ranges=new Map<string,Array<{start:number;end:number}>>();
+ const overlaps=(a:{start:number;end:number},b:{start:number;end:number})=>a.start<b.end&&b.start<a.end;
+ const rootOpen=data.xml.match(/<w:footnotes\b[^>]*>/)?.[0];if(!rootOpen)invalid();
+ for(const p of selected){
+  const note=data.notes.find(n=>n.id===p.id);
+  if(!note||p.originalText!==note.text||!Number.isInteger(p.start)||!Number.isInteger(p.end)||p.start<0||p.end<=p.start||p.end>note.text.length)fail('המקטע אינו תואם להערה המקורית.');
+  if(protectedSpans.some(q=>q.id===p.id&&(q.originalText!==note.text||overlaps(q,p))))fail('תיקון חופף להסבר מוגן; ההערה תישאר ללא שינוי.');
+  const used=ranges.get(p.id)??[];if(used.some(r=>overlaps(r,p)))fail('התיקונים המאושרים חופפים.');used.push(p);ranges.set(p.id,used);
+  const pi=note.paragraphRanges.findIndex(r=>p.start>=r.start&&p.end<=r.end);if(pi<0)fail('לא ניתן להחליף אזכור שחוצה פסקאות.');
+  let location:RegExpMatchArray|undefined;
+  for(const m of data.xml.matchAll(/<w:footnote\b[^>]*>[\s\S]*?<\/w:footnote>/g)){
+   const d=xmlDocument(`${rootOpen}${m[0]}</w:footnotes>`);if(d.documentElement.firstElementChild?.getAttributeNS(W,'id')===p.id){if(location)invalid();location=m;}
+  }
+  if(!location)invalid();
+  const paragraphs=[...location[0].matchAll(/<w:p\b[^>]*\/>|<w:p\b[^>]*>[\s\S]*?<\/w:p>/g)];
+  if(paragraphs.length!==note.paragraphRanges.length||!paragraphs[pi])invalid();
+  const par=paragraphs[pi],xmlStart=location.index!+par.index!,key=`${p.id}:${pi}`,range=note.paragraphRanges[pi];
+  const group=groups.get(key)??{xmlStart,xmlEnd:xmlStart+par[0].length,xml:par[0],patches:[]};
+  group.patches.push({start:p.start-range.start,end:p.end-range.start,originalText:note.text.slice(range.start,range.end),markedCitation:p.replacement});groups.set(key,group);
+ }
+ const changes=[...groups.values()].map(group=>({start:group.xmlStart,end:group.xmlEnd,text:applyStyledParagraph(group.xml,styles,group.patches)})).sort((a,b)=>b.start-a.start);
+ let result=data.xml;for(const c of changes)result=result.slice(0,c.start)+c.text+result.slice(c.end);
+ if(new TextEncoder().encode(result).length>MAX_XML)fail('התיקונים יוצרים רכיב הערות גדול מדי.');xmlDocument(result);
+ const out=new JSZip();for(const [name,bytes] of data.files)out.file(name,name==='word/footnotes.xml'?result:bytes,{dir:name.endsWith('/')});
+ return out.generateAsync({type:'uint8array',compression:'DEFLATE'});
+}
+
+/** Async safety preflight shares the exact exporter; generated bytes are discarded. */
+export async function checkStyledFootnotes(session:DocxFootnoteSession,patches:readonly ApprovedFootnotePatch[],protectedSpans:readonly ProtectedFootnoteSpan[]=[]):Promise<string|null>{
+ try{await embedStyledFootnotes(session,patches.map(p=>({...p,approved:true})),protectedSpans);return null;}catch(error){return error instanceof Error?error.message:'לא ניתן לשמור את עיצוב ההערה בבטחה; ההערה תישאר ללא שינוי.';}
+}
+
+export async function checkStyledFootnote(session:DocxFootnoteSession,patch:ApprovedFootnotePatch,protectedSpans:readonly ProtectedFootnoteSpan[]=[]):Promise<string|null>{return checkStyledFootnotes(session,[patch],protectedSpans);}

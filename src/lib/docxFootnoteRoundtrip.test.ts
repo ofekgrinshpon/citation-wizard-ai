@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import JSZip from "jszip";
-import { inspectDocxFootnotes, embedApprovedFootnotes } from "./docxFootnoteRoundtrip";
+import { inspectDocxFootnotes, embedApprovedFootnotes, embedStyledFootnotes } from "./docxFootnoteRoundtrip";
 const W = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
 const note = (id: number, text: string) => `<w:footnote w:id="${id}"><w:p><w:pPr><w:bidi/></w:pPr><w:r><w:rPr><w:rtl/></w:rPr><w:footnoteRef/></w:r><w:r><w:rPr><w:rtl/></w:rPr><w:t xml:space="preserve">${text}</w:t></w:r></w:p></w:footnote>`;
 async function fixture(notes = note(42,"הסבר: מקור ישן; הסבר נוסף")+note(7,"untouched"), body = '<w:p><w:r><w:footnoteReference w:id="7"/></w:r><w:r><w:footnoteReference w:id="42"/></w:r></w:p>') {
@@ -280,5 +280,30 @@ describe('paragraph-mark run properties',()=>{
  ])('continues to skip invalid run-property hierarchy %#',async(n)=>{
   const session=await inspectDocxFootnotes(await fixture(n+note(42,'old')));expect(session.notes.map(n=>n.id)).toEqual(['42']);expect(session.skippedCount).toBe(1);
   const output=await JSZip.loadAsync(await embedApprovedFootnotes(session,[{id:'42',originalText:'old',start:0,end:3,replacement:'new',approved:true}]));expect(await output.file('word/footnotes.xml')!.async('string')).toContain(n);
+ });
+});
+
+
+describe('rule-styled DOCX export',()=>{
+ const styles=`<w:styles xmlns:w="${W}"><w:style w:type="paragraph" w:styleId="Normal" w:default="1"><w:rPr><w:b/><w:iCs/></w:rPr></w:style></w:styles>`;
+ it('preserves all other package parts and marker, supports multiple text nodes and reimports small caps',async()=>{
+  const n='<w:footnote w:id="7"><w:p><w:r><w:rPr><w:rFonts w:ascii="Arial"/><w:rtl/><w:b/></w:rPr><w:footnoteRef/><w:t xml:space="preserve">prefix old</w:t><w:t xml:space="preserve"> cite suffix</w:t></w:r></w:p></w:footnote>';
+  const zip=await JSZip.loadAsync(await fixture(n+note(42,'unchanged')));zip.file('word/styles.xml',styles);const input=await zip.generateAsync({type:'arraybuffer'}),before=new Uint8Array(input).slice();
+  const session=await inspectDocxFootnotes(input);const output=await embedStyledFootnotes(session,[{id:'7',originalText:'prefix old cite suffix',start:7,end:15,replacement:'##new## ^^Review^^',approved:true}]);const result=await JSZip.loadAsync(output);
+  for(const name of Object.keys(zip.files))if(name!=='word/footnotes.xml')expect(await result.files[name].async('uint8array')).toEqual(await zip.files[name].async('uint8array'));
+  expect(new Uint8Array(input)).toEqual(before);const foot=await result.file('word/footnotes.xml')!.async('string');expect((foot.match(/<w:footnoteRef\/>/g)??[]).length).toBe(2);expect(foot).toContain('<w:smallCaps w:val="1"/>');
+  const reimport=await inspectDocxFootnotes(output.buffer.slice(output.byteOffset,output.byteOffset+output.byteLength) as ArrayBuffer);expect(reimport.notes.find(x=>x.id==='7')?.text).toBe('prefix new Review suffix');
+ });
+ it('exports and reimports synthetic 39 notes with paragraph marks and proofing',async()=>{
+  const notes=Array.from({length:39},(_,i)=>i<22?paragraphMarkNote(i+1,'old citation').replace('<w:r><w:rPr><w:rtl/></w:rPr><w:t','<w:proofErr w:type="spellStart"/><w:r><w:rPr><w:rtl/></w:rPr><w:t').replace('</w:t></w:r></w:p>','</w:t></w:r><w:proofErr w:type="spellEnd"/></w:p>'):paragraphMarkNote(i+1,'old citation')).join('');
+  const body=`<w:p>${Array.from({length:39},(_,i)=>`<w:r><w:footnoteReference w:id="${i+1}"/></w:r>`).join('')}</w:p>`;
+  const zip=await JSZip.loadAsync(await fixture(notes,body));zip.file('word/styles.xml',styles);const input=await zip.generateAsync({type:'arraybuffer'}),before=new Uint8Array(input).slice();const session=await inspectDocxFootnotes(input);expect(session.notes).toHaveLength(39);expect(session.skippedCount).toBe(0);
+  const output=await embedStyledFootnotes(session,[{id:'7',originalText:'old citation',start:0,end:12,replacement:'^^new^^ ##Journal##',approved:true}]);const out=await JSZip.loadAsync(output);for(const name of Object.keys(zip.files))if(name!=='word/footnotes.xml')expect(await out.files[name].async('uint8array')).toEqual(await zip.files[name].async('uint8array'));expect(new Uint8Array(input)).toEqual(before);
+  const foot=await out.file('word/footnotes.xml')!.async('string');expect((foot.match(/<w:footnoteRef\/>/g)??[])).toHaveLength(39);expect(foot.split(paragraphMarkProperties)).toHaveLength(40);expect((foot.match(/<w:proofErr/g)??[])).toHaveLength(44);
+  const again=await inspectDocxFootnotes(output.buffer.slice(output.byteOffset,output.byteOffset+output.byteLength) as ArrayBuffer);expect(again.notes).toHaveLength(39);expect(again.skippedCount).toBe(0);expect(again.notes[6].text).toBe('new Journal');
+ });
+ it('leaves original untouched and refuses ambiguous inherited typography',async()=>{
+  const zip=await JSZip.loadAsync(await fixture());zip.file('word/styles.xml',styles.replace('<w:b/>','<w:vanish/>'));const input=await zip.generateAsync({type:'arraybuffer'}),before=new Uint8Array(input).slice();const session=await inspectDocxFootnotes(input);
+  await expect(embedStyledFootnotes(session,[{id:'7',originalText:'untouched',start:0,end:9,replacement:'##new##',approved:true}])).rejects.toThrow('תישאר');expect(new Uint8Array(input)).toEqual(before);
  });
 });

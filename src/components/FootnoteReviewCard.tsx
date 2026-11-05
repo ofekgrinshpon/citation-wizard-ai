@@ -35,6 +35,8 @@ interface Props {
   /** Word review shows the exact selected document text, even if the search input is edited. */
   wordOriginal?: string;
   wordLabel?: string;
+  wordNeedsRevalidation?: boolean;
+  wordApprovalDisabled?: boolean;
   /** Available only for an explicit retry of a server-confirmed failed request. */
   newAttempt?: { disclosure: string; onRetry: () => void };
   /** Optional per-card copy action (used by the V2 אזכור אחיד review layer). */
@@ -109,6 +111,8 @@ export function FootnoteReviewCard({
   disabled,
   regenerationDisabled,
   wordOriginal,
+  wordNeedsRevalidation,
+  wordApprovalDisabled,
   wordLabel,
   newAttempt,
   onCopy,
@@ -158,13 +162,15 @@ export function FootnoteReviewCard({
             onChange={event => { setDraftOutput(event.target.value); onOutputChange(cell.id, escapeCitationLiteral(event.target.value)); }}
             className="mt-2 w-full resize-y rounded-lg border border-border bg-background p-3 text-base font-normal leading-7 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary disabled:bg-muted/30" />
         </label>
+        {cell.output && !wordNeedsRevalidation && <div aria-label={`תצוגה מעוצבת לאזכור ${cell.id}`} className="mt-2 whitespace-pre-wrap"><FormattedCitation text={cell.output} /></div>}
+        {wordNeedsRevalidation && <p className="mt-2 text-sm text-amber-800">הנוסח נערך. יש לבדוק אותו שוב כדי להחיל את כללי העיצוב לפני אישורו.</p>}
       </div>
     </div>
     {cell.warningMsg && <p className="rounded-lg bg-amber-50 p-3 text-sm text-amber-950">{cell.warningMsg}</p>}
     {isError && <div className="space-y-2 text-sm text-destructive"><p>{cell.errorMsg || "הבדיקה לא הושלמה. לא ננסה שוב אוטומטית."}</p><CitationRequestStatusLink requestId={cell.requestId} /></div>}
     <div className="flex flex-wrap items-center justify-between gap-3">
       <p className="text-xs text-muted-foreground">עריכת ההצעה מחייבת אישור מחדש.</p>
-      <button type="button" aria-label={`${isApproved ? "בטל אישור" : "אשר תיקון"} לאזכור ${cell.id}`} onClick={() => onApproveToggle(cell.id, !isApproved)} disabled={disabled || isLoading || !cell.output || isError || regenerationDisabled}
+      <button type="button" aria-label={`${isApproved ? "בטל אישור" : "אשר תיקון"} לאזכור ${cell.id}`} onClick={() => onApproveToggle(cell.id, !isApproved)} disabled={disabled || isLoading || !cell.output || isError || regenerationDisabled || wordNeedsRevalidation || wordApprovalDisabled}
         className={`min-h-11 rounded-lg border px-4 py-2 text-sm font-medium focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-50 ${isApproved ? "border-emerald-300 bg-emerald-50 text-emerald-900" : "border-primary bg-primary text-primary-foreground"}`}>{isApproved ? "בטל אישור" : "אשר תיקון"}</button>
     </div>
     <details className="border-t border-border pt-3 text-sm">

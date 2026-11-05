@@ -1,3 +1,4 @@
+import { FormattedCitation } from "@/components/FormattedCitation";
 import { mapWordSources, validateWordSource, type WordMappedSource } from "@/lib/wordSourceMap";
 import { proposeWordRepeats, invalidateWordDependents } from "@/lib/wordRepeatContext";
 import { ForeignSourcePicker } from "./ForeignSourcePicker";
@@ -11,13 +12,13 @@ import { FootnoteReviewCard, type ReviewCardCell } from "./FootnoteReviewCard";
 import { useAuth } from "@/hooks/useAuth";
 import { useProjects } from "@/hooks/useProjects";
 import { runCitation } from "@/lib/runCitation";
-import { citationTextOnly } from "@/lib/citationSegments";
+import { citationTextOnly, escapeCitationLiteral } from "@/lib/citationSegments";
 import { newTelemetryBatch, sourceTelemetry } from "@/lib/costTelemetry";
-import { inspectDocxFootnotes, embedApprovedFootnotes } from "@/lib/docxFootnoteRoundtrip";
+import { inspectDocxFootnotes, embedStyledFootnotes, checkStyledFootnote, checkStyledFootnotes } from "@/lib/docxFootnoteRoundtrip";
 
 type Session = Awaited<ReturnType<typeof inspectDocxFootnotes>>;
 type Span = { noteId: string; start: number; end: number };
-type Row = ReviewCardCell & WordMappedSource & { fullOutput?: string | null; repeatProposal?: boolean; classification?: GenerationPlan | null; classificationRecord?: ClassificationRecord; noteId: string; originalText: string; start: number; end: number; crossesRuns?: boolean; allowFormattingNormalization?: boolean };
+type Row = ReviewCardCell & WordMappedSource & { fullOutput?: string | null; repeatProposal?: boolean; classification?: GenerationPlan | null; classificationRecord?: ClassificationRecord; noteId: string; originalText: string; start: number; end: number; crossesRuns?: boolean; needsStyleRevalidation?: boolean; manualDraft?: string; styleIssue?: string | null };
 const button = "min-h-11 rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
 const primaryButton = `${button} border-primary bg-primary text-primary-foreground hover:bg-primary/90`;
 const steps = ["בחירת מסמך", "טקסט הסבר שלא לשנות", "בדיקת תיקונים", "הורדת עותק"];
@@ -104,7 +105,7 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
     setProtectedSpans(next);
     setRows(old => invalidateWordDependents([...old.filter(row => row.noteId !== noteId), ...plan.sources.map((source,part)=>({
       ...source,id:session.notes.indexOf(note)+1+part*250,noteId,originalText:note.text,
-      output:null,status:"empty" as const,approved:false,allowFormattingNormalization:false,
+      output:null,status:"empty" as const,approved:false,
     }))],session.notes.map(n=>n.id),noteId).sort((a,b)=>session.notes.findIndex(n=>n.id===a.noteId)-session.notes.findIndex(n=>n.id===b.noteId)||a.start-b.start));
     setSelection(null); setEditingRow(null); setError(""); setNotice("");
   };
@@ -127,7 +128,7 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
   };
   const generate = async (onlyId?: number) => {
     if (lock.current || !session) return;
-    const selected = rows.filter(row => row.end > row.start && row.input.trim() && (!row.crossesRuns || row.allowFormattingNormalization) && !blockedNotes.current.has(noteKey(row)) && (onlyId === undefined ? !row.output && row.status !== "error" : row.id === onlyId));
+    const selected = rows.filter(row => row.end > row.start && row.input.trim() && !blockedNotes.current.has(noteKey(row)) && (onlyId === undefined ? !row.output && row.status !== "error" : row.id === onlyId));
     if (!selected.length) return;
     lock.current = true; setBusy(true); setError(""); setNotice("");
     setRows(old=>{
@@ -146,10 +147,13 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
       if (blockedNotes.current.has(noteKey(row))) continue;
       const original=session.notes.find(n=>n.id===row.noteId);
       if(!original || !validateWordSource(original,protectedSpans.filter(p=>p.noteId===row.noteId),row))continue;
+      const originalIssue=await checkStyledFootnote(session,{id:row.noteId,originalText:row.originalText,start:row.start,end:row.end,replacement:escapeCitationLiteral(row.originalText.slice(row.start,row.end)),approved:true},protectedSpans.filter(p=>p.noteId===row.noteId).map(p=>({...p,id:p.noteId,originalText:row.originalText})));
+      if(!isCurrent())break;
+      if(originalIssue){setRows(old=>old.map(r=>r.id===row.id?{...r,styleIssue:originalIssue,approved:false}:r));continue;}
       setRows(old => old.map(r => r.id === row.id ? { ...r, status: "loading", approved: false } : r));
       blockedNotes.current.set(noteKey(row), { message: "בקשה זו עדיין בטיפול. אין ליצור ניסיון נוסף לפני בירור התוצאה." });
       try {
-        const result = await runCitation({ rawInput: row.input, overrideType: row.classification?.sourceType ?? row.sourceTypeOverride, manualChoice: row.classification?.manualChoice,
+        const result = await runCitation({ rawInput: row.manualDraft ?? row.input, overrideType: row.classification?.sourceType ?? row.sourceTypeOverride, manualChoice: row.classification?.manualChoice,
           projectId: currentProject?.id, useVerifiedStore: true, isResultCurrent: isCurrent,
           telemetry: sourceTelemetry(batch) });
         if (owner === currentScope.current) blockedNotes.current.delete(noteKey(row));
@@ -158,7 +162,9 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
           setRows(old => old.map(r => r.id === row.id ? {...r,output:null,status:"error",approved:false,errorMsg:"התוצאה עשויה לכלול כמה מקורות או הפניה למקור קודם שלא קושר. נדרש טיפול נוסף; ההערה תישאר ללא שינוי."} : r));
           continue;
         }
-        setRows(old => old.map(r => r.id === row.id ? { ...r, output: result.citation, fullOutput:result.citation, repeatProposal:false,
+        const styleIssue=await checkStyledFootnote(session,{id:row.noteId,originalText:row.originalText,start:row.start,end:row.end,replacement:result.citation,approved:true},protectedSpans.filter(p=>p.noteId===row.noteId).map(p=>({...p,id:p.noteId,originalText:row.originalText})));
+        if (!isCurrent()) break;
+        setRows(old => old.map(r => r.id === row.id ? { ...r, output: result.citation, fullOutput:result.citation, repeatProposal:false,needsStyleRevalidation:false,manualDraft:undefined,styleIssue,
           completion: result.completion, pastedCitation: result.pastedCitation, status: row.classification?.warning ? "warning" : result.status, detectedType: result.sourceType, warningMsg: [result.warningMsg, row.classification?.warning].filter(Boolean).join(" · ") || undefined, errorMsg: undefined, approved: false } : r));
       } catch (e) {
         const failure = e && typeof e === "object" ? e as { requestId?: string; userMessage?: string } : {};
@@ -184,8 +190,18 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
     const version = epoch.current;
     const owner = scope;
     try {
-      const bytes = await embedApprovedFootnotes(session, approved.map(r => ({ id: r.noteId, originalText: r.originalText,
-        start: r.start, end: r.end, replacement: citationTextOnly(r.output!), approved: true, ...(r.crossesRuns ? { allowFormattingNormalization: r.allowFormattingNormalization } : {}) })), protectedSpans.map(p => ({ ...p, id: p.noteId, originalText: session.notes.find(n => n.id === p.noteId)!.text })));
+      const protectedRecords=protectedSpans.map(p=>({...p,id:p.noteId,originalText:session.notes.find(n=>n.id===p.noteId)!.text}));
+      const grouped = new Map<string,typeof approved>();
+      for(const row of approved)grouped.set(row.noteId,[...(grouped.get(row.noteId)??[]),row]);
+      const safe:typeof approved=[];const skippedIds:string[]=[];
+      for(const [id,group] of grouped){
+        const patches=group.map(r=>({id:r.noteId,originalText:r.originalText,start:r.start,end:r.end,replacement:r.output!,approved:true}));
+        if(await checkStyledFootnotes(session,patches,protectedRecords.filter(p=>p.id===id)))skippedIds.push(id);else safe.push(...group);
+      }
+      if(version!==epoch.current||owner!==currentScope.current)return;
+      if(skippedIds.length)setRows(old=>old.map(r=>skippedIds.includes(r.noteId)?{...r,approved:false,styleIssue:"לא ניתן לשמור את ההערה בבטחה; היא נשארה ללא שינוי."}:r));
+      if(!safe.length){setError('לא ניתן לשמור את ההערות שאושרו בבטחה; הן נשארו ללא שינוי.');return;}
+      const bytes=await embedStyledFootnotes(session,safe.map(r=>({id:r.noteId,originalText:r.originalText,start:r.start,end:r.end,replacement:r.output!,approved:true})),protectedRecords);
       if (version !== epoch.current || owner !== currentScope.current) return;
       const blob = new Blob([new Uint8Array(bytes)], { type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
       const url = URL.createObjectURL(blob);
@@ -193,21 +209,23 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
       link.download = filename.replace(/\.docx$/i, "") + "-ReLex.docx";
       document.body.appendChild(link); link.click(); link.remove();
       setTimeout(() => URL.revokeObjectURL(url), 1000);
-      setNotice(`הוכן עותק עם ${approved.length} תיקונים שאושרו. פתחו ב־Word ובדקו את המסמך לפני שימוש.`);
+      setNotice(`הוכן עותק עם ${safe.length} תיקונים שאושרו.${skippedIds.length ? ` הערות ${skippedIds.map(id=>String(session.documentOrder?.find(n=>n.id===id)?.number ?? id)).join(", ")} נשארו ללא שינוי כי לא ניתן היה לשמר אותן בבטחה.` : ""} פתחו ב־Word ובדקו את המסמך לפני שימוש.`);
     } catch (e) { if (version === epoch.current) setError(e instanceof Error ? e.message : "לא ניתן להטמיע את התיקונים."); }
     finally { if (version === epoch.current) { lock.current = false; setBusy(false); } }
   };
 
   const approvedCount = rows.filter(r => r.approved && r.output && r.status !== "error").length;
   const preview = (noteId: string, text: string) => {
-    for (const row of rows.filter(r => r.noteId === noteId && r.approved && r.output && r.status !== "error").sort((a,b) => b.start-a.start))
-      text = text.slice(0,row.start) + citationTextOnly(row.output!) + text.slice(row.end);
-    return text;
+    let marked='';let cursor=0;
+    for(const row of rows.filter(r=>r.noteId===noteId&&r.approved&&r.output&&r.status!=="error").sort((a,b)=>a.start-b.start)){
+      marked+=escapeCitationLiteral(text.slice(cursor,row.start))+row.output!;cursor=row.end;
+    }
+    return marked+escapeCitationLiteral(text.slice(cursor));
   };
   const note = session?.notes[activeNote];
   const activePlan = note ? mapWordSources(note, protectedSpans.filter(span => span.noteId === note.id)) : null;
   const noteRows = rows.filter(row => row.noteId === note?.id);
-  const readyRows = rows.filter(row => row.input.trim() && (!row.crossesRuns || row.allowFormattingNormalization)
+  const readyRows = rows.filter(row => row.input.trim()
     && !row.output && row.status !== "error" && !blockedNotes.current.has(noteKey(row)));
   const readyCount=readyRows.length;
   const goToStep = (next: number) => {
@@ -218,11 +236,6 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
     if (lock.current) return;
     setActiveNote(index); setSelection(null); setEditingRow(null); setError("");
   };
-  const formattingConsent = (row: Row) => row.crossesRuns && <label className="flex items-start gap-3 rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm leading-6 text-amber-950">
-    <input type="checkbox" aria-label={`אישור איחוד עיצוב באזכור ${row.id}`} className="mt-1 h-5 w-5 shrink-0" disabled={busy}
-      checked={!!row.allowFormattingNormalization} onChange={event => changeRow(row.id, { allowFormattingNormalization: event.target.checked })} />
-    <span><strong className="block">האזכור כולל כמה עיצובים</strong>אני מאשר/ת שהתיקון יקבל את עיצוב תחילת הקטע. הדגשות ונטייה בתוך האזכור לא יישמרו לפי מיקומן. העיצוב מחוץ לבחירה לא ישתנה.</span>
-  </label>;
   return <section aria-label="תיקון הערות שוליים במסמך Word" dir="rtl" className="overflow-hidden rounded-2xl border border-border bg-card text-foreground">
     <header className="space-y-2 border-b border-border p-4 sm:p-6">
       <h3 className="text-xl font-bold">תיקון אזכורים במסמך Word</h3>
@@ -281,7 +294,7 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
             setRows(old=>proposeWordRepeats(session,old,protectedSpans));
             setNotice("הצעות לאזכור חוזר מוצגות בכרטיסים ודורשות אישור. כשזהות המקור, ההקשר או המספור אינם ידועים, נשאר הנוסח המלא. שינוי בהערה קודמת מבטל אישורים תלויים.");
           }}>הצע אזכורים חוזרים לבדיקה</button>
-          {rows.some(row => row.crossesRuns && !row.allowFormattingNormalization) && <p className="text-sm text-amber-900">חלק מהאזכורים כוללים כמה עיצובים. לפני בדיקתם נדרש אישור שינוי העיצוב בכרטיס האזכור.</p>}
+
         </div>}
         {step === 3 && <div className="space-y-3 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-emerald-950">
           <p className="text-lg font-semibold">{approvedCount} תיקונים אושרו להורדה</p>
@@ -323,7 +336,7 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
             </div>)}
             {noteRows.map(row => <div key={row.id} className="space-y-2">
               <p className="text-sm font-medium">התוכן שיישלח לבדיקה</p><p className="whitespace-pre-wrap break-words rounded-lg bg-blue-50 p-3 text-sm text-blue-950">{row.input}</p>
-              {formattingConsent(row)}
+              {row.styleIssue && <p className="text-sm text-amber-900">לא ניתן לשמור את עיצוב האזכור בבטחה. ההערה תישאר ללא שינוי.</p>}
             </div>)}
           </>}
           {activePlan && activePlan.kind !== "mapped" && <div role="status" className="space-y-2 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-950">
@@ -337,20 +350,20 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
             <p className="text-sm text-muted-foreground">התוצאה היא הצעה לבדיקה ולא אישור לדיוק משפטי. השוו למקור לפני אישור.</p>
             {noteRows.map(row => <div key={row.id} className="space-y-3">
               {row.repeatProposal && <p className="rounded-lg bg-blue-50 p-3 text-sm text-blue-950">הצעה לאזכור חוזר לפי ההקשר במסמך — יש לאשר את הנוסח המוצג.</p>}
-              {formattingConsent(row)}
+              {row.styleIssue && <p className="text-sm text-amber-900">לא ניתן לשמור את עיצוב האזכור בבטחה. ההערה תישאר ללא שינוי.</p>}
               {isForeignSourceType(row.sourceTypeOverride ?? row.detectedType ?? "unknown") && <fieldset disabled={busy}><ForeignSourcePicker transient
                 key={`${row.id}:${row.sourceTypeOverride}`} initialRecord={row.classificationRecord} accountId={user?.id} itemKey={`word:${row.id}`} input={row.input} regenerateDisabled={busy}
                 onChange={({plan,record}) => {
                   if ((row.classification?.effectiveKey ?? "") !== (plan?.effectiveKey ?? "")) changeRow(row.id,{classification:plan,classificationRecord:record,output:null,status:"empty"});
                 }} /></fieldset>}
-              <FootnoteReviewCard cell={row} wordLabel={`מקור ${noteRows.indexOf(row)+1} בהערה הפתוחה`} wordOriginal={row.originalText.slice(row.start, row.end)} disabled={busy}
-                regenerationDisabled={row.status === "error" || blockedNotes.current.has(noteKey(row)) || (row.crossesRuns && !row.allowFormattingNormalization)} hideRemove
+              <FootnoteReviewCard cell={row} wordLabel={`מקור ${noteRows.indexOf(row)+1} בהערה הפתוחה`} wordOriginal={row.originalText.slice(row.start, row.end)} wordNeedsRevalidation={!!row.needsStyleRevalidation} wordApprovalDisabled={!!row.styleIssue} disabled={busy}
+                regenerationDisabled={row.status === "error" || blockedNotes.current.has(noteKey(row))} hideRemove
                 onInputChange={() => { /* Input is derived exclusively from unprotected document text. */ }}
-                onOutputChange={(id, output) => changeRow(id, { output })}
+                onOutputChange={(id, output) => changeRow(id, { output, manualDraft:citationTextOnly(output), needsStyleRevalidation:true,styleIssue:null })}
                 onSourceTypeChange={(id, sourceTypeOverride) => changeRow(id, { sourceTypeOverride, classification:null, classificationRecord:undefined, output: null, status: "empty" })}
                 onApproveToggle={(id,approved)=>{if(!lock.current)setRows(old=>{
                   const changed=old.find(r=>r.id===id);if(!changed)return old;
-                  return invalidateWordDependents(old,session.notes.map(n=>n.id),changed.noteId,changed.start).map(item=>item.id===id?{...item,approved:(!item.crossesRuns||!!item.allowFormattingNormalization)&&!!item.output&&item.status!=="error"&&approved}:item);
+                  return invalidateWordDependents(old,session.notes.map(n=>n.id),changed.noteId,changed.start).map(item=>item.id===id?{...item,approved:!item.needsStyleRevalidation&&!item.styleIssue&&!!item.output&&item.status!=="error"&&approved}:item);
                 });}}
                 onRegenerate={id => { if (rows.find(item => item.id === id)?.status !== "error") void generate(id); }} onRemove={() => {}} />
             </div>)}
@@ -358,7 +371,7 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
           {step >= 2 && <details open={step === 3} className="rounded-xl border border-border p-3 text-sm" key={`preview-${step}-${note.id}`}>
             <summary className="cursor-pointer py-1 font-medium focus-visible:outline focus-visible:outline-2">כך תיראה ההערה בעותק החדש</summary>
             <p className="mt-2 text-muted-foreground">מוצגים רק תיקונים שאושרו.</p>
-            <pre aria-label={`תצוגת הערה ${activeNote + 1}`} className="mt-3 whitespace-pre-wrap break-words rounded-lg bg-muted/40 p-3 font-sans text-base leading-7">{preview(note.id, note.text)}</pre>
+            <pre aria-label={`תצוגת הערה ${activeNote + 1}`} className="mt-3 whitespace-pre-wrap break-words rounded-lg bg-muted/40 p-3 font-sans text-base leading-7"><FormattedCitation text={preview(note.id, note.text)} /></pre>
           </details>}
         </div>}
         <footer className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-4">
