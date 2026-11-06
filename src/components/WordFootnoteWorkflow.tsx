@@ -47,6 +47,7 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
   useEffect(() => { onBusyChange?.(busy); return () => onBusyChange?.(false); }, [busy, onBusyChange]);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
+  const [batchDone, setBatchDone] = useState(false);
   const epoch = useRef(0);
   const lock = useRef(false);
   // Keep uncertain/failed request identity across clear/reimport in this account/project.
@@ -134,7 +135,7 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
     if (lock.current || !session) return;
     const selected = rows.filter(row => row.end > row.start && row.input.trim() && !blockedNotes.current.has(noteKey(row)) && (onlyId === undefined ? !row.output && row.status !== "error" : row.id === onlyId));
     if (!selected.length) return;
-    lock.current = true;stopBatch.current=false;setBatchProgress({current:0,total:selected.length,stopping:false}); setBusy(true); setError(""); setNotice("");
+    lock.current = true;stopBatch.current=false;setBatchProgress({current:0,total:selected.length,stopping:false}); setBusy(true); setError(""); setNotice(""); setBatchDone(false);
     setRows(old=>{
       let next=old;
       for(const row of selected)next=invalidateWordDependents(next,session.notes.map(n=>n.id),row.noteId,row.start);
@@ -184,7 +185,14 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
         setRows(old => old.map(r => r.id === row.id ? { ...r, status: "error", output: null, requestId, errorMsg: message, approved: false } : r));
       }
     }
-    if (isCurrent()) { if(stopBatch.current)setNotice("הבדיקה נעצרה; בקשות נוספות לא נשלחו.");stopBatch.current=false;setBatchProgress(null);lock.current = false; setBusy(false); }
+    if (isCurrent()) {
+      if(!stopBatch.current&&onlyId===undefined&&selected.length){
+        // Open every checked note so proposals are visible, and show a completion banner.
+        const checked=new Set(selected.map(r=>r.noteId));
+        setOpenNotes(old=>new Set([...old,...checked]));
+        setBatchDone(true);
+      }
+      if(stopBatch.current)setNotice("הבדיקה נעצרה; בקשות נוספות לא נשלחו.");stopBatch.current=false;setBatchProgress(null);lock.current = false; setBusy(false); }
   };
 
   const download = async () => {
@@ -219,6 +227,9 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
     finally { if (version === epoch.current) { lock.current = false; setBusy(false); } }
   };
 
+  const isSafeToApprove = (r: Row) => !r.approved && !!r.output && r.status === "valid" && !r.warningMsg && !r.styleIssue && !r.needsStyleRevalidation && !r.repeatProposal && r.end > r.start;
+  const safeCount = rows.filter(isSafeToApprove).length;
+  const pendingCount = rows.filter(r => !r.approved && r.output && r.status !== "error").length;
   const approvedCount = rows.filter(r => r.approved && r.output && r.status !== "error").length;
   const preview = (noteId: string, text: string) => {
     let marked='';let cursor=0;
@@ -291,6 +302,19 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
           <p className="text-sm">מתוכננות עד {readyCount} בקשות למקורות מתוך {new Set(readyRows.map(r=>r.noteId)).size} הערות. דברי הסבר מוגנים אינם נשלחים. אין כאן הבטחה למספר חיובים: המנוע הקיים קובע את פעולות האיתור וההשלמה ואת השימוש במכסת החשבון.</p>
           <button type="button" className={primaryButton} disabled={busy || !readyCount} onClick={() => void generate()}>{busy ? "הבדיקה מתבצעת…" : readyCount ? `בדוק ${readyCount} מקורות` : "אין הערות נוספות לבדיקה"}</button>
           {batchProgress && <div role="status" aria-live="polite"><p>{batchProgress.stopping?"העצירה מתבצעת; בקשה שכבר נשלחה תושלם ועשויה להשתמש במכסת החשבון. לא יישלחו בקשות נוספות.":`בודקים מקור ${batchProgress.current} מתוך ${batchProgress.total}.`}</p><button type="button" className={button} disabled={batchProgress.stopping} onClick={()=>{stopBatch.current=true;setBatchProgress(old=>old?{...old,stopping:true}:old);}}>עצור שליחת בקשות נוספות</button></div>}
+          {batchDone && !busy && <div role="status" className="rounded-lg border border-primary/30 bg-background p-3 text-sm">
+            <p className="font-semibold">בדיקת ההערות הושלמה – {pendingCount} הצעות ממתינות לאישור.</p>
+            <p>ההערות שנבדקו נפתחו למטה. עברו על ההצעות ואשרו אותן לפני ההורדה.</p>
+          </div>}
+          <div className="flex flex-wrap gap-2">
+            <button type="button" className={button} onClick={()=>setOpenNotes(new Set(session.notes.map(n=>n.id)))}>פתח את כל ההערות</button>
+            <button type="button" className={button} onClick={()=>setOpenNotes(new Set())}>סגור את כל ההערות</button>
+            <button type="button" className={button} disabled={busy || !safeCount} onClick={()=>{
+              if(lock.current)return;
+              setRows(old=>old.map(r=>isSafeToApprove(r)?{...r,approved:true}:r));
+              setNotice(`${safeCount} תיקונים ללא אזהרות אושרו. תיקונים עם אזהרה או בעיה נשארו לאישור ידני.`);
+            }}>אשר את כל התיקונים ללא אזהרות ({safeCount})</button>
+          </div>
           <button type="button" className={button} disabled={busy || !rows.some(r=>r.output && r.status!=="error")} onClick={()=>{
             setRows(old=>proposeWordRepeats(session,old,protectedSpans));
             setNotice("הצעות לאזכור חוזר מוצגות בכרטיסים ודורשות אישור. כשזהות המקור, ההקשר או המספור אינם ידועים, נשאר הנוסח המלא. שינוי בהערה קודמת מבטל אישורים תלויים.");
