@@ -151,7 +151,7 @@ export function FootnoteReviewCard({
   if (wordOriginal !== undefined) return <article aria-label={`בדיקת אזכור ${cell.id}`} className={`space-y-4 rounded-xl border p-4 ${isApproved ? "border-emerald-300 bg-emerald-50/30" : "border-border bg-background"}`}>
     <div className="flex flex-wrap items-center justify-between gap-2">
       <h5 className="font-semibold">{wordLabel ?? `אזכור ${cell.id}`}</h5>
-      <span className={`rounded-full px-3 py-1 text-xs font-medium ${statusPill.cls}`}>{isLoading ? "בבדיקה…" : isError ? "הבדיקה לא הושלמה" : isApproved ? "אושר לעותק החדש" : cell.output ? "ממתין לאישור שלך" : "מוכן לבדיקה"}</span>
+      <span role="status" aria-live="polite" className={`rounded-full px-3 py-1 text-xs font-medium ${statusPill.cls}`}>{isLoading ? "בבדיקה…" : isError ? "הבדיקה לא הושלמה" : isApproved ? "אושר לעותק החדש" : cell.output ? "ממתין לאישור שלך" : "מוכן לבדיקה"}</span>
     </div>
     <div className="grid gap-4 md:grid-cols-2">
       <div><p className="mb-2 text-sm font-medium">הנוסח במסמך</p><p className="whitespace-pre-wrap break-words rounded-lg bg-muted/40 p-3 text-base leading-7">{wordOriginal}</p></div>
@@ -182,8 +182,8 @@ export function FootnoteReviewCard({
           {[...TYPE_OPTIONS, ...FOREIGN_TYPE_OPTIONS.map(option => option.type)].map(type => <option key={type} value={type}>{SOURCE_TYPE_LABELS[type]}</option>)}
         </select></label>
         <p className="text-xs text-muted-foreground">בדיקה נוספת משתמשת במכסת החשבון ושולחת את הנוסח לבדיקה.</p>
-        <button type="button" aria-label={`בדוק שוב אזכור ${cell.id}`} disabled={disabled || regenerationDisabled || isLoading || !cell.input.trim()} onClick={() => onRegenerate(cell.id)}
-          className="min-h-11 rounded-lg border border-border px-4 py-2 focus-visible:outline focus-visible:outline-2 disabled:opacity-50">בדוק שוב</button>
+        <button type="button" aria-label={`${cell.output ? "בדוק שוב" : "בדוק"} אזכור ${cell.id}`} disabled={disabled || regenerationDisabled || isLoading || !cell.input.trim()} onClick={() => onRegenerate(cell.id)}
+          className="min-h-11 rounded-lg border border-border px-4 py-2 focus-visible:outline focus-visible:outline-2 disabled:opacity-50">{cell.output ? "בדוק שוב" : "בדוק"}</button>
       </div>
     </details>
   </article>;
