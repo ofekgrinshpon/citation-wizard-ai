@@ -2,6 +2,31 @@ import { applyStyledParagraph, type StyledParagraphPatch } from './wordStyledPar
 import JSZip from "jszip";
 
 const W = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
+const R = "http://schemas.openxmlformats.org/officeDocument/2006/relationships";
+const P = "http://schemas.openxmlformats.org/package/2006/relationships";
+const HYPERLINK_TYPE = `${R}/hyperlink`;
+function validExternalLinks(files:Map<string,Uint8Array>):Set<string> {
+ const valid=new Set<string>(),seen=new Set<string>(),duplicate=new Set<string>();
+ try {
+  const d=xmlDocument(textFile(files,'word/_rels/footnotes.xml.rels'));
+  if(d.documentElement.namespaceURI!==P||d.documentElement.localName!=='Relationships')return valid;
+  for(const e of Array.from(d.documentElement.children)){
+   if(e.namespaceURI!==P||e.localName!=='Relationship')return new Set();
+   if(Array.from(e.attributes).some(a=>a.namespaceURI!==null&&a.namespaceURI!=='http://www.w3.org/2000/xmlns/'||a.namespaceURI===null&&!['Id','Type','Target','TargetMode'].includes(a.localName))||Array.from(e.childNodes).some(n=>n.nodeType===3&&n.textContent?.trim()))return new Set();
+   const id=e.getAttribute('Id')??'';if(!id)continue;if(seen.has(id))duplicate.add(id);seen.add(id);
+   const target=e.getAttribute('Target')??'';
+   let safeTarget=false;try{const u=new URL(target);safeTarget=/^https?:\/\//i.test(target)&&['http:','https:'].includes(u.protocol)&&!!u.hostname&&!u.username&&!u.password&&!/[\u0000-\u0020\u007f]/.test(target);}catch{ /* Unsupported target stays unchanged. */ }
+   if(e.getAttribute('Type')===HYPERLINK_TYPE&&e.getAttribute('TargetMode')==='External'&&safeTarget&&!e.children.length)valid.add(id);
+  }
+ } catch {return new Set();}
+ for(const id of duplicate)valid.delete(id);return valid;
+}
+function safeHyperlink(e:Element,valid:Set<string>):boolean {
+ if(e.namespaceURI!==W||e.prefix!=='w'||e.localName!=='hyperlink'||e.parentElement?.localName!=='p')return false;
+ const id=e.getAttributeNS(R,'id');if(!id||!valid.has(id))return false;
+ for(const a of Array.from(e.attributes))if(a.namespaceURI!=='http://www.w3.org/2000/xmlns/'&&!(a.namespaceURI===R&&a.localName==='id')&&!(a.namespaceURI===W&&a.localName==='history'&&['0','1','true','false'].includes(a.value)))return false;
+ return !Array.from(e.childNodes).some(n=>n.nodeType===3&&n.textContent?.trim())&&Array.from(e.children).every(c=>c.namespaceURI===W&&c.prefix==='w'&&c.localName==='r');
+}
 const MAX_ARCHIVE = 10 * 1024 * 1024;
 const MAX_EXPANDED = 40 * 1024 * 1024;
 const MAX_ENTRY = 10 * 1024 * 1024;
@@ -14,7 +39,7 @@ export interface DocxFootnoteOrder { readonly id: string; readonly number: numbe
 export interface DocxFootnoteSession { readonly documentOrder?: readonly DocxFootnoteOrder[]; readonly notes: readonly DocxFootnote[]; readonly skippedNotes: readonly SkippedDocxFootnote[]; readonly skippedCount: number; readonly warnings: readonly string[]; }
 export interface ApprovedFootnotePatch { id: string; originalText: string; start: number; end: number; replacement: string; approved: boolean; /** Explicit per-selection consent: replacement inherits the first selected run; other selected text is cleared. */ allowFormattingNormalization?: boolean; }
 interface TextPosition { start: number; end: number; xmlStart: number; xmlEnd: number; text: string; preserveSpace: boolean; }
-interface Internal { files: Map<string, Uint8Array>; xml: string; positions: Map<string, TextPosition[]>; notes: readonly DocxFootnote[]; }
+interface Internal { files: Map<string, Uint8Array>; xml: string; linkedNoteIds: Set<string>; positions: Map<string, TextPosition[]>; notes: readonly DocxFootnote[]; }
 const sessions = new WeakMap<DocxFootnoteSession, Internal>();
 function fail(message: string): never { throw new Error(message); }
 const invalid = () => fail("קובץ Word פגום או מבנה ZIP שאינו נתמך.");
@@ -233,6 +258,7 @@ export async function inspectDocxFootnotes(input: ArrayBuffer): Promise<DocxFoot
   const anchors = Array.from(bodyDoc.getElementsByTagNameNS(W, "footnoteReference"));
   const order = anchors.map(a => { if (a.hasAttributeNS(W, "customMarkFollows")) fail("סימוני הערות מותאמים אינם נתמכים."); return a.getAttributeNS(W, "id") || ""; });
   if (!order.length || order.length > 250 || new Set(order).size !== order.length) fail("נדרשות 1–250 הערות שוליים בעלות הפניות ייחודיות.");
+  const validLinks=validExternalLinks(files),linkedNoteIds=new Set<string>();
   const positions = new Map<string, TextPosition[]>(), found = new Map<string, DocxFootnote>();
   const encountered = new Set<string>(), skipped = new Map<string, SkippedDocxFootnote>();
   const skip = (id: string, reason: string) => skipped.set(id, Object.freeze({id, reason}));
@@ -253,13 +279,17 @@ export async function inspectDocxFootnotes(input: ArrayBuffer): Promise<DocxFoot
     if (!paras.length || Array.from(element.children).some(child => child.namespaceURI !== W || child.localName !== "p")) {
       skip(id, "מבנה ההערה אינו נתמך; ההערה תישמר ללא שינוי."); continue;
     }
+    const links=Array.from(element.getElementsByTagNameNS(W,"hyperlink"));
+    if(links.some(link=>!safeHyperlink(link,validLinks))) { skip(id,"קישור בהערה אינו נתמך או שלא ניתן לאמת את מבנהו; ההערה תישמר ללא שינוי."); continue; }
     const unsupported = Array.from(element.getElementsByTagName("*")).some(child =>
-      child.namespaceURI !== W || child.prefix !== "w" || !["p", "pPr", "r", "rPr", "t", "footnoteRef", "proofErr", "pStyle", "rStyle", "b", "bCs", "i", "iCs", "smallCaps", "caps", "rtl", "bidi", "lang", "sz", "szCs", "rFonts", "color", "spacing", "ind", "jc", "keepNext", "keepLines", "widowControl", "contextualSpacing", "vertAlign", "u", "highlight", "noProof"].includes(child.localName));
+      child.namespaceURI !== W || child.prefix !== "w" || !["p", "pPr", "hyperlink", "r", "rPr", "t", "footnoteRef", "proofErr", "pStyle", "rStyle", "b", "bCs", "i", "iCs", "smallCaps", "caps", "rtl", "bidi", "lang", "sz", "szCs", "rFonts", "color", "spacing", "ind", "jc", "keepNext", "keepLines", "widowControl", "contextualSpacing", "vertAlign", "u", "highlight", "noProof"].includes(child.localName));
     const invalidHierarchy = Array.from(element.childNodes).some(node => node.nodeType === 3 && !!node.textContent?.trim()) || Array.from(element.getElementsByTagName("*")).some(child => {
       const parent = child.parentElement;
       const name = child.localName;
       const expectedParent = name === "p" ? "footnote" : name === "r" || name === "pPr" || name === "proofErr" ? "p" : name === "t" || name === "rPr" || name === "footnoteRef" ? "r" : null;
       // Run properties also describe paragraph-mark formatting under pPr.
+      if (name === "r" && parent?.namespaceURI===W && parent.localName==="hyperlink") return Array.from(child.childNodes).some(node => node.nodeType === 3 && !!node.textContent?.trim());
+      if (name === "hyperlink" && parent?.namespaceURI===W && parent.localName==="p") return false;
       if (name === "rPr" ? !parent || !["r", "pPr"].includes(parent.localName) : expectedParent ? parent?.localName !== expectedParent : !parent || !["pPr","rPr"].includes(parent.localName)) return true;
       if (name === "t" && child.children.length) return true;
       return name !== "t" && Array.from(child.childNodes).some(node => node.nodeType === 3 && !!node.textContent?.trim());
@@ -280,18 +310,20 @@ export async function inspectDocxFootnotes(input: ArrayBuffer): Promise<DocxFoot
       paragraphRanges.push({start:paragraphStart,end:text.length});
     }
     if (!text.trim() || text.length > 10000) { skip(id, "הערה ריקה או ארוכה מדי תישמר ללא שינוי."); continue; }
+    if(links.length)linkedNoteIds.add(id);
     found.set(id, Object.freeze({id, text, editableRanges: Object.freeze(list.map(({start,end}) => Object.freeze({start,end}))), paragraphRanges:Object.freeze(paragraphRanges.map(range => Object.freeze(range)))})); positions.set(id,list);
   }
   if (encountered.size !== order.length || order.some(id => !encountered.has(id))) fail("מיפוי ההערות במסמך אינו חד־משמעי.");
   const notes = Object.freeze(order.filter(id => found.has(id)).map(id => found.get(id)!));
   const skippedNotes = Object.freeze(order.filter(id => skipped.has(id)).map(id => skipped.get(id)!));
   const session = Object.freeze({documentOrder: documentNumbering(files, bodyDoc, order), notes, skippedNotes, skippedCount:skippedNotes.length, warnings: Object.freeze([...(preservedFields ? ["תוכן העניינים והפניות העמוד נשמרו ללא חישוב מחדש. לאחר התיקון יש לעדכן שדות ולבדוק עימוד ב-Word."] : []), "אזכורים יישמרו רק כאשר ניתן להחיל את עיצובם בבטחה; אחרת ההערה תישאר ללא שינוי.", "אין להחליף אזכור שחוצה פסקאות. טקסט שלא סומן לתיקון והערות שדולגו נשמרים ללא שינוי.", "הקובץ המקורי נשמר ללא שינוי. יש לבדוק את העותק שהורד ב-Word."])});
-  sessions.set(session, {files, xml, positions, notes}); return session;
+  sessions.set(session, {files, xml, positions, notes, linkedNoteIds}); return session;
 }
 const escapeXml = (s: string) => s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
 export async function embedApprovedFootnotes(session: DocxFootnoteSession, patches: readonly ApprovedFootnotePatch[], protectedSpans: readonly ProtectedFootnoteSpan[] = []): Promise<Uint8Array> {
   const data = sessions.get(session); if (!data) fail("המסמך אינו זמין. יש להעלות אותו מחדש.");
   const selected = patches.filter(p => p.approved);
+  if(selected.some(p=>data.linkedNoteIds.has(p.id)))fail("לא ניתן לערוך קישור במסלול הישן; ההערה תישאר ללא שינוי.");
   if (!selected.length) fail("יש לאשר לפחות תיקון אחד.");
   if (selected.length > 1000 || protectedSpans.length > 1000) fail("מספר המקטעים חורג מהמגבלה.");
   const changes: Array<{start:number;end:number;text:string}> = [];
@@ -350,7 +382,8 @@ export async function embedApprovedFootnotes(session: DocxFootnoteSession, patch
 /** Preflight and splice rule-styled citations; no source document mutation. */
 export async function embedStyledFootnotes(session:DocxFootnoteSession,patches:readonly ApprovedFootnotePatch[],protectedSpans:readonly ProtectedFootnoteSpan[]=[]):Promise<Uint8Array>{
  const data=sessions.get(session);if(!data)fail('המסמך אינו זמין. יש להעלות אותו מחדש.');
- const selected=patches.filter(p=>p.approved);if(!selected.length||selected.length>1000||protectedSpans.length>1000)fail('יש לאשר מספר תקין של תיקונים.');
+ const selected=patches.filter(p=>p.approved);if(selected.length>1000||protectedSpans.length>1000)fail('יש לאשר מספר תקין של תיקונים.');
+ if(!selected.length){const out=new JSZip();for(const [name,bytes] of data.files)out.file(name,bytes,{dir:name.endsWith('/')});return out.generateAsync({type:'uint8array',compression:'DEFLATE'});}
  const styles=data.files.has('word/styles.xml')?textFile(data.files,'word/styles.xml'):null;
  const protectedByNote=new Map<string,ProtectedFootnoteSpan[]>();
  for(const span of protectedSpans){

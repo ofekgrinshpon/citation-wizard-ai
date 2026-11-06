@@ -116,6 +116,9 @@ describe('Word default engine flow',()=>{
  it('stops a sequential batch after the in-flight request without dispatching later notes',async()=>{
   let resolve!:(v:any)=>void;mocks.run.mockImplementation(()=>new Promise(r=>resolve=r));mocks.inspect.mockResolvedValue({notes:[{...note('First (2020)'),id:'70'},{...note('Second (2021)'),id:'3'}],skippedNotes:[]});render(<WordFootnoteWorkflow/>);await upload();review();generate();await waitFor(()=>expect(mocks.run).toHaveBeenCalledTimes(1));expect(screen.getByText(/בודקים מקור 1 מתוך 2/)).toBeInTheDocument();fireEvent.click(screen.getByRole('button',{name:'עצור שליחת בקשות נוספות'}));expect(screen.getByText(/העצירה מתבצעת/)).toBeInTheDocument();await act(async()=>resolve({citation:'First',status:'valid',sourceType:'book'}));await screen.findByText(/הבדיקה נעצרה; בקשות נוספות/);expect(mocks.run).toHaveBeenCalledTimes(1);
  });
+ it('does not call the provider for a refused link crossing and keeps the session usable',async()=>{
+  mocks.check.mockResolvedValueOnce('האזכור חוצה בין קישורים');render(<WordFootnoteWorkflow/>);await upload();review();generate();await screen.findByText(/לא ניתן לשמור את עיצוב האזכור בבטחה/);expect(mocks.run).not.toHaveBeenCalled();expect(screen.getByRole('button',{name:'חזרה לטקסט הסבר שלא לשנות'})).toBeEnabled();back();expect(screen.getByLabelText('טקסט מקורי של הערה במיקום 1')).toHaveValue('Author, Title (2020)');
+ });
  it('stops while a local preflight is pending before sending any request',async()=>{
   let resolve!:(v:any)=>void;mocks.check.mockImplementation(()=>new Promise(r=>resolve=r));render(<WordFootnoteWorkflow/>);await upload();review();generate();await waitFor(()=>expect(mocks.check).toHaveBeenCalledTimes(1));fireEvent.click(screen.getByRole('button',{name:'עצור שליחת בקשות נוספות'}));await act(async()=>resolve(null));await screen.findByText(/הבדיקה נעצרה; בקשות נוספות/);expect(mocks.run).not.toHaveBeenCalled();
  });

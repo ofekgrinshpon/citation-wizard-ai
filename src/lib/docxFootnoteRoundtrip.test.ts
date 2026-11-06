@@ -307,3 +307,68 @@ describe('rule-styled DOCX export',()=>{
   await expect(embedStyledFootnotes(session,[{id:'7',originalText:'untouched',start:0,end:9,replacement:'##new##',approved:true}])).rejects.toThrow('תישאר');expect(new Uint8Array(input)).toEqual(before);
  });
 });
+
+describe('ordinary external hyperlink footnotes',()=>{
+ const R='http://schemas.openxmlformats.org/officeDocument/2006/relationships';
+ const P='http://schemas.openxmlformats.org/package/2006/relationships';
+ const styles=`<w:styles xmlns:w="${W}"><w:style w:type="paragraph" w:styleId="Normal" w:default="1"/><w:style w:type="character" w:styleId="Hyperlink"><w:rPr><w:color w:val="0563C1"/><w:u w:val="single"/></w:rPr></w:style></w:styles>`;
+ const rel=(id='link1',type=`${R}/hyperlink`,mode='External')=>`<Relationship Id="${id}" Type="${type}" Target="https://example.com/article.pdf" TargetMode="${mode}"/>`;
+ const link=(text:string,id='link1')=>`<w:hyperlink r:id="${id}" w:history="1"><w:r><w:rPr><w:rStyle w:val="Hyperlink"/><w:rtl/></w:rPr><w:t xml:space="preserve">${text}</w:t></w:r></w:hyperlink>`;
+ const plain=(text:string)=>`<w:r><w:rPr><w:rtl/></w:rPr><w:t xml:space="preserve">${text}</w:t></w:r>`;
+ async function setup(inner:string, relationships=rel(), linkStyles=styles){
+  const xml=`<w:footnote w:id="7"><w:p><w:r><w:footnoteRef/></w:r>${inner}</w:p></w:footnote>`;
+  const z=await JSZip.loadAsync(await fixture(xml,'<w:p><w:r><w:footnoteReference w:id="7"/></w:r></w:p>'));
+  const f=await z.file('word/footnotes.xml')!.async('string');z.file('word/footnotes.xml',f.replace(`xmlns:w="${W}"`,`xmlns:w="${W}" xmlns:r="${R}"`));
+  z.file('word/_rels/footnotes.xml.rels',`<Relationships xmlns="${P}">${relationships}</Relationships>`);z.file('word/styles.xml',linkStyles);return z.generateAsync({type:'arraybuffer'});
+ }
+ const buffer=(out:Uint8Array)=>out.buffer.slice(out.byteOffset,out.byteOffset+out.byteLength) as ArrayBuffer;
+ it('replaces an entire linked citation, retaining the wrapper and relation, and reimports',async()=>{
+  const input=await setup(link('old citation'));const before=new Uint8Array(input).slice(),session=await inspectDocxFootnotes(input);expect(session.notes[0].text).toBe('old citation');
+  const patch={id:'7',originalText:'old citation',start:0,end:12,replacement:'##new## ^^Journal^^',approved:true};const out=await embedStyledFootnotes(session,[patch]);const a=await JSZip.loadAsync(input),b=await JSZip.loadAsync(out);
+  for(const name of Object.keys(a.files))if(name!=='word/footnotes.xml')expect(await b.files[name].async('uint8array')).toEqual(await a.files[name].async('uint8array'));
+  const xml=await b.file('word/footnotes.xml')!.async('string');expect(xml).toContain('<w:hyperlink r:id="link1" w:history="1">');expect((xml.match(/<w:hyperlink/g)??[])).toHaveLength(1);expect(xml).toContain('<w:rStyle w:val="Hyperlink"');expect(xml).toContain('w:smallCaps w:val="1"');expect(new Uint8Array(input)).toEqual(before);expect((await inspectDocxFootnotes(buffer(out))).notes[0].text).toBe('new Journal');
+  const out2=await embedStyledFootnotes(session,[patch]);const b2=await JSZip.loadAsync(out2);expect(await b2.file('word/footnotes.xml')!.async('string')).toEqual(xml);
+ });
+ it('preserves linked prefix and suffix and permits disjoint plain and linked patches',async()=>{
+  const input=await setup(plain('prose ')+link('before old after')+plain(' tail'));const session=await inspectDocxFootnotes(input),text=session.notes[0].text;const start=text.indexOf('old');
+  const out=await embedStyledFootnotes(session,[{id:'7',originalText:text,start,end:start+3,replacement:'##חדש##',approved:true},{id:'7',originalText:text,start:0,end:5,replacement:'text',approved:true}]);const zip=await JSZip.loadAsync(out),xml=await zip.file('word/footnotes.xml')!.async('string');expect(xml).toContain('before ');expect(xml).toContain(' after');expect((await inspectDocxFootnotes(buffer(out))).notes[0].text).toBe('text before חדש after tail');
+ });
+ it('keeps two separate wrappers when separate citations are patched',async()=>{
+  const session=await inspectDocxFootnotes(await setup(link('first')+plain(' ; ')+link('second'))),text=session.notes[0].text;
+  const out=await embedStyledFootnotes(session,[{id:'7',originalText:text,start:0,end:5,replacement:'one',approved:true},{id:'7',originalText:text,start:8,end:14,replacement:'two',approved:true}]);const zip=await JSZip.loadAsync(out),xml=await zip.file('word/footnotes.xml')!.async('string');expect((xml.match(/<w:hyperlink/g)??[])).toHaveLength(2);expect((await inspectDocxFootnotes(buffer(out))).notes[0].text).toBe('one ; two');
+ });
+ it('rejects crossing linked and plain content and separate wrappers with the same target',async()=>{
+  for(const inner of [plain('a')+link('b'),link('a')+link('b')]){const session=await inspectDocxFootnotes(await setup(inner)),text=session.notes[0].text;await expect(embedStyledFootnotes(session,[{id:'7',originalText:text,start:0,end:2,replacement:'x',approved:true}])).rejects.toThrow('חוצה');}
+ });
+ it.each([['missing',''],['duplicate',rel()+rel()],['wrong type',rel('link1','urn:other')],['internal',rel('link1',`${R}/hyperlink`,'Internal')],['wrong id',rel('other')]])('skips unsupported %s relationship',async(_label,relationships)=>{
+  const session=await inspectDocxFootnotes(await setup(link('old'),relationships));expect(session.notes).toHaveLength(0);expect(session.skippedNotes[0].reason).toContain('קישור');
+ });
+ it('preserves a proof-marked multi-run hyperlink containing entities and a supplementary character',async()=>{
+  const run=(t:string)=>`<w:r><w:rPr><w:rStyle w:val="Hyperlink"/><w:rtl/></w:rPr><w:t xml:space="preserve">${t}</w:t></w:r>`;
+  const inner=`<w:proofErr w:type="spellStart"/><w:hyperlink r:id="link1">${run('לפני &amp; ')}${run('😀 text') }</w:hyperlink><w:proofErr w:type="spellEnd"/>`;
+  const input=await setup(inner),session=await inspectDocxFootnotes(input),text=session.notes[0].text;const start=text.indexOf('😀');await expect(embedStyledFootnotes(session,[{id:'7',originalText:text,start:start+1,end:start+2,replacement:'x',approved:true}])).rejects.toThrow();
+  const out=await embedStyledFootnotes(session,[{id:'7',originalText:text,start,end:text.length,replacement:'##new##',approved:true}]);const zip=await JSZip.loadAsync(out),xml=await zip.file('word/footnotes.xml')!.async('string');expect(xml).toContain('<w:proofErr w:type="spellStart"/>');expect(xml).toContain('<w:proofErr w:type="spellEnd"/>');expect((await inspectDocxFootnotes(buffer(out))).notes[0].text).toBe('לפני & new');
+ });
+ it('rejects namespace spoofing and internal anchors',async()=>{
+  for(const inner of ['<w:hyperlink xmlns:r="urn:wrong" r:id="link1"><w:r><w:t>old</w:t></w:r></w:hyperlink>','<w:hyperlink w:anchor="bookmark"><w:r><w:t>old</w:t></w:r></w:hyperlink>']){const session=await inspectDocxFootnotes(await setup(inner));expect(session.notes).toHaveLength(0);expect(session.skippedCount).toBe(1);}
+ });
+ it('keeps protected explanation and rejects legacy raw exporter for linked notes',async()=>{
+  const input=await setup(plain('explain ')+link('old'));const session=await inspectDocxFootnotes(input),text=session.notes[0].text;const patch={id:'7',originalText:text,start:8,end:11,replacement:'new',approved:true};
+  await expect(embedApprovedFootnotes(session,[patch])).rejects.toThrow('קישור');const out=await embedStyledFootnotes(session,[patch],[{id:'7',originalText:text,start:0,end:7}]);expect((await inspectDocxFootnotes(buffer(out))).notes[0].text).toBe('explain new');await expect(embedStyledFootnotes(session,[{...patch,start:0,end:11}],[{id:'7',originalText:text,start:0,end:7}])).rejects.toThrow('מוגן');
+ });
+ it('supports a wrapper-local relationship namespace without rewriting it',async()=>{
+  const inner='<w:hyperlink xmlns:link="'+R+'" link:id="link1"><w:r><w:t>old</w:t></w:r></w:hyperlink>';const session=await inspectDocxFootnotes(await setup(inner));const out=await embedStyledFootnotes(session,[{id:'7',originalText:'old',start:0,end:3,replacement:'new',approved:true}]);const zip=await JSZip.loadAsync(out),xml=await zip.file('word/footnotes.xml')!.async('string');expect(xml).toContain('<w:hyperlink xmlns:link="'+R+'" link:id="link1">');expect((await inspectDocxFootnotes(buffer(out))).notes[0].text).toBe('new');
+ });
+ it.each(['https://','javascript:alert(1)','https://user:pass@example.com/','https://example.com/a b'])('does not accept malformed or unsupported target %s',async(target)=>{
+  const session=await inspectDocxFootnotes(await setup(link('old'),rel().replace('https://example.com/article.pdf',target)));expect(session.notes).toHaveLength(0);expect(session.skippedCount).toBe(1);
+ });
+ it('does not let a formatting-only correction cross separate hyperlink wrappers',async()=>{
+  const session=await inspectDocxFootnotes(await setup(link('a')+link('b')));await expect(embedStyledFootnotes(session,[{id:'7',originalText:'ab',start:0,end:2,replacement:'##ab##',approved:true}])).rejects.toThrow('חוצה');
+ });
+ it('rejects inherited hidden hyperlink styling',async()=>{
+  const input=await setup(link('old'),rel(),styles.replace('<w:u w:val="single"/>','<w:vanish/>'));const session=await inspectDocxFootnotes(input);await expect(embedStyledFootnotes(session,[{id:'7',originalText:'old',start:0,end:3,replacement:'new',approved:true}])).rejects.toThrow('ללא שינוי');
+ });
+ it('no approved edits preserves every uncompressed package entry',async()=>{
+  const input=await setup(link('old')),session=await inspectDocxFootnotes(input),out=await embedStyledFootnotes(session,[]),a=await JSZip.loadAsync(input),b=await JSZip.loadAsync(out);for(const name of Object.keys(a.files))expect(await b.files[name].async('uint8array')).toEqual(await a.files[name].async('uint8array'));
+ });
+});

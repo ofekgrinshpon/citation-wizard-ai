@@ -10,7 +10,7 @@ const xmlEscape=(s:string)=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace
  * Paragraph styles are not consulted: direct off values override only the listed
  * bold/italic/caps properties. Inherited visibility/vertical alignment need validation.
  * Unsupported run properties are refused rather than normalized. */
-export function wordCitationStyledRuns(marked:string,originalProperties:string):string {
+export function wordCitationStyledRuns(marked:string,originalProperties:string,linked=false):string {
  const stack:string[]=[];
  for(let i=0;i<marked.length;){
   if(marked[i]==='\\'&&/[\\*#^]/.test(marked[i+1]??'')){i+=2;continue;}
@@ -27,7 +27,8 @@ export function wordCitationStyledRuns(marked:string,originalProperties:string):
  if(parsed.getElementsByTagName('parsererror').length)throw Error('עיצוב האזכור אינו נתמך; ההערה תישאר ללא שינוי.');
  const root=parsed.documentElement;
  for(const child of Array.from(root.children)){
-  if(child.namespaceURI!==W||child.prefix!=='w'||!safeTags.has(child.localName)||(['u','highlight'].includes(child.localName)&&child.getAttributeNS(W,'val')!=='none')||child.children.length||child.textContent?.trim())throw Error('עיצוב האזכור אינו נתמך; ההערה תישאר ללא שינוי.');
+  if(child.namespaceURI!==W||child.prefix!=='w'||(!safeTags.has(child.localName)&&!(linked&&child.localName==='rStyle'))||(['u','highlight'].includes(child.localName)&&child.getAttributeNS(W,'val')!=='none'&&!(linked&&child.localName==='u'&&child.getAttributeNS(W,'val')==='single'))||child.children.length||child.textContent?.trim())throw Error('עיצוב האזכור אינו נתמך; ההערה תישאר ללא שינוי.');
+  if(child.localName==='rStyle'&&(!child.getAttributeNS(W,'val')||Array.from(child.attributes).some(a=>a.namespaceURI!=='http://www.w3.org/2000/xmlns/'&&!(a.namespaceURI===W&&a.localName==='val'))))throw Error('סגנון הקישור אינו נתמך; ההערה תישאר ללא שינוי.');
   if(typography.has(child.localName))root.removeChild(child);
  }
  if(Array.from(root.childNodes).some(n=>n.nodeType===3&&n.textContent?.trim()))throw Error('עיצוב האזכור אינו נתמך; ההערה תישאר ללא שינוי.');
