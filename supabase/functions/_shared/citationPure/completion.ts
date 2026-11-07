@@ -7,7 +7,7 @@ const text = (v: unknown): string => typeof v === "string" ? v : "";
 const norm = (v: string) => v.toLowerCase().replace(/[.,'"’‘:;()\[\]]/g, " ").replace(/\s+/g, " ").trim();
 const party = (v: string) => norm(v).replace(/\b(inc|llc|llp|plc|ltd|corp|corporation|co|company|the|of|and)\b/g, " ").replace(/\s+/g, " ").trim();
 const fieldsByKind: Record<string, string[]> = {
-  case: ["caseName", "court", "reporter", "ukSeries", "ukVolume", "volume", "reporterVolume", "firstPage", "year", "docket", "neutral", "decisionDate", "parallel", "pinpoint", "paragraph"],
+  case: ["caseName", "court", "reporter", "ukSeries", "ukVolume", "volume", "reporterVolume", "firstPage", "year", "docket", "neutral", "decisionDate", "parallel", "pinpoint", "paragraph", "reportYearStyle"],
   statute: ["statuteName", "titleNumber", "code", "section", "sections", "year", "chapter"],
   journal_article: ["authors", "articleTitle", "journal", "volume", "firstPage", "year", "doi", "sourceUrl"],
   book: ["authors", "bookTitle", "year", "edition", "volume", "editors", "translators"],
@@ -69,7 +69,7 @@ export function acceptCitationCompletion(request: Record<string, unknown>, raw: 
     : ["articleTitle", "chapterTitle", "bookTitle", "statuteName", "doi", "sourceUrl"].filter(k => (identifierArticle ?? supplied)[k]).map(k => `${k === "doi" || k === "sourceUrl" ? k : "title"}:${text((identifierArticle ?? supplied)[k])}`);
   const conflicts = Array.isArray(identity.conflicts) ? identity.conflicts : null;
   // Explicit field conflicts quarantine only that field; identity/record conflicts stop acceptance.
-  const fieldConflicts = (conflicts ?? []).filter((v): v is string => typeof v === "string" && /^(conflicting_statute_|(?:year|journal|volume|firstPage):)/.test(v));
+  const fieldConflicts = (conflicts ?? []).filter((v): v is string => typeof v === "string" && /^(conflicting_statute_|(?:year|journal|volume|firstPage|location):)/.test(v));
   const matchingAnchor = expected.some(a => anchors.some(b => norm(a) === norm(b)));
   const contradictedAnchor = anchors.some(a => {
     const prefix = a.slice(0, a.indexOf(":") + 1);

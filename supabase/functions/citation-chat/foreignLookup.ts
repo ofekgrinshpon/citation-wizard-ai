@@ -66,6 +66,10 @@ export interface ForeignLookupResult {
   };
   /** Two or more plausible, different records — the user must choose. */
   disambiguation?: Array<{ jurisdiction: "US" | "UK"; label: string; url: string }>;
+  /** Case lookups: complete location records grouped by decision (never mixed). */
+  caseDecisions?: CaseDecisionRecord[];
+  /** One decision, several parallel reports, no verified priority rule: the user chooses. */
+  locationChoiceRequired?: boolean;
   diagnostics: { tier1Queried: boolean; tier2Fired: boolean; jurisdictionResolvedBy?: string };
   error?: string;
   /** Article lookup outcome, not a verification claim. Partial fields stay missing. */
@@ -89,6 +93,10 @@ import {
   articleHeadingMatches, articleFieldMatches, enrichArticleAuthors, type ArticleRecord,
 } from "../_shared/foreignArticle.ts";
 import { extractWorkIdentifiers, normalizeDoi, normalizeWorkUrl } from "../_shared/workIdentifiers.ts";
+import {
+  bindChainsToCaption, decisionLocationFields, extractLocationChains, formatLocationLabel, groupCaseDecisions,
+  selectableLocations, type CaseDecisionRecord, type CaseLocationRecord, type ChainEvidence,
+} from "../_shared/citationPure/caseLocations.ts";
 const PPLX_SEARCH_URL = "https://api.perplexity.ai/search";
 const TIMEOUT_MS = 20_000;
 const MAX_RESULTS = 8;
@@ -241,10 +249,13 @@ function splitParties(raw: string): [string, string] | null {
   return [m[1], m[2]];
 }
 
+const CROWN_RE = /^(?:r|regina|rex|queen|king)$/;
 function textContainsParty(text: string, party: string): boolean {
   const p = normalizePartyName(party);
-  if (p.length < 3) return false;
   const t = normalizePartyName(text);
+  // English criminal captions name the Crown as "R"; accept only its own forms.
+  if (CROWN_RE.test(p)) return /(?:^|\s)(?:r|regina|rex|queen|king)(?:\s|$)/.test(t);
+  if (p.length < 3) return false;
   // Every significant token of the party name must appear (abbreviations expanded).
   return p.split(" ").every((tok) => {
     if (tok.length < 3) return true;
@@ -1114,48 +1125,12 @@ export async function runForeignLookup(
   if (input.kind === "statute") return lookupStatute(input, empty, doFetch, apiKey);
   const query = buildQuery(input);
 
-  // Tier 1 — preferred-domain discovery hints.
-  empty.diagnostics.tier1Queried = true;
-  const hints = tier1Hints(input.kind, input.jurisdiction);
-  let results: Array<{ title?: string; url?: string; snippet?: string; tier: "tier1" | "tier2" }> = (await searchOnce(query, hints, doFetch, apiKey, "foreign_search_tier1")).map((r) => ({
-    ...r,
-    tier: "tier1" as const,
-  }));
-
-  // Tier 2 — one bounded open-web retry when Tier 1 found nothing useful.
-  const hasUsable = results.some((r) => r.url && classifySource(r.url) !== "weak");
-  if (!hasUsable || results.length === 0) {
-    empty.diagnostics.tier2Fired = true;
-    const t2 = (await searchOnce(query, null, doFetch, apiKey, "foreign_search_tier2")).map((r) => ({
-      ...r,
-      tier: "tier2" as const,
-    }));
-    results = [...results, ...t2];
-  }
-
-  // Record sources + strength.
-  const seen = new Set<string>();
-  const sources: LookupSource[] = [];
-  for (const r of results) {
-    if (!r.url || seen.has(r.url)) continue;
-    seen.add(r.url);
-    sources.push({
-      url: r.url,
-      title: r.title,
-      snippet: r.snippet,
-      tier: r.tier,
-      strong: classifySource(r.url) !== "weak",
-    });
-    empty.sources.push({ url: r.url, title: r.title, tier: r.tier, snippet: r.snippet } as LookupSource & { tier: "tier1" | "tier2" });
-  }
-
-  // ── Identity matching ──
+  // ── Identity predicates (used for the Tier-2 decision and acceptance) ──
   const parties = input.kind === "case" ? splitParties(input.rawInput) : null;
   const titleHint = input.kind === "case" ? null : extractTitleHint(input);
   const authorHint = input.kind === "case" ? null : extractAuthorHint(input);
   const chapterHint = input.kind === "book_chapter" ? input.parsedFields?.chapterTitle : undefined;
-
-  const identitySources = sources.filter((s) => {
+  const matchesIdentity = (s: LookupSource): boolean => {
     const ev = `${s.title ?? ""} ${s.snippet ?? ""} ${s.url}`;
     // Collection identity does not prove chapter identity. URLs are not title evidence.
     if (input.kind === "book_chapter") {
@@ -1176,7 +1151,82 @@ export async function runForeignLookup(
       return true;
     }
     return false;
+  };
+  const hasParty = (t: string, which: 0 | 1) => !!parties && textContainsParty(t, parties[which]);
+  /** Citation chains of ONE source that are bound to the target caption. */
+  const boundChains = (
+    s: LookupSource, jur: "US" | "UK", inspectedText?: string,
+  ): ChainEvidence[] => {
+    const basis = basisFor(classifySource(s.url), inspectedText !== undefined);
+    const titleText = s.title ?? "";
+    const titleIsCaption = hasParty(titleText, 0) && hasParty(titleText, 1);
+    const texts: Array<[string, boolean]> = inspectedText !== undefined
+      ? [[inspectedText, titleIsCaption]]
+      : [[titleText, false], [s.snippet ?? "", titleIsCaption]];
+    const out: ChainEvidence[] = [];
+    for (const [text, noCaptionBound] of texts) {
+      if (!text) continue;
+      const chains = extractLocationChains(text, jur);
+      const bound = bindChainsToCaption(text, chains, hasParty, noCaptionBound);
+      chains.forEach((chain, i) => {
+        if (bound[i]) out.push({ chain, sourceUrl: s.url, ...(s.title ? { sourceTitle: s.title } : {}), basis });
+      });
+    }
+    return out;
+  };
+  const nonLocationCase = (s: LookupSource, jur: "US" | "UK"): boolean => {
+    const c = extractCaseFromEvidence(`${s.title ?? ""} ${s.snippet ?? ""}`, jur);
+    return !!c && !(c.volume || c.reporter || c.neutral || c.ukSeries) && !!(c.databaseIdentifier || c.docket);
+  };
+  /** A search round is productive when an identity-matched strong source carries usable evidence. */
+  const productive = (list: LookupSource[]): boolean => list.some((s) => {
+    if (!s.strong || !matchesIdentity(s)) return false;
+    if (input.kind === "case") {
+      const jurs: Array<"US" | "UK"> = input.jurisdiction === "US" || input.jurisdiction === "UK" ? [input.jurisdiction] : ["US", "UK"];
+      return jurs.some((j) => boundChains(s, j).length > 0 || nonLocationCase(s, j));
+    }
+    const w = extractWorkFromEvidence(`${s.title ?? ""} ${s.snippet ?? ""}`, input.kind, s.title);
+    return Object.values(w).some((v) => typeof v === "string" && v.length > 0);
   });
+  const toSources = (rows: Array<{ title?: string; url?: string; snippet?: string; tier: "tier1" | "tier2" }>): LookupSource[] => {
+    const seen = new Set<string>();
+    const out: LookupSource[] = [];
+    for (const r of rows) {
+      if (!r.url || seen.has(r.url)) continue;
+      seen.add(r.url);
+      out.push({ url: r.url, title: r.title, snippet: r.snippet, tier: r.tier, strong: classifySource(r.url) !== "weak" });
+    }
+    return out;
+  };
+
+  // Tier 1 — preferred-domain discovery hints.
+  empty.diagnostics.tier1Queried = true;
+  const hints = tier1Hints(input.kind, input.jurisdiction);
+  let results: Array<{ title?: string; url?: string; snippet?: string; tier: "tier1" | "tier2" }> = (await searchOnce(query, hints, doFetch, apiKey, "foreign_search_tier1")).map((r) => ({
+    ...r,
+    tier: "tier1" as const,
+  }));
+
+  // Tier 2 — one bounded open-web search when Tier 1 returned nothing usable,
+  // only unrelated records, or a related record without usable details.
+  // Never more than two searches per citation.
+  if (!productive(toSources(results))) {
+    empty.diagnostics.tier2Fired = true;
+    const t2 = (await searchOnce(query, null, doFetch, apiKey, "foreign_search_tier2")).map((r) => ({
+      ...r,
+      tier: "tier2" as const,
+    }));
+    results = [...results, ...t2];
+  }
+
+  // Record sources + strength.
+  const sources = toSources(results);
+  for (const s of sources) {
+    empty.sources.push({ url: s.url, title: s.title, tier: s.tier, snippet: s.snippet } as LookupSource & { tier: "tier1" | "tier2" });
+  }
+
+  // ── Identity matching ──
+  const identitySources = sources.filter(matchesIdentity);
 
   if (parties) {
     empty.identity.anchors.push(`parties:${normalizePartyName(parties[0])} v ${normalizePartyName(parties[1])}`);
@@ -1252,13 +1302,96 @@ export async function runForeignLookup(
   const userYear = input.parsedFields?.year ?? input.rawInput.match(/\b(19|20)\d{2}\b/)?.[0];
   const strongMatched = identitySources.filter((s) => s.strong);
 
+  // ── Case location records → decisions → location (Stage 2) ─────────────
+  // Every reported location is one complete record; records are grouped by
+  // decision before any location is chosen, and parallel reports of one
+  // decision are offered as a choice (priority rule not yet verified).
+  let inspectedPage: string | null | undefined;
+  let inspectedUrl: string | undefined;
+  if (input.kind === "case" && (input.jurisdiction === "US" || input.jurisdiction === "UK")) {
+    const jur = input.jurisdiction;
+    let evidence = strongMatched.flatMap((s) => boundChains(s, jur));
+    if (evidence.length === 0 && strongMatched.length > 0 && !strongMatched.some((s) => nonLocationCase(s, jur))) {
+      // Bounded single-page inspection (one fetch, no link following).
+      const best = strongMatched[0];
+      inspectedUrl = best.url;
+      const page = await fetchPageText(best.url, doFetch);
+      inspectedPage = page ? page.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").slice(0, 200_000) : null;
+      if (inspectedPage) evidence = boundChains(best, jur, inspectedPage);
+    }
+    if (evidence.length > 0) return finishCaseDecisions(evidence, jur);
+  }
+
+  function finishCaseDecisions(evidence: ChainEvidence[], jur: "US" | "UK"): ForeignLookupResult {
+    const userNeutral = input.parsedFields?.neutral;
+    const anchorConflicts: string[] = [];
+    const decisions = groupCaseDecisions(evidence, jur).filter((d) => {
+      if (userCourt && d.court && normalizeCourtName(d.court) !== normalizeCourtName(userCourt)) {
+        anchorConflicts.push(`court:${userCourt} vs ${d.court}`);
+        return false;
+      }
+      const years = [d.decisionYear, ...d.locations.map((l) => l.volumeYear)].filter((y): y is string => !!y);
+      if (userYear && years.length > 0 && !years.includes(userYear)) {
+        anchorConflicts.push(`year:${userYear} vs ${years[0]}`);
+        return false;
+      }
+      if (userNeutral && d.neutral && normalizeCourtName(d.neutral) !== normalizeCourtName(userNeutral)) {
+        anchorConflicts.push(`neutral:${userNeutral} vs ${d.neutral}`);
+        return false;
+      }
+      return true;
+    });
+    if (decisions.length === 0) {
+      empty.identity.matched = false;
+      empty.identity.conflicts.push(...anchorConflicts);
+      return empty;
+    }
+    empty.caseDecisions = decisions;
+    if (decisions.length > 1) {
+      empty.identity.matched = false;
+      empty.identity.conflicts.push("ambiguous_record");
+      empty.disambiguation = decisions.slice(0, 5).map((d) => ({
+        jurisdiction: d.jurisdiction,
+        label: decisionLabel(d),
+        url: d.locations[0]?.sourceUrl ?? d.neutralSourceUrl ?? d.sourceUrls[0],
+      }));
+      return empty;
+    }
+    const d = decisions[0];
+    const selectable = selectableLocations(d);
+    const suppliedLocation = !!(input.parsedFields?.reporter && input.parsedFields?.firstPage);
+    let chosen: CaseLocationRecord | undefined;
+    if (!suppliedLocation) {
+      if (selectable.length === 1) chosen = selectable[0];
+      else if (selectable.length > 1) empty.locationChoiceRequired = true;
+    }
+    empty.identity.conflicts.push(...d.locationConflicts);
+    const { fields, donors } = decisionLocationFields(d, chosen);
+    for (const [field, value] of Object.entries(fields)) {
+      if (field === "year" && userYear === value) continue; // user anchor ≠ new fact
+      const donor = donors[field] === "location" ? (chosen && { url: chosen.sourceUrl, title: chosen.sourceTitle, basis: chosen.basis })
+        : donors[field] === "neutral" ? (d.neutralSourceUrl && { url: d.neutralSourceUrl, title: d.neutralSourceTitle, basis: d.neutralBasis! })
+        : donors[field] === "court" ? d.courtSource
+        : d.decisionYearSource;
+      if (!donor) continue;
+      empty.fields[field] = value;
+      empty.grounded[field] = true;
+      empty.provenance[field] = { value, sourceUrl: donor.url, sourceTitle: donor.title, basis: donor.basis };
+    }
+    empty.identity.court = empty.fields.court ?? input.parsedFields?.court;
+    empty.identity.year = empty.fields.year ?? userYear;
+    return empty;
+  }
+
   type Candidate = { field: string; value: string; donor: LookupSource; inspected: boolean };
   const candidates: Candidate[] = [];
 
   const fieldsForSource = (text: string, pageTitle?: string): Record<string, string | undefined> => {
     if (input.kind === "case") {
       const c = extractCaseFromEvidence(text, input.jurisdiction);
-      if (!c) return {};
+      // Reported locations are owned by the decision records above; a location
+      // the records did not bind to this caption is never accepted field by field.
+      if (!c || c.volume || c.reporter || c.neutral || c.ukSeries) return {};
       if (input.jurisdiction === "UK") {
         return {
           // Field names match the deterministic UK renderer.
@@ -1328,9 +1461,10 @@ export async function runForeignLookup(
 
   // Bounded single-page inspection of the best identity-matched strong source
   // when snippets yielded nothing. One fetch maximum; no link following.
-  if (candidates.length === 0) {
+  // One fetch maximum: reuse the page already inspected above, never a second one.
+  if (candidates.length === 0 && (inspectedUrl === undefined || inspectedUrl === usable[0].url)) {
     const best = usable[0];
-    const page = await fetchPageText(best.url, doFetch);
+    const page = inspectedUrl ? inspectedPage : await fetchPageText(best.url, doFetch);
     if (page) {
       const plain = page.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").slice(0, 200_000);
       const f = fieldsForSource(plain, best.title);
@@ -1461,4 +1595,13 @@ function extractAuthorHint(input: ForeignLookupInput): string | null {
   if (input.parsedFields?.author) return input.parsedFields.author;
   const m = input.rawInput.match(/^\s*([A-Z][A-Za-z.\s]+?),/);
   return m ? m[1].trim() : null;
+}
+
+function decisionLabel(d: CaseDecisionRecord): string {
+  const parts = [
+    ...(d.neutral && d.decisionYear ? [`[${d.decisionYear}] ${d.neutral}`] : []),
+    ...d.locations.slice(0, 3).map(formatLocationLabel),
+  ];
+  const paren = d.jurisdiction === "US" ? [d.court, d.decisionYear].filter(Boolean).join(" ") : "";
+  return `${parts.join(", ")}${paren ? ` (${paren})` : ""}`.slice(0, 160);
 }

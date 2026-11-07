@@ -195,6 +195,11 @@ export function renderUsCase(f: ForeignCaseFields): RenderResult {
   return finish(out, warnings, missing, unrep);
 }
 
+/** Report year in the form the source used; square brackets unless stated otherwise. */
+function ukReportYear(year: string, style?: "round" | "none"): string {
+  return style === "round" ? `(${year})` : style === "none" ? year : `[${year}]`;
+}
+
 export function renderUkCase(f: ForeignCaseFields): RenderResult {
   const warnings: string[] = [];
   const missing: string[] = [];
@@ -204,9 +209,9 @@ export function renderUkCase(f: ForeignCaseFields): RenderResult {
   if (!f.neutral && f.reporter && f.firstPage && f.year) {
     const vol = f.reporterVolume ? `${f.reporterVolume} ` : "";
     const court = f.court ? ` (${f.court})` : "";
-    reportExtraFields(f, ["caseName", "year", "reporterVolume", "reporter", "firstPage", "pinpoint", "court"], warnings, unrep);
+    reportExtraFields(f, ["caseName", "year", "reporterVolume", "reporter", "firstPage", "pinpoint", "court", "reportYearStyle"], warnings, unrep);
     const out = appendRemainder(
-      `${fullCitationCaseName(name)} [${f.year}] ${vol}${f.reporter} ${pageSpan(f.firstPage, f.pinpoint)}${court}`,
+      `${fullCitationCaseName(name)} ${ukReportYear(f.year, f.reportYearStyle)} ${vol}${f.reporter} ${pageSpan(f.firstPage, f.pinpoint)}${court}`,
       f.unparsedRemainder, warnings, unrep,
     );
     return finish(out, warnings, missing, unrep);
@@ -221,7 +226,7 @@ export function renderUkCase(f: ForeignCaseFields): RenderResult {
   }
   if (f.reporter && f.firstPage) {
     const rvol = f.reporterVolume ? `${f.reporterVolume} ` : "";
-    bits.push(`, [${f.volume || f.year}] ${rvol}${f.reporter} ${pageSpan(f.firstPage, f.pinpoint)}`);
+    bits.push(`, ${ukReportYear(f.volume || f.year!, f.reportYearStyle)} ${rvol}${f.reporter} ${pageSpan(f.firstPage, f.pinpoint)}`);
   }
   let out = bits.join(" ").replace(/\s+,/g, ",");
   if (f.paragraph) out += ` [${f.paragraph}]`;
@@ -229,7 +234,7 @@ export function renderUkCase(f: ForeignCaseFields): RenderResult {
     warnings.push("לא אותר אזכור ניטרלי או דיווח רשמי לפסק הדין האנגלי.");
   }
   reportExtraFields(f, ["caseName", "year", "neutral", "volume", "reporterVolume", "reporter", "firstPage", "paragraph",
-    ...(f.reporter && f.firstPage ? ["pinpoint"] : [])], warnings, unrep);
+    ...(f.reporter && f.firstPage ? ["pinpoint", "reportYearStyle"] : [])], warnings, unrep);
   out = appendRemainder(out, f.unparsedRemainder, warnings, unrep);
   return finish(out, warnings, missing, unrep);
 }

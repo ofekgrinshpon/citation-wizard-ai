@@ -47,7 +47,11 @@ describe("narrow C2 corrections — real extraction and shared resolution", () =
       }
       expect(result.resolution.pastedCitation?.rawInput).toBe(rawInput);
     }
-    expect(calls).toEqual(["https://api.perplexity.ai/search"]);
+    // Stage 2 search completion: an unmatched first search allows exactly one
+    // open search (never a page fetch or a third search); a matched one stops.
+    expect(calls).toEqual(mode === "wrong-chapter" || mode === "absent-chapter"
+      ? ["https://api.perplexity.ai/search", "https://api.perplexity.ai/search"]
+      : ["https://api.perplexity.ai/search"]);
   });
   it("old collection-only matched envelope cannot confirm a chapter", async () => {
     const { response, rawInput } = await c2CorrectionPayload("edition-chapter");
@@ -67,7 +71,7 @@ describe("narrow C2 corrections — real extraction and shared resolution", () =
     const { rawInput, donor } = c2CorrectionFixture("edition-chapter");
     const { response, calls } = await c1ServerPayload({ kind: "book_chapter", jurisdiction: "OTHER", rawInput, parsedFields: { chapterTitle: "Quiet Rules", bookTitle: "Synthetic Collection", authors: "Jane Doe" } }, [{ ...donor, title: donor.title.replace("Jane Doe", "Ana Roe"), snippet: donor.snippet.replace("Jane Doe", "Ana Roe") }]);
     expect(response.identity.matched).toBe(false); expect(response.fields).toEqual({});
-    expect(calls).toEqual(["https://api.perplexity.ai/search"]);
+    expect(calls).toEqual(["https://api.perplexity.ai/search", "https://api.perplexity.ai/search"]);
   });
   it("missing bibliographic firstPage with a supplied pinpoint never turns pinpoint into lookup evidence", () => {
     const f = c2CorrectionFixture("firstPage-only");

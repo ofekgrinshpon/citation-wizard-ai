@@ -85,3 +85,11 @@
 - [ ] AU/CA local independent QA gate: separate app TypeScript/production Vite unavailable under manual-command prohibition; completion awaits owner gate.
 - [ ] D2 AU/CA grounded completion + authoritative replay (not authorized in local slice; awaits independent QA).
 - [ ] D3 DE/FR templates + completion; FR Cass. oc./soc. table anomaly unresolved.
+
+## Foreign free-form citations (plan 2026-11-07)
+- [x] Stage 1 — edition/rules/permissions report; decisions recorded (ed. 21, gemini-3.8-flash parser, ≤2 searches/≤2 model calls).
+- [x] Stage 2 — case location records, grouping by decision, parallel-report choice, decision vs report year, expanded UK reporters (search evidence), open search on irrelevant/partial results; offline 4,521 passed / 1 skipped / 2 pre-existing Word-flow failures. Report: reports/foreign-freeform/STAGE2_CASE_LOCATIONS.md. Stopped for review; no deployment.
+- [ ] Stage 3 — English choice buttons bound to record ids; invalidate choice after input edit (awaits approval).
+- [ ] Stage 4 — model parser (gemini-3.8-flash) with source-span checks (awaits approval).
+- [ ] Reporter priority (Rule 10.3/T2) — BLOCKED: needs authorized edition-21 check.
+- [ ] Pre-existing: 2 failing tests in wordFootnoteWorkflow.test.tsx (reproduced without Stage 2 changes) — awaits owner decision.

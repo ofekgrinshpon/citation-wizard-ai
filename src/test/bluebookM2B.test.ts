@@ -327,7 +327,9 @@ describe("Bluebook M2B — grounded foreign lookup", () => {
     expect(Object.keys(r.fields)).toHaveLength(0);
   });
 
-  it("B14: conflicting non-identity field stays missing; other fields survive", async () => {
+  // Stage 2 (foreign free-form plan): a location is one complete record, so two
+  // records of the same reporter that disagree are never merged field by field.
+  it("B14: conflicting records of one reporter leave the whole location missing; decision fields survive", async () => {
     const { result } = lookup(REDI_INPUT, [
       [
         {
@@ -344,9 +346,12 @@ describe("Bluebook M2B — grounded foreign lookup", () => {
     ]);
     const r = await result;
     expect(r.identity.matched).toBe(true);
-    expect(r.fields.volume).toBeUndefined(); // disagreement → missing
-    expect(r.fields.reporter).toBe("F.3d"); // agreement → grounded
-    expect(r.fields.firstPage).toBe("649");
+    expect(r.fields.volume).toBeUndefined(); // disagreement → whole record missing
+    expect(r.fields.reporter).toBeUndefined(); // never assembled from mixed records
+    expect(r.fields.firstPage).toBeUndefined();
+    expect(r.fields.court).toBe("2d Cir.");
+    expect(r.identity.conflicts.some((c) => c.startsWith("location:"))).toBe(true);
+    expect(r.locationChoiceRequired).toBeUndefined();
   });
 
   it("B15: Rule 37 preserved — lookup/renderers never emit Id./supra/infra", async () => {

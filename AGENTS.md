@@ -16,3 +16,4 @@
 - `_shared/citationPure/rulepack.ts` (`rulepackCapability`) decides local/typed/server routes by family+jurisdiction, with exact template IDs required for AU/CA local routes; disabled country packs keep raw with zero IO (not general literature); ids use its mapping, never cast to US/IL/UNKNOWN. Why: one contract.
 
 - AU/CA evidence/styles use `_shared/citationPure/countryLocal.ts` and the shared host planner; unsupported/incomplete forms stop before cache/classifier/provider; completion stays off. Why: one browser/Deno grammar, no country fallback or identity claims.
+- Foreign case lookups build complete location records via `_shared/citationPure/caseLocations.ts`, group them by decision before choosing, and return parallel reports as a user choice (`locationChoiceRequired`) until a priority rule is verified. Why: never mix reporter/volume/page across records or guess between reports.

@@ -28,6 +28,7 @@ import { eligibleBookCompletion, resolveBookCompletion } from "../../supabase/fu
 import { preparePastedCitation, pastedCaseRequest, readPastedCitationSafety, renderPastedCaseResponse } from "@/lib/pastedCitationAdapter";
 import { suppliedLookupFieldsMatch } from "../../supabase/functions/_shared/pastedCitation";
 import { DISABLED_RULEPACK_WARNING, rulepackCapability, rulepackLookupEligible } from "../../supabase/functions/_shared/citationPure/rulepack.ts";
+import { readLocationChoice } from "../../supabase/functions/_shared/citationPure/caseLocations.ts";
 
 /** Local rendering controls; only host identity differs after bounded C2 parity. */
 export interface CitationHostCapabilities {
@@ -321,6 +322,14 @@ export function resolveCitationResponse(plan: TypedPlan, data: Record<string, un
       completion: accepted,
     } };
   }
+  // One decision reported in several parallel reports: the priority rule is not
+  // verified, so the user chooses instead of the system picking one.
+  const locationChoices = req.kind === "case" && accepted.identityConfirmed ? readLocationChoice(fl, accepted.jurisdiction) : null;
+  if (locationChoices) return { kind: "terminal", origin: "disambiguation", resolution: {
+    citation: "", reply: `נמצאו כמה מראי מקום מקבילים לאותו פסק דין. כלל הקדימות ביניהם טרם אומת, ולכן לא נבחר אחד מהם אוטומטית. בחרו את מראה המקום הרצוי:\n${locationChoices.slice(0, 5).map((o, i) => escapeCitationLiteral(`${i + 1}. ${o.label} — ${o.url}`)).join("\n")}`,
+    status: "warning", warningMsg: "נדרשת בחירה בין מראי מקום מקבילים", pastedCitation: contract,
+    completion: accepted,
+  } };
   const wireSupplied = req.parsedFields && typeof req.parsedFields === "object" ? req.parsedFields as Record<string, string> : {};
   const supplied = { ...wireSupplied, ...(plan.localFields ?? {}) };
   let rendered: { citation: string; reply?: string; missing?: string[]; warnings?: string[] } | null = null;

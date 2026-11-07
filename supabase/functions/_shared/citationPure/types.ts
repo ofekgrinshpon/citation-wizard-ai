@@ -119,6 +119,11 @@ export interface ForeignCaseFields {
   opinionFormat?: "database" | "slip_separate" | "slip_nonseparate" | "pending";
   /** Volume number inside a UK report year, e.g. "1" in "[1990] 1 WLR 1". */
   reporterVolume?: string;
+  /**
+   * UK report year form copied from the source: absent = "[1932] AC 562",
+   * "round" = "(1878) 3 App Cas 1", "none" = "1932 SC (HL) 31".
+   */
+  reportYearStyle?: "round" | "none";
   /** Neutral citation body for UK sources, e.g. "UKSC 41". */
   neutral?: string;
   /** Additional (parallel) reporter citation exactly as parsed, e.g. "50 N.Y.2d 1, 5". */
