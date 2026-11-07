@@ -294,7 +294,8 @@ const Index = () => {
       citationScope.current.accountId === scope.accountId && citationScope.current.projectId === scope.projectId && citationScope.current.mode === scope.mode;
     const requestId = crypto.randomUUID();
     // Batch B: shared pure planner (same contract as runCitation; chat capabilities declared).
-    const canonicalRaw = article?.rawInput ?? userMessage;
+    // The selection tag is a routing marker only; it never belongs in the bound raw citation.
+    const canonicalRaw = (article?.rawInput ?? userMessage).replace(/^\s*\[בחירת תוצאה\]\s*/, "");
     const evidence = planCitationEvidence(canonicalRaw,
       article?.manualChoice ?? (article?.manual ? citationManualChoice(article.sourceType) : null));
     const { pasted } = evidence;
@@ -730,7 +731,7 @@ const Index = () => {
     // Step 2: Detect source type — hybrid regex + Gemini classifier
     // One telemetry action per wizard submission (attribution only).
     const tel = sourceTelemetry(newTelemetryBatch("uniform_citation"));
-    const pasted = preparePastedCitation(rawText);
+    const pasted = preparePastedCitation(rawText.replace(/^\s*\[בחירת תוצאה\]\s*/, ""));
     const resolved = pasted.local || pasted.contract.sourceKind === "case" && pasted.contract.route === "foreign"
       ? { sourceType: pasted.country ? (pasted.country.family === "case" ? "foreign_case_other" : "foreign") : pasted.detection?.sourceType ?? (pasted.contract.jurisdiction === "US" ? "foreign_case_us" : "foreign_case_other") as SourceType, source: "regex" as const }
       : await resolveSourceType(normalized, tel);

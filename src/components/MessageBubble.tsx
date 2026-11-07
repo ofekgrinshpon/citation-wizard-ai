@@ -16,6 +16,7 @@ import { useOffice } from "@/hooks/useOffice";
 import { insertCitationAsFootnote } from "@/lib/wordInsertion";
 import type { SourceType } from "@/data/abbreviations";
 import { normalizeHebrewNumberRanges } from "@/lib/hebrewNumberRange";
+import { citationTextOnly } from "@/lib/citationSegments";
 
 interface Message {
   role: "user" | "assistant";
@@ -257,7 +258,11 @@ export function MessageBubble({ msg: rawMsg, detectedType, onChangeSourceType, o
                 return (
                   <button
                     key={i}
-                    onClick={() => onSelectOption?.(line.trim())}
+                    onClick={() => {
+                      // Keep the hidden data blob intact; strip only styling markers from the legal text.
+                      const blobs = (line.match(/<!--DATA:[^>]*?-->/g) ?? []).join("");
+                      onSelectOption?.(`${citationTextOnly(displayLine).trim()}${blobs ? ` ${blobs}` : ""}`);
+                    }}
                     className="w-full text-right p-2 my-1 rounded-lg border border-primary/20 hover:bg-primary/10 hover:border-primary/40 transition-colors cursor-pointer block"
                     dir="rtl"
                   >
