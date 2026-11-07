@@ -24,6 +24,8 @@ export interface ForeignLookupInput {
   rawInput: string;
   /** Partially parsed local fields — identity anchors the user supplied. */
   parsedFields?: Record<string, string>;
+  /** Stage 4 handoff. The server re-reads the raw text before searching. */
+  freeformHandoff?: boolean;
 }
 
 export interface LookupSource {
@@ -104,6 +106,7 @@ import {
   selectableLocations, type CaseDecisionRecord, type CaseLocationRecord, type ChainEvidence,
 } from "../_shared/citationPure/caseLocations.ts";
 import { canChargeSearch, chargeSearch, markBudgetUnknown, type CitationBudget } from "../_shared/citationPure/freeformInterpret.ts";
+import { authorEvidenceStatus } from "../_shared/citationPure/authorNames.ts";
 const PPLX_SEARCH_URL = "https://api.perplexity.ai/search";
 const TIMEOUT_MS = 20_000;
 const MAX_RESULTS = 8;
@@ -1158,8 +1161,8 @@ export async function runForeignLookup(
     if (titleHint) {
       if (!titleMatches(ev, titleHint)) return false;
       if (authorHint) {
-        const surname = normalizePartyName(authorHint).split(" ").pop() ?? "";
-        return surname.length >= 3 ? normalizePartyName(ev).includes(surname) : true;
+        const statuses = [s.title, s.snippet].filter((text): text is string => !!text).map((text) => authorEvidenceStatus(authorHint, text));
+        if (statuses.includes("conflict") || !statuses.includes("match")) return false;
       }
       return true;
     }
@@ -1534,6 +1537,13 @@ export async function runForeignLookup(
     byField.set(c.field, list);
   }
   const journalKey = (v: string) => v.toLowerCase().replace(/[^a-z0-9]/g, "");
+  if (input.kind === "book" || input.kind === "book_chapter") {
+    const values = (field: string) => new Set((byField.get(field) ?? []).map((candidate) => candidate.value));
+    // A year and an edition describe one publication. Disagreeing years mean the
+    // edition stated by only one of those records is not a shared fact.
+    if (values("year").size > 1) byField.delete("edition");
+    if (values("edition").size > 1) byField.delete("year");
+  }
   for (const [field, list] of byField) {
     const distinct = new Set(list.map((c) => field === "journal" ? journalKey(c.value) : c.value));
     if ((globalThis as { __FL_DEBUG?: boolean }).__FL_DEBUG) console.error("DBG byfield", field, JSON.stringify([...distinct]), "cands", list.length);

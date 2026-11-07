@@ -10,6 +10,7 @@
  * Hebrew input is never interpreted here. The Israeli path stays on the
  * existing engine.
  */
+import { authorCanBeMatched } from "./authorNames.ts";
 import { extractLocationChains, type LocationHit } from "./caseLocations.ts";
 import { escapeCitationLiteral } from "./segments.ts";
 
@@ -143,10 +144,14 @@ function presentationAuthors(authors: string): string | undefined {
   return tokens(authors) === tokens(reordered) ? reordered : undefined;
 }
 
-/** The existing book lookup checks the last author token. A short token does not bind the author. */
+/** A surname and at least one full given name can be compared in either order. */
 export function engineAuthorCheckBinds(authors: string): boolean {
-  const last = authors.toLowerCase().replace(/[.,'"’‘:;()[\]]/g, " ").replace(/\s+/g, " ").trim().split(" ").filter(Boolean).pop() ?? "";
-  return last.length >= 3;
+  return authorCanBeMatched(authors);
+}
+
+const ISRAELI_SOURCE = /ע["״']א|בג["״']ץ|בע["״']מ|דנ["״']א|רע["״']א|פ["״']ד|נגד|(?:^|\s)נ['׳]\s|חוק|פקוד|תקנות|הצעת\s+חוק|\d{1,6}\s*\/\s*\d{2,4}/;
+function isIsraeliSource(raw: string): boolean {
+  return HEBREW.test(raw) && ISRAELI_SOURCE.test(raw);
 }
 
 function localResolution(sourceType: FreeformResolution["sourceType"], raw: string, warningMsg: string): FreeformResolution {
@@ -169,9 +174,9 @@ function yearFromSlot(raw: string): GroundedField | null {
  */
 export function interpretDeterministic(raw: string): FreeformFacts | null {
   const text = raw.trim();
-  if (!text || text.length > 400 || HEBREW.test(text) || /https?:\/\//i.test(text) || CASE_SHAPE.test(text)) return null;
+  if (!text || text.length > 400 || /https?:\/\//i.test(text) || CASE_SHAPE.test(text) || isIsraeliSource(text)) return null;
   const body = text.replace(YEAR_SLOT, "").trim();
-  const by = body.match(/^(.{6,180}?)\s+by\s+(.{3,160})$/i);
+  const by = body.match(/([A-Z][A-Za-z'’.: -]{5,160}?)\s+(?:by|מאת)\s+([A-Z][A-Za-z.'’\- ,]{2,180})/u);
   if (!by) return null;
   const title = by[1].trim();
   let rest = by[2].trim();
@@ -338,11 +343,12 @@ function normalizeTitleLength(title: string): number {
 /**
  * Route a free-form Latin source into the existing book or article engine,
  * or into a clarification when that engine cannot safely search.
- * Returns null for Hebrew and for text this stage does not recognize.
- * Case-shaped text stays on the existing case lookup (null here).
+ * Hebrew words do not by themselves reject a foreign source. Israeli dockets,
+ * statutes and Hebrew case captions stay on the Israeli path. Case-shaped
+ * Latin captions stay on the existing case lookup (null here).
  */
 export function prepareFreeformHandoff(raw: string): FreeformHandoff | null {
-  if (HEBREW.test(raw)) return null;
+  if (isIsraeliSource(raw)) return null;
   if (/,?\s+in\s+/i.test(raw) && /\sby\s/i.test(raw)) {
     return { mode: "local", sourceType: "foreign_book_chapter", resolution: localResolution("foreign_book_chapter", raw,
       "הקלט נראה כפרק בתוך ספר. הגבול בין שם הפרק, שם האסופה והעמוד לא נחתך אוטומטית, ולכן לא בוצע חיפוש ולא הושלמו שנה, מוציא לאור או עמוד.") };
@@ -357,7 +363,7 @@ export function prepareFreeformHandoff(raw: string): FreeformHandoff | null {
     const authors = facts.fields.authors.value;
     const year = facts.fields.year?.value;
     return { mode: "local", sourceType: "foreign_book", resolution: localResolution("foreign_book", raw,
-      `זוהה ספר לועזי מתוך הקלט בלבד. כותרת: ${title}. מחבר: ${authors}. ${year ? `שנה שמופיעה בקלט: ${year}. ` : "שנה לא מופיעה במקום שנה של אזכור. "}מהדורה ומוציא לאור לא מופיעים בקלט ולא הושלמו. בדיקת המחבר של מנוע הספרים הקיים מאמתת את המילה האחרונה בשם המחבר; כאן היא לא מזהה שם משפחה, ולכן חיפוש לא יצא לדרך. לא נבנה אזכור Bluebook מלא.`) };
+      `זוהה ספר לועזי מתוך הקלט בלבד. כותרת: ${title}. מחבר: ${authors}. ${year ? `שנה שמופיעה בקלט: ${year}. ` : "שנה לא מופיעה במקום שנה של אזכור. "}מהדורה ומוציא לאור לא מופיעים בקלט ולא הושלמו. שם המחבר לא ניתן להשוואה מול קטלוג, ולכן חיפוש לא יצא לדרך. לא נבנה אזכור Bluebook מלא.`) };
   }
   return null;
 }
@@ -410,7 +416,7 @@ export async function executeFreeformModelAttempt(
   transport: (request: FreeformModelRequest) => Promise<ModelTransportResult>,
   opts?: { permitMock?: boolean },
 ): Promise<{ status: ModelAttemptStatus; facts: FreeformFacts | null; dropped: string[] }> {
-  if (HEBREW.test(raw)) return { status: "disabled", facts: null, dropped: ["hebrew"] };
+  if (HEBREW.test(raw) && !interpretDeterministic(raw)) return { status: "disabled", facts: null, dropped: ["hebrew"] };
   if (!opts?.permitMock && !freeformLiveEnabled()) return { status: "disabled", facts: null, dropped: [] };
   if (!chargeModel(budget)) return { status: "blocked", facts: null, dropped: [] };
   let result: ModelTransportResult;

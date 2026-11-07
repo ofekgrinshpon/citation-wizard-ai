@@ -13,7 +13,6 @@ import {
 } from "../../supabase/functions/_shared/citationPure/freeformInterpret";
 import { CHAT_HOST, foreignFreeformSourceType, planCitationEvidence, planLocalCitation, planTypedRequest, resolveCitationResponse, selectForeignCaseChoice } from "@/lib/citationPlanner";
 import { citationTextOnly } from "@/lib/citationSegments";
-import { runCitation } from "@/lib/runCitation";
 
 const BOOK = "National identity by Smith, Anthony D";
 const ARTICLE = "The Path of the Law by Holmes, Oliver Wendell, Harvard Law Review";
@@ -38,14 +37,16 @@ describe("books and articles from the supplied text", () => {
     expect(facts?.fields.publisher).toBeUndefined();
     expect(facts?.fields.edition).toBeUndefined();
     expect(facts?.presentationAuthors).toBe("Anthony D Smith");
-    expect(engineAuthorCheckBinds("Smith, Anthony D")).toBe(false);
+    expect(engineAuthorCheckBinds("Smith, Anthony D")).toBe(true);
     const handed = plan(BOOK);
-    expect(handed.local?.reply).toContain("National identity");
-    expect(handed.local?.reply).toContain("Smith, Anthony D");
-    expect(handed.local?.reply).not.toContain("Anthony D Smith");
-    expect(handed.local?.reply).not.toMatch(/\b(?:1[5-9]|20)\d{2}\b/);
-    expect(handed.local?.sourceType).toBe("foreign_book");
-    expect(handed.typed).toBeUndefined();
+    expect(handed.typed?.foreignLookup).toMatchObject({
+      enabled: true, freeformHandoff: true, kind: "book",
+      parsedFields: { bookTitle: "National identity", authors: "Smith, Anthony D" },
+    });
+    expect(handed.typed?.foreignLookup?.parsedFields).not.toHaveProperty("year");
+    expect(handed.typed?.foreignLookup?.parsedFields).not.toHaveProperty("publisher");
+    expect(handed.typed?.foreignLookup?.parsedFields).not.toHaveProperty("edition");
+    expect(JSON.stringify(handed.typed?.foreignLookup?.parsedFields)).not.toContain("Anthony D Smith");
   });
 
   it("routes a given-name author into the existing book lookup with only grounded fields", () => {
@@ -279,10 +280,11 @@ describe("citation-wide budget and selected-record handoff", () => {
       enabled: true, freeformHandoff: true, kind: "book", jurisdiction: "OTHER", rawInput: BOOK,
       parsedFields: { bookTitle: "National identity", authors: "Smith, Anthony D", year: "1991", publisher: "Polity" },
     });
-    expect(bound.action).toBe("stop");
-    if (bound.action !== "stop") return;
-    expect(bound.reply).not.toMatch(/\b1991\b/);
-    expect(bound.reply).not.toContain("Polity");
+    expect(bound.action).toBe("lookup");
+    if (bound.action !== "lookup") return;
+    expect(bound.parsedFields).toEqual({ bookTitle: "National identity", authors: "Smith, Anthony D" });
+    expect(bound.parsedFields).not.toHaveProperty("year");
+    expect(bound.parsedFields).not.toHaveProperty("publisher");
     expect(bindFreeformLookup({ freeformHandoff: true, kind: "book", rawInput: "ע\"א 240/95" }).action).toBe("stop");
     expect(bindFreeformLookup({ kind: "case", rawInput: "Donoghue v Stevenson" }).action).toBe("passthrough");
   });
@@ -313,12 +315,14 @@ describe("citation-wide budget and selected-record handoff", () => {
     expect(wrongOnly.identity.matched).toBe(false);
   });
 
-  it("does not call the classifier or the citation model for the Smith example", async () => {
-    vi.stubGlobal("fetch", vi.fn(() => { throw new Error("Live network forbidden"); }));
-    const result = await runCitation({ rawInput: BOOK, useVerifiedStore: false });
-    expect(result.sourceType).toBe("foreign_book");
-    expect(result.reply).toContain("Smith, Anthony D");
-    expect(result.reply).not.toMatch(/\b(?:1[5-9]|20)\d{2}\b/);
-    expect(result.status).toBe("warning");
+  it("routes a Hebrew-wrapped foreign book and leaves an Israeli docket alone", () => {
+    const mixed = "הספר National identity מאת Smith, Anthony D";
+    const handed = plan(mixed);
+    expect(handed.typed?.foreignLookup?.parsedFields).toEqual({ bookTitle: "National identity", authors: "Smith, Anthony D" });
+    expect(handed.typed?.foreignLookup?.rawInput).toContain("הספר");
+    expect(JSON.stringify(handed.typed?.foreignLookup?.parsedFields)).not.toMatch(/הספר|מאת/);
+    expect(prepareFreeformHandoff("ע\"א 240/95")).toBeNull();
+    expect(foreignFreeformSourceType("מדינת ישראל נגד פלוני")).toBeNull();
+    expect(foreignFreeformSourceType("הספר National Identity של סמית'")).toBeNull();
   });
 });
