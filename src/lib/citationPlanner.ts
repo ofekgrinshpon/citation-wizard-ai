@@ -29,6 +29,7 @@ import { preparePastedCitation, pastedCaseRequest, readPastedCitationSafety, ren
 import { suppliedLookupFieldsMatch } from "../../supabase/functions/_shared/pastedCitation";
 import { DISABLED_RULEPACK_WARNING, rulepackCapability, rulepackLookupEligible } from "../../supabase/functions/_shared/citationPure/rulepack.ts";
 import { readLocationChoice } from "../../supabase/functions/_shared/citationPure/caseLocations.ts";
+import { prepareFreeformHandoff, type FreeformHandoff } from "../../supabase/functions/_shared/citationPure/freeformInterpret.ts";
 import { buildForeignCaseChoice, prepareChoiceSelection, type ForeignCaseChoice } from "@/lib/foreignCaseChoice";
 
 /** Local rendering controls; only host identity differs after bounded C2 parity. */
@@ -97,6 +98,23 @@ export interface LocalPlanInput {
 
 const OPINION = (d: ForeignDetection | null | undefined) => !!(d?.fields as { opinionFormat?: string } | undefined)?.opinionFormat;
 
+/**
+ * Free-form Latin book/article text that the structured detector did not take.
+ * Hebrew, manual choices and an already-structured citation stay on the existing route.
+ */
+function freeformDecision(p: LocalPlanInput): FreeformHandoff | null {
+  if (p.manual || p.isPinpoint) return null;
+  if (p.evidence.pasted.contract.route === "israeli") return null;
+  if (detectForeignSource(p.input)) return null;
+  return prepareFreeformHandoff(p.input);
+}
+
+/** Source type for a free-form handoff, so the host can skip the classifier model. */
+export function foreignFreeformSourceType(raw: string): SourceType | null {
+  if (detectForeignSource(raw)) return null;
+  return prepareFreeformHandoff(raw)?.sourceType ?? null;
+}
+
 /** Phase 2 — terminal local outcomes (render or preserve). Null → continue to typed planning. */
 export function planLocalCitation(p: LocalPlanInput, caps: CitationHostCapabilities): { origin: LocalOrigin; resolution: CitationResolution } | { origin: null; statutePrep: StatutePreparation | null } {
   const { pasted } = p.evidence;
@@ -104,6 +122,9 @@ export function planLocalCitation(p: LocalPlanInput, caps: CitationHostCapabilit
   if (pasted.country && pasted.local) return { origin: pasted.contract.route === "preserve" ? "preserve" : "deterministic", resolution: { ...pasted.local, status: "warning", pastedCitation: pasted.contract, sourceType: pasted.country.family === "case" ? "foreign_case_other" : "foreign" } };
   const gate = planCapabilityGate(p);
   if (gate) return gate;
+  const handoff = freeformDecision(p);
+  if (handoff?.mode === "local") return { origin: "preserve", resolution: { ...handoff.resolution, pastedCitation: pasted.contract } };
+  if (handoff?.mode === "search") return { origin: null, statutePrep: null };
   if (pasted.local && !(caps.pastedLocalDefersOpinionFormat && OPINION(pasted.detection))) {
     const warnings = pasted.detection ? renderForeignDetection(pasted.detection)?.warnings ?? [] : [];
     return { origin: "pasted_local", resolution: { ...pasted.local, pastedCitation: pasted.contract,
@@ -270,6 +291,11 @@ export function planTypedRequest(p: LocalPlanInput & { statutePrep: StatutePrepa
   const caseRequest = pastedCaseRequest(p.canonicalRaw, pasted.contract);
   if (caseRequest) foreignLookup = caseRequest;
   if (caseRequest) articleRequest = null;
+  const handoff = freeformDecision(p);
+  if (handoff?.mode === "search" && (!foreignLookup || foreignLookup.kind === handoff.request.kind)) {
+    foreignLookup = { ...(foreignLookup ?? {}), ...handoff.request, rawInput: p.input };
+    if (handoff.request.kind === "journal_article") articleRequest = foreignLookup as { parsedFields: Record<string, string> };
+  }
   const typed = !!(foreignLookup || p.statutePrep?.request);
   return { kind: typed ? "typed" : "legacy", evidence: p.evidence, sourceType: st, statutePrep: p.statutePrep, caseRequest, articleRequest, foreignLookup, extraBody,
     ...(localFields && !caseRequest ? { localFields, localSourceFields } : {}) };

@@ -8,6 +8,7 @@ import * as usage from "../../../supabase/functions/_shared/citationUsageGuard";
 import * as pasted from "../../../supabase/functions/_shared/pastedCitation";
 import * as prefixes from "../../../supabase/functions/_shared/caseTypePrefixes";
 import * as bookFinal from "../../../supabase/functions/_shared/citationPure/bookFinal";
+import * as freeformInterpret from "../../../supabase/functions/_shared/citationPure/freeformInterpret";
 import { CHAT_HOST, planCitationEvidence, planLocalCitation, planTypedRequest } from "@/lib/citationPlanner";
 import { citationManualChoice } from "@/lib/pastedCitationAdapter";
 import { c1ServerPayload } from "./c1ServerPayload";
@@ -61,6 +62,7 @@ export async function c2AuthoritativePayload(f: WireFixture) {
     if (path.includes("pastedCitation")) return pasted;
     if (path.includes("caseTypePrefixes")) return prefixes;
     if (path.includes("citationPure/bookFinal")) return bookFinal;
+    if (path.includes("freeformInterpret")) return freeformInterpret;
     if (path.includes("statuteRoute")) return statuteRoute;
     if (path.includes("foreignLookup")) return { runForeignLookup: async () => { counts.lookup++; return payload.response; } };
     if (path.includes("costTelemetry")) return { withCostTelemetry: (_: unknown, fn: () => unknown) => fn(), setTelemetryFromBody: () => {} };

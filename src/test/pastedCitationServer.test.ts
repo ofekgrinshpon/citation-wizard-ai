@@ -6,6 +6,7 @@ import * as pasted from "../../supabase/functions/_shared/pastedCitation";
 import * as recovery from "../../supabase/functions/_shared/citationRecovery";
 import * as prefixes from "../../supabase/functions/_shared/caseTypePrefixes";
 import * as statute from "../../supabase/functions/citation-chat/statuteRoute";
+import * as freeformInterpret from "../../supabase/functions/_shared/citationPure/freeformInterpret";
 const compiled = ts.transpileModule(readFileSync("supabase/functions/citation-chat/index.ts", "utf8"), {
   compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.CommonJS },
 }).outputText;
@@ -23,6 +24,7 @@ function fixture() {
     if (path.includes("citationRecovery")) return recovery;
     if (path.includes("caseTypePrefixes")) return prefixes;
     if (path.includes("statuteRoute")) return statute;
+    if (path.includes("freeformInterpret")) return freeformInterpret;
     if (path.includes("citationDiagnosticGate")) return { isCitationDiagnosticPreflight: () => false };
     if (path.includes("costTelemetry")) return { withCostTelemetry: (_: unknown, fn: () => unknown) => fn(), setTelemetryFromBody: () => {}, trackedFetch: provider };
     if (path.includes("citationUsageGuard")) return { withCitationProviderOutcome: (fn: () => unknown) => fn(), CitationUsageGuard: class { constructor() { construct(); } begin = claim; finish = async () => {}; }, citationFingerprint: async () => "offline-fingerprint" };

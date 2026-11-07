@@ -78,6 +78,7 @@ import {
 } from "../_shared/trustedHosts.ts";
 import { normalizeHebrewNumberRanges } from "../_shared/hebrewNumberRange.ts";
 import { runForeignLookup, articleLookupFallback, type ForeignLookupResult } from "./foreignLookup.ts";
+import { bindFreeformLookup } from "../_shared/citationPure/freeformInterpret.ts";
 import { boundBookCompletion, resolveBookCompletion, frameBookFinal } from "../_shared/citationPure/bookFinal.ts";
 import type { CitationRecoveryInput } from "../_shared/citationRecovery.ts";
 import { isStatuteLookupRequest, validateStatuteRequest, resolveStatuteLookup } from "./statuteRoute.ts";
@@ -1998,18 +1999,26 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
         ["US", "UK", "OTHER", "UNKNOWN"].includes(flJur) &&
         flRaw.trim()
       ) {
+        const freeformBinding = bindFreeformLookup(foreignLookupRequest);
+        if (freeformBinding.action === "stop") {
+          return completeResponse(new Response(JSON.stringify({ content: freeformBinding.reply }), {
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          }));
+        }
+        const parsedForLookup = freeformBinding.action === "lookup" ? freeformBinding.parsedFields : flParsed;
         const pplxKey = Deno.env.get("PERPLEXITY_API_KEY");
         if (pplxKey || flKind === "journal_article") {
           try {
             foreignLookupResult = await runForeignLookup(
-              { kind: flKind, jurisdiction: flJur, rawInput: flRaw, parsedFields: flParsed },
-              { apiKey: pplxKey, fetchImpl: trackedFetch, ...(diagnostic ? { diagnosticObserver: diagnostic.collector.observe } : {}) },
+              { kind: flKind, jurisdiction: flJur, rawInput: flRaw, parsedFields: parsedForLookup },
+              { apiKey: pplxKey, fetchImpl: trackedFetch, ...(diagnostic ? { diagnosticObserver: diagnostic.collector.observe } : {}),
+                ...(freeformBinding.action === "lookup" ? { budget: freeformBinding.budget } : {}) },
             );
           } catch (flErr) {
             markCitationProviderUnknown();
             console.error("foreign lookup error:", flErr);
             foreignLookupResult = flKind === "journal_article"
-              ? articleLookupFallback({ kind: flKind, jurisdiction: flJur, rawInput: flRaw, parsedFields: flParsed }, "lookup_failed")
+              ? articleLookupFallback({ kind: flKind, jurisdiction: flJur, rawInput: flRaw, parsedFields: parsedForLookup }, "lookup_failed")
               : null;
           }
           // Identity matched + at least one grounded new field → the client
@@ -2055,6 +2064,13 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
       }
     }
 
+    // A free-form handoff never continues into the generic formatter. That call
+    // would be another model request and could fill missing facts from memory.
+    if (foreignLookupRequest?.freeformHandoff === true) {
+      return completeResponse(new Response(JSON.stringify({
+        content: "פענוח הניסוח החופשי לא הושלם לכדי אזכור; לא נשלחה קריאת מודל נוספת.",
+      }), { headers: { ...corsHeaders, "Content-Type": "application/json" } }));
+    }
     // Bounded foreign completion never escapes into Israeli docket enrichment or the generic model on failure.
     if (pastedContract.route === "foreign" && pastedContract.sourceKind === "case") return preservePasted();
     let caseLawHint = "";

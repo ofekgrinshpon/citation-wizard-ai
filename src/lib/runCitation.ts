@@ -42,7 +42,7 @@ import { renderUnpublishedLocal } from "@/lib/unpublishedWorkLocal";
 import { renderPeriodicalLocal } from "@/lib/periodicalLocal";
 import { renderBookLocal } from "@/lib/bookLocal";
 import { citationManualChoice } from "@/lib/pastedCitationAdapter";
-import { planCapabilityGate, planCitationEvidence, planLocalCitation, planTypedRequest, resolveCitationResponse, RUNNER_HOST } from "@/lib/citationPlanner";
+import { planCapabilityGate, planCitationEvidence, planLocalCitation, planTypedRequest, resolveCitationResponse, foreignFreeformSourceType, RUNNER_HOST } from "@/lib/citationPlanner";
 import type { CitationManualChoice, PastedCitationContract } from "../../supabase/functions/_shared/pastedCitation";
 import { citationDiagnosticBody, observeCitationDiagnostic, type CitationDiagnosticActivation } from "@/lib/citationDiagnostic";
 
@@ -188,7 +188,10 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
   const isPinpoint = PINPOINT_RE.test(rawInput);
 
   let sourceType: SourceType;
-  if (opts.overrideType) {
+  const freeformType = opts.overrideType || opts.manualChoice ? null : foreignFreeformSourceType(normalized);
+  if (freeformType) {
+    sourceType = freeformType;
+  } else if (opts.overrideType) {
     sourceType = opts.overrideType;
   } else if (pasted.contract.sourceKind === "case" && pasted.contract.route === "foreign") {
     sourceType = pasted.detection?.sourceType ?? (pasted.contract.jurisdiction === "US" ? "foreign_case_us" : "foreign_case_other");

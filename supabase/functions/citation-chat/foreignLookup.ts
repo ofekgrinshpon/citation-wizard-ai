@@ -81,6 +81,12 @@ export interface LookupDeps {
   apiKey?: string | null;
   /** Optional per-invocation observation only; never serialized into lookup results. */
   diagnosticObserver?: CitationDiagnosticObserver;
+  /**
+   * Free-form citations only. When set, this lookup shares the citation-wide
+   * cap (2 searches) and does not send another search after an unknown outcome.
+   * Absent: existing callers keep their own tier-2 behavior.
+   */
+  budget?: CitationBudget;
 }
 
 import { trackedFetch, type CostStage } from "../_shared/costTelemetry.ts";
@@ -97,6 +103,7 @@ import {
   bindChainsToCaption, decisionLabel, extractLocationChains, groundDecisionFields, groupCaseDecisions,
   selectableLocations, type CaseDecisionRecord, type CaseLocationRecord, type ChainEvidence,
 } from "../_shared/citationPure/caseLocations.ts";
+import { canChargeSearch, chargeSearch, markBudgetUnknown, type CitationBudget } from "../_shared/citationPure/freeformInterpret.ts";
 const PPLX_SEARCH_URL = "https://api.perplexity.ai/search";
 const TIMEOUT_MS = 20_000;
 const MAX_RESULTS = 8;
@@ -683,7 +690,9 @@ async function searchOnce(
   stage: CostStage = "unspecified",
   observer?: CitationDiagnosticObserver,
   tier: CitationDiagnosticTier = "tier1",
+  budget?: CitationBudget,
 ): Promise<RawResult[]> {
+  if (budget && !chargeSearch(budget)) return [];
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), TIMEOUT_MS);
   let status: number | null = null;
@@ -701,6 +710,7 @@ async function searchOnce(
     }, { stage });
     if (observer) status = resp.status;
     if (!resp.ok) {
+      if (budget && [408, 502, 504].includes(resp.status)) markBudgetUnknown(budget);
       safeObserveCitationDiagnostic(observer, { type: "search", tier, status: "http_error", httpStatus: status, resultCount: 0 });
       return [];
     }
@@ -710,6 +720,7 @@ async function searchOnce(
     safeObserveCitationDiagnostic(observer, { type: "search", tier, status: jsonFailed ? (ctrl.signal.aborted ? "timeout" : "json_error") : Array.isArray(json?.results) ? "ok" : "invalid_shape", httpStatus: status, resultCount: results.length });
     return results;
   } catch {
+    if (budget) markBudgetUnknown(budget);
     safeObserveCitationDiagnostic(observer, { type: "search", tier, status: ctrl.signal.aborted ? "timeout" : "fetch_error", httpStatus: status, resultCount: 0 });
     return [];
   } finally {
@@ -745,6 +756,7 @@ async function lookupArticle(
   doFetch: typeof fetch,
   apiKey: string,
   observer?: CitationDiagnosticObserver,
+  budget?: CitationBudget,
 ): Promise<ForeignLookupResult> {
   const rawFields = parseForeignArticleInput(input.rawInput);
   const supplied = { ...rawFields, ...Object.fromEntries(
@@ -820,7 +832,7 @@ async function lookupArticle(
     if (tier === "tier1") result.diagnostics.tier1Queried = true;
     else result.diagnostics.tier2Fired = true;
     const found = await searchOnce(buildQuery(input), tier === "tier1" ? tier1Hints(input.kind, input.jurisdiction) : null, doFetch, apiKey,
-      tier === "tier1" ? "foreign_search_tier1" : "foreign_search_tier2", observer, tier);
+      tier === "tier1" ? "foreign_search_tier1" : "foreign_search_tier2", observer, tier, budget);
     let strongHostCount = 0, weakHostCount = 0, missingUrlCount = 0, noRecordCount = 0;
     for (const item of found) {
       if (!item.url) { missingUrlCount++; continue; }
@@ -871,7 +883,7 @@ async function lookupArticle(
   await discover("tier1");
   await inspect("tier1");
   // An irrelevant strong host or a conflicting record no longer blocks rescue.
-  if (!records.length) {
+  if (!records.length && canChargeSearch(budget)) {
     await discover("tier2");
     await inspect("tier2");
     safeObserveCitationDiagnostic(observer, { type: "stop", reason: "tier2_exhausted" });
@@ -940,6 +952,7 @@ async function lookupStatute(
   result: ForeignLookupResult,
   doFetch: typeof fetch,
   apiKey: string,
+  budget?: CitationBudget,
 ): Promise<ForeignLookupResult> {
   const supplied = Object.fromEntries(
     Object.entries(input.parsedFields ?? {}).filter(([, v]) => typeof v === "string" && v.trim()),
@@ -954,13 +967,13 @@ async function lookupStatute(
 
   result.diagnostics.tier1Queried = true;
   type TieredResult = { title?: string; url?: string; snippet?: string; tier: "tier1" | "tier2" };
-  const tier1: TieredResult[] = (await searchOnce(buildQuery(input), tier1Hints("statute", input.jurisdiction), doFetch, apiKey, "foreign_search_tier1"))
+  const tier1: TieredResult[] = (await searchOnce(buildQuery(input), tier1Hints("statute", input.jurisdiction), doFetch, apiKey, "foreign_search_tier1", undefined, "tier1", budget))
     .map((r) => ({ ...r, tier: "tier1" as const }));
   let found: TieredResult[] = tier1;
   const usable1 = tier1.some((r) => r.url && classifySource(r.url) !== "weak");
-  if (!usable1 || tier1.length === 0) {
+  if ((!usable1 || tier1.length === 0) && canChargeSearch(budget)) {
     result.diagnostics.tier2Fired = true;
-    const tier2: TieredResult[] = (await searchOnce(buildQuery(input), null, doFetch, apiKey, "foreign_search_tier2"))
+    const tier2: TieredResult[] = (await searchOnce(buildQuery(input), null, doFetch, apiKey, "foreign_search_tier2", undefined, "tier2", budget))
       .map((r) => ({ ...r, tier: "tier2" as const }));
     found = [...tier1, ...tier2];
   }
@@ -1121,8 +1134,8 @@ export async function runForeignLookup(
     return result;
   }
   const doFetch = deps?.fetchImpl ?? trackedFetch;
-  if (input.kind === "journal_article") return lookupArticle(input, empty, doFetch, apiKey, deps?.diagnosticObserver);
-  if (input.kind === "statute") return lookupStatute(input, empty, doFetch, apiKey);
+  if (input.kind === "journal_article") return lookupArticle(input, empty, doFetch, apiKey, deps?.diagnosticObserver, deps?.budget);
+  if (input.kind === "statute") return lookupStatute(input, empty, doFetch, apiKey, deps?.budget);
   const query = buildQuery(input);
 
   // ── Identity predicates (used for the Tier-2 decision and acceptance) ──
@@ -1202,17 +1215,18 @@ export async function runForeignLookup(
   // Tier 1 — preferred-domain discovery hints.
   empty.diagnostics.tier1Queried = true;
   const hints = tier1Hints(input.kind, input.jurisdiction);
-  let results: Array<{ title?: string; url?: string; snippet?: string; tier: "tier1" | "tier2" }> = (await searchOnce(query, hints, doFetch, apiKey, "foreign_search_tier1")).map((r) => ({
+  let results: Array<{ title?: string; url?: string; snippet?: string; tier: "tier1" | "tier2" }> = (await searchOnce(query, hints, doFetch, apiKey, "foreign_search_tier1", undefined, "tier1", deps?.budget)).map((r) => ({
     ...r,
     tier: "tier1" as const,
   }));
 
   // Tier 2 — one bounded open-web search when Tier 1 returned nothing usable,
   // only unrelated records, or a related record without usable details.
-  // Never more than two searches per citation.
-  if (!productive(toSources(results))) {
+  // Never more than two searches per citation. A free-form budget also stops
+  // the second search when the first outcome is unknown.
+  if (!productive(toSources(results)) && canChargeSearch(deps?.budget)) {
     empty.diagnostics.tier2Fired = true;
-    const t2 = (await searchOnce(query, null, doFetch, apiKey, "foreign_search_tier2")).map((r) => ({
+    const t2 = (await searchOnce(query, null, doFetch, apiKey, "foreign_search_tier2", undefined, "tier2", deps?.budget)).map((r) => ({
       ...r,
       tier: "tier2" as const,
     }));

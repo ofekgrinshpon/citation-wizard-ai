@@ -4,7 +4,7 @@
 - [x] Stage 2: case location records grouped by decision, parallel-report choice.
 - [x] Fix two Word footnote tests broken by auto-opened cards.
 - [x] Stage 3: record-bound English choice buttons in chat, rejected after input edits (reports/foreign-freeform/STAGE3_RECORD_CHOICE.md).
-- [ ] Stage 4: Gemini 3.8 Flash free-form parsing (awaiting approval).
+- [x] Stage 4: gated free-form interpretation and handoff; live model stays off (reports/foreign-freeform/STAGE4_FREEFORM_INTERPRETATION.md).
 - [ ] Reporter priority rule: blocked on an authorised edition-21 check.
 
 ## Unified pasted-citation infrastructure batch A (offline only)
@@ -97,6 +97,6 @@
 - [x] Stage 1 — edition/rules/permissions report; decisions recorded (ed. 21, gemini-3.8-flash parser, ≤2 searches/≤2 model calls).
 - [x] Stage 2 — case location records, grouping by decision, parallel-report choice, decision vs report year, expanded UK reporters (search evidence), open search on irrelevant/partial results; offline 4,521 passed / 1 skipped / 2 pre-existing Word-flow failures. Report: reports/foreign-freeform/STAGE2_CASE_LOCATIONS.md. Stopped for review; no deployment.
 - [ ] Stage 3 — English choice buttons bound to record ids; invalidate choice after input edit (awaits approval).
-- [ ] Stage 4 — model parser (gemini-3.8-flash) with source-span checks (awaits approval).
+- [x] Stage 4 — gated free-form interpretation with source-span checks; live `google/gemini-3.8-flash` calls stay off. Report: reports/foreign-freeform/STAGE4_FREEFORM_INTERPRETATION.md.
 - [ ] Reporter priority (Rule 10.3/T2) — BLOCKED: needs authorized edition-21 check.
 - [ ] Pre-existing: 2 failing tests in wordFootnoteWorkflow.test.tsx (reproduced without Stage 2 changes) — awaits owner decision.
