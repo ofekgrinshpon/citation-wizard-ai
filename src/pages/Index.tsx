@@ -47,6 +47,8 @@ interface Message {
   content: string;
   completion?: import("@/lib/citationCompletion").CompletionAcceptance;
   pastedCitation?: import("../../supabase/functions/_shared/pastedCitation").PastedCitationContract;
+  /** In memory only: record-bound foreign case choice for this reply. */
+  foreignChoice?: import("@/lib/foreignCaseChoice").ForeignCaseChoice;
 }
 
 import { applyYearPreferences, isLegislationInput, extractLawNameFromInput, extractCitationFromResponse, type YearPreferences } from "@/lib/citationUtils";
@@ -68,7 +70,7 @@ import { renderUnpublishedLocal } from "@/lib/unpublishedWorkLocal";
 import { renderPeriodicalLocal } from "@/lib/periodicalLocal";
 import { renderBookLocal } from "@/lib/bookLocal";
 import { citationManualChoice, preparePastedCitation } from "@/lib/pastedCitationAdapter";
-import { planCitationEvidence, planLocalCitation, planTypedRequest, resolveCitationResponse, CHAT_HOST } from "@/lib/citationPlanner";
+import { planCitationEvidence, planLocalCitation, planTypedRequest, resolveCitationResponse, selectForeignCaseChoice, CHAT_HOST } from "@/lib/citationPlanner";
 import type { CitationManualChoice } from "../../supabase/functions/_shared/pastedCitation";
 
 interface PendingVerification {
@@ -521,7 +523,7 @@ const Index = () => {
           }
         }
 
-        setMessages([...newMessages, { role: "assistant", content: finalReply, completion: resolution?.completion, pastedCitation: resolution?.pastedCitation }]);
+        setMessages([...newMessages, { role: "assistant", content: finalReply, completion: resolution?.completion, pastedCitation: resolution?.pastedCitation, foreignChoice: resolution?.foreignChoice }]);
         setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: sourceType as SourceType }));
         setMessageRawInputs((prev) => ({ ...prev, [assistantIndex]: rawText }));
         // Credit already charged server-side by citation-chat (no frontend double-charge).
@@ -586,7 +588,7 @@ const Index = () => {
           }
         }
 
-        setMessages([...newMessages, { role: "assistant", content: finalReply, completion: resolution?.completion, pastedCitation: resolution?.pastedCitation }]);
+        setMessages([...newMessages, { role: "assistant", content: finalReply, completion: resolution?.completion, pastedCitation: resolution?.pastedCitation, foreignChoice: resolution?.foreignChoice }]);
         setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: sourceType as SourceType }));
         setMessageRawInputs((prev) => ({ ...prev, [assistantIndex]: rawText }));
         // Credit already charged server-side by citation-chat (no frontend double-charge).
@@ -661,7 +663,7 @@ const Index = () => {
       }
       const onCitationSuccess = async (reply: string, isCurrent: () => boolean, historyRequestId?: string, _typed?: boolean, resolution?: import("@/lib/citationPlanner").CitationResolution) => {
         const assistantIndex = messages.length;
-        setMessages((prev) => [...prev, { role: "assistant", content: reply, completion: resolution?.completion, pastedCitation: resolution?.pastedCitation }]);
+        setMessages((prev) => [...prev, { role: "assistant", content: reply, completion: resolution?.completion, pastedCitation: resolution?.pastedCitation, foreignChoice: resolution?.foreignChoice }]);
         setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: sourceType }));
         setMessageRawInputs((prev) => ({ ...prev, [assistantIndex]: rawInput }));
         // Credit already charged server-side by citation-chat (no frontend double-charge).
@@ -870,7 +872,7 @@ const Index = () => {
           }
         }
 
-        setMessages([...newMessages, { role: "assistant", content: finalReply, completion: resolution?.completion, pastedCitation: resolution?.pastedCitation }]);
+        setMessages([...newMessages, { role: "assistant", content: finalReply, completion: resolution?.completion, pastedCitation: resolution?.pastedCitation, foreignChoice: resolution?.foreignChoice }]);
         setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: effectiveSourceType }));
         setMessageRawInputs((prev) => ({ ...prev, [assistantIndex]: rawText }));
         // Credit already charged server-side by citation-chat (no frontend double-charge).
@@ -1246,7 +1248,7 @@ const Index = () => {
                             } else {
                               const onCitationSuccess = async (reply: string, isCurrent: () => boolean, historyRequestId?: string, _typed?: boolean, resolution?: import("@/lib/citationPlanner").CitationResolution) => {
                                 const assistantIndex = updatedMessages.length;
-                                setMessages([...updatedMessages, { role: "assistant", content: reply, completion: resolution?.completion, pastedCitation: resolution?.pastedCitation }]);
+                                setMessages([...updatedMessages, { role: "assistant", content: reply, completion: resolution?.completion, pastedCitation: resolution?.pastedCitation, foreignChoice: resolution?.foreignChoice }]);
                                 setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: sourceType as SourceType }));
                                 setMessageRawInputs((prev) => ({ ...prev, [assistantIndex]: newContent }));
 
@@ -1287,7 +1289,7 @@ const Index = () => {
                             const onCitationSuccess = async (reply: string, isCurrent: () => boolean, historyRequestId?: string, _typed?: boolean, resolution?: import("@/lib/citationPlanner").CitationResolution) => {
                               setMessages((prev) => {
                                 const updated = [...prev];
-                                updated[i] = { role: "assistant", content: reply, completion: resolution?.completion, pastedCitation: resolution?.pastedCitation };
+                                updated[i] = { role: "assistant", content: reply, completion: resolution?.completion, pastedCitation: resolution?.pastedCitation, foreignChoice: resolution?.foreignChoice };
                                 return updated;
                               });
                               // Only this explicit, successful generation may vouch for the choice.
@@ -1315,13 +1317,42 @@ const Index = () => {
                           setCitationStatus(null);
                           setMessages((prev) => {
                             const updated = [...prev];
-                            updated[i] = { ...updated[i], content: newContent, completion: undefined, pastedCitation: undefined };
+                            updated[i] = { ...updated[i], content: newContent, completion: undefined, pastedCitation: undefined, foreignChoice: undefined };
                             return updated;
                           });
                           toast.success("האזכור עודכן בהצלחה");
                         }
                       : undefined
                   }
+                  onSelectForeignChoice={msg.role === "assistant" && msg.foreignChoice ? (optionId: string) => {
+                    const choice = msg.foreignChoice;
+                    if (!choice || loading) return;
+                    // The choice is valid only while this reply's input is unchanged.
+                    const raw = rawInputFor(i);
+                    const outcome = selectForeignCaseChoice(choice, optionId, raw ? [raw, normalizeAbbreviations(raw)] : [], CHAT_HOST);
+                    if (outcome.kind !== "resolved") {
+                      setMessages((prev) => prev.map((m, j) => j === i && m.foreignChoice === choice ? { ...m, foreignChoice: undefined } : m));
+                      toast.error(outcome.kind === "stale"
+                        ? "הקלט השתנה מאז שהוצגו האפשרויות, ולכן הבחירה בוטלה. שלחו את המקור שוב."
+                        : "לא ניתן היה להשתמש באפשרות שנבחרה. שלחו את המקור שוב.");
+                      return;
+                    }
+                    const resolution = outcome.resolution;
+                    setCitationStatus(null);
+                    setMessages((prev) => prev.map((m, j) => j === i && m.foreignChoice === choice
+                      ? { role: "assistant", content: resolution.reply, completion: resolution.completion, pastedCitation: resolution.pastedCitation, foreignChoice: resolution.foreignChoice }
+                      : m));
+                    if (resolution.sourceType) setMessageSourceTypes((prev) => ({ ...prev, [i]: resolution.sourceType as SourceType }));
+                    if (resolution.citation && user?.id) {
+                      saveCitationHistoryRecord({
+                        raw_input: raw,
+                        formatted_output: extractCitationFromResponse(resolution.reply) || resolution.reply,
+                        source_type: resolution.sourceLabel ?? null,
+                        user_id: user.id,
+                        project_id: currentProject?.id || null,
+                      }).then(() => setCitationRefreshKey(k => k + 1)).catch(() => toast.error("האזכור מוצג, אך שמירתו בהיסטוריה לא אושרה."));
+                    }
+                  } : undefined}
                   onSelectOption={(optionText: string) => {
                     setCitationStatus(null);
                     // Prepend selection tag so edge function skips Perplexity search

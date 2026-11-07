@@ -17,12 +17,14 @@ import { insertCitationAsFootnote } from "@/lib/wordInsertion";
 import type { SourceType } from "@/data/abbreviations";
 import { normalizeHebrewNumberRanges } from "@/lib/hebrewNumberRange";
 import { citationTextOnly } from "@/lib/citationSegments";
+import { ForeignCaseChoiceButtons } from "./ForeignCaseChoiceButtons";
 
 interface Message {
   role: "user" | "assistant";
   content: string;
   completion?: import("@/lib/citationCompletion").CompletionAcceptance;
   pastedCitation?: import("../../supabase/functions/_shared/pastedCitation").PastedCitationContract;
+  foreignChoice?: import("@/lib/foreignCaseChoice").ForeignCaseChoice;
 }
 
 /** Extract rule number from a 📐 line */
@@ -38,17 +40,20 @@ interface MessageBubbleProps {
   onEdit?: (newContent: string) => void;
   onUpdateAssistantContent?: (newContent: string) => void;
   onSelectOption?: (optionText: string) => void;
+  /** Record-bound foreign case choice (chat only). */
+  onSelectForeignChoice?: (optionId: string) => void;
   /** Local foreign-source classification scope (assistant citations only). */
   foreignScope?: { accountId: string | null | undefined; itemKey: string; input: string };
 }
 
-export function MessageBubble({ msg: rawMsg, detectedType, onChangeSourceType, onEdit, onUpdateAssistantContent, onSelectOption, foreignScope }: MessageBubbleProps) {
+export function MessageBubble({ msg: rawMsg, detectedType, onChangeSourceType, onEdit, onUpdateAssistantContent, onSelectOption, onSelectForeignChoice, foreignScope }: MessageBubbleProps) {
   // Rule 1.10 safety net: enforce Hebrew number-range order on display/copy,
   // including cached messages produced before the server-side fix.
   const msg: Message = rawMsg.role === "assistant"
     ? { ...rawMsg, content: normalizeHebrewNumberRanges(rawMsg.content) }
     : rawMsg;
   const isUser = msg.role === "user";
+  const foreignChoice = !isUser && onSelectForeignChoice ? msg.foreignChoice : undefined;
   const { isOfficeAddin, hasDocumentAccess } = useOffice();
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(msg.content);
@@ -205,6 +210,8 @@ export function MessageBubble({ msg: rawMsg, detectedType, onChangeSourceType, o
             )}
             {msg.content.split("\n").map((line, i) => {
               if (!line.trim()) return <br key={i} />;
+              // The numbered options are shown as record-bound buttons below.
+              if (foreignChoice && i > 0 && /^\d+\.\s/.test(line.trim())) return null;
 
               if (isRuleLine(line)) {
                 const ruleNum = extractRuleNumber(line);
@@ -285,6 +292,10 @@ export function MessageBubble({ msg: rawMsg, detectedType, onChangeSourceType, o
                 </div>
               );
             })}
+
+            {foreignChoice && (
+              <ForeignCaseChoiceButtons key={`${foreignChoice.stage}|${foreignChoice.options.map((o) => o.id).join(",")}`} choice={foreignChoice} onSelect={onSelectForeignChoice!} />
+            )}
 
             {isCaseLaw && !isVerifiedSource && !msg.content.split("\n").some(l => isRuleLine(l)) && (
               <div className="flex items-center gap-2 flex-wrap mt-2">

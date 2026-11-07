@@ -17,6 +17,7 @@ function review(){fireEvent.click(screen.getByRole('button',{name:'המשך לב
 function generate(){fireEvent.click(screen.getByRole('button',{name:/^בדוק \d+ מקורות$/}));}
 async function result(){await waitFor(()=>expect(screen.getByLabelText('התיקון המוצע לאזכור 1')).toHaveValue('Corrected'));}
 function approve(){fireEvent.click(screen.getByRole('button',{name:'אשר תיקון לאזכור 1'}));}
+function openCard(name:RegExp){const b=screen.getByRole('button',{name});if(b.getAttribute('aria-expanded')!=='true')fireEvent.click(b);}
 function back(){fireEvent.click(screen.getByRole('button',{name:'חזרה לטקסט הסבר שלא לשנות'}));}
 beforeEach(()=>{vi.clearAllMocks();localStorage.clear();mocks.account='a';mocks.project='p';mocks.inspect.mockResolvedValue({notes:[note('Author, Title (2020)')],skippedNotes:[]});mocks.run.mockResolvedValue({citation:'Corrected',status:'valid',sourceType:'book'});mocks.embed.mockResolvedValue(new Uint8Array([1]));mocks.checkGroup.mockResolvedValue(null);mocks.check.mockResolvedValue(null);URL.createObjectURL=vi.fn(()=>'blob:test');URL.revokeObjectURL=vi.fn();vi.spyOn(HTMLAnchorElement.prototype,'click').mockImplementation(()=>{});});
 describe('Word default engine flow',()=>{
@@ -47,7 +48,7 @@ describe('Word default engine flow',()=>{
  });
  it('keeps an unsafe approved note unchanged while exporting another',async()=>{
   mocks.inspect.mockResolvedValue({notes:[{...note('Author, Title (2020)'),id:'42'},{...note('Other, Book (2021)'),id:'7'}],skippedNotes:[]});
-  render(<WordFootnoteWorkflow/>);await upload();review();generate();await waitFor(()=>expect(mocks.run).toHaveBeenCalledTimes(2));fireEvent.click(screen.getByRole('button',{name:/הערה במיקום 1 ·/}));await result();approve();fireEvent.click(screen.getByRole('button',{name:/הערה במיקום 2 ·/}));fireEvent.click(screen.getByRole('button',{name:'אשר תיקון לאזכור 2'}));
+  render(<WordFootnoteWorkflow/>);await upload();review();generate();await waitFor(()=>expect(mocks.run).toHaveBeenCalledTimes(2));await waitFor(()=>expect(screen.getByRole('button',{name:/הערה במיקום 2 ·/})).toHaveAttribute('aria-expanded','true'));expect(screen.getByRole('button',{name:/הערה במיקום 1 ·/})).toHaveAttribute('aria-expanded','true');openCard(/הערה במיקום 1 ·/);await result();approve();openCard(/הערה במיקום 2 ·/);fireEvent.click(screen.getByRole('button',{name:'אשר תיקון לאזכור 2'}));
   mocks.checkGroup.mockImplementation(async(_s:any,patches:any[])=>patches[0].id==='42'?'unsafe':null);fireEvent.click(screen.getByRole('button',{name:/המשך להורדה/}));fireEvent.click(screen.getByRole('button',{name:/הורדת עותק מתוקן/}));await waitFor(()=>expect(mocks.embed).toHaveBeenCalledTimes(1));expect(mocks.embed.mock.calls[0][1].map((p:any)=>p.id)).toEqual(['7']);expect(await screen.findByText(/נשארו ללא שינוי כי לא ניתן היה לשמר/)).toBeInTheDocument();
  });
  it('blocks repeated clicks, reset prevents stale delivery and pending note cannot be resent',async()=>{
@@ -98,9 +99,9 @@ describe('Word default engine flow',()=>{
   const a='Brown v. Board of Education, 347 U.S. 483 (1954)';const notes=[{...note(a),id:'42'},{...note(a),id:'7'}];
   mocks.inspect.mockResolvedValue({notes,documentOrder:[{id:'42',number:10},{id:'7',number:11}],skippedNotes:[]});mocks.run.mockImplementation(async({rawInput}:any)=>({citation:rawInput,status:'valid',sourceType:'book'}));
   render(<WordFootnoteWorkflow/>);await upload();review();generate();await waitFor(()=>expect(mocks.run).toHaveBeenCalledTimes(2));await waitFor(()=>expect(screen.getByRole('button',{name:'הצע אזכורים חוזרים לבדיקה'})).toBeEnabled());
-  fireEvent.click(screen.getByRole('button',{name:'הצע אזכורים חוזרים לבדיקה'}));fireEvent.click(screen.getByRole('button',{name:/הערת שוליים 11 ·/}));expect(screen.getByLabelText('התיקון המוצע לאזכור 2')).toHaveValue('שם.');
+  fireEvent.click(screen.getByRole('button',{name:'הצע אזכורים חוזרים לבדיקה'}));openCard(/הערת שוליים 11 ·/);expect(screen.getByLabelText('התיקון המוצע לאזכור 2')).toHaveValue('שם.');
   fireEvent.click(screen.getByRole('button',{name:'אשר תיקון לאזכור 2'}));expect(screen.getByLabelText('תצוגת הערה 11')).toHaveTextContent('שם.');
-  fireEvent.click(screen.getByRole('button',{name:/הערת שוליים 10 ·/}));fireEvent.change(screen.getByLabelText('התיקון המוצע לאזכור 1'),{target:{value:'Changed source'}});
+  openCard(/הערת שוליים 10 ·/);fireEvent.change(screen.getByLabelText('התיקון המוצע לאזכור 1'),{target:{value:'Changed source'}});
   expect(screen.getByLabelText('התיקון המוצע לאזכור 2')).toHaveValue(a);expect(screen.getByRole('button',{name:/המשך להורדה/})).toBeDisabled();
  });
  it('lists 39 notes in document order across both steps without dispatch, including skipped and unresolved numbering',async()=>{

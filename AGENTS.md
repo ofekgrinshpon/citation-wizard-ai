@@ -17,3 +17,4 @@
 
 - AU/CA evidence/styles use `_shared/citationPure/countryLocal.ts` and the shared host planner; unsupported/incomplete forms stop before cache/classifier/provider; completion stays off. Why: one browser/Deno grammar, no country fallback or identity claims.
 - Foreign case lookups build complete location records via `_shared/citationPure/caseLocations.ts`, group them by decision before choosing, and return parallel reports as a user choice (`locationChoiceRequired`) until a priority rule is verified. Why: never mix reporter/volume/page across records or guess between reports.
+- Chat choices between foreign case records use `src/lib/foreignCaseChoice.ts` + `selectForeignCaseChoice`: options carry validated record ids, selection re-runs the shared acceptance on that record (no IO), is bound to an input fingerprint and lives in memory only. Why: a choice can never mix records, trigger a search or survive an input edit.

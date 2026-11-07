@@ -392,6 +392,15 @@ export function readLocationChoice(response: unknown, jurisdiction: string | nul
   const d = r.caseDecisions[0] as Record<string, unknown> | null;
   if (!d || typeof d !== "object" || d.jurisdiction !== jurisdiction || !Array.isArray(d.locations)) return null;
   const options: LocationChoiceOption[] = [];
+  // Reporters whose own records disagree are never offered (same rule as selectableLocations).
+  const seriesCount = new Map<string, number>();
+  for (const raw of d.locations) {
+    const l = raw && typeof raw === "object" ? raw as Record<string, unknown> : {};
+    if (typeof l.reporter === "string") {
+      const k = seriesKey({ jurisdiction: jurisdiction as CaseJurisdiction, reporter: l.reporter, firstPage: "" });
+      seriesCount.set(k, (seriesCount.get(k) ?? 0) + 1);
+    }
+  }
   for (const raw of d.locations) {
     if (!raw || typeof raw !== "object") return null;
     const l = raw as Record<string, unknown>;
@@ -400,6 +409,7 @@ export function readLocationChoice(response: unknown, jurisdiction: string | nul
     if (jurisdiction === "US" && !str("volume")) return null;
     if (jurisdiction === "UK" && (!str("volumeYear") || !["square", "round", "none"].includes(String(l.yearStyle)))) return null;
     try { if (!["https:", "http:"].includes(new URL(str("sourceUrl")!).protocol)) return null; } catch { return null; }
+    if ((seriesCount.get(seriesKey({ jurisdiction: jurisdiction as CaseJurisdiction, reporter: str("reporter")!, firstPage: "" })) ?? 0) > 1) continue;
     options.push({
       id: str("id")!,
       label: formatLocationLabel({
@@ -410,4 +420,107 @@ export function readLocationChoice(response: unknown, jurisdiction: string | nul
     });
   }
   return options.length > 1 ? options : null;
+}
+
+/** One line describing a decision for a choice list. */
+export function decisionLabel(d: CaseDecisionRecord): string {
+  const parts = [
+    ...(d.neutral && d.decisionYear ? [`[${d.decisionYear}] ${d.neutral}`] : []),
+    ...d.locations.slice(0, 3).map(formatLocationLabel),
+  ];
+  const paren = d.jurisdiction === "US" ? [d.court, d.decisionYear].filter(Boolean).join(" ") : "";
+  return `${parts.join(", ")}${paren ? ` (${paren})` : ""}`.slice(0, 160);
+}
+
+export interface GroundedProvenance { value: string; sourceUrl: string; sourceTitle?: string; basis: CaseLocationBasis }
+/**
+ * Lookup-response fields for one decision and (optionally) one of its
+ * locations, each tied to the source that stated it. Shared by the server
+ * lookup and by a user's choice in the app, so both ground fields identically.
+ * A field equal to the user's own year is the user's anchor, not a new fact.
+ */
+export function groundDecisionFields(d: CaseDecisionRecord, chosen: CaseLocationRecord | undefined, userYear?: string): {
+  fields: Record<string, string>; grounded: Record<string, true>; provenance: Record<string, GroundedProvenance>;
+} {
+  const out = { fields: {} as Record<string, string>, grounded: {} as Record<string, true>, provenance: {} as Record<string, GroundedProvenance> };
+  const { fields, donors } = decisionLocationFields(d, chosen);
+  for (const [field, value] of Object.entries(fields)) {
+    if (field === "year" && userYear === value) continue;
+    const donor = donors[field] === "location" ? (chosen && { url: chosen.sourceUrl, title: chosen.sourceTitle, basis: chosen.basis })
+      : donors[field] === "neutral" ? (d.neutralSourceUrl && d.neutralBasis ? { url: d.neutralSourceUrl, title: d.neutralSourceTitle, basis: d.neutralBasis } : undefined)
+      : donors[field] === "court" ? d.courtSource
+      : d.decisionYearSource;
+    if (!donor) continue;
+    out.fields[field] = value;
+    out.grounded[field] = true;
+    out.provenance[field] = { value, sourceUrl: donor.url, sourceTitle: donor.title, basis: donor.basis };
+  }
+  return out;
+}
+
+const BASES: readonly CaseLocationBasis[] = ["official_record", "structured_metadata", "publisher_metadata", "repository_metadata", "search_result_explicit", "document_inspection"];
+const httpUrl = (v: unknown): v is string => {
+  if (typeof v !== "string") return false;
+  try { return ["https:", "http:"].includes(new URL(v).protocol); } catch { return false; }
+};
+const optStr = (o: Record<string, unknown>, k: string): string | undefined | null =>
+  o[k] === undefined ? undefined : typeof o[k] === "string" && (o[k] as string).trim() ? o[k] as string : null;
+const basis = (v: unknown): CaseLocationBasis | null => BASES.includes(v as CaseLocationBasis) ? v as CaseLocationBasis : null;
+function readDonor(v: unknown): { url: string; title?: string; basis: CaseLocationBasis } | undefined | null {
+  if (v === undefined) return undefined;
+  if (!v || typeof v !== "object") return null;
+  const o = v as Record<string, unknown>;
+  const b = basis(o.basis), title = optStr(o, "title");
+  if (!httpUrl(o.url) || !b || title === null) return null;
+  return { url: o.url, ...(title ? { title } : {}), basis: b };
+}
+
+/**
+ * Validate one untrusted decision record from a lookup response and return a
+ * clean copy with only known fields. Any malformed part rejects the record.
+ */
+export function readDecisionRecord(raw: unknown, jurisdiction: CaseJurisdiction): CaseDecisionRecord | null {
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return null;
+  const d = raw as Record<string, unknown>;
+  if (typeof d.id !== "string" || !d.id || d.jurisdiction !== jurisdiction || !Array.isArray(d.locations)) return null;
+  const court = optStr(d, "court"), decisionYear = optStr(d, "decisionYear"), neutral = optStr(d, "neutral");
+  if (court === null || decisionYear === null || neutral === null) return null;
+  if (decisionYear !== undefined && !/^(?:17|18|19|20)\d{2}$/.test(decisionYear)) return null;
+  const courtSource = readDonor(d.courtSource), decisionYearSource = readDonor(d.decisionYearSource);
+  if (courtSource === null || decisionYearSource === null) return null;
+  let neutralPart: Partial<CaseDecisionRecord> = {};
+  if (neutral) {
+    const t = optStr(d, "neutralSourceTitle");
+    const nb = d.neutralBasis === undefined ? undefined : basis(d.neutralBasis);
+    if (t === null || nb === null || (d.neutralSourceUrl !== undefined && !httpUrl(d.neutralSourceUrl))) return null;
+    neutralPart = { neutral, ...(httpUrl(d.neutralSourceUrl) ? { neutralSourceUrl: d.neutralSourceUrl } : {}), ...(t ? { neutralSourceTitle: t } : {}), ...(nb ? { neutralBasis: nb } : {}) };
+  }
+  const locations: CaseLocationRecord[] = [];
+  for (const rl of d.locations) {
+    if (!rl || typeof rl !== "object") return null;
+    const l = rl as Record<string, unknown>;
+    const id = optStr(l, "id"), reporter = optStr(l, "reporter"), firstPage = optStr(l, "firstPage");
+    const volume = optStr(l, "volume"), volumeYear = optStr(l, "volumeYear"), lcourt = optStr(l, "court"), title = optStr(l, "sourceTitle");
+    const b = basis(l.basis);
+    if (!id || !reporter || !firstPage || volume === null || volumeYear === null || lcourt === null || title === null || !b) return null;
+    if (l.jurisdiction !== jurisdiction || !httpUrl(l.sourceUrl) || typeof l.support !== "number" || !(l.support >= 1)) return null;
+    if (jurisdiction === "US" && !volume) return null;
+    if (jurisdiction === "UK" && (!volumeYear || !["square", "round", "none"].includes(String(l.yearStyle)))) return null;
+    const rec: CaseLocationRecord = {
+      jurisdiction, reporter, firstPage, ...(volume ? { volume } : {}), ...(volumeYear ? { volumeYear } : {}),
+      ...(l.yearStyle !== undefined ? { yearStyle: l.yearStyle as ReportYearStyle } : {}), ...(lcourt ? { court: lcourt } : {}),
+      id, sourceUrl: l.sourceUrl, ...(title ? { sourceTitle: title } : {}), basis: b, support: l.support,
+    };
+    if (locationId(rec) !== id) return null; // the id must name exactly these fields
+    locations.push(rec);
+  }
+  if (!Array.isArray(d.sourceUrls) || !d.sourceUrls.every(httpUrl)) return null;
+  if (!Array.isArray(d.locationConflicts) || !d.locationConflicts.every((c) => typeof c === "string" && c.startsWith("location:"))) return null;
+  if (!neutral && locations.length === 0) return null;
+  return {
+    id: d.id, jurisdiction,
+    ...(court ? { court } : {}), ...(decisionYear ? { decisionYear } : {}), ...neutralPart,
+    ...(courtSource ? { courtSource } : {}), ...(decisionYearSource ? { decisionYearSource } : {}),
+    locations, sourceUrls: [...d.sourceUrls as string[]], locationConflicts: [...d.locationConflicts as string[]],
+  };
 }

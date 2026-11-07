@@ -94,7 +94,7 @@ import {
 } from "../_shared/foreignArticle.ts";
 import { extractWorkIdentifiers, normalizeDoi, normalizeWorkUrl } from "../_shared/workIdentifiers.ts";
 import {
-  bindChainsToCaption, decisionLocationFields, extractLocationChains, formatLocationLabel, groupCaseDecisions,
+  bindChainsToCaption, decisionLabel, extractLocationChains, groundDecisionFields, groupCaseDecisions,
   selectableLocations, type CaseDecisionRecord, type CaseLocationRecord, type ChainEvidence,
 } from "../_shared/citationPure/caseLocations.ts";
 const PPLX_SEARCH_URL = "https://api.perplexity.ai/search";
@@ -1246,6 +1246,7 @@ export async function runForeignLookup(
   if (chapterHint) empty.identity.anchors.push(`chapter:${chapterHint}`);
 
   // ── Identity discovery: resolve jurisdiction from evidence, never guess ──
+  let deferredRecordAmbiguity: (() => ForeignLookupResult) | null = null;
   if (input.kind === "case" && isUnresolvedJurisdiction(input.jurisdiction)) {
     const strongIds = identitySources.filter((s) => s.strong);
     const records: Array<{ jurisdiction: "US" | "UK"; sig: string; label: string; url: string; rank: number }> = [];
@@ -1268,7 +1269,7 @@ export async function runForeignLookup(
     const tieAtTop = sorted.length > 1 && sorted[0][1] === sorted[1][1];
     const noUserAnchor = !input.parsedFields?.court && !input.parsedFields?.year &&
       !/\b(19|20)\d{2}\b/.test(input.rawInput);
-    if (jurs.size > 1 || (tieAtTop && noUserAnchor)) {
+    const recordAmbiguity = (): ForeignLookupResult => {
       empty.identity.matched = false;
       empty.identity.conflicts.push(jurs.size > 1 ? "ambiguous_jurisdiction" : "ambiguous_record");
       const opts = [...bySig.values()];
@@ -1280,7 +1281,12 @@ export async function runForeignLookup(
         .slice(0, 5)
         .map((r) => ({ jurisdiction: r.jurisdiction, label: r.label, url: r.url }));
       return empty;
-    }
+    };
+    if (jurs.size > 1) return recordAmbiguity();
+    // One jurisdiction but tied records: decision grouping below decides
+    // (several rulings → choice; parallel reports of one ruling → report
+    // choice). Without decision records the earlier record list is kept.
+    if (tieAtTop && noUserAnchor) deferredRecordAmbiguity = recordAmbiguity;
     const resolved = [...jurs][0];
     input = { ...input, jurisdiction: resolved };
     empty.jurisdiction = resolved;
@@ -1321,6 +1327,7 @@ export async function runForeignLookup(
     }
     if (evidence.length > 0) return finishCaseDecisions(evidence, jur);
   }
+  if (deferredRecordAmbiguity) return deferredRecordAmbiguity();
 
   function finishCaseDecisions(evidence: ChainEvidence[], jur: "US" | "UK"): ForeignLookupResult {
     const userNeutral = input.parsedFields?.neutral;
@@ -1366,18 +1373,11 @@ export async function runForeignLookup(
       else if (selectable.length > 1) empty.locationChoiceRequired = true;
     }
     empty.identity.conflicts.push(...d.locationConflicts);
-    const { fields, donors } = decisionLocationFields(d, chosen);
-    for (const [field, value] of Object.entries(fields)) {
-      if (field === "year" && userYear === value) continue; // user anchor ≠ new fact
-      const donor = donors[field] === "location" ? (chosen && { url: chosen.sourceUrl, title: chosen.sourceTitle, basis: chosen.basis })
-        : donors[field] === "neutral" ? (d.neutralSourceUrl && { url: d.neutralSourceUrl, title: d.neutralSourceTitle, basis: d.neutralBasis! })
-        : donors[field] === "court" ? d.courtSource
-        : d.decisionYearSource;
-      if (!donor) continue;
-      empty.fields[field] = value;
-      empty.grounded[field] = true;
-      empty.provenance[field] = { value, sourceUrl: donor.url, sourceTitle: donor.title, basis: donor.basis };
-    }
+    // Same grounding the app uses when the user later picks one of the choices.
+    const grounded = groundDecisionFields(d, chosen, userYear);
+    Object.assign(empty.fields, grounded.fields);
+    Object.assign(empty.grounded, grounded.grounded);
+    Object.assign(empty.provenance, grounded.provenance);
     empty.identity.court = empty.fields.court ?? input.parsedFields?.court;
     empty.identity.year = empty.fields.year ?? userYear;
     return empty;
@@ -1595,13 +1595,4 @@ function extractAuthorHint(input: ForeignLookupInput): string | null {
   if (input.parsedFields?.author) return input.parsedFields.author;
   const m = input.rawInput.match(/^\s*([A-Z][A-Za-z.\s]+?),/);
   return m ? m[1].trim() : null;
-}
-
-function decisionLabel(d: CaseDecisionRecord): string {
-  const parts = [
-    ...(d.neutral && d.decisionYear ? [`[${d.decisionYear}] ${d.neutral}`] : []),
-    ...d.locations.slice(0, 3).map(formatLocationLabel),
-  ];
-  const paren = d.jurisdiction === "US" ? [d.court, d.decisionYear].filter(Boolean).join(" ") : "";
-  return `${parts.join(", ")}${paren ? ` (${paren})` : ""}`.slice(0, 160);
 }

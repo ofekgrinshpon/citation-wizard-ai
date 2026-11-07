@@ -1,5 +1,12 @@
 # Roadmap — research → memo → draft handoff (legal-research-v2)
 
+## Foreign free-form citations (offline only, each stage separately approved)
+- [x] Stage 2: case location records grouped by decision, parallel-report choice.
+- [x] Fix two Word footnote tests broken by auto-opened cards.
+- [x] Stage 3: record-bound English choice buttons in chat, rejected after input edits (reports/foreign-freeform/STAGE3_RECORD_CHOICE.md).
+- [ ] Stage 4: Gemini 3.8 Flash free-form parsing (awaiting approval).
+- [ ] Reporter priority rule: blocked on an authorised edition-21 check.
+
 ## Unified pasted-citation infrastructure batch A (offline only)
 - [x] Narrow C2 missing-label compatibility at 8ebf71f0: restore existing book/chapter caller labels; 14 fail-before, 566 focused / 4,049 full passed, 1 skipped; report updated; automatic compilation OK, explicit TS/Vite unrun; no replay/validation/IO changes. Stop for independent final QA.
 - [x] Narrow C2 JSONB binding correction at de9f47d9: recursive canonical v2 checksum, exact-v1 compatibility; five fail-before/pass-after vertical/history cases; 615 focused / 4,028 full passed, 1 skipped; automatic compilation OK, explicit TS/Vite unrun; no deployment/live/DB changes.

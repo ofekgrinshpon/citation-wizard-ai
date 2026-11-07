@@ -29,6 +29,7 @@ import { preparePastedCitation, pastedCaseRequest, readPastedCitationSafety, ren
 import { suppliedLookupFieldsMatch } from "../../supabase/functions/_shared/pastedCitation";
 import { DISABLED_RULEPACK_WARNING, rulepackCapability, rulepackLookupEligible } from "../../supabase/functions/_shared/citationPure/rulepack.ts";
 import { readLocationChoice } from "../../supabase/functions/_shared/citationPure/caseLocations.ts";
+import { buildForeignCaseChoice, prepareChoiceSelection, type ForeignCaseChoice } from "@/lib/foreignCaseChoice";
 
 /** Local rendering controls; only host identity differs after bounded C2 parity. */
 export interface CitationHostCapabilities {
@@ -70,6 +71,8 @@ export interface CitationResolution {
   sourceLabel?: string;
   pastedCitation?: PastedCitationContract;
   completion?: ReturnType<typeof acceptCitationCompletion>;
+  /** Chat only: record-bound foreign case choice (in memory, never persisted). */
+  foreignChoice?: ForeignCaseChoice;
 }
 export type LocalOrigin = "preserve" | "pasted_local" | "unreported_local" | "deterministic" | "statute_local";
 
@@ -278,7 +281,7 @@ export type ResponseResolution =
   | { kind: "legacy" };
 
 /** One terminal acceptance path for every existing typed request; legacy requests alone hand off. */
-export function resolveCitationResponse(plan: TypedPlan, data: Record<string, unknown> | null, _caps: CitationHostCapabilities): ResponseResolution {
+export function resolveCitationResponse(plan: TypedPlan, data: Record<string, unknown> | null, caps: CitationHostCapabilities): ResponseResolution {
   const contract = plan.evidence.pasted.contract;
   const safety = readPastedCitationSafety(contract, data);
   if (safety) return { kind: "terminal", origin: "safety", resolution: { ...safety, status: "warning", pastedCitation: contract } };
@@ -316,16 +319,21 @@ export function resolveCitationResponse(plan: TypedPlan, data: Record<string, un
       if (!["US", "UK"].includes(String(o.jurisdiction)) || typeof o.label !== "string" || !o.label.trim() || typeof o.url !== "string") return false;
       try { return ["https:", "http:"].includes(new URL(o.url).protocol); } catch { return false; }
     });
-    if (choices.length > 1) return { kind: "terminal", origin: "disambiguation", resolution: {
-      citation: "", reply: `נמצאו כמה פסקי דין אפשריים בשם זה. כדי לא לנחש, בחרו את הנכון והוסיפו את הערכאה או השנה:\n${choices.slice(0, 5).map((o, i) => escapeCitationLiteral(`${i + 1}. ${o.label} (${o.jurisdiction}) — ${o.url}`)).join("\n")}`,
-      status: "warning", warningMsg: messages.ambiguous, pastedCitation: contract,
-      completion: accepted,
-    } };
+    if (choices.length > 1) {
+      const foreignChoice = caps.host === "chat" ? buildForeignCaseChoice(plan, response, data?.pastedCitation, "decision") : null;
+      return { kind: "terminal", origin: "disambiguation", resolution: {
+        citation: "", reply: `נמצאו כמה פסקי דין אפשריים בשם זה. כדי לא לנחש, בחרו את הנכון והוסיפו את הערכאה או השנה:\n${choices.slice(0, 5).map((o, i) => escapeCitationLiteral(`${i + 1}. ${o.label} (${o.jurisdiction}) — ${o.url}`)).join("\n")}`,
+        status: "warning", warningMsg: messages.ambiguous, pastedCitation: contract,
+        completion: accepted, ...(foreignChoice ? { foreignChoice } : {}),
+      } };
+    }
   }
   // One decision reported in several parallel reports: the priority rule is not
   // verified, so the user chooses instead of the system picking one.
   const locationChoices = req.kind === "case" && accepted.identityConfirmed ? readLocationChoice(fl, accepted.jurisdiction) : null;
+  const locationChoice = locationChoices && caps.host === "chat" ? buildForeignCaseChoice(plan, response, data?.pastedCitation, "location") : null;
   if (locationChoices) return { kind: "terminal", origin: "disambiguation", resolution: {
+    ...(locationChoice ? { foreignChoice: locationChoice } : {}),
     citation: "", reply: `נמצאו כמה מראי מקום מקבילים לאותו פסק דין. כלל הקדימות ביניהם טרם אומת, ולכן לא נבחר אחד מהם אוטומטית. בחרו את מראה המקום הרצוי:\n${locationChoices.slice(0, 5).map((o, i) => escapeCitationLiteral(`${i + 1}. ${o.label} — ${o.url}`)).join("\n")}`,
     status: "warning", warningMsg: "נדרשת בחירה בין מראי מקום מקבילים", pastedCitation: contract,
     completion: accepted,
@@ -361,4 +369,27 @@ export function resolveCitationResponse(plan: TypedPlan, data: Record<string, un
     sourceType: effectiveType, sourceLabel: SOURCE_TYPE_LABELS[effectiveType], pastedCitation: contract,
     completion: accepted,
   } };
+}
+
+export type ForeignChoiceOutcome =
+  | { kind: "stale" }
+  | { kind: "invalid" }
+  | { kind: "resolved"; resolution: CitationResolution };
+
+/**
+ * Apply a user's choice between foreign case records. No IO: the chosen record
+ * goes through the same acceptance and rendering as a lookup response.
+ */
+export function selectForeignCaseChoice(choice: ForeignCaseChoice, optionId: string, currentInputs: string[], caps: CitationHostCapabilities): ForeignChoiceOutcome {
+  const prepared = prepareChoiceSelection(choice, optionId, currentInputs);
+  const contract = choice.plan.evidence.pasted.contract;
+  if (prepared.kind === "stale" || prepared.kind === "invalid") return prepared;
+  if (prepared.kind === "choice") return { kind: "resolved", resolution: {
+    citation: "", reply: prepared.reply, status: "warning", warningMsg: "נדרשת בחירה בין מראי מקום מקבילים",
+    pastedCitation: contract, foreignChoice: prepared.choice,
+  } };
+  const resolved = resolveCitationResponse(choice.plan, prepared.data, caps);
+  if (resolved.kind !== "terminal" || resolved.origin === "disambiguation") return { kind: "invalid" };
+  const { foreignChoice: _ignored, ...resolution } = resolved.resolution;
+  return { kind: "resolved", resolution };
 }
