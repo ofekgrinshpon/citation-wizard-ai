@@ -7,8 +7,9 @@
  * the original input. Live model calls stay off until gateway retention for
  * this deployment is proved and a separate live-validation approval exists.
  *
- * Hebrew input is never interpreted here. The Israeli path stays on the
- * existing engine.
+ * Israeli dockets and Hebrew case captions are not interpreted here. A Hebrew
+ * note beside a Latin source does not by itself reject that source. The live
+ * parser stays off until gateway retention is proved and a live test is approved.
  */
 import { authorCanBeMatched } from "./authorNames.ts";
 import { extractLocationChains, type LocationHit } from "./caseLocations.ts";
@@ -79,8 +80,12 @@ export function chargePageFetch(budget: CitationBudget): boolean {
   return true;
 }
 
+export function canChargeModel(budget: CitationBudget): boolean {
+  return !budget.unknown && budget.modelCalls < FREEFORM_LIMITS.maxModelCalls;
+}
+
 export function chargeModel(budget: CitationBudget): boolean {
-  if (budget.unknown || budget.modelCalls >= FREEFORM_LIMITS.maxModelCalls) return false;
+  if (!canChargeModel(budget)) return false;
   budget.modelCalls += 1;
   return true;
 }
@@ -352,6 +357,11 @@ function searchRequest(raw: string, facts: FreeformFacts): FreeformSearchRequest
     if (!parsedFields.articleTitle || !parsedFields.journal) return null;
     return { enabled: true, freeformHandoff: true, articleResponseVersion: 1, kind: "journal_article", jurisdiction: "OTHER", rawInput: raw, parsedFields };
   }
+  if (facts.kind === "case") {
+    const caseName = parsedFields.caseName;
+    if (!caseName || !/\sv(?:s)?\.?\s/i.test(caseName)) return null;
+    return { enabled: true, freeformHandoff: true, kind: "case", jurisdiction: "UNKNOWN", rawInput: raw, parsedFields: { caseName } };
+  }
   return null;
 }
 
@@ -462,7 +472,7 @@ export async function executeFreeformModelAttempt(
   transport: (request: FreeformModelRequest) => Promise<ModelTransportResult>,
   opts?: { permitMock?: boolean },
 ): Promise<{ status: ModelAttemptStatus; facts: FreeformFacts | null; dropped: string[] }> {
-  if (HEBREW.test(raw) && !interpretDeterministic(raw)) return { status: "disabled", facts: null, dropped: ["hebrew"] };
+  if (isIsraeliSource(raw)) return { status: "disabled", facts: null, dropped: ["israeli"] };
   if (!opts?.permitMock && !freeformLiveEnabled()) return { status: "disabled", facts: null, dropped: [] };
   if (!chargeModel(budget)) return { status: "blocked", facts: null, dropped: [] };
   let result: ModelTransportResult;
@@ -486,4 +496,61 @@ export async function executeFreeformModelAttempt(
   const accepted = acceptModelExtraction(raw, parsed);
   if (accepted.status !== "ok" || !accepted.facts) return { status: "schema", facts: null, dropped: accepted.dropped };
   return { status: "ok", facts: accepted.facts, dropped: accepted.dropped };
+}
+
+export type FreeformParserTransport = (request: FreeformModelRequest) => Promise<ModelTransportResult>;
+
+/** In-process test double only. Production never calls this. A client request cannot set it. */
+let testParserTransport: FreeformParserTransport | null = null;
+export function installFreeformParserTransportForTests(transport: FreeformParserTransport | null): void {
+  testParserTransport = transport;
+}
+export function freeformParserTransportAvailable(): boolean {
+  return testParserTransport !== null || freeformLiveEnabled();
+}
+
+/** Deterministic search is enough. The model is only for a foreign paste it did not already route, and never for an Israeli source. */
+export function freeformAwaitingModel(raw: string): boolean {
+  if (isIsraeliSource(raw)) return false;
+  return prepareFreeformHandoff(raw) === null;
+}
+
+export type FreeformPrepared =
+  | { action: "search"; kind: FreeformSearchRequest["kind"]; jurisdiction: FreeformSearchRequest["jurisdiction"]; parsedFields: Record<string, string> }
+  | { action: "stop"; reply: string }
+  | { action: "passthrough" };
+
+/**
+ * Deterministic route first. A model transport is used only when that route
+ * found nothing to search. One attempt. Timeout or an unknown send does not
+ * try again. Fields that are not exact quotes are dropped before any search.
+ */
+export async function resolveFreeformBeforeLookup(
+  raw: string,
+  budget: CitationBudget,
+  transport: FreeformParserTransport | null,
+): Promise<FreeformPrepared> {
+  if (isIsraeliSource(raw)) return { action: "passthrough" };
+  const deterministic = prepareFreeformHandoff(raw);
+  if (deterministic?.mode === "search") {
+    return { action: "search", kind: deterministic.request.kind, jurisdiction: deterministic.request.jurisdiction, parsedFields: { ...deterministic.request.parsedFields } };
+  }
+  if (deterministic?.mode === "local") return { action: "stop", reply: deterministic.resolution.reply };
+  const chosen = transport ?? testParserTransport;
+  if (!chosen) {
+    return { action: "stop", reply: "פענוח הניסוח החופשי לא אומת מול הקלט; לא בוצע חיפוש ולא נבנה אזכור." };
+  }
+  const attempt = await executeFreeformModelAttempt(raw, budget, chosen, { permitMock: !freeformLiveEnabled() });
+  if (attempt.status === "disabled") {
+    return { action: "stop", reply: "פענוח הניסוח החופשי לא אומת מול הקלט; לא בוצע חיפוש ולא נבנה אזכור." };
+  }
+  if (attempt.status === "timeout" || attempt.status === "blocked") {
+    return { action: "stop", reply: "פענוח הניסוח החופשי לא הושלם; לא נשלחה קריאה נוספת." };
+  }
+  if (attempt.status !== "ok" || !attempt.facts) {
+    return { action: "stop", reply: "פענוח הניסוח החופשי לא אומת מול הקלט; לא בוצע חיפוש ולא נבנה אזכור." };
+  }
+  const request = searchRequest(raw, attempt.facts);
+  if (!request) return { action: "stop", reply: "השדות שחולצו אינם ניתנים לאימות מול הקלט; לא בוצע חיפוש ולא נבנה אזכור." };
+  return { action: "search", kind: request.kind, jurisdiction: request.jurisdiction, parsedFields: { ...request.parsedFields } };
 }

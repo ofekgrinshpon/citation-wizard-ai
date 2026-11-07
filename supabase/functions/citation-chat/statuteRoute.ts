@@ -81,6 +81,7 @@ export async function resolveStatuteLookup(request: unknown, deps: StatuteRouteD
       apiKey: deps.apiKey,
       ...(deps.fetchImpl ? { fetchImpl: deps.fetchImpl } : {}),
       ...(deps.diagnosticObserver ? { diagnosticObserver: deps.diagnosticObserver } : {}),
+      ...(deps.budget ? { budget: deps.budget } : {}),
     });
   } catch (error) {
     deps.onProviderUnknown?.();

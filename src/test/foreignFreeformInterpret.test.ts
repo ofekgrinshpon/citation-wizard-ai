@@ -8,6 +8,7 @@ import { runForeignLookup, type ForeignLookupInput } from "../../supabase/functi
 import {
   acceptModelExtraction, bindFreeformLookup, createCitationBudget, chargeModel, engineAuthorCheckBinds,
   executeFreeformModelAttempt, freeformLiveEnabled, freeformModelRequest, interpretDeterministic,
+  installFreeformParserTransportForTests, resolveFreeformBeforeLookup,
   noteRecordChoice, prepareFreeformHandoff, FREEFORM_PARSER_MODEL_ID, GATEWAY_RETENTION_PROVED,
   type FreeformModelRequest,
 } from "../../supabase/functions/_shared/citationPure/freeformInterpret";
@@ -418,5 +419,70 @@ describe("citation-wide budget and selected-record handoff", () => {
     expect(looked.fields.year).toBe("1991");
     expect(looked.fields.edition).toBeUndefined();
     expect(looked.provenance.edition).toBeUndefined();
+  });
+});
+
+describe("optional parser before lookup", () => {
+  const prose = "Anthony D. Smith wrote the book National Identity.";
+  const quoted = {
+    kind: "book",
+    fields: {
+      bookTitle: { value: "National Identity", quote: "National Identity" },
+      authors: { value: "Anthony D. Smith", quote: "Anthony D. Smith" },
+      year: { value: "1991", quote: "1991" },
+      publisher: { value: "Polity", quote: "Polity" },
+    },
+  };
+
+  it("does not call the model when the deterministic route already searches", async () => {
+    const calls: unknown[] = [];
+    const budget = createCitationBudget();
+    const resolved = await resolveFreeformBeforeLookup("National identity by Smith, Anthony D", budget, async (request) => {
+      calls.push(request);
+      return { status: 200, text: JSON.stringify(quoted) };
+    });
+    expect(calls).toHaveLength(0);
+    expect(budget.modelCalls).toBe(0);
+    expect(resolved.action).toBe("search");
+  });
+
+  it("drops a year and a publisher that are not in the text, and does not retry an unknown attempt", async () => {
+    const budget = createCitationBudget();
+    let calls = 0;
+    const resolved = await resolveFreeformBeforeLookup(prose, budget, async () => {
+      calls += 1;
+      return { status: 200, text: JSON.stringify(quoted) };
+    });
+    expect(resolved.action).toBe("search");
+    if (resolved.action !== "search") return;
+    expect(resolved.parsedFields.bookTitle).toBe("National Identity");
+    expect(resolved.parsedFields.authors).toBe("Anthony D. Smith");
+    expect(resolved.parsedFields.year).toBeUndefined();
+    expect(resolved.parsedFields.publisher).toBeUndefined();
+    expect(budget.modelCalls).toBe(1);
+    expect(calls).toBe(1);
+  });
+
+  it("does not send a second model call after an unknown transport failure", async () => {
+    const budget = createCitationBudget();
+    let calls = 0;
+    const transport = async () => { calls += 1; throw new Error("socket hang up"); };
+    const first = await resolveFreeformBeforeLookup(prose, budget, transport);
+    const second = await resolveFreeformBeforeLookup(prose, budget, transport);
+    expect(first.action).toBe("stop");
+    expect(second.action).toBe("stop");
+    expect(calls).toBe(1);
+    expect(budget.unknown).toBe(true);
+    expect(budget.modelCalls).toBe(1);
+  });
+
+  it("stays disabled for an Israeli docket even when a transport is installed", async () => {
+    installFreeformParserTransportForTests(async () => { throw new Error("must not run"); });
+    try {
+      const resolved = await resolveFreeformBeforeLookup("ע\"א 240/95", createCitationBudget(), null);
+      expect(resolved.action).toBe("passthrough");
+    } finally {
+      installFreeformParserTransportForTests(null);
+    }
   });
 });

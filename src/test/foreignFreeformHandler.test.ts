@@ -10,7 +10,7 @@ import { resolve } from "node:path";
 import { TextEncoder } from "node:util";
 import { createContext, runInContext } from "node:vm";
 import ts from "typescript";
-import { beforeAll, describe, expect, it, vi } from "vitest";
+import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import { citationTextOnly } from "@/lib/citationSegments";
 import { CHAT_HOST, foreignFreeformSourceType, planCitationEvidence, planLocalCitation, planTypedRequest, resolveCitationResponse, selectForeignCaseChoice } from "@/lib/citationPlanner";
 import * as articles from "../../supabase/functions/_shared/hebrewArticleEvidence";
@@ -28,6 +28,7 @@ import * as bookFinal from "../../supabase/functions/_shared/citationPure/bookFi
 import * as freeformInterpret from "../../supabase/functions/_shared/citationPure/freeformInterpret";
 import * as statuteRoute from "../../supabase/functions/citation-chat/statuteRoute";
 import { articleLookupFallback, runForeignLookup } from "../../supabase/functions/citation-chat/foreignLookup";
+import { installFreeformParserTransportForTests } from "../../supabase/functions/_shared/citationPure/freeformInterpret";
 
 const source = readFileSync(resolve(__dirname, "../../supabase/functions/citation-chat/index.ts"), "utf8");
 const compile = (input: string) => ts.transpileModule(input, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText;
@@ -123,6 +124,8 @@ function searchCalls() {
 function gatewayCalls() {
   return calls.filter((call) => call.url.includes("ai.gateway.lovable.dev"));
 }
+
+afterAll(() => installFreeformParserTransportForTests(null));
 
 beforeAll(() => {
   vi.stubGlobal("fetch", vi.fn(() => { throw new Error("Live network forbidden"); }));
@@ -312,5 +315,147 @@ describe("real citation-chat handler", () => {
     expect(JSON.stringify(posted.body.foreignLookup ?? {})).not.toContain("National identity");
     for (const call of gatewayCalls()) expect(call.body).not.toContain("gemini-3.8-flash");
     for (const call of gatewayCalls()) expect(call.body).toContain("google/gemini-2.5-flash");
+  });
+});
+
+describe("wired parser stays off unless a test transport is installed", () => {
+  const prose = "Anthony D. Smith wrote the book National Identity.";
+  const bookPayload = {
+    kind: "book",
+    fields: {
+      bookTitle: { value: "National Identity", quote: "National Identity" },
+      authors: { value: "Anthony D. Smith", quote: "Anthony D. Smith" },
+      year: { value: "1991", quote: "1991" },
+    },
+  };
+  let parserCalls = 0;
+
+  function install(body: unknown, fail = false) {
+    parserCalls = 0;
+    installFreeformParserTransportForTests(async (request) => {
+      parserCalls += 1;
+      expect(request.model).toBe("google/gemini-3.8-flash");
+      expect(request.endpoint).toBe("https://ai.gateway.lovable.dev/v1/chat/completions");
+      if (fail) throw new Error("socket hang up");
+      return { status: 200, text: typeof body === "string" ? body : JSON.stringify(body) };
+    });
+  }
+
+  afterAll(() => installFreeformParserTransportForTests(null));
+
+  it("does not call the parser for a deterministic book, and does not call it when the gate is off", async () => {
+    install(bookPayload);
+    reset({ hits: [{ title: "National Identity — Anthony D. Smith", url: "https://press.example.edu/smith", snippet: "Anthony D. Smith, National Identity (1991)." }] });
+    const raw = "National identity by Smith, Anthony D";
+    const plan = planned(raw);
+    const posted = await post(raw, plan.typed?.foreignLookup, "handler-parser-0001");
+    expect(parserCalls).toBe(0);
+    expect(gatewayCalls()).toHaveLength(0);
+    expect((posted.body.foreignLookup as { fields: { year?: string } }).fields.year).toBe("1991");
+
+    installFreeformParserTransportForTests(null);
+    parserCalls = 0;
+    reset({ hits: [] });
+    const off = await post(prose, { enabled: true, freeformHandoff: true, kind: "book", jurisdiction: "OTHER", rawInput: prose, parsedFields: { bookTitle: "National Identity", authors: "Anthony D. Smith" } }, "handler-parser-0002");
+    expect(parserCalls).toBe(0);
+    expect(searchCalls()).toHaveLength(0);
+    expect(gatewayCalls()).toHaveLength(0);
+    expect(String(off.body.content ?? "")).not.toContain("1991");
+  });
+
+  it("grounds a prose book from quoted model fields and does not call the formatter", async () => {
+    install(bookPayload);
+    reset({ hits: [
+      { title: "National Identity", url: "https://press.example.edu/joan", snippet: "Joan Other, National Identity (2001)." },
+      { title: "National Identity — Anthony D. Smith", url: "https://press.example.edu/smith", snippet: "Anthony D. Smith, National Identity (1991)." },
+    ] });
+    const posted = await post(prose, { enabled: true, freeformHandoff: true, kind: "book", jurisdiction: "OTHER", rawInput: prose, parsedFields: { year: "1800" } }, "handler-parser-0003");
+    expect(posted.status, JSON.stringify(posted.body)).toBe(200);
+    expect(parserCalls).toBe(1);
+    expect(gatewayCalls()).toHaveLength(0);
+    expect(searchCalls().length).toBeGreaterThan(0);
+    expect(searchCalls().length).toBeLessThanOrEqual(2);
+    const lookup = posted.body.foreignLookup as { fields: Record<string, string>; identity: { matched: boolean } };
+    expect(lookup.identity.matched).toBe(true);
+    expect(lookup.fields.year).toBe("1991");
+    expect(lookup.fields.publisher).toBeUndefined();
+    const chat = resolveCitationResponse(planned("National identity by Anthony D. Smith").typed!, { foreignLookup: posted.body.foreignLookup }, CHAT_HOST);
+    expect(chat.kind).toBe("terminal");
+    if (chat.kind !== "terminal") return;
+    const text = citationTextOnly(chat.resolution.citation);
+    expect(text).toContain("1991");
+    expect(text.toLowerCase()).toContain("national identity");
+    expect(text).not.toContain("2001");
+    expect(text).not.toContain("Joan");
+    expect(text).not.toContain("Polity");
+  });
+
+  it("drops a malformed model payload and does not fall through to the formatter", async () => {
+    install("not-json");
+    reset({ hits: [{ title: "National Identity", url: "https://press.example.edu/smith", snippet: "Anthony D. Smith, National Identity (1991)." }] });
+    const posted = await post(prose, { enabled: true, freeformHandoff: true, kind: "book", jurisdiction: "OTHER", rawInput: prose, parsedFields: {} }, "handler-parser-0004");
+    expect(parserCalls).toBe(1);
+    expect(searchCalls()).toHaveLength(0);
+    expect(gatewayCalls()).toHaveLength(0);
+    expect(posted.body.foreignLookup).toBeUndefined();
+  });
+
+  it("does not retry or call the formatter when the parser outcome is unknown", async () => {
+    install(bookPayload, true);
+    reset({ hits: [{ title: "National Identity", url: "https://press.example.edu/smith", snippet: "Anthony D. Smith, National Identity (1991)." }] });
+    const posted = await post(prose, { enabled: true, freeformHandoff: true, kind: "book", jurisdiction: "OTHER", rawInput: prose, parsedFields: {} }, "handler-parser-0005");
+    expect(parserCalls).toBe(1);
+    expect(searchCalls()).toHaveLength(0);
+    expect(gatewayCalls()).toHaveLength(0);
+    expect(String(posted.body.content ?? "")).not.toContain("1991");
+  });
+
+  it("does not let the model certify an ambiguous byline or an Israeli docket", async () => {
+    install({ kind: "book", fields: { bookTitle: { value: "Privacy", quote: "Privacy" }, authors: { value: "Louis Warren", quote: "Louis Warren" }, year: { value: "1990", quote: "1990" } } });
+    reset({ hits: [{ title: "Privacy — Louis Warren", url: "https://press.example.edu/warren", snippet: "Louis Warren, Privacy (1990)." }] });
+    const warren = "Privacy by Warren, Louis";
+    const posted = await post(warren, { enabled: true, freeformHandoff: true, kind: "book", jurisdiction: "OTHER", rawInput: warren, parsedFields: { authors: "Louis Warren" } }, "handler-parser-0006");
+    expect(parserCalls).toBe(0);
+    expect(searchCalls()).toHaveLength(0);
+    expect(String(posted.body.content ?? "")).not.toContain("1990");
+
+    const israeli = await post("ע\"א 240/95", { enabled: true, freeformHandoff: true, kind: "book", jurisdiction: "OTHER", rawInput: "ע\"א 240/95", parsedFields: { bookTitle: "National Identity" } }, "handler-parser-0007");
+    expect(parserCalls).toBe(0);
+    expect(searchCalls()).toHaveLength(0);
+    expect(JSON.stringify(israeli.body.foreignLookup ?? {})).not.toContain("National Identity");
+  });
+
+  it("sends a prose case and a prose article through lookup without a formatter call", async () => {
+    install({ kind: "case", fields: { caseName: { value: "Donoghue v Stevenson", quote: "Donoghue v Stevenson" }, year: { value: "1932", quote: "1932" } } });
+    reset({ hits: [{ title: "Donoghue v Stevenson [1932] UKHL 100 (26 May 1932)", url: "https://www.bailii.org/uk/cases/UKHL/1932/100.html", snippet: "Donoghue v Stevenson [1932] UKHL 100, [1932] AC 562, 1932 SC (HL) 31." }] });
+    const caseRaw = "Readers still discuss Donoghue v Stevenson.";
+    const casePosted = await post(caseRaw, { enabled: true, freeformHandoff: true, kind: "case", jurisdiction: "UNKNOWN", rawInput: caseRaw, parsedFields: {} }, "handler-parser-0008");
+    expect(parserCalls).toBe(1);
+    expect(gatewayCalls()).toHaveLength(0);
+    expect(searchCalls().length).toBeLessThanOrEqual(2);
+    const before = calls.length;
+    const chat = resolveCitationResponse(planned("Donoghue v Stevenson").typed!, { foreignLookup: casePosted.body.foreignLookup }, CHAT_HOST);
+    expect(chat.kind).toBe("terminal");
+    if (chat.kind !== "terminal") return;
+    const picked = chat.resolution.foreignChoice?.options.find((option) => option.label.includes("SC (HL)"));
+    expect(picked).toBeTruthy();
+    const chosen = selectForeignCaseChoice(chat.resolution.foreignChoice!, picked!.id, ["Donoghue v Stevenson"], CHAT_HOST);
+    expect(chosen.kind).toBe("resolved");
+    expect(calls).toHaveLength(before);
+
+    install({ kind: "journal_article", fields: {
+      articleTitle: { value: "The Path of the Law", quote: "The Path of the Law" },
+      authors: { value: "Oliver Wendell Holmes", quote: "Oliver Wendell Holmes" },
+      journal: { value: "Harvard Law Review", quote: "Harvard Law Review" },
+      year: { value: "1901", quote: "1901" },
+    } });
+    reset({ hits: [{ title: "The Path of the Law — Oliver Wendell Holmes", url: "https://lawreview.example.edu/path", snippet: "Oliver Wendell Holmes, The Path of the Law, 10 Harvard Law Review 457 (1897)." }] });
+    const articleRaw = "Oliver Wendell Holmes published The Path of the Law in the Harvard Law Review.";
+    const articlePosted = await post(articleRaw, { enabled: true, freeformHandoff: true, articleResponseVersion: 1, kind: "journal_article", jurisdiction: "OTHER", rawInput: articleRaw, parsedFields: { year: "1901" } }, "handler-parser-0009");
+    expect(parserCalls).toBe(1);
+    expect(gatewayCalls()).toHaveLength(0);
+    const articleLookup = articlePosted.body.foreignLookup as { fields: Record<string, string> };
+    expect(articleLookup.fields.year).toBe("1897");
+    expect(articleLookup.fields.year).not.toBe("1901");
   });
 });
