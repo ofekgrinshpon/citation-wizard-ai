@@ -185,9 +185,19 @@ describe("real citation-chat handler", () => {
     reset({ hits: [{ title: "National Identity — Anthony Smith", url: "https://press.example.edu/smith", snippet: "Anthony Smith, National Identity (1991)." }] });
     const smith = "National identity by Smith, Anthony";
     const smithPlan = planned(smith);
-    const smithPosted = await post(smith, smithPlan.typed?.foreignLookup, "handler-fixture-0004");
+    expect(smithPlan.typed?.foreignLookup).toBeUndefined();
+    const smithPosted = await post(smith, { enabled: true, freeformHandoff: true, kind: "book", jurisdiction: "OTHER", rawInput: smith, parsedFields: { bookTitle: "National identity", authors: "Smith, Anthony" } }, "handler-fixture-0004");
     expect(gatewayCalls()).toHaveLength(0);
-    expect((smithPosted.body.foreignLookup as { fields: { year?: string } }).fields.year).toBe("1991");
+    expect(searchCalls()).toHaveLength(0);
+    expect(smithPosted.body.foreignLookup).toBeUndefined();
+    expect(String(smithPosted.body.content ?? "")).not.toContain("1991");
+
+    reset({ hits: [{ title: "Privacy — Louis Warren", url: "https://press.example.edu/warren", snippet: "Louis Warren, Privacy (1990)." }] });
+    const warren = "Privacy by Warren, Louis";
+    const warrenPosted = await post(warren, { enabled: true, freeformHandoff: true, kind: "book", jurisdiction: "OTHER", rawInput: warren, parsedFields: { bookTitle: "Privacy", authors: "Warren, Louis" } }, "handler-fixture-0004b");
+    expect(searchCalls()).toHaveLength(0);
+    expect(gatewayCalls()).toHaveLength(0);
+    expect(String(warrenPosted.body.content ?? "")).not.toContain("1990");
 
     reset({ hits: [{ title: "The Concept of Law — H.L.A. Hart", url: "https://press.example.edu/hart", snippet: "H.L.A. Hart, The Concept of Law (1961)." }] });
     const hart = "The Concept of Law by Hart, H.L.A.";

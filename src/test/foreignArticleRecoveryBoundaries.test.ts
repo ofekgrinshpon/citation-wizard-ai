@@ -191,7 +191,7 @@ describe("single fetched record recovery without full-page reference scanning", 
     expect(result.identity.matched).toBe(false);
     expect(renderForeignArticleLookup({ parsedFields: anchors }, result)).toMatchObject({ status: "warning" });
     expect(test.pageCalls).toEqual([pageSource.url]);
-    expect(test.searches.map((call) => call.body)).toEqual(capture.searches.map((tier) => tier.body));
+    expect(test.searches.map((call) => call.body)).toEqual([capture.searches[0].body]);
   });
 
   it.each([
@@ -225,7 +225,7 @@ describe("single fetched record recovery without full-page reference scanning", 
     const second = { ...pageSource, url: "https://law.harvard.edu/export/second.bib" };
     const test = replay([[pageSource], [second]], { [pageSource.url]: `<a href="${second.url}">Download citation</a>`, [second.url]: bibtex });
     expect((await test.lookup()).articleResolution).toBe("incomplete");
-    expect(test.searches).toHaveLength(2);
+    expect(test.searches).toHaveLength(1);
     expect(test.pageCalls).toEqual([pageSource.url]);
   });
 

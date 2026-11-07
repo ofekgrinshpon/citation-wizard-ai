@@ -45,7 +45,7 @@ async function cite(rawInput: string, results: Array<{ title: string; url: strin
     return { data: { foreignLookup: response, content: "" }, errorInfo: null };
   });
   const result = await runCitation({ rawInput, useVerifiedStore: false });
-  return { result, budget, looked, request: m.invoke.mock.calls[0]?.[1] as { foreignLookup?: ForeignLookupInput } | undefined };
+  return { result, budget, looked, request: m.invoke.mock.calls.at(-1)?.[1] as { foreignLookup?: ForeignLookupInput } | undefined };
 }
 
 describe("mocked citation flow", () => {
@@ -113,11 +113,21 @@ describe("mocked citation flow", () => {
     expect(citationTextOnly(ambiguous.result.citation)).not.toContain("1980");
     expect(ambiguous.result.completion?.fields.year).toBeUndefined();
 
+    const callsBefore = m.invoke.mock.calls.length;
+    const beforeInverted = m.searches;
     const inverted = await cite("National identity by Smith, Anthony", [
       hit("National Identity — Anthony Smith", "Anthony Smith, National Identity (1991)."),
     ]);
-    expect(citationTextOnly(inverted.result.citation)).toContain("1991");
-    expect(citationTextOnly(inverted.result.citation)).not.toContain("Anthony J");
+    expect(citationTextOnly(inverted.result.citation)).not.toContain("1991");
+    expect(m.invoke.mock.calls.length).toBe(callsBefore);
+    expect(m.searches).toBe(beforeInverted);
+
+    const beforeWarren = m.invoke.mock.calls.length;
+    const warren = await cite("Privacy by Warren, Louis", [
+      hit("Privacy — Louis Warren", "Louis Warren, Privacy (1990)."),
+    ]);
+    expect(citationTextOnly(warren.result.citation)).not.toContain("1990");
+    expect(m.invoke.mock.calls.length).toBe(beforeWarren);
 
     const hart = await cite("The Concept of Law by Hart, H.L.A.", [
       hit("The Concept of Law — H.L.A. Hart", "H.L.A. Hart, The Concept of Law (1961)."),

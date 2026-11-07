@@ -13,7 +13,7 @@ import {
 } from "../../supabase/functions/_shared/citationPure/freeformInterpret";
 import { CHAT_HOST, foreignFreeformSourceType, planCitationEvidence, planLocalCitation, planTypedRequest, resolveCitationResponse, selectForeignCaseChoice } from "@/lib/citationPlanner";
 import { citationTextOnly } from "@/lib/citationSegments";
-import { compatiblePersonNames } from "../../supabase/functions/_shared/citationPure/authorNames";
+import { authorEvidenceStatus, compatiblePersonNames } from "../../supabase/functions/_shared/citationPure/authorNames";
 
 const BOOK = "National identity by Smith, Anthony D";
 const ARTICLE = "The Path of the Law by Holmes, Oliver Wendell, Harvard Law Review";
@@ -329,13 +329,21 @@ describe("citation-wide budget and selected-record handoff", () => {
   });
 
   it("treats a missing initial as unverified and reads Smith, Anthony and Hart, H.L.A.", () => {
-    expect(engineAuthorCheckBinds("Smith, Anthony")).toBe(true);
+    expect(engineAuthorCheckBinds("Smith, Anthony")).toBe(false);
+    expect(engineAuthorCheckBinds("Warren, Louis")).toBe(false);
     expect(engineAuthorCheckBinds("Hart, H.L.A.")).toBe(true);
     expect(compatiblePersonNames("Warren, Louis", "Louis Warren")).toBe(false);
+    expect(authorEvidenceStatus("Warren, Louis", "Louis Warren, Privacy (1990).")).toBe("absent");
+    expect(authorEvidenceStatus("Smith, Anthony D", "Anthony D. Smith, National Identity (1991).")).toBe("match");
+    expect(authorEvidenceStatus("Hart, H.L.A.", "H.L.A. Hart, The Concept of Law (1961).")).toBe("match");
     expect(compatiblePersonNames("Samuel D. Warren, Louis D. Brandeis", "Samuel D. Warren and Louis D. Brandeis")).toBe(true);
     expect(compatiblePersonNames("Samuel D. Warren and Louis D. Brandeis", "Samuel D. Warren and Louis D. Brandeis")).toBe(true);
     const handed = plan("National identity by Smith, Anthony");
-    expect(handed.typed?.foreignLookup?.parsedFields).toMatchObject({ authors: "Smith, Anthony", bookTitle: "National identity" });
+    expect(handed.typed).toBeUndefined();
+    expect(handed.local?.reply).toContain("לא בוצע חיפוש");
+    const warren = plan("Privacy by Warren, Louis");
+    expect(warren.typed).toBeUndefined();
+    expect(warren.local?.sourceType).toBe("foreign_book");
     expect((plan("The Concept of Law by Hart, H.L.A.").typed?.foreignLookup?.parsedFields as { authors?: string } | undefined)?.authors).toBe("Hart, H.L.A.");
     const review = plan("National identity by Smith, Anthony, A Review of Politics");
     expect(review.typed).toBeUndefined();
@@ -391,7 +399,7 @@ describe("citation-wide budget and selected-record handoff", () => {
         return new Response("Anthony Smith, National Identity (1991).", { status: 200 });
       }) as unknown as typeof fetch,
     });
-    expect(open.calls).toBe(3);
+    expect(open.calls).toBe(2);
   });
 
   it("does not merge a year-only record with a same-year edition record", async () => {

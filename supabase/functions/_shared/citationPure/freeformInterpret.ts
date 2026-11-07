@@ -404,8 +404,12 @@ export function prepareFreeformHandoff(raw: string): FreeformHandoff | null {
     const title = facts.fields.bookTitle.value;
     const authors = facts.fields.authors.value;
     const year = facts.fields.year?.value;
-    return { mode: "local", sourceType: "foreign_book", resolution: localResolution("foreign_book", raw,
-      `זוהה ספר לועזי מתוך הקלט בלבד. כותרת: ${title}. מחבר: ${authors}. ${year ? `שנה שמופיעה בקלט: ${year}. ` : "שנה לא מופיעה במקום שנה של אזכור. "}מהדורה ומוציא לאור לא מופיעים בקלט ולא הושלמו. שם המחבר לא ניתן להשוואה מול קטלוג, ולכן חיפוש לא יצא לדרך. לא נבנה אזכור Bluebook מלא.`) };
+    const twoWords = authors.split(",").map((part) => part.trim()).filter(Boolean);
+    const ambiguousComma = twoWords.length === 2 && twoWords.every((part) => part.split(/\s+/).length === 1);
+    const warning = ambiguousComma
+      ? `הפסיק ב"${authors}" יכול להיות שם הפוך או שני מחברים. לא נבחר פירוש אחד. כותרת: ${title}. לא בוצע חיפוש ולא נבנה אזכור.`
+      : `זוהה ספר לועזי מתוך הקלט בלבד. כותרת: ${title}. מחבר: ${authors}. ${year ? `שנה שמופיעה בקלט: ${year}. ` : "שנה לא מופיעה במקום שנה של אזכור. "}מהדורה ומוציא לאור לא מופיעים בקלט ולא הושלמו. שם המחבר לא ניתן להשוואה מול קטלוג, ולכן חיפוש לא יצא לדרך. לא נבנה אזכור Bluebook מלא.`;
+    return { mode: "local", sourceType: "foreign_book", resolution: localResolution("foreign_book", raw, warning) };
   }
   return null;
 }

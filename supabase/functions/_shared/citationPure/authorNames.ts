@@ -115,14 +115,22 @@ function contradicts(supplied: PersonalName, candidate: PersonalName): boolean {
   return suppliedInitial.length > 0 && candidateInitial.length > 0 && suppliedInitial.join("|") !== candidateInitial.join("|");
 }
 
-/** Bibliographic "Surname, Given" including a single given name or initials. Not used for article coauthor lists. */
+/**
+ * Inverted "Surname, Given..." only when the right side cannot also be a second
+ * person. One full word (`Warren, Louis` or `Smith, Anthony`) is ambiguous and
+ * is not a match. An initial or a second token (`Smith, Anthony D`, `Hart, H.L.A.`,
+ * `Holmes, Oliver Wendell`) is one person. Article coauthor lists do not use this.
+ */
 function bylineReading(value: string): PersonalName[] | null {
   const match = value.trim().match(/^([^,]+),\s*([^,]+)$/);
   if (!match) return null;
   const left = tokens(match[1]);
   const right = tokens(match[2]);
-  if (left.length !== 1 || left[0].length < 3 || right.length < 1) return null;
-  if (!right.some((token) => token.length >= 2) && right.length < 2) return null;
+  if (left.length !== 1 || left[0].length < 3 || right.length < 2) return null;
+  const full = right.filter((token) => token.length >= 2);
+  const initials = right.filter((token) => token.length === 1);
+  if (full.length === 1 && initials.length === 0) return null;
+  if (full.length === 0 && initials.length < 2) return null;
   return [{ surname: left[0], given: right }];
 }
 

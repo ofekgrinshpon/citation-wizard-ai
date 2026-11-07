@@ -105,7 +105,7 @@ import {
   bindChainsToCaption, decisionLabel, extractLocationChains, groundDecisionFields, groupCaseDecisions,
   selectableLocations, type CaseDecisionRecord, type CaseLocationRecord, type ChainEvidence,
 } from "../_shared/citationPure/caseLocations.ts";
-import { canChargeSearch, chargePageFetch, chargeSearch, markBudgetUnknown, type CitationBudget } from "../_shared/citationPure/freeformInterpret.ts";
+import { canChargeSearch, chargePageFetch, chargeSearch, createCitationBudget, markBudgetUnknown, type CitationBudget } from "../_shared/citationPure/freeformInterpret.ts";
 import { authorEvidenceStatus } from "../_shared/citationPure/authorNames.ts";
 const PPLX_SEARCH_URL = "https://api.perplexity.ai/search";
 const TIMEOUT_MS = 20_000;
@@ -1143,8 +1143,13 @@ export async function runForeignLookup(
     return result;
   }
   const doFetch = deps?.fetchImpl ?? trackedFetch;
-  if (input.kind === "journal_article") return lookupArticle(input, empty, doFetch, apiKey, deps?.diagnosticObserver, deps?.budget);
-  if (input.kind === "statute") return lookupStatute(input, empty, doFetch, apiKey, deps?.budget);
+  // A missing budget is not permission for a third retrieval or a retry after
+  // an unknown send. One lookup call keeps one budget, including article and
+  // statute routes. A caller that already holds the citation budget passes it
+  // through, so a later call in the same citation does not start the count over.
+  const budget = deps?.budget ?? createCitationBudget();
+  if (input.kind === "journal_article") return lookupArticle(input, empty, doFetch, apiKey, deps?.diagnosticObserver, budget);
+  if (input.kind === "statute") return lookupStatute(input, empty, doFetch, apiKey, budget);
   const query = buildQuery(input);
 
   // ── Identity predicates (used for the Tier-2 decision and acceptance) ──
@@ -1226,25 +1231,24 @@ export async function runForeignLookup(
   // Tier 1 — preferred-domain discovery hints.
   empty.diagnostics.tier1Queried = true;
   const hints = tier1Hints(input.kind, input.jurisdiction);
-  let results: Array<{ title?: string; url?: string; snippet?: string; tier: "tier1" | "tier2" }> = (await searchOnce(query, hints, doFetch, apiKey, "foreign_search_tier1", undefined, "tier1", deps?.budget)).map((r) => ({
+  let results: Array<{ title?: string; url?: string; snippet?: string; tier: "tier1" | "tier2" }> = (await searchOnce(query, hints, doFetch, apiKey, "foreign_search_tier1", undefined, "tier1", budget)).map((r) => ({
     ...r,
     tier: "tier1" as const,
   }));
 
   // Tier 2 — one bounded open-web search when Tier 1 returned nothing usable.
-  // With a citation budget the second slot is a page fetch when an identity
-  // match has no fields, and it is skipped entirely when the first outcome
-  // is unknown. Callers that pass no budget keep the earlier search-then-page behavior.
+  // The second retrieval is a page fetch when an identity match has no fields,
+  // and it is skipped entirely when the first outcome is unknown.
   let budgetPage: { url: string; text: string } | null = null;
-  if (!productive(toSources(results)) && canChargeSearch(deps?.budget)) {
-    const identified = deps?.budget ? toSources(results).filter((source) => source.strong && matchesIdentity(source)) : [];
+  if (!productive(toSources(results)) && canChargeSearch(budget)) {
+    const identified = toSources(results).filter((source) => source.strong && matchesIdentity(source));
     if (identified.length) {
       const best = identified[0];
-      const text = await fetchPageText(best.url, doFetch, undefined, "tier1", deps?.budget);
+      const text = await fetchPageText(best.url, doFetch, undefined, "tier1", budget);
       if (text) budgetPage = { url: best.url, text };
     } else {
       empty.diagnostics.tier2Fired = true;
-      const t2 = (await searchOnce(query, null, doFetch, apiKey, "foreign_search_tier2", undefined, "tier2", deps?.budget)).map((r) => ({
+      const t2 = (await searchOnce(query, null, doFetch, apiKey, "foreign_search_tier2", undefined, "tier2", budget)).map((r) => ({
         ...r,
         tier: "tier2" as const,
       }));
@@ -1354,7 +1358,7 @@ export async function runForeignLookup(
       // Bounded single-page inspection (one fetch, no link following).
       const best = strongMatched[0];
       inspectedUrl = best.url;
-      const page = await fetchPageText(best.url, doFetch, undefined, "tier1", deps?.budget);
+      const page = await fetchPageText(best.url, doFetch, undefined, "tier1", budget);
       inspectedPage = page ? page.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").slice(0, 200_000) : null;
       if (inspectedPage) evidence = boundChains(best, jur, inspectedPage);
     }
@@ -1498,7 +1502,7 @@ export async function runForeignLookup(
   if (candidates.length === 0 && (inspectedUrl === undefined || inspectedUrl === usable[0].url)) {
     const best = usable[0];
     const page = budgetPage && budgetPage.url === best.url ? budgetPage.text
-      : inspectedUrl ? inspectedPage : await fetchPageText(best.url, doFetch, undefined, "tier1", deps?.budget);
+      : inspectedUrl ? inspectedPage : await fetchPageText(best.url, doFetch, undefined, "tier1", budget);
     if (page) {
       const plain = page.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").slice(0, 200_000);
       const pageNamesWork = (!authorHint || authorEvidenceStatus(authorHint, plain) === "match")
