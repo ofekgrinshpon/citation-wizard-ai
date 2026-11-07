@@ -78,7 +78,7 @@ import {
 } from "../_shared/trustedHosts.ts";
 import { normalizeHebrewNumberRanges } from "../_shared/hebrewNumberRange.ts";
 import { runForeignLookup, articleLookupFallback, type ForeignLookupResult } from "./foreignLookup.ts";
-import { bindFreeformLookup } from "../_shared/citationPure/freeformInterpret.ts";
+import { bindFreeformLookup, createCitationBudget } from "../_shared/citationPure/freeformInterpret.ts";
 import { boundBookCompletion, resolveBookCompletion, frameBookFinal } from "../_shared/citationPure/bookFinal.ts";
 import type { CitationRecoveryInput } from "../_shared/citationRecovery.ts";
 import { isStatuteLookupRequest, validateStatuteRequest, resolveStatuteLookup } from "./statuteRoute.ts";
@@ -1797,8 +1797,16 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
     const preservePasted = () => completeResponse(new Response(JSON.stringify({
       content: `${pastedContract?.rawInput ?? ""}\n⚠️ ${pastedContract ? pastedCitationWarning(pastedContract) : "חסרים פרטים"}`,
     }), { headers: { ...corsHeaders, "Content-Type": "application/json" } }));
+    // A validated free-form handoff is a foreign book, article or case. A slash
+    // number or a Hebrew comment in the same paste does not keep it on preserve.
+    const freeformEarly = foreignLookupRequest?.freeformHandoff === true ? bindFreeformLookup(foreignLookupRequest) : null;
+    if (freeformEarly?.action === "stop") {
+      return completeResponse(new Response(JSON.stringify({ content: freeformEarly.reply }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      }));
+    }
     // Source binding must reject even malformed recovery payloads before cache or usage.
-    if (pastedContract.route === "preserve" || (pastedContract.route === "foreign" && pastedContract.sourceKind === "case" && !foreignLookupRequest)) {
+    if (freeformEarly?.action !== "lookup" && (pastedContract.route === "preserve" || (pastedContract.route === "foreign" && pastedContract.sourceKind === "case" && !foreignLookupRequest))) {
       return preservePasted();
     }
     const recoveryInput = citationRecoveryInput({
@@ -2006,13 +2014,13 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
           }));
         }
         const parsedForLookup = freeformBinding.action === "lookup" ? freeformBinding.parsedFields : flParsed;
+        const lookupBudget = freeformBinding.action === "lookup" ? freeformBinding.budget : createCitationBudget();
         const pplxKey = Deno.env.get("PERPLEXITY_API_KEY");
         if (pplxKey || flKind === "journal_article") {
           try {
             foreignLookupResult = await runForeignLookup(
               { kind: flKind, jurisdiction: flJur, rawInput: flRaw, parsedFields: parsedForLookup },
-              { apiKey: pplxKey, fetchImpl: trackedFetch, ...(diagnostic ? { diagnosticObserver: diagnostic.collector.observe } : {}),
-                ...(freeformBinding.action === "lookup" ? { budget: freeformBinding.budget } : {}) },
+              { apiKey: pplxKey, fetchImpl: trackedFetch, budget: lookupBudget, ...(diagnostic ? { diagnosticObserver: diagnostic.collector.observe } : {}) },
             );
           } catch (flErr) {
             markCitationProviderUnknown();

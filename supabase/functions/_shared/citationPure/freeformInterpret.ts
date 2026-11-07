@@ -32,7 +32,7 @@ export const GATEWAY_RETENTION_PROVED: boolean = false;
 
 const HEBREW = /[\u0590-\u05FF]/;
 const CASE_SHAPE = /\s+v(?:s)?\.?\s+/i;
-const JOURNAL_CUE = /\b(?:Journal|Review|Quarterly|Law Journal|L\. Rev\.|L\.J\.)\b/;
+const JOURNAL_CUE = /\b(?:Journal|Quarterly|Law\s+Review|L\.\s*Rev\.|L\.J\.)\b/;
 const YEAR_SLOT = /(?:\s*[\[(]((?:1[5-9]|20)\d{2})[\])])\s*$/;
 const EDITION_SLOT = /\b(\d+(?:st|nd|d|rd|th)\s+ed\.)\b/;
 const NAME_TOKEN = String.raw`[A-Z][A-Za-z.'’\-]*`;
@@ -40,23 +40,42 @@ const NAME = new RegExp(`^${NAME_TOKEN}(?:\\s+${NAME_TOKEN}){0,5}(?:,\\s*${NAME_
 const MARKER = "פענוח ניסוח חופשי:";
 
 export interface CitationBudget {
+  /** Perplexity search calls. */
   searches: number;
+  /**
+   * Search calls plus page fetches. When a budget is attached, this total
+   * is the citation cap of 2. A page fetch is not a free extra retrieval.
+   */
+  retrievals: number;
   modelCalls: number;
   /** A call whose completion is unknown. Further provider calls are refused. */
   unknown: boolean;
 }
 
 export function createCitationBudget(): CitationBudget {
-  return { searches: 0, modelCalls: 0, unknown: false };
+  return { searches: 0, retrievals: 0, modelCalls: 0, unknown: false };
+}
+
+export function canChargeRetrieval(budget: CitationBudget | undefined): boolean {
+  if (!budget) return true;
+  return !budget.unknown && budget.retrievals < FREEFORM_LIMITS.maxSearches;
 }
 
 export function canChargeSearch(budget: CitationBudget | undefined): boolean {
-  return !budget || (!budget.unknown && budget.searches < FREEFORM_LIMITS.maxSearches);
+  return canChargeRetrieval(budget);
 }
 
 export function chargeSearch(budget: CitationBudget): boolean {
-  if (!canChargeSearch(budget)) return false;
+  if (!canChargeRetrieval(budget)) return false;
   budget.searches += 1;
+  budget.retrievals += 1;
+  return true;
+}
+
+/** A fetched result page uses one of the two retrieval slots. */
+export function chargePageFetch(budget: CitationBudget): boolean {
+  if (!canChargeRetrieval(budget)) return false;
+  budget.retrievals += 1;
   return true;
 }
 
@@ -97,14 +116,14 @@ export interface FreeformResolution {
   citation: string;
   status: "warning";
   warningMsg: string;
-  sourceType: "foreign_book" | "foreign_book_chapter" | "foreign_journal_article";
+  sourceType: "foreign_book" | "foreign_book_chapter" | "foreign_journal_article" | "foreign";
 }
 
 export interface FreeformSearchRequest {
   enabled: true;
   freeformHandoff: true;
-  kind: "book" | "journal_article";
-  jurisdiction: "OTHER";
+  kind: "book" | "journal_article" | "case";
+  jurisdiction: "OTHER" | "UNKNOWN";
   rawInput: string;
   parsedFields: Record<string, string>;
   articleResponseVersion?: 1;
@@ -112,7 +131,7 @@ export interface FreeformSearchRequest {
 
 export type FreeformHandoff =
   | { mode: "local"; sourceType: FreeformResolution["sourceType"]; resolution: FreeformResolution }
-  | { mode: "search"; sourceType: "foreign_book" | "foreign_journal_article"; request: FreeformSearchRequest };
+  | { mode: "search"; sourceType: "foreign_book" | "foreign_journal_article" | "foreign"; request: FreeformSearchRequest };
 
 /** Exact slice of the original input. A supplied start/end must match the quote. */
 export function quoteSpan(raw: string, quote: string, start?: number, end?: number): TextSpan | null {
@@ -149,7 +168,7 @@ export function engineAuthorCheckBinds(authors: string): boolean {
   return authorCanBeMatched(authors);
 }
 
-const ISRAELI_SOURCE = /ע["״']א|בג["״']ץ|בע["״']מ|דנ["״']א|רע["״']א|פ["״']ד|נגד|(?:^|\s)נ['׳]\s|חוק|פקוד|תקנות|הצעת\s+חוק|\d{1,6}\s*\/\s*\d{2,4}/;
+const ISRAELI_SOURCE = /ע["״']א|בג["״']ץ|בע["״']מ|דנ["״']א|רע["״']א|פ["״']ד|נגד|(?:^|\s)נ['׳]\s|חוק|פקוד|תקנות|הצעת\s+חוק/;
 function isIsraeliSource(raw: string): boolean {
   return HEBREW.test(raw) && ISRAELI_SOURCE.test(raw);
 }
@@ -347,14 +366,37 @@ function normalizeTitleLength(title: string): number {
  * statutes and Hebrew case captions stay on the Israeli path. Case-shaped
  * Latin captions stay on the existing case lookup (null here).
  */
+/** Latin "Name v Name" only. Surrounding Hebrew is not part of the caption. */
+export function latinCaseSpan(raw: string): string | null {
+  const party = String.raw`[A-Z][A-Za-z'’.-]*(?:\s+(?:of|the|and|&)\s+[A-Z][A-Za-z'’.-]*|\s+[A-Z][A-Za-z'’.-]*){0,6}`;
+  const match = raw.match(new RegExp(String.raw`\b(${party})\s+v(?:s)?\.?\s+(${party})`));
+  if (!match || match.index === undefined) return null;
+  const name = raw.slice(match.index, match.index + match[0].length).replace(/\s+/g, " ").trim();
+  return name.length >= 5 ? name : null;
+}
+
 export function prepareFreeformHandoff(raw: string): FreeformHandoff | null {
   if (isIsraeliSource(raw)) return null;
+  const caseName = HEBREW.test(raw) ? latinCaseSpan(raw) : null;
+  if (caseName) {
+    return { mode: "search", sourceType: "foreign", request: {
+      enabled: true, freeformHandoff: true, kind: "case", jurisdiction: "UNKNOWN", rawInput: raw,
+      parsedFields: { caseName },
+    } };
+  }
   if (/,?\s+in\s+/i.test(raw) && /\sby\s/i.test(raw)) {
     return { mode: "local", sourceType: "foreign_book_chapter", resolution: localResolution("foreign_book_chapter", raw,
       "הקלט נראה כפרק בתוך ספר. הגבול בין שם הפרק, שם האסופה והעמוד לא נחתך אוטומטית, ולכן לא בוצע חיפוש ולא הושלמו שנה, מוציא לאור או עמוד.") };
   }
   const facts = interpretDeterministic(raw);
-  if (!facts) return null;
+  if (!facts) {
+    // "Review" alone is not a journal name. Ask, and do not start an article search.
+    if (/\bReview\b/.test(raw) && !JOURNAL_CUE.test(raw) && /\s(?:by|מאת)\s/u.test(raw)) {
+      return { mode: "local", sourceType: "foreign_book", resolution: localResolution("foreign_book", raw,
+        "הניסוח דומה לספר לועזי, אבל כתב העת לא זוהה. לא בוצע חיפוש ולא נבנה אזכור.") };
+    }
+    return null;
+  }
   const request = searchRequest(raw, facts);
   if (request?.kind === "journal_article") return { mode: "search", sourceType: "foreign_journal_article", request };
   if (facts.kind === "book" && request) return { mode: "search", sourceType: "foreign_book", request };

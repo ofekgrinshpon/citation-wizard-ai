@@ -53,10 +53,11 @@ function validInput(value: unknown): value is CitationRecoveryInput {
       !(value.batchId === null || validId(value.batchId))) return false;
   if (value.foreignLookup === null) return true;
   const foreign = value.foreignLookup;
-  return object(foreign) && exactKeys(foreign, ["enabled", "kind", "jurisdiction", "rawInput", "parsedFields", "articleResponseVersion"]) &&
+  return object(foreign) && exactKeys(foreign, ["enabled", "kind", "jurisdiction", "rawInput", "parsedFields", "articleResponseVersion", "freeformHandoff"]) &&
     jsonSafe(foreign) && (foreign.enabled === undefined || typeof foreign.enabled === "boolean") &&
     [foreign.kind, foreign.jurisdiction, foreign.rawInput].every((v) => v === undefined || typeof v === "string") &&
     (foreign.articleResponseVersion === undefined || foreign.articleResponseVersion === 1) &&
+    (foreign.freeformHandoff === undefined || foreign.freeformHandoff === true) &&
     (foreign.parsedFields === undefined || object(foreign.parsedFields) && Object.values(foreign.parsedFields).every((v) => typeof v === "string"));
 }
 /** Typed foreign output is meaningful only together with the retained input. */

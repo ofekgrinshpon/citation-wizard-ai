@@ -16,7 +16,8 @@ const SUFFIX = /^(?:jr|sr|ii|iii|iv)$/;
 const NOT_A_NAME = new Set(["national", "identity", "synthetic", "collection", "review", "journal", "press", "university", "law", "harvard", "oxford", "cambridge", "edition", "volume", "page", "pages", "chapter", "book", "quarterly"]);
 
 function tokens(value: string): string[] {
-  return value.normalize("NFKD").replace(/[\u0300-\u036f]/g, "")
+  const initials = value.replace(/\b(?:[A-Z]\.){2,}/g, (mark) => mark.split(".").filter(Boolean).join(" "));
+  return initials.normalize("NFKD").replace(/[\u0300-\u036f]/g, "")
     .replace(/[.’']/g, "")
     .toLowerCase()
     .split(/[^a-z]+/)
@@ -60,26 +61,27 @@ export function authorNameParts(value: string): PersonalName[] | null {
   return people.length ? people : null;
 }
 
+function fullGiven(name: PersonalName): string[] {
+  return name.given.filter((part) => part.length >= 2).sort();
+}
+function initialGiven(name: PersonalName): string[] {
+  return name.given.filter((part) => part.length === 1).sort();
+}
+
+/**
+ * Full given names must be the same set. Initials must be the same set too.
+ * An initial present on only one side is not enough to confirm the person.
+ */
 function samePerson(a: PersonalName, b: PersonalName): boolean {
   if (!a.surname || a.surname !== b.surname) return false;
   if (a.suffix && b.suffix && a.suffix !== b.suffix) return false;
-  const full = (name: PersonalName) => name.given.filter((part) => part.length >= 2);
-  const aFull = full(a);
-  const bFull = full(b);
-  if (aFull.length === 0 || bFull.length === 0) return false;
-  if (aFull.length !== bFull.length || aFull.some((part, index) => part !== [...bFull].sort()[index] && part !== bFull[index])) {
-    const as = [...aFull].sort();
-    const bs = [...bFull].sort();
-    if (as.length !== bs.length || as.some((part, index) => part !== bs[index])) return false;
-  }
-  const aInitial = a.given.filter((part) => part.length === 1);
-  const bInitial = b.given.filter((part) => part.length === 1);
-  if (aInitial.length && bInitial.length) {
-    const bs = [...bInitial].sort();
-    const as = [...aInitial].sort();
-    if (as.length !== bs.length || as.some((part, index) => part !== bs[index])) return false;
-  }
-  return true;
+  const aFull = fullGiven(a);
+  const bFull = fullGiven(b);
+  if (aFull.join("|") !== bFull.join("|")) return false;
+  const aInitial = initialGiven(a);
+  const bInitial = initialGiven(b);
+  if (aInitial.join("|") !== bInitial.join("|")) return false;
+  return aFull.length > 0 || aInitial.length > 0;
 }
 
 function loosePerson(a: PersonalName, b: PersonalName): boolean {
@@ -94,29 +96,34 @@ function looseList(left: PersonalName[] | null, right: PersonalName[] | null): b
   return left.every((name, index) => loosePerson(name, right[index]));
 }
 
-/** True when either order of each name refers to the same people. Single given names ("Smith, Anthony") are included. */
+/**
+ * Article bylines. A comma between two full words stays a coauthor split
+ * ("Warren, Louis" is not treated as one identified person). An initial or a
+ * second given name is what makes "Smith, Anthony D." and "Hart, H.L.A." one person.
+ */
 export function compatiblePersonNames(a: string, b: string): boolean {
-  if (looseList(authorNameParts(a), authorNameParts(b))) return true;
-  const inverted = (value: string): PersonalName[] | null => {
-    const match = value.trim().match(/^([^,]+),\s*([^,]+)$/);
-    if (!match) return null;
-    const left = tokens(match[1]);
-    const right = tokens(match[2]);
-    if (left.length !== 1 || right.length < 1 || right.every((token) => token.length < 2)) return null;
-    return [{ surname: left[0], given: right }];
-  };
-  const directA = authorNameParts(a);
-  const directB = authorNameParts(b);
-  return looseList(inverted(a), directB) || looseList(directA, inverted(b)) || looseList(inverted(a), inverted(b));
+  return looseList(authorNameParts(a), authorNameParts(b));
 }
 
 function contradicts(supplied: PersonalName, candidate: PersonalName): boolean {
-  if (candidate.surname !== supplied.surname) return false;
-  if (samePerson(supplied, candidate)) return false;
-  const suppliedFull = new Set(supplied.given.filter((part) => part.length >= 2));
-  const candidateFull = candidate.given.filter((part) => part.length >= 2);
-  if (candidateFull.length === 0) return false;
-  return candidateFull.some((part) => !suppliedFull.has(part));
+  if (candidate.surname !== supplied.surname || samePerson(supplied, candidate)) return false;
+  const suppliedFull = new Set(fullGiven(supplied));
+  const candidateFull = fullGiven(candidate);
+  if (candidateFull.some((part) => !suppliedFull.has(part))) return true;
+  const suppliedInitial = initialGiven(supplied);
+  const candidateInitial = initialGiven(candidate);
+  return suppliedInitial.length > 0 && candidateInitial.length > 0 && suppliedInitial.join("|") !== candidateInitial.join("|");
+}
+
+/** Bibliographic "Surname, Given" including a single given name or initials. Not used for article coauthor lists. */
+function bylineReading(value: string): PersonalName[] | null {
+  const match = value.trim().match(/^([^,]+),\s*([^,]+)$/);
+  if (!match) return null;
+  const left = tokens(match[1]);
+  const right = tokens(match[2]);
+  if (left.length !== 1 || left[0].length < 3 || right.length < 1) return null;
+  if (!right.some((token) => token.length >= 2) && right.length < 2) return null;
+  return [{ surname: left[0], given: right }];
 }
 
 function nameCandidates(evidence: string): PersonalName[] {
@@ -148,11 +155,20 @@ function wantedPeople(supplied: string): PersonalName[] {
 }
 
 export function authorEvidenceStatus(supplied: string, evidence: string): "match" | "conflict" | "absent" {
-  const wanted = wantedPeople(supplied);
-  if (!wanted.length || wanted.some((person) => person.surname.length < 3 || person.given.every((part) => part.length < 2))) return "absent";
+  const primary = wantedPeople(supplied).filter((person) => person.surname.length >= 3 && (fullGiven(person).length > 0 || initialGiven(person).length > 0));
+  const inverted = bylineReading(supplied);
+  const readings = primary.length ? [primary] : [];
+  if (inverted && !primary.length) readings.push(inverted);
+  if (!readings.length) return "absent";
   const candidates = nameCandidates(evidence);
-  if (wanted.some((person) => candidates.some((candidate) => contradicts(person, candidate)))) return "conflict";
-  return wanted.every((person) => candidates.some((candidate) => samePerson(person, candidate))) ? "match" : "absent";
+  let conflict = false;
+  for (const people of readings) {
+    const matched = people.every((person) => candidates.some((candidate) => samePerson(person, candidate)));
+    const contradicted = people.some((person) => candidates.some((candidate) => contradicts(person, candidate)));
+    if (matched && !contradicted) return "match";
+    if (contradicted) conflict = true;
+  }
+  return conflict ? "conflict" : "absent";
 }
 
 export function authorEvidenceMatches(supplied: string, evidence: string): boolean {
@@ -161,6 +177,8 @@ export function authorEvidenceMatches(supplied: string, evidence: string): boole
 
 /** A supplied author can be checked against a catalog name. An initial-only surname cannot. */
 export function authorCanBeMatched(supplied: string): boolean {
-  const people = authorNameParts(supplied);
-  return !!people?.length && people.every((person) => person.surname.length >= 3 && person.given.some((part) => part.length >= 2));
+  const people = authorNameParts(supplied) ?? [];
+  const usable = people.some((person) => person.surname.length >= 3 && (fullGiven(person).length > 0 || initialGiven(person).length > 1));
+  if (usable && people.every((person) => person.surname.length >= 3 && (fullGiven(person).length > 0 || initialGiven(person).length > 0))) return true;
+  return !!bylineReading(supplied);
 }

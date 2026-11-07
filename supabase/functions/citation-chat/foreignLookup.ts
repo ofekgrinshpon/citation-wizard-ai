@@ -105,7 +105,7 @@ import {
   bindChainsToCaption, decisionLabel, extractLocationChains, groundDecisionFields, groupCaseDecisions,
   selectableLocations, type CaseDecisionRecord, type CaseLocationRecord, type ChainEvidence,
 } from "../_shared/citationPure/caseLocations.ts";
-import { canChargeSearch, chargeSearch, markBudgetUnknown, type CitationBudget } from "../_shared/citationPure/freeformInterpret.ts";
+import { canChargeSearch, chargePageFetch, chargeSearch, markBudgetUnknown, type CitationBudget } from "../_shared/citationPure/freeformInterpret.ts";
 import { authorEvidenceStatus } from "../_shared/citationPure/authorNames.ts";
 const PPLX_SEARCH_URL = "https://api.perplexity.ai/search";
 const TIMEOUT_MS = 20_000;
@@ -622,6 +622,7 @@ async function fetchPageText(
   doFetch: typeof fetch,
   observer?: CitationDiagnosticObserver,
   tier: CitationDiagnosticTier = "tier1",
+  budget?: CitationBudget,
 ): Promise<string | null> {
   let status: number | null = null;
   let reading = false;
@@ -630,6 +631,10 @@ async function fetchPageText(
     const u = new URL(url);
     if (!/^https?:$/.test(u.protocol) || PRIVATE_HOST_RE.test(u.hostname)) {
       safeObserveCitationDiagnostic(observer, { type: "page", tier, status: "blocked_url" });
+      return null;
+    }
+    if (budget && !chargePageFetch(budget)) {
+      safeObserveCitationDiagnostic(observer, { type: "page", tier, status: "skipped_records_present" });
       return null;
     }
     const ctrl = new AbortController();
@@ -673,6 +678,7 @@ async function fetchPageText(
       clearTimeout(timer);
     }
   } catch {
+    if (budget && !reading) markBudgetUnknown(budget);
     safeObserveCitationDiagnostic(observer, { type: "page", tier, status: timedOut ? "timeout" : reading ? "read_error" : "fetch_error", httpStatus: status });
     return null;
   }
@@ -873,7 +879,7 @@ async function lookupArticle(
       return;
     }
     inspected = true;
-    const page = await fetchPageText(source.url, doFetch, observer, tier);
+    const page = await fetchPageText(source.url, doFetch, observer, tier, budget);
     if (!page) return;
     // Self-identifying HTML metadata or one complete exported article record;
     // never strip and scan page bodies containing references to other works.
@@ -1142,7 +1148,9 @@ export async function runForeignLookup(
   const query = buildQuery(input);
 
   // ── Identity predicates (used for the Tier-2 decision and acceptance) ──
-  const parties = input.kind === "case" ? splitParties(input.rawInput) : null;
+  const partySource = input.kind === "case" && input.parsedFields?.caseName && /\sv(?:s)?\.?\s/i.test(input.parsedFields.caseName)
+    ? input.parsedFields.caseName : input.rawInput;
+  const parties = input.kind === "case" ? splitParties(partySource) : null;
   const titleHint = input.kind === "case" ? null : extractTitleHint(input);
   const authorHint = input.kind === "case" ? null : extractAuthorHint(input);
   const chapterHint = input.kind === "book_chapter" ? input.parsedFields?.chapterTitle : undefined;
@@ -1223,17 +1231,25 @@ export async function runForeignLookup(
     tier: "tier1" as const,
   }));
 
-  // Tier 2 — one bounded open-web search when Tier 1 returned nothing usable,
-  // only unrelated records, or a related record without usable details.
-  // Never more than two searches per citation. A free-form budget also stops
-  // the second search when the first outcome is unknown.
+  // Tier 2 — one bounded open-web search when Tier 1 returned nothing usable.
+  // With a citation budget the second slot is a page fetch when an identity
+  // match has no fields, and it is skipped entirely when the first outcome
+  // is unknown. Callers that pass no budget keep the earlier search-then-page behavior.
+  let budgetPage: { url: string; text: string } | null = null;
   if (!productive(toSources(results)) && canChargeSearch(deps?.budget)) {
-    empty.diagnostics.tier2Fired = true;
-    const t2 = (await searchOnce(query, null, doFetch, apiKey, "foreign_search_tier2", undefined, "tier2", deps?.budget)).map((r) => ({
-      ...r,
-      tier: "tier2" as const,
-    }));
-    results = [...results, ...t2];
+    const identified = deps?.budget ? toSources(results).filter((source) => source.strong && matchesIdentity(source)) : [];
+    if (identified.length) {
+      const best = identified[0];
+      const text = await fetchPageText(best.url, doFetch, undefined, "tier1", deps?.budget);
+      if (text) budgetPage = { url: best.url, text };
+    } else {
+      empty.diagnostics.tier2Fired = true;
+      const t2 = (await searchOnce(query, null, doFetch, apiKey, "foreign_search_tier2", undefined, "tier2", deps?.budget)).map((r) => ({
+        ...r,
+        tier: "tier2" as const,
+      }));
+      results = [...results, ...t2];
+    }
   }
 
   // Record sources + strength.
@@ -1338,7 +1354,7 @@ export async function runForeignLookup(
       // Bounded single-page inspection (one fetch, no link following).
       const best = strongMatched[0];
       inspectedUrl = best.url;
-      const page = await fetchPageText(best.url, doFetch);
+      const page = await fetchPageText(best.url, doFetch, undefined, "tier1", deps?.budget);
       inspectedPage = page ? page.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").slice(0, 200_000) : null;
       if (inspectedPage) evidence = boundChains(best, jur, inspectedPage);
     }
@@ -1481,14 +1497,19 @@ export async function runForeignLookup(
   // One fetch maximum: reuse the page already inspected above, never a second one.
   if (candidates.length === 0 && (inspectedUrl === undefined || inspectedUrl === usable[0].url)) {
     const best = usable[0];
-    const page = inspectedUrl ? inspectedPage : await fetchPageText(best.url, doFetch);
+    const page = budgetPage && budgetPage.url === best.url ? budgetPage.text
+      : inspectedUrl ? inspectedPage : await fetchPageText(best.url, doFetch, undefined, "tier1", deps?.budget);
     if (page) {
       const plain = page.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").slice(0, 200_000);
-      const f = fieldsForSource(plain, best.title);
-      for (const [field, value] of Object.entries(f)) {
-        if (!value) continue;
-        if (field === "year" && userYear === value) continue;
-        candidates.push({ field, value, donor: best, inspected: true });
+      const pageNamesWork = (!authorHint || authorEvidenceStatus(authorHint, plain) === "match")
+        && (!titleHint || titleMatches(plain, titleHint));
+      if (pageNamesWork) {
+        const f = fieldsForSource(plain, best.title);
+        for (const [field, value] of Object.entries(f)) {
+          if (!value) continue;
+          if (field === "year" && userYear === value) continue;
+          candidates.push({ field, value, donor: best, inspected: true });
+        }
       }
     }
   }
@@ -1541,8 +1562,11 @@ export async function runForeignLookup(
     const values = (field: string) => new Set((byField.get(field) ?? []).map((candidate) => candidate.value));
     // A year and an edition describe one publication. Disagreeing years mean the
     // edition stated by only one of those records is not a shared fact.
-    if (values("year").size > 1) byField.delete("edition");
-    if (values("edition").size > 1) byField.delete("year");
+    if (values("year").size > 1) { byField.delete("year"); byField.delete("edition"); }
+    if (values("edition").size > 1) { byField.delete("edition"); byField.delete("year"); }
+    const yearDonors = new Set((byField.get("year") ?? []).map((candidate) => candidate.donor.url));
+    const editionDonors = new Set((byField.get("edition") ?? []).map((candidate) => candidate.donor.url));
+    if (yearDonors.size && editionDonors.size && [...yearDonors].some((url) => !editionDonors.has(url))) byField.delete("edition");
   }
   for (const [field, list] of byField) {
     const distinct = new Set(list.map((c) => field === "journal" ? journalKey(c.value) : c.value));

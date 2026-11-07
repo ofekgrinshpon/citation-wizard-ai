@@ -302,7 +302,8 @@ const Index = () => {
       article?.manualChoice ?? (article?.manual ? citationManualChoice(article.sourceType) : null));
     const { pasted } = evidence;
     const planInput = { evidence, sourceType: article?.sourceType ?? null, input: article?.rawInput ?? canonicalRaw, isPinpoint: false, manual: !!article?.manual };
-    const local = evidence.preserve ? { origin: "preserve" as const, resolution: evidence.preserve } : planLocalCitation(planInput, CHAT_HOST);
+    const freeformBypassesPreserve = !article?.manual && !article?.manualChoice && foreignFreeformSourceType(canonicalRaw) !== null;
+    const local = evidence.preserve && !freeformBypassesPreserve ? { origin: "preserve" as const, resolution: evidence.preserve } : planLocalCitation(planInput, CHAT_HOST);
     if ("resolution" in local) {
       if (local.origin !== "preserve") reportZeroWork(telemetry, "local_foreign_formatter", "deterministic");
       if (local.origin !== "statute_local" && !isCurrent()) throw Object.assign(new Error("CITATION_RETRY_STALE"), { handled: true });

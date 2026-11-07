@@ -13,6 +13,7 @@ import {
 } from "../../supabase/functions/_shared/citationPure/freeformInterpret";
 import { CHAT_HOST, foreignFreeformSourceType, planCitationEvidence, planLocalCitation, planTypedRequest, resolveCitationResponse, selectForeignCaseChoice } from "@/lib/citationPlanner";
 import { citationTextOnly } from "@/lib/citationSegments";
+import { compatiblePersonNames } from "../../supabase/functions/_shared/citationPure/authorNames";
 
 const BOOK = "National identity by Smith, Anthony D";
 const ARTICLE = "The Path of the Law by Holmes, Oliver Wendell, Harvard Law Review";
@@ -232,6 +233,7 @@ describe("citation-wide budget and selected-record handoff", () => {
     });
     expect(emptyCalls).toBe(2);
     expect(capped.searches).toBe(2);
+    expect(capped.retrievals).toBe(2);
     expect(capped.unknown).toBe(false);
     const again = await runForeignLookup(input, {
       apiKey: "offline-only", budget: capped,
@@ -324,5 +326,89 @@ describe("citation-wide budget and selected-record handoff", () => {
     expect(prepareFreeformHandoff("ע\"א 240/95")).toBeNull();
     expect(foreignFreeformSourceType("מדינת ישראל נגד פלוני")).toBeNull();
     expect(foreignFreeformSourceType("הספר National Identity של סמית'")).toBeNull();
+  });
+
+  it("treats a missing initial as unverified and reads Smith, Anthony and Hart, H.L.A.", () => {
+    expect(engineAuthorCheckBinds("Smith, Anthony")).toBe(true);
+    expect(engineAuthorCheckBinds("Hart, H.L.A.")).toBe(true);
+    expect(compatiblePersonNames("Warren, Louis", "Louis Warren")).toBe(false);
+    expect(compatiblePersonNames("Samuel D. Warren, Louis D. Brandeis", "Samuel D. Warren and Louis D. Brandeis")).toBe(true);
+    expect(compatiblePersonNames("Samuel D. Warren and Louis D. Brandeis", "Samuel D. Warren and Louis D. Brandeis")).toBe(true);
+    const handed = plan("National identity by Smith, Anthony");
+    expect(handed.typed?.foreignLookup?.parsedFields).toMatchObject({ authors: "Smith, Anthony", bookTitle: "National identity" });
+    expect((plan("The Concept of Law by Hart, H.L.A.").typed?.foreignLookup?.parsedFields as { authors?: string } | undefined)?.authors).toBe("Hart, H.L.A.");
+    const review = plan("National identity by Smith, Anthony, A Review of Politics");
+    expect(review.typed).toBeUndefined();
+    expect(review.local?.sourceType).toBe("foreign_book");
+    expect(foreignFreeformSourceType("The Path of the Law by Holmes, Oliver Wendell, Harvard Law Review")).toBe("foreign_journal_article");
+    const noted = plan("הערה 12/34 National identity by Smith, Anthony D");
+    expect(noted.typed?.foreignLookup?.kind).toBe("book");
+    const wrapped = plan("הספר Donoghue v Stevenson");
+    expect(wrapped.typed?.foreignLookup).toMatchObject({ kind: "case", parsedFields: { caseName: "Donoghue v Stevenson" } });
+    expect(JSON.stringify(wrapped.typed?.foreignLookup?.parsedFields)).not.toMatch(/הספר/);
+  });
+
+  it("counts a page fetch in the budget and refuses a page whose author is not the supplied author", async () => {
+    vi.stubGlobal("fetch", vi.fn(() => { throw new Error("Live network forbidden"); }));
+    const input: ForeignLookupInput = {
+      kind: "book", jurisdiction: "OTHER", rawInput: "National identity by Anthony Smith",
+      parsedFields: { bookTitle: "National Identity", authors: "Anthony Smith" }, freeformHandoff: true,
+    };
+    const budget = createCitationBudget();
+    const urls: string[] = [];
+    const looked = await runForeignLookup(input, {
+      apiKey: "offline-only", budget,
+      fetchImpl: (async (url: string) => {
+        urls.push(url);
+        if (url.includes("perplexity")) return new Response(JSON.stringify({ results: [{ title: "National Identity — Anthony Smith", url: "https://press.example.edu/page", snippet: "A catalog entry for Anthony Smith." }] }), { status: 200 });
+        return new Response("Anthony J. Smith, National Identity (3rd ed. 1970).", { status: 200 });
+      }) as unknown as typeof fetch,
+    });
+    expect(urls).toHaveLength(2);
+    expect(budget).toMatchObject({ searches: 1, retrievals: 2, modelCalls: 0, unknown: false });
+    expect(looked.fields.year).toBeUndefined();
+    expect(looked.fields.edition).toBeUndefined();
+
+    const exhausted = createCitationBudget();
+    let afterCap = 0;
+    await runForeignLookup(input, {
+      apiKey: "offline-only", budget: exhausted,
+      fetchImpl: (async (url: string) => {
+        afterCap += 1;
+        if (url.includes("perplexity")) return new Response(JSON.stringify({ results: [] }), { status: 200 });
+        throw new Error("page fetch after two searches");
+      }) as unknown as typeof fetch,
+    });
+    expect(afterCap).toBe(2);
+    expect(exhausted.retrievals).toBe(2);
+
+    const open = { calls: 0 };
+    await runForeignLookup(input, {
+      apiKey: "offline-only",
+      fetchImpl: (async (url: string) => {
+        open.calls += 1;
+        if (url.includes("perplexity")) return new Response(JSON.stringify({ results: [{ title: "National Identity — Anthony Smith", url: "https://press.example.edu/page", snippet: "Anthony Smith, National Identity." }] }), { status: 200 });
+        return new Response("Anthony Smith, National Identity (1991).", { status: 200 });
+      }) as unknown as typeof fetch,
+    });
+    expect(open.calls).toBe(3);
+  });
+
+  it("does not merge a year-only record with a same-year edition record", async () => {
+    vi.stubGlobal("fetch", vi.fn(() => { throw new Error("Live network forbidden"); }));
+    const input: ForeignLookupInput = {
+      kind: "book", jurisdiction: "OTHER", rawInput: "National identity by Smith, Anthony D",
+      parsedFields: { bookTitle: "National Identity", authors: "Smith, Anthony D" }, freeformHandoff: true,
+    };
+    const looked = await runForeignLookup(input, {
+      apiKey: "offline-only", budget: createCitationBudget(),
+      fetchImpl: (async () => new Response(JSON.stringify({ results: [
+        { title: "National Identity", url: "https://press.example.edu/a", snippet: "Anthony D. Smith, National Identity (1991)." },
+        { title: "National Identity", url: "https://press.example.edu/b", snippet: "Anthony D. Smith, National Identity (2nd ed. 1991)." },
+      ] }), { status: 200 })) as unknown as typeof fetch,
+    });
+    expect(looked.fields.year).toBe("1991");
+    expect(looked.fields.edition).toBeUndefined();
+    expect(looked.provenance.edition).toBeUndefined();
   });
 });

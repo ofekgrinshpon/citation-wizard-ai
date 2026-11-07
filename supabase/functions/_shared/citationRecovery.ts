@@ -47,13 +47,14 @@ export function citationRecoveryInput(value: unknown): CitationRecoveryInput | n
       !(value.batchId === null || (typeof value.batchId === "string" && value.batchId.length >= 8 && value.batchId.length <= 200))) return null;
   const foreign = value.foreignLookup;
   if (foreign !== null && (!recoveryObject(foreign) ||
-      !keysOnly(foreign, ["enabled", "kind", "jurisdiction", "rawInput", "parsedFields", "articleResponseVersion", "statuteResponseVersion"]) ||
+      !keysOnly(foreign, ["enabled", "kind", "jurisdiction", "rawInput", "parsedFields", "articleResponseVersion", "statuteResponseVersion", "freeformHandoff"]) ||
       !(typeof foreign.enabled === "boolean") || !optionalString(foreign, "rawInput") ||
       ("kind" in foreign && !kinds.includes(String(foreign.kind))) ||
       ("jurisdiction" in foreign && !jurisdictions.includes(String(foreign.jurisdiction))) ||
       ("parsedFields" in foreign && !fields(foreign.parsedFields)) ||
       ("articleResponseVersion" in foreign && foreign.articleResponseVersion !== 1) ||
-      ("statuteResponseVersion" in foreign && foreign.statuteResponseVersion !== 1))) return null;
+      ("statuteResponseVersion" in foreign && foreign.statuteResponseVersion !== 1) ||
+      ("freeformHandoff" in foreign && foreign.freeformHandoff !== true))) return null;
   if (!bounded(value, CITATION_RECOVERY_INPUT_BYTES)) return null;
   return structuredClone(value) as unknown as CitationRecoveryInput;
 }

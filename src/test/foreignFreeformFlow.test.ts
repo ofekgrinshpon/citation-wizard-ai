@@ -87,7 +87,7 @@ describe("mocked citation flow", () => {
 
     const editions = await cite(BOOK, [
       hit("National Identity", "Anthony D. Smith, National Identity (1991).", "https://press.example.edu/a"),
-      hit("National Identity", "Anthony Smith, National Identity (2nd ed. 2001).", "https://press.example.edu/b"),
+      hit("National Identity", "Anthony D. Smith, National Identity (2nd ed. 2001).", "https://press.example.edu/b"),
     ]);
     const editionText = citationTextOnly(editions.result.citation);
     expect(editionText).not.toContain("1991");
@@ -95,6 +95,48 @@ describe("mocked citation flow", () => {
     expect(editionText).not.toMatch(/2nd ed/);
     expect(editions.result.completion?.identityConfirmed).toBe(true);
     expect(editions.result.completion?.fields.year).toBeUndefined();
+
+    const sameYear = await cite(BOOK, [
+      hit("National Identity", "Anthony D. Smith, National Identity (1991).", "https://press.example.edu/c"),
+      hit("National Identity", "Anthony D. Smith, National Identity (2nd ed. 1991).", "https://press.example.edu/d"),
+    ]);
+    const sameYearText = citationTextOnly(sameYear.result.citation);
+    expect(sameYearText).toContain("1991");
+    expect(sameYearText).not.toMatch(/2nd ed/);
+    expect(sameYear.result.completion?.fields.edition).toBeUndefined();
+  });
+
+  it("does not confirm Anthony Smith from Anthony J. Smith, and does confirm Smith, Anthony and Hart, H.L.A.", async () => {
+    const ambiguous = await cite("National Identity by Anthony Smith", [
+      hit("National Identity — Anthony J. Smith", "Anthony J. Smith, National Identity (1980)."),
+    ]);
+    expect(citationTextOnly(ambiguous.result.citation)).not.toContain("1980");
+    expect(ambiguous.result.completion?.fields.year).toBeUndefined();
+
+    const inverted = await cite("National identity by Smith, Anthony", [
+      hit("National Identity — Anthony Smith", "Anthony Smith, National Identity (1991)."),
+    ]);
+    expect(citationTextOnly(inverted.result.citation)).toContain("1991");
+    expect(citationTextOnly(inverted.result.citation)).not.toContain("Anthony J");
+
+    const hart = await cite("The Concept of Law by Hart, H.L.A.", [
+      hit("The Concept of Law — H.L.A. Hart", "H.L.A. Hart, The Concept of Law (1961)."),
+    ]);
+    expect(citationTextOnly(hart.result.citation)).toContain("1961");
+    expect(hart.budget.modelCalls).toBe(0);
+  });
+
+  it("does not route a bare Review title as an article and keeps a Hebrew note with a Latin book", async () => {
+    const review = await cite("National identity by Smith, Anthony, A Review of Politics", []);
+    expect(review.request?.foreignLookup).toBeUndefined();
+    expect(review.result.sourceType).not.toBe("foreign_journal_article");
+    expect(m.searches).toBe(0);
+
+    const noted = await cite("הערה 12/34 National identity by Smith, Anthony D", [
+      hit("National Identity — Anthony D. Smith", "Anthony D. Smith, National Identity (1991)."),
+    ]);
+    expect(noted.request?.foreignLookup?.kind).toBe("book");
+    expect(citationTextOnly(noted.result.citation)).toContain("1991");
   });
 
   it("completes the article from the full name and ignores a different Holmes", async () => {
