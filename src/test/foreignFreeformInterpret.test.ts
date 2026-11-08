@@ -525,3 +525,23 @@ describe("optional parser before lookup", () => {
     }
   });
 });
+
+describe("lower case and the server-parser handoff", () => {
+  it("reads a lower-case title and author", async () => {
+    const { interpretDeterministic } = await import("../../supabase/functions/_shared/citationPure/freeformInterpret");
+    const facts = interpretDeterministic("national identity by smith, anthony D");
+    expect(facts?.fields.bookTitle.value).toBe("national identity");
+    expect(facts?.fields.authors.value).toBe("smith, anthony D");
+  });
+  it("hands an unread foreign book with an author cue to the server, and nothing else", async () => {
+    const { prepareFreeformModelHandoff } = await import("../../supabase/functions/_shared/citationPure/freeformInterpret");
+    const prose = "Anthony D. Smith wrote the book National Identity.";
+    expect(prepareFreeformModelHandoff(prose, "foreign_book")).toEqual({ enabled: true, freeformHandoff: true, kind: "book", jurisdiction: "OTHER", rawInput: prose, parsedFields: {} });
+    expect(prepareFreeformModelHandoff(prose, "foreign_book_chapter")).toBeNull();
+    expect(prepareFreeformModelHandoff(prose, "foreign_journal_article")).toBeNull();
+    expect(prepareFreeformModelHandoff("Synthetic work needing details", "foreign_book")).toBeNull();
+    expect(prepareFreeformModelHandoff("national identity by smith, anthony D", "foreign_book")).toBeNull();
+    expect(prepareFreeformModelHandoff("ע\"א 240/95 פלוני נ' אלמוני, מאת", "foreign_book")).toBeNull();
+    expect(prepareFreeformModelHandoff("See https://example.com/book, by Smith", "foreign_book")).toBeNull();
+  });
+});

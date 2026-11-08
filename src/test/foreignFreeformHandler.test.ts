@@ -491,3 +491,91 @@ describe("wired parser stays off unless a test transport is installed", () => {
     expect(articleLookup.fields.year).not.toBe("1901");
   });
 });
+
+describe("free-form books in lower case, and books the safe patterns cannot read", () => {
+  const smithHit = { title: "National Identity — Anthony D. Smith", url: "https://press.example.edu/smith", snippet: "Anthony D. Smith, National Identity (1991)." };
+  let parserCalls = 0;
+  function install(body: unknown) {
+    parserCalls = 0;
+    installFreeformParserTransportForTests(async () => {
+      parserCalls += 1;
+      return { status: 200, text: JSON.stringify(body) };
+    });
+  }
+  function plannedAs(raw: string, sourceType: "foreign_book") {
+    const evidence = planCitationEvidence(raw, null);
+    const input = { evidence, sourceType, input: raw, isPinpoint: false, manual: false };
+    const local = planLocalCitation(input, CHAT_HOST);
+    if ("resolution" in local) return { local: local.resolution, typed: null };
+    return { local: null, typed: planTypedRequest({ ...input, statutePrep: local.statutePrep, canonicalRaw: raw }, CHAT_HOST) };
+  }
+  afterAll(() => installFreeformParserTransportForTests(null));
+
+  it("reads a lower-case title and author without the parser and cites the matching book", async () => {
+    installFreeformParserTransportForTests(null);
+    reset({ hits: [smithHit] });
+    const raw = "national identity by smith, anthony D";
+    const plan = plannedAs(raw, "foreign_book");
+    expect(plan.local).toBeNull();
+    expect(plan.typed?.foreignLookup?.parsedFields).toEqual({ bookTitle: "national identity", authors: "smith, anthony D" });
+    const posted = await post(raw, plan.typed?.foreignLookup, "handler-lower-0001");
+    expect(posted.status, JSON.stringify(posted.body)).toBe(200);
+    expect(gatewayCalls()).toHaveLength(0);
+    expect((posted.body.foreignLookup as { fields: Record<string, string> }).fields.year).toBe("1991");
+  });
+
+  it("sends an unread book to the server parser instead of stopping with the local warning", async () => {
+    install({ kind: "book", fields: {
+      bookTitle: { value: "National Identity", quote: "National Identity" },
+      authors: { value: "Anthony D. Smith", quote: "Anthony D. Smith" },
+    } });
+    reset({ hits: [smithHit] });
+    const raw = "Anthony D. Smith wrote the book National Identity.";
+    const plan = plannedAs(raw, "foreign_book");
+    expect(plan.local).toBeNull();
+    expect(plan.typed?.foreignLookup).toEqual({ enabled: true, freeformHandoff: true, kind: "book", jurisdiction: "OTHER", rawInput: raw, parsedFields: {} });
+    const posted = await post(raw, plan.typed?.foreignLookup, "handler-model-0001");
+    expect(posted.status, JSON.stringify(posted.body)).toBe(200);
+    expect(parserCalls).toBe(1);
+    expect(gatewayCalls()).toHaveLength(0);
+    expect(searchCalls().length).toBeLessThanOrEqual(2);
+    const lookup = posted.body.foreignLookup as { freeformFields?: Record<string, string> };
+    expect(lookup.freeformFields).toEqual({ bookTitle: "National Identity", authors: "Anthony D. Smith" });
+    const chat = resolveCitationResponse(plan.typed!, { foreignLookup: posted.body.foreignLookup }, CHAT_HOST);
+    expect(chat.kind).toBe("terminal");
+    if (chat.kind !== "terminal") return;
+    const text = citationTextOnly(chat.resolution.citation);
+    expect(text).toContain("National Identity");
+    expect(text).toContain("1991");
+  });
+
+  it("does not bind returned fields that are not in the pasted text", async () => {
+    install({ kind: "book", fields: {
+      bookTitle: { value: "National Identity", quote: "National Identity" },
+      authors: { value: "Anthony D. Smith", quote: "Anthony D. Smith" },
+    } });
+    reset({ hits: [smithHit] });
+    const raw = "Anthony D. Smith wrote the book National Identity.";
+    const plan = plannedAs(raw, "foreign_book");
+    const posted = await post(raw, plan.typed?.foreignLookup, "handler-model-0002");
+    const forged = { ...(posted.body.foreignLookup as Record<string, unknown>), freeformFields: { bookTitle: "Nations and Nationalism", authors: "Anthony D. Smith" } };
+    const chat = resolveCitationResponse(plan.typed!, { foreignLookup: forged }, CHAT_HOST);
+    expect(chat.kind).toBe("terminal");
+    if (chat.kind !== "terminal") return;
+    expect(citationTextOnly(chat.resolution.citation)).not.toContain("1991");
+    expect(citationTextOnly(chat.resolution.citation)).not.toContain("Nations and Nationalism");
+  });
+
+  it("stops before any search when the parser is off, and keeps Israeli and case text off this route", async () => {
+    installFreeformParserTransportForTests(null);
+    reset({ hits: [smithHit] });
+    const raw = "Anthony D. Smith wrote the book National Identity.";
+    const plan = plannedAs(raw, "foreign_book");
+    const posted = await post(raw, plan.typed?.foreignLookup, "handler-model-0003");
+    expect(searchCalls()).toHaveLength(0);
+    expect(gatewayCalls()).toHaveLength(0);
+    expect(String(posted.body.content ?? "")).not.toContain("1991");
+    expect(plannedAs("ע\"א 240/95 פלוני נ' אלמוני", "foreign_book").typed?.foreignLookup?.freeformHandoff).not.toBe(true);
+    expect(plannedAs("Donoghue v Stevenson as a book", "foreign_book").typed?.foreignLookup?.freeformHandoff).not.toBe(true);
+  });
+});

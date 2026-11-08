@@ -57,6 +57,13 @@
       "when": 1790861292800,
       "tag": "0007_ai_cost_events_v2_research",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1794137298227,
+      "tag": "0008_citation_recovery_accepts_freeform_handoff",
+      "breakpoints": true
     }
   ]
 }

@@ -293,3 +293,61 @@ it("keeps authored closed input/result schemas aligned with the public payload k
   expect(body("_citation_canonical_json")).toContain('ORDER BY e.key COLLATE "C"');
   expect(body("_citation_canonical_json")).toContain("ORDER BY e.ordinality");
 });
+
+// Same rules as public._citation_json_shape, in JS, so payloads the runtime
+// accepts can be checked against the authored closed schemas without a database.
+function jsonShape(value: unknown, schema: Record<string, unknown>): boolean {
+  if (value === undefined) return false;
+  const kind = value === null ? "null" : Array.isArray(value) ? "array" : typeof value === "number" ? "number" : typeof value;
+  if ("enum" in schema) return (schema.enum as unknown[]).some((item) => item === value);
+  const type = schema.type as string | string[];
+  if (Array.isArray(type) ? !type.includes(kind) : type !== kind) return false;
+  if (kind === "object") {
+    const object = value as Record<string, unknown>;
+    if (((schema.required as string[]) ?? []).some((key) => !(key in object))) return false;
+    const properties = (schema.properties ?? {}) as Record<string, Record<string, unknown>>;
+    return Object.entries(object).every(([key, item]) => key in properties && jsonShape(item, properties[key]));
+  }
+  if (kind === "array") {
+    const items = value as unknown[];
+    if (items.length < Number(schema.minItems ?? 0) || items.length > Number(schema.maxItems ?? Infinity)) return false;
+    return items.every((item) => jsonShape(item, schema.items as Record<string, unknown>));
+  }
+  if (kind === "string") return (value as string).length >= Number(schema.minLength ?? 0) && (value as string).length <= Number(schema.maxLength ?? Infinity);
+  return true;
+}
+
+describe("closed recovery schemas accept every input the runtime contract accepts", () => {
+  const schemas = () => [...body("_citation_recovery_valid").matchAll(/\$schema\$([\s\S]*?)\$schema\$/g)].map((match) => JSON.parse(match[1]));
+  const messages = [{ role: "user", content: "x" }];
+
+  it("accepts a free-form parser handoff", async () => {
+    const { citationRecoveryInput } = await import("../../supabase/functions/_shared/citationRecovery");
+    const raw = "Anthony D. Smith wrote the book National Identity.";
+    const input = { messages, rawInput: raw, batchId: null,
+      foreignLookup: { enabled: true, freeformHandoff: true, kind: "book", jurisdiction: "OTHER", rawInput: raw, parsedFields: {} } };
+    expect(citationRecoveryInput(input)).not.toBeNull();
+    expect(jsonShape(input, schemas()[0])).toBe(true);
+    expect(jsonShape({ ...input, foreignLookup: { ...input.foreignLookup, freeformHandoff: false } }, schemas()[0])).toBe(false);
+  });
+
+  it("accepts a typed statute request and every shared citation field", async () => {
+    const { citationRecoveryInput, CITATION_FIELD_KEYS } = await import("../../supabase/functions/_shared/citationRecovery");
+    const parsedFields = Object.fromEntries(CITATION_FIELD_KEYS.map((key) => [key, "v"]));
+    const input = { messages, rawInput: "42 U.S.C. § 1983", batchId: null,
+      foreignLookup: { enabled: true, statuteResponseVersion: 1, kind: "statute", jurisdiction: "US", rawInput: "42 U.S.C. § 1983", parsedFields } };
+    expect(citationRecoveryInput(input)).not.toBeNull();
+    expect(jsonShape(input, schemas()[0])).toBe(true);
+  });
+
+  it("stores a result that carries the parser's fields", async () => {
+    const { citationRecoveryResult } = await import("../../supabase/functions/_shared/citationRecovery");
+    const result = { content: "", foreignLookup: { kind: "book", jurisdiction: "OTHER", fields: { year: "1991" }, grounded: { year: true },
+      provenance: { year: { value: "1991", basis: "search_result_explicit", sourceUrl: "https://press.example.edu/smith" } },
+      sources: [{ url: "https://press.example.edu/smith", tier: "tier1" }],
+      identity: { matched: true, anchors: [], conflicts: [] }, diagnostics: { tier1Queried: true, tier2Fired: false },
+      freeformFields: { bookTitle: "National Identity", authors: "Anthony D. Smith" } } };
+    expect(citationRecoveryResult(result)).not.toBeNull();
+    expect(jsonShape(result, schemas()[1])).toBe(true);
+  });
+});

@@ -42,12 +42,15 @@ export const FREEFORM_LIVE_OWNER_AUTHORIZED: boolean = true;
 
 const HEBREW = /[\u0590-\u05FF]/;
 const CASE_SHAPE = /\s+v(?:s)?\.?\s+/i;
-const JOURNAL_CUE = /\b(?:Journal|Quarterly|Law\s+Review|L\.\s*Rev\.|L\.J\.)\b/;
+const JOURNAL_CUE = /\b(?:Journal|Quarterly|Law\s+Review|L\.\s*Rev\.|L\.J\.)\b/i;
 const YEAR_SLOT = /(?:\s*[\[(]((?:1[5-9]|20)\d{2})[\])])\s*$/;
 const EDITION_SLOT = /\b(\d+(?:st|nd|d|rd|th)\s+ed\.)\b/;
-const NAME_TOKEN = String.raw`[A-Z][A-Za-z.'’\-]*`;
+/** Letter case is not evidence. "smith, anthony d" is read like "Smith, Anthony D". */
+const NAME_TOKEN = String.raw`[A-Za-z][A-Za-z.'’\-]*`;
 const NAME = new RegExp(`^${NAME_TOKEN}(?:\\s+${NAME_TOKEN}){0,5}(?:,\\s*${NAME_TOKEN}(?:\\s+${NAME_TOKEN}){0,4})?$`);
 const MARKER = "פענוח ניסוח חופשי:";
+/** A separator or verb that can sit between a title and an author name. */
+const AUTHOR_CUE = /\bby\b|מאת|,|\bwr(?:ote|itten)\b|\bauthor(?:ed|s)?\b|\s[—–-]\s/iu;
 
 export interface CitationBudget {
   /** Perplexity search calls. */
@@ -170,7 +173,7 @@ function grounded(raw: string, value: unknown, quote: unknown, start?: number, e
 }
 
 function presentationAuthors(authors: string): string | undefined {
-  const match = authors.match(/^([A-Z][A-Za-z.'’\-]+),\s*((?:[A-Z][A-Za-z.'’\-]*)(?:\s+[A-Z][A-Za-z.'’\-]*)*)$/);
+  const match = authors.match(/^([A-Za-z][A-Za-z.'’\-]+),\s*((?:[A-Za-z][A-Za-z.'’\-]*)(?:\s+[A-Za-z][A-Za-z.'’\-]*)*)$/);
   if (!match) return undefined;
   const reordered = `${match[2]} ${match[1]}`;
   const tokens = (value: string) => value.split(/[\s,]+/).filter(Boolean).sort().join("|");
@@ -209,7 +212,7 @@ export function interpretDeterministic(raw: string): FreeformFacts | null {
   const text = raw.trim();
   if (!text || text.length > 400 || /https?:\/\//i.test(text) || CASE_SHAPE.test(text) || isIsraeliSource(text)) return null;
   const body = text.replace(YEAR_SLOT, "").trim();
-  const by = body.match(/([A-Z][A-Za-z'’.: -]{5,160}?)\s+(?:by|מאת)\s+([A-Z][A-Za-z.'’\- ,]{2,180})/u);
+  const by = body.match(/([A-Za-z][A-Za-z'’.: -]{5,160}?)\s+(?:by|מאת)\s+([A-Za-z][A-Za-z.'’\- ,]{2,180})/iu);
   if (!by) return null;
   const title = by[1].trim();
   let rest = by[2].trim();
@@ -410,7 +413,7 @@ export function prepareFreeformHandoff(raw: string): FreeformHandoff | null {
   const facts = interpretDeterministic(raw);
   if (!facts) {
     // "Review" alone is not a journal name. Ask, and do not start an article search.
-    if (/\bReview\b/.test(raw) && !JOURNAL_CUE.test(raw) && /\s(?:by|מאת)\s/u.test(raw)) {
+    if (/\bReview\b/i.test(raw) && !JOURNAL_CUE.test(raw) && /\s(?:by|מאת)\s/iu.test(raw)) {
       return { mode: "local", sourceType: "foreign_book", resolution: localResolution("foreign_book", raw,
         "הניסוח דומה לספר לועזי, אבל כתב העת לא זוהה. לא בוצע חיפוש ולא נבנה אזכור.") };
     }
@@ -524,8 +527,58 @@ export function freeformAwaitingModel(raw: string): boolean {
   return prepareFreeformHandoff(raw) === null;
 }
 
+/**
+ * Client side: a Latin book paste that the safe patterns did not read. It goes
+ * to the server parser with no client fields, instead of stopping locally.
+ * The server interprets the same raw text again and decides. Israeli sources,
+ * case captions, URLs and chapter-shaped text stay on their existing routes.
+ */
+export function prepareFreeformModelHandoff(raw: string, sourceType: string | null | undefined): FreeformSearchRequest | null {
+  if (sourceType !== "foreign_book") return null;
+  const text = raw.trim();
+  if (text.length < 6 || text.length > 400 || /https?:\/\//i.test(text) || CASE_SHAPE.test(text)) return null;
+  if (isIsraeliSource(text) || prepareFreeformHandoff(raw) !== null) return null;
+  if ((text.match(/[A-Za-z]{2,}/g) ?? []).length < 2) return null;
+  // Without some author cue the parser cannot ground an author, so the
+  // request could only fail after a paid call. Keep that text local.
+  if (!AUTHOR_CUE.test(text)) return null;
+  return { enabled: true, freeformHandoff: true, kind: "book", jurisdiction: "OTHER", rawInput: raw, parsedFields: {} };
+}
+
+/** Fields that may be bound back from a server parse; every value is re-checked against the raw text. */
+const RETURNED_FIELDS: Record<FreeformSearchRequest["kind"], readonly string[]> = {
+  book: ["bookTitle", "authors", "year", "edition", "volume"],
+  journal_article: ["articleTitle", "authors", "journal", "volume", "firstPage", "year", "edition"],
+  case: ["caseName"],
+};
+
+/**
+ * Client side: bind the server parser's fields to a model handoff that was
+ * sent without fields. Each value must be an exact slice of the original
+ * input and the kind must match, otherwise the request stays unchanged and
+ * the result cannot confirm identity.
+ */
+export function bindFreeformResponseFields(request: Record<string, unknown>, raw: string, response: unknown): Record<string, unknown> {
+  if (request.freeformHandoff !== true) return request;
+  const supplied = request.parsedFields;
+  if (supplied && typeof supplied === "object" && Object.keys(supplied).length > 0) return request;
+  if (!response || typeof response !== "object" || Array.isArray(response)) return request;
+  const body = response as Record<string, unknown>;
+  const kind = request.kind as FreeformSearchRequest["kind"];
+  const returned = body.freeformFields;
+  if (body.kind !== kind || !RETURNED_FIELDS[kind] || !returned || typeof returned !== "object" || Array.isArray(returned)) return request;
+  const entries = Object.entries(returned as Record<string, unknown>);
+  if (!entries.length) return request;
+  const parsedFields: Record<string, string> = {};
+  for (const [key, value] of entries) {
+    if (!RETURNED_FIELDS[kind].includes(key) || typeof value !== "string" || !value.trim() || !raw.includes(value) || HEBREW.test(value)) return request;
+    parsedFields[key] = value;
+  }
+  return { ...request, parsedFields };
+}
+
 export type FreeformPrepared =
-  | { action: "search"; kind: FreeformSearchRequest["kind"]; jurisdiction: FreeformSearchRequest["jurisdiction"]; parsedFields: Record<string, string> }
+  | { action: "search"; source: "deterministic" | "model"; kind: FreeformSearchRequest["kind"]; jurisdiction: FreeformSearchRequest["jurisdiction"]; parsedFields: Record<string, string> }
   | { action: "stop"; reply: string }
   | { action: "passthrough" };
 
@@ -543,7 +596,7 @@ export async function resolveFreeformBeforeLookup(
   if (isIsraeliSource(raw)) return { action: "passthrough" };
   const deterministic = prepareFreeformHandoff(raw);
   if (deterministic?.mode === "search") {
-    return { action: "search", kind: deterministic.request.kind, jurisdiction: deterministic.request.jurisdiction, parsedFields: { ...deterministic.request.parsedFields } };
+    return { action: "search", source: "deterministic", kind: deterministic.request.kind, jurisdiction: deterministic.request.jurisdiction, parsedFields: { ...deterministic.request.parsedFields } };
   }
   if (deterministic?.mode === "local") return { action: "stop", reply: deterministic.resolution.reply };
   const chosen = transport ?? testParserTransport;
@@ -565,5 +618,5 @@ export async function resolveFreeformBeforeLookup(
   }
   const request = searchRequest(raw, attempt.facts);
   if (!request) return { action: "stop", reply: "השדות שחולצו אינם ניתנים לאימות מול הקלט; לא בוצע חיפוש ולא נבנה אזכור." };
-  return { action: "search", kind: request.kind, jurisdiction: request.jurisdiction, parsedFields: { ...request.parsedFields } };
+  return { action: "search", source: "model", kind: request.kind, jurisdiction: request.jurisdiction, parsedFields: { ...request.parsedFields } };
 }

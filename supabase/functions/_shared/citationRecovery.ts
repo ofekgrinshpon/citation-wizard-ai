@@ -61,8 +61,9 @@ export function citationRecoveryInput(value: unknown): CitationRecoveryInput | n
 
 /** Validate the published typed foreign result, never a raw provider envelope. */
 function validForeignResult(value: unknown): value is Record<string, unknown> {
-  if (!recoveryObject(value) || !keysOnly(value, ["kind", "jurisdiction", "fields", "grounded", "provenance", "sources", "identity", "disambiguation", "diagnostics", "error", "articleResolution", "statuteResponseVersion"]) ||
+  if (!recoveryObject(value) || !keysOnly(value, ["kind", "jurisdiction", "fields", "grounded", "provenance", "sources", "identity", "disambiguation", "diagnostics", "error", "articleResolution", "statuteResponseVersion", "freeformFields"]) ||
       !kinds.includes(String(value.kind)) || !jurisdictions.includes(String(value.jurisdiction)) || !fields(value.fields) || !fields(value.grounded, "boolean") ||
+      ("freeformFields" in value && !fields(value.freeformFields)) ||
       !recoveryObject(value.provenance) || !keysOnly(value.provenance, CITATION_FIELD_KEYS) ||
       !Object.values(value.provenance).every((entry) => recoveryObject(entry) && keysOnly(entry, ["value", "sourceUrl", "sourceTitle", "basis"]) &&
         typeof entry.value === "string" && bases.includes(String(entry.basis)) && optionalString(entry, "sourceUrl") && optionalString(entry, "sourceTitle")) ||

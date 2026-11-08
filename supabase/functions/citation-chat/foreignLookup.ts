@@ -73,6 +73,8 @@ export interface ForeignLookupResult {
   /** One decision, several parallel reports, no verified priority rule: the user chooses. */
   locationChoiceRequired?: boolean;
   diagnostics: { tier1Queried: boolean; tier2Fired: boolean; jurisdictionResolvedBy?: string };
+  /** Free-form handoff only: the server parser's quote-checked fields used for this search. */
+  freeformFields?: Record<string, string>;
   error?: string;
   /** Article lookup outcome, not a verification claim. Partial fields stay missing. */
   articleResolution?: "resolved" | "incomplete" | "conflict";

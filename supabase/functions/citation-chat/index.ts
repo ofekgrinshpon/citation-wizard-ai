@@ -2045,6 +2045,17 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
             content: "פענוח הניסוח החופשי לא אומת מול הקלט; לא בוצע חיפוש ולא נבנה אזכור.",
           }), { headers: { ...corsHeaders, "Content-Type": "application/json" } }));
         }
+        // The parse decides the source family only within the family the client asked for.
+        if (freeformPrepared.action === "search" && freeformPrepared.kind !== flKind) {
+          return completeResponse(new Response(JSON.stringify({
+            content: "סוג המקור שפוענח מהניסוח החופשי אינו תואם לסוג שזוהה; לא בוצע חיפוש ולא נבנה אזכור.",
+          }), { headers: { ...corsHeaders, "Content-Type": "application/json" } }));
+        }
+        // Model-parsed fields go back with the result so the client can bind them to its raw text.
+        const freeformFields = freeformPrepared.action === "search" && freeformPrepared.source === "model"
+          ? { ...freeformPrepared.parsedFields } : null;
+        const withFreeformFields = (result: ForeignLookupResult | null): ForeignLookupResult | null =>
+          result && freeformFields ? { ...result, freeformFields } : result;
         const parsedForLookup = freeformPrepared.action === "search" ? freeformPrepared.parsedFields : flParsed;
         const kindForLookup = freeformPrepared.action === "search" ? freeformPrepared.kind : flKind;
         const jurForLookup = freeformPrepared.action === "search" ? freeformPrepared.jurisdiction : flJur;
@@ -2062,6 +2073,7 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
               ? articleLookupFallback({ kind: kindForLookup, jurisdiction: jurForLookup, rawInput: flRaw, parsedFields: parsedForLookup }, "lookup_failed")
               : null;
           }
+          foreignLookupResult = withFreeformFields(foreignLookupResult);
           // Identity matched + at least one grounded new field → the client
           // renders deterministically; no model call needed for this request.
           if (
@@ -2088,12 +2100,12 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
         // is unavailable or unmatched. Settlement stays with completeResponse;
         // no generic generation, resend or new refund policy is introduced.
         if (kindForLookup === "book" || kindForLookup === "book_chapter") {
-          const result: ForeignLookupResult = foreignLookupResult ?? {
+          const result: ForeignLookupResult = foreignLookupResult ?? withFreeformFields({
             kind: kindForLookup, jurisdiction: jurForLookup, fields: {}, grounded: {}, provenance: {}, sources: [],
             identity: { matched: false, anchors: [], conflicts: [] },
             diagnostics: { tier1Queried: !!pplxKey, tier2Fired: false },
             error: pplxKey ? "lookup_failed" : "missing_perplexity_credentials",
-          };
+          })!;
           const warning = result.error
             ? "חיפוש פרטי הספר או הפרק לא היה זמין; הקלט נשמר ללא השלמה."
             : "לא אומתה התאמת הספר או הפרק לפרטים שסופקו; הקלט נשמר ללא השלמה.";

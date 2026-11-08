@@ -29,7 +29,7 @@ import { preparePastedCitation, pastedCaseRequest, readPastedCitationSafety, ren
 import { suppliedLookupFieldsMatch } from "../../supabase/functions/_shared/pastedCitation";
 import { DISABLED_RULEPACK_WARNING, rulepackCapability, rulepackLookupEligible } from "../../supabase/functions/_shared/citationPure/rulepack.ts";
 import { readLocationChoice } from "../../supabase/functions/_shared/citationPure/caseLocations.ts";
-import { prepareFreeformHandoff, type FreeformHandoff } from "../../supabase/functions/_shared/citationPure/freeformInterpret.ts";
+import { bindFreeformResponseFields, prepareFreeformHandoff, prepareFreeformModelHandoff, type FreeformHandoff, type FreeformSearchRequest } from "../../supabase/functions/_shared/citationPure/freeformInterpret.ts";
 import { buildForeignCaseChoice, prepareChoiceSelection, type ForeignCaseChoice } from "@/lib/foreignCaseChoice";
 
 /** Local rendering controls; only host identity differs after bounded C2 parity. */
@@ -109,6 +109,15 @@ function freeformDecision(p: LocalPlanInput): FreeformHandoff | null {
   return prepareFreeformHandoff(p.input);
 }
 
+/** A free-form foreign book the safe patterns did not read: hand it to the server parser instead of stopping here. */
+function freeformModelDecision(p: LocalPlanInput): FreeformSearchRequest | null {
+  if (p.manual || p.isPinpoint) return null;
+  if (p.evidence.pasted.contract.route === "israeli") return null;
+  if (detectForeignSource(p.input)) return null;
+  if (eligibleBookCompletion(p.sourceType, p.input)) return null;
+  return prepareFreeformModelHandoff(p.input, p.sourceType);
+}
+
 /** Source type for a free-form handoff, so the host can skip the classifier model. */
 export function foreignFreeformSourceType(raw: string): SourceType | null {
   if (detectForeignSource(raw)) return null;
@@ -161,6 +170,7 @@ export function planLocalCitation(p: LocalPlanInput, caps: CitationHostCapabilit
     const r = renderStatuteLocal(statutePrep);
     return { origin: "statute_local", resolution: { ...r, status: r.status === "warning" ? "warning" : "valid" } };
   }
+  if (freeformModelDecision(p)) return { origin: null, statutePrep };
   if ((st === "foreign_book" || st === "foreign_book_chapter") && !p.isPinpoint && !bookCompletion) {
     const citation = escapeCitationLiteral(p.evidence.pasted.contract.rawInput);
     const warningMsg = "לא סופקו עוגני מחבר וכותרת מובחנים ובטוחים להשלמת הספר או הפרק; הקלט נשמר ללא חיפוש.";
@@ -295,6 +305,9 @@ export function planTypedRequest(p: LocalPlanInput & { statutePrep: StatutePrepa
   if (handoff?.mode === "search" && (!foreignLookup || foreignLookup.kind === handoff.request.kind)) {
     foreignLookup = { ...(foreignLookup ?? {}), ...handoff.request, rawInput: p.input };
     if (handoff.request.kind === "journal_article") articleRequest = foreignLookup as { parsedFields: Record<string, string> };
+  } else if (!handoff && !foreignLookup) {
+    const model = freeformModelDecision(p);
+    if (model) foreignLookup = { ...model };
   }
   const typed = !!(foreignLookup || p.statutePrep?.request);
   return { kind: typed ? "typed" : "legacy", evidence: p.evidence, sourceType: st, statutePrep: p.statutePrep, caseRequest, articleRequest, foreignLookup, extraBody,
@@ -312,8 +325,8 @@ export function resolveCitationResponse(plan: TypedPlan, data: Record<string, un
   const safety = readPastedCitationSafety(contract, data);
   if (safety) return { kind: "terminal", origin: "safety", resolution: { ...safety, status: "warning", pastedCitation: contract } };
   if (plan.kind === "legacy" || !plan.foreignLookup) return { kind: "legacy" };
-  const req = plan.foreignLookup;
   const response = data?.foreignLookup;
+  const req = bindFreeformResponseFields(plan.foreignLookup, typeof plan.foreignLookup.rawInput === "string" ? plan.foreignLookup.rawInput : contract.rawInput, response);
   if (req.kind === "book" || req.kind === "book_chapter") {
     const resolution = resolveBookCompletion(req, contract.rawInput, response, plan.localFields ?? {}, plan.localSourceFields, contract.missing);
     // Adopt server final content only after the same full-evidence resolver
