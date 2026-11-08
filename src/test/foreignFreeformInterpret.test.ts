@@ -196,7 +196,9 @@ describe("evidence spans, failures and Hebrew", () => {
     const transport = vi.fn(async () => ({ status: 200, text: "{}" }));
     expect((await executeFreeformModelAttempt("ע\"א 240/95", createCitationBudget(), transport, { permitMock: true })).status).toBe("disabled");
     expect(transport).not.toHaveBeenCalled();
-    expect(freeformLiveEnabled({ FREEFORM_PARSER_LIVE: "1", FREEFORM_PARSER_MODEL: FREEFORM_PARSER_MODEL_ID })).toBe(false);
+    expect(freeformLiveEnabled({})).toBe(false);
+    expect(freeformLiveEnabled({ FREEFORM_PARSER_LIVE: "1", FREEFORM_PARSER_MODEL: "google/gemini-2.5-flash" })).toBe(false);
+    expect(freeformLiveEnabled({ FREEFORM_PARSER_LIVE: "1", FREEFORM_PARSER_MODEL: FREEFORM_PARSER_MODEL_ID })).toBe(true);
     expect(GATEWAY_RETENTION_PROVED).toBe(false);
     expect((await executeFreeformModelAttempt(BOOK, createCitationBudget(), transport)).status).toBe("disabled");
     expect(transport).not.toHaveBeenCalled();

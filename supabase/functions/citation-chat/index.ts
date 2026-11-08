@@ -1800,9 +1800,13 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
     // A validated free-form handoff is a foreign book, article or case. A slash
     // number or a Hebrew comment in the same paste does not keep it on preserve.
     const freeformRawEarly = typeof foreignLookupRequest?.rawInput === "string" ? foreignLookupRequest.rawInput : "";
+    const freeformServerEnv = {
+      FREEFORM_PARSER_LIVE: Deno.env.get("FREEFORM_PARSER_LIVE"),
+      FREEFORM_PARSER_MODEL: Deno.env.get("FREEFORM_PARSER_MODEL"),
+    };
     const deferFreeformModel = foreignLookupRequest?.freeformHandoff === true
       && freeformAwaitingModel(freeformRawEarly)
-      && freeformParserTransportAvailable();
+      && freeformParserTransportAvailable(freeformServerEnv);
     const freeformEarly = foreignLookupRequest?.freeformHandoff === true && !deferFreeformModel ? bindFreeformLookup(foreignLookupRequest) : null;
     if (freeformEarly?.action === "stop") {
       return completeResponse(new Response(JSON.stringify({ content: freeformEarly.reply }), {
@@ -1983,7 +1987,7 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
     let foreignLookupResult: ForeignLookupResult | null = null;
     const citationBudget = createCitationBudget();
     const parserTransport = (): FreeformParserTransport | null => {
-      if (!freeformLiveEnabled()) return null;
+      if (!freeformLiveEnabled(freeformServerEnv)) return null;
       return async (request) => {
         try {
           const resp = await trackedFetch(request.endpoint, {
@@ -2029,7 +2033,7 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
         flRaw.trim()
       ) {
         const freeformPrepared = foreignLookupRequest.freeformHandoff === true
-          ? await resolveFreeformBeforeLookup(flRaw, citationBudget, parserTransport())
+          ? await resolveFreeformBeforeLookup(flRaw, citationBudget, parserTransport(), freeformServerEnv)
           : { action: "passthrough" as const };
         if (freeformPrepared.action === "stop") {
           return completeResponse(new Response(JSON.stringify({ content: freeformPrepared.reply }), {

@@ -24,12 +24,21 @@ export const EXISTING_FORMATTER_MODEL_ID = "google/gemini-2.5-flash";
 export const FREEFORM_LIMITS = { maxSearches: 2, maxModelCalls: 2 } as const;
 
 /**
- * Public Lovable docs describe Enterprise zero-data-retention as a workspace
- * setting that an admin can turn off (Extended-retention models). They do not
- * describe this deployment's gateway logs, the LOVABLE_API_KEY route, or
- * whether prompts are stored. Vendor policy is not proof. Leave this false.
+ * Public Lovable docs do not prove that this deployment stores nothing.
+ * The owner said AI app context is on, so Lovable can keep full gateway
+ * requests and responses for 90 days. This constant stays false.
  */
 export const GATEWAY_RETENTION_PROVED: boolean = false;
+
+/**
+ * The owner asked on 2026-11-08 to turn the parser on for the live site while
+ * accepting that 90-day storage. This is not a privacy proof. A server still
+ * stays off until FREEFORM_PARSER_LIVE=1 and FREEFORM_PARSER_MODEL is exactly
+ * google/gemini-3.8-flash. A client request cannot set either variable.
+ * Rollback for one server: unset FREEFORM_PARSER_LIVE. Rollback for every
+ * server that runs this build: set this constant back to false.
+ */
+export const FREEFORM_LIVE_OWNER_AUTHORIZED: boolean = true;
 
 const HEBREW = /[\u0590-\u05FF]/;
 const CASE_SHAPE = /\s+v(?:s)?\.?\s+/i;
@@ -100,7 +109,7 @@ export function noteRecordChoice(budget: CitationBudget): CitationBudget {
 }
 
 export function freeformLiveEnabled(env: Record<string, string | undefined> = {}): boolean {
-  return GATEWAY_RETENTION_PROVED === true
+  return FREEFORM_LIVE_OWNER_AUTHORIZED === true
     && env.FREEFORM_PARSER_LIVE === "1"
     && env.FREEFORM_PARSER_MODEL === FREEFORM_PARSER_MODEL_ID;
 }
@@ -470,10 +479,10 @@ export async function executeFreeformModelAttempt(
   raw: string,
   budget: CitationBudget,
   transport: (request: FreeformModelRequest) => Promise<ModelTransportResult>,
-  opts?: { permitMock?: boolean },
+  opts?: { permitMock?: boolean; env?: Record<string, string | undefined> },
 ): Promise<{ status: ModelAttemptStatus; facts: FreeformFacts | null; dropped: string[] }> {
   if (isIsraeliSource(raw)) return { status: "disabled", facts: null, dropped: ["israeli"] };
-  if (!opts?.permitMock && !freeformLiveEnabled()) return { status: "disabled", facts: null, dropped: [] };
+  if (!opts?.permitMock && !freeformLiveEnabled(opts?.env)) return { status: "disabled", facts: null, dropped: [] };
   if (!chargeModel(budget)) return { status: "blocked", facts: null, dropped: [] };
   let result: ModelTransportResult;
   try {
@@ -505,8 +514,8 @@ let testParserTransport: FreeformParserTransport | null = null;
 export function installFreeformParserTransportForTests(transport: FreeformParserTransport | null): void {
   testParserTransport = transport;
 }
-export function freeformParserTransportAvailable(): boolean {
-  return testParserTransport !== null || freeformLiveEnabled();
+export function freeformParserTransportAvailable(env: Record<string, string | undefined> = {}): boolean {
+  return testParserTransport !== null || freeformLiveEnabled(env);
 }
 
 /** Deterministic search is enough. The model is only for a foreign paste it did not already route, and never for an Israeli source. */
@@ -529,6 +538,7 @@ export async function resolveFreeformBeforeLookup(
   raw: string,
   budget: CitationBudget,
   transport: FreeformParserTransport | null,
+  env: Record<string, string | undefined> = {},
 ): Promise<FreeformPrepared> {
   if (isIsraeliSource(raw)) return { action: "passthrough" };
   const deterministic = prepareFreeformHandoff(raw);
@@ -540,7 +550,10 @@ export async function resolveFreeformBeforeLookup(
   if (!chosen) {
     return { action: "stop", reply: "פענוח הניסוח החופשי לא אומת מול הקלט; לא בוצע חיפוש ולא נבנה אזכור." };
   }
-  const attempt = await executeFreeformModelAttempt(raw, budget, chosen, { permitMock: !freeformLiveEnabled() });
+  const attempt = await executeFreeformModelAttempt(raw, budget, chosen, {
+    permitMock: testParserTransport !== null || (transport !== null && !freeformLiveEnabled(env)),
+    env,
+  });
   if (attempt.status === "disabled") {
     return { action: "stop", reply: "פענוח הניסוח החופשי לא אומת מול הקלט; לא בוצע חיפוש ולא נבנה אזכור." };
   }
