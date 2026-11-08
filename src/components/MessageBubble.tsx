@@ -18,6 +18,7 @@ import type { SourceType } from "@/data/abbreviations";
 import { normalizeHebrewNumberRanges } from "@/lib/hebrewNumberRange";
 import { citationTextOnly } from "@/lib/citationSegments";
 import { ForeignCaseChoiceButtons } from "./ForeignCaseChoiceButtons";
+import { lineDirection } from "@/lib/textDirection";
 
 interface Message {
   role: "user" | "assistant";
@@ -178,7 +179,7 @@ export function MessageBubble({ msg: rawMsg, detectedType, onChangeSourceType, o
             </div>
           ) : (
             <div className="flex items-start gap-2">
-              <div className="chat-bubble-user px-4 py-3 text-primary-foreground text-sm leading-relaxed flex-1">
+              <div className="chat-bubble-user px-4 py-3 text-primary-foreground text-sm leading-relaxed flex-1" dir="auto">
                 {msg.content}
               </div>
               {onEdit && (
@@ -278,16 +279,21 @@ export function MessageBubble({ msg: rawMsg, detectedType, onChangeSourceType, o
                 );
               }
 
+              // English/foreign lines are laid out left-to-right so trailing
+              // punctuation stays at the end of the citation.
+              const dir = lineDirection(line);
+              const dirClass = dir === "ltr" ? "my-0.5 text-left" : "my-0.5";
+
               if (hasMissingMarker(line)) {
                 return (
-                  <div key={i} className="my-0.5">
+                  <div key={i} className={dirClass} dir={dir}>
                     <FormattedCitation text={line} highlightMissing enableTooltips />
                   </div>
                 );
               }
 
               return (
-                <div key={i} className="my-0.5">
+                <div key={i} className={dirClass} dir={dir}>
                   <FormattedCitation text={line} enableTooltips />
                 </div>
               );

@@ -12,7 +12,7 @@
  */
 import { citationBindingText } from "../../supabase/functions/_shared/pastedCitation";
 import {
-  decisionLabel, formatLocationLabel, groundDecisionFields, readDecisionRecord, selectableLocations,
+  decisionLabel, formatLocationLabel, groundDecisionFields, orderDecisionsForChoice, readDecisionRecord, selectableLocations,
   type CaseDecisionRecord, type CaseJurisdiction,
 } from "../../supabase/functions/_shared/citationPure/caseLocations.ts";
 import { escapeCitationLiteral } from "@/lib/citationSegments";
@@ -83,7 +83,7 @@ export function buildForeignCaseChoice(plan: TypedPlan, response: unknown, paste
   let options: ForeignCaseChoiceOption[];
   if (stage === "decision") {
     if (decisions.length < 2) return null;
-    options = decisions.slice(0, MAX_OPTIONS).map((d) => ({
+    options = orderDecisionsForChoice(decisions).slice(0, MAX_OPTIONS).map((d) => ({
       id: d.id, label: decisionLabel(d), url: d.locations[0]?.sourceUrl ?? d.neutralSourceUrl ?? d.sourceUrls[0],
     }));
     if (options.some((o) => !o.url)) return null;

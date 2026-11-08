@@ -105,7 +105,7 @@ import {
 import { extractWorkIdentifiers, normalizeDoi, normalizeWorkUrl } from "../_shared/workIdentifiers.ts";
 import {
   bindChainsToCaption, decisionLabel, extractLocationChains, groundDecisionFields, groupCaseDecisions,
-  selectableLocations, type CaseDecisionRecord, type CaseLocationRecord, type ChainEvidence,
+  orderDecisionsForChoice, selectableLocations, type CaseDecisionRecord, type CaseLocationRecord, type ChainEvidence,
 } from "../_shared/citationPure/caseLocations.ts";
 import { canChargeSearch, chargePageFetch, chargeSearch, createCitationBudget, markBudgetUnknown, type CitationBudget } from "../_shared/citationPure/freeformInterpret.ts";
 import { authorEvidenceStatus } from "../_shared/citationPure/authorNames.ts";
@@ -1390,7 +1390,8 @@ export async function runForeignLookup(
   function finishCaseDecisions(evidence: ChainEvidence[], jur: "US" | "UK"): ForeignLookupResult {
     const userNeutral = input.parsedFields?.neutral;
     const anchorConflicts: string[] = [];
-    const decisions = groupCaseDecisions(evidence, jur).filter((d) => {
+    // UK: decisions with official Law Reports are listed first (nothing is auto-picked).
+    const decisions = orderDecisionsForChoice(groupCaseDecisions(evidence, jur)).filter((d) => {
       if (userCourt && d.court && normalizeCourtName(d.court) !== normalizeCourtName(userCourt)) {
         anchorConflicts.push(`court:${userCourt} vs ${d.court}`);
         return false;

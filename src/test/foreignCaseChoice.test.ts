@@ -89,8 +89,18 @@ describe("choosing between parallel reports", () => {
     if (out.kind !== "resolved") throw new Error(out.kind);
     const text = citationTextOnly(out.resolution.citation);
     expect(text).toContain("1932 SC (HL) 31");
-    expect(text).toContain("[1932] UKHL 100");
+    // Pre-2001: the database-assigned neutral citation is not added to a printed report.
+    expect(text).not.toContain("UKHL 100");
     expect(text).not.toContain("AC 562");
+  });
+
+  it("Donoghue v Stevenson: choosing the official Law Reports gives [1932] AC 562 alone", async () => {
+    const input = "Donoghue v Stevenson";
+    const { plan, data } = await lookup(input, [DONOGHUE]);
+    const choice = terminal(resolveCitationResponse(plan, data, CHAT_HOST)).resolution.foreignChoice!;
+    const out = selectForeignCaseChoice(choice, choice.options[0].id, [input], CHAT_HOST);
+    if (out.kind !== "resolved") throw new Error(out.kind);
+    expect(citationTextOnly(out.resolution.citation)).toBe("Donoghue v Stevenson [1932] AC 562.");
   });
 });
 

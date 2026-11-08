@@ -321,13 +321,55 @@ export function groupCaseDecisions(evidence: ChainEvidence[], jurisdiction: Case
   });
 }
 
-/** Locations usable for selection: reporters whose own records disagree are dropped. */
+/**
+ * The official Law Reports series (Incorporated Council of Law Reporting),
+ * current and older forms. Nominate, Scottish and commercial reports are not
+ * in this list.
+ */
+export const UK_OFFICIAL_LAW_REPORTS = ["AC", "QB", "KB", "Ch", "Fam", "P", "App Cas", "QBD", "ChD", "Ch D", "PD", "Ex D", "CPD"] as const;
+const OFFICIAL_KEYS = new Set(UK_OFFICIAL_LAW_REPORTS.map((r) => r.toLowerCase().replace(/[^a-z0-9]/g, "")));
+export const isOfficialLawReport = (l: Pick<LocationHit, "jurisdiction" | "reporter">) =>
+  l.jurisdiction === "UK" && OFFICIAL_KEYS.has(l.reporter.toLowerCase().replace(/[^a-z0-9]/g, ""));
+
+/** First year in which UK courts issued neutral citations themselves. */
+export const UK_NEUTRAL_CITATION_START = 2001;
+/**
+ * A UK neutral citation for a decision given before 2001 was assigned later by
+ * a database (e.g. BAILII); it is not the decision's citation, so a printed
+ * report is preferred over it whenever one is available.
+ */
+export function isRetroactiveUkNeutral(year: string | undefined, neutral: string | undefined): boolean {
+  return !!neutral && !!year && /^\d{4}$/.test(year) && Number(year) < UK_NEUTRAL_CITATION_START;
+}
+const retroactive = (d: CaseDecisionRecord) => d.jurisdiction === "UK" && isRetroactiveUkNeutral(d.decisionYear, d.neutral);
+
+/** UK: official Law Reports first, original order otherwise (stable). Other jurisdictions unchanged. */
+function officialFirst<T extends Pick<LocationHit, "jurisdiction" | "reporter">>(xs: T[]): T[] {
+  return xs.map((l, i) => ({ l, i, o: isOfficialLawReport(l) ? 0 : 1 })).sort((a, b) => a.o - b.o || a.i - b.i).map((x) => x.l);
+}
+
+/**
+ * Order decisions for a choice list: UK decisions reported in the official Law
+ * Reports first, then decisions with any printed report, then the rest
+ * (e.g. a pre-2001 decision known only by a database identifier). Stable.
+ * Nothing is selected or dropped.
+ */
+export function orderDecisionsForChoice(ds: CaseDecisionRecord[]): CaseDecisionRecord[] {
+  const rank = (d: CaseDecisionRecord) => d.jurisdiction !== "UK" ? 0 : d.locations.some(isOfficialLawReport) ? 0 : d.locations.length ? 1 : 2;
+  return ds.map((d, i) => ({ d, i, r: rank(d) })).sort((a, b) => a.r - b.r || a.i - b.i).map((x) => x.d);
+}
+
+/**
+ * Locations usable for selection: reporters whose own records disagree are
+ * dropped. UK official Law Reports are listed first; which report to use is
+ * still the user's choice when there are several.
+ */
 export function selectableLocations(d: CaseDecisionRecord): CaseLocationRecord[] {
   const bad = new Set<string>();
   const bySeries = new Map<string, number>();
   for (const l of d.locations) bySeries.set(seriesKey(l), (bySeries.get(seriesKey(l)) ?? 0) + 1);
   for (const [k, n] of bySeries) if (n > 1) bad.add(k);
-  return d.locations.filter((l) => !bad.has(seriesKey(l)));
+  return officialFirst(d.locations.filter((l) => !bad.has(seriesKey(l))));
 }
 
 /**
@@ -351,7 +393,9 @@ export function decisionLocationFields(d: CaseDecisionRecord, l?: CaseLocationRe
     set("year", d.decisionYear, "decisionYear");
     return { fields, donors };
   }
-  if (d.neutral) {
+  // A pre-2001 neutral citation was assigned later by a database: with a
+  // printed report chosen, the report alone is the citation.
+  if (d.neutral && !(l && retroactive(d))) {
     set("neutral", d.neutral, "neutral");
     set("year", d.decisionYear, "neutral");
     if (l) {
@@ -419,15 +463,21 @@ export function readLocationChoice(response: unknown, jurisdiction: string | nul
       url: str("sourceUrl")!,
     });
   }
-  return options.length > 1 ? options : null;
+  if (options.length < 2) return null;
+  // UK official Law Reports first (same order as selectableLocations); still a user choice.
+  const official = new Set(d.locations.flatMap((raw) => {
+    const l = raw as Record<string, unknown>;
+    return typeof l.reporter === "string" && isOfficialLawReport({ jurisdiction: jurisdiction as CaseJurisdiction, reporter: l.reporter }) ? [l.id] : [];
+  }));
+  return options.map((o, i) => ({ o, i, r: official.has(o.id) ? 0 : 1 })).sort((a, b) => a.r - b.r || a.i - b.i).map((x) => x.o);
 }
 
 /** One line describing a decision for a choice list. */
 export function decisionLabel(d: CaseDecisionRecord): string {
-  const parts = [
-    ...(d.neutral && d.decisionYear ? [`[${d.decisionYear}] ${d.neutral}`] : []),
-    ...d.locations.slice(0, 3).map(formatLocationLabel),
-  ];
+  const neutral = d.neutral && d.decisionYear ? [`[${d.decisionYear}] ${d.neutral}`] : [];
+  const reports = officialFirst(d.locations).slice(0, 3).map(formatLocationLabel);
+  // A pre-2001 database identifier follows the printed reports.
+  const parts = retroactive(d) ? [...reports, ...neutral] : [...neutral, ...reports];
   const paren = d.jurisdiction === "US" ? [d.court, d.decisionYear].filter(Boolean).join(" ") : "";
   return `${parts.join(", ")}${paren ? ` (${paren})` : ""}`.slice(0, 160);
 }

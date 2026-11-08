@@ -12,6 +12,7 @@
 import type { ForeignPeriodicalFields } from "./types.ts";
 import { REPORTER_IMPLIES_COURT, normalizeJournalName } from "./tables.ts";
 import { citationTextOnly } from "./segments.ts";
+import { isRetroactiveUkNeutral } from "./caseLocations.ts";
 import type {
   ForeignArticleFields,
   ForeignBookFields,
@@ -215,6 +216,22 @@ export function renderUkCase(f: ForeignCaseFields): RenderResult {
       f.unparsedRemainder, warnings, unrep,
     );
     return finish(out, warnings, missing, unrep);
+  }
+  // Pre-2001: a neutral citation was assigned later by a database, so a printed
+  // report (official Law Reports first in any choice) is the citation.
+  if (isRetroactiveUkNeutral(f.year, f.neutral)) {
+    if (f.reporter && f.firstPage) {
+      const vol = f.reporterVolume ? `${f.reporterVolume} ` : "";
+      const court = f.court ? ` (${f.court})` : "";
+      warnings.push(`האזכור הניטרלי [${f.year}] ${f.neutral} הוקצה בדיעבד במאגר (אזכורים ניטרליים ניתנים רק משנת 2001), ולכן מוצג הדיווח המודפס בלבד.`);
+      reportExtraFields(f, ["caseName", "year", "neutral", "volume", "reporterVolume", "reporter", "firstPage", "pinpoint", "court", "reportYearStyle"], warnings, unrep);
+      const out = appendRemainder(
+        `${fullCitationCaseName(name)} ${ukReportYear(f.volume || f.year!, f.reportYearStyle)} ${vol}${f.reporter} ${pageSpan(f.firstPage, f.pinpoint)}${court}`,
+        f.unparsedRemainder, warnings, unrep,
+      );
+      return finish(out, warnings, missing, unrep);
+    }
+    warnings.push(`האזכור הניטרלי [${f.year}] ${f.neutral} הוקצה בדיעבד במאגר (אזכורים ניטרליים ניתנים רק משנת 2001); לא נמצא דיווח מודפס, ומומלץ להשלים את מראה המקום ב־Law Reports (למשל AC).`);
   }
   const bits: string[] = [fullCitationCaseName(name)];
   if (f.neutral && f.year) {
