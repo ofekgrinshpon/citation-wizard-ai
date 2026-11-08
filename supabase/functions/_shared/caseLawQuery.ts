@@ -1,6 +1,7 @@
 // Court-aware case-number search prompts for citation-chat.
 // פ"ד (פסקי דין) is the printed series of the Supreme Court only, so the
 // "check פ"ד first" instruction is sent only for Supreme dockets.
+import { parseDocketNumber, extractDocket, docketPatternSource, isTrustedHost, TRUSTED_LEGAL } from "./trustedHosts.ts";
 
 export type DocketCourt = "supreme" | "lower" | "district_historic" | "unknown";
 
@@ -195,4 +196,89 @@ export function strictSnippetEvidence(
     }
   }
   return null;
+}
+
+// ── Party-name search: open-web complementary pass ──────────────────────────
+// When the restricted-domain party search finds nothing relevant, citation-chat
+// runs ONE open-web search. A model-proposed result from that pass is kept only
+// when a returned search result (title+snippet) holds its exact docket AND both
+// user-typed party names (strictSnippetEvidence). Every other field must be
+// read in that same proof text, or it is dropped (rendered as [חסר: ...]).
+// פ"ד fields are kept only as a claim: the caller must still verify them
+// against trusted publishers (`openWebProof` marks the result as suspect).
+
+
+export interface OpenWebPartyGrounding {
+  accepted: Array<Record<string, unknown>>;
+  rejected: number;
+}
+
+const quoteNorm = (s: string) =>
+  s.normalize("NFKC").replace(/[״“”"]/g, '"').replace(/[׳‘’']/g, "'").replace(/\s+/g, " ").trim();
+
+function dateForms(date: string): string[] {
+  const m = date.trim().match(/^(\d{1,2})[./-](\d{1,2})[./-](\d{4})$/);
+  if (!m) return [];
+  const d = parseInt(m[1], 10), mo = parseInt(m[2], 10), y = m[3];
+  const dd = String(d).padStart(2, "0"), mm = String(mo).padStart(2, "0");
+  const out = new Set<string>();
+  for (const a of [String(d), dd]) for (const b of [String(mo), mm]) for (const sep of [".", "/", "-"]) out.add(`${a}${sep}${b}${sep}${y}`);
+  return [...out];
+}
+
+export function groundOpenWebPartyResults(
+  modelResults: Array<Record<string, unknown>>,
+  searchResults: Array<Record<string, unknown>>,
+  party1: string,
+  party2: string,
+): OpenWebPartyGrounding {
+  const accepted: Array<Record<string, unknown>> = [];
+  let rejected = 0;
+  const s = (v: unknown) => (typeof v === "string" ? v.trim() : "");
+  for (const r of modelResults) {
+    if (!r || r.found === false) { rejected++; continue; }
+    const caseNumber = s(r.caseNumber);
+    const docket = parseDocketNumber(caseNumber) ?? extractDocket(caseNumber);
+    if (!docket) { rejected++; continue; }
+    const src = docketPatternSource(docket, { yearAliases: true });
+    const matcher = (text: string) => Array.from(text.normalize("NFKC").matchAll(new RegExp(src, "g")), (m) => m.index ?? 0);
+    const proofUrl = strictSnippetEvidence(searchResults, matcher, party1, party2);
+    if (!proofUrl) { rejected++; continue; }
+    const proof = searchResults.find((x) => x.url === proofUrl)!;
+    const text = quoteNorm(`${s(proof.title)} ${s(proof.snippet)}`);
+    const has = (v: string) => v.length > 0 && text.includes(quoteNorm(v));
+
+    // Fuller party names from the model survive only if the same text proves them.
+    const rp1 = s(r.party1), rp2 = s(r.party2);
+    const modelPartiesProven = !!rp1 && !!rp2 && strictSnippetEvidence([proof], matcher, rp1, rp2) === proofUrl;
+
+    // Case type must sit right before the docket in the proof text.
+    const caseType = s(r.caseType);
+    const ctNorm = quoteNorm(caseType);
+    const caseTypeProven = !!ctNorm && matcher(text).some((at) => text.slice(Math.max(0, at - ctNorm.length - 4), at).includes(ctNorm));
+
+    const date = s(r.date);
+    const dateProven = dateForms(date).some((f) => text.includes(f));
+    const year = s(r.year);
+    const yearProven = /^\d{4}$/.test(year) && text.includes(year);
+
+    const trustedSource = isTrustedHost(proofUrl, TRUSTED_LEGAL);
+    accepted.push({
+      ...r,
+      found: true,
+      caseNumber: docket.full,
+      caseType: caseTypeProven ? caseType : "",
+      party1: modelPartiesProven ? rp1 : party1,
+      party2: modelPartiesProven ? rp2 : party2,
+      date: dateProven ? date : "",
+      year: yearProven ? year : "",
+      court: has(s(r.court)) ? s(r.court) : "",
+      // A trusted legal host is named by its URL downstream; any other proof
+      // page carries the snippet-evidence label, never a database name.
+      databaseName: trustedSource ? "" : SNIPPET_EVIDENCE_DB_NAME,
+      source_url: proofUrl,
+      openWebProof: true,
+    });
+  }
+  return { accepted, rejected };
 }

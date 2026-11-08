@@ -55,7 +55,7 @@ function normalizeDatabaseName(urls: unknown, fallback: unknown): string {
   return "";
 }
 import { CASE_DOCKET_RE, CASE_TYPE_PREFIX_RE, CASE_TYPE_PREFIXES, findBareDocket } from "../_shared/caseTypePrefixes.ts";
-import { classifyDocketCourt, buildCaseNumberQuery, buildCaseSystemPrompt, shouldRunPartyFollowup, shouldRunUnanchoredFollowup, buildPartyFollowupQuery, mergeFollowupFields, strictSnippetEvidence, SNIPPET_EVIDENCE_DB_NAME, isLowerCourt, isPrintedDistrictRef } from "../_shared/caseLawQuery.ts";
+import { classifyDocketCourt, buildCaseNumberQuery, buildCaseSystemPrompt, shouldRunPartyFollowup, shouldRunUnanchoredFollowup, buildPartyFollowupQuery, mergeFollowupFields, strictSnippetEvidence, SNIPPET_EVIDENCE_DB_NAME, isLowerCourt, isPrintedDistrictRef, groundOpenWebPartyResults } from "../_shared/caseLawQuery.ts";
 import {
   TRUSTED_LEGAL,
   TRUSTED_PUB,
@@ -2963,7 +2963,7 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
                   // stripped from rawParty1 above, or detected via 20-char window).
                   // Already declared at outer scope: `userCaseTypeNorm`, `normalizeQuotes`.
 
-                  const results = rawResults.filter((r: Record<string, unknown>) => {
+                  const isRelevantPartyResult = (r: Record<string, unknown>): boolean => {
                     const rp1 = String(r.party1 || "");
                     const rp2 = String(r.party2 || "");
                     const rType = normalizeQuotes(String(r.caseType || ""));
@@ -3007,9 +3007,46 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
                       }
                     }
                     return true;
-                  });
+                  };
+                  let results = rawResults.filter(isRelevantPartyResult);
 
                   console.log(`[case-law] Filtered ${rawResults.length} → ${results.length} relevant results`);
+
+                  // ── Open-web complementary search (at most once) ──
+                  // The restricted legal domains often hold no open page for
+                  // older rulings. Search once more without the domain filter;
+                  // a result survives only if one returned page shows its exact
+                  // docket next to both parties (groundOpenWebPartyResults).
+                  // Skipped when the tiered helper already searched the open web.
+                  if (results.length === 0 && !partySearchRun.tier2_fired) {
+                    try {
+                      const { search_domain_filter: _restricted, ...openWebBody } = partySearchBody;
+                      console.log(`[case-law] party_openweb firing for "${searchQuery}"`);
+                      const owResp = await trackedFetch("https://api.perplexity.ai/chat/completions", {
+                        method: "POST",
+                        headers: { Authorization: `Bearer ${PERPLEXITY_API_KEY}`, "Content-Type": "application/json" },
+                        body: JSON.stringify(openWebBody),
+                      }, { stage: "case_party_retrieval_tier2" });
+                      if (owResp.ok) {
+                        const ow = await owResp.json();
+                        const owSearch: Array<Record<string, unknown>> = Array.isArray(ow.search_results) ? ow.search_results : [];
+                        const owRaw = String(ow.choices?.[0]?.message?.content ?? "").match(/\{[\s\S]*\}/)?.[0];
+                        let owParsed: Record<string, unknown> | null = null;
+                        if (owRaw) {
+                          try { owParsed = JSON.parse(owRaw.replace(/([\u0590-\u05FF])"([\u0590-\u05FF])/g, "$1\u05F4$2")); }
+                          catch { try { owParsed = JSON.parse(owRaw); } catch { owParsed = null; } }
+                        }
+                        const owModel = owParsed && Array.isArray(owParsed.results) ? owParsed.results as Array<Record<string, unknown>> : [];
+                        const grounded = groundOpenWebPartyResults(owModel, owSearch, party1, party2);
+                        results = grounded.accepted.filter(isRelevantPartyResult);
+                        console.log(`[case-law] party_openweb model=${owModel.length} grounded=${grounded.accepted.length} rejected=${grounded.rejected} kept=${results.length} sources=${JSON.stringify(results.map((r) => r.source_url))}`);
+                      } else {
+                        console.log(`[case-law] party_openweb http ${owResp.status} → no results`);
+                      }
+                    } catch (e) {
+                      console.log(`[case-law] party_openweb failed: ${e instanceof Error ? e.message : String(e)}`);
+                    }
+                  }
 
                   // ── Publication-data hallucination guard ──
                   // Takdin/lite.takdin pages mix metadata between neighboring cases, so the
@@ -3107,7 +3144,8 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
                     const trusted = isTrustedPubUrl(r.source_url);
                     const halfPub = (!!r.padi_volume) !== (!!r.padi_page);
                     const dateMissing = !r.date || !String(r.date).trim();
-                    const suspect = yearMismatch || halfPub || (claimsPub && dateMissing) || !trusted;
+                    // Open-web פ"ד claims are never accepted without trusted verification.
+                    const suspect = yearMismatch || halfPub || (claimsPub && dateMissing) || !trusted || r.openWebProof === true;
                     console.log(
                       `[case-law] pub-guard: ${r.caseType} ${r.caseNumber} ` +
                       `dy=${dy} ry=${ry} trustedUrl=${trusted} suspect=${suspect} src=${r.source_url ?? "none"}`,

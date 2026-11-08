@@ -101,3 +101,6 @@
 - [x] Stage 4 — gated free-form interpretation with source-span checks; live `google/gemini-3.8-flash` calls stay off. Report: reports/foreign-freeform/STAGE4_FREEFORM_INTERPRETATION.md.
 - [ ] Reporter priority (Rule 10.3/T2) — BLOCKED: needs authorized edition-21 check.
 - [ ] Pre-existing: 2 failing tests in wordFootnoteWorkflow.test.tsx (reproduced without Stage 2 changes) — awaits owner decision.
+
+## Israeli party-name search
+- [x] One open-web search when the legal databases find nothing; kept only if one page shows the exact case number with both parties; פ"ד still verified with trusted publishers (offline tests). Server function not yet deployed.
