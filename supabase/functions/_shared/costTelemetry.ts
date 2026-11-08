@@ -63,7 +63,7 @@ export const COST_STAGES = [
   "article_retrieval_tier1", "article_retrieval_tier2",
   "decision_retrieval_tier1", "decision_retrieval_tier2",
   "author_check", "biblio_fallback",
-  "foreign_search_tier1", "foreign_search_tier2",
+  "foreign_search_tier1", "foreign_search_tier2", "freeform_parser",
   "refill_tier1", "refill_tier2",
   // legal-research-v2 (explicit at each call site)
   "v2_router", "v2_direct_chat", "v2_research_agent", "v2_support_verifier", "v2_temporal_validity",

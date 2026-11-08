@@ -227,7 +227,7 @@ describe("legacy standalone article adapter", () => {
     expect(reply).toContain("[חסר: עמוד], 213–214");
     expect(reply).toContain("⚠️");
     expect(h.invokeFunction).toHaveBeenCalledTimes(1);
-    expect(h.provider).toHaveBeenCalledTimes(lookup === "unavailable" ? 0 : 2);
+    expect(h.provider).toHaveBeenCalledTimes(lookup === "unavailable" ? 0 : lookup === "timeout" ? 1 : 2);
     expect(h.handleRefundResponse).toHaveBeenCalledTimes(1);
   });
 

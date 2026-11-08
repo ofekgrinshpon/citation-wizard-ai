@@ -78,6 +78,7 @@ import {
 } from "../_shared/trustedHosts.ts";
 import { normalizeHebrewNumberRanges } from "../_shared/hebrewNumberRange.ts";
 import { runForeignLookup, articleLookupFallback, type ForeignLookupResult } from "./foreignLookup.ts";
+import { bindFreeformLookup, chargeModel, createCitationBudget, freeformAwaitingModel, freeformLiveEnabled, freeformParserTransportAvailable, markBudgetUnknown, resolveFreeformBeforeLookup, type FreeformParserTransport } from "../_shared/citationPure/freeformInterpret.ts";
 import { boundBookCompletion, resolveBookCompletion, frameBookFinal } from "../_shared/citationPure/bookFinal.ts";
 import type { CitationRecoveryInput } from "../_shared/citationRecovery.ts";
 import { isStatuteLookupRequest, validateStatuteRequest, resolveStatuteLookup } from "./statuteRoute.ts";
@@ -1796,8 +1797,24 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
     const preservePasted = () => completeResponse(new Response(JSON.stringify({
       content: `${pastedContract?.rawInput ?? ""}\n⚠️ ${pastedContract ? pastedCitationWarning(pastedContract) : "חסרים פרטים"}`,
     }), { headers: { ...corsHeaders, "Content-Type": "application/json" } }));
+    // A validated free-form handoff is a foreign book, article or case. A slash
+    // number or a Hebrew comment in the same paste does not keep it on preserve.
+    const freeformRawEarly = typeof foreignLookupRequest?.rawInput === "string" ? foreignLookupRequest.rawInput : "";
+    const freeformServerEnv = {
+      FREEFORM_PARSER_LIVE: Deno.env.get("FREEFORM_PARSER_LIVE"),
+      FREEFORM_PARSER_MODEL: Deno.env.get("FREEFORM_PARSER_MODEL"),
+    };
+    const deferFreeformModel = foreignLookupRequest?.freeformHandoff === true
+      && freeformAwaitingModel(freeformRawEarly)
+      && freeformParserTransportAvailable(freeformServerEnv);
+    const freeformEarly = foreignLookupRequest?.freeformHandoff === true && !deferFreeformModel ? bindFreeformLookup(foreignLookupRequest) : null;
+    if (freeformEarly?.action === "stop") {
+      return completeResponse(new Response(JSON.stringify({ content: freeformEarly.reply }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      }));
+    }
     // Source binding must reject even malformed recovery payloads before cache or usage.
-    if (pastedContract.route === "preserve" || (pastedContract.route === "foreign" && pastedContract.sourceKind === "case" && !foreignLookupRequest)) {
+    if (!deferFreeformModel && freeformEarly?.action !== "lookup" && (pastedContract.route === "preserve" || (pastedContract.route === "foreign" && pastedContract.sourceKind === "case" && !foreignLookupRequest))) {
       return preservePasted();
     }
     const recoveryInput = citationRecoveryInput({
@@ -1968,6 +1985,22 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
     // renders the citation with the existing Bluebook renderers. One citation
     // operation = one credit; the single Tier-2 open-web retry is included.
     let foreignLookupResult: ForeignLookupResult | null = null;
+    const citationBudget = createCitationBudget();
+    const parserTransport = (): FreeformParserTransport | null => {
+      if (!freeformLiveEnabled(freeformServerEnv)) return null;
+      return async (request) => {
+        try {
+          const resp = await trackedFetch(request.endpoint, {
+            method: "POST",
+            headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
+            body: JSON.stringify({ model: request.model, messages: request.messages }),
+          }, { stage: "freeform_parser" });
+          return { status: resp.status, text: await resp.text() };
+        } catch {
+          return { thrown: true };
+        }
+      };
+    };
     // Stage 4: a typed statute request always terminates with a typed result
     // (grounded, unmatched, ambiguous, or an honest error). It never falls
     // through to the generic model and is never retried here.
@@ -1979,6 +2012,7 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
         onProviderUnknown: markCitationProviderUnknown,
         onError: (flErr) => console.error("foreign statute lookup error:", flErr),
         ...(diagnostic ? { diagnosticObserver: diagnostic.collector.observe } : {}),
+        budget: citationBudget,
       });
       return completeResponse(new Response(JSON.stringify({ content: "", foreignLookup: statuteResult,
         ...diagnosticEnvelope(statuteResult.error === "lookup_failed" ? "lookup_failed" : "lookup_complete") }), {
@@ -1998,18 +2032,34 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
         ["US", "UK", "OTHER", "UNKNOWN"].includes(flJur) &&
         flRaw.trim()
       ) {
+        const freeformPrepared = foreignLookupRequest.freeformHandoff === true
+          ? await resolveFreeformBeforeLookup(flRaw, citationBudget, parserTransport(), freeformServerEnv)
+          : { action: "passthrough" as const };
+        if (freeformPrepared.action === "stop") {
+          return completeResponse(new Response(JSON.stringify({ content: freeformPrepared.reply }), {
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          }));
+        }
+        if (freeformPrepared.action === "passthrough" && foreignLookupRequest.freeformHandoff === true) {
+          return completeResponse(new Response(JSON.stringify({
+            content: "פענוח הניסוח החופשי לא אומת מול הקלט; לא בוצע חיפוש ולא נבנה אזכור.",
+          }), { headers: { ...corsHeaders, "Content-Type": "application/json" } }));
+        }
+        const parsedForLookup = freeformPrepared.action === "search" ? freeformPrepared.parsedFields : flParsed;
+        const kindForLookup = freeformPrepared.action === "search" ? freeformPrepared.kind : flKind;
+        const jurForLookup = freeformPrepared.action === "search" ? freeformPrepared.jurisdiction : flJur;
         const pplxKey = Deno.env.get("PERPLEXITY_API_KEY");
-        if (pplxKey || flKind === "journal_article") {
+        if (pplxKey || kindForLookup === "journal_article") {
           try {
             foreignLookupResult = await runForeignLookup(
-              { kind: flKind, jurisdiction: flJur, rawInput: flRaw, parsedFields: flParsed },
-              { apiKey: pplxKey, fetchImpl: trackedFetch, ...(diagnostic ? { diagnosticObserver: diagnostic.collector.observe } : {}) },
+              { kind: kindForLookup, jurisdiction: jurForLookup, rawInput: flRaw, parsedFields: parsedForLookup },
+              { apiKey: pplxKey, fetchImpl: trackedFetch, budget: citationBudget, ...(diagnostic ? { diagnosticObserver: diagnostic.collector.observe } : {}) },
             );
           } catch (flErr) {
             markCitationProviderUnknown();
             console.error("foreign lookup error:", flErr);
-            foreignLookupResult = flKind === "journal_article"
-              ? articleLookupFallback({ kind: flKind, jurisdiction: flJur, rawInput: flRaw, parsedFields: flParsed }, "lookup_failed")
+            foreignLookupResult = kindForLookup === "journal_article"
+              ? articleLookupFallback({ kind: kindForLookup, jurisdiction: jurForLookup, rawInput: flRaw, parsedFields: parsedForLookup }, "lookup_failed")
               : null;
           }
           // Identity matched + at least one grounded new field → the client
@@ -2037,9 +2087,9 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
         // Existing typed book/chapter requests are terminal even when discovery
         // is unavailable or unmatched. Settlement stays with completeResponse;
         // no generic generation, resend or new refund policy is introduced.
-        if (flKind === "book" || flKind === "book_chapter") {
+        if (kindForLookup === "book" || kindForLookup === "book_chapter") {
           const result: ForeignLookupResult = foreignLookupResult ?? {
-            kind: flKind, jurisdiction: flJur, fields: {}, grounded: {}, provenance: {}, sources: [],
+            kind: kindForLookup, jurisdiction: jurForLookup, fields: {}, grounded: {}, provenance: {}, sources: [],
             identity: { matched: false, anchors: [], conflicts: [] },
             diagnostics: { tier1Queried: !!pplxKey, tier2Fired: false },
             error: pplxKey ? "lookup_failed" : "missing_perplexity_credentials",
@@ -2055,6 +2105,13 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
       }
     }
 
+    // A free-form handoff never continues into the generic formatter. That call
+    // would be another model request and could fill missing facts from memory.
+    if (foreignLookupRequest?.freeformHandoff === true) {
+      return completeResponse(new Response(JSON.stringify({
+        content: "פענוח הניסוח החופשי לא הושלם לכדי אזכור; לא נשלחה קריאת מודל נוספת.",
+      }), { headers: { ...corsHeaders, "Content-Type": "application/json" } }));
+    }
     // Bounded foreign completion never escapes into Israeli docket enrichment or the generic model on failure.
     if (pastedContract.route === "foreign" && pastedContract.sourceKind === "case") return preservePasted();
     let caseLawHint = "";
@@ -3889,24 +3946,36 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
       return m;
     });
 
-    const response = await trackedFetch(
-      "https://ai.gateway.lovable.dev/v1/chat/completions",
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${LOVABLE_API_KEY}`,
-          "Content-Type": "application/json",
+    if (citationBudget.unknown || !chargeModel(citationBudget)) {
+      return completeResponse(new Response(JSON.stringify({
+        content: "לא נשלחה קריאת מודל נוספת.",
+      }), { headers: { ...corsHeaders, "Content-Type": "application/json" } }));
+    }
+    let response: Response;
+    try {
+      response = await trackedFetch(
+        "https://ai.gateway.lovable.dev/v1/chat/completions",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${LOVABLE_API_KEY}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            model: "google/gemini-2.5-flash",
+            messages: [
+              { role: "system", content: SYSTEM_PROMPT },
+              ...enhancedMessages,
+            ],
+          }),
         },
-        body: JSON.stringify({
-          model: "google/gemini-2.5-flash",
-          messages: [
-            { role: "system", content: SYSTEM_PROMPT },
-            ...enhancedMessages,
-          ],
-        }),
-      },
-      { stage: "formatter" },
-    );
+        { stage: "formatter" },
+      );
+    } catch (error) {
+      markBudgetUnknown(citationBudget);
+      throw error;
+    }
+    if (response.status === 408 || response.status === 502 || response.status === 504) markBudgetUnknown(citationBudget);
 
     if (!response.ok) {
       if (response.status === 429) {

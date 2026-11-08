@@ -8,6 +8,7 @@ import * as recovery from "../../supabase/functions/_shared/citationRecovery";
 import * as usage from "../../supabase/functions/_shared/citationUsageGuard";
 import * as pasted from "../../supabase/functions/_shared/pastedCitation";
 import * as bookFinal from "../../supabase/functions/_shared/citationPure/bookFinal";
+import * as freeformInterpret from "../../supabase/functions/_shared/citationPure/freeformInterpret";
 import { splitCitationWarnings } from "@/lib/citationSegments";
 import * as prefixes from "../../supabase/functions/_shared/caseTypePrefixes";
 import * as statute from "../../supabase/functions/citation-chat/statuteRoute";
@@ -105,6 +106,7 @@ async function vertical(f: { id: string; raw: string; type: "foreign_book" | "fo
       if (path.includes("caseTypePrefixes")) return prefixes;
       if (path.includes("statuteRoute")) return statute;
       if (path.includes("citationPure/bookFinal")) return bookFinal;
+      if (path.includes("freeformInterpret")) return freeformInterpret;
       if (path.includes("foreignLookup")) return { runForeignLookup: lookup, articleLookupFallback };
       if (path.includes("costTelemetry")) return { withCostTelemetry: (_: unknown, fn: () => unknown) => fn(), setTelemetryFromBody: () => {}, trackedFetch: search };
       if (path.includes("citationDiagnosticGate")) return { isCitationDiagnosticPreflight: () => false };

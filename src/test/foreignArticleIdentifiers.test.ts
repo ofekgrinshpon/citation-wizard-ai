@@ -137,7 +137,7 @@ describe("bounded same-work identifier evidence", () => {
     const test = replay(`${original} DOI ${doi}`, [[donor(bibtex.replace(`, doi={${doi}}`, ""))]]);
     expect((await test.result).articleResolution).toBe("incomplete");
     expect((await test.result).fields).toEqual({});
-    expect(test.calls.filter((call) => call.body)).toHaveLength(2);
+    expect(test.calls.filter((call) => call.body)).toHaveLength(1);
     expect(test.calls.filter((call) => !call.body)).toHaveLength(1);
   });
   it("keeps the saved October 8 evidence as an honest negative for DOI-only lookup", async () => {
@@ -146,7 +146,7 @@ describe("bounded same-work identifier evidence", () => {
     expect(result.articleResolution).toBe("incomplete");
     expect(result.identity.matched).toBe(false);
     expect(result.fields).toEqual({});
-    expect(test.calls.filter((call) => call.body)).toHaveLength(2);
+    expect(test.calls.filter((call) => call.body)).toHaveLength(1);
     expect(test.calls.filter((call) => !call.body)).toHaveLength(1);
   });
   it("uses only the existing selected strong-source page inspection for citation metadata", async () => {

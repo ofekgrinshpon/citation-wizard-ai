@@ -1,5 +1,6 @@
 /** Pure article parsing shared by the client and edge lookup. No I/O or formatting. */
 import { extractWorkIdentifiers, normalizeDoi, normalizeWorkUrl } from "./workIdentifiers.ts";
+import { authorNameParts, compatiblePersonNames } from "./citationPure/authorNames.ts";
 export type ArticleFields = Record<string, string>;
 export interface ArticleRecord {
   fields: ArticleFields;
@@ -543,26 +544,14 @@ export function articleRecordFromPage(text: string, anchors: ArticleFields): Art
 }
 
 function authorNames(value: string): Array<{ surname: string; given: string[]; suffix?: string }> | null {
-  // "et al." does not establish membership/order and cannot justify expansion.
-  if (/\bet al\.?/i.test(value)) return null;
-  return value.replace(/,\s*(Jr\.?|Sr\.?|II|III|IV)(?=\s*(?:,|&|and\b|$))/g, " $1")
-    .split(/\s*(?:&|;)\s*|\s+and\s+|,\s*/)
-    .map((name) => {
-      const tokens = articleKey(name).split(" ").filter(Boolean);
-      const suffix = /^(?:jr|sr|ii|iii|iv)$/.test(tokens[tokens.length - 1] ?? "") ? tokens.pop() : undefined;
-      return { surname: tokens.pop() ?? "", given: tokens, suffix };
-    });
+  return authorNameParts(value);
 }
 
 function compatibleAuthorNames(a: string, b: string): boolean {
-  const left = authorNames(a), right = authorNames(b);
-  if (!left || !right) return articleKey(a) === articleKey(b);
-  return left.length === right.length && left.every((name, i) => {
-    const other = right[i];
-    if (!name.surname || name.surname !== other.surname || (name.suffix && other.suffix && name.suffix !== other.suffix)) return false;
-    return name.given.every((part, j) => !other.given[j] || part === other.given[j]
-      || (Math.min(part.length, other.given[j].length) === 1 && part[0] === other.given[j][0]));
-  });
+  if (compatiblePersonNames(a, b)) return true;
+  // "et al." still has no membership. Identical text remains the only fallback.
+  if (/\bet al\.?/i.test(a) || /\bet al\.?/i.test(b)) return articleKey(a) === articleKey(b);
+  return false;
 }
 
 /** Choose an evidenced expansion without mutating anchors or losing any detail. */

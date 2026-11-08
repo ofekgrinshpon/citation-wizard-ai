@@ -160,14 +160,14 @@ describe("search completion", () => {
     expect(r.fields).toMatchObject({ reporter: "AC", firstPage: "562" });
   });
 
-  it("runs the open search when the related record has no usable details, and never a third", async () => {
+  it("inspects the related record when it has no usable details, and does not add a third retrieval", async () => {
     const { p, searches, pages } = run(uk("Donoghue v Stevenson"), [
       [{ title: "Donoghue v Stevenson", url: "https://www.bailii.org/uk/cases/UKHL/1932/100.html", snippet: "The snail in the bottle case." }],
       [],
     ]);
     const r = await p;
-    expect(r.diagnostics.tier2Fired).toBe(true);
-    expect(searches).toHaveLength(2);
+    expect(r.diagnostics.tier2Fired).toBe(false);
+    expect(searches).toHaveLength(1);
     expect(pages()).toBe(1);
     expect(r.fields).toEqual({});
   });

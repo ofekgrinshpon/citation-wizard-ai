@@ -70,7 +70,7 @@ import { renderUnpublishedLocal } from "@/lib/unpublishedWorkLocal";
 import { renderPeriodicalLocal } from "@/lib/periodicalLocal";
 import { renderBookLocal } from "@/lib/bookLocal";
 import { citationManualChoice, preparePastedCitation } from "@/lib/pastedCitationAdapter";
-import { planCitationEvidence, planLocalCitation, planTypedRequest, resolveCitationResponse, selectForeignCaseChoice, CHAT_HOST } from "@/lib/citationPlanner";
+import { planCitationEvidence, planLocalCitation, planTypedRequest, resolveCitationResponse, selectForeignCaseChoice, foreignFreeformSourceType, CHAT_HOST } from "@/lib/citationPlanner";
 import type { CitationManualChoice } from "../../supabase/functions/_shared/pastedCitation";
 
 interface PendingVerification {
@@ -302,7 +302,8 @@ const Index = () => {
       article?.manualChoice ?? (article?.manual ? citationManualChoice(article.sourceType) : null));
     const { pasted } = evidence;
     const planInput = { evidence, sourceType: article?.sourceType ?? null, input: article?.rawInput ?? canonicalRaw, isPinpoint: false, manual: !!article?.manual };
-    const local = evidence.preserve ? { origin: "preserve" as const, resolution: evidence.preserve } : planLocalCitation(planInput, CHAT_HOST);
+    const freeformBypassesPreserve = !article?.manual && !article?.manualChoice && foreignFreeformSourceType(canonicalRaw) !== null;
+    const local = evidence.preserve && !freeformBypassesPreserve ? { origin: "preserve" as const, resolution: evidence.preserve } : planLocalCitation(planInput, CHAT_HOST);
     if ("resolution" in local) {
       if (local.origin !== "preserve") reportZeroWork(telemetry, "local_foreign_formatter", "deterministic");
       if (local.origin !== "statute_local" && !isCurrent()) throw Object.assign(new Error("CITATION_RETRY_STALE"), { handled: true });
@@ -734,7 +735,10 @@ const Index = () => {
     // One telemetry action per wizard submission (attribution only).
     const tel = sourceTelemetry(newTelemetryBatch("uniform_citation"));
     const pasted = preparePastedCitation(rawText.replace(/^\s*\[בחירת תוצאה\]\s*/, ""));
-    const resolved = pasted.local || pasted.contract.sourceKind === "case" && pasted.contract.route === "foreign"
+    const freeformType = foreignFreeformSourceType(rawText);
+    const resolved = freeformType
+      ? { sourceType: freeformType, source: "regex" as const }
+      : pasted.local || pasted.contract.sourceKind === "case" && pasted.contract.route === "foreign"
       ? { sourceType: pasted.country ? (pasted.country.family === "case" ? "foreign_case_other" : "foreign") : pasted.detection?.sourceType ?? (pasted.contract.jurisdiction === "US" ? "foreign_case_us" : "foreign_case_other") as SourceType, source: "regex" as const }
       : await resolveSourceType(normalized, tel);
     const sourceType = resolved.sourceType;
@@ -1204,7 +1208,7 @@ const Index = () => {
                           try {
                             const editTel = sourceTelemetry(newTelemetryBatch("uniform_citation"));
                             const normalized = normalizeAbbreviations(newContent);
-                            const sourceType = detectSourceType(normalized);
+                            const sourceType = foreignFreeformSourceType(normalized) ?? detectSourceType(normalized);
                             const sourceLabel = SOURCE_TYPE_LABELS[sourceType];
                             let prompt = normalized;
                             if (sourceType !== "unknown") {

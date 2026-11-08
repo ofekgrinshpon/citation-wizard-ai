@@ -57,7 +57,7 @@ describe("combined normalization and identifier whole-page parsing", () => {
     expect(result.identity.matched).toBe(false);
     expect(result.identity.conflicts).toContain(`articleTitle:A Different Work vs ${title}`);
     expect(result.fields).toEqual({});
-    expect(test.searches).toHaveLength(2);
+    expect(test.searches).toHaveLength(1);
     expect(test.pages).toHaveLength(1);
   });
   it("retains same-identifier wrong-author conflicts and does not replace the user's title/byline", async () => {
@@ -95,7 +95,7 @@ describe("combined normalization and identifier whole-page parsing", () => {
     expect(result.articleResolution).toBe("incomplete");
     expect(result.identity.matched).toBe(false);
     expect(result.fields).toEqual({});
-    expect(test.searches).toHaveLength(2);
+    expect(test.searches).toHaveLength(1);
     expect(test.pages).toHaveLength(1);
   });
   it("does not fill DOI identity from an otherwise complete export missing its DOI", async () => {

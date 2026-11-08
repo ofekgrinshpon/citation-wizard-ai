@@ -42,7 +42,7 @@ import { renderUnpublishedLocal } from "@/lib/unpublishedWorkLocal";
 import { renderPeriodicalLocal } from "@/lib/periodicalLocal";
 import { renderBookLocal } from "@/lib/bookLocal";
 import { citationManualChoice } from "@/lib/pastedCitationAdapter";
-import { planCapabilityGate, planCitationEvidence, planLocalCitation, planTypedRequest, resolveCitationResponse, RUNNER_HOST } from "@/lib/citationPlanner";
+import { planCapabilityGate, planCitationEvidence, planLocalCitation, planTypedRequest, resolveCitationResponse, foreignFreeformSourceType, RUNNER_HOST } from "@/lib/citationPlanner";
 import type { CitationManualChoice, PastedCitationContract } from "../../supabase/functions/_shared/pastedCitation";
 import { citationDiagnosticBody, observeCitationDiagnostic, type CitationDiagnosticActivation } from "@/lib/citationDiagnostic";
 
@@ -161,14 +161,15 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
   // Batch B: evidence and manual conflicts are planned before any cache/classifier.
   const evidence = planCitationEvidence(opts.rawInput, opts.manualChoice ?? citationManualChoice(opts.overrideType));
   const { pasted } = evidence;
-  if (evidence.preserve) {
+  const freeformBypassesPreserve = !(opts.overrideType || opts.manualChoice) && foreignFreeformSourceType(opts.rawInput) !== null;
+  if (evidence.preserve && !freeformBypassesPreserve) {
     const sourceType = opts.overrideType ?? pasted.detection?.sourceType ?? "foreign";
     return { ...evidence.preserve, sourceType, sourceLabel: SOURCE_TYPE_LABELS[sourceType],
       telemetry: opts.telemetry, fromVerifiedStore: false, status: "warning" };
   }
 
   // AU/CA routes are terminal before normalization, classifier or verified-store access.
-  if (pasted.country && pasted.local) {
+  if (pasted.country && pasted.local && !freeformBypassesPreserve) {
     const sourceType: SourceType = pasted.country.family === "case" ? "foreign_case_other" : "foreign";
     const local = planLocalCitation({ evidence, sourceType, input: opts.rawInput, isPinpoint: false, manual: !!opts.manualChoice || !!opts.overrideType }, RUNNER_HOST);
     if ("resolution" in local) return { ...local.resolution, sourceType, sourceLabel: SOURCE_TYPE_LABELS[sourceType], fromVerifiedStore: false, status: "warning", telemetry: opts.telemetry };
@@ -188,7 +189,10 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
   const isPinpoint = PINPOINT_RE.test(rawInput);
 
   let sourceType: SourceType;
-  if (opts.overrideType) {
+  const freeformType = opts.overrideType || opts.manualChoice ? null : foreignFreeformSourceType(normalized);
+  if (freeformType) {
+    sourceType = freeformType;
+  } else if (opts.overrideType) {
     sourceType = opts.overrideType;
   } else if (pasted.contract.sourceKind === "case" && pasted.contract.route === "foreign") {
     sourceType = pasted.detection?.sourceType ?? (pasted.contract.jurisdiction === "US" ? "foreign_case_us" : "foreign_case_other");

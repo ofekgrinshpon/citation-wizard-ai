@@ -67,13 +67,13 @@ describe("foreign article record identity", () => {
     expect(calls.filter((call) => call.body)).toHaveLength(2);
   });
 
-  it("uses richer Tier 2 evidence at the same URL without duplicating the source or inspection", async () => {
-    const { result, calls } = lookup(input, [[{ ...original, snippet: "Samuel D. Warren and Louis D. Brandeis" }], [original]]);
+  it("uses richer Tier 2 evidence at the same URL when the first hit is not a page candidate", async () => {
+    const { result, calls } = lookup(input, [[{ ...original, title: "Catalog record", snippet: "Samuel D. Warren and Louis D. Brandeis" }], [original]]);
     const found = await result;
     expect(found.fields.firstPage).toBe("193");
     expect(found.sources).toHaveLength(1);
     expect(calls.filter((call) => call.body)).toHaveLength(2);
-    expect(calls.filter((call) => !call.body)).toHaveLength(1);
+    expect(calls.filter((call) => !call.body)).toHaveLength(0);
   });
 
   it("binds a tuple to its citation rather than the first tuple on the page", async () => {
