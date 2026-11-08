@@ -90,7 +90,6 @@ describe("temporary citation lookup observation", () => {
 
   it.each([
     ["http_error", { status: 429 }, 429, 0],
-    ["json_error", { jsonError: true }, 200, 2],
     ["invalid_shape", { payload: { unexpected: "PRIVATE_JSON_BODY" } }, 200, 2],
   ] as const)("records %s per tier and preserves existing rescue", async (status, fixture, httpStatus, reads) => {
     const test = await parity([fixture, fixture]);
@@ -100,6 +99,14 @@ describe("temporary citation lookup observation", () => {
     expect(test.trace.stopReason).toBe("tier2_exhausted");
     expect(test.trace.final.resolution).toBe("incomplete");
     expect(JSON.stringify(test.trace)).not.toMatch(/PRIVATE|SENTINEL|secret|https:/);
+  });
+
+  it("does not rescue after the search body read is interrupted", async () => {
+    const test = await parity([{ jsonError: true }, { jsonError: true }]);
+    expect(test.calls).toHaveLength(1);
+    expect(test.reads).toEqual({ json: 1, page: 0 });
+    expect(test.trace.searches.tier1).toMatchObject({ status: "json_error", httpStatus: 200, resultCount: 0 });
+    expect(test.trace.searches.tier2.status).toBe("not_started");
   });
 
   it("does not send another search after an unknown search failure", async () => {
@@ -138,9 +145,9 @@ describe("temporary citation lookup observation", () => {
     const result = runForeignLookup(input, { fetchImpl, apiKey: "mock", diagnosticObserver: collector.observe });
     await vi.advanceTimersByTimeAsync(40_000);
     expect((await result).articleResolution).toBe("incomplete");
-    expect(reads).toBe(2);
+    expect(reads).toBe(1);
     expect(collector.snapshot().searches.tier1).toMatchObject({ status: "timeout", httpStatus: 200 });
-    expect(collector.snapshot().searches.tier2).toMatchObject({ status: "timeout", httpStatus: 200 });
+    expect(collector.snapshot().searches.tier2.status).toBe("not_started");
   });
 
   it("counts weak, strong-unparsed and missing-URL results without accepting them", async () => {

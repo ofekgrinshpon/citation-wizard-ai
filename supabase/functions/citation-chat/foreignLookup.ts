@@ -678,7 +678,7 @@ async function fetchPageText(
       clearTimeout(timer);
     }
   } catch {
-    if (budget && !reading) markBudgetUnknown(budget);
+    if (budget) markBudgetUnknown(budget);
     safeObserveCitationDiagnostic(observer, { type: "page", tier, status: timedOut ? "timeout" : reading ? "read_error" : "fetch_error", httpStatus: status });
     return null;
   }
@@ -723,10 +723,29 @@ async function searchOnce(
       safeObserveCitationDiagnostic(observer, { type: "search", tier, status: "http_error", httpStatus: status, resultCount: 0 });
       return [];
     }
+    let fullBody: string | undefined;
+    try {
+      fullBody = typeof resp.text === "function" ? await resp.text() : undefined;
+    } catch {
+      if (budget) markBudgetUnknown(budget);
+      safeObserveCitationDiagnostic(observer, { type: "search", tier, status: ctrl.signal.aborted ? "timeout" : "json_error", httpStatus: status, resultCount: 0 });
+      return [];
+    }
+    let json: { results?: RawResult[] } | null = null;
     let jsonFailed = false;
-    const json = (await resp.json().catch(() => { jsonFailed = true; return null; })) as { results?: RawResult[] } | null;
+    if (fullBody !== undefined) {
+      try { json = JSON.parse(fullBody) as { results?: RawResult[] }; }
+      catch { jsonFailed = true; }
+    } else {
+      try { json = await resp.json() as { results?: RawResult[] }; }
+      catch {
+        if (budget) markBudgetUnknown(budget);
+        safeObserveCitationDiagnostic(observer, { type: "search", tier, status: ctrl.signal.aborted ? "timeout" : "json_error", httpStatus: status, resultCount: 0 });
+        return [];
+      }
+    }
     const results = Array.isArray(json?.results) ? json!.results! : [];
-    safeObserveCitationDiagnostic(observer, { type: "search", tier, status: jsonFailed ? (ctrl.signal.aborted ? "timeout" : "json_error") : Array.isArray(json?.results) ? "ok" : "invalid_shape", httpStatus: status, resultCount: results.length });
+    safeObserveCitationDiagnostic(observer, { type: "search", tier, status: jsonFailed ? "json_error" : Array.isArray(json?.results) ? "ok" : "invalid_shape", httpStatus: status, resultCount: results.length });
     return results;
   } catch {
     if (budget) markBudgetUnknown(budget);

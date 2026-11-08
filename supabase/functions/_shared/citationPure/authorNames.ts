@@ -146,7 +146,12 @@ function nameCandidates(evidence: string): PersonalName[] {
       found.push(person);
     }
   };
-  for (const match of evidence.matchAll(/\b([A-Z][A-Za-z'’.-]{2,}),\s+((?:[A-Z]\.?\s+){0,2}[A-Z][a-zA-Z'’.-]{1,})/g)) add(`${match[1]}, ${match[2]}`);
+  // Bibliographic "Smith, Anthony D." keeps the initial. A title after the comma, or two full words, is not one person.
+  const initial = String.raw`(?:[A-Z]\.|[A-Z](?![A-Za-z]))`;
+  const givenThenInitial = String.raw`[A-Z][A-Za-z'’\-]+(?:\s+[A-Z][A-Za-z'’\-]+)?(?:\s+${initial}){1,3}`;
+  for (const match of evidence.matchAll(new RegExp(String.raw`\b([A-Z][A-Za-z'’.-]{2,}),\s+(${givenThenInitial})`, "g"))) {
+    add(`${match[1]}, ${match[2]}`);
+  }
   for (const clause of evidence.split(/[—–|]|(?:,\s+)|[;:()]+/)) {
     const words = [...clause.matchAll(/[A-Z][A-Za-z'’.-]*/g)].map((match) => match[0]);
     if (words.length >= 2 && words.length <= 4) add(words.join(" "));

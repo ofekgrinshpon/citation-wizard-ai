@@ -42,7 +42,7 @@ type Handler = (req: Request) => Promise<Response>;
 
 let handler: Handler;
 const calls: Array<{ url: string; body: string }> = [];
-let script: { hits: Hit[]; page: string | null; throwOnSearch: number | null; searches: number };
+let script: { hits: Hit[]; page: string | null; throwOnSearch: number | null; searches: number; interruptBody: boolean };
 
 function installHandler() {
   const modules: Record<string, unknown> = {
@@ -61,6 +61,7 @@ function installHandler() {
       if (url.includes("api.perplexity.ai/search")) {
         script.searches += 1;
         if (script.throwOnSearch === script.searches) throw new Error("socket hang up");
+        if (script.interruptBody) return { ok: true, status: 200, text: async () => { throw new Error("body interrupted"); }, json: async () => { throw new Error("body interrupted"); } } as unknown as Response;
         return new Response(JSON.stringify({ results: script.hits }), { status: 200 });
       }
       if (script.page === null) throw new Error("page fetch was not part of this fixture");
@@ -94,7 +95,7 @@ function installHandler() {
 
 function reset(next: Partial<typeof script> = {}) {
   calls.length = 0;
-  script = { hits: [], page: null, throwOnSearch: null, searches: 0, ...next };
+  script = { hits: [], page: null, throwOnSearch: null, searches: 0, interruptBody: false, ...next };
 }
 
 function planned(raw: string) {
@@ -315,6 +316,37 @@ describe("real citation-chat handler", () => {
     expect(JSON.stringify(posted.body.foreignLookup ?? {})).not.toContain("National identity");
     for (const call of gatewayCalls()) expect(call.body).not.toContain("gemini-3.8-flash");
     for (const call of gatewayCalls()) expect(call.body).toContain("google/gemini-2.5-flash");
+  });
+
+  it("accepts Anthony D. Smith against a bibliographic Smith, Anthony D. record and rejects a different person", async () => {
+    reset({ hits: [{ title: "National Identity", url: "https://press.example.edu/smith", snippet: "Smith, Anthony D., National Identity (2nd ed. 1991)." }] });
+    const raw = "National Identity by Anthony D. Smith (1991)";
+    const plan = planned(raw);
+    const posted = await post(raw, plan.typed?.foreignLookup, "handler-author-0001");
+    const lookup = posted.body.foreignLookup as { identity: { matched: boolean }; fields: Record<string, string> };
+    expect(lookup.identity.matched).toBe(true);
+    expect(lookup.fields.edition).toBe("2nd ed.");
+    expect(lookup.fields.year).toBeUndefined();
+    expect(gatewayCalls()).toHaveLength(0);
+
+    reset({ hits: [{ title: "National Identity", url: "https://press.example.edu/other", snippet: "John Smith, National Identity (2nd ed. 1988)." }] });
+    const wrong = await post(raw, plan.typed?.foreignLookup, "handler-author-0002");
+    const wrongLookup = wrong.body.foreignLookup as { identity: { matched: boolean }; fields: Record<string, string> };
+    expect(wrongLookup.identity.matched).toBe(false);
+    expect(wrongLookup.fields.edition).toBeUndefined();
+    expect(JSON.stringify(wrongLookup.fields)).not.toContain("1988");
+  });
+
+  it("does not search again when the first response body is interrupted", async () => {
+    reset({ interruptBody: true, page: "Anthony D. Smith, National Identity (1991)." });
+    const raw = "National Identity by Anthony D. Smith (1991)";
+    const plan = planned(raw);
+    const posted = await post(raw, plan.typed?.foreignLookup, "handler-author-0003");
+    expect(searchCalls()).toHaveLength(1);
+    expect(calls.filter((call) => !call.url.includes("api.perplexity.ai/search"))).toHaveLength(0);
+    expect(gatewayCalls()).toHaveLength(0);
+    expect(posted.body.foreignLookup).toBeTruthy();
+    expect((posted.body.foreignLookup as { fields: Record<string, string> }).fields.year).toBeUndefined();
   });
 });
 

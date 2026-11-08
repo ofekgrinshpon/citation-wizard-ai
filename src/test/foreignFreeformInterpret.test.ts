@@ -337,6 +337,10 @@ describe("citation-wide budget and selected-record handoff", () => {
     expect(authorEvidenceStatus("Warren, Louis", "Louis Warren, Privacy (1990).")).toBe("absent");
     expect(authorEvidenceStatus("Smith, Anthony D", "Anthony D. Smith, National Identity (1991).")).toBe("match");
     expect(authorEvidenceStatus("Hart, H.L.A.", "H.L.A. Hart, The Concept of Law (1961).")).toBe("match");
+    expect(authorEvidenceStatus("Anthony D. Smith", "Smith, Anthony D., National Identity (1991).")).toBe("match");
+    expect(authorEvidenceStatus("Anthony D. Smith", "John Smith, National Identity (1988).")).toBe("conflict");
+    expect(authorEvidenceStatus("Anthony Smith", "Smith, Anthony D., National Identity (1991).")).toBe("absent");
+    expect(authorEvidenceStatus("Anthony J. Smith", "Smith, Anthony D., National Identity (1991).")).toBe("conflict");
     expect(compatiblePersonNames("Samuel D. Warren, Louis D. Brandeis", "Samuel D. Warren and Louis D. Brandeis")).toBe(true);
     expect(compatiblePersonNames("Samuel D. Warren and Louis D. Brandeis", "Samuel D. Warren and Louis D. Brandeis")).toBe(true);
     const handed = plan("National identity by Smith, Anthony");
@@ -419,6 +423,39 @@ describe("citation-wide budget and selected-record handoff", () => {
     expect(looked.fields.year).toBe("1991");
     expect(looked.fields.edition).toBeUndefined();
     expect(looked.provenance.edition).toBeUndefined();
+  });
+
+  it("treats an interrupted search body as unknown and a fully read bad payload as unusable", async () => {
+    vi.stubGlobal("fetch", vi.fn(() => { throw new Error("Live network forbidden"); }));
+    const input: ForeignLookupInput = {
+      kind: "book", jurisdiction: "OTHER", rawInput: "National Identity by Anthony D. Smith",
+      parsedFields: { bookTitle: "National Identity", authors: "Anthony D. Smith" },
+    };
+    const interrupted = createCitationBudget();
+    let calls = 0;
+    await runForeignLookup(input, {
+      apiKey: "offline-only", budget: interrupted,
+      fetchImpl: (async () => {
+        calls += 1;
+        return { ok: true, status: 200, text: async () => { throw new Error("body interrupted"); } } as unknown as Response;
+      }) as unknown as typeof fetch,
+    });
+    expect(calls).toBe(1);
+    expect(interrupted.unknown).toBe(true);
+    expect(interrupted.searches).toBe(1);
+
+    const unusable = createCitationBudget();
+    let full = 0;
+    await runForeignLookup(input, {
+      apiKey: "offline-only", budget: unusable,
+      fetchImpl: (async () => {
+        full += 1;
+        return new Response("{not-json", { status: 200 });
+      }) as unknown as typeof fetch,
+    });
+    expect(full).toBe(2);
+    expect(unusable.unknown).toBe(false);
+    expect(unusable.searches).toBe(2);
   });
 });
 
