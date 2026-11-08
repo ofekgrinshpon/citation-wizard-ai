@@ -38,3 +38,21 @@ it('rejects misplaced properties and text directly in document defaults',()=>{
  expect(citationInheritanceIsSafe(wrap('<w:docDefaults><w:vanish/></w:docDefaults>'),null,[])).toBe(false);
  expect(citationInheritanceIsSafe(wrap('<w:docDefaults>hidden</w:docDefaults>'),null,[])).toBe(false);
 });
+
+// Ordinary Word / python-docx templates must not block every footnote.
+const W14='http://schemas.microsoft.com/office/word/2010/wordml';
+const wrap14=(content:string)=>`<w:styles xmlns:w="${w}" xmlns:w14="${W14}">${content}</w:styles>`;
+it('accepts a standard template whose table styles carry conditional table formatting',()=>{
+ const table='<w:style w:type="table" w:styleId="LightShading"><w:basedOn w:val="TableNormal"/><w:tblStylePr w:type="firstRow"><w:rPr><w:b/><w:vanish/></w:rPr></w:tblStylePr></w:style><w:style w:type="table" w:default="1" w:styleId="TableNormal"><w:tblPr/></w:style>';
+ expect(citationInheritanceIsSafe(wrap(style('Normal','<w:rPr><w:sz w:val="22"/></w:rPr>','w:default="1"')+table),'Normal',[])).toBe(true);
+});
+it('accepts Word 365 document defaults with kerning and ligatures',()=>{
+ const defaults='<w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:asciiTheme="minorHAnsi"/><w:kern w:val="2"/><w:sz w:val="24"/><w:szCs w:val="24"/><w:lang w:val="en-US" w:bidi="he-IL"/><w14:ligatures w14:val="standardContextual"/></w:rPr></w:rPrDefault><w:pPrDefault><w:pPr><w:spacing w:after="160"/></w:pPr></w:pPrDefault></w:docDefaults>';
+ expect(citationInheritanceIsSafe(wrap14(defaults+style('Normal','<w:rPr><w:cs/></w:rPr>','w:default="1"')),'Normal',[])).toBe(true);
+});
+it('still refuses hidden, shifted or decorated text in the citation style chain',()=>{
+ expect(citationInheritanceIsSafe(wrap14(style('Normal','<w:rPr><w14:textOutline/></w:rPr>','w:default="1"')),'Normal',[])).toBe(false);
+ expect(citationInheritanceIsSafe(wrap14(style('Normal','<w:rPr><w:vanish/></w:rPr>','w:default="1"')),'Normal',[])).toBe(false);
+ expect(citationInheritanceIsSafe(wrap14(style('Normal','<w:rPr><w:vertAlign w:val="superscript"/></w:rPr>','w:default="1"')),'Normal',[])).toBe(false);
+ expect(citationInheritanceIsSafe(wrap14(style('Normal','<w:rPr><w:kern w:val="2"><w:b/></w:kern></w:rPr>','w:default="1"')),'Normal',[])).toBe(false);
+});

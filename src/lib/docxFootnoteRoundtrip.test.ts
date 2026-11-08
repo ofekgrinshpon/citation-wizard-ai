@@ -372,3 +372,23 @@ describe('ordinary external hyperlink footnotes',()=>{
   const input=await setup(link('old')),session=await inspectDocxFootnotes(input),out=await embedStyledFootnotes(session,[]),a=await JSZip.loadAsync(input),b=await JSZip.loadAsync(out);for(const name of Object.keys(a.files))expect(await b.files[name].async('uint8array')).toEqual(await a.files[name].async('uint8array'));
  });
 });
+
+describe('ordinary Word templates do not block styled citation checks',()=>{
+ it('a document with table styles and Word 365 defaults passes the check for an unchanged citation',async()=>{
+  const W14='http://schemas.microsoft.com/office/word/2010/wordml';
+  const styles=`<w:styles xmlns:w="${W}" xmlns:w14="${W14}"><w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:asciiTheme="minorHAnsi" w:cstheme="minorBidi"/><w:kern w:val="2"/><w:sz w:val="22"/><w:szCs w:val="22"/><w:lang w:val="en-US" w:bidi="he-IL"/><w14:ligatures w14:val="standardContextual"/></w:rPr></w:rPrDefault><w:pPrDefault><w:pPr><w:spacing w:after="200"/></w:pPr></w:pPrDefault></w:docDefaults><w:latentStyles w:defLockedState="0"/><w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/><w:qFormat/></w:style><w:style w:type="character" w:default="1" w:styleId="DefaultParagraphFont"><w:name w:val="Default Paragraph Font"/><w:uiPriority w:val="1"/><w:semiHidden/></w:style><w:style w:type="table" w:default="1" w:styleId="TableNormal"><w:name w:val="Normal Table"/><w:tblPr><w:tblInd w:w="0" w:type="dxa"/></w:tblPr></w:style><w:style w:type="table" w:styleId="LightShading"><w:name w:val="Light Shading"/><w:basedOn w:val="TableNormal"/><w:tblPr/><w:tblStylePr w:type="firstRow"><w:pPr><w:spacing w:before="0"/></w:pPr><w:rPr><w:b/><w:bCs/></w:rPr><w:tblPr/><w:tcPr/></w:tblStylePr></w:style><w:style w:type="paragraph" w:styleId="FootnoteText"><w:name w:val="footnote text"/><w:basedOn w:val="Normal"/><w:pPr><w:spacing w:after="0"/></w:pPr><w:rPr><w:sz w:val="20"/><w:szCs w:val="20"/></w:rPr></w:style></w:styles>`;
+  const z=new JSZip();
+  z.file('[Content_Types].xml','<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>');
+  z.file('word/document.xml',`<w:document xmlns:w="${W}"><w:body><w:p><w:r><w:footnoteReference w:id="1"/></w:r></w:p></w:body></w:document>`);
+  z.file('word/footnotes.xml',`<w:footnotes xmlns:w="${W}"><w:footnote w:id="1"><w:p><w:pPr><w:pStyle w:val="FootnoteText"/><w:bidi/></w:pPr><w:r><w:footnoteRef/></w:r><w:r><w:rPr><w:rtl/></w:rPr><w:t xml:space="preserve">חוק הגנת הצרכן, סעיף 2.</w:t></w:r></w:p></w:footnote></w:footnotes>`);
+  z.file('word/styles.xml',styles);
+  const s=await inspectDocxFootnotes(await z.generateAsync({type:'arraybuffer'}));
+  const text=s.notes[0].text;
+  const {checkStyledFootnote}=await import('./docxFootnoteRoundtrip');
+  expect(await checkStyledFootnote(s,{id:'1',originalText:text,start:0,end:text.length,replacement:text,approved:true})).toBeNull();
+  // Hidden text in the footnote style still blocks the check.
+  z.file('word/styles.xml',styles.replace('<w:sz w:val="20"/>','<w:vanish/><w:sz w:val="20"/>'));
+  const hidden=await inspectDocxFootnotes(await z.generateAsync({type:'arraybuffer'}));
+  expect(await checkStyledFootnote(hidden,{id:'1',originalText:text,start:0,end:text.length,replacement:text,approved:true})).not.toBeNull();
+ });
+});
