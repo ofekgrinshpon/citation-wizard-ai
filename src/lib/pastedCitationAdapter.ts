@@ -49,6 +49,13 @@ export function pastedCaseRequest(raw: string, contract: PastedCitationContract)
     parsedFields.court = decision[1];
     parsedFields.year = decision[2];
   }
+  // A bare decision year right after the parties ("R v Jogee [2016]", "X v Y (1954)")
+  // is the user's own fact: keep it, so it survives even when a looked-up neutral
+  // citation or report is not accepted. The server already reads the same year.
+  if (!parsedFields.year && parsedFields.caseName) {
+    const bare = raw.match(/^\s*(.+?)[,\s]*[[(]((?:17|18|19|20)\d{2})[\])]\s*\.?\s*$/);
+    if (bare && citationBindingText(bare[1]) === citationBindingText(parsedFields.caseName)) parsedFields.year = bare[2];
+  }
   return { enabled: true, kind: "case" as const, jurisdiction: contract.jurisdiction === "US" || contract.jurisdiction === "UK" ? contract.jurisdiction : "UNKNOWN", rawInput: raw, parsedFields };
 }
 export function renderPastedCaseResponse(contract: PastedCitationContract, request: ReturnType<typeof pastedCaseRequest>, response: unknown) {

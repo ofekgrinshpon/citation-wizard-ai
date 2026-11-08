@@ -42,7 +42,8 @@ import { renderUnpublishedLocal } from "@/lib/unpublishedWorkLocal";
 import { renderPeriodicalLocal } from "@/lib/periodicalLocal";
 import { renderBookLocal } from "@/lib/bookLocal";
 import { citationManualChoice } from "@/lib/pastedCitationAdapter";
-import { planCapabilityGate, planCitationEvidence, planLocalCitation, planTypedRequest, resolveCitationResponse, foreignFreeformSourceType, RUNNER_HOST } from "@/lib/citationPlanner";
+import { planCapabilityGate, planCitationEvidence, planLocalCitation, planTypedRequest, resolveCitationResponse, foreignFreeformSourceType, RUNNER_HOST, WORD_HOST } from "@/lib/citationPlanner";
+import type { ForeignCaseChoice } from "@/lib/foreignCaseChoice";
 import type { CitationManualChoice, PastedCitationContract } from "../../supabase/functions/_shared/pastedCitation";
 import { citationDiagnosticBody, observeCitationDiagnostic, type CitationDiagnosticActivation } from "@/lib/citationDiagnostic";
 
@@ -109,9 +110,13 @@ export interface RunCitationOptions {
   telemetry?: CostTelemetry;
   /** Temporary admin-only observer activation, prepared by the diagnostic readiness check. */
   diagnostic?: CitationDiagnosticActivation;
+  /** Word review only: return a record-bound foreign case choice (in memory) instead of a text list. */
+  recordChoices?: boolean;
 }
 
 export interface RunCitationResult {
+  /** Present only with `recordChoices`: options built from the lookup's own records. */
+  foreignChoice?: ForeignCaseChoice;
   completion?: import("@/lib/citationCompletion").CompletionAcceptance;
   pastedCitation?: PastedCitationContract;
   /** Full engine reply (may include explanation / warning lines). */
@@ -341,7 +346,7 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
   }
 
   function renderPreparedResponse(data: ({ content?: string } & Record<string, unknown>) | null): RunCitationResult {
-    const resolved = resolveCitationResponse(plan, data, RUNNER_HOST);
+    const resolved = resolveCitationResponse(plan, data, opts.recordChoices ? WORD_HOST : RUNNER_HOST);
     const rejectUnusableResponse = (code: string, userMessage: string): never => {
       // A transport-successful response is not proof of usable citation output.
       // Rechecking this unchanged row only re-renders the retained response; it

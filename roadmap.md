@@ -5,6 +5,7 @@
 - [x] Fix two Word footnote tests broken by auto-opened cards.
 - [x] Stage 3: record-bound English choice buttons in chat, rejected after input edits (reports/foreign-freeform/STAGE3_RECORD_CHOICE.md).
 - [x] Stage 4: gated free-form interpretation and handoff; live model stays off (reports/foreign-freeform/STAGE4_FREEFORM_INTERPRETATION.md).
+- [x] Word review: ruling/report choice buttons, left-to-right English lines, typed decision year kept.
 - [ ] Reporter priority rule: blocked on an authorised edition-21 check.
 
 ## Unified pasted-citation infrastructure batch A (offline only)

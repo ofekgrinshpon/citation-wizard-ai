@@ -12,6 +12,9 @@ import { FootnoteReviewCard, type ReviewCardCell } from "./FootnoteReviewCard";
 import { useAuth } from "@/hooks/useAuth";
 import { useProjects } from "@/hooks/useProjects";
 import { runCitation } from "@/lib/runCitation";
+import { selectForeignCaseChoice, WORD_HOST } from "@/lib/citationPlanner";
+import { normalizeAbbreviations } from "@/data/abbreviations";
+import { lineDirection } from "@/lib/textDirection";
 import { citationTextOnly, escapeCitationLiteral } from "@/lib/citationSegments";
 import { newTelemetryBatch, sourceTelemetry } from "@/lib/costTelemetry";
 import { inspectDocxFootnotes, embedStyledFootnotes, checkStyledFootnote, checkStyledFootnotes } from "@/lib/docxFootnoteRoundtrip";
@@ -126,21 +129,21 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
     setRows(old => {
       const changed=old.find(row=>row.id===id);if(!changed)return old;
       const invalidated=invalidateWordDependents(old,session?.notes.map(n=>n.id)??[],changed.noteId,changed.start);
-      return invalidated.map(row=>row.id===id?{...row,...update,approved:false,completion:undefined,pastedCitation:undefined,
+      return invalidated.map(row=>row.id===id?{...row,...update,approved:false,completion:undefined,pastedCitation:undefined,foreignChoice:undefined,
         ...(Object.prototype.hasOwnProperty.call(update,"output")?{fullOutput:update.output,repeatProposal:false}:{}),
         ...(blockedNotes.current.has(noteKey(row))?{status:"error" as const,requestId:blockedNotes.current.get(noteKey(row))!.requestId,errorMsg:blockedNotes.current.get(noteKey(row))!.message}:{})}:row);
     });
   };
   const generate = async (onlyId?: number) => {
     if (lock.current || !session) return;
-    const selected = rows.filter(row => row.end > row.start && row.input.trim() && !blockedNotes.current.has(noteKey(row)) && (onlyId === undefined ? !row.output && row.status !== "error" : row.id === onlyId));
+    const selected = rows.filter(row => row.end > row.start && row.input.trim() && !blockedNotes.current.has(noteKey(row)) && (onlyId === undefined ? !row.output && row.status !== "error" && !row.foreignChoice : row.id === onlyId));
     if (!selected.length) return;
     lock.current = true;stopBatch.current=false;setBatchProgress({current:0,total:selected.length,stopping:false}); setBusy(true); setError(""); setNotice(""); setBatchDone(false);
     setRows(old=>{
       let next=old;
       for(const row of selected)next=invalidateWordDependents(next,session.notes.map(n=>n.id),row.noteId,row.start);
       const selectedIds=new Set(selected.map(row=>row.id));
-      return next.map(row=>selectedIds.has(row.id)?{...row,approved:false,output:row.repeatProposal?(row.fullOutput??row.output):row.output,repeatProposal:false}:row);
+      return next.map(row=>selectedIds.has(row.id)?{...row,approved:false,foreignChoice:undefined,output:row.repeatProposal?(row.fullOutput??row.output):row.output,repeatProposal:false}:row);
     });
     const version = epoch.current;
     const owner = scope;
@@ -160,18 +163,18 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
       blockedNotes.current.set(noteKey(row), { message: "בקשה זו עדיין בטיפול. אין ליצור ניסיון נוסף לפני בירור התוצאה." });
       try {
         const result = await runCitation({ rawInput: row.manualDraft ?? row.input, overrideType: row.classification?.sourceType ?? row.sourceTypeOverride, manualChoice: row.classification?.manualChoice,
-          projectId: currentProject?.id, useVerifiedStore: true, isResultCurrent: isCurrent,
+          projectId: currentProject?.id, useVerifiedStore: true, isResultCurrent: isCurrent, recordChoices: true,
           telemetry: sourceTelemetry(batch) });
         if (owner === currentScope.current) blockedNotes.current.delete(noteKey(row));
         if (!isCurrent()) break;
         if (hasMultipleSourceSignals(citationTextOnly(result.citation)) || isUnboundRepeatReference(citationTextOnly(result.citation))) {
-          setRows(old => old.map(r => r.id === row.id ? {...r,output:null,status:"error",approved:false,errorMsg:"התוצאה עשויה לכלול כמה מקורות או הפניה למקור קודם שלא קושר. נדרש טיפול נוסף; ההערה תישאר ללא שינוי."} : r));
+          setRows(old => old.map(r => r.id === row.id ? {...r,output:null,foreignChoice:undefined,status:"error",approved:false,errorMsg:"התוצאה עשויה לכלול כמה מקורות או הפניה למקור קודם שלא קושר. נדרש טיפול נוסף; ההערה תישאר ללא שינוי."} : r));
           continue;
         }
         const styleIssue=await checkStyledFootnote(session,{id:row.noteId,originalText:row.originalText,start:row.start,end:row.end,replacement:result.citation,approved:true},protectedSpans.filter(p=>p.noteId===row.noteId).map(p=>({...p,id:p.noteId,originalText:row.originalText})));
         if (!isCurrent()) break;
         setRows(old => old.map(r => r.id === row.id ? { ...r, output: result.citation, fullOutput:result.citation, repeatProposal:false,needsStyleRevalidation:false,manualDraft:undefined,styleIssue,
-          completion: result.completion, pastedCitation: result.pastedCitation, status: row.classification?.warning ? "warning" : result.status, detectedType: result.sourceType, warningMsg: [result.warningMsg, row.classification?.warning].filter(Boolean).join(" · ") || undefined, errorMsg: undefined, approved: false } : r));
+          completion: result.completion, pastedCitation: result.pastedCitation, foreignChoice: result.foreignChoice, status: row.classification?.warning ? "warning" : result.status, detectedType: result.sourceType, warningMsg: [result.warningMsg, row.classification?.warning].filter(Boolean).join(" · ") || undefined, errorMsg: undefined, approved: false } : r));
       } catch (e) {
         const failure = e && typeof e === "object" ? e as { requestId?: string; userMessage?: string } : {};
         const requestId = failure.requestId;
@@ -182,7 +185,7 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
           setRows(old => old.map(r => r.id === row.id && noteKey(r) === noteKey(row) ? { ...r, status: "error", requestId, errorMsg: message, approved: false } : r));
         }
         if (!isCurrent()) break;
-        setRows(old => old.map(r => r.id === row.id ? { ...r, status: "error", output: null, requestId, errorMsg: message, approved: false } : r));
+        setRows(old => old.map(r => r.id === row.id ? { ...r, status: "error", output: null, foreignChoice: undefined, requestId, errorMsg: message, approved: false } : r));
       }
     }
     if (isCurrent()) {
@@ -193,6 +196,44 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
         setBatchDone(true);
       }
       if(stopBatch.current)setNotice("הבדיקה נעצרה; בקשות נוספות לא נשלחו.");stopBatch.current=false;setBatchProgress(null);lock.current = false; setBusy(false); }
+  };
+
+  /** Apply a choice between foreign rulings/reports from the records already found. No request is sent. */
+  const selectChoice = async (id: number, optionId: string) => {
+    if (lock.current || !session) return;
+    const row = rows.find(r => r.id === id);
+    const choice = row?.foreignChoice;
+    if (!row || !choice) return;
+    const current = row.manualDraft ?? row.input;
+    const outcome = selectForeignCaseChoice(choice, optionId, [current, normalizeAbbreviations(current)], WORD_HOST);
+    if (outcome.kind !== "resolved") {
+      setRows(old => old.map(r => r.id === id && r.foreignChoice === choice ? { ...r, foreignChoice: undefined, status: "warning", warningMsg: outcome.kind === "stale"
+        ? "הנוסח השתנה מאז שהוצגו האפשרויות, ולכן הבחירה בוטלה. יש לבדוק את האזכור שוב."
+        : "לא ניתן היה להשתמש באפשרות שנבחרה. יש לבדוק את האזכור שוב." } : r));
+      return;
+    }
+    const res = outcome.resolution;
+    if (res.foreignChoice) {
+      // The chosen ruling still has parallel reports: ask again, from the same records.
+      setRows(old => old.map(r => r.id === id && r.foreignChoice === choice ? { ...r, foreignChoice: res.foreignChoice, status: "warning", warningMsg: res.warningMsg } : r));
+      return;
+    }
+    const citation = res.citation;
+    if (!citation.trim() || hasMultipleSourceSignals(citationTextOnly(citation)) || isUnboundRepeatReference(citationTextOnly(citation))) {
+      setRows(old => old.map(r => r.id === id && r.foreignChoice === choice ? { ...r, foreignChoice: undefined, output: null, status: "error", approved: false, errorMsg: "לא ניתן היה להשתמש באפשרות שנבחרה. ההערה תישאר ללא שינוי." } : r));
+      return;
+    }
+    lock.current = true; setBusy(true);
+    const version = epoch.current;
+    const owner = scope;
+    try {
+      const styleIssue = await checkStyledFootnote(session, { id: row.noteId, originalText: row.originalText, start: row.start, end: row.end, replacement: citation, approved: true },
+        protectedSpans.filter(p => p.noteId === row.noteId).map(p => ({ ...p, id: p.noteId, originalText: row.originalText })));
+      if (version !== epoch.current || owner !== currentScope.current) return;
+      setRows(old => old.map(r => r.id === id && r.foreignChoice === choice ? { ...r, output: citation, fullOutput: citation, repeatProposal: false, needsStyleRevalidation: false, manualDraft: undefined, styleIssue,
+        foreignChoice: undefined, completion: res.completion, pastedCitation: res.pastedCitation, status: row.classification?.warning ? "warning" : res.status,
+        detectedType: res.sourceType ?? r.detectedType, warningMsg: [res.warningMsg, row.classification?.warning].filter(Boolean).join(" · ") || undefined, errorMsg: undefined, approved: false } : r));
+    } finally { if (version === epoch.current) { lock.current = false; setBusy(false); } }
   };
 
   const download = async () => {
@@ -242,7 +283,7 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
   const knownIds = new Set(knownOrder.map(item=>item.id));
   const noteOrder = session ? [...knownOrder,...[...session.notes,...(session.skippedNotes??[])].filter(n=>!knownIds.has(n.id)).map(n=>({id:n.id,number:null}))] : [];
   const readyRows = rows.filter(row => row.input.trim()
-    && !row.output && row.status !== "error" && !blockedNotes.current.has(noteKey(row)));
+    && !row.output && row.status !== "error" && !row.foreignChoice && !blockedNotes.current.has(noteKey(row)));
   const readyCount=readyRows.length;
   const goToStep = (next: number) => {
     if (lock.current) return;
@@ -360,7 +401,7 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
               </div>
             </div>)}
             {noteRows.map(row => <div key={row.id} className="space-y-2">
-              <p className="text-sm font-medium">התוכן שיישלח לבדיקה</p><p className="whitespace-pre-wrap break-words rounded-lg bg-blue-50 p-3 text-sm text-blue-950">{row.input}</p>
+              <p className="text-sm font-medium">התוכן שיישלח לבדיקה</p><p dir={lineDirection(row.input)} className="whitespace-pre-wrap break-words rounded-lg bg-blue-50 p-3 text-start text-sm text-blue-950">{row.input}</p>
               {row.styleIssue && <p className="text-sm text-amber-900">לא ניתן לשמור את עיצוב האזכור בבטחה. ההערה תישאר ללא שינוי.</p>}
             </div>)}
           </>}
@@ -390,13 +431,14 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
                   const changed=old.find(r=>r.id===id);if(!changed)return old;
                   return invalidateWordDependents(old,session.notes.map(n=>n.id),changed.noteId,changed.start).map(item=>item.id===id?{...item,approved:!item.needsStyleRevalidation&&!item.styleIssue&&!!item.output&&item.status!=="error"&&approved}:item);
                 });}}
-                onRegenerate={id => { if (rows.find(item => item.id === id)?.status !== "error") void generate(id); }} onRemove={() => {}} />
+                onRegenerate={id => { if (rows.find(item => item.id === id)?.status !== "error") void generate(id); }} onRemove={() => {}}
+                onSelectForeignChoice={(id, optionId) => void selectChoice(id, optionId)} />
             </div>)}
           </>}
           {step >= 2 && <details open={step === 3} className="rounded-xl border border-border p-3 text-sm" key={`preview-${step}-${note.id}`}>
             <summary className="cursor-pointer py-1 font-medium focus-visible:outline focus-visible:outline-2">כך תיראה ההערה בעותק החדש</summary>
             <p className="mt-2 text-muted-foreground">מוצגים רק תיקונים שאושרו.</p>
-            <pre aria-label={`תצוגת ${entry.number===null?`הערה במיקום ${position+1}`:`הערה ${entry.number}`}`} className="mt-3 whitespace-pre-wrap break-words rounded-lg bg-muted/40 p-3 font-sans text-base leading-7"><FormattedCitation text={preview(note.id, note.text)} /></pre>
+            <pre aria-label={`תצוגת ${entry.number===null?`הערה במיקום ${position+1}`:`הערה ${entry.number}`}`} dir={lineDirection(preview(note.id, note.text))} className="mt-3 whitespace-pre-wrap break-words rounded-lg bg-muted/40 p-3 text-start font-sans text-base leading-7"><FormattedCitation text={preview(note.id, note.text)} /></pre>
           </details>}
               </>}</div>
             </li>;

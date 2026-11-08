@@ -5,10 +5,11 @@ import type { ForeignCaseChoice } from "@/lib/foreignCaseChoice";
 interface Props {
   choice: ForeignCaseChoice;
   onSelect: (optionId: string) => void;
+  disabled?: boolean;
 }
 
 /** Record-bound options for a foreign ruling or its parallel reports. */
-export function ForeignCaseChoiceButtons({ choice, onSelect }: Props) {
+export function ForeignCaseChoiceButtons({ choice, onSelect, disabled }: Props) {
   const [chosen, setChosen] = useState<string | null>(null);
   const label = choice.stage === "decision" ? "בחירת פסק הדין" : "בחירת מראה המקום";
   return (
@@ -17,7 +18,7 @@ export function ForeignCaseChoiceButtons({ choice, onSelect }: Props) {
         <div key={o.id} className="flex items-stretch gap-1.5">
           <button
             type="button"
-            disabled={chosen !== null}
+            disabled={chosen !== null || disabled}
             aria-label={`${i + 1}. ${o.label}`}
             onClick={() => { setChosen(o.id); onSelect(o.id); }}
             className="flex-1 text-left p-2 rounded-lg border border-primary/20 hover:bg-primary/10 hover:border-primary/40 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"

@@ -34,7 +34,8 @@ import { buildForeignCaseChoice, prepareChoiceSelection, type ForeignCaseChoice 
 
 /** Local rendering controls; only host identity differs after bounded C2 parity. */
 export interface CitationHostCapabilities {
-  host: "chat" | "runner";
+  /** "word": the runner inside the Word footnote review, which can show record-bound choices. */
+  host: "chat" | "runner" | "word";
   /** Pasted local render waits for the opinion-format (US unreported) formatter. */
   pastedLocalDefersOpinionFormat: boolean;
   /** Book formatter defers complete inputs to the deterministic renderer. */
@@ -61,6 +62,10 @@ export const RUNNER_HOST: CitationHostCapabilities = Object.freeze({
   deterministicForeignRender: true, articleIncompleteFallback: true,
   caseDisambiguation: true, groundedMerge: true, rejectEmptyCaseFields: false,
 });
+/** Same rendering as the runner; only adds record-bound choice buttons (Word review cards). */
+export const WORD_HOST: CitationHostCapabilities = Object.freeze({ ...RUNNER_HOST, host: "word" });
+/** Hosts that can show and apply a record-bound foreign case choice in memory. */
+const offersRecordChoice = (caps: CitationHostCapabilities) => caps.host === "chat" || caps.host === "word";
 
 export interface CitationResolution {
   reply: string;
@@ -359,7 +364,7 @@ export function resolveCitationResponse(plan: TypedPlan, data: Record<string, un
       try { return ["https:", "http:"].includes(new URL(o.url).protocol); } catch { return false; }
     });
     if (choices.length > 1) {
-      const foreignChoice = caps.host === "chat" ? buildForeignCaseChoice(plan, response, data?.pastedCitation, "decision") : null;
+      const foreignChoice = offersRecordChoice(caps) ? buildForeignCaseChoice(plan, response, data?.pastedCitation, "decision") : null;
       return { kind: "terminal", origin: "disambiguation", resolution: {
         citation: "", reply: `נמצאו כמה פסקי דין אפשריים בשם זה. כדי לא לנחש, בחרו את הנכון והוסיפו את הערכאה או השנה:\n${choices.slice(0, 5).map((o, i) => escapeCitationLiteral(`${i + 1}. ${o.label} (${o.jurisdiction}) — ${o.url}`)).join("\n")}`,
         status: "warning", warningMsg: messages.ambiguous, pastedCitation: contract,
@@ -370,7 +375,7 @@ export function resolveCitationResponse(plan: TypedPlan, data: Record<string, un
   // One decision reported in several parallel reports: the priority rule is not
   // verified, so the user chooses instead of the system picking one.
   const locationChoices = req.kind === "case" && accepted.identityConfirmed ? readLocationChoice(fl, accepted.jurisdiction) : null;
-  const locationChoice = locationChoices && caps.host === "chat" ? buildForeignCaseChoice(plan, response, data?.pastedCitation, "location") : null;
+  const locationChoice = locationChoices && offersRecordChoice(caps) ? buildForeignCaseChoice(plan, response, data?.pastedCitation, "location") : null;
   if (locationChoices) return { kind: "terminal", origin: "disambiguation", resolution: {
     ...(locationChoice ? { foreignChoice: locationChoice } : {}),
     citation: "", reply: `נמצאו כמה מראי מקום מקבילים לאותו פסק דין. כלל הקדימות ביניהם טרם אומת, ולכן לא נבחר אחד מהם אוטומטית. בחרו את מראה המקום הרצוי:\n${locationChoices.slice(0, 5).map((o, i) => escapeCitationLiteral(`${i + 1}. ${o.label} — ${o.url}`)).join("\n")}`,
