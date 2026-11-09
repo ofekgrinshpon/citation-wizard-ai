@@ -1,6 +1,7 @@
 import { webcrypto } from "node:crypto";
 import { TextEncoder } from "node:util";
 import * as statuteRoute from "../../../supabase/functions/citation-chat/statuteRoute";
+import * as countryRoute from "../../../supabase/functions/citation-chat/countryRoute";
 import { readFileSync } from "node:fs";
 import ts from "typescript";
 import * as recovery from "../../../supabase/functions/_shared/citationRecovery";
@@ -64,6 +65,7 @@ export async function c2AuthoritativePayload(f: WireFixture) {
     if (path.includes("citationPure/bookFinal")) return bookFinal;
     if (path.includes("freeformInterpret")) return freeformInterpret;
     if (path.includes("statuteRoute")) return statuteRoute;
+    if (path.includes("countryRoute")) return countryRoute;
     if (path.includes("foreignLookup")) return { runForeignLookup: async () => { counts.lookup++; return payload.response; } };
     if (path.includes("costTelemetry")) return { withCostTelemetry: (_: unknown, fn: () => unknown) => fn(), setTelemetryFromBody: () => {} };
     if (path.includes("citationDiagnosticGate")) return { isCitationDiagnosticPreflight: () => false };

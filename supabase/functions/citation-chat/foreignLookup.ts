@@ -262,7 +262,7 @@ function splitParties(raw: string): [string, string] | null {
 }
 
 const CROWN_RE = /^(?:r|regina|rex|queen|king)$/;
-function textContainsParty(text: string, party: string): boolean {
+export function textContainsParty(text: string, party: string): boolean {
   const p = normalizePartyName(party);
   const t = normalizePartyName(text);
   // English criminal captions name the Crown as "R"; accept only its own forms.
@@ -693,7 +693,7 @@ interface RawResult {
   snippet?: string;
 }
 
-async function searchOnce(
+export async function searchOnce(
   query: string,
   domains: string[] | null,
   doFetch: typeof fetch,

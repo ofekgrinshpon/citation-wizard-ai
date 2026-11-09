@@ -31,7 +31,9 @@ import { DISABLED_RULEPACK_WARNING, rulepackCapability, rulepackLookupEligible }
 import { readLocationChoice } from "../../supabase/functions/_shared/citationPure/caseLocations.ts";
 import { adoptVerifiedCasing } from "../../supabase/functions/_shared/citationPure/caseNameCase.ts";
 import { bindFreeformResponseFields, prepareFreeformHandoff, prepareFreeformModelHandoff, type FreeformHandoff, type FreeformSearchRequest } from "../../supabase/functions/_shared/citationPure/freeformInterpret.ts";
-import { buildForeignCaseChoice, prepareChoiceSelection, type ForeignCaseChoice } from "@/lib/foreignCaseChoice";
+import { buildCountryCaseChoice, buildForeignCaseChoice, decisionChoiceReply, locationChoiceReply, prepareChoiceSelection, type ForeignCaseChoice } from "@/lib/foreignCaseChoice";
+import { acceptCountryResponse, countryCues, type CountryLookupRequest } from "../../supabase/functions/_shared/citationPure/countryLookup.ts";
+import { buildCountryQuestion, countryQuestionReply, type CountryQuestion } from "@/lib/countryQuestion";
 
 /** Local rendering controls; only host identity differs after bounded C2 parity. */
 export interface CitationHostCapabilities {
@@ -80,6 +82,8 @@ export interface CitationResolution {
   completion?: ReturnType<typeof acceptCitationCompletion>;
   /** Chat only: record-bound foreign case choice (in memory, never persisted). */
   foreignChoice?: ForeignCaseChoice;
+  /** Chat only: ask which country a case is from instead of guessing (in memory, input-bound). */
+  countryQuestion?: CountryQuestion;
 }
 export type LocalOrigin = "preserve" | "pasted_local" | "unreported_local" | "deterministic" | "statute_local";
 
@@ -134,6 +138,8 @@ export function foreignFreeformSourceType(raw: string): SourceType | null {
 export function planLocalCitation(p: LocalPlanInput, caps: CitationHostCapabilities): { origin: LocalOrigin; resolution: CitationResolution } | { origin: null; statutePrep: StatutePreparation | null } {
   const { pasted } = p.evidence;
   const st = p.sourceType;
+  // Bounded AU/CA completion: the typed request is the only next step.
+  if (pasted.countryLookup) return { origin: null, statutePrep: null };
   if (pasted.country && pasted.local) return { origin: pasted.contract.route === "preserve" ? "preserve" : "deterministic", resolution: { ...pasted.local, status: "warning", pastedCitation: pasted.contract, sourceType: pasted.country.family === "case" ? "foreign_case_other" : "foreign" } };
   const gate = planCapabilityGate(p);
   if (gate) return gate;
@@ -192,6 +198,9 @@ export function planLocalCitation(p: LocalPlanInput, caps: CitationHostCapabilit
  */
 export function planCapabilityGate(p: LocalPlanInput): { origin: LocalOrigin; resolution: CitationResolution } | null {
   const { pasted } = p.evidence;
+  if (pasted.countryLookup) return null;
+  const question = countryFormQuestion(p);
+  if (question) return question;
   if (pasted.country && pasted.local) return { origin: pasted.contract.route === "preserve" ? "preserve" : "deterministic", resolution: { ...pasted.local, status: "warning", pastedCitation: pasted.contract, sourceType: pasted.country.family === "case" ? "foreign_case_other" : "foreign" } };
   const disabled = (): { origin: LocalOrigin; resolution: CitationResolution } => {
     const citation = escapeCitationLiteral(pasted.contract.rawInput);
@@ -206,6 +215,27 @@ export function planCapabilityGate(p: LocalPlanInput): { origin: LocalOrigin; re
   const bookCompletion = eligibleBookCompletion(st, p.input);
   if (bookCompletion && !rulepackLookupEligible(bookCompletion.kind, "OTHER")) return disabled();
   return null;
+}
+
+/** A manual country choice the user already made (never "UNKNOWN"). */
+function chosenCountry(contract: PastedCitationContract): boolean {
+  const j = contract.manualChoice?.jurisdiction;
+  return !!j && j !== "UNKNOWN";
+}
+
+/**
+ * A case whose citation form is used by more than one country (e.g. the Indian
+ * "(2010) 5 SCC 1") is not searched anywhere: the user is asked for the country.
+ */
+function countryFormQuestion(p: LocalPlanInput): { origin: LocalOrigin; resolution: CitationResolution } | null {
+  const { contract, country } = p.evidence.pasted;
+  if (p.manual || country || chosenCountry(contract) || contract.route === "israeli") return null;
+  if (!FOREIGN_CASE_SHAPE.test(contract.rawInput) || countryCues(contract.rawInput) !== "ambiguous") return null;
+  const reply = countryQuestionReply(contract.rawInput, "ambiguous_form");
+  return { origin: "preserve", resolution: {
+    reply, citation: reply.split("\n")[0], status: "warning", warningMsg: reply.split("⚠️ ")[1], pastedCitation: contract,
+    sourceType: "foreign_case_other", countryQuestion: buildCountryQuestion(contract.rawInput, "ambiguous_form"),
+  } };
 }
 
 /** Shared manifest capability for the effective family/jurisdiction of a foreign input. */
@@ -272,6 +302,10 @@ type CompletionAcceptanceFields = NonNullable<ReturnType<typeof acceptCitationCo
 export function planTypedRequest(p: LocalPlanInput & { statutePrep: StatutePreparation | null; canonicalRaw: string }, _caps: CitationHostCapabilities): TypedPlan {
   const { pasted } = p.evidence;
   const st = p.sourceType;
+  if (pasted.countryLookup) {
+    return { kind: "typed", evidence: p.evidence, sourceType: st, statutePrep: null, caseRequest: null, articleRequest: null,
+      foreignLookup: { ...pasted.countryLookup, parsedFields: { ...pasted.countryLookup.parsedFields } }, extraBody: {} };
+  }
   let foreignLookup: Record<string, unknown> | null = null;
   let articleRequest: TypedPlan["articleRequest"] = null;
   let extraBody: Record<string, unknown> = {};
@@ -332,6 +366,9 @@ export function resolveCitationResponse(plan: TypedPlan, data: Record<string, un
   if (safety) return { kind: "terminal", origin: "safety", resolution: { ...safety, status: "warning", pastedCitation: contract } };
   if (plan.kind === "legacy" || !plan.foreignLookup) return { kind: "legacy" };
   const response = data?.foreignLookup;
+  if (plan.evidence.pasted.countryLookup && (plan.foreignLookup.jurisdiction === "AU" || plan.foreignLookup.jurisdiction === "CA")) {
+    return resolveCountryResponse(plan, plan.foreignLookup as unknown as CountryLookupRequest, response, data?.pastedCitation, caps);
+  }
   const req = bindFreeformResponseFields(plan.foreignLookup, typeof plan.foreignLookup.rawInput === "string" ? plan.foreignLookup.rawInput : contract.rawInput, response);
   if (req.kind === "book" || req.kind === "book_chapter") {
     const resolution = resolveBookCompletion(req, contract.rawInput, response, plan.localFields ?? {}, plan.localSourceFields, contract.missing);
@@ -357,6 +394,18 @@ export function resolveCitationResponse(plan: TypedPlan, data: Record<string, un
   if (accepted.reason) warnings.push(messages[accepted.reason]);
   if (accepted.quarantined.length) warnings.push("פרטים סותרים או ללא ראיות מספקות לא שולבו: " + accepted.quarantined.join(", ") + ".");
   const fl = response && typeof response === "object" ? response as Record<string, unknown> : {};
+  // A caption the US/UK search could not ground is not answered with an unrelated
+  // record: the chat asks for the country instead (no further search until chosen).
+  if (caps.host === "chat" && req.kind === "case" && req.jurisdiction === "UNKNOWN" && accepted.reason === "identity" &&
+      (fl.identity as { matched?: unknown } | undefined)?.matched !== true && !chosenCountry(contract) &&
+      typeof (req.parsedFields as Record<string, unknown> | undefined)?.caseName === "string") {
+    const reply = countryQuestionReply(contract.rawInput, "not_found");
+    return { kind: "terminal", origin: "case", resolution: {
+      reply, citation: reply.split("\n")[0], status: "warning", warningMsg: reply.split("⚠️ ")[1], pastedCitation: contract,
+      sourceType: "foreign_case_other", sourceLabel: SOURCE_TYPE_LABELS.foreign_case_other, completion: accepted,
+      countryQuestion: buildCountryQuestion(contract.rawInput, "not_found"),
+    } };
+  }
   if (accepted.reason === "ambiguous" && req.kind === "case" && Array.isArray(fl.disambiguation)) {
     const choices = fl.disambiguation.filter((v): v is { jurisdiction: "US" | "UK"; label: string; url: string } => {
       if (!v || typeof v !== "object") return false;
@@ -387,7 +436,9 @@ export function resolveCitationResponse(plan: TypedPlan, data: Record<string, un
   const supplied = { ...wireSupplied, ...(plan.localFields ?? {}) };
   let rendered: { citation: string; reply?: string; missing?: string[]; warnings?: string[] } | null = null;
   const kind = req.kind as ForeignSourceKind;
-  const jur = accepted.jurisdiction ?? (req.jurisdiction === "US" || req.jurisdiction === "UK" ? req.jurisdiction : "OTHER");
+  // AU/CA never reach this US/UK/OTHER renderer (they resolve in resolveCountryResponse).
+  const acceptedJur = accepted.jurisdiction === "AU" || accepted.jurisdiction === "CA" ? null : accepted.jurisdiction;
+  const jur = acceptedJur ?? (req.jurisdiction === "US" || req.jurisdiction === "UK" ? req.jurisdiction : "OTHER");
   const effectiveType = kind === "case" ? toSourceType(kind, jur) : st ?? toSourceType(kind, jur);
   if (kind === "statute" && plan.statutePrep) {
     rendered = renderForeignStatuteLookup(plan.statutePrep, { ...fl, fields: accepted.fields,
@@ -422,6 +473,44 @@ export function resolveCitationResponse(plan: TypedPlan, data: Record<string, un
     sourceType: effectiveType, sourceLabel: SOURCE_TYPE_LABELS[effectiveType], pastedCitation: contract,
     completion: accepted,
   } };
+}
+
+const COUNTRY_FAIL_MESSAGES: Record<string, string> = {
+  unavailable: "חיפוש פרטי המקור לא היה זמין; הקלט נשמר ללא השלמה.",
+  not_found: "לא נמצאה במקורות הרשמיים או במאגרים המוכרים רשומה שתואמת לקלט ולשמות שסופקו; הקלט נשמר ללא השלמה.",
+  ambiguous: "נמצאו כמה רשומות אפשריות; כדי לא לנחש, הקלט נשמר ללא השלמה. הוסיפו שנה, ערכאה או מספר.",
+  conflict: "הפרטים שנמצאו סותרים את הפרטים שסופקו; הקלט נשמר ללא השלמה.",
+  binding: "תשובת החיפוש אינה תואמת לקלט או לתבנית הנתמכת; הקלט נשמר ללא השלמה.",
+  incomplete: "הפרטים שנמצאו אינם משלימים אזכור מלא בתבנית הנתמכת; הקלט נשמר ללא השלמה.",
+};
+
+/** Bounded AU/CA completion: the shared acceptance decides; the local template renders. */
+function resolveCountryResponse(plan: TypedPlan, request: CountryLookupRequest, response: unknown, pastedCitation: unknown, caps: CitationHostCapabilities): ResponseResolution {
+  const contract = plan.evidence.pasted.contract;
+  const sourceType: SourceType = request.kind === "case" ? "foreign_case_other" : "foreign";
+  const base = { pastedCitation: contract, sourceType, sourceLabel: SOURCE_TYPE_LABELS[sourceType] };
+  const a = acceptCountryResponse(request, contract.rawInput, response);
+  if (a.kind === "choice") {
+    const choice = offersRecordChoice(caps) ? buildCountryCaseChoice(plan, request, response, pastedCitation, a.stage, a.decisions) : null;
+    const options = choice?.options ?? (a.stage === "decision"
+      ? a.decisions.map((d) => ({ id: d.id, label: d.label, url: Object.values(d.options[0].sources)[0].url }))
+      : a.decisions[0].options.map((o) => ({ id: o.id, label: o.label, url: Object.values(o.sources)[0].url })));
+    const reply = a.stage === "decision" ? decisionChoiceReply(options) : locationChoiceReply(options);
+    return { kind: "terminal", origin: "disambiguation", resolution: { ...base, citation: "", reply, status: "warning",
+      warningMsg: a.stage === "decision" ? "נדרשת בחירה בין כמה פסקי דין" : "נדרשת בחירה בין מראי מקום מקבילים", ...(choice ? { foreignChoice: choice } : {}) } };
+  }
+  if (a.kind === "fail") {
+    const citation = escapeCitationLiteral(contract.rawInput);
+    const warningMsg = COUNTRY_FAIL_MESSAGES[a.reason];
+    return { kind: "terminal", origin: request.kind === "case" ? "case" : "statute", resolution: { ...base, citation, reply: `${citation}\n⚠️ ${warningMsg}`, status: "warning", warningMsg } };
+  }
+  const warningMsg = `הפרטים החסרים הושלמו מתוך: ${a.sourceUrls.join(", ")}. מומלץ לבדוק מול המקור.`;
+  const completion: ReturnType<typeof acceptCitationCompletion> = {
+    fields: a.fields, provenance: a.provenance, quarantined: [], identityConfirmed: true, jurisdiction: request.jurisdiction,
+    missing: [], conflicts: [], completeness: "complete",
+  };
+  return { kind: "terminal", origin: request.kind === "case" ? "case" : "statute", resolution: { ...base, citation: a.citation,
+    reply: `${a.citation}\n⚠️ ${escapeCitationLiteral(warningMsg)}`, status: "warning", warningMsg, completion } };
 }
 
 export type ForeignChoiceOutcome =

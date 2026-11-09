@@ -199,6 +199,9 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
     sourceType = freeformType;
   } else if (opts.overrideType) {
     sourceType = opts.overrideType;
+  } else if (pasted.countryLookup) {
+    // Bounded AU/CA completion: the template family decides; no classifier.
+    sourceType = pasted.countryLookup.kind === "case" ? "foreign_case_other" : "foreign";
   } else if (pasted.contract.sourceKind === "case" && pasted.contract.route === "foreign") {
     sourceType = pasted.detection?.sourceType ?? (pasted.contract.jurisdiction === "US" ? "foreign_case_us" : "foreign_case_other");
   } else {
@@ -225,7 +228,8 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
 
   // 1) Verified-source store first — a direct hit costs no credit.
   let verifiedMatch: VerifiedSourceMatch | null = null;
-  if (opts.useVerifiedStore !== false) {
+  // AU/CA completion requests never read the verified store (pasted safety precedes cache).
+  if (opts.useVerifiedStore !== false && !pasted.countryLookup) {
     try {
       verifiedMatch = await findVerifiedSourceMatch(normalized);
     } catch {

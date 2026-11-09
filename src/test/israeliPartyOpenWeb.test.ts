@@ -26,6 +26,7 @@ import * as diagnosticGate from "../../supabase/functions/_shared/citationDiagno
 import * as bookFinal from "../../supabase/functions/_shared/citationPure/bookFinal";
 import * as freeformInterpret from "../../supabase/functions/_shared/citationPure/freeformInterpret";
 import * as statuteRoute from "../../supabase/functions/citation-chat/statuteRoute";
+import * as countryRoute from "../../supabase/functions/citation-chat/countryRoute";
 import { articleLookupFallback, runForeignLookup } from "../../supabase/functions/citation-chat/foreignLookup";
 
 const WIKI = {
@@ -142,6 +143,7 @@ function install() {
     "../_shared/citationDiagnosticGate.ts": diagnosticGate,
     "./foreignLookup.ts": { runForeignLookup, articleLookupFallback },
     "./statuteRoute.ts": statuteRoute,
+    "./countryRoute.ts": countryRoute,
     "../_shared/citationPure/bookFinal.ts": bookFinal,
     "../_shared/citationPure/freeformInterpret.ts": freeformInterpret,
   };

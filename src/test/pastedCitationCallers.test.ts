@@ -106,11 +106,16 @@ describe("AU/CA QA 852985d: partial structures and incidental titles in actual r
     "Criminal Code, R.S.C. 1985", "Synthetic Records Act, S.C. 2020", "Synthetic Records Act (Cth)"];
   const warmEntry = { full_citation: "CACHED", source_name: "unrelated cached source", verification_status: "verified" };
   it.each(PARTIAL.flatMap(raw => [false, true].flatMap(warm => [undefined, /v\.? /.test(raw) ? "foreign_case_other" : "foreign_statute_us"].map(o => ({ raw, warm, o })))))(
-    "$raw warm=$warm manual=$o preserves with zero IO", async ({ raw, warm, o }) => {
+    "$raw warm=$warm manual=$o: only one exact-country typed lookup (or none on a conflicting choice); never cache/classifier/generic output", async ({ raw, warm, o }) => {
       if (warm) m.cache.mockResolvedValue(warmEntry);
       const r = await runCitation({ rawInput: raw, overrideType: o as never });
+      // The default mocked reply is unrelated generic text: it is never shown as a citation.
       expect(citationToPlain(r.citation)).toBe(raw); expect(r.status).toBe("warning");
-      expect(m.cache).not.toHaveBeenCalled(); expect(m.classifier).not.toHaveBeenCalled(); expect(m.invoke).not.toHaveBeenCalled();
+      expect(m.cache).not.toHaveBeenCalled(); expect(m.classifier).not.toHaveBeenCalled();
+      const lookup = o !== "foreign_statute_us";
+      expect(m.invoke).toHaveBeenCalledTimes(lookup ? 1 : 0);
+      if (lookup) expect(m.invoke.mock.calls[0][1].foreignLookup).toMatchObject({ enabled: true, rawInput: raw,
+        jurisdiction: /Maple|R\.S\.C\.|S\.C\. 2020/.test(raw) ? "CA" : "AU", kind: /v\.? /.test(raw) ? "case" : "statute" });
     });
   it.each([
     ["Author: Jane Doe; Book: Quicklaw Studies; Edition: 2nd; Year: 2020", "Author: Jane Doe; Book: Zedlaw Studies; Edition: 2nd; Year: 2020", "Quicklaw", "Zedlaw"],
@@ -165,10 +170,11 @@ describe("AU/CA QA 29db8bb: country suffix inside labelled literature (frozen D1
     expect(r.citation).toBe(raw);
     expect([m.cache.mock.calls.length, m.classifier.mock.calls.length, m.invoke.mock.calls.length]).toEqual([0, 0, 0]);
   });
-  it("true case name ending (Can.) without literature labels is Canadian and preserved locally", async () => {
+  it("true case name ending (Can.) without literature labels is Canadian: one Canada-only lookup, raw kept on an ungrounded reply", async () => {
     const raw = "Maple v. Cedar (Can.).";
     const r = await runCitation({ rawInput: raw });
     expect(r.citation).toBe(raw); expect(r.pastedCitation?.jurisdiction).toBe("CA");
-    expect([m.cache.mock.calls.length, m.classifier.mock.calls.length, m.invoke.mock.calls.length]).toEqual([0, 0, 0]);
+    expect([m.cache.mock.calls.length, m.classifier.mock.calls.length, m.invoke.mock.calls.length]).toEqual([0, 0, 1]);
+    expect(m.invoke.mock.calls[0][1].foreignLookup).toMatchObject({ kind: "case", jurisdiction: "CA", parsedFields: { caseName: "Maple v. Cedar" } });
   });
 });

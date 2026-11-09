@@ -82,6 +82,7 @@ import { bindFreeformLookup, chargeModel, createCitationBudget, freeformAwaiting
 import { boundBookCompletion, resolveBookCompletion, frameBookFinal } from "../_shared/citationPure/bookFinal.ts";
 import type { CitationRecoveryInput } from "../_shared/citationRecovery.ts";
 import { isStatuteLookupRequest, validateStatuteRequest, resolveStatuteLookup } from "./statuteRoute.ts";
+import { isCountryLookupRequest, resolveCountryLookup, validateCountryRequest } from "./countryRoute.ts";
 import { guardPastedCitationRequest, pastedCitationWarning, type PastedCitationContract } from "../_shared/pastedCitation.ts";
 import { createCitationDiagnosticCollector } from "../_shared/citationDiagnostic.ts";
 import { authorizeCitationDiagnostic, isCitationDiagnosticPreflight, CITATION_DIAGNOSTIC_BUILD, CITATION_DIAGNOSTIC_PARSER } from "../_shared/citationDiagnosticGate.ts";
@@ -1828,7 +1829,14 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
     bookInput = recoveryInput;
     // Stage 4: a malformed typed statute request is invalid input, rejected
     // before any usage claim (existing invalid-input semantics, no new refund).
-    const statuteRequest = isStatuteLookupRequest(foreignLookupRequest);
+    // Bounded AU/CA completion has its own typed contract (re-derived from the raw text).
+    const countryRequest = isCountryLookupRequest(foreignLookupRequest);
+    if (countryRequest && !validateCountryRequest(foreignLookupRequest)) {
+      return new Response(JSON.stringify({ error: "INVALID_INPUT", messageHe: INVALID_INPUT_MSG_HE }), {
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    const statuteRequest = !countryRequest && isStatuteLookupRequest(foreignLookupRequest);
     if (statuteRequest && !validateStatuteRequest(foreignLookupRequest)) {
       return new Response(JSON.stringify({ error: "INVALID_INPUT", messageHe: INVALID_INPUT_MSG_HE }), {
         status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -2004,6 +2012,20 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
     // Stage 4: a typed statute request always terminates with a typed result
     // (grounded, unmatched, ambiguous, or an honest error). It never falls
     // through to the generic model and is never retried here.
+    // AU/CA: always a typed result; never the generic model, never a retry.
+    if (countryRequest) {
+      const countryResult = await resolveCountryLookup(foreignLookupRequest, {
+        apiKey: Deno.env.get("PERPLEXITY_API_KEY"),
+        fetchImpl: trackedFetch,
+        budget: citationBudget,
+        onProviderUnknown: markCitationProviderUnknown,
+        onError: (err) => console.error("country lookup error:", err),
+      });
+      return completeResponse(new Response(JSON.stringify({ content: "", foreignLookup: countryResult,
+        ...diagnosticEnvelope(countryResult.error === "lookup_failed" ? "lookup_failed" : "lookup_complete") }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      }));
+    }
     if (statuteRequest) {
       const statuteResult = await resolveStatuteLookup(foreignLookupRequest, {
         apiKey: Deno.env.get("PERPLEXITY_API_KEY"),

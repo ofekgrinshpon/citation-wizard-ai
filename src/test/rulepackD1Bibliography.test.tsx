@@ -58,13 +58,17 @@ describe("actual BibliographyGenerator regeneration with a disabled-country manu
     expect(b.run.mock.calls.at(-1)![0]).toMatchObject({ rawInput: RAW, overrideType: type, manualChoice });
     const result = await b.run.mock.results.at(-1)!.value;
     expect(result.citation).toBe(RAW); expect(result.status).toBe("warning");
-    expect(b.invoke).not.toHaveBeenCalled(); expect(b.cache).not.toHaveBeenCalled();
+    // An explicit Australia/Canada case choice is the only route that may ask (once) for that country's records;
+    // the unrelated generic reply is never shown. Other choices stay local.
+    const countryCase = (id === "t2:australia" || id === "t2:canada") && type === "foreign_case_other";
+    expect(b.invoke).toHaveBeenCalledTimes(countryCase ? 1 : 0); expect(b.cache).not.toHaveBeenCalled();
+    if (countryCase) expect(b.invoke.mock.calls[0][1].foreignLookup).toEqual({ enabled: true, kind: "case", jurisdiction: id === "t2:australia" ? "AU" : "CA", rawInput: RAW, parsedFields: { caseName: RAW } });
   });
 });
 
-import { COUNTRY_LOCAL_FIXTURES, COUNTRY_LOCAL_QA_FIXTURES, COUNTRY_PARTIAL_FIXTURES } from "./fixtures/countryLocalFixtures";
+import { COUNTRY_LOCAL_FIXTURES, COUNTRY_LOCAL_QA_FIXTURES } from "./fixtures/countryLocalFixtures";
 describe("AU/CA actual bibliography local slice", () => {
-  it.each([...COUNTRY_LOCAL_FIXTURES, ...COUNTRY_LOCAL_QA_FIXTURES, ...COUNTRY_PARTIAL_FIXTURES])("$id initial and exact manual regeneration bypass warm cache", async f => {
+  it.each([...COUNTRY_LOCAL_FIXTURES, ...COUNTRY_LOCAL_QA_FIXTURES])("$id initial and exact manual regeneration bypass warm cache", async f => {
     b.cache.mockResolvedValue({ full_citation:"UNSAFE CACHE", verification_status:"verified" });
     render(<TooltipProvider><BibliographyProvider><BibliographyGenerator /></BibliographyProvider></TooltipProvider>);
     fireEvent.change(screen.getByRole("textbox"), { target: { value:f.raw } });

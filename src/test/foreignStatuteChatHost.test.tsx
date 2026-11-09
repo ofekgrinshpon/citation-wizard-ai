@@ -310,15 +310,16 @@ describe("chat page — typed statute request through initial send and regenerat
     expect(screen.getByTestId("bubble-assistant")).toHaveTextContent("סותרים");
     expect(m.invoke).not.toHaveBeenCalled();
   });
-  it("AU incomplete manual regeneration preserves raw with local-only warning and zero IO", async () => {
+  it("AU manual regeneration of a bare caption sends one Australia-only typed request and ignores generic output", async () => {
     const input = "Mabo v. Queensland";
     m.invoke.mockResolvedValue({ data: { content: "UNSAFE MODEL OUTPUT" }, errorInfo: null });
     await mountChat(); await send(input);
     await waitFor(() => expect(screen.getByTestId("bubble-assistant")).toHaveTextContent(input));
     const calls = m.invoke.mock.calls.length;
     await act(async () => { fireEvent.click(screen.getByRole("button", { name: "regen-au" })); });
-    expect(m.invoke).toHaveBeenCalledTimes(calls);
-    expect(screen.getByTestId("bubble-assistant")).toHaveTextContent("הקלט נשמר ללא חיפוש");
+    await waitFor(() => expect(m.invoke).toHaveBeenCalledTimes(calls + 1));
+    expect(m.invoke.mock.calls[calls][1].foreignLookup).toEqual({ enabled: true, kind: "case", jurisdiction: "AU", rawInput: input, parsedFields: { caseName: input } });
+    await waitFor(() => expect(screen.getByTestId("bubble-assistant")).toHaveTextContent("הקלט נשמר ללא השלמה"));
     expect(screen.getByTestId("bubble-assistant")).not.toHaveTextContent("UNSAFE MODEL OUTPUT");
   });
   it("D1 natural BGH docket initial send stays local with zero IO", async () => {
@@ -614,7 +615,7 @@ afterAll(() => { expect(plannerHosts.has("chat")).toBe(true); expect(plannerHost
 
 // Actual Index initial/manual and local saved chat replay; only IO boundaries mocked.
 describe("AU/CA actual Index local slice", () => {
-  it.each([...COUNTRY_LOCAL_FIXTURES, ...COUNTRY_LOCAL_QA_FIXTURES, ...COUNTRY_PARTIAL_FIXTURES])("$id initial, manual, repeat and saved replay skip warm cache", async f => {
+  it.each([...COUNTRY_LOCAL_FIXTURES, ...COUNTRY_LOCAL_QA_FIXTURES])("$id initial, manual, repeat and saved replay skip warm cache", async f => {
     vi.mocked(findVerifiedSourceMatch).mockResolvedValue({ full_citation:"UNSAFE CACHE", verification_status:"verified" } as never);
     await mountChat(); await send(f.raw);
     await waitFor(() => expect(screen.getByTestId("bubble-assistant")).toHaveTextContent(f.output));
@@ -627,6 +628,33 @@ describe("AU/CA actual Index local slice", () => {
     cleanup(); await mountChat();
     expect(screen.getByTestId("bubble-assistant").textContent).toBe(content);
     expect(m.invoke).not.toHaveBeenCalled(); expect(fetch).not.toHaveBeenCalled();
+  });
+});
+
+// Bounded AU/CA completion: a partial in-scope citation sends one exact-country typed
+// request (no cache, no classifier) and renders only a grounded, template-complete record.
+describe("AU/CA partial citations complete through actual Index", () => {
+  const GROUNDED: Record<string, { fields: Record<string, string>; url: string; title: string; out: string }> = {
+    "partial.au.case.neutral": { fields: { neutralNumber: "123", decisionDate: "4 March 2020" }, url: "https://www.judgments.fedcourt.gov.au/judgments/Judgments/fca/single/2020/2020fca0123",
+      title: "Wattle v Harbour [2020] FCA 123 (4 March 2020)", out: "##Wattle v Harbour## [2020] FCA 123 (4 March 2020) (Austl.)." },
+    "partial.ca.statute.rsc": { fields: { chapter: "C-46" }, url: "https://laws-lois.justice.gc.ca/eng/acts/C-46/",
+      title: "Criminal Code (R.S.C., 1985, c. C-46)", out: "Criminal Code, R.S.C. 1985, c C-46 (Can.)." },
+  };
+  it.each([...COUNTRY_PARTIAL_FIXTURES])("$id: one typed request, warm cache skipped, grounded record rendered", async f => {
+    vi.mocked(findVerifiedSourceMatch).mockResolvedValue({ full_citation:"UNSAFE CACHE", verification_status:"verified" } as never);
+    const g = GROUNDED[f.id];
+    const kind = f.id.includes("case") ? "case" : "statute";
+    m.invoke.mockResolvedValue({ data: { content: "UNSAFE MODEL OUTPUT", foreignLookup: {
+      kind, jurisdiction: f.j, fields: g.fields, grounded: Object.fromEntries(Object.keys(g.fields).map(k => [k, true])),
+      provenance: Object.fromEntries(Object.entries(g.fields).map(([k, v]) => [k, { value: v, sourceUrl: g.url, sourceTitle: g.title, basis: "official_record" }])),
+      sources: [{ url: g.url, title: g.title, tier: "tier1" }], identity: { matched: true, anchors: [], conflicts: [], jurisdiction: f.j },
+      diagnostics: { tier1Queried: true, tier2Fired: false } } }, errorInfo: null });
+    await mountChat(); await send(f.raw);
+    await waitFor(() => expect(screen.getByTestId("bubble-assistant")).toHaveTextContent(g.out));
+    expect(m.invoke).toHaveBeenCalledTimes(1);
+    expect(m.invoke.mock.calls[0][1].foreignLookup).toMatchObject({ enabled: true, kind, jurisdiction: f.j, rawInput: f.raw });
+    expect(m.classify).not.toHaveBeenCalled(); expect(findVerifiedSourceMatch).not.toHaveBeenCalled();
+    expect(screen.getByTestId("bubble-assistant")).not.toHaveTextContent("UNSAFE");
   });
 });
 

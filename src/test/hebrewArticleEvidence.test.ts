@@ -24,6 +24,7 @@ import { buildEnginePromptHint } from "@/lib/citationValidation";
 import * as bookFinal from "../../supabase/functions/_shared/citationPure/bookFinal";
 import * as freeformInterpret from "../../supabase/functions/_shared/citationPure/freeformInterpret";
 import * as statuteRoute from "../../supabase/functions/citation-chat/statuteRoute";
+import * as countryRoute from "../../supabase/functions/citation-chat/countryRoute";
 import { CITATION_RULES } from "@/data/citationEngine";
 import { C2_WIRE, c2WirePayload } from "./fixtures/c2WirePayload";
 import { renderCitationRecovery } from "@/lib/renderCitationRecovery";
@@ -281,6 +282,7 @@ async function runHandler(options: { raw?: string; rawInputNull?: boolean; recor
       }) as typeof fetch });
     }, articleLookupFallback },
     "./statuteRoute.ts": statuteRoute,
+    "./countryRoute.ts": countryRoute,
     "../_shared/citationPure/bookFinal.ts": bookFinal,
     "../_shared/citationPure/freeformInterpret.ts": freeformInterpret,
   };

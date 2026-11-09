@@ -77,7 +77,8 @@ function caseSupplied(raw: string, jurisdiction: CountryJurisdiction): Record<st
   const tailAt = s.search(jurisdiction === "AU" ? /\s*,?\s*(?:\[\d{4}\]|\(\d{4}\))/ : /\s*,?\s*(?:\[\d{4}\]|\(\d{4}\)|\b\d{4}\s+SCC\b)/);
   const caseName = (tailAt >= 0 ? s.slice(0, tailAt) : s).trim().replace(/[,\s]+$/, "");
   const tail = (tailAt >= 0 ? s.slice(tailAt) : "").trim().replace(/^,\s*/, "");
-  if (!caseName || !twoParties(caseName)) return null;
+  // A four-digit number left in the caption is an unread citation part (e.g. "2020 CanLII 12"), not a party name.
+  if (!caseName || !twoParties(caseName) || /\d{4}/.test(caseName)) return null;
   const out: Record<string, string> = { caseName };
   const put = (k: string, v: string | undefined) => { if (v) out[k] = v; };
   if (!tail) return out;
@@ -89,12 +90,14 @@ function caseSupplied(raw: string, jurisdiction: CountryJurisdiction): Record<st
     if (m && m[3]) { put("reporterYear", m[1]); put("reporterVolume", m[2]); put("reporter", m[3]); put("firstPage", m[4]); return out; }
     return null;
   }
-  let m = tail.match(/^(\d{4})\s+SCC(?:\s+(\d+))?(?:,\s*\[(\d{4})\]\s+(\d+)\s+(S\.C\.R\.|SCR)(?:\s+(\d+))?)?$/);
-  if (m) { put("neutralYear", m[1]); put("neutralNumber", m[2]); put("reporterYear", m[3]); put("reporterVolume", m[4]); put("reporter", m[5]); put("firstPage", m[6]); return out; }
-  m = tail.match(/^(?:\((\d{4})\)\s*,?\s*)?\[(\d{4})\](?:\s+(\d+))?(?:\s+(S\.C\.R\.|SCR))?(?:\s+(\d+))?$/);
+  // A trailing sentence period was removed above, so "S.C.R" here is the reporter "S.C.R.".
+  const scrName = (v: string | undefined) => v && /^S\.C\.R/.test(v) ? "S.C.R." : v;
+  let m = tail.match(/^(\d{4})\s+SCC(?:\s+(\d+))?(?:,\s*\[(\d{4})\]\s+(\d+)\s+(S\.C\.R\.?|SCR)(?:\s+(\d+))?)?$/);
+  if (m) { put("neutralYear", m[1]); put("neutralNumber", m[2]); put("reporterYear", m[3]); put("reporterVolume", m[4]); put("reporter", scrName(m[5])); put("firstPage", m[6]); return out; }
+  m = tail.match(/^(?:\((\d{4})\)\s*,?\s*)?\[(\d{4})\](?:\s+(\d+))?(?:\s+(S\.C\.R\.?|SCR))?(?:\s+(\d+))?$/);
   if (m) {
     if (Number(m[2]) < 1975) return null;
-    put("decisionYear", m[1]); put("reporterYear", m[2]); put("reporterVolume", m[3]); put("reporter", m[4]); put("firstPage", m[5]);
+    put("decisionYear", m[1]); put("reporterYear", m[2]); put("reporterVolume", m[3]); put("reporter", scrName(m[4])); put("firstPage", m[5]);
     return out;
   }
   m = tail.match(/^\((\d{4})\)$/);
@@ -109,7 +112,7 @@ function statuteSupplied(raw: string, jurisdiction: CountryJurisdiction): Record
     if (!m || !/[A-Za-z]{3}/.test(m[1].replace(/\bAct$/, ""))) return null;
     return { statuteName: m[1].trim(), ...(m[2] ? { enactmentYear: m[2] } : {}), ...(m[3] ? { code: m[3] } : {}) };
   }
-  const m = s.match(/^([^,()]*[A-Za-z][^,()]*?)(?:,\s*(R\.?S\.?C\.?|S\.C\.)(?:,?\s+(\d{4}))?(?:,\s*c\.?\s+([A-Za-z0-9]+(?:-[A-Za-z0-9.]+)*))?)?$/);
+  const m = s.match(/^([^,()]*[A-Za-z][^,()]*?)(?:,\s*(R\.?S\.?C\.?|S\.C\.?)(?:,?\s+(\d{4}))?(?:,\s*c\.?\s+([A-Za-z0-9]+(?:-[A-Za-z0-9.]+)*))?)?$/);
   if (!m || m[1].trim().length < 4) return null;
   const out: Record<string, string> = { statuteName: m[1].trim() };
   if (m[2]) out.code = m[2];
@@ -126,8 +129,8 @@ function statuteSupplied(raw: string, jurisdiction: CountryJurisdiction): Record
  */
 export function planCountryLookup(ast: CountryAst | null, raw: string): CountryLookupDecision | null {
   if (!ast || ast.complete) return null;
-  if (countryCues(raw) === "ambiguous") return { kind: "blocked", reason: "country_form_conflict" };
   const cue = countryCues(raw);
+  if (cue === "ambiguous") return { kind: "blocked", reason: "country_form_conflict" };
   if (ast.conflicts.length || (cue !== "none" && cue !== ast.jurisdiction)) return null;
   const supplied = ast.family === "case" ? caseSupplied(raw, ast.jurisdiction) : statuteSupplied(raw, ast.jurisdiction);
   if (!supplied) return null;
@@ -164,7 +167,7 @@ const TOKEN_RES: Record<CountryJurisdiction, Array<[Token["type"], RegExp]>> = {
     ["date", new RegExp(String.raw`\((\d{1,2})\s+(${MONTHS})\s+(\d{4})\)`, "g")],
   ],
   CA: [
-    ["neutral", /(?<![\d)]\s{0,3})\b(\d{4})\s+SCC\s+(\d+)\b/g],
+    ["neutral", /\b(\d{4})\s+SCC\s+(\d+)\b/g],
     ["report", /\[(\d{4})\]\s+(\d+)\s+(S\.\s?C\.\s?R\.|SCR)\s+(\d+)/g],
     ["canlii", /\b(\d{4})\s+CanLII\s+(\d+)(?:\s*\((?:SCC|CSC)\))?/g],
   ],

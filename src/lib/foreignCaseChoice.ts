@@ -17,6 +17,7 @@ import {
 } from "../../supabase/functions/_shared/citationPure/caseLocations.ts";
 import { escapeCitationLiteral } from "@/lib/citationSegments";
 import type { TypedPlan } from "@/lib/citationPlanner";
+import { countryOptionResponse, type CountryDecision, type CountryLookupRequest } from "../../supabase/functions/_shared/citationPure/countryLookup.ts";
 
 export interface ForeignCaseChoiceOption { id: string; label: string; url: string }
 
@@ -24,7 +25,7 @@ export interface ForeignCaseChoice {
   version: 1;
   /** "decision": several rulings; "location": parallel reports of one ruling. */
   stage: "decision" | "location";
-  jurisdiction: CaseJurisdiction;
+  jurisdiction: CaseJurisdiction | "AU" | "CA";
   /** Fingerprint of the bound original input. */
   fingerprint: string;
   options: ForeignCaseChoiceOption[];
@@ -34,6 +35,8 @@ export interface ForeignCaseChoice {
   plan: TypedPlan;
   response: Record<string, unknown>;
   pastedCitation?: unknown;
+  /** AU/CA bounded completion: validated per-template records (decisions stays empty). */
+  country?: { request: CountryLookupRequest; decisions: CountryDecision[] };
 }
 
 const MAX_OPTIONS = 5;
@@ -98,6 +101,23 @@ export function buildForeignCaseChoice(plan: TypedPlan, response: unknown, paste
   };
 }
 
+const countryOptions = (stage: "decision" | "location", decisions: CountryDecision[]): ForeignCaseChoiceOption[] => stage === "decision"
+  ? decisions.slice(0, MAX_OPTIONS).map((d) => ({ id: d.id, label: d.label, url: Object.values(d.options[0].sources)[0].url }))
+  : decisions[0].options.slice(0, MAX_OPTIONS).map((o) => ({ id: o.id, label: o.label, url: Object.values(o.sources)[0].url }));
+
+/** AU/CA choice from records already validated by `acceptCountryResponse` (no IO). */
+export function buildCountryCaseChoice(plan: TypedPlan, request: CountryLookupRequest, response: unknown, pastedCitation: unknown,
+  stage: "decision" | "location", decisions: CountryDecision[]): ForeignCaseChoice | null {
+  if (!decisions.length || (stage === "location" && (decisions.length !== 1 || decisions[0].options.length < 2)) || (stage === "decision" && decisions.length < 2)) return null;
+  const options = countryOptions(stage, decisions);
+  if (options.some((o) => !o.url)) return null;
+  return {
+    version: 1, stage, jurisdiction: request.jurisdiction, fingerprint: inputFingerprint(plan.evidence.pasted.contract.rawInput),
+    options, decisions: [], plan, response: record(response), ...(pastedCitation !== undefined ? { pastedCitation } : {}),
+    country: { request, decisions },
+  };
+}
+
 export type ChoiceSelection =
   | { kind: "stale" }
   | { kind: "invalid" }
@@ -114,6 +134,20 @@ export function prepareChoiceSelection(choice: ForeignCaseChoice, optionId: stri
   if (choice.version !== 1 || inputFingerprint(raw) !== choice.fingerprint) return { kind: "stale" };
   if (!currentInputs.some((v) => typeof v === "string" && inputFingerprint(v) === choice.fingerprint && citationBindingText(v) === citationBindingText(raw))) return { kind: "stale" };
   if (!choice.options.some((o) => o.id === optionId)) return { kind: "invalid" };
+  if (choice.country) {
+    const { request, decisions } = choice.country;
+    const decision = choice.stage === "decision" ? decisions.find((d) => d.id === optionId) : decisions[0];
+    if (!decision) return { kind: "invalid" };
+    if (choice.stage === "decision" && decision.options.length > 1) {
+      const options = countryOptions("location", [decision]);
+      const next: ForeignCaseChoice = { ...choice, stage: "location", options, country: { request, decisions: [decision] } };
+      return { kind: "choice", choice: next, reply: locationChoiceReply(options) };
+    }
+    const option = choice.stage === "decision" ? decision.options[0] : decision.options.find((o) => o.id === optionId);
+    if (!option) return { kind: "invalid" };
+    return { kind: "respond", data: { foreignLookup: countryOptionResponse(request, option, choice.response),
+      ...(choice.pastedCitation !== undefined ? { pastedCitation: choice.pastedCitation } : {}) } };
+  }
   const req = choice.plan.foreignLookup!;
   const parsed = record(req.parsedFields) as Record<string, string>;
   const userYear = parsed.year ?? String(req.rawInput ?? "").match(/\b(19|20)\d{2}\b/)?.[0];

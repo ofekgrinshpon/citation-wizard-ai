@@ -95,7 +95,9 @@ describe("batch A pure supplied-evidence contract", () => {
     expect(c.contract.route).toBe("preserve"); expect(c.contract.formatter).toBe("unsupported");
     const unknownCountry = preparePastedCitation("Alpha v. Beta", citationManualChoice("foreign_case_other", "t2:canada"));
     expect(unknownCountry.contract.manualChoice?.jurisdictionId).toBe("t2:canada");
-    expect(unknownCountry.contract.route).toBe("preserve");
+    // An explicit Canada choice on a caption asks for Canadian completion only (bounded SCC/S.C.R. templates).
+    expect(unknownCountry.contract.route).toBe("foreign");
+    expect(unknownCountry.countryLookup).toEqual({ enabled: true, kind: "case", jurisdiction: "CA", rawInput: "Alpha v. Beta", parsedFields: { caseName: "Alpha v. Beta" } });
   });
   it("server derives foreign evidence from text despite forged client declaration/rawInput", () => {
     const c = guardPastedCitationRequest({ messages: [{ role: "user", content: DE }], rawInput: 'ע"א 1234/20',

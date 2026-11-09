@@ -48,11 +48,16 @@ describe('six BB21 exact local templates', () => {
         const r = await runCitation({ rawInput: f.raw, manualChoice: choice }); expect(citationToPlain(r.citation)).toBe(f.raw); expect(r.pastedCitation?.conflicts.length).toBeGreaterThan(0);
       } zero();
     });
-    it(`${f.id} server refuses typed/forged UNKNOWN and generic completion`, () => {
-      for (const lookup of [undefined, { enabled: true, rawInput: f.raw, kind: f.id.includes('case') ? 'case' : 'statute', jurisdiction: 'UNKNOWN', parsedFields: {} }]) {
+    it(`${f.id} server refuses typed/forged UNKNOWN, generic and complete-input completion`, () => {
+      const kind = f.id.includes('case') ? 'case' : 'statute';
+      for (const lookup of [undefined, { enabled: true, rawInput: f.raw, kind, jurisdiction: 'UNKNOWN', parsedFields: {} },
+        // A complete template is never sent for completion, even with the exact country.
+        { enabled: true, rawInput: f.raw, kind, jurisdiction: f.j, parsedFields: {} }]) {
         const c = guardPastedCitationRequest({ messages: [{ role:'user', content:f.raw }], rawInput:f.raw, foreignLookup:lookup }); expect(c.route).toBe('preserve'); expect(c.jurisdiction).toBe(f.j);
       }
-      expect(rulepackLookupEligible(f.id.includes('case') ? 'case' : 'statute', f.j)).toBe(false); expect(planForeignLookup('foreign_case_other', f.raw, null)).toBeNull();
+      // Completion exists only as the exact-country typed route, never the generic US/UK planner.
+      expect(rulepackLookupEligible(kind, f.j)).toBe(true); expect(planForeignLookup('foreign_case_other', f.raw, null)).toBeNull();
+      expect(preparePastedCitation(f.raw).countryLookup).toBeNull();
     });
   }
 });
@@ -66,7 +71,7 @@ it.each([
   ['Maple v. Cedar, [1975] 2 SCR 100, para. 104', 'Maple v. Cedar, [1975] 2 S.C.R. 100, para. 104 (Can.).'],
 ])('supplied alias/optional/year roles %s', async (raw, output) => { expect((await runCitation({ rawInput:raw })).citation).toBe(output); zero(); });
 it.each([
- 'Wattle v Harbour [2020] FCA 123', 'Wattle v Harbour [2020] FCAFC 123 (4 March 2020)',
+ 'Wattle v Harbour [2020] FCAFC 123 (4 March 2020)',
  'Maple v. Cedar, [1974] 2 SCR 100', 'Wattle v Harbour (2020) 270 CLR 10, 14, 2 XYZ 19',
  'Synthetic Records Act 2020 (Cth) ss 4–6 amended 2023', 'Wattle v Harbour [2020] HCA 1 (31 February 2020)',
  'Maple v. Cedar, 2020 CanLII 12', 'Wattle v Harbour (2020) 270 CLR 10 (Can.).',
@@ -80,7 +85,15 @@ it('literal markers and HTML remain literal inside semantic party italics', asyn
 });
 it('neutral year and full decision year remain independent', () => { const a = ast('Wattle v Harbour [2020] HCA 1 (4 March 2021)'); expect(a.fields.neutralYear.value).toBe('2020'); expect(a.fields.decisionYear.value).toBe('2021'); });
 it('page and explicit paragraph roles remain separate', () => { expect(ast(fixtures[4].raw).fields.pagePinpoint.value).toBe('104'); expect(ast(fixtures[4].raw).fields.paragraph).toBeUndefined(); });
-it('incomplete country choice stops legacy', async () => { const r = await runCitation({ rawInput:'Wattle v Harbour', manualChoice:citationManualChoice('foreign_case_other','t2:australia') }); expect(r.citation).toBe('Wattle v Harbour'); zero(); });
+it('incomplete country choice asks only the exact-country typed lookup (no legacy, cache or classifier)', async () => {
+  m.invoke.mockResolvedValue({ data: { content: '', foreignLookup: { kind: 'case', jurisdiction: 'AU', fields: {}, grounded: {}, provenance: {}, sources: [], identity: { matched: false, anchors: [], conflicts: [] }, diagnostics: { tier1Queried: true, tier2Fired: false } } }, errorInfo: null });
+  const r = await runCitation({ rawInput:'Wattle v Harbour', manualChoice:citationManualChoice('foreign_case_other','t2:australia') });
+  expect(r.citation).toBe('Wattle v Harbour'); expect(r.status).toBe('warning');
+  expect(m.invoke).toHaveBeenCalledTimes(1);
+  const body = m.invoke.mock.calls[0][1];
+  expect(body.foreignLookup).toEqual({ enabled: true, kind: 'case', jurisdiction: 'AU', rawInput: 'Wattle v Harbour', parsedFields: { caseName: 'Wattle v Harbour' } });
+  expect(m.cache).not.toHaveBeenCalled(); expect(m.classifier).not.toHaveBeenCalled(); expect(fetch).not.toHaveBeenCalled();
+});
 
 it.each([
  'Synthetic Records Act 2020 (Cth) pts 2–3, divs 4–6, schs 1–2',

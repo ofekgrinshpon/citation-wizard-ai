@@ -4,6 +4,8 @@ import { escapeCitationLiteral } from "@/lib/citationSegments";
 import type { SourceType } from "@/data/abbreviations";
 import { isPlannedJurisdiction, rulepackJurisdictionFromId, rulepackLookupEligible } from "../../supabase/functions/_shared/citationPure/rulepack.ts";
 import { parseCountryLocal, renderCountryLocal } from "../../supabase/functions/_shared/citationPure/countryLocal.ts";
+import { planCountryLookup } from "../../supabase/functions/_shared/citationPure/countryLookup.ts";
+export const COUNTRY_FORM_CONFLICT_WARNING = "צורת האזכור משמשת גם במדינה אחרת (למשל SCC של הודו) ואינה תואמת למדינה שנבחרה; הקלט נשמר ללא חיפוש.";
 export function citationManualChoice(type?: SourceType, jurisdictionId?: string, subjurisdiction?: string): CitationManualChoice | null {
   if (!type && !jurisdictionId) return null;
   // Shared rulepack mapping: AU/CA/FR keep their own code (planned/disabled), never US/IL/UNKNOWN.
@@ -19,8 +21,14 @@ export function preparePastedCitation(raw: string, manual: CitationManualChoice 
     contract.route = "preserve"; contract.formatter = "unsupported"; contract.unsupported.push("subjurisdiction_formatter_not_supported");
   }
   const preserved = () => ({ citation: escapeCitationLiteral(raw), reply: `${escapeCitationLiteral(raw)}\n⚠️ ${pastedCitationWarning(contract)}`, warningMsg: pastedCitationWarning(contract) });
-  if (contract.route === "preserve") return { contract, local: country && !contract.conflicts.length && !contract.unsupported.length ? renderCountryLocal(country) : preserved(), detection, country };
-  if (country) return { contract, local: renderCountryLocal(country), detection, country };
+  // Bounded AU/CA completion: an incomplete in-scope template asks for its missing facts.
+  const countryLookup = country ? planCountryLookup(country, raw) : null;
+  if (countryLookup?.kind === "blocked") {
+    const citation = escapeCitationLiteral(raw);
+    return { contract, local: { citation, reply: `${citation}\n⚠️ ${COUNTRY_FORM_CONFLICT_WARNING}`, warningMsg: COUNTRY_FORM_CONFLICT_WARNING, status: "warning" as const }, detection, country, countryLookup: null };
+  }
+  if (contract.route === "preserve") return { contract, local: country && !contract.conflicts.length && !contract.unsupported.length ? renderCountryLocal(country) : preserved(), detection, country, countryLookup: null };
+  if (country) return { contract, local: renderCountryLocal(country), detection, country, countryLookup: countryLookup?.kind === "lookup" ? countryLookup.request : null };
   // Only complete supported case forms. Existing literature ambiguity gates stay authoritative.
   const rendered = detection?.kind === "case" && detection.confidence === "deterministic" &&
     (!manual?.sourceType || manual.sourceType === detection.sourceType) ? renderForeignDetection(detection) : null;
@@ -29,7 +37,7 @@ export function preparePastedCitation(raw: string, manual: CitationManualChoice 
     reply: `${rendered.citation}\n⚠️ ${[...rendered.warnings, "עוצב לפי הפרטים שסופקו; זהות המקור לא אומתה."].join(" ")}`,
     warningMsg: rendered.warnings[0] ?? "זהות המקור לא אומתה.",
   } : null;
-  return { contract, local, detection, country };
+  return { contract, local, detection, country, countryLookup: null };
 }
 export function pastedCaseRequest(raw: string, contract: PastedCitationContract) {
   if (contract.route !== "foreign" || contract.sourceKind !== "case" || raw !== contract.rawInput || (contract.jurisdiction === "AU" || contract.jurisdiction === "CA" || isPlannedJurisdiction(contract.jurisdiction)) ||

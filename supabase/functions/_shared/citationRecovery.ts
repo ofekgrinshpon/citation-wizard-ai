@@ -8,9 +8,12 @@ export const CITATION_FIELD_KEYS = [
   "authors", "author", "articleTitle", "journal", "bookTitle", "edition", "editors", "translators", "chapterTitle",
   "doi", "sourceUrl", "title", "jurisdiction", "division", "number", "section", "clause", "statuteName",
   "titleNumber", "code", "subsection", "chapter", "regnalYear", "monarch", "site", "date", "url",
+  // AU/CA bounded templates (countryLookup.ts).
+  "neutralYear", "neutralNumber", "reporterYear", "decisionYear", "enactmentYear", "revisionYear",
 ] as const;
 const kinds = ["case", "journal_article", "book", "book_chapter", "statute"];
-const jurisdictions = ["US", "UK", "OTHER", "UNKNOWN"];
+const jurisdictions = ["US", "UK", "OTHER", "UNKNOWN", "AU", "CA"];
+const recordJurisdictions = ["US", "UK", "AU", "CA"];
 const bases = ["official_record", "structured_metadata", "publisher_metadata", "repository_metadata", "search_result_explicit", "document_inspection"];
 export function recoveryObject(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === "object" && !Array.isArray(value);
@@ -72,11 +75,11 @@ function validForeignResult(value: unknown): value is Record<string, unknown> {
   const identity = value.identity;
   if (!recoveryObject(identity) || !keysOnly(identity, ["matched", "anchors", "conflicts", "jurisdiction", "jurisdictionDiscovered", "court", "year"]) ||
       typeof identity.matched !== "boolean" || !strings(identity.anchors) || !strings(identity.conflicts) ||
-      ("jurisdiction" in identity && !["US", "UK"].includes(String(identity.jurisdiction))) ||
+      ("jurisdiction" in identity && !recordJurisdictions.includes(String(identity.jurisdiction))) ||
       ("jurisdictionDiscovered" in identity && typeof identity.jurisdictionDiscovered !== "boolean") ||
       !optionalString(identity, "court") || !optionalString(identity, "year")) return false;
   if ("disambiguation" in value && (!Array.isArray(value.disambiguation) || !value.disambiguation.every((entry) =>
-    recoveryObject(entry) && keysOnly(entry, ["jurisdiction", "label", "url"]) && ["US", "UK"].includes(String(entry.jurisdiction)) &&
+    recoveryObject(entry) && keysOnly(entry, ["jurisdiction", "label", "url"]) && recordJurisdictions.includes(String(entry.jurisdiction)) &&
     typeof entry.label === "string" && typeof entry.url === "string"))) return false;
   const diagnostics = value.diagnostics;
   return recoveryObject(diagnostics) && keysOnly(diagnostics, ["tier1Queried", "tier2Fired", "jurisdictionResolvedBy"]) &&

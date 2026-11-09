@@ -12,6 +12,7 @@ import * as freeformInterpret from "../../supabase/functions/_shared/citationPur
 import { splitCitationWarnings } from "@/lib/citationSegments";
 import * as prefixes from "../../supabase/functions/_shared/caseTypePrefixes";
 import * as statute from "../../supabase/functions/citation-chat/statuteRoute";
+import * as country from "../../supabase/functions/citation-chat/countryRoute";
 import { runForeignLookup, articleLookupFallback } from "../../supabase/functions/citation-chat/foreignLookup";
 import { CHAT_HOST, resolveCitationResponse } from "@/lib/citationPlanner";
 import { renderCitationRecovery } from "@/lib/renderCitationRecovery";
@@ -105,6 +106,7 @@ async function vertical(f: { id: string; raw: string; type: "foreign_book" | "fo
       if (path.includes("pastedCitation")) return pasted;
       if (path.includes("caseTypePrefixes")) return prefixes;
       if (path.includes("statuteRoute")) return statute;
+      if (path.includes("countryRoute")) return country;
       if (path.includes("citationPure/bookFinal")) return bookFinal;
       if (path.includes("freeformInterpret")) return freeformInterpret;
       if (path.includes("foreignLookup")) return { runForeignLookup: lookup, articleLookupFallback };
