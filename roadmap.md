@@ -103,4 +103,10 @@
 - [ ] Pre-existing: 2 failing tests in wordFootnoteWorkflow.test.tsx (reproduced without Stage 2 changes) — awaits owner decision.
 
 ## Israeli party-name search
-- [x] One open-web search when the legal databases find nothing; kept only if one page shows the exact case number with both parties; פ"ד still verified with trusted publishers (offline tests). Server function not yet deployed.
+- [x] One open-web search when the legal databases find nothing; kept only if one page shows the exact case number with both parties; פ"ד still verified with trusted publishers (offline tests). Citation server updated 2026-11-09; site not yet published.
+
+## Chat polish (2026-11-09)
+- [x] Short English law names ("online safety act", "Data Protection Act") pass the send check.
+- [x] Rule hints follow the source type: year hint (18.7) only on Israeli rulings; foreign sources get no Israeli hints.
+- [x] Foreign classification card shows the main identification instead of a contradicting "not identified".
+- [ ] Publish the site so these reach relexlm.com — awaits owner.

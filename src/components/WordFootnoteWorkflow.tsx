@@ -13,7 +13,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useProjects } from "@/hooks/useProjects";
 import { runCitation } from "@/lib/runCitation";
 import { selectForeignCaseChoice, WORD_HOST } from "@/lib/citationPlanner";
-import { normalizeAbbreviations } from "@/data/abbreviations";
+import { normalizeAbbreviations, SOURCE_TYPE_LABELS } from "@/data/abbreviations";
 import { lineDirection } from "@/lib/textDirection";
 import { citationTextOnly, escapeCitationLiteral } from "@/lib/citationSegments";
 import { newTelemetryBatch, sourceTelemetry } from "@/lib/costTelemetry";
@@ -29,6 +29,12 @@ const steps = ["בחירת מסמך", "טקסט הסבר שלא לשנות", "ב
 /** Files and extracted text live only in this mounted panel, never localStorage.
  * Generation uses the existing server protocol. Import/export never call providers.
  */
+/** The card's own identification, shown by the foreign classification card when its local detector finds nothing. */
+function hostForeignLabel(type: string | undefined): string | undefined {
+  if (!type || type === "foreign" || type === "unknown") return undefined;
+  return (SOURCE_TYPE_LABELS as Record<string, string>)[type];
+}
+
 export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: boolean) => void }) {
   const { user } = useAuth();
   const { currentProject } = useProjects();
@@ -419,6 +425,7 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
               {row.styleIssue && <p className="text-sm text-amber-900">לא ניתן לשמור את עיצוב האזכור בבטחה. ההערה תישאר ללא שינוי.</p>}
               {isForeignSourceType(row.sourceTypeOverride ?? row.detectedType ?? "unknown") && <fieldset disabled={busy}><ForeignSourcePicker transient
                 key={`${row.id}:${row.sourceTypeOverride}`} initialRecord={row.classificationRecord} accountId={user?.id} itemKey={`word:${row.id}`} input={row.input} regenerateDisabled={busy}
+                hostDetectedLabel={hostForeignLabel(row.sourceTypeOverride ?? row.detectedType)}
                 onChange={({plan,record}) => {
                   if ((row.classification?.effectiveKey ?? "") !== (plan?.effectiveKey ?? "")) changeRow(row.id,{classification:plan,classificationRecord:record,output:null,status:"empty"});
                 }} /></fieldset>}

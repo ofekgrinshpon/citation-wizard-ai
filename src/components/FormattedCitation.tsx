@@ -1,5 +1,5 @@
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
-import { CITATION_PART_RULES, RULE_EXPLANATIONS } from "@/data/ruleTooltips";
+import { RULE_EXPLANATIONS, citationPartRulesFor, tooltipScopeFor, type CitationPartRule } from "@/data/ruleTooltips";
 import { parseCitationSegments, type CitationSegment } from "@/lib/citationSegments";
 
 /** Map missing field descriptions to likely rule numbers */
@@ -30,6 +30,8 @@ interface FormattedCitationProps {
   text: string;
   highlightMissing?: boolean;
   enableTooltips?: boolean;
+  /** Detected source type: rule hints follow it (Israeli case-law year hint only on Israeli case law; foreign sources get no Israeli hints). */
+  sourceType?: string;
 }
 
 /** Render a single segment with optional tooltip */
@@ -140,10 +142,10 @@ function parseInlineMarkers(
  * Try to find a citation part rule that matches starting near position 0 of the raw text.
  * Returns the matched rule and the match boundaries, or null.
  */
-function findPartRules(rawLine: string) {
+function findPartRules(rawLine: string, rules: CitationPartRule[]) {
   const matches: { start: number; end: number; ruleKey: string; label: string }[] = [];
 
-  for (const rule of CITATION_PART_RULES) {
+  for (const rule of rules) {
     if (!rule.ruleKey) continue; // skip display-only rules
     let m: RegExpExecArray | null;
     const regex = new RegExp(rule.pattern.source, "g");
@@ -170,13 +172,14 @@ export function FormattedCitation({
   text,
   highlightMissing,
   enableTooltips = false,
+  sourceType,
 }: FormattedCitationProps) {
   if (!enableTooltips) {
     return <>{parseInlineMarkers(text, !!highlightMissing)}</>;
   }
 
   // With tooltips: find rule-matching segments and wrap them
-  const matches = findPartRules(text);
+  const matches = findPartRules(text, citationPartRulesFor(tooltipScopeFor(sourceType, text)));
 
   if (matches.length === 0) {
     return <>{parseInlineMarkers(text, !!highlightMissing)}</>;

@@ -215,6 +215,22 @@ describe("picker UI — deterministic, local, zero network", () => {
     expect(screen.getByTestId("foreign-support").dataset.status).toBe("unidentified");
     noNetwork();
   });
+  it("shows the host's identification instead of a contradicting 'not identified' line", () => {
+    render(<ForeignSourcePicker accountId="acct-A" itemKey="t:host1" input="online safety act uk" hostDetectedLabel="חוק אנגלי (36.3)" />);
+    expect(screen.getByTestId("foreign-effective").textContent).toBe("חוק אנגלי (36.3)");
+    expect(screen.queryByText(/סוג המקור לא זוהה/)).toBeNull();
+    // A manual "other / not identified" choice still shows as such.
+    fireEvent.click(screen.getByRole("button", { name: "שינוי סיווג" }));
+    fireEvent.click(screen.getByRole("button", { name: "אחר / לא זוהה" }));
+    expect(screen.getByTestId("foreign-effective").textContent).toBe("אחר / לא זוהה");
+    expect(screen.getByTestId("foreign-support").dataset.status).toBe("unidentified");
+    noNetwork();
+  });
+  it("without a host identification, an unrecognised input still says 'not identified'", () => {
+    render(<ForeignSourcePicker accountId="acct-A" itemKey="t:host2" input="online safety act uk" />);
+    expect(screen.getByTestId("foreign-effective").textContent).toBe("אחר / לא זוהה");
+    expect(screen.getByTestId("foreign-support").dataset.status).toBe("unidentified");
+  });
   it("searchable: query filters families/subtypes", () => {
     render(<ForeignSourcePicker accountId="acct-A" itemKey="t:3" input="Foo" />);
     fireEvent.click(screen.getByRole("button", { name: "שינוי סיווג" }));

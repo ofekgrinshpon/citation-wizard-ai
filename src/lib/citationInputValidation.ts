@@ -27,6 +27,10 @@ const PARTY_SEPARATOR_RE = /\sנ['׳]\s|\sנגד\s/;
 // English case-name separator ("GEMA v. Suno Inc.", "Roe v Wade", "A vs. B"):
 // a word of ≥2 letters on each side so stray letters like "x v y" stay gated.
 const LATIN_PARTY_SEPARATOR_RE = /[A-Za-z]{2,}\.?\s+(?:v|vs)\.?\s+[A-Za-z]{2,}/i;
+// Short English legislation names ("online safety act", "Data Protection Act",
+// "US Code"): a legislation word after a word of ≥2 letters, any letter case.
+// A lone "act" or "code" stays gated.
+const LATIN_LEGISLATION_RE = /[A-Za-z]{2,}\s+(?:act|statute|code|regulations?|ordinance|directive|constitution)\b/i;
 
 // Pure single-character/short-pattern repetition: "עעעע", "aaaa", "1111", "abcabcabc".
 const SINGLE_CHAR_REPEAT_RE = /^(.)\1{2,}$/;
@@ -63,6 +67,7 @@ export function validateCitationInput(raw: string): ValidationResult {
     CASE_NUMBER_RE.test(text) ||
     PARTY_SEPARATOR_RE.test(text) ||
     LATIN_PARTY_SEPARATOR_RE.test(text) ||
+    LATIN_LEGISLATION_RE.test(text) ||
     URL_RE.test(text);
 
   if (!hasAnyLegalMarker && SHORT_PATTERN_REPEAT_RE.test(compact) && compact.length <= 12) {

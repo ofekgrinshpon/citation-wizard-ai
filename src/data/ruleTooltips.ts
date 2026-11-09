@@ -54,6 +54,37 @@ export interface CitationPartRule {
   label: string;
 }
 
+/**
+ * Which rule hints fit a citation line. Israeli rule hints describe Israeli
+ * sources only, and the year hint (18.7) describes Israeli case law only.
+ * - israeli_case_law: every hint
+ * - israeli_other: every hint except the case-law year (18.7)
+ * - foreign: only the foreign-source hint (36)
+ */
+export type TooltipScope = "israeli_case_law" | "israeli_other" | "foreign";
+
+const HEBREW_RE = /[\u0590-\u05FF]/;
+const LATIN_RE = /[A-Za-z]/;
+const ISRAELI_CASE_LINE_RE = /[א-ת]{1,3}["״][א-ת]\s*\d+\/\d+|פ["״]ד|נבו|פדאור|\sנ['׳]\s|\sנגד\s/;
+
+/** Scope from the detected source type when known; otherwise from the line itself. */
+export function tooltipScopeFor(sourceType: string | undefined, line: string): TooltipScope {
+  if (sourceType && sourceType !== "unknown") {
+    if (sourceType === "foreign" || sourceType.startsWith("foreign_")) return "foreign";
+    return sourceType === "case_law_published" || sourceType === "case_law_database" ? "israeli_case_law" : "israeli_other";
+  }
+  const plain = line.replace(/\*\*|##|\^\^/g, "");
+  if (LATIN_RE.test(plain) && !HEBREW_RE.test(plain)) return "foreign";
+  return ISRAELI_CASE_LINE_RE.test(plain) ? "israeli_case_law" : "israeli_other";
+}
+
+/** The part rules allowed in a scope. */
+export function citationPartRulesFor(scope: TooltipScope): CitationPartRule[] {
+  if (scope === "foreign") return CITATION_PART_RULES.filter((r) => r.ruleKey === "36");
+  if (scope === "israeli_other") return CITATION_PART_RULES.filter((r) => r.ruleKey !== "18.7");
+  return CITATION_PART_RULES;
+}
+
 export const CITATION_PART_RULES: CitationPartRule[] = [
   // Parties (bold text around נ')
   { pattern: /\*\*[^*]+\*\*\s*נ['׳]\s*\*\*[^*]+\*\*/, ruleKey: "18.5", label: "שמות צדדים" },

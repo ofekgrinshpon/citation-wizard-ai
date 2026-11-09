@@ -313,6 +313,7 @@ export function FootnoteReviewCard({
 
       {foreignScope && isForeignSourceType(activeType) && (
         <ForeignSourcePicker accountId={foreignScope.accountId} itemKey={foreignScope.itemKey} input={cell.input}
+          hostDetectedLabel={activeType !== "foreign" ? SOURCE_TYPE_LABELS[activeType] : undefined}
           onRegenerate={() => onRegenerate(cell.id)} regenerateDisabled={disabled || regenerationDisabled || isLoading || !cell.input.trim()} />
       )}
 

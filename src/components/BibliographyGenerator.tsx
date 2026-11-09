@@ -891,6 +891,7 @@ function ReviewRow({
 
       {(detectedCat.startsWith("foreign_") || item.pastedCitation?.jurisdiction === "AU" || item.pastedCitation?.jurisdiction === "CA") && (item.status === "ok" || item.status === "error") && (
         <ForeignSourcePicker accountId={accountId} itemKey={`bib:${item.classificationKey}`} input={item.rawInput}
+          hostDetectedLabel={detectedCat.startsWith("foreign_") && detectedCat !== "foreign_other" ? catLabel : undefined}
           onRegenerate={onRetry} />
       )}
 

@@ -26,3 +26,26 @@ describe("validateCitationInput — short English case names", () => {
     expect(validateCitationInput("כהן נ' לוי").valid).toBe(true);
   });
 });
+
+describe("validateCitationInput — short English legislation names", () => {
+  it("accepts 'online saftey act' (17 chars, lowercase)", () => {
+    expect(validateCitationInput("online saftey act").valid).toBe(true);
+  });
+
+  it("accepts 'Data Protection Act'", () => {
+    expect(validateCitationInput("Data Protection Act").valid).toBe(true);
+  });
+
+  it("accepts 'US Code' and 'Civil Code'", () => {
+    expect(validateCitationInput("US Code").valid).toBe(true);
+    expect(validateCitationInput("Civil Code").valid).toBe(true);
+  });
+
+  it("still rejects a lone 'act'", () => {
+    expect(validateCitationInput("act").valid).toBe(false);
+  });
+
+  it("does not treat words that merely contain 'act' as legislation", () => {
+    expect(validateCitationInput("hello actor").reason).toBe("latin_garbage");
+  });
+});

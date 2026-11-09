@@ -14,7 +14,7 @@ import type { GenerationPlan } from "@/lib/foreignClassification";
 import { VerifiedAutocomplete } from "./VerifiedAutocomplete";
 import { useOffice } from "@/hooks/useOffice";
 import { insertCitationAsFootnote } from "@/lib/wordInsertion";
-import type { SourceType } from "@/data/abbreviations";
+import { SOURCE_TYPE_LABELS, type SourceType } from "@/data/abbreviations";
 import { normalizeHebrewNumberRanges } from "@/lib/hebrewNumberRange";
 import { citationTextOnly } from "@/lib/citationSegments";
 import { ForeignCaseChoiceButtons } from "./ForeignCaseChoiceButtons";
@@ -206,6 +206,7 @@ export function MessageBubble({ msg: rawMsg, detectedType, onChangeSourceType, o
                 accountId={foreignScope.accountId}
                 itemKey={foreignScope.itemKey}
                 input={foreignScope.input}
+                hostDetectedLabel={detectedType !== "foreign" ? SOURCE_TYPE_LABELS[detectedType] : undefined}
                 onRegenerate={onChangeSourceType ? (plan) => onChangeSourceType(plan.sourceType, plan) : undefined}
               />
             )}
@@ -274,7 +275,7 @@ export function MessageBubble({ msg: rawMsg, detectedType, onChangeSourceType, o
                     className="w-full text-right p-2 my-1 rounded-lg border border-primary/20 hover:bg-primary/10 hover:border-primary/40 transition-colors cursor-pointer block"
                     dir="rtl"
                   >
-                    <FormattedCitation text={displayLine} enableTooltips />
+                    <FormattedCitation text={displayLine} enableTooltips sourceType={detectedType} />
                   </button>
                 );
               }
@@ -287,14 +288,14 @@ export function MessageBubble({ msg: rawMsg, detectedType, onChangeSourceType, o
               if (hasMissingMarker(line)) {
                 return (
                   <div key={i} className={dirClass} dir={dir}>
-                    <FormattedCitation text={line} highlightMissing enableTooltips />
+                    <FormattedCitation text={line} highlightMissing enableTooltips sourceType={detectedType} />
                   </div>
                 );
               }
 
               return (
                 <div key={i} className={dirClass} dir={dir}>
-                  <FormattedCitation text={line} enableTooltips />
+                  <FormattedCitation text={line} enableTooltips sourceType={detectedType} />
                 </div>
               );
             })}

@@ -88,6 +88,10 @@ interface Props {
   onRegenerate?: (plan: GenerationPlan) => void;
   onChange?: (snapshot: ForeignClassificationSnapshot) => void;
   regenerateDisabled?: boolean;
+  /** The host's own source-type label (e.g. "חוק אנגלי (36.3)"). When the local
+   *  detector finds nothing and no manual choice exists, the card shows this
+   *  label instead of a contradicting "not identified" line. Display only. */
+  hostDetectedLabel?: string;
 }
 
 /**
@@ -95,7 +99,7 @@ interface Props {
  * restoring are local and deterministic — never a network call. Generation
  * happens only through the host's explicit action.
  */
-export function ForeignSourcePicker({ accountId, itemKey, input, onRegenerate, onChange, regenerateDisabled, transient, initialRecord }: Props) {
+export function ForeignSourcePicker({ accountId, itemKey, input, onRegenerate, onChange, regenerateDisabled, transient, initialRecord, hostDetectedLabel }: Props) {
   const c = useForeignClassification({ accountId, itemKey, input, transient, initialRecord });
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -129,10 +133,13 @@ export function ForeignSourcePicker({ accountId, itemKey, input, onRegenerate, o
   const subs = jurId ? subdivisionsOf(jurId) : [];
   const groupsHint = jurId ? subdivisionGroupsOf(jurId) : [];
 
-  const summary = e.otherUnidentified || !fam
-    ? "אחר / לא זוהה"
-    : [familyLabel(fam), subtypeLabel(e.scalars.subtype), sub?.name ?? jur?.name].filter(Boolean).join(" · ");
   const manual = Object.values(e.source).includes("user_override") || e.otherUnidentified;
+  const showHostLabel = !manual && !fam && !!hostDetectedLabel;
+  const summary = showHostLabel
+    ? hostDetectedLabel
+    : e.otherUnidentified || !fam
+      ? "אחר / לא זוהה"
+      : [familyLabel(fam), subtypeLabel(e.scalars.subtype), sub?.name ?? jur?.name].filter(Boolean).join(" · ");
 
   const multiControl = (k: MultiField, legend: string) => axes.has(k) && (
     <fieldset>
@@ -240,9 +247,11 @@ export function ForeignSourcePicker({ accountId, itemKey, input, onRegenerate, o
         )}
       </div>
 
-      <p role="status" className="mt-1 text-[11px] text-muted-foreground" data-testid="foreign-support" data-status={c.support.status}>
-        {c.support.message}
-      </p>
+      {!showHostLabel && (
+        <p role="status" className="mt-1 text-[11px] text-muted-foreground" data-testid="foreign-support" data-status={c.support.status}>
+          {c.support.message}
+        </p>
+      )}
 
       {c.record.needsReview && (
         <div role="alert" className="mt-1.5 rounded border border-border bg-background px-2 py-1.5" data-testid="foreign-needs-review">
