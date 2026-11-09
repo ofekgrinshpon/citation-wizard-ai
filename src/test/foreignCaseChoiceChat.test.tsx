@@ -32,7 +32,7 @@ vi.mock("@/lib/verifiedSources", () => ({
 }));
 vi.mock("@/lib/functionError", () => ({ invokeFunction: m.invoke, retryCitationFunction: vi.fn(), citationRetryDisclosure: vi.fn() }));
 vi.mock("@/lib/citationHistorySave", () => ({ saveCitationHistoryRecord: vi.fn().mockResolvedValue({}) }));
-vi.mock("@/lib/foreignClassificationStore", () => ({ recordGeneration: vi.fn(), clearItemsWithPrefix: vi.fn() }));
+vi.mock("@/lib/foreignClassificationStore", () => ({ recordGeneration: vi.fn(), clearItemsWithPrefix: vi.fn(), loadRecord: vi.fn(() => undefined), saveRecord: vi.fn() }));
 vi.mock("sonner", () => ({ toast: Object.assign(vi.fn(), { error: vi.fn(), info: vi.fn(), success: vi.fn(), warning: vi.fn(), message: vi.fn() }) }));
 vi.mock("@/components/MessageBubble", () => ({
   MessageBubble: ({ msg, onSelectForeignChoice, onEdit }: {

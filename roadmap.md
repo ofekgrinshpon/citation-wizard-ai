@@ -96,7 +96,9 @@
 - [x] D1 independent gate supplied on 56411d7: full regression, actual hosts, TypeScript and production build.
 - [x] Bounded AU/CA LOCAL slice: six exact templates, shared actual hosts, local saved/reloaded and zero-IO guards; 4,210 passed / 1 skipped / 0 failed (202 files); report updated; no completion/deployment.
 - [ ] AU/CA local independent QA gate: separate app TypeScript/production Vite unavailable under manual-command prohibition; completion awaits owner gate.
-- [ ] D2 AU/CA grounded completion + authoritative replay (not authorized in local slice; awaits independent QA).
+- [x] D2 AU/CA grounded online completion for the six templates + "which country?" question (approved plan 2026-11-09); offline tests only.
+- [ ] D2 saved-request rules in the database accept AU/CA (draft ready, not applied) — awaits owner approval.
+- [ ] D2 citation server update + site publish + paid pilot — each awaits owner approval.
 - [ ] D3 DE/FR templates + completion; FR Cass. oc./soc. table anomaly unresolved.
 
 ## Foreign free-form citations (plan 2026-11-07)

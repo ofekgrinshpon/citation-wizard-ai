@@ -43,12 +43,15 @@ vi.mock("@/lib/verifiedSources", () => ({
 }));
 vi.mock("@/lib/functionError", () => ({ invokeFunction: m.invoke, retryCitationFunction: vi.fn(), citationRetryDisclosure: vi.fn() }));
 vi.mock("@/lib/citationHistorySave", () => ({ saveCitationHistoryRecord: vi.fn().mockResolvedValue({}) }));
-vi.mock("@/lib/foreignClassificationStore", () => ({ recordGeneration: m.recordGeneration, clearItemsWithPrefix: vi.fn() }));
+vi.mock("@/lib/foreignClassificationStore", () => ({ recordGeneration: m.recordGeneration, clearItemsWithPrefix: vi.fn(), loadRecord: vi.fn(() => undefined), saveRecord: vi.fn() }));
 vi.mock("sonner", () => ({ toast: Object.assign(vi.fn(), { error: vi.fn(), info: vi.fn(), success: vi.fn(), warning: vi.fn(), message: vi.fn() }) }));
 vi.mock("@/components/MessageBubble", () => ({
-  MessageBubble: ({ msg, onChangeSourceType }: { msg: { role: string; content: string }; onChangeSourceType?: (t: string, p: unknown) => void }) => (m.bubble(msg),
+  MessageBubble: ({ msg, onChangeSourceType, onAnswerCountry }: { msg: { role: string; content: string; countryQuestion?: { options: { id: string }[] } }; onChangeSourceType?: (t: string, p: unknown) => void; onAnswerCountry?: (c: string) => unknown }) => (m.bubble(msg),
     <div data-testid={`bubble-${msg.role}`}>
       <span>{msg.content}</span>
+      {onAnswerCountry && msg.countryQuestion?.options.map((o) => (
+        <button key={o.id} type="button" onClick={() => onAnswerCountry(o.id)}>{`country-${o.id}`}</button>
+      ))}
       {onChangeSourceType && (
         <button type="button" onClick={() => onChangeSourceType("case_law_database", {
           itemKey: "chat:0", sourceType: "case_law_database", supported: true, effectiveKey: "il-eff", inputFingerprint: "il-fp",
@@ -655,6 +658,41 @@ describe("AU/CA partial citations complete through actual Index", () => {
     expect(m.invoke.mock.calls[0][1].foreignLookup).toMatchObject({ enabled: true, kind, jurisdiction: f.j, rawInput: f.raw });
     expect(m.classify).not.toHaveBeenCalled(); expect(findVerifiedSourceMatch).not.toHaveBeenCalled();
     expect(screen.getByTestId("bubble-assistant")).not.toHaveTextContent("UNSAFE");
+  });
+});
+
+describe("which country? — asked instead of guessing (actual Index)", () => {
+  beforeEach(() => { vi.mocked(findVerifiedSourceMatch).mockResolvedValue(null); }); // an earlier block leaves a warm entry
+  const unmatched = { foreignLookup: { kind: "case", jurisdiction: "UNKNOWN", fields: {}, grounded: {}, provenance: {}, sources: [],
+    identity: { matched: false, anchors: [], conflicts: [] }, diagnostics: { tier1Queried: true, tier2Fired: true } }, content: "UNSAFE MODEL OUTPUT" };
+  it("an Indian-style SCC citation asks with no request at all", async () => {
+    const raw = "State of Punjab v Davinder Singh (2010) 5 SCC 1";
+    await mountChat(); await send(raw);
+    await waitFor(() => expect(screen.getByRole("button", { name: "country-au" })).toBeInTheDocument());
+    expect(screen.getByTestId("bubble-assistant")).toHaveTextContent("משמשת ביותר ממדינה אחת");
+    expect(m.invoke).not.toHaveBeenCalled(); expect(m.classify).not.toHaveBeenCalled();
+  });
+  it("Mabo v Queensland: no US/UK match → question; Australia sends one Australia-only request", async () => {
+    const raw = "Mabo v Queensland";
+    m.invoke.mockResolvedValue({ data: unmatched, errorInfo: null });
+    await mountChat(); await send(raw);
+    await waitFor(() => expect(screen.getByRole("button", { name: "country-au" })).toBeInTheDocument());
+    expect(m.invoke).toHaveBeenCalledTimes(1);
+    expect(screen.getByTestId("bubble-assistant")).not.toHaveTextContent("UNSAFE");
+    await act(async () => { fireEvent.click(screen.getByRole("button", { name: "country-au" })); });
+    await waitFor(() => expect(m.invoke).toHaveBeenCalledTimes(2));
+    expect(m.invoke.mock.calls[1][1].foreignLookup).toEqual({ enabled: true, kind: "case", jurisdiction: "AU", rawInput: raw, parsedFields: { caseName: raw } });
+    await waitFor(() => expect(screen.queryByRole("button", { name: "country-au" })).toBeNull());
+  });
+  it("“Other” keeps the input with a warning and makes no request", async () => {
+    const raw = "Mabo v Queensland";
+    m.invoke.mockResolvedValue({ data: unmatched, errorInfo: null });
+    await mountChat(); await send(raw);
+    await waitFor(() => expect(screen.getByRole("button", { name: "country-other" })).toBeInTheDocument());
+    await act(async () => { fireEvent.click(screen.getByRole("button", { name: "country-other" })); });
+    expect(m.invoke).toHaveBeenCalledTimes(1);
+    expect(screen.getByTestId("bubble-assistant")).toHaveTextContent("אינה נתמכת בהשלמה אוטומטית");
+    expect(screen.queryByRole("button", { name: "country-other" })).toBeNull();
   });
 });
 
