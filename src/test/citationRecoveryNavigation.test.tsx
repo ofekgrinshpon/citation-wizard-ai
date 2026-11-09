@@ -16,16 +16,17 @@ describe("recovery navigation", () => {
     render(<CitationRequestStatusLink requestId={requestId} />);
     expect(screen.queryByRole("link")).not.toBeInTheDocument();
   });
-  it("keeps recovery in desktop and profile history rather than the main header", () => {
+  it("keeps recovery out of the main header and the history sidebar; profile keeps a quiet link", () => {
     const index = readFileSync("src/pages/Index.tsx", "utf8");
     const header = index.slice(index.indexOf("{/* Header */}"), index.indexOf("{/* Mode tabs"));
     expect(header).not.toContain("citation-recovery");
     expect(index).toContain('user && isOfficeAddin && <footer');
     expect(index).toContain('to="/profile?tab=history"');
-    for (const path of ["src/components/CitationHistorySidebar.tsx", "src/pages/Profile.tsx"]) {
-      const source = readFileSync(path, "utf8");
-      expect(source).toContain('to="/citation-recovery"');
-      expect(source).toContain("מצב בקשות אזכור");
-    }
+    const sidebar = readFileSync("src/components/CitationHistorySidebar.tsx", "utf8");
+    expect(sidebar).not.toContain("citation-recovery");
+    expect(sidebar).not.toContain("מצב בקשות אזכור");
+    const profile = readFileSync("src/pages/Profile.tsx", "utf8");
+    expect(profile).toContain('to="/citation-recovery"');
+    expect(profile).toContain("מצב בקשות אזכור");
   });
 });
