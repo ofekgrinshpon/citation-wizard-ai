@@ -13,6 +13,7 @@ import type { ForeignPeriodicalFields } from "./types.ts";
 import { REPORTER_IMPLIES_COURT, normalizeJournalName } from "./tables.ts";
 import { citationTextOnly } from "./segments.ts";
 import { isRetroactiveUkNeutral } from "./caseLocations.ts";
+import { capitalizeCaseName } from "./caseNameCase.ts";
 import type {
   ForeignArticleFields,
   ForeignBookFields,
@@ -123,7 +124,7 @@ export function renderUsCase(f: ForeignCaseFields): RenderResult {
   const warnings: string[] = [];
   const missing: string[] = [];
   const unrep: string[] = [];
-  const name = f.caseName?.trim() || (missing.push("caseName"), miss("שם ההליך"));
+  const name = f.caseName?.trim() ? capitalizeCaseName(f.caseName.trim()) : (missing.push("caseName"), miss("שם ההליך"));
 
   if (f.opinionFormat || (!(f.volume && f.reporter && f.firstPage) && f.databaseIdentifier)) {
     for (const key of ["docket", "court", "decisionDate"] as const) {
@@ -205,7 +206,7 @@ export function renderUkCase(f: ForeignCaseFields): RenderResult {
   const warnings: string[] = [];
   const missing: string[] = [];
   const unrep: string[] = [];
-  const name = f.caseName?.trim() || (missing.push("caseName"), miss("שם ההליך"));
+  const name = f.caseName?.trim() ? capitalizeCaseName(f.caseName.trim()) : (missing.push("caseName"), miss("שם ההליך"));
   // Traditional Law Reports without a neutral citation (M2A).
   if (!f.neutral && f.reporter && f.firstPage && f.year) {
     const vol = f.reporterVolume ? `${f.reporterVolume} ` : "";

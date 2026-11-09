@@ -29,6 +29,7 @@ import { preparePastedCitation, pastedCaseRequest, readPastedCitationSafety, ren
 import { suppliedLookupFieldsMatch } from "../../supabase/functions/_shared/pastedCitation";
 import { DISABLED_RULEPACK_WARNING, rulepackCapability, rulepackLookupEligible } from "../../supabase/functions/_shared/citationPure/rulepack.ts";
 import { readLocationChoice } from "../../supabase/functions/_shared/citationPure/caseLocations.ts";
+import { adoptVerifiedCasing } from "../../supabase/functions/_shared/citationPure/caseNameCase.ts";
 import { bindFreeformResponseFields, prepareFreeformHandoff, prepareFreeformModelHandoff, type FreeformHandoff, type FreeformSearchRequest } from "../../supabase/functions/_shared/citationPure/freeformInterpret.ts";
 import { buildForeignCaseChoice, prepareChoiceSelection, type ForeignCaseChoice } from "@/lib/foreignCaseChoice";
 
@@ -395,8 +396,16 @@ export function resolveCitationResponse(plan: TypedPlan, data: Record<string, un
     // A sanitized response never replaces supplied authors (including abbreviations).
     rendered = renderForeignArticleLookup(plan.articleRequest, { fields: accepted.fields, identity: { matched: accepted.identityConfirmed, conflicts: [] }, articleResolution: "incomplete" });
   } else if (accepted.identityConfirmed) {
+    const fields: Record<string, unknown> = { ...accepted.fields, ...supplied };
+    // The typed party names keep their words; only their letter case follows a
+    // verified title of the accepted record (presentation, never identity).
+    if (kind === "case" && typeof supplied.caseName === "string") {
+      const titles = Object.values(accepted.provenance).map((p) => (p as { sourceTitle?: unknown } | null)?.sourceTitle).filter((t): t is string => typeof t === "string");
+      const cased = adoptVerifiedCasing(supplied.caseName, titles);
+      if (cased) fields.caseName = cased;
+    }
     rendered = renderForeignDetection({ kind, jurisdiction: jur, sourceType: effectiveType,
-      confidence: "deterministic", fields: { ...accepted.fields, ...supplied } as ForeignFields });
+      confidence: "deterministic", fields: fields as ForeignFields });
   }
   if (accepted.identityConfirmed && Array.isArray((fl.identity as { conflicts?: unknown } | undefined)?.conflicts) && ((fl.identity as { conflicts: unknown[] }).conflicts.length)) warnings.push("נמצאו פרטי פרסום סותרים; נשמרו רק השלמות תואמות.");
   if (rendered?.warnings) warnings.push(...rendered.warnings);
