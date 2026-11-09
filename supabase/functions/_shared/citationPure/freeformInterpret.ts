@@ -45,6 +45,8 @@ const CASE_SHAPE = /\s+v(?:s)?\.?\s+/i;
 const JOURNAL_CUE = /\b(?:Journal|Quarterly|Law\s+Review|L\.\s*Rev\.|L\.J\.)\b/i;
 const YEAR_SLOT = /(?:\s*[\[(]((?:1[5-9]|20)\d{2})[\])])\s*$/;
 const EDITION_SLOT = /\b(\d+(?:st|nd|d|rd|th)\s+ed\.)\b/;
+/** A trailing ", second edition" / ", 2nd ed." after the byline is the edition, not part of the author. */
+const EDITION_TAIL = /,\s*((?:first|second|third|fourth|fifth|sixth|seventh|eighth|ninth|tenth|\d+(?:st|nd|rd|th|d))\s+(?:edition|ed\.?))\s*\.?\s*$/i;
 /** Letter case is not evidence. "smith, anthony d" is read like "Smith, Anthony D". */
 const NAME_TOKEN = String.raw`[A-Za-z][A-Za-z.'’\-]*`;
 const NAME = new RegExp(`^${NAME_TOKEN}(?:\\s+${NAME_TOKEN}){0,5}(?:,\\s*${NAME_TOKEN}(?:\\s+${NAME_TOKEN}){0,4})?$`);
@@ -211,7 +213,9 @@ function yearFromSlot(raw: string): GroundedField | null {
 export function interpretDeterministic(raw: string): FreeformFacts | null {
   const text = raw.trim();
   if (!text || text.length > 400 || /https?:\/\//i.test(text) || CASE_SHAPE.test(text) || isIsraeliSource(text)) return null;
-  const body = text.replace(YEAR_SLOT, "").trim();
+  const yearless = text.replace(YEAR_SLOT, "").trim();
+  const editionTail = yearless.match(EDITION_TAIL);
+  const body = editionTail && editionTail.index !== undefined ? yearless.slice(0, editionTail.index).trim() : yearless;
   const by = body.match(/([A-Za-z][A-Za-z'’.: -]{5,160}?)\s+(?:by|מאת)\s+([A-Za-z][A-Za-z.'’\- ,]{2,180})/iu);
   if (!by) return null;
   const title = by[1].trim();
@@ -241,7 +245,12 @@ export function interpretDeterministic(raw: string): FreeformFacts | null {
   const year = yearFromSlot(text);
   if (year) fields.year = year;
   const edition = text.match(EDITION_SLOT);
-  if (edition && edition.index !== undefined) {
+  if (editionTail) {
+    const quote = editionTail[1];
+    const start = text.lastIndexOf(quote);
+    const span = quoteSpan(text, quote, start, start + quote.length);
+    if (span) fields.edition = { value: quote, span };
+  } else if (edition && edition.index !== undefined) {
     const span = quoteSpan(text, edition[1], edition.index, edition.index + edition[1].length);
     if (span) fields.edition = { value: edition[1], span };
   }

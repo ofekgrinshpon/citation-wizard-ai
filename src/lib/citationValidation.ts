@@ -173,7 +173,8 @@ function extractFieldsFromResponse(response: string, sourceType: SourceType): Re
     if (authorMatch) fields.author = authorMatch[1].trim();
     const titleMatch = response.match(/\*\*([^*]+)\*\*/);
     if (titleMatch) fields.bookTitle = titleMatch[1];
-    const yearMatch = response.match(/\((?:[^)]*?)(\d{4}|הת[שׁש][א-ת]*["״׳][א-ת]["״׳]?[א-ת]?)\)$/);
+    // The year parenthetical closes the citation, optionally followed by its final period.
+    const yearMatch = response.trim().match(/\((?:[^)]*?)(\d{4}|הת[שׁש][א-ת]*["״׳][א-ת]["״׳]?[א-ת]?)\)\s*\.?$/);
     if (yearMatch) fields.year = yearMatch[1];
     // Volume (כרך)
     const volMatch = response.match(/כרך\s+([א-ת]+|\d+)/);

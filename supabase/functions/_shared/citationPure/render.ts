@@ -338,7 +338,11 @@ const plural = (names: string) => /&|,|\sand\s/.test(names);
 /** Presentation only: retain evidence values, normalize only recognized ordinal editions. */
 function bookEdition(value: string): string {
   const recognized = value.trim().match(/^(\d+(?:st|nd|d|rd|th))(?:\s+ed\.?)?$/i);
-  return recognized ? `${recognized[1]} ed.` : value;
+  if (recognized) return `${recognized[1]} ed.`;
+  // A spelled-out ordinal ("second edition") in the Bluebook form (R15.4: "2d ed.").
+  const word = value.trim().match(/^(first|second|third|fourth|fifth|sixth|seventh|eighth|ninth|tenth)\s+(?:edition|ed\.?)$/i);
+  const ORDINAL: Record<string, string> = { first: "1st", second: "2d", third: "3d", fourth: "4th", fifth: "5th", sixth: "6th", seventh: "7th", eighth: "8th", ninth: "9th", tenth: "10th" };
+  return word ? `${ORDINAL[word[1].toLowerCase()]} ed.` : value;
 }
 
 /** R15.2–15.4(a) parenthetical: editors, translators, [non-original publisher] [edition] year. */

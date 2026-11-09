@@ -8,11 +8,28 @@ export type WordFootnotePlan =
  * The existing engine returns one citation, without source-to-document offsets.
  * Never split a mixed note by punctuation and pretend the pieces are verified sources.
  */
+const DOCKET = String.raw`\d{1,7}[-/]\d{2,4}(?:[-/]\d{2,4})?`;
+const PROCEEDING = String.raw`[א-ת]{1,4}["״׳'][א-ת]{1,3}`;
+/** One Israeli caption heard together: "ע"א 6821/93, רע"א 1908/94 ... X נ' Y" — one list of dockets, one party pair. */
+const CONSOLIDATED_DOCKETS = new RegExp(String.raw`^\s*(?:${PROCEEDING}\s+)?${DOCKET}(?:\s*(?:,|ו-?)\s*(?:${PROCEEDING}\s+)?${DOCKET})+(?![\d/-])`, "u");
+
+/** Count docket numbers, treating one leading consolidated docket list of a single caption as one. */
+function docketCount(text: string): number {
+  const all = text.match(new RegExp(String.raw`\b${DOCKET}\b`, "g"))?.length ?? 0;
+  const lead = text.match(CONSOLIDATED_DOCKETS);
+  if (!lead) return all;
+  const rest = text.slice(lead[0].length);
+  const restDockets = rest.match(new RegExp(String.raw`\b${DOCKET}\b`, "g"))?.length ?? 0;
+  const partyPairs = rest.match(/\sנ['׳]\s|\sנגד\s/gu)?.length ?? 0;
+  return restDockets === 0 && partyPairs <= 1 ? 1 : all;
+}
+
 export function hasMultipleSourceSignals(text: string): boolean {
   return /[;؛\n\r]/u.test(text.trim().replace(/[;؛]+$/u, ""))
-    || (text.match(/\b(?:18|19|20)\d{2}\b/g)?.length ?? 0) > 1
+    // A docket part such as "1908/94" is not a year.
+    || (text.match(/(?<![\w/])(?:18|19|20)\d{2}(?!\w|\/\d)/g)?.length ?? 0) > 1
     || (text.match(/https?:\/\/|\bdoi\s*:/gi)?.length ?? 0) > 1
-    || (text.match(/\b\d{1,7}[-/]\d{2,4}(?:[-/]\d{2,4})?\b/g)?.length ?? 0) > 1
+    || docketCount(text) > 1
     || /(?:ראו גם|וכן ראו|להשוואה ראו|see also|but see|accord)\s/iu.test(text);
 }
 /** The runner has no document antecedent/numbering contract. Never resolve

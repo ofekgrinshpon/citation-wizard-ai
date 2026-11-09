@@ -615,7 +615,9 @@ export function detectForeignSource(raw: string): ForeignDetection | null {
     return build(
       "case",
       /\b(?:UKSC|UKHL|EWCA|EWHC|AC|WLR|QB|KB)\b/.test(text) ? "UK" : "OTHER",
-      { caseName: text.replace(/\.$/, "") , ...(procName ? {} : {}) },
+      // A bare decision year after the parties ("Brown v. Board of Education (1954)")
+      // is not part of the name; the case adapter keeps it as the user's year.
+      { caseName: text.replace(/\.$/, "").replace(/[,\s]*[[(](?:17|18|19|20)\d{2}[\])]$/, "").trim() , ...(procName ? {} : {}) },
       "shape",
     );
   }
