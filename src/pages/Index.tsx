@@ -538,7 +538,8 @@ const Index = () => {
           project_id: currentProject?.id || null,
         }, historyRequestId, isCurrent).then(() => { if (isCurrent()) setCitationRefreshKey(k => k + 1); }).catch(() => { if (isCurrent()) toast.error("האזכור מוצג, אך שמירתו בהיסטוריה לא אושרה. אפשר להעתיק אותו ולבדוק את מצב הבקשה במסך השחזור."); });
 
-        const isVerifiedClean = !/\[חסר:/.test(reply) && !/⚠️/.test(reply);
+        // A list of options is not a citation: never verify it, and never hold the chat busy while the user chooses.
+        const isVerifiedClean = !resolution?.foreignChoice && !/\[חסר:/.test(reply) && !/⚠️/.test(reply);
         const isFragment = !extractedCitation || extractedCitation.length < 10;
         if (isVerifiedClean && !isFragment) {
           await saveVerifiedSource(fullRawInput, extractedCitation, sourceType !== "unknown" ? sourceLabel : null, undefined, telemetry, isCurrent);
@@ -603,7 +604,8 @@ const Index = () => {
           project_id: currentProject?.id || null,
         }, historyRequestId, isCurrent).then(() => { if (isCurrent()) setCitationRefreshKey(k => k + 1); }).catch(() => { if (isCurrent()) toast.error("האזכור מוצג, אך שמירתו בהיסטוריה לא אושרה. אפשר להעתיק אותו ולבדוק את מצב הבקשה במסך השחזור."); });
 
-        const isVerifiedClean = !/\[חסר:/.test(reply) && !/⚠️/.test(reply);
+        // A list of options is not a citation: never verify it, and never hold the chat busy while the user chooses.
+        const isVerifiedClean = !resolution?.foreignChoice && !/\[חסר:/.test(reply) && !/⚠️/.test(reply);
         const isFragment = !extractedCitation || extractedCitation.length < 10;
         if (isVerifiedClean && !isFragment) {
           await saveVerifiedSource(fullRawInput, extractedCitation, sourceType !== "unknown" ? sourceLabel : null, undefined, telemetry, isCurrent);
@@ -678,7 +680,8 @@ const Index = () => {
           project_id: currentProject?.id || null,
         }, historyRequestId, isCurrent).then(() => { if (isCurrent()) setCitationRefreshKey(k => k + 1); }).catch(() => { if (isCurrent()) toast.error("האזכור מוצג, אך שמירתו בהיסטוריה לא אושרה. אפשר להעתיק אותו ולבדוק את מצב הבקשה במסך השחזור."); });
 
-        const isVerifiedClean = !/\[חסר:/.test(reply) && !/⚠️/.test(reply);
+        // A list of options is not a citation: never verify it, and never hold the chat busy while the user chooses.
+        const isVerifiedClean = !resolution?.foreignChoice && !/\[חסר:/.test(reply) && !/⚠️/.test(reply);
         const isFragment = !extractedCitation || extractedCitation.length < 10 || /^\d+\.?$/.test(extractedCitation.trim());
         if (isVerifiedClean && !isFragment) {
           await saveVerifiedSource(rawInput, extractedCitation, sourceType !== "unknown" ? sourceLabel : null, undefined, telemetry, isCurrent);
@@ -897,7 +900,8 @@ const Index = () => {
         logActivity("יצירת אזכור", { source_type: sourceLabel, raw_input: fullRawInput.slice(0, 100) });
 
         // Only verify if we have a real, complete citation (not a fragment, not missing data)
-        const isVerifiedClean = !/\[חסר:/.test(reply) && !/⚠️/.test(reply);
+        // A list of options is not a citation: never verify it, and never hold the chat busy while the user chooses.
+        const isVerifiedClean = !resolution?.foreignChoice && !/\[חסר:/.test(reply) && !/⚠️/.test(reply);
         const isFragment = !extractedCitation || extractedCitation.length < 10 || /^\d+\.?$/.test(extractedCitation.trim());
         // Don't save pinpoint references to verified sources — they are specific references, not master records
 
@@ -1257,7 +1261,8 @@ const Index = () => {
                                 setMessageRawInputs((prev) => ({ ...prev, [assistantIndex]: newContent }));
 
                                 const extractedCitation = extractCitationFromResponse(reply);
-                                const isVerifiedClean = !/\[חסר:/.test(reply) && !/⚠️/.test(reply);
+                                // A list of options is not a citation: never verify it, and never hold the chat busy while the user chooses.
+                                const isVerifiedClean = !resolution?.foreignChoice && !/\[חסר:/.test(reply) && !/⚠️/.test(reply);
                                 const isFragment = !extractedCitation || extractedCitation.length < 10;
                                 if (isVerifiedClean && !isFragment) {
                                   await saveVerifiedSource(newContent, extractedCitation, sourceType !== "unknown" ? sourceLabel : null, undefined, editTel, isCurrent);
@@ -1330,20 +1335,33 @@ const Index = () => {
                   }
                   onSelectForeignChoice={msg.role === "assistant" && msg.foreignChoice ? (optionId: string) => {
                     const choice = msg.foreignChoice;
-                    if (!choice || loading) return;
+                    if (!choice) return false;
+                    if (loading) {
+                      // Keep the options usable: the click is ignored, not lost.
+                      toast.info("בקשה אחרת עדיין בעיבוד. בחרו שוב בעוד רגע.");
+                      return false;
+                    }
                     // The choice is valid only while this reply's input is unchanged.
                     const raw = rawInputFor(i);
-                    const outcome = selectForeignCaseChoice(choice, optionId, raw ? [raw, normalizeAbbreviations(raw)] : [], CHAT_HOST);
+                    let outcome: ReturnType<typeof selectForeignCaseChoice>;
+                    try {
+                      outcome = selectForeignCaseChoice(choice, optionId, raw ? [raw, normalizeAbbreviations(raw)] : [], CHAT_HOST);
+                    } catch {
+                      outcome = { kind: "invalid" };
+                    }
+                    // Match the reply by the choice it shows (same stage, same record ids), not by object identity.
+                    const sameChoice = (c?: typeof choice) => !!c && c.fingerprint === choice.fingerprint && c.stage === choice.stage &&
+                      c.options.map((o) => o.id).join("\u0000") === choice.options.map((o) => o.id).join("\u0000");
                     if (outcome.kind !== "resolved") {
-                      setMessages((prev) => prev.map((m, j) => j === i && m.foreignChoice === choice ? { ...m, foreignChoice: undefined } : m));
+                      setMessages((prev) => prev.map((m, j) => j === i && sameChoice(m.foreignChoice) ? { ...m, foreignChoice: undefined } : m));
                       toast.error(outcome.kind === "stale"
                         ? "הקלט השתנה מאז שהוצגו האפשרויות, ולכן הבחירה בוטלה. שלחו את המקור שוב."
                         : "לא ניתן היה להשתמש באפשרות שנבחרה. שלחו את המקור שוב.");
-                      return;
+                      return true;
                     }
                     const resolution = outcome.resolution;
                     setCitationStatus(null);
-                    setMessages((prev) => prev.map((m, j) => j === i && m.foreignChoice === choice
+                    setMessages((prev) => prev.map((m, j) => j === i && sameChoice(m.foreignChoice)
                       ? { role: "assistant", content: resolution.reply, completion: resolution.completion, pastedCitation: resolution.pastedCitation, foreignChoice: resolution.foreignChoice }
                       : m));
                     if (resolution.sourceType) setMessageSourceTypes((prev) => ({ ...prev, [i]: resolution.sourceType as SourceType }));

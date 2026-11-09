@@ -110,6 +110,17 @@ describe("chat page — choosing a parallel report", () => {
     expect(screen.queryByRole("button", { name: /^choose / })).not.toBeInTheDocument();
   });
 
+  it("a reply that only lists options is not verified or saved as a source, so the chat is free to choose", async () => {
+    const { ensureVerifiedSources } = await import("@/lib/verifiedSources");
+    await mountChat();
+    await send("Donoghue v Stevenson");
+    const sc = await screen.findByRole("button", { name: "choose 1932 SC (HL) 31" });
+    expect(ensureVerifiedSources).not.toHaveBeenCalled();
+    await act(async () => { fireEvent.click(sc); });
+    await waitFor(() => expect(latest().foreignChoice).toBeUndefined());
+    expect(citationTextOnly(latest().content)).toContain("1932 SC (HL) 31");
+  });
+
   it("editing the input removes the old choice; it can no longer be used", async () => {
     await mountChat();
     await send("Donoghue v Stevenson");

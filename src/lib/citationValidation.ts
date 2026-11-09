@@ -129,8 +129,9 @@ function extractFieldsFromResponse(response: string, sourceType: SourceType): Re
     // Volume
     const volMatch = response.match(/(?:פ["״]ד|פד["״]ע|פ["״]מ)\s+([א-ת]+|\d+)/);
     if (volMatch) fields.volume = volMatch[1];
-    // First page
-    const pageMatch = response.match(/\)\s+(\d+)/);
+    // First page — after the volume, with or without a part in parentheses:
+    // פ"ד סד(3) 202 (modern) or פ"ד ז 871 (early volumes have no parts).
+    const pageMatch = response.match(/(?:פ["״]ד|פד["״]ע|פ["״]מ)\s+(?:[א-ת]+[׳']?|\d+)(?:\s*\(\d+\))?\s+(\d+)/);
     if (pageMatch) fields.firstPage = pageMatch[1];
   }
 

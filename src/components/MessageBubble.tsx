@@ -42,7 +42,8 @@ interface MessageBubbleProps {
   onUpdateAssistantContent?: (newContent: string) => void;
   onSelectOption?: (optionText: string) => void;
   /** Record-bound foreign case choice (chat only). */
-  onSelectForeignChoice?: (optionId: string) => void;
+  /** Returns false when the choice was not applied, so the options unlock. */
+  onSelectForeignChoice?: (optionId: string) => boolean | void;
   /** Local foreign-source classification scope (assistant citations only). */
   foreignScope?: { accountId: string | null | undefined; itemKey: string; input: string };
 }
