@@ -18,6 +18,8 @@ import { SOURCE_TYPE_LABELS, type SourceType } from "@/data/abbreviations";
 import { normalizeHebrewNumberRanges } from "@/lib/hebrewNumberRange";
 import { citationTextOnly } from "@/lib/citationSegments";
 import { ForeignCaseChoiceButtons } from "./ForeignCaseChoiceButtons";
+import { CountryQuestionButtons } from "./CountryQuestionButtons";
+import type { QuickCountryId } from "@/lib/foreignQuickPick";
 import { lineDirection } from "@/lib/textDirection";
 
 interface Message {
@@ -26,6 +28,7 @@ interface Message {
   completion?: import("@/lib/citationCompletion").CompletionAcceptance;
   pastedCitation?: import("../../supabase/functions/_shared/pastedCitation").PastedCitationContract;
   foreignChoice?: import("@/lib/foreignCaseChoice").ForeignCaseChoice;
+  countryQuestion?: import("@/lib/countryQuestion").CountryQuestion;
 }
 
 /** Extract rule number from a 📐 line */
@@ -44,11 +47,13 @@ interface MessageBubbleProps {
   /** Record-bound foreign case choice (chat only). */
   /** Returns false when the choice was not applied, so the options unlock. */
   onSelectForeignChoice?: (optionId: string) => boolean | void;
+  /** "Which country?" answer (chat only); false keeps the buttons usable. */
+  onAnswerCountry?: (country: QuickCountryId) => boolean | void;
   /** Local foreign-source classification scope (assistant citations only). */
   foreignScope?: { accountId: string | null | undefined; itemKey: string; input: string };
 }
 
-export function MessageBubble({ msg: rawMsg, detectedType, onChangeSourceType, onEdit, onUpdateAssistantContent, onSelectOption, onSelectForeignChoice, foreignScope }: MessageBubbleProps) {
+export function MessageBubble({ msg: rawMsg, detectedType, onChangeSourceType, onEdit, onUpdateAssistantContent, onSelectOption, onSelectForeignChoice, onAnswerCountry, foreignScope }: MessageBubbleProps) {
   // Rule 1.10 safety net: enforce Hebrew number-range order on display/copy,
   // including cached messages produced before the server-side fix.
   const msg: Message = rawMsg.role === "assistant"
@@ -56,6 +61,7 @@ export function MessageBubble({ msg: rawMsg, detectedType, onChangeSourceType, o
     : rawMsg;
   const isUser = msg.role === "user";
   const foreignChoice = !isUser && onSelectForeignChoice ? msg.foreignChoice : undefined;
+  const countryQuestion = !isUser && onAnswerCountry ? msg.countryQuestion : undefined;
   const { isOfficeAddin, hasDocumentAccess } = useOffice();
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(msg.content);
@@ -312,6 +318,9 @@ export function MessageBubble({ msg: rawMsg, detectedType, onChangeSourceType, o
 
             {foreignChoice && (
               <ForeignCaseChoiceButtons key={`${foreignChoice.stage}|${foreignChoice.options.map((o) => o.id).join(",")}`} choice={foreignChoice} onSelect={onSelectForeignChoice!} />
+            )}
+            {countryQuestion && (
+              <CountryQuestionButtons key={`${countryQuestion.reason}|${countryQuestion.fingerprint}`} question={countryQuestion} onAnswer={onAnswerCountry!} />
             )}
 
             {isCaseLaw && !isVerifiedSource && !msg.content.split("\n").some(l => isRuleLine(l)) && (

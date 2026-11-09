@@ -28,7 +28,7 @@ export const QUICK_KINDS: readonly QuickKind[] = [
   { id: "treaty", label: "אמנה בין־לאומית", icon: "🤝", family: "treaty", subtype: "treaty.agreement", needsCountry: false },
 ];
 
-const LOCAL_ONLY_NOTE = "עיצוב אוטומטי לתבניות מסוימות בלבד, בלי השלמת פרטים חסרים. יש לבדוק ידנית.";
+const LOCAL_ONLY_NOTE = "עיצוב והשלמת פרטים מהרשת לתבניות מסוימות בלבד (פסקי דין של בתי המשפט העליונים והפדרליים וחקיקה פדרלית). יש לבדוק ידנית.";
 export const QUICK_COUNTRIES: readonly QuickCountry[] = [
   { id: "us", label: "ארצות הברית", jurisdiction: US_ROOT_ID },
   { id: "uk", label: "בריטניה", jurisdiction: UK_ID },

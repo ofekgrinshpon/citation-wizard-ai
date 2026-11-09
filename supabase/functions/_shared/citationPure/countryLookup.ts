@@ -67,7 +67,9 @@ export type CountryLookupDecision =
 
 const twoParties = (name: string) => {
   const m = name.match(/^(.+?)\s+(?:v\.?|c\.)\s+(.+)$/u);
-  return !!m && /[A-Za-z]{2}/.test(m[1]) && /[A-Za-z]{2}/.test(m[2]);
+  // The Crown is named "R" in Australian/Canadian criminal captions ("R v Jordan").
+  const party = (t: string) => /[A-Za-z]{2}/.test(t) || /^R\.?$/.test(t.trim());
+  return !!m && party(m[1]) && party(m[2]) && /[A-Za-z]{2}/.test(m[1] + m[2]);
 };
 const stripSuffix = (s: string) => s.trim().replace(/\.$/, "").replace(/\s*\((?:Austl|Can)\.\)\s*\.?$/, "").trim();
 
@@ -200,7 +202,11 @@ export function bindCountryChains(text: string, chains: Chain[], hasParty: (t: s
     const segment = text.slice(prevEnd, chain.start);
     const vs = [...segment.matchAll(CAPTION_V)];
     const last = vs[vs.length - 1];
-    const bound = !last ? prevBound : hasParty(segment.slice(0, last.index!), 0) && hasParty(segment.slice(last.index!), 1);
+    // The first party must be the caption words right before "v" (a capitalised run),
+    // so an earlier mention of the target ("Mabo v Q was applied in Wik v Q (1996) …") never binds.
+    const left = segment.slice(0, last?.index ?? 0);
+    const run = left.match(/(?:(?:[A-Z(\[][^\s]*|of|the|and|for|&|de|du|la|ex|parte)\s+)*[A-Z(\[][^\s]*\s*$/)?.[0] ?? left;
+    const bound = !last ? prevBound : hasParty(run, 0) && hasParty(segment.slice(last.index!), 1);
     out.push(bound); prevBound = bound; prevEnd = chain.end;
   }
   return out;

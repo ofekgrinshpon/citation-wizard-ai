@@ -1,7 +1,10 @@
 import { useState, useRef, useEffect } from "react";
-import { chatClassificationKey, type GenerationPlan } from "@/lib/foreignClassification";
+import { applyOverride, chatClassificationKey, planGeneration, reconcileRecord, type GenerationPlan } from "@/lib/foreignClassification";
+import { quickOverride, type QuickCountryId } from "@/lib/foreignQuickPick";
+import { COUNTRY_OTHER_WARNING, countryQuestionCurrent } from "@/lib/countryQuestion";
+import { escapeCitationLiteral } from "@/lib/citationSegments";
 import { isForeignSourceType } from "@/data/bluebook/types";
-import { clearItemsWithPrefix, recordGeneration } from "@/lib/foreignClassificationStore";
+import { clearItemsWithPrefix, loadRecord, recordGeneration, saveRecord } from "@/lib/foreignClassificationStore";
 import { Link, useNavigate } from "react-router-dom";
 import { CitationRequestStatusLink } from "@/components/CitationRequestStatusLink";
 import { MessageBubble } from "@/components/MessageBubble";
@@ -49,6 +52,8 @@ interface Message {
   pastedCitation?: import("../../supabase/functions/_shared/pastedCitation").PastedCitationContract;
   /** In memory only: record-bound foreign case choice for this reply. */
   foreignChoice?: import("@/lib/foreignCaseChoice").ForeignCaseChoice;
+  /** In memory only: "which country?" asked instead of guessing, bound to this reply's input. */
+  countryQuestion?: import("@/lib/countryQuestion").CountryQuestion;
 }
 
 import { applyYearPreferences, isLegislationInput, extractLawNameFromInput, extractCitationFromResponse, type YearPreferences } from "@/lib/citationUtils";
@@ -524,7 +529,7 @@ const Index = () => {
           }
         }
 
-        setMessages([...newMessages, { role: "assistant", content: finalReply, completion: resolution?.completion, pastedCitation: resolution?.pastedCitation, foreignChoice: resolution?.foreignChoice }]);
+        setMessages([...newMessages, { role: "assistant", content: finalReply, completion: resolution?.completion, pastedCitation: resolution?.pastedCitation, foreignChoice: resolution?.foreignChoice, countryQuestion: resolution?.countryQuestion }]);
         setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: sourceType as SourceType }));
         setMessageRawInputs((prev) => ({ ...prev, [assistantIndex]: rawText }));
         // Credit already charged server-side by citation-chat (no frontend double-charge).
@@ -590,7 +595,7 @@ const Index = () => {
           }
         }
 
-        setMessages([...newMessages, { role: "assistant", content: finalReply, completion: resolution?.completion, pastedCitation: resolution?.pastedCitation, foreignChoice: resolution?.foreignChoice }]);
+        setMessages([...newMessages, { role: "assistant", content: finalReply, completion: resolution?.completion, pastedCitation: resolution?.pastedCitation, foreignChoice: resolution?.foreignChoice, countryQuestion: resolution?.countryQuestion }]);
         setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: sourceType as SourceType }));
         setMessageRawInputs((prev) => ({ ...prev, [assistantIndex]: rawText }));
         // Credit already charged server-side by citation-chat (no frontend double-charge).
@@ -666,7 +671,7 @@ const Index = () => {
       }
       const onCitationSuccess = async (reply: string, isCurrent: () => boolean, historyRequestId?: string, _typed?: boolean, resolution?: import("@/lib/citationPlanner").CitationResolution) => {
         const assistantIndex = messages.length;
-        setMessages((prev) => [...prev, { role: "assistant", content: reply, completion: resolution?.completion, pastedCitation: resolution?.pastedCitation, foreignChoice: resolution?.foreignChoice }]);
+        setMessages((prev) => [...prev, { role: "assistant", content: reply, completion: resolution?.completion, pastedCitation: resolution?.pastedCitation, foreignChoice: resolution?.foreignChoice, countryQuestion: resolution?.countryQuestion }]);
         setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: sourceType }));
         setMessageRawInputs((prev) => ({ ...prev, [assistantIndex]: rawInput }));
         // Credit already charged server-side by citation-chat (no frontend double-charge).
@@ -879,7 +884,7 @@ const Index = () => {
           }
         }
 
-        setMessages([...newMessages, { role: "assistant", content: finalReply, completion: resolution?.completion, pastedCitation: resolution?.pastedCitation, foreignChoice: resolution?.foreignChoice }]);
+        setMessages([...newMessages, { role: "assistant", content: finalReply, completion: resolution?.completion, pastedCitation: resolution?.pastedCitation, foreignChoice: resolution?.foreignChoice, countryQuestion: resolution?.countryQuestion }]);
         setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: effectiveSourceType }));
         setMessageRawInputs((prev) => ({ ...prev, [assistantIndex]: rawText }));
         // Credit already charged server-side by citation-chat (no frontend double-charge).
@@ -992,6 +997,42 @@ const Index = () => {
   ];
 
   
+
+  // Explicit regeneration of one reply with a chosen source type (picker, Israeli list or country question).
+  const regenerateMessageAs = async (i: number, newType: SourceType, plan?: GenerationPlan) => {
+    const rawInput = rawInputFor(i);
+    if (!rawInput) return;
+    setMessageSourceTypes((prev) => ({ ...prev, [i]: newType }));
+    setLoading(true);
+    let citationStale = false;
+    try {
+      const newLabel = SOURCE_TYPE_LABELS[newType];
+      const engineHint = buildEnginePromptHint(newType);
+      // IMPORTANT: include [סיווג אוטומטי: ...] so the backend routes to the right Perplexity branch
+      const reclassifiedPrompt = `[סיווג אוטומטי: ${newLabel}]\n[תיקון סיווג: המשתמש ציין שמדובר ב${newLabel}]\n${engineHint}[כלל רלוונטי: ${getEngineRuleReference(newType)}]\n${rawInput}`;
+      const onCitationSuccess = async (reply: string, isCurrent: () => boolean, historyRequestId?: string, _typed?: boolean, resolution?: import("@/lib/citationPlanner").CitationResolution) => {
+        setMessages((prev) => {
+          const updated = [...prev];
+          updated[i] = { role: "assistant", content: reply, completion: resolution?.completion, pastedCitation: resolution?.pastedCitation, foreignChoice: resolution?.foreignChoice, countryQuestion: resolution?.countryQuestion };
+          return updated;
+        });
+        // Only this explicit, successful generation may vouch for the choice.
+        if (plan && isCurrent()) {
+          recordGeneration(user?.id, plan);
+          if (plan.warning) toast.message(plan.warning);
+        }
+      };
+      await callAPI(reclassifiedPrompt, messages.slice(0, i), sourceTelemetry(newTelemetryBatch("uniform_citation")), { sourceType: newType, rawInput, manual: true, manualChoice: plan?.manualChoice }, onCitationSuccess);
+    } catch (err) {
+      if ((err as { message?: string })?.message === "CITATION_RETRY_STALE") { citationStale = true; return; }
+
+      toast.error("שגיאה בעיבוד מחדש");
+    } finally {
+      if (!citationStale) {
+        setLoading(false);
+      }
+    }
+  };
 
   return (
     <div className={`flex flex-col h-screen font-sans bg-background text-foreground ${isOfficeAddin ? "compact-mode" : ""}`}>
@@ -1256,7 +1297,7 @@ const Index = () => {
                             } else {
                               const onCitationSuccess = async (reply: string, isCurrent: () => boolean, historyRequestId?: string, _typed?: boolean, resolution?: import("@/lib/citationPlanner").CitationResolution) => {
                                 const assistantIndex = updatedMessages.length;
-                                setMessages([...updatedMessages, { role: "assistant", content: reply, completion: resolution?.completion, pastedCitation: resolution?.pastedCitation, foreignChoice: resolution?.foreignChoice }]);
+                                setMessages([...updatedMessages, { role: "assistant", content: reply, completion: resolution?.completion, pastedCitation: resolution?.pastedCitation, foreignChoice: resolution?.foreignChoice, countryQuestion: resolution?.countryQuestion }]);
                                 setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: sourceType as SourceType }));
                                 setMessageRawInputs((prev) => ({ ...prev, [assistantIndex]: newContent }));
 
@@ -1284,40 +1325,7 @@ const Index = () => {
                   }
                   onChangeSourceType={
                     msg.role === "assistant"
-                      ? async (newType: SourceType, plan?: GenerationPlan) => {
-                          const rawInput = rawInputFor(i);
-                          if (!rawInput) return;
-                          setMessageSourceTypes((prev) => ({ ...prev, [i]: newType }));
-                          setLoading(true);
-                          let citationStale = false;
-                          try {
-                            const newLabel = SOURCE_TYPE_LABELS[newType];
-                            const engineHint = buildEnginePromptHint(newType);
-                            // IMPORTANT: include [סיווג אוטומטי: ...] so the backend routes to the right Perplexity branch
-                            const reclassifiedPrompt = `[סיווג אוטומטי: ${newLabel}]\n[תיקון סיווג: המשתמש ציין שמדובר ב${newLabel}]\n${engineHint}[כלל רלוונטי: ${getEngineRuleReference(newType)}]\n${rawInput}`;
-                            const onCitationSuccess = async (reply: string, isCurrent: () => boolean, historyRequestId?: string, _typed?: boolean, resolution?: import("@/lib/citationPlanner").CitationResolution) => {
-                              setMessages((prev) => {
-                                const updated = [...prev];
-                                updated[i] = { role: "assistant", content: reply, completion: resolution?.completion, pastedCitation: resolution?.pastedCitation, foreignChoice: resolution?.foreignChoice };
-                                return updated;
-                              });
-                              // Only this explicit, successful generation may vouch for the choice.
-                              if (plan && isCurrent()) {
-                                recordGeneration(user?.id, plan);
-                                if (plan.warning) toast.message(plan.warning);
-                              }
-                            };
-                            await callAPI(reclassifiedPrompt, messages.slice(0, i), sourceTelemetry(newTelemetryBatch("uniform_citation")), { sourceType: newType, rawInput, manual: true, manualChoice: plan?.manualChoice }, onCitationSuccess);
-                          } catch (err) {
-                            if ((err as { message?: string })?.message === "CITATION_RETRY_STALE") { citationStale = true; return; }
-
-                            toast.error("שגיאה בעיבוד מחדש");
-                          } finally {
-                            if (!citationStale) {
-                              setLoading(false);
-                            }
-                          }
-                        }
+                      ? (newType: SourceType, plan?: GenerationPlan) => regenerateMessageAs(i, newType, plan)
                       : undefined
                   }
                   onUpdateAssistantContent={
@@ -1326,13 +1334,43 @@ const Index = () => {
                           setCitationStatus(null);
                           setMessages((prev) => {
                             const updated = [...prev];
-                            updated[i] = { ...updated[i], content: newContent, completion: undefined, pastedCitation: undefined, foreignChoice: undefined };
+                            updated[i] = { ...updated[i], content: newContent, completion: undefined, pastedCitation: undefined, foreignChoice: undefined, countryQuestion: undefined };
                             return updated;
                           });
                           toast.success("האזכור עודכן בהצלחה");
                         }
                       : undefined
                   }
+                  onAnswerCountry={msg.role === "assistant" && msg.countryQuestion ? (country: QuickCountryId) => {
+                    const q = msg.countryQuestion;
+                    if (!q) return false;
+                    if (loading) {
+                      toast.info("בקשה אחרת עדיין בעיבוד. בחרו שוב בעוד רגע.");
+                      return false;
+                    }
+                    const raw = rawInputFor(i);
+                    const clear = (patch: Partial<Message> = {}) => setMessages((prev) => prev.map((m, j) =>
+                      j === i && m.countryQuestion?.fingerprint === q.fingerprint && m.countryQuestion.reason === q.reason ? { ...m, ...patch, countryQuestion: undefined } : m));
+                    // The question answers only the exact input it was asked about.
+                    if (!countryQuestionCurrent(q, raw)) {
+                      clear();
+                      toast.error("הקלט השתנה מאז שהוצגה השאלה, ולכן היא בוטלה. שלחו את המקור שוב.");
+                      return true;
+                    }
+                    if (country === "other") {
+                      clear({ content: `${escapeCitationLiteral(raw)}\n⚠️ ${COUNTRY_OTHER_WARNING}` });
+                      return true;
+                    }
+                    // The answer is an explicit classification choice (shown in the source box) and one new generation.
+                    const itemKey = chatClassificationKey(projectId, i);
+                    const rec = applyOverride(reconcileRecord(loadRecord(user?.id, itemKey), itemKey, raw), quickOverride("case", country));
+                    saveRecord(user?.id, rec);
+                    const plan = planGeneration(rec, raw);
+                    if (!plan) return false;
+                    clear();
+                    void regenerateMessageAs(i, plan.sourceType, plan);
+                    return true;
+                  } : undefined}
                   onSelectForeignChoice={msg.role === "assistant" && msg.foreignChoice ? (optionId: string) => {
                     const choice = msg.foreignChoice;
                     if (!choice) return false;
@@ -1362,7 +1400,7 @@ const Index = () => {
                     const resolution = outcome.resolution;
                     setCitationStatus(null);
                     setMessages((prev) => prev.map((m, j) => j === i && sameChoice(m.foreignChoice)
-                      ? { role: "assistant", content: resolution.reply, completion: resolution.completion, pastedCitation: resolution.pastedCitation, foreignChoice: resolution.foreignChoice }
+                      ? { role: "assistant", content: resolution.reply, completion: resolution.completion, pastedCitation: resolution.pastedCitation, foreignChoice: resolution.foreignChoice, countryQuestion: resolution.countryQuestion }
                       : m));
                     if (resolution.sourceType) setMessageSourceTypes((prev) => ({ ...prev, [i]: resolution.sourceType as SourceType }));
                     if (resolution.citation && user?.id) {

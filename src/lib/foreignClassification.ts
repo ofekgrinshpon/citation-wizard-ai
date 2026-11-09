@@ -6,6 +6,7 @@
  * reports existing renderer coverage and `validity` is never asserted.
  */
 import { parseCountryLocal } from "../../supabase/functions/_shared/citationPure/countryLocal.ts";
+import { planCountryLookup } from "../../supabase/functions/_shared/citationPure/countryLookup.ts";
 import { rulepackJurisdictionFromId, rulepackCapability } from "../../supabase/functions/_shared/citationPure/rulepack.ts";
 import { detectForeignSource } from "@/data/bluebook/extract";
 import type { SourceType } from "@/data/abbreviations";
@@ -297,6 +298,12 @@ export function engineRouteFor(e: EffectiveClassification): { sourceType: Source
   return { sourceType: "foreign", supported: false };
 }
 
+/** AU/CA: a complete template renders locally; an in-scope incomplete one may be completed online. */
+function countrySupported(country: NonNullable<ReturnType<typeof parseCountryLocal>>, raw: string): boolean {
+  if (country.complete) return rulepackCapability(country.family, country.jurisdiction, country.templateId ?? "unsupported").local;
+  return planCountryLookup(country, raw)?.kind === "lookup";
+}
+
 export function supportFor(e: EffectiveClassification, raw?: string): SupportReport {
   if (e.otherUnidentified || !e.scalars.family) {
     return { status: "unidentified", validity: "not_assessed", message: "סוג המקור לא זוהה. הקלט נשמר וניתן לערוך ולייצא אותו." };
@@ -304,7 +311,7 @@ export function supportFor(e: EffectiveClassification, raw?: string): SupportRep
   const route = engineRouteFor(e);
   const choice = citationManualChoice(route.sourceType, e.scalars.jurisdiction, e.scalars.subjurisdiction);
   const country = raw && (choice?.jurisdiction === "AU" || choice?.jurisdiction === "CA") ? parseCountryLocal(raw, choice) : null;
-  return (country ? country.complete && rulepackCapability(country.family, country.jurisdiction, country.templateId ?? "unsupported").local : route.supported)
+  return (country ? countrySupported(country, raw!) : route.supported)
     ? { status: "renderer_partial", validity: "not_assessed", message: "קיימת תמיכה חלקית בעיצוב האוטומטי. יש לבדוק את האזכור ידנית." }
     : { status: "unsupported", validity: "not_assessed", message: "שילוב זה עדיין לא נתמך בעיצוב האוטומטי. הנתונים נשמרים לעריכה ולייצוא." };
 }
@@ -330,7 +337,7 @@ export function planGeneration(rec: ClassificationRecord | undefined, input: str
   const route = engineRouteFor(eff);
   const manualChoice = citationManualChoice(route.sourceType, eff.scalars.jurisdiction, eff.scalars.subjurisdiction);
   const country = parseCountryLocal(input, manualChoice);
-  if (country && (manualChoice?.jurisdiction === "AU" || manualChoice?.jurisdiction === "CA")) route.supported = country.complete && rulepackCapability(country.family, country.jurisdiction, country.templateId ?? "unsupported").local;
+  if (country && (manualChoice?.jurisdiction === "AU" || manualChoice?.jurisdiction === "CA")) route.supported = countrySupported(country, input);
   return {
     itemKey: rec.itemKey,
     sourceType: route.sourceType,

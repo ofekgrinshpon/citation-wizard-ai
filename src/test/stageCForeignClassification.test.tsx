@@ -434,7 +434,12 @@ describe("Stage C correction — explicit generation uses the effective choice",
     expect(route({ family: "decision", subtype: "decision.judgment", jurisdiction: CA })).toEqual({ sourceType: "foreign_case_other", supported: false });
     expect(route({ family: "normative_instrument", subtype: "normative_instrument.statute", jurisdiction: CA }).sourceType).toBe("foreign");
     let r = applyOverride(createRecord("x", "Smith v Jones"), { scalars: { family: "decision", subtype: "decision.judgment", jurisdiction: CA } });
-    expect(planGeneration(r, "Smith v Jones")?.warning).toBeTruthy();
+    // A bare Canadian caption may now be completed online (exact Canada lookup): supported, no warning.
+    expect(planGeneration(r, "Smith v Jones")).toMatchObject({ supported: true });
+    expect(planGeneration(r, "Smith v Jones")?.warning).toBeUndefined();
+    // An out-of-scope Canadian form (CanLII identifier) stays unsupported and warns.
+    const canlii = applyOverride(createRecord("y", "Smith v Jones, 2020 CanLII 12"), { scalars: { family: "decision", subtype: "decision.judgment", jurisdiction: CA } });
+    expect(planGeneration(canlii, "Smith v Jones, 2020 CanLII 12")?.warning).toBeTruthy();
     r = resetOverrides(r);
     expect(planGeneration(r, "Smith v Jones")).toBeNull();
   });
