@@ -59,7 +59,8 @@ export function citationSourceKind(sourceType?: string): string | null {
 export function citationUserText(text: string): string {
   return text
     .replace(/(?:^|\n)══ (?:מנוע(?: אזכור)?|מקור מאומת)[^\n]* ══\n[\s\S]*?\n═{3,}(?=\n|$)/g, "\n")
-    .replace(/^(?:\[(?:סיווג שיפוט ידני|סיווג אוטומטי|תיקון סיווג|כלל רלוונטי):[^\n]*\]|\[בחירת תוצאה\])\s*/gm, "")
+    // Treaty-type and bill-type answers are wrapper lines too, not source text.
+    .replace(/^(?:\[(?:סיווג שיפוט ידני|סיווג אוטומטי|תיקון סיווג|כלל רלוונטי|סוג אמנה|סוג חוברת):[^\n]*\]|\[בחירת תוצאה\])\s*/gm, "")
     .trim();
 }
 /** Presentation-only quote/whitespace normalization; no words or source tokens can be replaced. */
@@ -106,7 +107,8 @@ export function buildPastedCitation(raw: string, manual: CitationManualChoice | 
   add(/\bBVerfGE\b/, "DE", "reporter");
   add(/\bBGH\b/, "DE", "court");
   add(/\bBGH(?:Z|St)\b/, "DE", "reporter");
-  add(/\bU\.\s?S\.(?!\s?C\.)|\bF\.\s?(?:2d|3d|4th|Supp\.)/, "US", "reporter");
+  // U.S.T. (treaty series) is not a U.S. Reports citation.
+  add(/\bU\.\s?S\.(?!\s?C\.|\s?T\.)|\bF\.\s?(?:2d|3d|4th|Supp\.)/, "US", "reporter");
   add(/\b(?:D\. Mass\.|S\.D\.N\.Y\.|\d+(?:st|nd|rd|th|d) Cir\.)/, "US", "court");
   add(/\bU\.\s?S\.\s?C\.|\bU\.\s?S\.\s?CONST\./, "US", "code");
   add(/\b(?:UKSC|UKHL|UKPC|EWCA|EWHC)\b/, "UK", "court");

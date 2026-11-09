@@ -26,6 +26,7 @@ import { useActivityLog } from "@/hooks/useActivityLog";
 import { normalizeAbbreviations, detectSourceType, SOURCE_TYPE_LABELS, type SourceType, RULE_REFERENCES } from "@/data/abbreviations";
 import { validateAIResponse, buildEnginePromptHint, getEngineRuleReference, getMissingFieldsSummary } from "@/lib/citationValidation";
 import { resolveSourceType } from "@/lib/sourceTypeClassifier";
+import { isForeignTreatyText } from "@/lib/foreignTreaty";
 import { newTelemetryBatch, sourceTelemetry, telemetryBody, reportZeroWork, type CostTelemetry } from "@/lib/costTelemetry";
 import { VerifiedAutocomplete } from "@/components/VerifiedAutocomplete";
 import { toast } from "sonner";
@@ -146,7 +147,7 @@ const Index = () => {
   const restoredSourceType = (i: number): SourceType | undefined => {
     const raw = rawInputFor(i);
     if (!raw) return undefined;
-    const t = detectSourceType(normalizeAbbreviations(raw));
+    const t = isForeignTreatyText(raw) ? "foreign" : detectSourceType(normalizeAbbreviations(raw));
     // Only foreign results are restored (the picker); Hebrew rows keep prior behaviour.
     return isForeignSourceType(t) ? t : undefined;
   };

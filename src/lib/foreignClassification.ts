@@ -9,6 +9,7 @@ import { parseCountryLocal } from "../../supabase/functions/_shared/citationPure
 import { planCountryLookup } from "../../supabase/functions/_shared/citationPure/countryLookup.ts";
 import { rulepackJurisdictionFromId, rulepackCapability } from "../../supabase/functions/_shared/citationPure/rulepack.ts";
 import { detectForeignSource } from "@/data/bluebook/extract";
+import { isForeignTreatyText } from "@/lib/foreignTreaty";
 import type { SourceType } from "@/data/abbreviations";
 import { citationManualChoice } from "@/lib/pastedCitationAdapter";
 import type { CitationManualChoice } from "../../supabase/functions/_shared/pastedCitation";
@@ -181,6 +182,11 @@ export function detectClassification(raw: string): DetectedClassification {
       { value: "periodical.article", confidence: "low", evidence: "shape:periodical_at_page" },
       { value: "periodical.newspaper", confidence: "low", evidence: "shape:periodical_at_page" },
     ]);
+  }
+  // An English treaty name is a treaty (same shape rule as the chat routing).
+  if (!scalars.family && isForeignTreatyText(text)) {
+    scalars.family = ev("treaty", "medium", ["shape:treaty_name"]);
+    scalars.subtype = ev("treaty.agreement", "medium", ["shape:treaty_name"]);
   }
   if (d?.kind === "unpublished_manuscript") scalars.publication_status = ev("unpublished", "high", ["label:unpublished_work_type"]);
   if (/https?:\/\/\S+/i.test(text)) multi.access_medium = ev(["web"], "medium", ["url_present"]);

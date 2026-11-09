@@ -5,6 +5,7 @@ import { extractUsUnreportedCase } from "@/data/bluebook/extract";
 import { explicitUnpublishedKind } from "@/data/bluebook/unpublished";
 import { extractPeriodical } from "@/data/bluebook/periodical";
 import { extractBookWork } from "@/data/bluebook/bookWorks";
+import { isForeignTreatyText, isLatinOnly } from "@/lib/foreignTreaty";
 import {
   detectSourceType,
   hasStrongStatuteSignal,
@@ -106,6 +107,19 @@ export async function classifySourceWithLLM(rawText: string, telemetry?: CostTel
  * the literature family (book/article/article_in_book).
  */
 export async function resolveSourceType(rawText: string, telemetry?: CostTelemetry): Promise<{
+  sourceType: SourceType;
+  source: "regex" | "llm";
+  llm?: ClassifyResult;
+}> {
+  // An English treaty is a foreign source (Rule 36), decided locally without the classifier.
+  if (isForeignTreatyText(rawText)) return { sourceType: "foreign", source: "regex" };
+  const resolved = await resolveSourceTypeInner(rawText, telemetry);
+  // The Israeli treaty route (Rule 9) is for Hebrew text only.
+  if (resolved.sourceType === "treaty" && isLatinOnly(rawText)) return { ...resolved, sourceType: "foreign" };
+  return resolved;
+}
+
+async function resolveSourceTypeInner(rawText: string, telemetry?: CostTelemetry): Promise<{
   sourceType: SourceType;
   source: "regex" | "llm";
   llm?: ClassifyResult;
