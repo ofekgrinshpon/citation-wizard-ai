@@ -9,6 +9,9 @@
 - [x] English party names: lowercase words capitalized; casing taken from the chosen record's verified title (same words only).
 - [x] Friendly foreign source menu: simple kinds + country, advanced form folded, one box in chat.
 - [ ] Reporter priority rule: blocked on an authorised edition-21 check.
+- [ ] Canada/Australia online completion (federal cases + Acts) — plan awaiting approval.
+- [ ] Case with no clear country: ask the user which country instead of returning an unrelated US/UK result.
+- [ ] Country cues read by citation shape, not abbreviation alone (e.g. SCC is also an Indian reporter); ask when unsure.
 
 ## Unified pasted-citation infrastructure batch A (offline only)
 - [x] Narrow C2 missing-label compatibility at 8ebf71f0: restore existing book/chapter caller labels; 14 fail-before, 566 focused / 4,049 full passed, 1 skipped; report updated; automatic compilation OK, explicit TS/Vite unrun; no replay/validation/IO changes. Stop for independent final QA.
