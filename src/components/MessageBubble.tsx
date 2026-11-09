@@ -7,7 +7,7 @@ import { copyRichText } from "@/lib/clipboard";
 import { citationToHtml, citationToPlain } from "@/lib/citationRichText";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { RULE_EXPLANATIONS } from "@/data/ruleTooltips";
-import { SourceTypeConfirmation } from "./SourceTypeConfirmation";
+import { SourceTypeConfirmation, SourceTypeDialog } from "./SourceTypeConfirmation";
 import { ForeignSourcePicker } from "./ForeignSourcePicker";
 import { isForeignSourceType } from "@/data/bluebook/types";
 import type { GenerationPlan } from "@/lib/foreignClassification";
@@ -63,6 +63,7 @@ export function MessageBubble({ msg: rawMsg, detectedType, onChangeSourceType, o
   const [isEditingCitation, setIsEditingCitation] = useState(false);
   const [citationEditValue, setCitationEditValue] = useState("");
   const [isInserting, setIsInserting] = useState(false);
+  const [israeliListOpen, setIsraeliListOpen] = useState(false);
 
   const isCaseLawByType = detectedType === "case_law_published" || detectedType === "case_law_database";
   // Fallback: detect case law from content patterns when detectedType is lost (e.g. after HMR)
@@ -196,20 +197,28 @@ export function MessageBubble({ msg: rawMsg, detectedType, onChangeSourceType, o
           )
         ) : (
           <div className="chat-bubble-assistant px-4 py-3 text-foreground text-sm leading-relaxed">
-            {detectedType && onChangeSourceType && (
+            {/* Foreign sources get one friendly menu; the Israeli list opens from it. */}
+            {detectedType && onChangeSourceType && !(foreignScope && isForeignSourceType(detectedType)) && (
               <SourceTypeConfirmation
                 detectedType={detectedType}
                 onChangeType={onChangeSourceType}
               />
             )}
             {detectedType && foreignScope && isForeignSourceType(detectedType) && (
-              <ForeignSourcePicker
-                accountId={foreignScope.accountId}
-                itemKey={foreignScope.itemKey}
-                input={foreignScope.input}
-                hostDetectedLabel={detectedType !== "foreign" ? SOURCE_TYPE_LABELS[detectedType] : undefined}
-                onRegenerate={onChangeSourceType ? (plan) => onChangeSourceType(plan.sourceType, plan) : undefined}
-              />
+              <>
+                <ForeignSourcePicker
+                  accountId={foreignScope.accountId}
+                  itemKey={foreignScope.itemKey}
+                  input={foreignScope.input}
+                  hostDetectedLabel={detectedType !== "foreign" ? SOURCE_TYPE_LABELS[detectedType] : undefined}
+                  onRegenerate={onChangeSourceType ? (plan) => onChangeSourceType(plan.sourceType, plan) : undefined}
+                  onIsraeliSource={onChangeSourceType ? () => setIsraeliListOpen(true) : undefined}
+                />
+                {onChangeSourceType && (
+                  <SourceTypeDialog open={israeliListOpen} onOpenChange={setIsraeliListOpen}
+                    detectedType={detectedType} onChangeType={onChangeSourceType} />
+                )}
+              </>
             )}
             {msg.content.split("\n").map((line, i) => {
               if (!line.trim()) return <br key={i} />;

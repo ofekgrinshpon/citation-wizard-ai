@@ -195,6 +195,7 @@ describe("picker UI — deterministic, local, zero network", () => {
   it("JUR2: England and Wales / Scotland / Northern Ireland are distinct selectable subdivisions", () => {
     render(<ForeignSourcePicker accountId="acct-A" itemKey="t:1" input="Donoghue v Stevenson [1932] AC 562 (HL)" />);
     fireEvent.click(screen.getByRole("button", { name: "שינוי סיווג" }));
+    fireEvent.click(screen.getByRole("button", { name: "הגדרות מתקדמות" }));
     const subSelect = screen.getByRole("combobox", { name: "יחידת משנה" });
     const values = within(subSelect).getAllByRole("option").map((o) => (o as HTMLOptionElement).value);
     expect(values).toEqual(expect.arrayContaining([UK1, UK2, UK3]));
@@ -207,7 +208,7 @@ describe("picker UI — deterministic, local, zero network", () => {
   });
   it("books do not require a country; other/unidentified always offered; no rule ids", () => {
     render(<ForeignSourcePicker accountId="acct-A" itemKey="t:2" input="Hans Mueller, Grundrechte im Wandel (2019)" />);
-    expect(screen.getByTestId("foreign-effective").textContent).toContain("ספר ופרסום שאינו כתב עת");
+    expect(screen.getByTestId("foreign-effective").textContent).toBe("ספר");
     fireEvent.click(screen.getByRole("button", { name: "שינוי סיווג" }));
     expect(screen.queryByRole("combobox", { name: /תחום שיפוט/ })).toBeNull();
     expect(screen.getByRole("button", { name: "אחר / לא זוהה" })).toBeInTheDocument();
@@ -234,6 +235,7 @@ describe("picker UI — deterministic, local, zero network", () => {
   it("searchable: query filters families/subtypes", () => {
     render(<ForeignSourcePicker accountId="acct-A" itemKey="t:3" input="Foo" />);
     fireEvent.click(screen.getByRole("button", { name: "שינוי סיווג" }));
+    fireEvent.click(screen.getByRole("button", { name: "הגדרות מתקדמות" }));
     fireEvent.change(screen.getByRole("searchbox"), { target: { value: "אמנה" } });
     expect(screen.getByRole("button", { name: "אמנה או הסכם בין־לאומי" })).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "חוקה" })).toBeNull();
@@ -254,22 +256,23 @@ describe("picker UI — deterministic, local, zero network", () => {
     const regen = vi.fn();
     const { unmount } = render(card(cell(), regen));
     fireEvent.click(screen.getByRole("button", { name: "שינוי סיווג" }));
+    fireEvent.click(screen.getByRole("button", { name: "הגדרות מתקדמות" }));
     fireEvent.click(screen.getByRole("button", { name: "החלטה בהליך שיפוטי או מעין־שיפוטי" }));
     fireEvent.change(screen.getByRole("combobox", { name: /תחום שיפוט/ }), { target: { value: CA } });
-    expect(screen.getByTestId("foreign-effective").textContent).toContain("Canada");
+    expect(screen.getByTestId("foreign-effective").textContent).toContain("קנדה");
     // An identical detected-country choice is not a changed effective plan.
     expect(screen.queryByTestId("foreign-stale")).toBeNull();
     unmount();
     const r2 = render(card(cell(), regen));
-    expect(screen.getByTestId("foreign-effective").textContent).toContain("Canada");
+    expect(screen.getByTestId("foreign-effective").textContent).toContain("קנדה");
     expect(screen.queryByTestId("foreign-needs-review")).toBeNull();
     r2.rerender(card(cell({ input: "Smith v Jones, 2020 SCC 9" }), regen));
     expect(screen.getByTestId("foreign-needs-review")).toBeInTheDocument();
-    expect(screen.getByTestId("foreign-effective").textContent).toContain("Canada");
+    expect(screen.getByTestId("foreign-effective").textContent).toContain("קנדה");
     fireEvent.click(screen.getByRole("button", { name: "השאר את הבחירה" }));
     expect(screen.queryByTestId("foreign-needs-review")).toBeNull();
     fireEvent.click(screen.getByRole("button", { name: "חזרה לזיהוי האוטומטי" }));
-    expect(screen.getByTestId("foreign-effective").textContent).toContain("Canada");
+    expect(screen.getByTestId("foreign-effective").textContent).toContain("קנדה");
     expect(regen).not.toHaveBeenCalled();
     noNetwork();
   });
@@ -298,9 +301,10 @@ describe("picker UI — deterministic, local, zero network", () => {
       onChangeSourceType={vi.fn()} foreignScope={{ accountId: "acct-A", itemKey: "chat:p1:1:f", input: "Smith v Jones, 2019 SCC 5" }} /></TooltipProvider>);
     const picker = screen.getByTestId("foreign-source-picker");
     fireEvent.click(within(picker).getByRole("button", { name: "שינוי סיווג" }));
+    fireEvent.click(within(picker).getByRole("button", { name: "הגדרות מתקדמות" }));
     fireEvent.click(within(picker).getByRole("button", { name: "החלטה בהליך שיפוטי או מעין־שיפוטי" }));
     fireEvent.change(within(picker).getByRole("combobox", { name: /תחום שיפוט/ }), { target: { value: CA } });
-    expect(within(picker).getByTestId("foreign-effective").textContent).toContain("Canada");
+    expect(within(picker).getByTestId("foreign-effective").textContent).toContain("קנדה");
     noNetwork();
   });
 
@@ -315,7 +319,7 @@ describe("picker UI — deterministic, local, zero network", () => {
     fireEvent.click(within(picker).getByRole("button", { name: "שינוי סיווג" }));
     fireEvent.click(within(picker).getByRole("button", { name: "אחר / לא זוהה" }));
     fireEvent.click(within(picker).getByRole("button", { name: "חזרה לזיהוי האוטומטי" }));
-    await waitFor(() => expect(within(picker).getByTestId("foreign-effective").textContent).toContain("פריט מתוך פרסום תקופתי"));
+    await waitFor(() => expect(within(picker).getByTestId("foreign-effective").textContent).toBe("מאמר בכתב עת"));
     expect(h.runCitation.mock.calls.length).toBe(calls);
     noNetwork();
   });
@@ -393,6 +397,7 @@ describe("Stage C correction — 12 axes contract", () => {
   const openPicker = (input: string, family: string) => {
     render(<ForeignSourcePicker accountId="acct-A" itemKey={`t:${family}`} input={input} />);
     fireEvent.click(screen.getByRole("button", { name: "שינוי סיווג" }));
+    fireEvent.click(screen.getByRole("button", { name: "הגדרות מתקדמות" }));
     fireEvent.click(screen.getByRole("button", { name: family }));
   };
   it("conditional controls: treaty shows parties; book shows authorship+edition, not proceeding; decision shows proceeding+scheme+court", () => {
@@ -441,6 +446,7 @@ describe("Stage C correction — explicit generation uses the effective choice",
       onChangeSourceType={onChange} foreignScope={{ accountId: "acct-A", itemKey: "chat:p1:1", input: "Smith v Jones, 2019 SCC 5" }} /></TooltipProvider>);
     const picker = screen.getByTestId("foreign-source-picker");
     fireEvent.click(within(picker).getByRole("button", { name: "שינוי סיווג" }));
+    fireEvent.click(within(picker).getByRole("button", { name: "הגדרות מתקדמות" }));
     fireEvent.click(within(picker).getByRole("button", { name: "החלטה בהליך שיפוטי או מעין־שיפוטי" }));
     fireEvent.click(within(picker).getByRole("button", { name: "פסק דין או החלטה שיפוטית" }));
     fireEvent.change(within(picker).getByRole("combobox", { name: /תחום שיפוט/ }), { target: { value: "us" } });
@@ -451,7 +457,7 @@ describe("Stage C correction — explicit generation uses the effective choice",
     // Changed input on the same message → previous choice kept, needs review.
     render(<ForeignSourcePicker accountId="acct-A" itemKey="chat:p1:1" input="Smith v Jones, 2020 SCC 9" />);
     expect(screen.getByTestId("foreign-needs-review")).toBeInTheDocument();
-    expect(screen.getByTestId("foreign-effective").textContent).toContain("United States");
+    expect(screen.getByTestId("foreign-effective").textContent).toContain("ארצות הברית");
   });
 
   it("bibliography: Other → commit → back to review keeps the choice; explicit retry uses it and records provenance", async () => {
@@ -487,6 +493,6 @@ describe("Stage C correction — explicit generation uses the effective choice",
     saveRecord("acct-A", applyOverride(createRecord("bib:iso", "X"), { scalars: { jurisdiction: CA } }));
     h.user = { id: "acct-B" };
     render(<ForeignSourcePicker accountId="acct-B" itemKey="bib:iso" input="X" />);
-    expect(screen.getByTestId("foreign-effective").textContent).not.toContain("Canada");
+    expect(screen.getByTestId("foreign-effective").textContent).not.toContain("קנדה");
   });
 });

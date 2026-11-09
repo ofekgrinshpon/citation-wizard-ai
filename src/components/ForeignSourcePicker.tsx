@@ -6,8 +6,6 @@ import {
   INSTITUTION_PROFILES,
   JURISDICTION_EXPECTED_FAMILIES,
   getAxis,
-  familyLabel,
-  subtypeLabel,
   subtypesOf,
 } from "@/data/bluebook/classification/taxonomy";
 import {
@@ -33,6 +31,16 @@ import {
   type StructuredAxis,
   type StructuredValue,
 } from "@/lib/foreignClassification";
+import {
+  QUICK_COUNTRIES,
+  QUICK_KINDS,
+  friendlySummary,
+  quickCountryOf,
+  quickKind,
+  quickKindOf,
+  quickOverride,
+  type QuickKindId,
+} from "@/lib/foreignQuickPick";
 
 /** Display copy only; stored values stay the workbook ids. */
 const VALUE_LABELS: Record<string, string> = {
@@ -92,6 +100,8 @@ interface Props {
    *  detector finds nothing and no manual choice exists, the card shows this
    *  label instead of a contradicting "not identified" line. Display only. */
   hostDetectedLabel?: string;
+  /** Chat only: the source is not foreign at all — open the Israeli source list. */
+  onIsraeliSource?: () => void;
 }
 
 /**
@@ -99,9 +109,11 @@ interface Props {
  * restoring are local and deterministic — never a network call. Generation
  * happens only through the host's explicit action.
  */
-export function ForeignSourcePicker({ accountId, itemKey, input, onRegenerate, onChange, regenerateDisabled, transient, initialRecord, hostDetectedLabel }: Props) {
+export function ForeignSourcePicker({ accountId, itemKey, input, onRegenerate, onChange, regenerateDisabled, transient, initialRecord, hostDetectedLabel, onIsraeliSource }: Props) {
   const c = useForeignClassification({ accountId, itemKey, input, transient, initialRecord });
   const [open, setOpen] = useState(false);
+  const [advanced, setAdvanced] = useState(false);
+  const [pendingKind, setPendingKind] = useState<QuickKindId | null>(null);
   const [query, setQuery] = useState("");
   const [showOptionalJur, setShowOptionalJur] = useState(false);
   const [showAll, setShowAll] = useState(false);
@@ -109,8 +121,6 @@ export function ForeignSourcePicker({ accountId, itemKey, input, onRegenerate, o
   const e = c.effective;
   const fam = e.scalars.family;
   const jurId = e.scalars.jurisdiction;
-  const jur = getEntity(jurId);
-  const sub = getEntity(e.scalars.subjurisdiction);
   const jurExpected = !!fam && JURISDICTION_EXPECTED_FAMILIES.has(fam);
   const showJur = jurExpected || showOptionalJur || !!jurId || showAll;
   const axes = visibleAxes(fam, showAll);
@@ -135,11 +145,23 @@ export function ForeignSourcePicker({ accountId, itemKey, input, onRegenerate, o
 
   const manual = Object.values(e.source).includes("user_override") || e.otherUnidentified;
   const showHostLabel = !manual && !fam && !!hostDetectedLabel;
-  const summary = showHostLabel
-    ? hostDetectedLabel
-    : e.otherUnidentified || !fam
-      ? "אחר / לא זוהה"
-      : [familyLabel(fam), subtypeLabel(e.scalars.subtype), sub?.name ?? jur?.name].filter(Boolean).join(" · ");
+  const summary = showHostLabel ? hostDetectedLabel : friendlySummary(e);
+  const currentKind = quickKindOf(e);
+  const activeKind = pendingKind ?? currentKind;
+  const showCountries = !!activeKind && quickKind(activeKind).needsCountry;
+  const currentCountry = activeKind === currentKind ? quickCountryOf(e) : null;
+  const countryNote = currentCountry ? QUICK_COUNTRIES.find((x) => x.id === currentCountry)?.note : undefined;
+  const chooseKind = (id: QuickKindId) => {
+    if (quickKind(id).needsCountry) { setPendingKind(id); return; }
+    setPendingKind(null);
+    c.setOverride(quickOverride(id));
+  };
+  const chooseCountry = (country: (typeof QUICK_COUNTRIES)[number]["id"]) => {
+    if (!activeKind) return;
+    setPendingKind(null);
+    c.setOverride(quickOverride(activeKind, country));
+  };
+  const chip = "flex items-center gap-1.5 rounded-md border border-border bg-background px-2.5 py-1.5 text-right hover:bg-accent aria-pressed:border-primary aria-pressed:bg-primary/10 aria-pressed:font-medium aria-pressed:text-primary";
 
   const multiControl = (k: MultiField, legend: string) => axes.has(k) && (
     <fieldset>
@@ -230,7 +252,7 @@ export function ForeignSourcePicker({ accountId, itemKey, input, onRegenerate, o
         <span className="text-muted-foreground">מקור לועזי:</span>
         <strong className="text-foreground" data-testid="foreign-effective">{summary}</strong>
         <span className="text-[10px] text-muted-foreground">{manual ? "נקבע ידנית" : "זוהה אוטומטית"}</span>
-        <button type="button" aria-expanded={open} aria-controls={`${baseId}-panel`} onClick={() => setOpen((v) => !v)}
+        <button type="button" aria-expanded={open} aria-controls={`${baseId}-panel`} onClick={() => { setOpen((v) => !v); setPendingKind(null); setAdvanced(false); }}
           className="rounded border border-border px-2 py-0.5 text-primary hover:bg-accent">
           {open ? "סגור" : "שינוי סיווג"}
         </button>
@@ -241,7 +263,7 @@ export function ForeignSourcePicker({ accountId, itemKey, input, onRegenerate, o
         )}
         {onRegenerate && c.plan && (
           <button type="button" disabled={regenerateDisabled} onClick={() => c.plan && onRegenerate(c.plan)}
-            className="rounded border border-primary px-2 py-0.5 text-primary disabled:opacity-40">
+            className={`rounded border border-primary px-2 py-0.5 disabled:opacity-40 ${c.stale ? "bg-primary text-primary-foreground" : "text-primary"}`}>
             הפקה מחדש לפי הסיווג
           </button>
         )}
@@ -269,8 +291,59 @@ export function ForeignSourcePicker({ accountId, itemKey, input, onRegenerate, o
         </p>
       )}
 
-      {open && (
+      {open && !advanced && (
+        <div id={`${baseId}-panel`} className="mt-2 space-y-2.5 border-t border-border pt-2" data-testid="foreign-quick-menu">
+          <div>
+            <p className="mb-1 font-medium">מה סוג המקור?</p>
+            <div role="group" aria-label="סוג המקור" className="grid grid-cols-2 gap-1.5 sm:grid-cols-3">
+              {QUICK_KINDS.map((k) => (
+                <button key={k.id} type="button" aria-pressed={activeKind === k.id} onClick={() => chooseKind(k.id)} className={chip}>
+                  <span aria-hidden="true">{k.icon}</span><span>{k.label}</span>
+                </button>
+              ))}
+              <button type="button" aria-pressed={e.otherUnidentified && !pendingKind} onClick={() => { setPendingKind(null); c.setOverride({ otherUnidentified: true }); }} className={chip}>
+                <span aria-hidden="true">📁</span><span>אחר / לא זוהה</span>
+              </button>
+            </div>
+          </div>
+
+          {showCountries && activeKind && (
+            <div>
+              <p className="mb-1 font-medium">{activeKind === "case" ? "מאיזו מדינה פסק הדין?" : "מאיזו מדינה החוק?"}</p>
+              <div role="group" aria-label="מדינה" className="flex flex-wrap gap-1.5">
+                {QUICK_COUNTRIES.map((ct) => (
+                  <button key={ct.id} type="button" aria-pressed={currentCountry === ct.id} onClick={() => chooseCountry(ct.id)} className={chip}>
+                    {ct.label}
+                  </button>
+                ))}
+              </div>
+              {pendingKind && <p className="mt-1 text-[11px] text-muted-foreground">בחרו מדינה כדי לשמור את הסיווג.</p>}
+              {!pendingKind && countryNote && <p className="mt-1 text-[11px] text-muted-foreground">{countryNote}</p>}
+            </div>
+          )}
+
+          {onRegenerate && c.plan && c.stale && (
+            <p className="text-[11px] text-foreground">הסיווג נשמר. לחצו על ״הפקה מחדש לפי הסיווג״ כדי לקבל אזכור מעודכן.</p>
+          )}
+
+          <div className="flex flex-wrap gap-3 border-t border-border pt-1.5">
+            <button type="button" onClick={() => setAdvanced(true)} className="text-muted-foreground hover:text-foreground hover:underline">
+              הגדרות מתקדמות
+            </button>
+            {onIsraeliSource && (
+              <button type="button" onClick={onIsraeliSource} className="text-muted-foreground hover:text-foreground hover:underline">
+                זה בכלל מקור ישראלי
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+
+      {open && advanced && (
         <div id={`${baseId}-panel`} className="mt-2 space-y-2.5 border-t border-border pt-2">
+          <button type="button" onClick={() => setAdvanced(false)} className="text-primary hover:underline">
+            → חזרה לתפריט הפשוט
+          </button>
           <label className="block">
             <span className="sr-only">חיפוש סוג מקור או תחום שיפוט</span>
             <input type="search" value={query} onChange={(ev) => setQuery(ev.target.value)} placeholder="חיפוש סוג מקור או תחום שיפוט"

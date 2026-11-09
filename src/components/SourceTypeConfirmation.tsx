@@ -67,36 +67,42 @@ export function SourceTypeConfirmation({ detectedType, onChangeType }: Props) {
       <span className="text-[10px] text-muted-foreground">
         במידה ולא, לחץ על &lsquo;שינוי מקור&rsquo; כדי לבחור קטגוריה אחרת.
       </span>
-
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-sm" style={{ direction: "rtl" }}>
-          <DialogHeader>
-            <DialogTitle className="text-right">בחר סוג מקור</DialogTitle>
-          </DialogHeader>
-          <div className="grid gap-1.5 max-h-[60vh] overflow-y-auto py-2">
-            {SOURCE_CATEGORIES.map((cat) => (
-              <button
-                key={cat.key}
-                onClick={() => {
-                  onChangeType(cat.key);
-                  setOpen(false);
-                }}
-                className={`flex items-center gap-2.5 px-3 py-2.5 rounded-md text-sm text-right transition-colors ${
-                  cat.key === detectedType
-                    ? "bg-primary/10 text-primary font-medium border border-primary/20"
-                    : "hover:bg-accent text-foreground"
-                }`}
-              >
-                <span className="text-base">{cat.icon}</span>
-                <span>{cat.label}</span>
-                {cat.key === detectedType && (
-                  <span className="mr-auto text-[10px] text-primary">✓ נוכחי</span>
-                )}
-              </button>
-            ))}
-          </div>
-        </DialogContent>
-      </Dialog>
+      <SourceTypeDialog open={open} onOpenChange={setOpen} detectedType={detectedType} onChangeType={onChangeType} />
     </div>
+  );
+}
+
+/** The Israeli source-type list on its own, for hosts that open it from elsewhere. */
+export function SourceTypeDialog({ open, onOpenChange, detectedType, onChangeType }: Props & { open: boolean; onOpenChange: (open: boolean) => void }) {
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-sm" style={{ direction: "rtl" }}>
+        <DialogHeader>
+          <DialogTitle className="text-right">בחר סוג מקור</DialogTitle>
+        </DialogHeader>
+        <div className="grid gap-1.5 max-h-[60vh] overflow-y-auto py-2">
+          {SOURCE_CATEGORIES.map((cat) => (
+            <button
+              key={cat.key}
+              onClick={() => {
+                onChangeType(cat.key);
+                onOpenChange(false);
+              }}
+              className={`flex items-center gap-2.5 px-3 py-2.5 rounded-md text-sm text-right transition-colors ${
+                cat.key === detectedType
+                  ? "bg-primary/10 text-primary font-medium border border-primary/20"
+                  : "hover:bg-accent text-foreground"
+              }`}
+            >
+              <span className="text-base">{cat.icon}</span>
+              <span>{cat.label}</span>
+              {cat.key === detectedType && (
+                <span className="mr-auto text-[10px] text-primary">✓ נוכחי</span>
+              )}
+            </button>
+          ))}
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }

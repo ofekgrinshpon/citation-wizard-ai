@@ -69,7 +69,7 @@ describe('Word default engine flow',()=>{
  it('uses the shared foreign jurisdiction plan, preserves it through navigation and never persists document text',async()=>{
   render(<WordFootnoteWorkflow/>);await upload();review();
   fireEvent.change(screen.getByLabelText('סוג המקור לאזכור 1'),{target:{value:'foreign_case_other'}});
-  fireEvent.click(screen.getByRole('button',{name:'שינוי סיווג'}));
+  fireEvent.click(screen.getByRole('button',{name:'שינוי סיווג'}));fireEvent.click(screen.getByRole('button',{name:'הגדרות מתקדמות'}));
   const addJur=screen.queryByRole('button',{name:'הוספת תחום שיפוט (לא חובה לסוג מקור זה)'});if(addJur)fireEvent.click(addJur);
   fireEvent.change(screen.getByLabelText(/^תחום שיפוט/),{target:{value:'t2:united-kingdom'}});
   expect(mocks.run).not.toHaveBeenCalled();expect(localStorage.length).toBe(0);
