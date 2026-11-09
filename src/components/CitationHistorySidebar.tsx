@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { normalizeHebrewNumberRanges } from "@/lib/hebrewNumberRange";
 import { citationHistoryHtml } from "@/lib/citationHistoryMarkup";
+import { lineDirection } from "@/lib/textDirection";
 
 interface CitationRecord {
   id: string;
@@ -122,7 +123,7 @@ export function CitationHistorySidebar({ projectId, refreshKey }: Props) {
 
   return (
     <div
-      className="w-64 border-l border-border bg-sidebar-background flex flex-col self-stretch"
+      className="w-72 shrink-0 border-l border-border bg-sidebar-background flex flex-col self-stretch"
       style={{ direction: "rtl" }}
     >
       <div className="px-3 py-3 border-b border-border">
@@ -137,7 +138,9 @@ export function CitationHistorySidebar({ projectId, refreshKey }: Props) {
         />
       </div>
 
-      <ScrollArea className="flex-1">
+      {/* Radix wraps content in a table-display div that grows to the longest
+          line; force block layout so citations wrap inside the sidebar. */}
+      <ScrollArea className="flex-1 [&>[data-radix-scroll-area-viewport]>div]:!block">
         {loading ? (
           <div className="p-4 text-center text-xs text-muted-foreground">
             טוען...
@@ -153,7 +156,7 @@ export function CitationHistorySidebar({ projectId, refreshKey }: Props) {
                 key={c.id}
                 onClick={() => handleCopy(c.formatted_output)}
                 className="w-full text-right p-2.5 rounded-lg hover:bg-sidebar-accent transition-colors group cursor-pointer"
-                title="לחץ להעתקה"
+                title={`${stripMarkdown(extractCitationOnly(c.formatted_output))}\n\nלחץ להעתקה`}
               >
                 <div className="flex items-center gap-1.5 mb-1">
                   {c.source_type && (
@@ -172,7 +175,8 @@ export function CitationHistorySidebar({ projectId, refreshKey }: Props) {
                   </span>
                 </div>
                 <p
-                  className="text-xs text-sidebar-foreground leading-relaxed line-clamp-2"
+                  dir={lineDirection(extractCitationOnly(c.formatted_output))}
+                  className="text-xs text-sidebar-foreground leading-relaxed line-clamp-4 [overflow-wrap:anywhere] text-start"
                   dangerouslySetInnerHTML={{ __html: markdownToHtml(extractCitationOnly(c.formatted_output)) }}
                 />
                 <p className="text-[10px] text-muted-foreground mt-1 line-clamp-1 opacity-0 group-hover:opacity-100 transition-opacity">

@@ -69,7 +69,7 @@ describe("history HTML boundary", () => {
     Object.defineProperty(navigator, "clipboard", { configurable: true, value: { write } });
     state.output = '**שלום & עולם** <img src=x onerror="alert(1)">';
     const ui = render(<CitationHistorySidebar projectId="project" />);
-    const button = await screen.findByTitle("לחץ להעתקה");
+    const button = await screen.findByTitle(/לחץ להעתקה$/);
     fireEvent.click(button);
     await waitFor(() => expect(write).toHaveBeenCalledTimes(1));
     const item = (write.mock.calls[0] as unknown as [ClipboardFixture[]])[0][0];
