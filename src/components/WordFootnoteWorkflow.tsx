@@ -306,8 +306,8 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
   };
   return <section aria-label="תיקון הערות שוליים במסמך Word" dir="rtl" className="overflow-hidden rounded-2xl border border-border bg-card text-foreground">
     <header className="space-y-2 border-b border-border p-4 sm:p-6">
-      <h3 className="text-xl font-bold">תיקון אזכורים במסמך Word</h3>
-      <p className="text-sm leading-6 text-muted-foreground">ההערות מוכנות לבדיקה. סמנו דברי הסבר אם יש, אשרו תיקונים והורידו עותק חדש.</p>
+      <h3 className="text-xl font-bold">בדיקת הערות שוליים במסמך Word</h3>
+      <p className="text-sm leading-6 text-muted-foreground">העלו מסמך Word, המערכת תסרוק את הערות השוליים, תבדוק את האזכורים לפי הכללים ותאפשר לכם לאשר את התיקונים לפני הורדת קובץ מעודכן.</p>
     </header>
     <nav aria-label="שלבי תיקון המסמך" className="border-b border-border bg-muted/30 p-3 sm:px-6">
       <ol className="grid grid-cols-2 gap-2 sm:grid-cols-4">
