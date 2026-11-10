@@ -259,13 +259,14 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
   const selectRetry = (id: number, pick: { kind: "israeli"; selection: string } | { kind: "country"; country: "us" | "uk" }) => {
     if (lock.current) return;
     const row = rows.find(r => r.id === id);
-    if (!row?.retryChoice || row.retryChoice.kind !== pick.kind || row.status === "error") return;
+    const choice = row?.retryChoice;
+    if (!row || !choice || row.status === "error") return;
     if (pick.kind === "israeli") {
-      if (!row.retryChoice.options.some(o => o.selection === pick.selection)) return;
+      if (choice.kind !== "israeli" || !choice.options.some(o => o.selection === pick.selection)) return;
       void generate(id, { rawInput: pick.selection, resultSelection: true });
       return;
     }
-    if (!row.retryChoice.countries.some(c => c.country === pick.country)) return;
+    if (choice.kind !== "country" || !choice.countries.some(c => c.country === pick.country)) return;
     // The country answer is an explicit classification choice (shown in the source box) for this card only.
     const text = row.manualDraft ?? row.input;
     const record = applyOverride(reconcileRecord(row.classificationRecord, `word:${row.id}`, text), quickOverride("case", pick.country));
