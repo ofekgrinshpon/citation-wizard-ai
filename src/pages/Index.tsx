@@ -1001,7 +1001,7 @@ const Index = () => {
 
   const MODE_LABELS: Record<AppMode, { label: string; icon: string }> = {
     legalqa: { label: "העוזר המשפטי", icon: "⚖️" },
-    freetext: { label: "אזכור חופשי", icon: "✨" },
+    freetext: { label: "אזכור מהיר", icon: "✨" },
     batch: { label: "הערות שוליים", icon: "📑" },
     bibliography: { label: "ביבליוגרפיה", icon: "📚" },
   };
