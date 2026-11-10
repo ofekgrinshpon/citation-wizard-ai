@@ -174,7 +174,9 @@ function extractFieldsFromResponse(response: string, sourceType: SourceType): Re
     const titleMatch = response.match(/\*\*([^*]+)\*\*/);
     if (titleMatch) fields.bookTitle = titleMatch[1];
     // The year parenthetical closes the citation, optionally followed by its final period.
-    const yearMatch = response.trim().match(/\((?:[^)]*?)(\d{4}|הת[שׁש][א-ת]*["״׳][א-ת]["״׳]?[א-ת]?)\)\s*\.?$/);
+    // Engine notes (⚠️ / rule lines) may follow the citation line, so each line is read.
+    const yearRe = /\((?:[^)]*?)(\d{4}|הת[שׁש][א-ת]*["״׳][א-ת]["״׳]?[א-ת]?)\)\s*\.?$/;
+    const yearMatch = response.split("\n").map((line) => line.trim().match(yearRe)).find(Boolean);
     if (yearMatch) fields.year = yearMatch[1];
     // Volume (כרך)
     const volMatch = response.match(/כרך\s+([א-ת]+|\d+)/);
@@ -579,6 +581,12 @@ export function validateAIResponse(
 /**
  * Generate a human-readable summary of what's missing in a citation.
  */
+/** The component's name only (its formatting guidance belongs to the engine, not the warning). */
+function shortComponentLabel(description: string): string {
+  const head = description.split(/\s*(?::|–|—|\(|\.\s)\s*/)[0].trim();
+  return head || description;
+}
+
 export function getMissingFieldsSummary(
   sourceType: SourceType,
   missingFields: string[]
@@ -602,7 +610,7 @@ export function getMissingFieldsSummary(
   const descriptions = missingFields
     .map(field => {
       const component = ruleSet.components.find(c => c.field === field);
-      return labelFor(field, component ? `${component.description} (כלל ${component.rule})` : undefined);
+      return labelFor(field, component ? `${shortComponentLabel(component.description)} (כלל ${component.rule})` : undefined);
     })
     .filter(Boolean);
 

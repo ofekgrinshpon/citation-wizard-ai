@@ -34,6 +34,7 @@ import { bindFreeformResponseFields, prepareFreeformHandoff, prepareFreeformMode
 import { buildCountryCaseChoice, buildForeignCaseChoice, decisionChoiceReply, locationChoiceReply, prepareChoiceSelection, type ForeignCaseChoice } from "@/lib/foreignCaseChoice";
 import { acceptCountryResponse, countryCues, type CountryLookupRequest } from "../../supabase/functions/_shared/citationPure/countryLookup.ts";
 import { buildCountryQuestion, countryQuestionReply, type CountryQuestion } from "@/lib/countryQuestion";
+import { countryRetryChoice, type RetryChoice } from "@/lib/resultOptions";
 
 /** Local rendering controls; only host identity differs after bounded C2 parity. */
 export interface CitationHostCapabilities {
@@ -84,6 +85,8 @@ export interface CitationResolution {
   foreignChoice?: ForeignCaseChoice;
   /** Chat only: ask which country a case is from instead of guessing (in memory, input-bound). */
   countryQuestion?: CountryQuestion;
+  /** Word only: results without records; choosing one sends one new, disclosed check. */
+  retryChoice?: RetryChoice;
 }
 export type LocalOrigin = "preserve" | "pasted_local" | "unreported_local" | "deterministic" | "statute_local";
 
@@ -415,7 +418,11 @@ export function resolveCitationResponse(plan: TypedPlan, data: Record<string, un
     });
     if (choices.length > 1) {
       const foreignChoice = offersRecordChoice(caps) ? buildForeignCaseChoice(plan, response, data?.pastedCitation, "decision") : null;
+      // Without records, rulings from several countries can only be narrowed by
+      // an explicit country choice and one new check (Word review only).
+      const retryChoice = !foreignChoice && caps.host === "word" ? countryRetryChoice(choices) : null;
       return { kind: "terminal", origin: "disambiguation", resolution: {
+        ...(retryChoice ? { retryChoice } : {}),
         citation: "", reply: `נמצאו כמה פסקי דין אפשריים בשם זה. כדי לא לנחש, בחרו את הנכון והוסיפו את הערכאה או השנה:\n${choices.slice(0, 5).map((o, i) => escapeCitationLiteral(`${i + 1}. ${o.label} (${o.jurisdiction}) — ${o.url}`)).join("\n")}`,
         status: "warning", warningMsg: messages.ambiguous, pastedCitation: contract,
         completion: accepted, ...(foreignChoice ? { foreignChoice } : {}),

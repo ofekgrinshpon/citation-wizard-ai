@@ -44,6 +44,7 @@ import { renderBookLocal } from "@/lib/bookLocal";
 import { citationManualChoice } from "@/lib/pastedCitationAdapter";
 import { planCapabilityGate, planCitationEvidence, planLocalCitation, planTypedRequest, resolveCitationResponse, foreignFreeformSourceType, RUNNER_HOST, WORD_HOST } from "@/lib/citationPlanner";
 import type { ForeignCaseChoice } from "@/lib/foreignCaseChoice";
+import { parseResultOptions, type RetryChoice } from "@/lib/resultOptions";
 import type { CitationManualChoice, PastedCitationContract } from "../../supabase/functions/_shared/pastedCitation";
 import { citationDiagnosticBody, observeCitationDiagnostic, type CitationDiagnosticActivation } from "@/lib/citationDiagnostic";
 
@@ -112,11 +113,15 @@ export interface RunCitationOptions {
   diagnostic?: CitationDiagnosticActivation;
   /** Word review only: return a record-bound foreign case choice (in memory) instead of a text list. */
   recordChoices?: boolean;
+  /** Word review: `rawInput` is an option the user chose from an earlier result list. */
+  resultSelection?: boolean;
 }
 
 export interface RunCitationResult {
   /** Present only with `recordChoices`: options built from the lookup's own records. */
   foreignChoice?: ForeignCaseChoice;
+  /** Word review: options without records; choosing one sends one new check. */
+  retryChoice?: RetryChoice;
   completion?: import("@/lib/citationCompletion").CompletionAcceptance;
   pastedCitation?: PastedCitationContract;
   /** Full engine reply (may include explanation / warning lines). */
@@ -216,6 +221,8 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
   if (sourceType !== "unknown") {
     prompt = `[סיווג אוטומטי: ${sourceLabel}]\n${buildEnginePromptHint(sourceType)}${normalized}`;
   }
+  // Same routing marker as the chat's option buttons; never part of the bound raw input.
+  if (opts.resultSelection) prompt = prompt.slice(0, prompt.length - normalized.length) + `[בחירת תוצאה] ${normalized}`;
 
   // D1: the disabled-capability decision precedes any verified-store access.
   const planInput = { evidence, sourceType, input: normalized, isPinpoint, manual: !!opts.overrideType };
@@ -384,6 +391,13 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
       effectiveSourceType = "case_law_published";
     }
 
+    // Several results to choose from (e.g. a party-name search): Word shows buttons.
+    const options = opts.recordChoices ? parseResultOptions(reply) : null;
+    if (options) return {
+      telemetry: opts.telemetry, reply, citation: "", sourceType, sourceLabel, fromVerifiedStore: false,
+      status: "warning", warningMsg: "נמצאו כמה פסקי דין אפשריים. בחרו את פסק הדין הנכון.",
+      retryChoice: { kind: "israeli", options },
+    };
     const citation = extractCitationFromResponse(reply) || reply.trim();
     if (isFragment(citation)) {
       rejectUnusableResponse("FRAGMENT_RESPONSE",

@@ -19,6 +19,8 @@ import { citationTextOnly, escapeCitationLiteral } from "@/lib/citationSegments"
 import { newTelemetryBatch, sourceTelemetry } from "@/lib/costTelemetry";
 import { inspectDocxFootnotes, embedStyledFootnotes, checkStyledFootnote, checkStyledFootnotes } from "@/lib/docxFootnoteRoundtrip";
 import { styleIssueReason } from "@/lib/wordStyleIssue";
+import { applyOverride, planGeneration, reconcileRecord } from "@/lib/foreignClassification";
+import { quickOverride } from "@/lib/foreignQuickPick";
 
 type Session = Awaited<ReturnType<typeof inspectDocxFootnotes>>;
 type Span = { noteId: string; start: number; end: number };
@@ -144,21 +146,23 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
     setRows(old => {
       const changed=old.find(row=>row.id===id);if(!changed)return old;
       const invalidated=invalidateWordDependents(old,session?.notes.map(n=>n.id)??[],changed.noteId,changed.start);
-      return invalidated.map(row=>row.id===id?{...row,...update,approved:false,completion:undefined,pastedCitation:undefined,foreignChoice:undefined,
+      return invalidated.map(row=>row.id===id?{...row,...update,approved:false,completion:undefined,pastedCitation:undefined,foreignChoice:undefined,retryChoice:undefined,
         ...(Object.prototype.hasOwnProperty.call(update,"output")?{fullOutput:update.output,repeatProposal:false}:{}),
         ...(blockedNotes.current.has(noteKey(row))?{status:"error" as const,requestId:blockedNotes.current.get(noteKey(row))!.requestId,errorMsg:blockedNotes.current.get(noteKey(row))!.message}:{})}:row);
     });
   };
-  const generate = async (onlyId?: number) => {
+  /** `retry` (single row only): a chosen result option or country, sent as one new check. */
+  const generate = async (onlyId?: number, retry?: { rawInput?: string; resultSelection?: boolean; patch?: Partial<Row> }) => {
     if (lock.current || !session) return;
-    const selected = rows.filter(row => row.end > row.start && row.input.trim() && !blockedNotes.current.has(noteKey(row)) && (onlyId === undefined ? !row.output && row.status !== "error" && !row.foreignChoice : row.id === onlyId));
+    const selected = rows.filter(row => row.end > row.start && row.input.trim() && !blockedNotes.current.has(noteKey(row)) && (onlyId === undefined ? !row.output && row.status !== "error" && !row.foreignChoice && !row.retryChoice : row.id === onlyId))
+      .map(row => retry?.patch && row.id === onlyId ? { ...row, ...retry.patch } : row);
     if (!selected.length) return;
     lock.current = true;stopBatch.current=false;setBatchProgress({current:0,total:selected.length,stopping:false}); setBusy(true); setError(""); setNotice(""); setBatchDone(false);
     setRows(old=>{
       let next=old;
       for(const row of selected)next=invalidateWordDependents(next,session.notes.map(n=>n.id),row.noteId,row.start);
       const selectedIds=new Set(selected.map(row=>row.id));
-      return next.map(row=>selectedIds.has(row.id)?{...row,approved:false,foreignChoice:undefined,output:row.repeatProposal?(row.fullOutput??row.output):row.output,repeatProposal:false}:row);
+      return next.map(row=>selectedIds.has(row.id)?{...row,...(retry?.patch&&row.id===onlyId?retry.patch:{}),approved:false,foreignChoice:undefined,retryChoice:undefined,output:row.repeatProposal?(row.fullOutput??row.output):row.output,repeatProposal:false}:row);
     });
     const version = epoch.current;
     const owner = scope;
@@ -177,19 +181,19 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
       setRows(old => old.map(r => r.id === row.id ? { ...r, status: "loading", approved: false } : r));
       blockedNotes.current.set(noteKey(row), { message: "בקשה זו עדיין בטיפול. אין ליצור ניסיון נוסף לפני בירור התוצאה." });
       try {
-        const result = await runCitation({ rawInput: row.manualDraft ?? row.input, overrideType: row.classification?.sourceType ?? row.sourceTypeOverride, manualChoice: row.classification?.manualChoice,
-          projectId: currentProject?.id, useVerifiedStore: true, isResultCurrent: isCurrent, recordChoices: true,
+        const result = await runCitation({ rawInput: retry?.rawInput ?? row.manualDraft ?? row.input, overrideType: row.classification?.sourceType ?? row.sourceTypeOverride, manualChoice: row.classification?.manualChoice,
+          projectId: currentProject?.id, useVerifiedStore: !retry?.resultSelection, isResultCurrent: isCurrent, recordChoices: true, resultSelection: retry?.resultSelection,
           telemetry: sourceTelemetry(batch) });
         if (owner === currentScope.current) blockedNotes.current.delete(noteKey(row));
         if (!isCurrent()) break;
         if (hasMultipleSourceSignals(citationTextOnly(result.citation)) || isUnboundRepeatReference(citationTextOnly(result.citation))) {
-          setRows(old => old.map(r => r.id === row.id ? {...r,output:null,foreignChoice:undefined,status:"error",approved:false,errorMsg:"התוצאה עשויה לכלול כמה מקורות או הפניה למקור קודם שלא קושר. נדרש טיפול נוסף; ההערה תישאר ללא שינוי."} : r));
+          setRows(old => old.map(r => r.id === row.id ? {...r,output:null,foreignChoice:undefined,retryChoice:undefined,status:"error",approved:false,errorMsg:"התוצאה עשויה לכלול כמה מקורות או הפניה למקור קודם שלא קושר. נדרש טיפול נוסף; ההערה תישאר ללא שינוי."} : r));
           continue;
         }
         const styleIssue=await checkStyledFootnote(session,{id:row.noteId,originalText:row.originalText,start:row.start,end:row.end,replacement:result.citation,approved:true},protectedSpans.filter(p=>p.noteId===row.noteId).map(p=>({...p,id:p.noteId,originalText:row.originalText})));
         if (!isCurrent()) break;
         setRows(old => old.map(r => r.id === row.id ? { ...r, output: result.citation, fullOutput:result.citation, repeatProposal:false,needsStyleRevalidation:false,manualDraft:undefined,styleIssue,
-          completion: result.completion, pastedCitation: result.pastedCitation, foreignChoice: result.foreignChoice, status: row.classification?.warning ? "warning" : result.status, detectedType: result.sourceType, warningMsg: [result.warningMsg, row.classification?.warning].filter(Boolean).join(" · ") || undefined, errorMsg: undefined, approved: false } : r));
+          completion: result.completion, pastedCitation: result.pastedCitation, foreignChoice: result.foreignChoice, retryChoice: result.retryChoice, status: row.classification?.warning ? "warning" : result.status, detectedType: result.sourceType, warningMsg: [result.warningMsg, row.classification?.warning].filter(Boolean).join(" · ") || undefined, errorMsg: undefined, approved: false } : r));
       } catch (e) {
         const failure = e && typeof e === "object" ? e as { requestId?: string; userMessage?: string } : {};
         const requestId = failure.requestId;
@@ -200,7 +204,7 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
           setRows(old => old.map(r => r.id === row.id && noteKey(r) === noteKey(row) ? { ...r, status: "error", requestId, errorMsg: message, approved: false } : r));
         }
         if (!isCurrent()) break;
-        setRows(old => old.map(r => r.id === row.id ? { ...r, status: "error", output: null, foreignChoice: undefined, requestId, errorMsg: message, approved: false } : r));
+        setRows(old => old.map(r => r.id === row.id ? { ...r, status: "error", output: null, foreignChoice: undefined, retryChoice: undefined, requestId, errorMsg: message, approved: false } : r));
       }
     }
     if (isCurrent()) {
@@ -251,6 +255,25 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
     } finally { if (version === epoch.current) { lock.current = false; setBusy(false); } }
   };
 
+  /** A choice without records: one new, user-initiated check for the chosen option or country. */
+  const selectRetry = (id: number, pick: { kind: "israeli"; selection: string } | { kind: "country"; country: "us" | "uk" }) => {
+    if (lock.current) return;
+    const row = rows.find(r => r.id === id);
+    if (!row?.retryChoice || row.retryChoice.kind !== pick.kind || row.status === "error") return;
+    if (pick.kind === "israeli") {
+      if (!row.retryChoice.options.some(o => o.selection === pick.selection)) return;
+      void generate(id, { rawInput: pick.selection, resultSelection: true });
+      return;
+    }
+    if (!row.retryChoice.countries.some(c => c.country === pick.country)) return;
+    // The country answer is an explicit classification choice (shown in the source box) for this card only.
+    const text = row.manualDraft ?? row.input;
+    const record = applyOverride(reconcileRecord(row.classificationRecord, `word:${row.id}`, text), quickOverride("case", pick.country));
+    const plan = planGeneration(record, text);
+    if (!plan) return;
+    void generate(id, { patch: { classification: plan, classificationRecord: record } });
+  };
+
   const download = async () => {
     if (!session || lock.current) return;
     const approved = rows.filter(r => r.approved && r.output && r.status !== "error" && r.end > r.start);
@@ -298,7 +321,7 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
   const knownIds = new Set(knownOrder.map(item=>item.id));
   const noteOrder = session ? [...knownOrder,...[...session.notes,...(session.skippedNotes??[])].filter(n=>!knownIds.has(n.id)).map(n=>({id:n.id,number:null}))] : [];
   const readyRows = rows.filter(row => row.input.trim()
-    && !row.output && row.status !== "error" && !row.foreignChoice && !blockedNotes.current.has(noteKey(row)));
+    && !row.output && row.status !== "error" && !row.foreignChoice && !row.retryChoice && !blockedNotes.current.has(noteKey(row)));
   const readyCount=readyRows.length;
   const goToStep = (next: number) => {
     if (lock.current) return;
@@ -433,14 +456,16 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
               {row.repeatProposal && <p className="rounded-lg bg-blue-50 p-3 text-sm text-blue-950">הצעה לאזכור חוזר לפי ההקשר במסמך — יש לאשר את הנוסח המוצג.</p>}
               {row.styleIssue && <StyleIssueNotice issue={row.styleIssue} />}
               {isForeignSourceType(row.sourceTypeOverride ?? row.detectedType ?? "unknown") && <fieldset disabled={busy}><ForeignSourcePicker transient
-                key={`${row.id}:${row.sourceTypeOverride}`} initialRecord={row.classificationRecord} accountId={user?.id} itemKey={`word:${row.id}`} input={row.input} regenerateDisabled={busy}
+                key={`${row.id}:${row.sourceTypeOverride}:${row.classification?.effectiveKey ?? ""}`} initialRecord={row.classificationRecord} accountId={user?.id} itemKey={`word:${row.id}`} input={row.input} regenerateDisabled={busy}
                 hostDetectedLabel={hostForeignLabel(row.sourceTypeOverride ?? row.detectedType)}
                 onChange={({plan,record}) => {
                   if ((row.classification?.effectiveKey ?? "") !== (plan?.effectiveKey ?? "")) changeRow(row.id,{classification:plan,classificationRecord:record,output:null,status:"empty"});
                 }} /></fieldset>}
               <FootnoteReviewCard cell={row} wordLabel={`מקור ${noteRows.indexOf(row)+1} בהערה הפתוחה`} wordOriginal={row.originalText.slice(row.start, row.end)} wordNeedsRevalidation={!!row.needsStyleRevalidation} wordApprovalDisabled={!!row.styleIssue} disabled={busy}
                 regenerationDisabled={row.status === "error" || blockedNotes.current.has(noteKey(row))} hideRemove
-                onInputChange={() => { /* Input is derived exclusively from unprotected document text. */ }}
+                wordCheckText={row.manualDraft ?? row.input}
+                // The document text stays bound to its note; an edit only changes what the next check sends.
+                onInputChange={(id, value) => changeRow(id, { manualDraft: value === row.input ? undefined : value, output: null, status: "empty", warningMsg: undefined, needsStyleRevalidation: false, styleIssue: null })}
                 onOutputChange={(id, output) => changeRow(id, { output, manualDraft:citationTextOnly(output), needsStyleRevalidation:true,styleIssue:null })}
                 onSourceTypeChange={(id, sourceTypeOverride) => changeRow(id, { sourceTypeOverride, classification:null, classificationRecord:undefined, output: null, status: "empty" })}
                 onApproveToggle={(id,approved)=>{if(!lock.current)setRows(old=>{
@@ -448,7 +473,7 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
                   return invalidateWordDependents(old,session.notes.map(n=>n.id),changed.noteId,changed.start).map(item=>item.id===id?{...item,approved:!item.needsStyleRevalidation&&!item.styleIssue&&!!item.output&&item.status!=="error"&&approved}:item);
                 });}}
                 onRegenerate={id => { if (rows.find(item => item.id === id)?.status !== "error") void generate(id); }} onRemove={() => {}}
-                onSelectForeignChoice={(id, optionId) => void selectChoice(id, optionId)} />
+                onSelectForeignChoice={(id, optionId) => void selectChoice(id, optionId)} onSelectRetry={selectRetry} />
             </div>)}
           </>}
           {step >= 2 && <details open={step === 3} className="rounded-xl border border-border p-3 text-sm" key={`preview-${step}-${note.id}`}>

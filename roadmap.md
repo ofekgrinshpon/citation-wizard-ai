@@ -1,5 +1,12 @@
 # Roadmap — research → memo → draft handoff (legal-research-v2)
 
+## Word review fixes (requested Nov 10)
+- [x] Foreign rulings from several countries: choose the country, then one new check.
+- [x] Israeli rulings list: choice buttons instead of a "2." prefix; single numbered line loses its number.
+- [x] Party-name check button on Israeli case cards in Word review.
+- [x] Edit the text sent for checking and the proposed fix (also when empty).
+- [x] Book year followed by notes no longer reported missing; short missing-detail wording.
+
 ## Product V1 scope
 - [x] Hide the legal assistant tab from non-admins; default tab is uniform citation.
 

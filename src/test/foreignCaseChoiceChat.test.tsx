@@ -83,7 +83,7 @@ beforeEach(() => {
 async function mountChat() {
   const { default: Index } = await import("@/pages/Index");
   render(<MemoryRouter><Index /></MemoryRouter>);
-  fireEvent.click(screen.getByRole("button", { name: /אזכור אחיד/ }));
+  fireEvent.click(screen.getByRole("button", { name: /אזכור מהיר/ }));
 }
 async function send(text: string) {
   fireEvent.change(screen.getByLabelText("citation-input"), { target: { value: text } });
@@ -96,7 +96,7 @@ describe("chat page — tabs for a regular user", () => {
     const { default: Index } = await import("@/pages/Index");
     render(<MemoryRouter initialEntries={["/app?mode=legalqa"]}><Index /></MemoryRouter>);
     expect(screen.queryByRole("button", { name: /העוזר המשפטי/ })).toBeNull();
-    expect(screen.getByRole("button", { name: /אזכור אחיד/ })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /אזכור מהיר/ })).toBeInTheDocument();
   });
 });
 

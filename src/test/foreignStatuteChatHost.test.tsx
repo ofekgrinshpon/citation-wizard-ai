@@ -109,7 +109,7 @@ function serverWith(results: Source[]) {
 async function mountChat() {
   const { default: Index } = await import("@/pages/Index");
   render(<MemoryRouter><Index /></MemoryRouter>);
-  fireEvent.click(screen.getByRole("button", { name: /אזכור אחיד/ }));
+  fireEvent.click(screen.getByRole("button", { name: /אזכור מהיר/ }));
 }
 
 async function send(text: string) {
@@ -600,7 +600,7 @@ describe("chat page — typed statute request through initial send and regenerat
     await waitFor(() => expect(m.invoke).toHaveBeenCalledTimes(1));
     fireEvent.click(screen.getByRole("button", { name: /הערות שוליים/ }));
     await act(async () => { release({ data: { content: "", foreignLookup: await serverWith([CORNELL_1983])(m.invoke.mock.calls[0][1].foreignLookup) }, errorInfo: null }); });
-    fireEvent.click(screen.getByRole("button", { name: /אזכור אחיד/ }));
+    fireEvent.click(screen.getByRole("button", { name: /אזכור מהיר/ }));
     expect(screen.queryByTestId("bubble-assistant")).toBeNull();
   });
 });

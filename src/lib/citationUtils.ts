@@ -1,3 +1,5 @@
+import { cleanCitationLine } from "@/lib/resultOptions";
+
 export interface YearPreferences {
   hasHebrewYear: boolean;
   hasGregorianYear: boolean;
@@ -50,5 +52,5 @@ export function extractCitationFromResponse(response: string): string {
     return true;
   });
 
-  return citationLines.length > 0 ? citationLines[citationLines.length - 1] : "";
+  return citationLines.length > 0 ? cleanCitationLine(citationLines[citationLines.length - 1], response) : "";
 }
