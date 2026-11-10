@@ -55,7 +55,7 @@ vi.mock("@/components/VerifiedAutocomplete", () => ({
 }));
 const Null = () => null;
 for (const path of ["LegalQAChat", "AppSidebar", "CitationHistorySidebar", "QAHistorySidebar", "FootnotesSection", "BibliographyGenerator",
-  "BatchFootnoteBuilder", "ReLexLogo", "LoadingDots", "VerifiedSuggestionCard", "PublicationIntegrityCard", "BillTypeSelector", "TreatyTypeSelector",
+  "ReLexLogo", "LoadingDots", "VerifiedSuggestionCard", "PublicationIntegrityCard", "BillTypeSelector", "TreatyTypeSelector",
   "CitationRequestStatusLink"]) {
   vi.doMock(`@/components/${path}`, () => ({ [path]: Null }));
 }

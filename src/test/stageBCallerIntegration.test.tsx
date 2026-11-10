@@ -52,7 +52,6 @@ vi.mock("sonner", () => ({ toast: b.toast }));
 vi.mock("@/components/VerifiedAutocomplete", () => ({ VerifiedAutocomplete: ({ value, onChange }: { value: string; onChange: (v: string) => void }) =>
   <input aria-label="מקור" value={value} onChange={(e) => onChange(e.target.value)} /> }));
 
-import { BatchFootnoteBuilder } from "@/components/BatchFootnoteBuilder";
 import { MessageBubble } from "@/components/MessageBubble";
 import { UniformCitationPanel } from "@/components/legal-research/UniformCitationPanel";
 import { citationToOoxml } from "@/lib/wordInsertion";
@@ -78,50 +77,6 @@ beforeEach(() => {
   b.office.hasDocumentAccess = false;
 });
 afterEach(() => { cleanup(); vi.unstubAllGlobals(); });
-
-function seedBatch(phase: "final" | "review") {
-  localStorage.setItem("footnote_cells_row-project", JSON.stringify([
-    { id: 1, key: "k1", input: "Hart, The Concept of Law", output: `${BOOK}\n⚠️ ${WARNING}`, status: "warning", approved: true },
-    { id: 2, key: "k2", input: "Coase, The Problem of Social Cost", output: ARTICLE, status: "valid", approved: true },
-  ]));
-  localStorage.setItem("footnote_phase_row-project", phase);
-}
-
-describe("BatchFootnoteBuilder — actual copy callbacks keep styles", () => {
-  it("copyAll keeps small caps and italics in rich output, warnings in both channels", () => {
-    seedBatch("final");
-    render(<BatchFootnoteBuilder />);
-    fireEvent.click(screen.getByRole("button", { name: /העתק הכל/ }));
-    const { html, plain } = lastRich();
-    expect(html).toContain('<span style="font-variant:small-caps;font-variant-caps:small-caps">H.L.A. Hart, The Concept of Law</span>');
-    expect(html).toContain("<em>The Problem of Social Cost</em>");
-    expect(html).not.toMatch(MARKERS);
-    expect(plain).not.toMatch(MARKERS);
-    expect(plain).toContain("[1] H.L.A. Hart, The Concept of Law 100 (2d ed. 1994).");
-    expect(plain).toContain("(Taylor, J., dissenting)");
-  });
-
-  it("copySingle keeps small caps for the selected footnote", () => {
-    seedBatch("final");
-    render(<BatchFootnoteBuilder />);
-    fireEvent.click(screen.getAllByRole("button", { name: "📋" })[0]);
-    const { html, plain } = lastRich();
-    expect(html).toContain("font-variant:small-caps");
-    expect(html).toContain("H.L.A. Hart, The Concept of Law");
-    expect(plain).toBe(`H.L.A. Hart, The Concept of Law 100 (2d ed. 1994).\n⚠️ ${WARNING}`);
-  });
-
-  it("finalize syncs bibliography entries with styles and warnings, not stripped text", async () => {
-    seedBatch("review");
-    render(<BatchFootnoteBuilder />);
-    await act(async () => { fireEvent.click(screen.getByRole("button", { name: /בנה רשימה סופית/ })); });
-    await waitFor(() => expect(b.sync).toHaveBeenCalled());
-    const items = b.sync.mock.calls[0][0] as { fullCitation: string; warnings?: string[] }[];
-    expect(items[0].fullCitation).toBe(BOOK);
-    expect(items[0].warnings).toEqual([WARNING]);
-    expect(items[1].fullCitation).toBe(ARTICLE);
-  });
-});
 
 describe("MessageBubble — chat copy uses safe shared formatting", () => {
   const content = "##<img src=x onerror=alert(1)>## v. Roe, 1 ^^U.S.^^ 1 (2000) https://example.org/a?q=1&x=2\n⚠️ " + WARNING;

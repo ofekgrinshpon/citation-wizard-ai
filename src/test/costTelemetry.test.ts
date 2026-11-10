@@ -291,7 +291,7 @@ describe("source identity and wizard attribution", () => {
   });
 
   it("footnotes/bibliography create row telemetry before runPool, not inside the retried callback", () => {
-    for (const f of ["src/components/BatchFootnoteBuilder.tsx", "src/components/BibliographyGenerator.tsx"]) {
+    for (const f of ["src/components/BibliographyGenerator.tsx"]) {
       const s = read(f);
       expect(s).toMatch(/const rowTelemetry = \w+\.map\(\(\) => sourceTelemetry\(telemetryBatch\)\)/);
       expect(s).toMatch(/rowTelemetry\[i\]/);
@@ -330,7 +330,7 @@ describe("billing invariants", () => {
   });
 
   it("no client caller sends the legacy billing batchId field", () => {
-    for (const f of ["src/lib/runCitation.ts", "src/pages/Index.tsx", "src/components/BatchFootnoteBuilder.tsx", "src/components/BibliographyGenerator.tsx", "src/lib/costTelemetry.ts"]) {
+    for (const f of ["src/lib/runCitation.ts", "src/pages/Index.tsx", "src/components/BibliographyGenerator.tsx", "src/lib/costTelemetry.ts"]) {
       expect(read(f)).not.toMatch(/[^a-zA-Z]batchId\s*:/);
     }
   });

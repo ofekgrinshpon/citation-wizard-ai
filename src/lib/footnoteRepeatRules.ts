@@ -1,7 +1,7 @@
 /**
  * Repeat-citation rules (שם / שם, בעמ' / לעיל ה"ש) and citation-line
- * extraction. Extracted verbatim from BatchFootnoteBuilder so the batch
- * footnote builder and the V2 "אזכור אחיד" review layer share one
+ * extraction. Shared by Word footnote review and the V2 "אזכור אחיד"
+ * review layer so they share one
  * implementation instead of duplicating citation formatting logic.
  */
 import { isLegislationInput, extractLawNameFromInput } from "@/lib/citationUtils";

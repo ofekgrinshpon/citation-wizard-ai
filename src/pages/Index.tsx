@@ -9,7 +9,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { CitationRequestStatusLink } from "@/components/CitationRequestStatusLink";
 import { MessageBubble } from "@/components/MessageBubble";
 import { LoadingDots } from "@/components/LoadingDots";
-import { BatchFootnoteBuilder } from "@/components/BatchFootnoteBuilder";
 import { BibliographyGenerator } from "@/components/BibliographyGenerator";
 import { LegalQAChat } from "@/components/LegalQAChat";
 import { BillTypeSelector, type BillPublicationType } from "@/components/BillTypeSelector";

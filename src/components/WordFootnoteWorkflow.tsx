@@ -352,7 +352,7 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
             {session.warnings?.map((warning, index) => <p key={`document-warning-${index}`}>{warning}</p>)}
           </div>
         </details>
-        {!session.notes.length && <p>לא נמצאו הערות שאפשר לערוך בבטחה. המסמך נשאר ללא שינוי. אפשר לבחור מסמך אחר או להמשיך בהזנה ידנית.</p>}
+        {!session.notes.length && <p>לא נמצאו הערות שאפשר לערוך בבטחה. המסמך נשאר ללא שינוי. אפשר לבחור מסמך אחר.</p>}
         {step === 1 && <p className="text-sm leading-6">אין חובה לסמן דבר. <strong>בלי סימוני הסבר, כל תוכן ההערה נשלח למנוע האזכור.</strong> אם יש דברי הסבר, סמנו אותם כדי שלא יישלחו ולא ישתנו. הערות שדורשות פיצול בטוח יישארו ללא שינוי.</p>}
         {step === 2 && <div className="space-y-3 rounded-xl bg-primary/5 p-4">
           <p className="text-sm">מתוכננות עד {readyCount} בקשות למקורות מתוך {new Set(readyRows.map(r=>r.noteId)).size} הערות. דברי הסבר מוגנים אינם נשלחים. אין כאן הבטחה למספר חיובים: המנוע הקיים קובע את פעולות האיתור וההשלמה ואת השימוש במכסת החשבון.</p>

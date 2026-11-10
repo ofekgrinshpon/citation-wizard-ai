@@ -1,4 +1,5 @@
-import relexLogo from "/relex-logo.png";
+// Files in /public are served from the site root; reference them by URL, not as a module import.
+const relexLogo = "/relex-logo.png";
 
 interface ReLexLogoProps {
   className?: string;

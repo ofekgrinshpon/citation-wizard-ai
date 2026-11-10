@@ -5,7 +5,6 @@ import { afterAll, afterEach, beforeEach, describe, expect, it, vi } from "vites
 
 const render = (ui: React.ReactElement) => rtlRender(ui, { wrapper: MemoryRouter });
 import { BibliographyGenerator } from "@/components/BibliographyGenerator";
-import { BatchFootnoteBuilder } from "@/components/BatchFootnoteBuilder";
 import { UniformCitationPanel } from "@/components/legal-research/UniformCitationPanel";
 import { FootnoteReviewCard } from "@/components/FootnoteReviewCard";
 import { c1ServerPayload } from "./fixtures/c1ServerPayload";
@@ -92,12 +91,6 @@ function bibliographyInput(raw = rawA) {
   const ui = render(<BibliographyGenerator />);
   fireEvent.change(screen.getByRole("textbox"), { target: { value: raw } });
   fireEvent.click(screen.getByRole("button", { name: /שלח לבדיקה/ }));
-  return ui;
-}
-function footnoteInput(raw = [rawA]) {
-  const ui = render(<BatchFootnoteBuilder />);
-  raw.forEach((value, index) => fireEvent.change(screen.getAllByRole("textbox", { name: "מקור" })[index], { target: { value } }));
-  fireEvent.click(screen.getByRole("button", { name: /בנה טיוטות לבדיקה/ }));
   return ui;
 }
 
@@ -371,144 +364,7 @@ describe("bibliography mounted per-row retry", () => {
 
 });
 
-describe("footnotes mounted per-cell retry", () => {
-  it("has independent cell actions, blocks double click and never persists descriptors or prepared context", async () => {
-    footnoteInput([rawA, rawB]);
-    const buttons = await screen.findAllByRole("button", { name: "ניסיון חדש" });
-    expect(boundary.invoke).toHaveBeenCalledTimes(2);
-    expect(localStorage.getItem("footnote_cells_row-project")).not.toMatch(/citationRetry|recovery|refundReceipt|handle|messages/);
-    const pending = deferred<typeof success>();
-    boundary.invoke.mockReturnValueOnce(pending.promise);
-    act(() => { buttons[0].click(); buttons[0].click(); });
-    await waitFor(() => expect(boundary.invoke).toHaveBeenCalledTimes(3));
-    expect(requestAt(2).retryOfRequestId).toBe(initialRequestFor("1234/22").requestId);
-    await act(async () => { pending.resolve(success); });
-    await screen.findByDisplayValue((value) => value.startsWith(citation));
-    expect(screen.getAllByRole("button", { name: "ניסיון חדש" })).toHaveLength(1);
-    expect(boundary.classify).toHaveBeenCalledTimes(2);
-  });
-
-  it("does not turn a batch re-run into a successor", async () => {
-    footnoteInput([rawA, rawB]);
-    await screen.findAllByRole("button", { name: "ניסיון חדש" });
-    const ids = [requestAt(0).requestId, requestAt(1).requestId];
-    fireEvent.click(screen.getByRole("button", { name: /חזור לעריכה$/ }));
-    fireEvent.click(screen.getByRole("button", { name: /בנה טיוטות לבדיקה/ }));
-    await screen.findAllByRole("button", { name: "ניסיון חדש" });
-    expect(boundary.invoke).toHaveBeenCalledTimes(4);
-    expect([requestAt(2).requestId, requestAt(3).requestId].sort()).toEqual(ids.sort());
-    expect([requestAt(2).retryOfRequestId, requestAt(3).retryOfRequestId]).toEqual([undefined, undefined]);
-    expect(boundary.classify).toHaveBeenCalledTimes(2);
-  });
-
-  it("Back invalidates a pending retry, then unchanged batch recovery consumes retained success without another invocation", async () => {
-    footnoteInput();
-    fireEvent.click(await screen.findByRole("button", { name: "ניסיון חדש" }));
-    // The default fixture makes a quick child failure; the newly offered action
-    // is independently bound to that child. Start it with a delayed response.
-    await waitFor(() => expect(boundary.invoke).toHaveBeenCalledTimes(2));
-    const nextButton = await screen.findByRole("button", { name: "ניסיון חדש" });
-    const pending = deferred<typeof success>();
-    boundary.invoke.mockReturnValueOnce(pending.promise);
-    fireEvent.click(nextButton);
-    await waitFor(() => expect(boundary.invoke).toHaveBeenCalledTimes(3));
-    fireEvent.click(screen.getByRole("button", { name: /חזור לעריכה$/ }));
-    await act(async () => { pending.resolve(success); });
-    expect(screen.queryByDisplayValue((value) => value.startsWith(citation))).not.toBeInTheDocument();
-    fireEvent.click(screen.getByRole("button", { name: /בנה טיוטות לבדיקה/ }));
-    await screen.findByDisplayValue((value) => value.startsWith(citation));
-    expect(boundary.invoke).toHaveBeenCalledTimes(3);
-    expect(boundary.classify).toHaveBeenCalledTimes(1);
-  });
-
-  it("editing one cell invalidates only its failure action and account changes discard every offer", async () => {
-    const ui = footnoteInput([rawA, rawB]);
-    const old = (await screen.findAllByRole("button", { name: "ניסיון חדש" }))[0];
-    fireEvent.click(screen.getAllByRole("button", { name: /ערוך קלט/ })[0]);
-    fireEvent.change(screen.getByRole("textbox"), { target: { value: rawA + " מתוקן" } });
-    act(() => old.click());
-    expect(boundary.invoke).toHaveBeenCalledTimes(2);
-    expect(screen.getAllByRole("button", { name: "ניסיון חדש" })).toHaveLength(1);
-    boundary.user = { id: "other-footnotes-account" };
-    ui.rerender(<BatchFootnoteBuilder />);
-    expect(screen.queryByRole("button", { name: "ניסיון חדש" })).not.toBeInTheDocument();
-  });
-
-  it("changing a cell source type revokes its prepared failed-parent action", async () => {
-    footnoteInput();
-    const oldButton = await screen.findByRole("button", { name: "ניסיון חדש" });
-    const originalScroll = HTMLElement.prototype.scrollIntoView;
-    HTMLElement.prototype.scrollIntoView = vi.fn();
-    try {
-      fireEvent.keyDown(screen.getByRole("combobox"), { key: "ArrowDown" });
-      fireEvent.click((await screen.findAllByRole("option", { name: "ספר" }))[0]);
-      act(() => oldButton.click());
-      expect(screen.queryByRole("button", { name: "ניסיון חדש" })).not.toBeInTheDocument();
-      expect(boundary.invoke).toHaveBeenCalledTimes(1);
-    } finally { HTMLElement.prototype.scrollIntoView = originalScroll; }
-  });
-
-  it("a removed cell cannot receive a pending result and the next cell keeps its own retry identity", async () => {
-    footnoteInput([rawA, rawB]);
-    const initial = await screen.findAllByRole("button", { name: "ניסיון חדש" });
-    const pending = deferred<typeof success>();
-    boundary.invoke.mockReturnValueOnce(pending.promise);
-    fireEvent.click(initial[0]);
-    await waitFor(() => expect(boundary.invoke).toHaveBeenCalledTimes(3));
-    fireEvent.click(screen.getAllByRole("button", { name: "✕" })[0]);
-    await act(async () => { pending.resolve(success); });
-    expect(screen.queryByDisplayValue((value) => value.startsWith(citation))).not.toBeInTheDocument();
-    const remainingParent = initialRequestFor("4567/23").requestId;
-    fireEvent.click(screen.getByRole("button", { name: "ניסיון חדש" }));
-    await waitFor(() => expect(boundary.invoke).toHaveBeenCalledTimes(4));
-    expect(requestAt(3).retryOfRequestId).toBe(remainingParent);
-  });
-
-  it("unmount retains a pending child's successful response and reload never restores a saved action", async () => {
-    const ui = footnoteInput();
-    const button = await screen.findByRole("button", { name: "ניסיון חדש" });
-    const pending = deferred<typeof success>();
-    boundary.invoke.mockReturnValueOnce(pending.promise);
-    fireEvent.click(button);
-    await waitFor(() => expect(boundary.invoke).toHaveBeenCalledTimes(2));
-    ui.unmount();
-    await act(async () => { pending.resolve(success); });
-    render(<BatchFootnoteBuilder />);
-    expect(screen.queryByRole("button", { name: "ניסיון חדש" })).not.toBeInTheDocument();
-    fireEvent.click(screen.getByRole("button", { name: /הפק מחדש/ }));
-    await screen.findByDisplayValue((value) => value.startsWith(citation));
-    expect(boundary.invoke).toHaveBeenCalledTimes(2);
-  });
-
-  it.each(["in_progress", "unknown", "succeeded"])("does not offer an explicit cell action for %s", async (status) => {
-    boundary.invoke.mockImplementation(async (_name, { body }: RequestOptions) => responseError({
-      error: "REQUEST_ALREADY_STARTED", status, requestId: body.requestId,
-    }, 409));
-    footnoteInput();
-    await screen.findByText(/מזהה בקשה:/);
-    expect(screen.queryByRole("button", { name: "ניסיון חדש" })).not.toBeInTheDocument();
-    expect(boundary.invoke).toHaveBeenCalledTimes(1);
-  });
-
-  it("runPool does not automatically repeat a normally transient cell failure", async () => {
-    boundary.invoke.mockImplementation(async (_name, { body }: RequestOptions) => responseError({
-      error: "AI_RATE_LIMITED", status: "failed", requestId: body.requestId,
-    }, 429));
-    footnoteInput();
-    await screen.findByRole("button", { name: "ניסיון חדש" });
-    expect(boundary.invoke).toHaveBeenCalledTimes(1);
-  });
-
-  it("locally unusable output remains a nonbillable local recheck in a cell", async () => {
-    boundary.invoke.mockResolvedValueOnce({ data: { content: "123" }, error: null });
-    footnoteInput();
-    await screen.findByText(/התוצאה שהתקבלה אינה אזכור שלם/);
-    expect(screen.queryByRole("button", { name: "ניסיון חדש" })).not.toBeInTheDocument();
-    fireEvent.click(screen.getByRole("button", { name: /נסה שוב/ }));
-    await screen.findByText(/התוצאה שהתקבלה אינה אזכור שלם/);
-    expect(boundary.invoke).toHaveBeenCalledTimes(1);
-  });
-
+describe("FootnoteReviewCard consumer", () => {
   it("keeps an unmodified FootnoteReviewCard consumer's existing regenerate behavior", () => {
     const regenerate = vi.fn();
     render(<FootnoteReviewCard cell={{ id: 1, input: rawA, output: null, status: "error" }}
@@ -615,9 +471,8 @@ describe("research uniform citation mounted rows", () => {
 
 
 describe("exact-request status links beside citation failures", () => {
-  it.each(["bibliography", "footnote", "uniform"])("links the %s failure to its existing request and adds no invocation", async (mode) => {
+  it.each(["bibliography", "uniform"])("links the %s failure to its existing request and adds no invocation", async (mode) => {
     if (mode === "bibliography") bibliographyInput();
-    else if (mode === "footnote") footnoteInput();
     else {
       render(<UniformCitationPanel footnotes={[{ number: 1, title: rawA }]} />);
       fireEvent.click(screen.getByRole("button", { name: "יצירת הערות שוליים לפי כללי האזכור האחיד" }));
@@ -627,10 +482,6 @@ describe("exact-request status links beside citation failures", () => {
     expect(link).toHaveAttribute("href", `/citation-recovery?requestId=${requestAt(0).requestId}`);
     expect(boundary.invoke).toHaveBeenCalledTimes(1);
     expect(boundary.insert).not.toHaveBeenCalled();
-    if (mode === "footnote") {
-      const saved = Object.values(localStorage).join(" ");
-      expect(saved).not.toContain(String(requestAt(0).requestId));
-    }
   });
 });
 
@@ -670,55 +521,38 @@ afterAll(() => { expect(plannerHosts.has("runner")).toBe(true); expect(plannerHo
   expect(result.reply).not.toContain("UNSAFE"); expect(boundary.invoke).toHaveBeenCalledTimes(1);
 });
 
-it.each(["bibliography", "footnote"])("C1 actual %s host uses real server partial acceptance and records a single request", async mode => {
+it.each(["bibliography"])("C1 actual %s host uses real server partial acceptance and records a single request", async mode => {
   const rawInput = "Brown v. Board of Education";
   const { response } = await c1ServerPayload({ kind: "case", jurisdiction: "UNKNOWN", rawInput, parsedFields: { caseName: rawInput } });
   delete response.provenance.year;
   boundary.invoke.mockResolvedValue({ data: { content: "UNSAFE", foreignLookup: response }, error: null });
   const expected = await runCitation({ rawInput, useVerifiedStore: false });
   boundary.invoke.mockClear();
-  if (mode === "bibliography") bibliographyInput(rawInput); else footnoteInput([rawInput]);
+  bibliographyInput(rawInput);
   await screen.findAllByText(/347 U.S. 483/);
   expect(document.body.textContent).toContain(expected.warningMsg);
   expect(document.body.textContent).not.toContain("UNSAFE");
   expect(boundary.invoke).toHaveBeenCalledTimes(1);
   expect(expected.completion?.fields.reporter).toBe("U.S.");
   expect(expected.completion?.missing).toContain("year");
-  if (mode === "bibliography") {
-    boundary.addEntries.mockReturnValue(1);
-    await act(async () => fireEvent.click(screen.getByRole("button", { name: /הוסף הכל לביבליוגרפיה/ })));
-    const row = boundary.addEntries.mock.calls.at(-1)?.[0][0];
-    expect(row.completion).toEqual(expected.completion);
-    expect(row.pastedCitation).toEqual(expected.pastedCitation);
-  } else {
-    const cell = boundary.card.mock.calls.map(([c]) => c).find(c => c.completion);
-    expect(cell.completion).toEqual(expected.completion);
-    expect(cell.pastedCitation).toEqual(expected.pastedCitation);
-    expect(localStorage.getItem("footnote_cells_row-project")).not.toContain('"completion"');
-    boundary.insert.mockResolvedValue({ data: null, error: null });
-    await act(async () => fireEvent.click(screen.getByRole("button", { name: /אשר הכל/ })));
-    await act(async () => fireEvent.click(screen.getByRole("button", { name: /בנה רשימה סופית/ })));
-    await waitFor(() => expect(boundary.sync.mock.calls.at(-1)?.[0][0].completion).toEqual(expected.completion));
-  }
+  boundary.addEntries.mockReturnValue(1);
+  await act(async () => fireEvent.click(screen.getByRole("button", { name: /הוסף הכל לביבליוגרפיה/ })));
+  const row = boundary.addEntries.mock.calls.at(-1)?.[0][0];
+  expect(row.completion).toEqual(expected.completion);
+  expect(row.pastedCitation).toEqual(expected.pastedCitation);
 });
 
-for (const host of ["bibliography", "footnote"] as const) {
+for (const host of ["bibliography"] as const) {
   it.each(C2_CORRECTION_MODES)(`C2 correction actual ${host} %s`, async mode => {
     const { rawInput, type, response } = await c2CorrectionPayload(mode);
     boundary.classify.mockResolvedValue({ sourceType: type });
     boundary.invoke.mockResolvedValue({ data: { foreignLookup: response, content: "UNSAFE" }, error: null });
-    if (host === "bibliography") bibliographyInput(rawInput); else footnoteInput([rawInput]);
+    bibliographyInput(rawInput);
     let result: { completion?: any; citation?: string; output?: string; warnings?: string[] };
-    if (host === "bibliography") {
-      const button = await screen.findByRole("button", { name: /הוסף הכל לביבליוגרפיה/ });
-      await waitFor(() => expect(button).not.toBeDisabled());
-      boundary.addEntries.mockReturnValue(1); await act(async () => fireEvent.click(button));
-      const row = boundary.addEntries.mock.calls.at(-1)?.[0][0]; result = { ...row, citation: row.fullCitation };
-    } else {
-      await waitFor(() => expect(boundary.card.mock.calls.some(([c]) => c.output)).toBe(true));
-      result = boundary.card.mock.calls.map(([c]) => c).filter(c => c.output).at(-1);
-      expect(localStorage.getItem("footnote_cells_row-project")).not.toContain('"completion"');
-    }
+    const button = await screen.findByRole("button", { name: /הוסף הכל לביבליוגרפיה/ });
+    await waitFor(() => expect(button).not.toBeDisabled());
+    boundary.addEntries.mockReturnValue(1); await act(async () => fireEvent.click(button));
+    const row = boundary.addEntries.mock.calls.at(-1)?.[0][0]; result = { ...row, citation: row.fullCitation };
     const output = result.citation ?? result.output;
     if (mode === "firstPage-only") {
       expect(boundary.invoke.mock.calls.filter(([name]) => name === "citation-chat")).toHaveLength(0);
@@ -737,25 +571,19 @@ for (const host of ["bibliography", "footnote"] as const) {
   });
 }
 
-for (const host of ["bibliography", "footnote"] as const) {
+for (const host of ["bibliography"] as const) {
   it.each(C2_WIRE)(`C2 wire actual ${host} $id retains supplied fields`, async f => {
     const { response } = await c2WirePayload(f);
     boundary.classify.mockResolvedValue({ sourceType: f.type });
     boundary.invoke.mockResolvedValue({ data: { foreignLookup: response, content: "UNSAFE" }, error: null });
     const runner = await runCitation({ rawInput: f.raw, overrideType: f.type, useVerifiedStore: false });
     boundary.invoke.mockClear();
-    if (host === "bibliography") bibliographyInput(f.raw); else footnoteInput([f.raw]);
+    bibliographyInput(f.raw);
     let result: { completion?: typeof runner.completion; output?: string; fullCitation?: string; pastedCitation?: typeof runner.pastedCitation };
-    if (host === "bibliography") {
-      const button = await screen.findByRole("button", { name: /הוסף הכל לביבליוגרפיה/ });
-      await waitFor(() => expect(button).not.toBeDisabled());
-      boundary.addEntries.mockReturnValue(1); await act(async () => fireEvent.click(button));
-      result = boundary.addEntries.mock.calls.at(-1)?.[0][0];
-    } else {
-      await waitFor(() => expect(boundary.card.mock.calls.some(([c]) => c.completion)).toBe(true));
-      result = boundary.card.mock.calls.map(([c]) => c).filter(c => c.completion).at(-1);
-      expect(localStorage.getItem("footnote_cells_row-project")).not.toContain('"suppliedFields"');
-    }
+    const button = await screen.findByRole("button", { name: /הוסף הכל לביבליוגרפיה/ });
+    await waitFor(() => expect(button).not.toBeDisabled());
+    boundary.addEntries.mockReturnValue(1); await act(async () => fireEvent.click(button));
+    result = boundary.addEntries.mock.calls.at(-1)?.[0][0];
     expect(result.completion).toEqual(runner.completion);
     expect(result.pastedCitation?.rawInput).toBe(f.raw);
     expect(result.fullCitation ?? result.output).toContain(f.output);
@@ -772,18 +600,12 @@ for (const host of ["bibliography", "footnote"] as const) {
     boundary.invoke.mockResolvedValue({ data: body, error: null });
     const runner = await runCitation({ rawInput: f.raw, overrideType: f.type, useVerifiedStore: false });
     boundary.invoke.mockClear();
-    if (host === "bibliography") bibliographyInput(f.raw); else footnoteInput([f.raw]);
+    bibliographyInput(f.raw);
     let result: { completion?: typeof runner.completion; output?: string; fullCitation?: string; pastedCitation?: typeof runner.pastedCitation };
-    if (host === "bibliography") {
-      const button = await screen.findByRole("button", { name: /הוסף הכל לביבליוגרפיה/ });
-      await waitFor(() => expect(button).not.toBeDisabled());
-      boundary.addEntries.mockReturnValue(1); await act(async () => fireEvent.click(button));
-      result = boundary.addEntries.mock.calls.at(-1)?.[0][0];
-    } else {
-      await waitFor(() => expect(boundary.card.mock.calls.some(([c]) => c.completion)).toBe(true));
-      result = boundary.card.mock.calls.map(([c]) => c).filter(c => c.completion).at(-1);
-      expect(localStorage.getItem("footnote_cells_row-project")).not.toContain('"suppliedFields"');
-    }
+    const button = await screen.findByRole("button", { name: /הוסף הכל לביבליוגרפיה/ });
+    await waitFor(() => expect(button).not.toBeDisabled());
+    boundary.addEntries.mockReturnValue(1); await act(async () => fireEvent.click(button));
+    result = boundary.addEntries.mock.calls.at(-1)?.[0][0];
     expect(result.completion).toEqual(runner.completion);
     expect(result.pastedCitation?.rawInput).toBe(f.raw);
     expect(result.fullCitation ?? result.output).toContain(f.output);
@@ -795,7 +617,7 @@ for (const host of ["bibliography", "footnote"] as const) {
   });
 }
 
-for (const host of ["bibliography", "footnote"] as const) for (const [kind, base, type] of [["book", C2_BOOK, "foreign_book"], ["book_chapter", C2_CHAPTER, "foreign_book_chapter"]] as const) {
+for (const host of ["bibliography"] as const) for (const [kind, base, type] of [["book", C2_BOOK, "foreign_book"], ["book_chapter", C2_CHAPTER, "foreign_book_chapter"]] as const) {
   it.each(C2_MODES)(`C2 actual ${host} ${kind} %s retains safe transient completion`, async mode => {
     const rawInput = base + (mode === "supplied-conflict" ? "; Edition: 2d" : "");
     const { response, calls } = await c2Payload(kind, rawInput, mode);
@@ -803,21 +625,13 @@ for (const host of ["bibliography", "footnote"] as const) for (const [kind, base
     boundary.invoke.mockResolvedValue({ data: { content: "UNSAFE", foreignLookup: response }, error: null });
     const expected = await runCitation({ rawInput, useVerifiedStore: false });
     boundary.invoke.mockClear();
-    if (host === "bibliography") bibliographyInput(rawInput); else footnoteInput([rawInput]);
-    if (host === "bibliography") {
-      const button = await screen.findByRole("button", { name: /הוסף הכל לביבליוגרפיה/ });
-      await waitFor(() => expect(button).not.toBeDisabled());
-      boundary.addEntries.mockReturnValue(1);
-      await act(async () => fireEvent.click(button));
-      expect(boundary.addEntries.mock.calls.at(-1)?.[0][0].completion).toEqual(expected.completion);
-      expect(boundary.addEntries.mock.calls.at(-1)?.[0][0].pastedCitation.rawInput).toBe(rawInput);
-    } else {
-      await waitFor(() => expect(boundary.card.mock.calls.some(([c]) => c.completion)).toBe(true));
-      const cell = boundary.card.mock.calls.map(([c]) => c).find(c => c.completion);
-      expect(cell.completion).toEqual(expected.completion);
-      expect(cell.pastedCitation.rawInput).toBe(rawInput);
-      expect(localStorage.getItem("footnote_cells_row-project")).not.toContain('"completion"');
-    }
+    bibliographyInput(rawInput);
+    const button = await screen.findByRole("button", { name: /הוסף הכל לביבליוגרפיה/ });
+    await waitFor(() => expect(button).not.toBeDisabled());
+    boundary.addEntries.mockReturnValue(1);
+    await act(async () => fireEvent.click(button));
+    expect(boundary.addEntries.mock.calls.at(-1)?.[0][0].completion).toEqual(expected.completion);
+    expect(boundary.addEntries.mock.calls.at(-1)?.[0][0].pastedCitation.rawInput).toBe(rawInput);
     expect(expected.completion).toBeDefined();
     if (kind === "book_chapter" && mode === "matching") {
       expect(expected.completion?.fields.year).toBe("2020");
@@ -848,7 +662,7 @@ it.each(["book", "book_chapter"] as const)("C2 %s retained response/retry uses p
   expect(boundary.classify).toHaveBeenCalledTimes(1);
 });
 
-for (const host of ["bibliography", "footnote"] as const) {
+for (const host of ["bibliography"] as const) {
   it.each([
     ["Author: Jane Doe; Book: Synthetic Collection; Year: 2020", "foreign_book"],
     ["Author: Jane Doe; Chapter: Quiet Rules; Collection: Synthetic Collection; First page: 12; Year: 2020", "foreign_book_chapter"],
@@ -858,13 +672,8 @@ for (const host of ["bibliography", "footnote"] as const) {
     ["Synthetic work needing details", "foreign_book"],
   ] as const)(`C2 actual ${host} complete/ambiguous %s is zero completion IO`, async (raw, type) => {
     boundary.classify.mockResolvedValue({ sourceType: type });
-    if (host === "bibliography") {
-      bibliographyInput(raw);
-      await waitFor(() => expect(screen.getByRole("button", { name: /הוסף הכל לביבליוגרפיה/ })).not.toBeDisabled());
-    } else {
-      footnoteInput([raw]);
-      await waitFor(() => expect(boundary.card.mock.calls.some(([c]) => c.output)).toBe(true));
-    }
+    bibliographyInput(raw);
+    await waitFor(() => expect(screen.getByRole("button", { name: /הוסף הכל לביבליוגרפיה/ })).not.toBeDisabled());
     expect(boundary.invoke.mock.calls.filter(([name]) => name === "citation-chat")).toHaveLength(0);
     expect(fetch).not.toHaveBeenCalled();
     if (raw.startsWith("Catch") || raw.startsWith("Title")) expect(document.body.textContent).toContain(raw);
@@ -872,13 +681,3 @@ for (const host of ["bibliography", "footnote"] as const) {
 }
 
 import { COUNTRY_LOCAL_FIXTURES } from "./fixtures/countryLocalFixtures";
-describe("AU/CA actual BatchFootnoteBuilder local slice", () => {
-  it.each(COUNTRY_LOCAL_FIXTURES)("$id actual initial and repeated generation bypass warm cache", async f => {
-    boundary.verified.mockResolvedValue({full_citation:"UNSAFE CACHE",verification_status:"verified"});
-    footnoteInput([f.raw]);
-    await waitFor(() => expect(screen.getAllByText(f.output, {exact:false}).length).toBeGreaterThan(0));
-    fireEvent.click(screen.getByRole("button", {name:/הפק מחדש/}));
-    await waitFor(() => expect(screen.getAllByText(f.output, {exact:false}).length).toBeGreaterThan(0));
-    expect(boundary.classify).not.toHaveBeenCalled(); expect(boundary.verified).not.toHaveBeenCalled(); expect(boundary.invoke).not.toHaveBeenCalled(); expect(fetch).not.toHaveBeenCalled();
-  });
-});

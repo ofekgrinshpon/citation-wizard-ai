@@ -2,7 +2,7 @@
  * Batch B — shared pure citation planner and typed response resolver.
  *
  * Used by every existing citation host: Index (chat initial + manual
- * regeneration) directly, and BatchFootnoteBuilder / BibliographyGenerator
+ * regeneration) directly, and BibliographyGenerator / Word review
  * through runCitation. Pure: no network, storage, telemetry, billing,
  * request ids, retries or UI. Hosts keep owning all IO and stale handling.
  *
