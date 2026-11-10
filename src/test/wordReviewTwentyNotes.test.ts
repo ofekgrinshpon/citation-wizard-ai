@@ -86,11 +86,18 @@ describe("Free-form book: a trailing edition is not part of the author", () => {
     const { result } = await cite("The Concept of Law by H. L. A. Hart, second edition.", [
       { title: "The Concept of Law — H.L.A. Hart", url: "https://global.oup.com/academic/product/the-concept-of-law", snippet: "H.L.A. Hart, The Concept of Law (2d ed. 1994)." },
     ]);
-    const text = citationTextOnly(result.citation);
-    console.log("HART", text, "|", result.reply);
-    expect(text).toContain("Hart");
-    expect(text).not.toContain("second edition.,");
+    expect(citationTextOnly(result.citation)).toBe("H. L. A. Hart, The Concept of Law (2d ed. 1994).");
     expect(result.reply).not.toContain("לא אומתה התאמת המקור");
+  });
+  it("does not take the year of a different edition", async () => {
+    const { result } = await cite("The Concept of Law by H. L. A. Hart, second edition.", [
+      { title: "The Concept of Law — H.L.A. Hart", url: "https://global.oup.com/academic/product/the-concept-of-law-1961", snippet: "H.L.A. Hart, The Concept of Law (1961)." },
+      { title: "The Concept of Law — H.L.A. Hart", url: "https://global.oup.com/academic/product/the-concept-of-law-3", snippet: "H.L.A. Hart, The Concept of Law (3d ed. 2012)." },
+    ]);
+    const text = citationTextOnly(result.citation);
+    expect(text).toContain("2d ed.");
+    expect(text).not.toContain("1961");
+    expect(text).not.toContain("2012");
   });
   it("reads '2nd ed.' the same way", () => {
     const handoff = prepareFreeformHandoff("The Concept of Law by H. L. A. Hart, 2nd ed.");

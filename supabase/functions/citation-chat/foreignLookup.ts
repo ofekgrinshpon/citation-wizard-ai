@@ -544,7 +544,7 @@ const ARTICLE_RE = /(\d{1,3})\s+([A-Z][A-Za-z.&' ]+?)\s+(\d{1,4})(?:\s*,\s*\d+)?
 function isPlausibleJournal(s: string): boolean {
   return /[A-Za-z]{2,}/.test(s) && /\.|Law|Journal|Rev|Stud|Econ|Legal/i.test(s);
 }
-const BOOK_YEAR_RE = /\((?:(\d+)(?:st|nd|rd|th)\s+ed\.?,?\s+)?(\d{4})\)/;
+const BOOK_YEAR_RE = /\((?:(\d+)(?:st|nd|rd|th|d)\s+ed\.?,?\s+)?(\d{4})\)/;
 
 interface WorkCite {
   volume?: string;
@@ -608,6 +608,17 @@ export function extractWorkFromEvidence(text: string, kind: ForeignLookupKind, t
   const py = text.match(/(?:University Press|Clarendon Press|Routledge|Harvard University Press|Yale University Press|MIT Press|Oxford)[^\n]{0,24}?,\s*(?:[A-Z][a-z]+\.?\s+\d{1,2},\s*)?((?:17|18|19|20)\d{2})\b/);
   if (py) return { year: py[1] };
   return {};
+}
+
+const EDITION_WORDS: Record<string, number> = { first: 1, second: 2, third: 3, fourth: 4, fifth: 5, sixth: 6, seventh: 7, eighth: 8, ninth: 9, tenth: 10 };
+/** "second edition" / "2nd ed." / "2d ed." → 2; anything else → null. */
+export function editionOrdinal(value: unknown): number | null {
+  if (typeof value !== "string") return null;
+  const v = value.trim().toLowerCase();
+  const n = v.match(/^(\d+)(?:st|nd|rd|th|d)\s+ed(?:ition|\.)?\.?$/);
+  if (n) return Number(n[1]);
+  const w = v.match(/^([a-z]+)\s+ed(?:ition|\.)?\.?$/);
+  return w && EDITION_WORDS[w[1]] ? EDITION_WORDS[w[1]] : null;
 }
 
 function ordinalSuffix(n: number): string {
@@ -1585,6 +1596,18 @@ export async function runForeignLookup(
   }
   const journalKey = (v: string) => v.toLowerCase().replace(/[^a-z0-9]/g, "");
   if (input.kind === "book" || input.kind === "book_chapter") {
+    // A user-stated edition ("second edition") owns the year: only a record of that
+    // same edition may donate it. The stated edition itself is kept as supplied.
+    const statedEdition = editionOrdinal(input.parsedFields?.edition);
+    if (statedEdition !== null) {
+      const sameEdition = new Set((byField.get("edition") ?? [])
+        .filter((candidate) => editionOrdinal(candidate.value) === statedEdition).map((candidate) => candidate.donor.url));
+      const years = (byField.get("year") ?? []).filter((candidate) =>
+        sameEdition.has(candidate.donor.url) ||
+        (statedEdition === 1 && !(byField.get("edition") ?? []).some((e) => e.donor.url === candidate.donor.url)));
+      if (years.length) byField.set("year", years); else byField.delete("year");
+      byField.delete("edition");
+    }
     const values = (field: string) => new Set((byField.get(field) ?? []).map((candidate) => candidate.value));
     // A year and an edition describe one publication. Disagreeing years mean the
     // edition stated by only one of those records is not a shared fact.
