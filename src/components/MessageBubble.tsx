@@ -66,6 +66,7 @@ export function MessageBubble({ msg: rawMsg, detectedType, onChangeSourceType, o
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(msg.content);
   const [showPartyCheck, setShowPartyCheck] = useState(false);
+  const [partiesConfirmed, setPartiesConfirmed] = useState(false);
   const [isEditingCitation, setIsEditingCitation] = useState(false);
   const [citationEditValue, setCitationEditValue] = useState("");
   const [isInserting, setIsInserting] = useState(false);
@@ -266,11 +267,11 @@ export function MessageBubble({ msg: rawMsg, detectedType, onChangeSourceType, o
                     {isCaseLaw && !isVerifiedSource && (
                       <button
                         onClick={() => setShowPartyCheck((v) => !v)}
-                        className="inline-flex items-center gap-1 py-1 px-2 rounded-md text-xs font-medium bg-destructive/10 text-destructive hover:bg-destructive/20 transition-colors"
+                        className={`inline-flex items-center gap-1 py-1 px-2 rounded-md text-xs font-medium transition-colors ${partiesConfirmed ? "bg-success/15 text-success hover:bg-success/25" : "bg-destructive/10 text-destructive hover:bg-destructive/20"}`}
                         title="בדיקת שמות צדדים (כלל 18.4.4)"
                       >
-                        <AlertTriangle size={13} />
-                        <span>👤 בדיקת צדדים</span>
+                        {partiesConfirmed ? <span>✓</span> : <AlertTriangle size={13} />}
+                        <span>{partiesConfirmed ? "👤 שמות הצדדים תקינים" : "👤 לחץ לבדיקת צדדים"}</span>
                       </button>
                     )}
                   </div>
@@ -327,11 +328,11 @@ export function MessageBubble({ msg: rawMsg, detectedType, onChangeSourceType, o
               <div className="flex items-center gap-2 flex-wrap mt-2">
                 <button
                   onClick={() => setShowPartyCheck((v) => !v)}
-                  className="inline-flex items-center gap-1 py-1 px-2 rounded-md text-xs font-medium bg-destructive/10 text-destructive hover:bg-destructive/20 transition-colors"
-                  title="בדיקת שמות צדדים (כלל 18.4.4)"
-                >
-                  <AlertTriangle size={13} />
-                  <span>👤 בדיקת צדדים</span>
+                  className={`inline-flex items-center gap-1 py-1 px-2 rounded-md text-xs font-medium transition-colors ${partiesConfirmed ? "bg-success/15 text-success hover:bg-success/25" : "bg-destructive/10 text-destructive hover:bg-destructive/20"}`}
+                        title="בדיקת שמות צדדים (כלל 18.4.4)"
+                      >
+                        {partiesConfirmed ? <span>✓</span> : <AlertTriangle size={13} />}
+                        <span>{partiesConfirmed ? "👤 שמות הצדדים תקינים" : "👤 לחץ לבדיקת צדדים"}</span>
                 </button>
               </div>
             )}
@@ -349,7 +350,9 @@ export function MessageBubble({ msg: rawMsg, detectedType, onChangeSourceType, o
             {showPartyCheck && (
               <PartyNameCheck
                 onDismiss={() => setShowPartyCheck(false)}
+                onConfirm={() => { setPartiesConfirmed(true); setShowPartyCheck(false); }}
                 onRequestEdit={() => {
+                  setPartiesConfirmed(false);
                   setShowPartyCheck(false);
                   // Extract the citation line for editing
                   const citationLine = msg.content

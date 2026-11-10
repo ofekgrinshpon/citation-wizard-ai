@@ -3,13 +3,14 @@ import { useState } from "react";
 interface PartyNameCheckProps {
   onDismiss: () => void;
   onRequestEdit: () => void;
+  onConfirm?: () => void;
 }
 
 /**
  * Rule 18.4.4 party name verification checklist.
  * Shows guidance and lets users confirm or fix their citation's party names.
  */
-export function PartyNameCheck({ onDismiss, onRequestEdit }: PartyNameCheckProps) {
+export function PartyNameCheck({ onDismiss, onRequestEdit, onConfirm }: PartyNameCheckProps) {
   const [dismissed, setDismissed] = useState(false);
 
   if (dismissed) return null;
@@ -85,7 +86,7 @@ export function PartyNameCheck({ onDismiss, onRequestEdit }: PartyNameCheckProps
 
       <div className="mt-2.5 flex gap-2">
         <button
-          onClick={() => { setDismissed(true); onDismiss(); }}
+          onClick={() => { setDismissed(true); if (onConfirm) onConfirm(); else onDismiss(); }}
           className="flex-1 text-center py-1.5 rounded-md bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 transition-colors"
         >
           ✓ שמות הצדדים תקינים
