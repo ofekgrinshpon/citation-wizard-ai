@@ -413,7 +413,7 @@ export async function embedStyledFootnotes(session:DocxFootnoteSession,patches:r
   const group=groups.get(key)??{xmlStart,xmlEnd:xmlStart+par[0].length,xml:par[0],patches:[]};
   group.patches.push({start:p.start-range.start,end:p.end-range.start,originalText:note.text.slice(range.start,range.end),markedCitation:p.replacement});groups.set(key,group);
  }
- const changes=[...groups.values()].map(group=>({start:group.xmlStart,end:group.xmlEnd,text:applyStyledParagraph(group.xml,styles,group.patches)})).sort((a,b)=>b.start-a.start);
+ const changes=[...groups.values()].map(group=>({start:group.xmlStart,end:group.xmlEnd,text:applyStyledParagraph(group.xml,styles,group.patches,rootOpen)})).sort((a,b)=>b.start-a.start);
  let result=data.xml;for(const c of changes)result=result.slice(0,c.start)+c.text+result.slice(c.end);
  if(new TextEncoder().encode(result).length>MAX_XML)fail('התיקונים יוצרים רכיב הערות גדול מדי.');xmlDocument(result);
  const out=new JSZip();for(const [name,bytes] of data.files)out.file(name,name==='word/footnotes.xml'?result:bytes,{dir:name.endsWith('/')});

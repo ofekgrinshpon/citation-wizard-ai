@@ -18,9 +18,18 @@ import { lineDirection } from "@/lib/textDirection";
 import { citationTextOnly, escapeCitationLiteral } from "@/lib/citationSegments";
 import { newTelemetryBatch, sourceTelemetry } from "@/lib/costTelemetry";
 import { inspectDocxFootnotes, embedStyledFootnotes, checkStyledFootnote, checkStyledFootnotes } from "@/lib/docxFootnoteRoundtrip";
+import { styleIssueReason } from "@/lib/wordStyleIssue";
 
 type Session = Awaited<ReturnType<typeof inspectDocxFootnotes>>;
 type Span = { noteId: string; start: number; end: number };
+/** Generic fail-closed notice plus the exact preflight reason, when one is known. */
+function StyleIssueNotice({ issue }: { issue: string }) {
+  const reason = styleIssueReason(issue);
+  return <div className="space-y-1 text-sm text-amber-900">
+    <p>לא ניתן לשמור את עיצוב האזכור בבטחה. ההערה תישאר ללא שינוי.</p>
+    {reason && <p className="text-xs">הסיבה: {reason}.</p>}
+  </div>;
+}
 type Row = ReviewCardCell & WordMappedSource & { fullOutput?: string | null; repeatProposal?: boolean; classification?: GenerationPlan | null; classificationRecord?: ClassificationRecord; noteId: string; originalText: string; start: number; end: number; crossesRuns?: boolean; needsStyleRevalidation?: boolean; manualDraft?: string; styleIssue?: string | null };
 const button = "min-h-11 rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
 const primaryButton = `${button} border-primary bg-primary text-primary-foreground hover:bg-primary/90`;
@@ -408,7 +417,7 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
             </div>)}
             {noteRows.map(row => <div key={row.id} className="space-y-2">
               <p className="text-sm font-medium">התוכן שיישלח לבדיקה</p><p dir={lineDirection(row.input)} className="whitespace-pre-wrap break-words rounded-lg bg-blue-50 p-3 text-start text-sm text-blue-950">{row.input}</p>
-              {row.styleIssue && <p className="text-sm text-amber-900">לא ניתן לשמור את עיצוב האזכור בבטחה. ההערה תישאר ללא שינוי.</p>}
+              {row.styleIssue && <StyleIssueNotice issue={row.styleIssue} />}
             </div>)}
           </>}
           {activePlan && activePlan.kind !== "mapped" && <div role="status" className="space-y-2 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-950">
@@ -422,7 +431,7 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
             <p className="text-sm text-muted-foreground">התוצאה היא הצעה לבדיקה ולא אישור לדיוק משפטי. השוו למקור לפני אישור.</p>
             {noteRows.map(row => <div key={row.id} className="space-y-3">
               {row.repeatProposal && <p className="rounded-lg bg-blue-50 p-3 text-sm text-blue-950">הצעה לאזכור חוזר לפי ההקשר במסמך — יש לאשר את הנוסח המוצג.</p>}
-              {row.styleIssue && <p className="text-sm text-amber-900">לא ניתן לשמור את עיצוב האזכור בבטחה. ההערה תישאר ללא שינוי.</p>}
+              {row.styleIssue && <StyleIssueNotice issue={row.styleIssue} />}
               {isForeignSourceType(row.sourceTypeOverride ?? row.detectedType ?? "unknown") && <fieldset disabled={busy}><ForeignSourcePicker transient
                 key={`${row.id}:${row.sourceTypeOverride}`} initialRecord={row.classificationRecord} accountId={user?.id} itemKey={`word:${row.id}`} input={row.input} regenerateDisabled={busy}
                 hostDetectedLabel={hostForeignLabel(row.sourceTypeOverride ?? row.detectedType)}
