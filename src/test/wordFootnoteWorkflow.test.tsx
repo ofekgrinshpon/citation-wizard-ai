@@ -147,3 +147,38 @@ it('shows preserved-navigation field update guidance without making provider cal
  render(<WordFootnoteWorkflow/>);await upload();expect(screen.getByText(warning)).toBeInTheDocument();
  expect(screen.getByText(/שדות בתוך הערות/)).toBeInTheDocument();expect(mocks.run).not.toHaveBeenCalled();
 });
+describe('Word review choices and editing',()=>{
+ it('an Israeli ruling list shows buttons; a choice sends exactly one new check for that ruling',async()=>{
+  const options=[{label:'ע"פ 1/10 זדורוב נ\' מדינת ישראל (2015)',selection:'ע"פ 1/10 זדורוב נ\' מדינת ישראל (2015) <!--DATA:x-->'},{label:'דנ"פ 2/16 זדורוב נ\' מדינת ישראל (2016)',selection:'דנ"פ 2/16 זדורוב נ\' מדינת ישראל (2016) <!--DATA:y-->'}];
+  mocks.run.mockResolvedValueOnce({citation:'',status:'warning',sourceType:'case_law_database',warningMsg:'נמצאו כמה פסקי דין אפשריים. בחרו את פסק הדין הנכון.',retryChoice:{kind:'israeli',options}});
+  render(<WordFootnoteWorkflow/>);await upload();review();generate();
+  const second=await screen.findByRole('button',{name:/דנ"פ 2\/16/});
+  mocks.run.mockResolvedValueOnce({citation:'Corrected',status:'valid',sourceType:'case_law_database'});
+  fireEvent.click(second);await result();
+  expect(mocks.run).toHaveBeenCalledTimes(2);expect(mocks.run.mock.calls[1][0]).toMatchObject({rawInput:options[1].selection,resultSelection:true,useVerifiedStore:false});
+ });
+ it('rulings from two countries: choosing England re-checks once with England chosen',async()=>{
+  mocks.run.mockResolvedValueOnce({citation:'',status:'warning',sourceType:'foreign_case_other',warningMsg:'נדרשת בחירה בין כמה פסקי דין',retryChoice:{kind:'country',countries:[{country:'uk',options:[{label:'Donoghue v Stevenson [1932] UKHL 100',url:'https://www.bailii.org/x'}]},{country:'us',options:[{label:'Donoghue (US page)',url:'https://example.edu/y'}]}]}});
+  render(<WordFootnoteWorkflow/>);await upload();review();generate();
+  const uk=await screen.findByRole('button',{name:'פסק דין מאנגליה'});
+  fireEvent.click(uk);await result();
+  expect(mocks.run).toHaveBeenCalledTimes(2);expect(mocks.run.mock.calls[1][0].manualChoice).toMatchObject({jurisdiction:'UK'});
+ });
+ it('the text to check can be edited and the empty proposal can be typed, then re-checked',async()=>{
+  mocks.run.mockResolvedValueOnce({citation:'',status:'warning',sourceType:'book',warningMsg:'x'});
+  render(<WordFootnoteWorkflow/>);await upload();review();generate();await waitFor(()=>expect(mocks.run).toHaveBeenCalledTimes(1));
+  const output=await screen.findByLabelText('התיקון המוצע לאזכור 1');await waitFor(()=>expect(output).toBeEnabled());
+  fireEvent.click(screen.getByRole('button',{name:'✎ עריכת הנוסח לבדיקה'}));
+  fireEvent.change(screen.getByLabelText('הנוסח לבדיקה לאזכור 1'),{target:{value:'Author, Better Title (2020)'}});
+  mocks.run.mockResolvedValueOnce({citation:'Corrected',status:'valid',sourceType:'book'});
+  fireEvent.click(screen.getByRole('button',{name:'בדוק את הנוסח הזה'}));await result();
+  expect(mocks.run.mock.calls[1][0].rawInput).toBe('Author, Better Title (2020)');
+ });
+ it('Israeli case proposals offer the party check, which turns green when confirmed',async()=>{
+  mocks.run.mockResolvedValueOnce({citation:'ע"א 1/20 כהן נ\' לוי (2020)',status:'valid',sourceType:'case_law_database'});
+  render(<WordFootnoteWorkflow/>);await upload();review();generate();
+  fireEvent.click(await screen.findByRole('button',{name:'👤 לחץ לבדיקת צדדים'}));
+  fireEvent.click(screen.getByRole('button',{name:'✓ שמות הצדדים תקינים'}));
+  expect(screen.getByRole('button',{name:'✓ שמות הצדדים תקינים'})).toBeInTheDocument();
+ });
+});
