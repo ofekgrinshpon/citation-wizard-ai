@@ -91,6 +91,15 @@ async function send(text: string) {
 }
 const latest = () => m.bubble.mock.calls.map(([msg]) => msg).filter((msg) => msg.role === "assistant").at(-1);
 
+describe("chat page — tabs for a regular user", () => {
+  it("hides the legal assistant tab from non-admins", async () => {
+    const { default: Index } = await import("@/pages/Index");
+    render(<MemoryRouter initialEntries={["/app?mode=legalqa"]}><Index /></MemoryRouter>);
+    expect(screen.queryByRole("button", { name: /העוזר המשפטי/ })).toBeNull();
+    expect(screen.getByRole("button", { name: /אזכור אחיד/ })).toBeInTheDocument();
+  });
+});
+
 describe("chat page — choosing a parallel report", () => {
   it("formats from the chosen record without another request or search", async () => {
     await mountChat();

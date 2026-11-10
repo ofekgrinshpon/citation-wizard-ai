@@ -5,7 +5,8 @@ import { COUNTRY_OTHER_WARNING, countryQuestionCurrent } from "@/lib/countryQues
 import { escapeCitationLiteral } from "@/lib/citationSegments";
 import { isForeignSourceType } from "@/data/bluebook/types";
 import { clearItemsWithPrefix, loadRecord, recordGeneration, saveRecord } from "@/lib/foreignClassificationStore";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+import { DEFAULT_APP_MODE, effectiveAppMode, isLegalAssistantLink, visibleAppModes, type AppMode } from "@/lib/appModes";
 import { CitationRequestStatusLink } from "@/components/CitationRequestStatusLink";
 import { MessageBubble } from "@/components/MessageBubble";
 import { LoadingDots } from "@/components/LoadingDots";
@@ -116,7 +117,6 @@ const CITATION_EXAMPLES = [
 ];
 
 
-type AppMode = "freetext" | "batch" | "bibliography" | "legalqa";
 
 const LS_KEY_INPUT_PREFIX = "legal_app_free_text_content";
 const LS_KEY_MESSAGES_PREFIX = "legal_app_free_text_messages";
@@ -134,7 +134,7 @@ const Index = () => {
   // Telemetry is carried immutably per action — never a shared latest-submission ref.
   const [loading, setLoading] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState<string | null>(null);
-  const [mode, setMode] = useState<AppMode>("legalqa");
+  const [requestedMode, setMode] = useState<AppMode>(DEFAULT_APP_MODE);
   const [pendingVerification, setPendingVerification] = useState<PendingVerification | null>(null);
   // Track detected source type per assistant message index
   const [messageSourceTypes, setMessageSourceTypes] = useState<Record<number, SourceType>>({});
@@ -207,7 +207,17 @@ const Index = () => {
   const chatEndRef = useRef<HTMLDivElement>(null);
   
   
-  const { user, isAdmin, loading: authLoading, signOut } = useAuth();
+  const { user, isAdmin, isAdminResolved, loading: authLoading, signOut } = useAuth();
+  // The legal assistant is admin-only for now; everyone else is held on the citation tabs.
+  const mode = effectiveAppMode(requestedMode, !!isAdmin);
+  const { conversationId } = useParams<{ conversationId?: string }>();
+  const location = useLocation();
+  const legalAssistantLink = isLegalAssistantLink(conversationId, location.search);
+  useEffect(() => {
+    if (!legalAssistantLink || !isAdminResolved) return;
+    if (isAdmin) setMode("legalqa");
+    else if (conversationId) navigate("/app", { replace: true });
+  }, [legalAssistantLink, conversationId, isAdmin, isAdminResolved]); // eslint-disable-line react-hooks/exhaustive-deps
   const [citationRetry, setCitationRetry] = useState<IndexCitationRetry | null>(null);
   const [citationStatus, setCitationStatus] = useState<{ requestId: string; isCurrent: () => boolean } | null>(null);
   const citationRetryRef = useRef<IndexCitationRetry | null>(null);
@@ -989,12 +999,13 @@ const Index = () => {
     }
   };
 
-  const MODES: { id: AppMode; label: string; icon: string }[] = [
-    { id: "legalqa", label: "העוזר המשפטי", icon: "⚖️" },
-    { id: "freetext", label: "אזכור אחיד", icon: "✨" },
-    { id: "batch", label: "הערות שוליים", icon: "📑" },
-    { id: "bibliography", label: "ביבליוגרפיה", icon: "📚" },
-  ];
+  const MODE_LABELS: Record<AppMode, { label: string; icon: string }> = {
+    legalqa: { label: "העוזר המשפטי", icon: "⚖️" },
+    freetext: { label: "אזכור אחיד", icon: "✨" },
+    batch: { label: "הערות שוליים", icon: "📑" },
+    bibliography: { label: "ביבליוגרפיה", icon: "📚" },
+  };
+  const MODES = visibleAppModes(!!isAdmin).map((id) => ({ id, ...MODE_LABELS[id] }));
 
   
 

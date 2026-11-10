@@ -1,5 +1,8 @@
 # Roadmap — research → memo → draft handoff (legal-research-v2)
 
+## Product V1 scope
+- [x] Hide the legal assistant tab from non-admins; default tab is uniform citation.
+
 ## Foreign free-form citations (offline only, each stage separately approved)
 - [x] Stage 2: case location records grouped by decision, parallel-report choice.
 - [x] Fix two Word footnote tests broken by auto-opened cards.
