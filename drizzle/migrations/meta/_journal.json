@@ -64,6 +64,20 @@
       "when": 1794137298227,
       "tag": "0008_citation_recovery_accepts_freeform_handoff",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1794309733477,
+      "tag": "0009_pin_email_queue_search_path_and_tighten_library_reads",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1794309741078,
+      "tag": "0010_move_dblink_out_of_public",
+      "breakpoints": true
     }
   ]
 }

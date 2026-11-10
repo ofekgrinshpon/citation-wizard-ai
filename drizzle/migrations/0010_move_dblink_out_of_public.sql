@@ -1,0 +1,2 @@
+CREATE SCHEMA IF NOT EXISTS extensions;
+ALTER EXTENSION dblink SET SCHEMA extensions;
