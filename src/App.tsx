@@ -23,6 +23,7 @@ import VerifiedSources from "./pages/VerifiedSources.tsx";
 import Legal from "./pages/Legal.tsx";
 import Unsubscribe from "./pages/Unsubscribe.tsx";
 import ResearchJobRedirect from "./pages/ResearchJobRedirect.tsx";
+import PaymentReturn from "./pages/PaymentReturn.tsx";
 
 
 const queryClient = new QueryClient();
@@ -120,6 +121,7 @@ const App = () => (
                   <Route path="/terms" element={<Legal doc="terms" />} />
                   <Route path="/privacy" element={<Legal doc="privacy" />} />
                   <Route path="/unsubscribe" element={<Unsubscribe />} />
+                  <Route path="/payment/return" element={<PaymentReturn />} />
 
                   <Route path="/research/:jobId" element={<ResearchJobRedirect />} />
                   <Route path="/auth-dialog" element={<AuthDialog />} />

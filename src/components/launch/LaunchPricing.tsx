@@ -1,4 +1,4 @@
-import { CITATION_OFFERS, CITATION_CHECKOUT_ENABLED, CITATION_RENEWAL_DISCLOSURE } from "@/lib/citationOffers";
+import { CITATION_CHECKOUT_NOT_OPEN, CITATION_OFFERS, CITATION_ONE_TIME_DISCLOSURE } from "@/lib/citationOffers";
 
 export function LaunchPricing() {
   return (
@@ -10,19 +10,19 @@ export function LaunchPricing() {
             <p className="text-3xl font-bold">{offer.priceLabel}</p>
             <p className="text-primary font-semibold">{offer.allowanceLabel}</p>
             <p className="text-sm text-muted-foreground">אזכור אחיד, ביבליוגרפיה והערות שוליים. מסלול תיקון DOCX בהכנה להשקה.</p>
-            <p className="text-sm">מנוי {offer.interval === "week" ? "שבועי" : "חודשי"} מתחדש אוטומטית עד ביטול.</p>
+            <p className="text-sm">תשלום חד־פעמי, ללא מנוי וללא חידוש אוטומטי.</p>
             {/* Presentation cannot activate billing, even if the catalog flag changes later. */}
             <button type="button" disabled className="mt-auto w-full rounded-xl border border-border bg-muted px-4 py-3 text-sm font-semibold text-muted-foreground cursor-not-allowed">
-              {CITATION_CHECKOUT_ENABLED ? "הרכישה אינה זמינה במסך זה" : "הרכישה עדיין לא נפתחה"}
+              הרכישה עדיין לא נפתחה
             </button>
           </article>
         ))}
       </div>
       <div className="max-w-2xl mx-auto text-center text-sm text-muted-foreground space-y-2">
-        <p>{CITATION_RENEWAL_DISCLOSURE}</p>
-        <p>המכסה המתוכננת נספרת לפי מקורות, לא לפי מסמכים, ומתחדשת בכל מחזור חיוב.</p>
+        <p>{CITATION_ONE_TIME_DISCLOSURE}</p>
+        <p>המכסה המתוכננת נספרת לפי מקורות, לא לפי מסמכים.</p>
         <p>הורדה חוזרת או הטמעה של תוצאה קיימת לא אמורות לצרוך מקור נוסף.</p>
-        <p>המנויים בהכנה להשקה; אין רכישה או חיוב דרך מסך זה.</p>
+        <p>{CITATION_CHECKOUT_NOT_OPEN}</p>
       </div>
     </div>
   );

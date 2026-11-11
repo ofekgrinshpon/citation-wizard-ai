@@ -22,10 +22,19 @@ describe("citation launch presentation", () => {
       expect(screen.getByText(offer.priceLabel)).toBeInTheDocument();
       expect(screen.getByText(offer.allowanceLabel)).toBeInTheDocument();
     }
-    expect(screen.getByText("₪39 לשבוע")).toBeInTheDocument();
-    expect(screen.getByText("₪65 לחודש")).toBeInTheDocument();
+    expect(screen.getByText("₪39 בתשלום חד־פעמי")).toBeInTheDocument();
+    expect(screen.getByText("₪65 בתשלום חד־פעמי")).toBeInTheDocument();
     expect(screen.getAllByRole("button")).toHaveLength(2);
     for (const button of screen.getAllByRole("button")) expect(button).toBeDisabled();
+  });
+
+  it("states one-time payment without renewal and that checkout has not opened", () => {
+    const { container } = render(<LaunchPricing />);
+    expect(screen.getAllByText("תשלום חד־פעמי, ללא מנוי וללא חידוש אוטומטי.")).toHaveLength(2);
+    expect(container.textContent).not.toMatch(/מתחדש(ים|ת)? (אוטומטית|בכל)/);
+    expect(container.textContent).not.toContain("מנוי שבועי");
+    expect(container.textContent).toContain("הרכישה עדיין לא נפתחה: לא ניתן לשלם באתר");
+    for (const button of screen.getAllByRole("button")) expect(button).toHaveTextContent("הרכישה עדיין לא נפתחה");
   });
 
   it("keeps review guidance and keyboard tabs without advertising research or the old video", () => {

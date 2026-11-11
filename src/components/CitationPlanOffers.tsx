@@ -1,5 +1,5 @@
 import { useId } from "react";
-import { CITATION_OFFERS, CITATION_RENEWAL_DISCLOSURE, CITATION_UNIT_DISCLOSURE } from '@/lib/citationOffers';
+import { CITATION_CHECKOUT_NOT_OPEN, CITATION_OFFERS, CITATION_ONE_TIME_DISCLOSURE, CITATION_UNIT_DISCLOSURE } from '@/lib/citationOffers';
 
 /** Informational only: intentionally no checkout handler or entitlement writes. */
 export function CitationPlanOffers() {
@@ -11,11 +11,11 @@ export function CitationPlanOffers() {
         <p className="text-2xl font-bold text-primary">{offer.priceLabel}</p>
         <p className="text-sm">{offer.allowanceLabel}</p>
         <p className="text-sm text-muted-foreground">אזכור אחיד, הערות שוליים וביבליוגרפיה — ללא כלי המחקר המשפטי.</p>
-        <button type="button" disabled aria-describedby={unavailableNoteId} className="w-full rounded-lg border p-2 text-sm opacity-60 cursor-not-allowed" aria-label={`רכישת ${offer.label} עדיין אינה זמינה`}>הרכישה עדיין אינה זמינה</button>
+        <button type="button" disabled aria-describedby={unavailableNoteId} className="w-full rounded-lg border p-2 text-sm opacity-60 cursor-not-allowed" aria-label={`רכישת ${offer.label} עדיין אינה זמינה`}>הרכישה עדיין לא נפתחה</button>
       </article>)}
     </div>
-    <p className="text-sm text-muted-foreground">{CITATION_RENEWAL_DISCLOSURE}</p>
+    <p className="text-sm text-muted-foreground">{CITATION_ONE_TIME_DISCLOSURE}</p>
     <p className="text-sm text-muted-foreground">{CITATION_UNIT_DISCLOSURE}</p>
-    <p id={unavailableNoteId} role="note" className="text-sm font-medium">המסלולים מוצגים לקראת פתיחת הרכישה. לא מתבצע חיוב באתר, ותנאי מסלול קיים בחשבון אינם משתנים.</p>
+    <p id={unavailableNoteId} role="note" className="text-sm font-medium">{CITATION_CHECKOUT_NOT_OPEN}</p>
   </div>;
 }
