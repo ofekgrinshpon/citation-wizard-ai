@@ -126,7 +126,7 @@ describe("takbull-hosted-webhook (closed)", () => {
     ];
     for (const body of bodies) for (const method of ["POST", "GET", "PUT"]) {
       const r = new Request("https://example.functions/takbull-hosted-webhook?event=20&status=success", { method, body: method === "GET" ? undefined : body });
-      const res = handleTakbullHostedWebhook(r);
+      const res = await handleTakbullHostedWebhook(r);
       expect(res.status).toBe(503);
       expect(await res.json()).toEqual({ error: "TAKBULL_WEBHOOK_NOT_READY", activated: false, grantedSources: 0 });
       expect(res.headers.get("Cache-Control")).toBe("no-store");
@@ -134,11 +134,20 @@ describe("takbull-hosted-webhook (closed)", () => {
     }
   });
 
-  it("the webhook source never reads, logs or stores the body and uses no secrets", () => {
-    for (const path of ["supabase/functions/takbull-hosted-webhook/handler.ts", "supabase/functions/takbull-hosted-webhook/index.ts"]) {
-      const src = readFileSync(path, "utf8");
-      for (const banned of ["console.", ".json()", ".text()", ".formData()", "Deno.env", "createClient", ".from(", ".rpc(", "fetch("]) expect(src).not.toContain(banned);
+  it("the webhook source stores nothing, calls nothing and only reads the one observation setting", () => {
+    const dir = "supabase/functions/takbull-hosted-webhook/";
+    for (const file of ["handler.ts", "observe.ts", "index.ts"]) {
+      const src = readFileSync(dir + file, "utf8");
+      for (const banned of [".json()", ".text()", ".formData()", "createClient", ".from(", ".rpc(", "fetch(", "SERVICE_ROLE", "Authorization", "req.url", "headers.entries", "headers.forEach"]) expect(src).not.toContain(banned);
     }
+    for (const file of ["handler.ts", "observe.ts"]) {
+      const src = readFileSync(dir + file, "utf8");
+      expect(src).not.toContain("console.");
+      expect(src).not.toContain("Deno.env");
+    }
+    const index = readFileSync(dir + "index.ts", "utf8");
+    expect(index.match(/Deno\.env\.get\(/g)).toHaveLength(1);
+    expect(index).toContain('Deno.env.get("TAKBULL_OBSERVE_CONFIG")');
   });
 
   it("existing function auth settings are not loosened for the new functions", () => {

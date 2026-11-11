@@ -1,4 +1,10 @@
 import { handleTakbullHostedWebhook } from "./handler.ts";
 
-// Closed until signed callback verification exists. Never reads the body.
-Deno.serve((req) => handleTakbullHostedWebhook(req));
+// Always closed (503, grants nothing). Observation stays dormant unless
+// TAKBULL_OBSERVE_CONFIG holds a valid, currently open window of <= 30 minutes.
+Deno.serve((req) =>
+  handleTakbullHostedWebhook(req, {
+    readConfig: () => Deno.env.get("TAKBULL_OBSERVE_CONFIG"),
+    log: (line) => console.log(line),
+  })
+);
