@@ -88,7 +88,15 @@ const CATEGORY_TO_SOURCE_TYPE: Partial<Record<BibSourceCategory, SourceType>> = 
 export function BibliographyGenerator() {
   const { user } = useAuth();
   const rowGuard = useCitationRowGuard(user?.id ?? null);
-  const { sortedEntries, addEntries, removeEntry, clearAll } = useBibliography();
+  const { sortedEntries, addEntries, removeEntry, clearAll, moveEntry } = useBibliography();
+  const draggedEntry = useRef<string | null>(null);
+  const [moveNotice, setMoveNotice] = useState("");
+  const moveSource = (id: string, category: BibSourceCategory) => {
+    if (!sortedEntries.some(entry => entry.id === id)) return;
+    moveEntry(id, category);
+    draggedEntry.current = null;
+    setMoveNotice(`המקור הועבר ל${CATEGORY_LABELS[category]}. נוסח המקור לא השתנה.`);
+  };
   const [rawText, setRawText] = useState("");
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState<{ done: number; total: number } | null>(null);
@@ -99,6 +107,7 @@ export function BibliographyGenerator() {
     rowGuard.invalidate();
     setReviewItems([]);
     setRawText("");
+    draggedEntry.current = null; setMoveNotice("");
     setLoading(false);
     setProgress(null);
     setServiceOutage(null);
@@ -705,6 +714,8 @@ export function BibliographyGenerator() {
           </div>
 
           <div className="p-4">
+            <p className="mb-3 text-xs text-muted-foreground">אפשר לגרור מקור אל כותרת קטגוריה אחרת, או לבחור ״העבר לקטגוריה״ בכל מקור (גם בנייד ובמקלדת). ההעברה משנה את המיון בלבד, ללא בדיקה חוזרת או שינוי הנוסח.</p>
+            <p role="status" className="mb-2 text-sm">{moveNotice}</p>
             {hebrewGroups.length > 0 && (
               <div className="mb-4">
                 <h5 className="text-primary font-bold text-sm mb-3 pb-1 border-b border-primary/20">
@@ -714,6 +725,11 @@ export function BibliographyGenerator() {
                   <CategoryGroup
                     key={group.category}
                     label={CATEGORY_LABELS[group.category] || group.category}
+                    category={group.category as BibSourceCategory}
+                    onMove={moveSource}
+                    onDragStart={id => { draggedEntry.current = id; }}
+                    onDragEnd={() => { draggedEntry.current = null; }}
+                    onDrop={() => { if (draggedEntry.current) moveSource(draggedEntry.current, group.category as BibSourceCategory); }}
                     entries={group.entries}
                     onRemove={removeEntry}
                     onEdit={sendEntryBackToReview}
@@ -731,6 +747,11 @@ export function BibliographyGenerator() {
                   <CategoryGroup
                     key={group.category}
                     label={CATEGORY_LABELS[group.category] || group.category}
+                    category={group.category as BibSourceCategory}
+                    onMove={moveSource}
+                    onDragStart={id => { draggedEntry.current = id; }}
+                    onDragEnd={() => { draggedEntry.current = null; }}
+                    onDrop={() => { if (draggedEntry.current) moveSource(draggedEntry.current, group.category as BibSourceCategory); }}
                     entries={group.entries}
                     onRemove={removeEntry}
                     onEdit={sendEntryBackToReview}
@@ -991,19 +1012,42 @@ function CategoryGroup({
   entries,
   onRemove,
   onEdit,
+  category, onMove, onDragStart, onDragEnd, onDrop,
 }: {
+  category: BibSourceCategory;
+  onMove: (id: string, category: BibSourceCategory) => void;
+  onDragStart: (id: string) => void;
+  onDragEnd: () => void;
+  onDrop: () => void;
   label: string;
   entries: { id: string; fullCitation: string; addedFrom: string; isVerified?: boolean; warnings?: string[] }[];
   onRemove: (id: string) => void;
   onEdit?: (id: string) => void;
 }) {
+  const [dropActive, setDropActive] = useState(false);
   return (
-    <div className="mb-3">
+    <section aria-label={`קטגוריה: ${label}`} className={`mb-3 rounded-lg border p-1 ${dropActive ? "border-primary bg-primary/5" : "border-transparent"}`}
+      onDragOver={event => { event.preventDefault(); event.dataTransfer.dropEffect = "move"; setDropActive(true); }}
+      onDragLeave={() => setDropActive(false)}
+      onDrop={event => { event.preventDefault(); setDropActive(false); onDrop(); }}>
       <h6 className="text-foreground text-xs font-bold mb-1.5 mr-1">{label}</h6>
       <div className="space-y-1.5">
         {entries.map((entry) => (
-          <div key={entry.id} className="flex items-start gap-2 group">
-            <div className="flex-1 text-foreground text-sm leading-relaxed pr-2">
+          <div key={entry.id} className="rounded-lg border border-border bg-background p-3 space-y-2 group">
+            <div className="flex flex-wrap items-center gap-2">
+              <span draggable onDragStart={event => { event.dataTransfer.effectAllowed = "move"; event.dataTransfer.setData("text/plain", entry.id); onDragStart(entry.id); }} onDragEnd={onDragEnd}
+                title="גררו לקטגוריה אחרת" aria-hidden="true" className="cursor-grab select-none px-2 text-muted-foreground">⠿</span>
+              <label className="flex min-w-0 flex-1 flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                העבר לקטגוריה
+                <select aria-label={`העבר לקטגוריה: ${entry.fullCitation}`} value={category}
+                  className="min-h-11 w-full max-w-full rounded border border-border bg-background px-2 text-foreground sm:w-auto"
+                  onChange={event => onMove(entry.id, event.target.value as BibSourceCategory)}>
+                  {CATEGORY_OPTIONS.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
+                </select>
+              </label>
+            </div>
+            <div className="flex items-start gap-2">
+            <div className="min-w-0 flex-1 break-words text-foreground text-sm leading-relaxed pr-2">
               <FormattedCitation text={entry.fullCitation} enableTooltips />
               {entry.isVerified && (
                 <span className="inline-flex items-center gap-1 text-[10px] font-medium text-emerald-700 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-1.5 py-0.5 rounded mr-2 align-middle">
@@ -1014,7 +1058,7 @@ function CategoryGroup({
                 <div key={w} className="text-[11px] text-amber-700 dark:text-amber-400 mt-0.5">⚠ {w}</div>
               ))}
             </div>
-            <div className="flex items-center gap-1 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+            <div className="flex items-center gap-1 flex-shrink-0 opacity-100">
               {entry.addedFrom === "footnote" && (
                 <span className="text-[10px] text-primary bg-primary/10 px-1.5 py-0.5 rounded">
                   מה"ש
@@ -1037,10 +1081,11 @@ function CategoryGroup({
                 ✕
               </button>
             </div>
+            </div>
           </div>
         ))}
       </div>
-    </div>
+    </section>
   );
 }
 

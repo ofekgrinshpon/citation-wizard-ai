@@ -182,3 +182,16 @@ describe('Word review choices and editing',()=>{
   expect(screen.getByRole('button',{name:'✓ שמות הצדדים תקינים'})).toBeInTheDocument();
  });
 });
+
+describe('Word preflight input editing',()=>{
+ it('edits an unresolved note, checks only on request and replaces original span only after approval',async()=>{
+  const value='First (2020); Second (2021)';mocks.inspect.mockResolvedValue({notes:[note(value)],skippedNotes:[]});render(<WordFootnoteWorkflow/>);await upload();
+  fireEvent.click(screen.getByRole('button',{name:/עריכת קלט ·/}));fireEvent.change(screen.getByLabelText(/קלט לבדיקה ·/),{target:{value:'First (2020)'}});fireEvent.click(screen.getByRole('button',{name:'שמור קלט'}));
+  expect(mocks.run).not.toHaveBeenCalled();review();generate();await result();expect(mocks.run.mock.calls[0][0].rawInput).toBe('First (2020)');expect(screen.getByLabelText('תצוגת הערה במיקום 1')).toHaveTextContent(value);
+  approve();fireEvent.click(screen.getByRole('button',{name:/המשך להורדה/}));fireEvent.click(screen.getByRole('button',{name:/הורדת עותק מתוקן/}));await waitFor(()=>expect(mocks.embed).toHaveBeenCalled());expect(mocks.embed.mock.calls[0][1][0]).toMatchObject({originalText:value,start:0,end:value.length,replacement:'Corrected'});
+ });
+ it('cancel preserves original, restoring clears approvals and repeated saves send nothing',async()=>{
+  render(<WordFootnoteWorkflow/>);await upload();fireEvent.click(screen.getByRole('button',{name:/עריכת קלט ·/}));fireEvent.change(screen.getByLabelText(/קלט לבדיקה ·/),{target:{value:'Changed'}});fireEvent.click(screen.getByRole('button',{name:'ביטול עריכת קלט'}));
+  fireEvent.click(screen.getByRole('button',{name:/עריכת קלט ·/}));expect(screen.getByLabelText(/קלט לבדיקה ·/)).toHaveValue('Author, Title (2020)');fireEvent.change(screen.getByLabelText(/קלט לבדיקה ·/),{target:{value:'Changed'}});fireEvent.click(screen.getByRole('button',{name:'שמור קלט'}));review();generate();await result();approve();back();fireEvent.click(screen.getByRole('button',{name:/חזרה לקלט המקורי ·/}));review();expect(screen.getByRole('button',{name:/המשך להורדה/})).toBeDisabled();expect(mocks.run).toHaveBeenCalledTimes(1);
+ });
+});

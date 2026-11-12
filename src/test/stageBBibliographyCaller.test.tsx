@@ -124,3 +124,44 @@ describe("BibliographyGenerator — fresh intake → commit → reload → copy"
     expect(html).toContain("<em>C## Guide: x^^2 &amp; A**B</em>");
   });
 });
+
+describe("Bibliography category moves", () => {
+  const seed = () => localStorage.setItem("bibliography_entries_bib-project", JSON.stringify([
+    { id: "a", rawInput: "supplied raw", fullCitation: "Custom **case citation** (2020)", sourceType: "literature", language: "hebrew", subCategory: "ספרות", manualCategory: true, warnings: [WARNING], isVerified: false, addedFrom: "manual", addedAt: 1 },
+    { id: "b", rawInput: "other raw", fullCitation: "Other **citation** (2021)", sourceType: "caselaw_district", language: "hebrew", subCategory: "מחוזי", manualCategory: true, addedFrom: "manual", addedAt: 2 },
+  ]));
+  it("moves with a keyboard/mobile select, preserving text, warning, identity and export across reload", () => {
+    seed(); mount();
+    const selector = screen.getByRole("combobox", { name: "העבר לקטגוריה: Custom **case citation** (2020)" });
+    fireEvent.change(selector, { target: { value: "foreign_caselaw" } });
+    const stored = JSON.parse(localStorage.getItem("bibliography_entries_bib-project")!);
+    expect(stored.find((e: {id:string}) => e.id === "a")).toMatchObject({
+      id: "a", rawInput: "supplied raw", fullCitation: "Custom **case citation** (2020)", sourceType: "foreign_caselaw", language: "english", manualCategory: true, warnings: [WARNING], isVerified: false,
+    });
+    expect(b.runCitation).not.toHaveBeenCalled();
+    expect(screen.getByRole("status")).toHaveTextContent("המקור הועבר");
+    cleanup(); mount();
+    expect(screen.getByRole("combobox", { name: "העבר לקטגוריה: Custom **case citation** (2020)" })).toHaveValue("foreign_caselaw");
+    fireEvent.click(screen.getByRole("button", { name: /העתק הכל ל-Word/ }));
+    const { html, plain } = lastRich();
+    expect(plain).toMatch(/מקורות באנגלית\s+פסיקה לועזית/);
+    expect(plain).toContain(WARNING);
+    expect(html).toContain("<strong>case citation</strong>");
+    expect(b.runCitation).not.toHaveBeenCalled();
+  });
+  it("moves a dragged block into an existing category and ignores external drops", () => {
+    seed(); mount();
+    const target = screen.getByRole("region", { name: "קטגוריה: פסיקה – בית משפט מחוזי" });
+    const dt = { setData: vi.fn(), effectAllowed: "", dropEffect: "" };
+    // A drop without a locally dragged entry must not mutate data.
+    const before = localStorage.getItem("bibliography_entries_bib-project");
+    fireEvent.drop(target, { dataTransfer: dt });
+    expect(localStorage.getItem("bibliography_entries_bib-project")).toBe(before);
+    fireEvent.dragStart(screen.getAllByTitle("גררו לקטגוריה אחרת")[1], { dataTransfer: dt });
+    // Category sorting puts district first, literature second.
+    fireEvent.dragOver(target, { dataTransfer: dt });
+    fireEvent.drop(target, { dataTransfer: dt });
+    expect(screen.getByRole("combobox", { name: "העבר לקטגוריה: Custom **case citation** (2020)" })).toHaveValue("caselaw_district");
+    expect(b.runCitation).not.toHaveBeenCalled();
+  });
+});

@@ -282,13 +282,13 @@ function rebuildBibliographyEntries(items: BibliographyEntry[]): BibliographyEnt
     seen.add(normalized);
     const auto = classifyCitation(cleanedCitation);
     // If user manually picked the category, keep their sourceType/subCategory choice;
-    // only refresh language/year so sorting still works after edits.
+    // foreign/domestic category choices also determine the section; refresh year for sorting.
     const preserved = item.manualCategory
       ? {
           sourceType: item.sourceType,
           subCategory: item.subCategory,
           authorSurname: item.authorSurname,
-          language: auto.language,
+          language: String(item.sourceType).startsWith("foreign_") ? "english" as const : ["misc", "unknown"].includes(item.sourceType) ? auto.language : "hebrew" as const,
           year: auto.year,
         }
       : auto;
@@ -335,6 +335,7 @@ interface BibliographyContextValue {
   syncFootnoteEntries: (items: (TransientCompletion & { rawInput: string; fullCitation: string; warnings?: string[] })[]) => number;
   removeEntry: (id: string) => void;
   clearAll: () => void;
+  moveEntry: (id: string, category: BibSourceCategory) => void;
   sortedEntries: BibliographyEntry[];
 }
 
@@ -427,7 +428,7 @@ export function BibliographyProvider({ children }: { children: React.ReactNode }
           const cleanedCitation = stripTrailingPunctuation(item.fullCitation);
           const info = classifyCitation(cleanedCitation);
           const manualCategory = Boolean(item.sourceTypeOverride);
-          if (item.sourceTypeOverride) info.sourceType = item.sourceTypeOverride;
+          if (item.sourceTypeOverride) { info.sourceType = item.sourceTypeOverride; info.subCategory = CATEGORY_LABELS[item.sourceTypeOverride]; }
           next.push({
             id: crypto.randomUUID(),
             rawInput: item.rawInput,
@@ -480,13 +481,21 @@ export function BibliographyProvider({ children }: { children: React.ReactNode }
     setEntries((prev) => prev.filter((e) => e.id !== id));
   }, []);
 
+  // A manual move changes organization only, never citation content or verification.
+  const moveEntry = useCallback((id: string, category: BibSourceCategory) => {
+    if (!Object.prototype.hasOwnProperty.call(CATEGORY_LABELS, category)) return;
+    setEntries(prev => rebuildBibliographyEntries(prev.map(entry => entry.id === id
+      ? { ...entry, sourceType: category, subCategory: CATEGORY_LABELS[category], manualCategory: true }
+      : entry)));
+  }, []);
+
   const clearAll = useCallback(() => setEntries([]), []);
 
   const sortedEntries = sortBibliography(entries);
 
   return (
     <BibliographyContext.Provider
-      value={{ entries, addEntry, addEntries, syncFootnoteEntries, removeEntry, clearAll, sortedEntries }}
+      value={{ entries, addEntry, addEntries, syncFootnoteEntries, removeEntry, clearAll, moveEntry, sortedEntries }}
     >
       {children}
     </BibliographyContext.Provider>
