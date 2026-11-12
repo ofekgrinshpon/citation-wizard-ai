@@ -190,12 +190,22 @@ describe("citation request identity and transport", () => {
     expect(boundary.invoke.mock.calls[1][1].body.requestId).toBe(boundary.invoke.mock.calls[0][1].body.requestId);
   });
 
-  it.each(["INPUT_TOO_LARGE", "INVALID_RECOVERY_INPUT"])("explains pre-claim bounded-input rejection %s without suggesting unknown paid work", async (code) => {
-    const info = await parseFunctionError(failure(code, code === "INPUT_TOO_LARGE" ? 413 : 400).error);
+  it("explains INPUT_TOO_LARGE with the exact bounded-input limits", async () => {
+    const info = await parseFunctionError(failure("INPUT_TOO_LARGE", 413).error);
     expect(info.isInvalidInput).toBe(true);
     expect(info.message).toContain("128 KiB");
     expect(info.message).toContain("100");
     expect(info.message).toContain("לא נצרכו יחידות שימוש חדשות");
+  });
+
+  it("tells the user to open a new chat for INVALID_RECOVERY_INPUT without implying the conversation ran out of room", async () => {
+    const info = await parseFunctionError(failure("INVALID_RECOVERY_INPUT", 400).error);
+    expect(info.isInvalidInput).toBe(true);
+    expect(info.message).toContain("שיחה חדשה");
+    expect(info.message).toContain("המקור המלא");
+    expect(info.message).toContain("לא נצרכו יחידות שימוש חדשות");
+    expect(info.message).not.toContain("KiB");
+    expect(info.message).not.toMatch(/100/);
   });
 
   it("rechecks the account before first dispatch even without a UI lifecycle callback", async () => {
