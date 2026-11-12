@@ -6,10 +6,10 @@
  *
  * Optional dormant observation (see observe.ts): only when the injected config
  * holds a valid window that is open now does the handler read one bounded JSON
- * body and log one sanitized allowlisted projection. Without it the body is never
- * read and nothing is logged.
+ * body and log one sanitized allowlisted projection, and only if the window is
+ * still open after that read. Without it the body is never read and nothing is logged.
  */
-import { observeRequest, parseObserveConfig } from "./observe.ts";
+import { isWindowOpen, observeRequest, parseObserveConfig } from "./observe.ts";
 
 export const TAKBULL_WEBHOOK_CLOSED_BODY = Object.freeze({
   error: "TAKBULL_WEBHOOK_NOT_READY",
@@ -40,9 +40,12 @@ export async function handleTakbullHostedWebhook(req: Request, deps?: WebhookObs
   try {
     let raw: string | undefined | null;
     try { raw = deps.readConfig(); } catch { return closed(); }
-    const cfg = parseObserveConfig(raw, (deps.now ?? Date.now)());
+    const now = deps.now ?? Date.now;
+    const cfg = parseObserveConfig(raw, now());
     if (!cfg) return closed();
     const line = await observeRequest(req, cfg, deps.limits);
+    // Recheck after the bounded read: if the window closed (or the clock is bad) while reading, discard the line.
+    if (!isWindowOpen(cfg, now())) return closed();
     try { deps.log(line); } catch { /* logging failure never changes the response */ }
   } catch {
     /* fail closed */

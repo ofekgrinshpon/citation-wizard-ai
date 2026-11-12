@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { handleTakbullHostedWebhook } from "../../supabase/functions/takbull-hosted-webhook/handler";
-import { OBSERVE_LOG_MARKER, parseObserveConfig, projectPayload } from "../../supabase/functions/takbull-hosted-webhook/observe";
+import { OBSERVE_LOG_MARKER, REF_ALIASES, isWindowOpen, parseObserveConfig, projectPayload } from "../../supabase/functions/takbull-hosted-webhook/observe";
 
 const CLOSED = { error: "TAKBULL_WEBHOOK_NOT_READY", activated: false, grantedSources: 0 };
 const NOW = Date.parse("2026-11-12T10:10:00.000Z");
@@ -110,10 +110,10 @@ describe("takbull-hosted-webhook observation: armed", () => {
     expect(f.amount).toEqual({ type: "string", amount: 1 });
     expect(f.currency).toEqual({ type: "string", currency: "ILS" });
     expect(f.pageId).toEqual({ type: "string", equalsExpected: true });
-    expect(f.orderRef).toEqual({ type: "string", equalsExpected: true });
+    expect(f.orderReference).toEqual({ type: "string", equalsExpected: true });
     expect(f.transactionId).toEqual({ type: "string" });
     expect(f["data.status"]).toEqual({ type: "number", code: 2 });
-    expect(Object.keys(f).sort()).toEqual(["amount", "currency", "data.status", "event", "orderRef", "pageId", "status", "transactionId"]);
+    expect(Object.keys(f).sort()).toEqual(["amount", "currency", "data.status", "event", "orderReference", "pageId", "status", "transactionId"]);
     expect(obj.projection.wrappers).toEqual(["data"]);
     expect(obj.projection.unknownKeyCount).toBeGreaterThan(5);
   });
@@ -187,5 +187,107 @@ describe("takbull-hosted-webhook observation: armed", () => {
     for (let i = 0; i < 3; i++) await run(post(callbackBody), cfgRaw(), { log });
     expect(log).toHaveBeenCalledTimes(3);
     expect(new Set(log.mock.calls.map((c) => c[0])).size).toBe(1);
+  });
+});
+
+describe("takbull-hosted-webhook observation: distinct reference aliases", () => {
+  const CID = "cust_55667788";
+  const ORDER_ID = "TK-20261112-0042";
+
+  it("c_id, orderId and order_reference keep separate fixed labels; one matches, two do not", async () => {
+    const body = JSON.stringify({ c_id: CID, orderId: ORDER_ID, order_reference: REF, event: 20 });
+    const { line, obj } = parsedLine(await run(post(body)));
+    const f = obj.projection.fields;
+    expect(f.cId).toEqual({ type: "string", equalsExpected: false });
+    expect(f.orderId).toEqual({ type: "string", equalsExpected: false });
+    expect(f.orderReference).toEqual({ type: "string", equalsExpected: true });
+    expect(f.orderRef).toBeUndefined();
+    expect(obj.projection.repeatedKnownKeys).toBe(0);
+    expect(obj.projection.unknownKeyCount).toBe(0);
+    for (const v of [CID, ORDER_ID, REF, "c_id", "order_reference"]) expect(line).not.toContain(v);
+  });
+
+  it("the match follows whichever alias carries the expected reference", () => {
+    const p = projectPayload({ c_id: REF, orderId: ORDER_ID, order_reference: CID }, cfg);
+    expect(p.fields.cId.equalsExpected).toBe(true);
+    expect(p.fields.orderId.equalsExpected).toBe(false);
+    expect(p.fields.orderReference.equalsExpected).toBe(false);
+  });
+
+  it("every allowlisted alias has its own label; different spellings of one alias are duplicates", () => {
+    const labels = REF_ALIASES.map(([l]) => l);
+    expect(new Set(labels).size).toBe(labels.length);
+    const all = projectPayload(Object.fromEntries(REF_ALIASES.map(([, k]) => [k, ORDER_ID])), cfg);
+    expect(Object.keys(all.fields).sort()).toEqual([...labels].sort());
+    expect(all.repeatedKnownKeys).toBe(0);
+    const dup = projectPayload({ order_reference: REF, OrderReference: CID, "order-reference": CID }, cfg);
+    expect(Object.keys(dup.fields)).toEqual(["orderReference"]);
+    expect(dup.fields.orderReference.equalsExpected).toBe(true);
+    expect(dup.repeatedKnownKeys).toBe(2);
+  });
+
+  it("malicious unknown keys near the aliases are counted, never emitted", async () => {
+    const evil = {
+      c_id_evil: REF, cid2: REF, "orderId<script>": REF, [`orderId_${SENSITIVE.email}`]: REF, order_reference_x: REF,
+      constructor: REF, toString: REF, hasOwnProperty: REF, ["x".repeat(80)]: REF, ["__proto__"]: { orderId: REF },
+    };
+    const { line, obj } = parsedLine(await run(post(JSON.stringify(evil))));
+    expect(obj.projection.fields).toEqual({});
+    expect(obj.projection.unknownKeyCount).toBe(Object.keys(JSON.parse(JSON.stringify(evil))).length);
+    for (const k of ["c_id_evil", "cid2", "<script>", SENSITIVE.email, "order_reference_x", "constructor", "toString", "hasOwnProperty", "xxxxxxxx", "proto", REF]) expect(line).not.toContain(k);
+  });
+});
+
+describe("takbull-hosted-webhook observation: window rechecked after the body read", () => {
+  const END = Date.parse("2026-11-12T10:30:00.000Z");
+  const enc = new TextEncoder();
+  // Body arrives in two chunks; the clock moves to `after` between them, i.e. during the read.
+  function slowBody(clock: { t: number }, after: number) {
+    let sent = 0;
+    const stream = new ReadableStream<Uint8Array>({
+      pull(c) {
+        if (sent === 0) { c.enqueue(enc.encode(`{"order_reference":"${REF}",`)); sent++; return; }
+        clock.t = after;
+        c.enqueue(enc.encode(`"event":20}`));
+        c.close();
+      },
+    });
+    return new Request("https://x/", { method: "POST", headers: { "Content-Type": "application/json" }, body: stream, duplex: "half" } as RequestInit);
+  }
+
+  it("a read that crosses the end time logs nothing and returns the closed 503", async () => {
+    for (const after of [END, END + 1, END + 60_000]) {
+      const clock = { t: END - 1 };
+      const r = slowBody(clock, after);
+      const log = await run(r, cfgRaw(), { now: () => clock.t });
+      expect(r.bodyUsed).toBe(true);
+      expect(log).not.toHaveBeenCalled();
+    }
+  });
+
+  it("a read that finishes just before the end time still logs", async () => {
+    const clock = { t: END - 10 };
+    const log = await run(slowBody(clock, END - 1), cfgRaw(), { now: () => clock.t });
+    expect(parsedLine(log).obj.projection.fields.orderReference).toEqual({ type: "string", equalsExpected: true });
+  });
+
+  it("a bad clock after the read (NaN, backwards before start, throwing) logs nothing", async () => {
+    const clocks: Array<() => number> = [
+      () => Number.NaN, () => Number.POSITIVE_INFINITY, () => Date.parse("2026-11-12T09:59:59.000Z"),
+      () => { throw new Error("clock down"); },
+    ];
+    for (const second of clocks) {
+      let calls = 0;
+      const log = await run(post(callbackBody), cfgRaw(), { now: () => (calls++ === 0 ? NOW : second()) });
+      expect(calls).toBe(2);
+      expect(log).not.toHaveBeenCalled();
+    }
+    expect(isWindowOpen(cfg, "1" as unknown)).toBe(false);
+  });
+
+  it("the recheck also applies to outcomes that never read the body", async () => {
+    let calls = 0;
+    const log = await run(post(null, {}, "GET"), cfgRaw(), { now: () => (calls++ === 0 ? NOW : END) });
+    expect(log).not.toHaveBeenCalled();
   });
 });

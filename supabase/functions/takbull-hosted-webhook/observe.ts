@@ -72,6 +72,11 @@ export function parseObserveConfig(raw: unknown, nowMs: number): ObserveConfig |
   }
 }
 
+/** True only while a finite clock reading lies inside the configured window (start <= now < end). */
+export function isWindowOpen(cfg: ObserveConfig, nowMs: unknown): boolean {
+  return typeof nowMs === "number" && Number.isFinite(nowMs) && nowMs >= cfg.startMs && nowMs < cfg.endMs;
+}
+
 export type ReadOutcome =
   | { ok: true; text: string; bytes: number }
   | { ok: false; outcome: "too_large" | "timeout" | "read_error" | "invalid_utf8" | "empty" };
@@ -113,6 +118,12 @@ export async function readBoundedBody(req: Request, maxBytes: number, timeoutMs:
 
 type FieldKind = "code" | "amount" | "currency" | "pageId" | "orderRef" | "txnId";
 
+/** Distinct reference aliases: [our fixed label, normalized key]. */
+export const REF_ALIASES: ReadonlyArray<readonly [string, string]> = Object.freeze([
+  ["orderReference", "orderreference"], ["orderRef", "orderref"], ["orderId", "orderid"], ["orderNumber", "ordernumber"],
+  ["reference", "reference"], ["customerReference", "customerreference"], ["externalId", "externalid"], ["uniqId", "uniqid"], ["cId", "cid"],
+] as const);
+
 /** Normalized key (lowercase, no _ - or spaces) -> our own fixed label + kind. */
 const FIELD_MAP: Record<string, { label: string; kind: FieldKind }> = (() => {
   const m: Record<string, { label: string; kind: FieldKind }> = {};
@@ -123,7 +134,10 @@ const FIELD_MAP: Record<string, { label: string; kind: FieldKind }> = (() => {
   add("amount", "amount", ["amount", "sum", "total", "totalamount", "dealamount", "transactionamount"]);
   add("currency", "currency", ["currency", "currencycode", "coin"]);
   add("pageId", "pageId", ["pageid", "hostedpageid", "pagecode", "pageuniqid", "paymentpageid"]);
-  add("orderRef", "orderRef", ["orderreference", "orderref", "orderid", "ordernumber", "reference", "customerreference", "externalid", "uniqid", "cid"]);
+  // Reference-like aliases each keep their OWN fixed label (never merged), so the line shows which
+  // field came back and which one matched expectedOrderRef. Raw spellings that normalize to the same
+  // alias (order_reference / OrderReference) share that label and count as repeatedKnownKeys.
+  for (const [label, key] of REF_ALIASES) add(label, "orderRef", [key]);
   add("transactionId", "txnId", ["transactionid", "transactioninternalnumber", "transactionnumber", "dealid", "dealnumber"]);
   return m;
 })();
