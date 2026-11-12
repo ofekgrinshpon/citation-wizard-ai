@@ -174,7 +174,9 @@ const Legal = ({ doc }: { doc: LegalDoc }) => {
       <main className="mx-auto max-w-3xl px-4 py-8">
         <article className="space-y-3">{content}</article>
 
-        <nav className="mt-12 flex items-center justify-center gap-4 border-t border-border pt-6 text-xs text-muted-foreground">
+        <nav className="mt-12 flex flex-wrap items-center justify-center gap-4 border-t border-border pt-6 text-xs text-muted-foreground">
+          <a href="/about" className="hover:text-foreground">אודות</a>
+          <a href="/contact" className="hover:text-foreground">צור קשר</a>
           <a href="/terms" className="hover:text-foreground">תנאי שימוש</a>
           <span>·</span>
           <a href="/privacy" className="hover:text-foreground">מדיניות פרטיות</a>

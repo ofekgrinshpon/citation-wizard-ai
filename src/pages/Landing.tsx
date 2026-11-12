@@ -124,12 +124,6 @@ const Landing = () => {
     pricingRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const scrollToContact = () => {
-    contactRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
-
-
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -170,13 +164,15 @@ const Landing = () => {
               כמה זה עולה
             </button>
             <button
-              onClick={scrollToContact}
+              onClick={() => navigate("/contact")}
               className="px-2 md:px-4 py-2 rounded-lg text-xs md:text-sm font-medium text-white/90 hover:text-white hover:bg-white/15 transition-colors"
             >
               יצירת קשר
             </button>
           </div>
 
+
+          <a href="/about" className="px-2 py-2 text-xs md:text-sm font-medium text-white/90 hover:text-white">אודות</a>
 
           {/* Spacer pushes the login button to the far left edge */}
           <div className="flex-1" />
@@ -291,7 +287,7 @@ const Landing = () => {
             תוכנית שמתאימה לקצב הכתיבה שלך
           </h2>
           <p className="text-muted-foreground text-sm md:text-base max-w-2xl mx-auto">
-            שני מסלולים מתוכננים להשקה: שבועי וחודשי, עם מכסת מקורות לכל מחזור חיוב.
+            שני מסלולים מתוכננים להשקה: שבועי וחודשי, בתשלום חד־פעמי וללא חידוש אוטומטי, עם מכסת מקורות לכל תקופת גישה.
           </p>
         </div>
 
@@ -304,6 +300,10 @@ const Landing = () => {
       <footer className="pb-16 px-4 max-w-6xl mx-auto relative z-10">
         <div className="mt-4 flex flex-wrap items-center justify-center gap-3 text-[11px] text-muted-foreground">
 
+          <a href="/about" className="hover:text-foreground transition-colors">אודות</a>
+          <span>·</span>
+          <a href="/contact" className="hover:text-foreground transition-colors">צור קשר</a>
+          <span>·</span>
           <a href="/terms" className="hover:text-foreground transition-colors">תנאי שימוש</a>
           <span>·</span>
           <a href="/privacy" className="hover:text-foreground transition-colors">מדיניות פרטיות</a>

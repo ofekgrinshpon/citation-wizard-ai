@@ -21,6 +21,7 @@ import ResetPassword from "./pages/ResetPassword.tsx";
 import AuthDialog from "./pages/AuthDialog.tsx";
 import VerifiedSources from "./pages/VerifiedSources.tsx";
 import Legal from "./pages/Legal.tsx";
+import BusinessInfo from "./pages/BusinessInfo.tsx";
 import Unsubscribe from "./pages/Unsubscribe.tsx";
 import ResearchJobRedirect from "./pages/ResearchJobRedirect.tsx";
 import PaymentReturn from "./pages/PaymentReturn.tsx";
@@ -118,6 +119,8 @@ const App = () => (
                   <Route path="/legal-qa" element={<LegalQARedirect />} />
                   <Route path="/auth-redirect" element={<AuthRedirect />} />
                   <Route path="/reset-password" element={<ResetPassword />} />
+                  <Route path="/about" element={<BusinessInfo page="about" />} />
+                  <Route path="/contact" element={<BusinessInfo page="contact" />} />
                   <Route path="/terms" element={<Legal doc="terms" />} />
                   <Route path="/privacy" element={<Legal doc="privacy" />} />
                   <Route path="/unsubscribe" element={<Unsubscribe />} />
