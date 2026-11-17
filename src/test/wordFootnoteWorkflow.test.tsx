@@ -1,3 +1,4 @@
+import { bookEditionResult, editionRaw } from "./fixtures/bookEditionResult";
 import {act,fireEvent,render,screen,waitFor,within} from '@testing-library/react';
 import {beforeEach,describe,it,expect,vi} from 'vitest';
 import {WordFootnoteWorkflow} from '../components/WordFootnoteWorkflow';
@@ -230,5 +231,23 @@ describe('inline edited note protection',()=>{
  it('does not allow changed text to masquerade as preserved explanation',async()=>{
   mocks.inspect.mockResolvedValue({notes:[note(original)],skippedNotes:[]});render(<WordFootnoteWorkflow/>);await upload();edit(original.replace('2','12345'));
   select(3,8);expect(screen.getByRole('button',{name:'זה טקסט הסבר — לא לשנות'})).toBeDisabled();expect(screen.getByRole('alert')).toHaveTextContent('אפשר להגן רק');
+ });
+});
+
+describe('Word edition choice',()=>{
+ it('selects from existing records, retaining protected explanation and style preflight',async()=>{
+  const prefix='Explanation. ';const value=prefix+editionRaw;
+  mocks.inspect.mockResolvedValue({notes:[note(value)],skippedNotes:[]});mocks.run.mockResolvedValue(bookEditionResult());
+  render(<WordFootnoteWorkflow/>);await upload();protect(0,prefix.length);review();generate();
+  const choice=await screen.findByRole('button',{name:'1993'});expect(screen.getByRole('button',{name:'אשר תיקון לאזכור 1'})).toBeDisabled();
+  fireEvent.click(choice);fireEvent.click(choice);
+  await waitFor(()=>expect((screen.getByLabelText('התיקון המוצע לאזכור 1') as HTMLTextAreaElement).value).toContain('1993'));
+  expect(mocks.run).toHaveBeenCalledTimes(1);expect(mocks.check.mock.calls.at(-1)?.[2]).toEqual([expect.objectContaining({start:0,end:prefix.length})]);
+  approve();fireEvent.click(screen.getByRole('button',{name:/המשך להורדה/}));fireEvent.click(screen.getByRole('button',{name:/הורדת עותק מתוקן/}));
+  await waitFor(()=>expect(mocks.embed).toHaveBeenCalledTimes(1));expect(mocks.embed.mock.calls[0][1]).toEqual([expect.objectContaining({start:prefix.length,replacement:expect.stringContaining('1993')})]);
+ });
+ it('can leave year missing locally',async()=>{
+  mocks.inspect.mockResolvedValue({notes:[note(editionRaw)],skippedNotes:[]});mocks.run.mockResolvedValue(bookEditionResult());render(<WordFootnoteWorkflow/>);await upload();review();generate();
+  fireEvent.click(await screen.findByRole('button',{name:/להשאיר את השנה חסרה/}));await waitFor(()=>expect(screen.queryByRole('group',{name:'בחירת מהדורת הספר'})).not.toBeInTheDocument());expect(mocks.run).toHaveBeenCalledTimes(1);
  });
 });

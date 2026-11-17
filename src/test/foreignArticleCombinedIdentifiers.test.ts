@@ -104,10 +104,10 @@ describe("combined normalization and identifier whole-page parsing", () => {
     expect(result.articleResolution).toBe("incomplete");
     expect(result.fields).toEqual({});
   });
-  it("does not fetch a page when Search does not select a matching strong source", async () => {
+  it("rescues the exact DOI instead of fetching an unrelated search source", async () => {
     const test = replay(doi, bibtex, "https://law.harvard.edu/unrelated"), result = await test.result;
-    expect(result.identity.matched).toBe(false);
-    expect(test.pages).toEqual([]);
-    expect(test.searches).toHaveLength(2);
+    expect(result.identity.matched).toBe(true);
+    expect(test.pages).toEqual([`https://doi.org/${doi}`]);
+    expect(test.searches).toHaveLength(1);
   });
 });

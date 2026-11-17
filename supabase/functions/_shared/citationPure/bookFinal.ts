@@ -1,6 +1,11 @@
+import { buildBookEditionChoice, selectedBookEditionResponse, type BookEditionChoice } from "./bookEditionChoice.ts";
+import { extractBookPublicationEvidence } from "./bookPublicationEvidence.ts";
+export type { BookEditionChoice, BookEditionChoiceOption } from "./bookEditionChoice.ts";
 /** Bounded book completion and final-text framing. Pure, shared by server and clients.
  * A frame is a format/version discriminator, NOT proof of authority. Authority
  * comes only from server-owned retention read through the authenticated API. */
+import { prepareFreeformHandoff } from "./freeformInterpret.ts";
+import { extractBookIsbn } from "./bookIsbn.ts";
 import { extractBookWork } from "./bookWorks.ts";
 import { acceptCitationCompletion } from "./completion.ts";
 import { renderBook, renderBookChapter, type RenderResult } from "./render.ts";
@@ -17,12 +22,22 @@ export function renderBookFields(kind: "book" | "book_chapter", fields: Record<s
 
 export function eligibleBookCompletion(type: string | null, raw: string) {
   if (type !== "foreign_book" && type !== "foreign_book_chapter") return null;
-  const work = extractBookWork(raw);
+  const identifier = type === "foreign_book" ? extractBookIsbn(raw) : null;
+  if (identifier && !identifier.isbn) return null;
+  if (identifier && !identifier.text) return { kind: "book" as const, fields: {}, wire: {}, suppliedFields: undefined };
+  const work = extractBookWork(identifier?.text ?? raw);
+  if (identifier && (!work || work.preserve || work.fields.unparsedRemainder || !work.explicitNew)) {
+    const handoff = prepareFreeformHandoff(identifier.text);
+    if (handoff?.mode !== "search" || handoff.request.kind !== "book") return null;
+    const wire = handoff.request.parsedFields;
+    if (!wire.authors || !wire.bookTitle || !suppliedLookupFieldsMatch(raw, "book", wire)) return null;
+    return { kind: "book" as const, fields: wire, wire, suppliedFields: undefined };
+  }
   if (!work || work.preserve || work.fields.unparsedRemainder || !work.explicitNew ||
     (work.kind === "book") !== (type === "foreign_book") || !work.fields.authors || !work.fields.bookTitle ||
     (work.kind === "chapter" && !work.fields.chapterTitle)) return null;
   const kind = work.kind === "book" ? "book" : "book_chapter";
-  if (!renderBookFields(kind, { ...work.fields }).missing.some(k => k === "year" || k === "edition")) return null;
+  if (!identifier && !renderBookFields(kind, { ...work.fields }).missing.some(k => k === "year" || k === "edition")) return null;
   const wire: Record<string, string> = {};
   for (const [k, v] of Object.entries(work.fields)) {
     const value = work.suppliedFields?.[k]?.value ?? (typeof v === "string" ? v.trim() : "");
@@ -70,6 +85,19 @@ export function resolveBookCompletion(request: Record<string, unknown>, raw: str
   const supplied = { ...(request.parsedFields as Record<string, string>), ...localFields };
   const accepted = acceptCitationCompletion({ ...request, parsedFields: supplied }, raw, response);
   if (suppliedFields) accepted.suppliedFields = suppliedFields;
+  // Search snippets may identify a work without proving its publication year.
+  for (const key of ["year", "edition"]) {
+    const p = accepted.provenance[key] as Record<string, unknown> | undefined;
+    if (!p || p.basis !== "search_result_explicit") continue;
+    const sources = (response as { sources?: Array<{ url: string; title?: string; snippet?: string }> })?.sources ?? [];
+    const source = sources.find(s => s.url === p.sourceUrl);
+    const facts = extractBookPublicationEvidence(`${source?.title ?? ""} ${source?.snippet ?? ""}`, supplied.bookTitle ?? "");
+    if (facts[key as "year" | "edition"] !== accepted.fields[key]) {
+      delete accepted.fields[key]; delete accepted.provenance[key]; accepted.quarantined.push(key);
+    }
+  }
+  const bookEditionChoice = buildBookEditionChoice(request, raw, response, localFields, suppliedFields, fallbackMissing);
+
   const messages = {
     binding: "תשובת החיפוש סותרת את הקלט, סוג המקור או השיפוט; הקלט נשמר ללא השלמה.",
     jurisdiction: "פרטי השיפוט שהוחזרו סותרים את ראיות הערכאה או מקור הפרסום שסופקו או עוגנו; הקלט נשמר ללא השלמה.",
@@ -83,7 +111,10 @@ export function resolveBookCompletion(request: Record<string, unknown>, raw: str
   if (accepted.quarantined.length) warnings.push("פרטים סותרים או ללא ראיות מספקות לא שולבו: " + accepted.quarantined.join(", ") + ".");
   const rendered = accepted.identityConfirmed ? renderBookFields(kind, { ...accepted.fields, ...supplied }) : null;
   const fl = response && typeof response === "object" ? response as { identity?: { conflicts?: unknown[] } } : null;
-  if (accepted.identityConfirmed && Array.isArray(fl?.identity?.conflicts) && fl.identity.conflicts.length) warnings.push("נמצאו פרטי פרסום סותרים; נשמרו רק השלמות תואמות.");
+  if (accepted.identityConfirmed && Array.isArray(fl?.identity?.conflicts) && fl.identity.conflicts.length) {
+    const marker = fl.identity.conflicts.find(c => typeof c === "string" && /^year:editions:(?:\d{4},){1,3}\d{4}$/.test(c)) as string | undefined;
+    warnings.push(marker ? `נמצאו רשומות לשנים ${marker.slice("year:editions:".length).replace(/,/g, ", ")}. לא נבחרה מהדורה אוטומטית.${bookEditionChoice ? "" : " הוסיפו שנה או ISBN כדי לזהות את המהדורה."}` : "נמצאו פרטי פרסום סותרים; נשמרו רק השלמות תואמות.");
+  }
   if (rendered) {
     warnings.push(...rendered.warnings);
     if (rendered.missing.length) warnings.push(`חסרים פרטים: ${bookMissingSummary(type, rendered.missing)}`);
@@ -93,7 +124,27 @@ export function resolveBookCompletion(request: Record<string, unknown>, raw: str
   accepted.completeness = !accepted.identityConfirmed ? "unconfirmed" : accepted.missing.length ? "partial" : "complete";
   const bits = [...new Set(warnings.filter(Boolean))];
   return { citation, reply: citation + (bits.length ? `\n⚠️ ${bits.join(" ")}` : ""), status: bits.length ? "warning" as const : "valid" as const,
-    warningMsg: bits[0], sourceType: type as "foreign_book" | "foreign_book_chapter", completion: accepted };
+    warningMsg: bits[0], sourceType: type as "foreign_book" | "foreign_book_chapter", completion: accepted, ...(bookEditionChoice ? { bookEditionChoice } : {}) };
+}
+
+/** Local choice only. Revalidate original evidence and exact input, never fetch. */
+export function selectBookEditionChoice(choice: BookEditionChoice, optionId: string, currentRaw: string): ReturnType<typeof resolveBookCompletion> | null {
+  if (choice.version !== 1 || choice.rawInput !== currentRaw || choice.fingerprint !== rawCitationFingerprint(currentRaw)) return null;
+  const validated = buildBookEditionChoice(choice.request, currentRaw, choice.response, choice.localFields, choice.localSourceFields, choice.fallbackMissing);
+  if (!validated) return null;
+  if (optionId === "keep-missing") {
+    const result = resolveBookCompletion(validated.request, currentRaw, validated.response, validated.localFields, validated.localSourceFields, validated.fallbackMissing);
+    delete result.bookEditionChoice;
+    result.warningMsg = "שנת המהדורה נשארה חסרה לפי בחירתכם; לא בוצע חיפוש נוסף.";
+    result.reply = result.citation + "\n⚠️ " + result.warningMsg; result.status = "warning";
+    return result;
+  }
+  const selected = selectedBookEditionResponse(validated, optionId, currentRaw);
+  if (!selected) return null;
+  const result = resolveBookCompletion(validated.request, currentRaw, selected.response, validated.localFields, validated.localSourceFields, validated.fallbackMissing);
+  if (!result.completion.fields.year) return null;
+  delete result.bookEditionChoice;
+  return result;
 }
 
 const PREFIX = "relex:book-final:2\n";

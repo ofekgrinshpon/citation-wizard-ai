@@ -64,6 +64,11 @@ export function pastedCaseRequest(raw: string, contract: PastedCitationContract)
     const bare = raw.match(/^\s*(.+?)[,\s]*[[(]((?:17|18|19|20)\d{2})[\])]\s*\.?\s*$/);
     if (bare && citationBindingText(bare[1]) === citationBindingText(parsedFields.caseName)) parsedFields.year = bare[2];
   }
+  // Preserve the supplied year of an incomplete UK neutral citation.
+  if (contract.jurisdiction === "UK" && !parsedFields.year && parsedFields.caseName) {
+    const partial = raw.match(/^\s*(.+?)[,\s]*\[((?:17|18|19|20)\d{2})\]\s*(?:UKSC|UKHL|UKPC|EWCA(?:\s+(?:Civ|Crim))?|EWHC)\s*\.?\s*$/i);
+    if (partial && citationBindingText(partial[1]) === citationBindingText(parsedFields.caseName)) parsedFields.year = partial[2];
+  }
   return { enabled: true, kind: "case" as const, jurisdiction: contract.jurisdiction === "US" || contract.jurisdiction === "UK" ? contract.jurisdiction : "UNKNOWN", rawInput: raw, parsedFields };
 }
 export function renderPastedCaseResponse(contract: PastedCitationContract, request: ReturnType<typeof pastedCaseRequest>, response: unknown) {

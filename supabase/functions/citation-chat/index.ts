@@ -1686,8 +1686,9 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
     const projectSources = foreign && ["book", "book_chapter"].includes(foreign.kind) && Array.isArray(foreign.sources);
     const knownSources = projectSources && foreign.sources.every((source: unknown) =>
       source !== null && typeof source === "object" && !Array.isArray(source) &&
-      Object.keys(source).every(key => ["url", "title", "tier", "snippet"].includes(key)) &&
-      (!("snippet" in source) || typeof source.snippet === "string"));
+      Object.keys(source).every(key => ["url", "title", "tier", "snippet", "strong"].includes(key)) &&
+      (!("snippet" in source) || typeof source.snippet === "string") &&
+      (!("strong" in source) || typeof source.strong === "boolean"));
     const retainedBody = knownSources ? { ...body, foreignLookup: { ...foreign,
       sources: foreign.sources.map((source: Record<string, unknown>) => ({
         url: source.url, ...("title" in source ? { title: source.title } : {}), tier: source.tier,
@@ -1868,7 +1869,7 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
     const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
     const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 
-    if (pastedContract.route !== "foreign" && SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY && userInput.length >= 2 && foreignLookupRequest?.kind !== "journal_article" && !statuteRequest) {
+    if (pastedContract.route !== "foreign" && SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY && userInput.length >= 2 && !["journal_article", "book", "book_chapter"].includes(foreignLookupRequest?.kind) && !statuteRequest) {
       try {
         const sb = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
         const searchTerm = articleRequest?.raw || userInput
@@ -2082,7 +2083,7 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
         const kindForLookup = freeformPrepared.action === "search" ? freeformPrepared.kind : flKind;
         const jurForLookup = freeformPrepared.action === "search" ? freeformPrepared.jurisdiction : flJur;
         const pplxKey = Deno.env.get("PERPLEXITY_API_KEY");
-        if (pplxKey || kindForLookup === "journal_article") {
+        if (pplxKey || kindForLookup === "journal_article" || kindForLookup === "book") {
           try {
             foreignLookupResult = await runForeignLookup(
               { kind: kindForLookup, jurisdiction: jurForLookup, rawInput: flRaw, parsedFields: parsedForLookup },

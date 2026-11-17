@@ -1,5 +1,6 @@
 /** Pure acceptance boundary for the existing server extraction envelope. No IO. */
 import { buildPastedCitation, citationBindingText } from "../pastedCitation.ts";
+import { extractBookIsbn } from "./bookIsbn.ts";
 import { articleFieldMatches, parseForeignArticleInput } from "../foreignArticle.ts";
 
 const record = (v: unknown): Record<string, unknown> => v && typeof v === "object" && !Array.isArray(v) ? v as Record<string, unknown> : {};
@@ -63,10 +64,15 @@ export function acceptCitationCompletion(request: Record<string, unknown>, raw: 
     out.conflicts.push("chapter_identity_unconfirmed"); return fail("chapter_identity");
   }
   // Server splitParties excludes supplied court/year parentheticals.
-  const name = text(supplied.caseName).split(/[([]/)[0].trim();
+  const caseParties = text(supplied.caseName).match(/^\s*(.+?)\s+v(?:s)?\.?\s+(.+?)(?:\s*[,(\[]|$)/i);
   const identifierArticle = request.kind === "journal_article" && (supplied.doi || supplied.sourceUrl) ? parseForeignArticleInput(raw) : null;
-  const expected = request.kind === "case" && name ? [`parties:${party(name.split(/\s+v(?:s)?\.?\s+/i)[0])} v ${party(name.split(/\s+v(?:s)?\.?\s+/i)[1] ?? "")}`]
+  const expected = request.kind === "case" && caseParties ? [`parties:${party(caseParties[1])} v ${party(caseParties[2])}`]
     : ["articleTitle", "chapterTitle", "bookTitle", "statuteName", "doi", "sourceUrl"].filter(k => (identifierArticle ?? supplied)[k]).map(k => `${k === "doi" || k === "sourceUrl" ? k : "title"}:${text((identifierArticle ?? supplied)[k])}`);
+  const isbn = request.kind === "book" ? extractBookIsbn(raw)?.isbn : undefined;
+  if (isbn) {
+    if (!anchors.includes(`isbn:${isbn}`)) return fail("identity");
+    expected.push(`isbn:${isbn}`);
+  }
   const conflicts = Array.isArray(identity.conflicts) ? identity.conflicts : null;
   // Explicit field conflicts quarantine only that field; identity/record conflicts stop acceptance.
   const fieldConflicts = (conflicts ?? []).filter((v): v is string => typeof v === "string" && /^(conflicting_statute_|(?:year|journal|volume|firstPage|location):)/.test(v));
@@ -105,6 +111,8 @@ export function acceptCitationCompletion(request: Record<string, unknown>, raw: 
       fieldConflicts.some(c => c === `conflicting_statute_${key}` || c.startsWith(`${key}:`)) ||
       (supplied[key] !== undefined && citationBindingText(text(supplied[key])) !== citationBindingText(value)) ||
       grounded[key] !== true || p.value !== value || !bases.has(text(p.basis)) || !urlValid || !source || !meaningful || !recordEvidence || norm(title) !== norm(donorTitle) ||
+      (isbn && (p.basis !== "structured_metadata" || p.sourceUrl !== `https://openlibrary.org/isbn/${isbn}` ||
+        !text(source.snippet).startsWith(`ISBN: ${isbn}`))) ||
       (request.kind === "book_chapter" && !chapterSourceMatches(source))) {
       out.quarantined.push(key); continue;
     }

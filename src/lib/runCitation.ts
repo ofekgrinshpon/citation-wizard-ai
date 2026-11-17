@@ -42,7 +42,7 @@ import { renderUnpublishedLocal } from "@/lib/unpublishedWorkLocal";
 import { renderPeriodicalLocal } from "@/lib/periodicalLocal";
 import { renderBookLocal } from "@/lib/bookLocal";
 import { citationManualChoice } from "@/lib/pastedCitationAdapter";
-import { planCapabilityGate, planCitationEvidence, planLocalCitation, planTypedRequest, resolveCitationResponse, foreignFreeformSourceType, RUNNER_HOST, WORD_HOST } from "@/lib/citationPlanner";
+import { planCapabilityGate, planCitationEvidence, planLocalCitation, planTypedRequest, resolveCitationResponse, foreignFreeformSourceType, needsBoundBookLookup, RUNNER_HOST, WORD_HOST } from "@/lib/citationPlanner";
 import type { ForeignCaseChoice } from "@/lib/foreignCaseChoice";
 import { parseResultOptions, type RetryChoice } from "@/lib/resultOptions";
 import type { CitationManualChoice, PastedCitationContract } from "../../supabase/functions/_shared/pastedCitation";
@@ -120,6 +120,7 @@ export interface RunCitationOptions {
 export interface RunCitationResult {
   /** Present only with `recordChoices`: options built from the lookup's own records. */
   foreignChoice?: ForeignCaseChoice;
+  bookEditionChoice?: import("@/lib/citationPlanner").BookEditionChoice;
   /** Word review: options without records; choosing one sends one new check. */
   retryChoice?: RetryChoice;
   completion?: import("@/lib/citationCompletion").CompletionAcceptance;
@@ -236,7 +237,7 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
   // 1) Verified-source store first — a direct hit costs no credit.
   let verifiedMatch: VerifiedSourceMatch | null = null;
   // AU/CA completion requests never read the verified store (pasted safety precedes cache).
-  if (opts.useVerifiedStore !== false && !pasted.countryLookup) {
+  if (opts.useVerifiedStore !== false && !pasted.countryLookup && !needsBoundBookLookup(sourceType, normalized)) {
     try {
       verifiedMatch = await findVerifiedSourceMatch(normalized);
     } catch {

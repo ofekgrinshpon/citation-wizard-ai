@@ -43,6 +43,7 @@ type Handler = (req: Request) => Promise<Response>;
 
 let handler: Handler;
 const calls: Array<{ url: string; body: string }> = [];
+const finishes: Record<string, unknown>[] = [];
 let script: { hits: Hit[]; page: string | null; throwOnSearch: number | null; searches: number; interruptBody: boolean };
 
 function installHandler() {
@@ -50,10 +51,10 @@ function installHandler() {
     "https://deno.land/std@0.168.0/http/server.ts": { serve: (fn: Handler) => { handler = fn; } },
     "https://esm.sh/@supabase/supabase-js@2": { createClient: () => ({
       auth: { getClaims: async () => ({ data: { claims: { sub: "test-user" } }, error: null }) },
-      rpc: async (name: string, args: Record<string, unknown>) => ({ data: name === "begin_citation_request"
+      rpc: async (name: string, args: Record<string, unknown>) => { if (name === "finish_citation_request") finishes.push(args); return ({ data: name === "begin_citation_request"
         ? { ok: true, execute: true, status: "in_progress", request_id: args._request_id, retry_of_request_id: args._retry_of_request_id ?? null, attempt_token: "fixture-attempt-token" }
         : name === "finish_citation_request" ? { ok: true, status: args._outcome, result_stored: true, refunded: false, refund_receipt: { status: "not_applicable", refunded: false, units_refunded: 0, request_id: args._request_id } }
-        : { ok: true }, error: null }),
+        : { ok: true }, error: null }); },
       from: () => { const chain = { select: () => chain, eq: () => chain, or: () => chain, abortSignal: () => chain, limit: async () => ({ data: [] }), maybeSingle: async () => ({ data: null, error: null }) }; return chain; },
     }) },
     "../_shared/costTelemetry.ts": { trackedFetch: async (url: string, init?: RequestInit) => {
@@ -96,7 +97,7 @@ function installHandler() {
 }
 
 function reset(next: Partial<typeof script> = {}) {
-  calls.length = 0;
+  calls.length = 0; finishes.length = 0;
   script = { hits: [], page: null, throwOnSearch: null, searches: 0, interruptBody: false, ...next };
 }
 
@@ -136,6 +137,44 @@ beforeAll(() => {
 });
 
 describe("real citation-chat handler", () => {
+  it("completes an exact ISBN from one structured record without discovery or formatter", async () => {
+    reset({ page: JSON.stringify({ "ISBN:9780874172041": { title: "National Identity", authors: [{ name: "Anthony D. Smith" }], publish_date: "1993", identifiers: { isbn_13: ["9780874172041"] } } }) });
+    const raw = "ISBN 9780874172041";
+    const plan = planned(raw).typed!;
+    const posted = await post(raw, plan.foreignLookup, "handler-isbn-record");
+    expect(searchCalls()).toHaveLength(0);
+    expect(gatewayCalls()).toHaveLength(0);
+    expect(calls.filter(c => c.url.includes("openlibrary.org"))).toHaveLength(1);
+    const result = resolveCitationResponse(plan, posted.body, CHAT_HOST);
+    expect(result.kind).toBe("terminal");
+    if (result.kind !== "terminal") return;
+    expect(citationTextOnly(result.resolution.citation)).toBe("Anthony D. Smith, National Identity (1993).");
+  });
+
+  it("keeps live book choices but strips transient evidence from recoverable output", async () => {
+    reset({ hits: [1991, 1993].map(year => ({ title: "National Identity — Anthony D. Smith", url: `https://press.example.edu/${year}`, snippet: `Anthony D. Smith, National Identity (${year}).` })) });
+    const raw = "National identity by Smith, Anthony D";
+    const plan = planned(raw);
+    const posted = await post(raw, plan.typed?.foreignLookup, "handler-book-choice");
+    const lookup = posted.body.foreignLookup as { sources: Array<{ strong?: boolean; snippet?: string }>; identity: { conflicts: string[] } };
+    expect(lookup.identity.conflicts).toContain("year:editions:1991,1993");
+    expect(lookup.sources[0].strong).toBe(true);
+    expect(lookup.sources[0].snippet).toBeTruthy();
+    expect(finishes).toHaveLength(1);
+    expect(finishes[0]._result).toBeTruthy();
+    expect(JSON.stringify(finishes[0]._result)).not.toContain('"strong"');
+    expect(JSON.stringify(finishes[0]._result)).not.toContain('"snippet"');
+    expect(finishes[0]._reason).not.toBe("recovery_result_invalid");
+  });
+  it("does not borrow an unrelated work year from a matching book page", async () => {
+    reset({ hits: [{title:"National Identity — Anthony D. Smith",url:"https://press.example.edu/smith",snippet:"Anthony D. Smith, National Identity. Other Work (1999)."}] });
+    const raw = "National identity by Smith, Anthony D";
+    const plan = planned(raw);
+    const posted = await post(raw, plan.typed?.foreignLookup, "handler-book-no-guess");
+    expect((posted.body.foreignLookup as {fields:Record<string,string>}).fields.year).toBeUndefined();
+    expect(gatewayCalls()).toHaveLength(0);
+  });
+
   it("cites the matching Smith edition and does not call the formatter", async () => {
     reset({ hits: [
       { title: "National Identity", url: "https://press.example.edu/joan", snippet: "Joan Other, National Identity (2001)." },

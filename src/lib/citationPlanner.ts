@@ -24,7 +24,10 @@ import { renderUsUnreportedLocal } from "@/lib/usUnreportedLocal";
 import { renderUnpublishedLocal } from "@/lib/unpublishedWorkLocal";
 import { renderPeriodicalLocal } from "@/lib/periodicalLocal";
 import { renderBookLocal } from "@/lib/bookLocal";
-import { eligibleBookCompletion, resolveBookCompletion } from "../../supabase/functions/_shared/citationPure/bookFinal.ts";
+import { extractBookIsbn } from "../../supabase/functions/_shared/citationPure/bookIsbn.ts";
+import type { BookEditionChoice } from "../../supabase/functions/_shared/citationPure/bookEditionChoice.ts";
+export type { BookEditionChoice } from "../../supabase/functions/_shared/citationPure/bookEditionChoice.ts";
+import { eligibleBookCompletion, resolveBookCompletion, selectBookEditionChoice as applyBookEditionChoice } from "../../supabase/functions/_shared/citationPure/bookFinal.ts";
 import { preparePastedCitation, pastedCaseRequest, readPastedCitationSafety, renderPastedCaseResponse } from "@/lib/pastedCitationAdapter";
 import { suppliedLookupFieldsMatch } from "../../supabase/functions/_shared/pastedCitation";
 import { DISABLED_RULEPACK_WARNING, rulepackCapability, rulepackLookupEligible } from "../../supabase/functions/_shared/citationPure/rulepack.ts";
@@ -83,6 +86,7 @@ export interface CitationResolution {
   completion?: ReturnType<typeof acceptCitationCompletion>;
   /** Chat only: record-bound foreign case choice (in memory, never persisted). */
   foreignChoice?: ForeignCaseChoice;
+  bookEditionChoice?: BookEditionChoice;
   /** Chat only: ask which country a case is from instead of guessing (in memory, input-bound). */
   countryQuestion?: CountryQuestion;
   /** Word only: results without records; choosing one sends one new, disclosed check. */
@@ -133,8 +137,15 @@ function freeformModelDecision(p: LocalPlanInput): FreeformSearchRequest | null 
 
 /** Source type for a free-form handoff, so the host can skip the classifier model. */
 export function foreignFreeformSourceType(raw: string): SourceType | null {
+  const identifier = extractBookIsbn(raw);
+  if (identifier && (!identifier.text || eligibleBookCompletion("foreign_book", raw))) return "foreign_book";
   if (detectForeignSource(raw)) return null;
   return prepareFreeformHandoff(raw)?.sourceType ?? null;
+}
+
+/** An exact supplied ISBN must be resolved against a record for that edition. */
+export function needsBoundBookLookup(st: SourceType | null, raw: string): boolean {
+  return st === "foreign_book" && extractBookIsbn(raw) !== null;
 }
 
 /** Phase 2 — terminal local outcomes (render or preserve). Null → continue to typed planning. */
@@ -146,6 +157,12 @@ export function planLocalCitation(p: LocalPlanInput, caps: CitationHostCapabilit
   if (pasted.country && pasted.local) return { origin: pasted.contract.route === "preserve" ? "preserve" : "deterministic", resolution: { ...pasted.local, status: "warning", pastedCitation: pasted.contract, sourceType: pasted.country.family === "case" ? "foreign_case_other" : "foreign" } };
   const gate = planCapabilityGate(p);
   if (gate) return gate;
+  if (st === "foreign_book" && !p.isPinpoint && extractBookIsbn(p.input)) {
+    if (eligibleBookCompletion(st, p.input)) return { origin: null, statutePrep: null };
+    const warningMsg = "ה־ISBN לא תקין או שלא ניתן לקשור אותו בבטחה לפרטי הספר שסופקו; הקלט נשמר ללא השלמה.";
+    const citation = escapeCitationLiteral(p.evidence.pasted.contract.rawInput);
+    return { origin: "preserve", resolution: { citation, reply: `${citation}\n⚠️ ${warningMsg}`, status: "warning", warningMsg, pastedCitation: pasted.contract } };
+  }
   const handoff = freeformDecision(p);
   if (handoff?.mode === "local") return { origin: "preserve", resolution: { ...handoff.resolution, pastedCitation: pasted.contract } };
   if (handoff?.mode === "search") return { origin: null, statutePrep: null };
@@ -341,6 +358,10 @@ export function planTypedRequest(p: LocalPlanInput & { statutePrep: StatutePrepa
       if (plan.kind === "journal_article") articleRequest = foreignLookup as { parsedFields: Record<string, string> };
     }
   }
+  if (foreignLookup?.kind === "book" && extractBookIsbn(p.input)?.isbn) return {
+    kind: "typed", evidence: p.evidence, sourceType: st, statutePrep: p.statutePrep, caseRequest: null, articleRequest: null,
+    foreignLookup, extraBody, localFields, localSourceFields,
+  };
   const caseRequest = pastedCaseRequest(p.canonicalRaw, pasted.contract);
   if (caseRequest) foreignLookup = caseRequest;
   if (caseRequest) articleRequest = null;
@@ -529,6 +550,16 @@ export type ForeignChoiceOutcome =
  * Apply a user's choice between foreign case records. No IO: the chosen record
  * goes through the same acceptance and rendering as a lookup response.
  */
+/** Render a previously found edition without sending another request. */
+export function selectBookEditionChoice(choice: BookEditionChoice, optionId: string, currentRawInput: string, _caps?: CitationHostCapabilities):
+  { kind: "resolved"; resolution: CitationResolution } | { kind: "invalid" | "stale" } {
+  if (choice.rawInput !== currentRawInput) return { kind: "stale" };
+  const selected = applyBookEditionChoice(choice, optionId, currentRawInput);
+  if (!selected) return { kind: "invalid" };
+  const { bookEditionChoice: _choice, ...resolution } = selected;
+  return { kind: "resolved", resolution: { ...resolution, sourceLabel: SOURCE_TYPE_LABELS[resolution.sourceType] } };
+}
+
 export function selectForeignCaseChoice(choice: ForeignCaseChoice, optionId: string, currentInputs: string[], caps: CitationHostCapabilities): ForeignChoiceOutcome {
   const prepared = prepareChoiceSelection(choice, optionId, currentInputs);
   const contract = choice.plan.evidence.pasted.contract;

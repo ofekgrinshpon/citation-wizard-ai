@@ -1,3 +1,4 @@
+import { BookEditionChoiceButtons } from "./BookEditionChoiceButtons";
 import { useState } from "react";
 import { AlertTriangle } from "lucide-react";
 import { FormattedCitation } from "./FormattedCitation";
@@ -27,6 +28,7 @@ interface Message {
   content: string;
   completion?: import("@/lib/citationCompletion").CompletionAcceptance;
   pastedCitation?: import("../../supabase/functions/_shared/pastedCitation").PastedCitationContract;
+  bookEditionChoice?: import("@/lib/citationPlanner").BookEditionChoice;
   foreignChoice?: import("@/lib/foreignCaseChoice").ForeignCaseChoice;
   countryQuestion?: import("@/lib/countryQuestion").CountryQuestion;
 }
@@ -46,6 +48,7 @@ interface MessageBubbleProps {
   onSelectOption?: (optionText: string) => void;
   /** Record-bound foreign case choice (chat only). */
   /** Returns false when the choice was not applied, so the options unlock. */
+  onSelectBookEditionChoice?: (optionId: string) => boolean | void;
   onSelectForeignChoice?: (optionId: string) => boolean | void;
   /** "Which country?" answer (chat only); false keeps the buttons usable. */
   onAnswerCountry?: (country: QuickCountryId) => boolean | void;
@@ -53,13 +56,14 @@ interface MessageBubbleProps {
   foreignScope?: { accountId: string | null | undefined; itemKey: string; input: string };
 }
 
-export function MessageBubble({ msg: rawMsg, detectedType, onChangeSourceType, onEdit, onUpdateAssistantContent, onSelectOption, onSelectForeignChoice, onAnswerCountry, foreignScope }: MessageBubbleProps) {
+export function MessageBubble({ msg: rawMsg, detectedType, onChangeSourceType, onEdit, onUpdateAssistantContent, onSelectOption, onSelectBookEditionChoice, onSelectForeignChoice, onAnswerCountry, foreignScope }: MessageBubbleProps) {
   // Rule 1.10 safety net: enforce Hebrew number-range order on display/copy,
   // including cached messages produced before the server-side fix.
   const msg: Message = rawMsg.role === "assistant"
     ? { ...rawMsg, content: normalizeHebrewNumberRanges(rawMsg.content) }
     : rawMsg;
   const isUser = msg.role === "user";
+  const bookEditionChoice = !isUser && onSelectBookEditionChoice ? msg.bookEditionChoice : undefined;
   const foreignChoice = !isUser && onSelectForeignChoice ? msg.foreignChoice : undefined;
   const countryQuestion = !isUser && onAnswerCountry ? msg.countryQuestion : undefined;
   const { isOfficeAddin, hasDocumentAccess } = useOffice();
@@ -230,7 +234,7 @@ export function MessageBubble({ msg: rawMsg, detectedType, onChangeSourceType, o
             {msg.content.split("\n").map((line, i) => {
               if (!line.trim()) return <br key={i} />;
               // The numbered options are shown as record-bound buttons below.
-              if (foreignChoice && i > 0 && /^\d+\.\s/.test(line.trim())) return null;
+              if ((foreignChoice || bookEditionChoice) && i > 0 && /^\d+\.\s/.test(line.trim())) return null;
 
               if (isRuleLine(line)) {
                 const ruleNum = extractRuleNumber(line);
@@ -317,6 +321,7 @@ export function MessageBubble({ msg: rawMsg, detectedType, onChangeSourceType, o
               );
             })}
 
+            {bookEditionChoice && <BookEditionChoiceButtons key={bookEditionChoice.fingerprint} choice={bookEditionChoice} onSelect={onSelectBookEditionChoice!} />}
             {foreignChoice && (
               <ForeignCaseChoiceButtons key={`${foreignChoice.stage}|${foreignChoice.options.map((o) => o.id).join(",")}`} choice={foreignChoice} onSelect={onSelectForeignChoice!} />
             )}

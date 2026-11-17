@@ -1,3 +1,4 @@
+import { bookEditionResult, editionRaw } from "./fixtures/bookEditionResult";
 /**
  * Stage B corrective — BibliographyGenerator through the real component,
  * the real BibliographyProvider (localStorage) and real copy serializers.
@@ -9,6 +10,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
 const b = vi.hoisted(() => ({
+  account: "u1", project: "bib-project",
   copyRichText: vi.fn(async (_html: string, _plain: string) => {}),
   runCitation: vi.fn(),
   toast: Object.assign(vi.fn(), { error: vi.fn(), success: vi.fn(), message: vi.fn(), info: vi.fn() }),
@@ -23,8 +25,8 @@ vi.mock("@/integrations/supabase/client", () => ({ supabase: {
   auth: { onAuthStateChange: vi.fn(() => ({ data: { subscription: { unsubscribe: vi.fn() } } })),
     getSession: vi.fn(async () => ({ data: { session: null } })), getUser: vi.fn(async () => ({ data: { user: null } })) },
 } }));
-vi.mock("@/hooks/useAuth", () => ({ useAuth: () => ({ user: { id: "u1" }, isAdmin: false, isAdminResolved: true }) }));
-vi.mock("@/hooks/useProjects", () => ({ useProjects: () => ({ currentProject: { id: "bib-project" } }) }));
+vi.mock("@/hooks/useAuth", () => ({ useAuth: () => ({ user: { id: b.account }, isAdmin: false, isAdminResolved: true }) }));
+vi.mock("@/hooks/useProjects", () => ({ useProjects: () => ({ currentProject: { id: b.project } }) }));
 vi.mock("sonner", () => ({ toast: b.toast }));
 
 import { BibliographyGenerator } from "@/components/BibliographyGenerator";
@@ -54,6 +56,7 @@ async function intakeAndCommit(raw: string) {
 
 beforeEach(() => {
   vi.clearAllMocks();
+  b.account="u1"; b.project="bib-project";
   vi.stubGlobal("crypto", webcrypto);
   vi.stubGlobal("fetch", vi.fn(() => { throw new Error("Live network forbidden"); }));
   localStorage.clear();
@@ -164,4 +167,39 @@ describe("Bibliography category moves", () => {
     expect(screen.getByRole("combobox", { name: "העבר לקטגוריה: Custom **case citation** (2020)" })).toHaveValue("caselaw_district");
     expect(b.runCitation).not.toHaveBeenCalled();
   });
+});
+
+describe('bibliography edition selection from existing evidence',()=>{
+  it('selects a year locally, preserves foreign book category and never persists the choice',async()=>{
+    b.runCitation.mockResolvedValue(bookEditionResult());
+    mount();fireEvent.change(screen.getByRole('textbox'),{target:{value:editionRaw}});
+    fireEvent.click(screen.getByRole('button',{name:/שלח לבדיקה/}));
+    const choose=await screen.findByRole('button',{name:'1993'});
+    expect(screen.getByRole('button',{name:/הוסף הכל לביבליוגרפיה/})).toBeDisabled();
+    fireEvent.click(choose);fireEvent.click(choose);
+    await waitFor(()=>expect(screen.getByRole('button',{name:/הוסף הכל לביבליוגרפיה/})).toBeEnabled());
+    fireEvent.click(screen.getByRole('button',{name:/הוסף הכל לביבליוגרפיה/}));
+    expect(screen.getByRole('region',{name:'קטגוריה: ספרים לועזיים'})).toHaveTextContent('1993');
+    expect(b.runCitation).toHaveBeenCalledTimes(1);
+    expect(JSON.stringify(localStorage)).not.toContain('bookEditionChoice');
+  });
+  it('can explicitly leave the year missing without another lookup',async()=>{
+    b.runCitation.mockResolvedValue(bookEditionResult());mount();fireEvent.change(screen.getByRole('textbox'),{target:{value:editionRaw}});fireEvent.click(screen.getByRole('button',{name:/שלח לבדיקה/}));
+    fireEvent.click(await screen.findByRole('button',{name:/להשאיר את השנה חסרה/}));
+    await waitFor(()=>expect(screen.getByRole('button',{name:/הוסף הכל לביבליוגרפיה/})).toBeEnabled());
+    expect(b.runCitation).toHaveBeenCalledTimes(1);expect(screen.queryByRole('group',{name:'בחירת מהדורת הספר'})).not.toBeInTheDocument();
+  });
+  for(const scope of ['account','project'] as const) it(`discards edition choices on ${scope} change`,async()=>{
+    b.runCitation.mockResolvedValue(bookEditionResult());const view=mount();fireEvent.change(screen.getByRole('textbox'),{target:{value:editionRaw}});fireEvent.click(screen.getByRole('button',{name:/שלח לבדיקה/}));
+    const stale=await screen.findByRole('button',{name:'1993'});b[scope]='other';
+    view.rerender(<TooltipProvider><BibliographyProvider><BibliographyGenerator /></BibliographyProvider></TooltipProvider>);
+    fireEvent.click(stale);expect(screen.queryByRole('group',{name:'בחירת מהדורת הספר'})).not.toBeInTheDocument();expect(b.runCitation).toHaveBeenCalledTimes(1);
+  });
+});
+
+it('invalidates an edition choice when the citation is manually edited',async()=>{
+  b.runCitation.mockResolvedValue(bookEditionResult());mount();fireEvent.change(screen.getByRole('textbox'),{target:{value:editionRaw}});fireEvent.click(screen.getByRole('button',{name:/שלח לבדיקה/}));
+  const stale=await screen.findByRole('button',{name:'1993'});fireEvent.click(screen.getByRole('button',{name:/✏️ ערוך/}));
+  fireEvent.change(screen.getByPlaceholderText('הקלד את האזכור המלא...'),{target:{value:'Manual book (2001)'}});fireEvent.click(screen.getByRole('button',{name:'שמור'}));fireEvent.click(stale);
+  expect(screen.queryByRole('group',{name:'בחירת מהדורת הספר'})).not.toBeInTheDocument();expect(screen.getByText('Manual book (2001)')).toBeInTheDocument();expect(b.runCitation).toHaveBeenCalledTimes(1);
 });

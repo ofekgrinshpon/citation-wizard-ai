@@ -1,3 +1,4 @@
+import { BookEditionChoiceButtons } from "./BookEditionChoiceButtons";
 import { CitationRequestStatusLink } from "@/components/CitationRequestStatusLink";
 import { useState, useEffect, useRef } from "react";
 import { PartyNameCheck } from "./PartyNameCheck";
@@ -13,6 +14,7 @@ import { ForeignCaseChoiceButtons } from "./ForeignCaseChoiceButtons";
 
 export interface ReviewCardCell {
   /** Word review only: record-bound choice between foreign rulings or parallel reports (in memory). */
+  bookEditionChoice?: import("@/lib/citationPlanner").BookEditionChoice;
   foreignChoice?: import("@/lib/foreignCaseChoice").ForeignCaseChoice;
   /** Word review only: options without records; choosing one sends one new check. */
   retryChoice?: RetryChoice;
@@ -56,6 +58,7 @@ interface Props {
   /** Local foreign-source classification scope (account + stable item key). */
   foreignScope?: { accountId: string | null | undefined; itemKey: string };
   /** Word review: apply a choice from `cell.foreignChoice` (no new request). */
+  onSelectBookEdition?: (id: number, optionId: string) => void;
   onSelectForeignChoice?: (id: number, optionId: string) => void;
   /** Word review: the text the next check will send (edited text, or the document text). */
   wordCheckText?: string;
@@ -136,6 +139,7 @@ export function FootnoteReviewCard({
   originLabel,
   hideRemove,
   foreignScope,
+  onSelectBookEdition,
   onSelectForeignChoice,
   wordCheckText,
   onSelectRetry,
@@ -177,7 +181,7 @@ export function FootnoteReviewCard({
   if (wordOriginal !== undefined) return <article aria-label={`בדיקת אזכור ${cell.id}`} className={`space-y-4 rounded-xl border p-4 ${isApproved ? "border-emerald-300 bg-emerald-50/30" : "border-border bg-background"}`}>
     <div className="flex flex-wrap items-center justify-between gap-2">
       <h5 className="font-semibold">{wordLabel ?? `אזכור ${cell.id}`}</h5>
-      <span role="status" aria-live="polite" className={`rounded-full px-3 py-1 text-xs font-medium ${statusPill.cls}`}>{isLoading ? "בבדיקה…" : isError ? "הבדיקה לא הושלמה" : isApproved ? "אושר לעותק החדש" : cell.output ? "ממתין לאישור שלך" : cell.foreignChoice || cell.retryChoice ? "ממתין לבחירה שלך" : "מוכן לבדיקה"}</span>
+      <span role="status" aria-live="polite" className={`rounded-full px-3 py-1 text-xs font-medium ${statusPill.cls}`}>{isLoading ? "בבדיקה…" : isError ? "הבדיקה לא הושלמה" : isApproved ? "אושר לעותק החדש" : cell.bookEditionChoice ? "ממתין לבחירת מהדורה" : cell.output ? "ממתין לאישור שלך" : cell.foreignChoice || cell.retryChoice ? "ממתין לבחירה שלך" : "מוכן לבדיקה"}</span>
     </div>
     <div className="grid gap-4 md:grid-cols-2">
       <div><p className="mb-2 text-sm font-medium">הנוסח במסמך</p><p dir={lineDirection(wordOriginal)} className="whitespace-pre-wrap break-words rounded-lg bg-muted/40 p-3 text-start text-base leading-7">{wordOriginal}</p>
@@ -216,6 +220,7 @@ export function FootnoteReviewCard({
       </div>
     </div>
     {cell.warningMsg && <p className="rounded-lg bg-amber-50 p-3 text-sm text-amber-950">{cell.warningMsg}</p>}
+    {cell.bookEditionChoice && onSelectBookEdition && !isLoading && !isError && <BookEditionChoiceButtons key={cell.bookEditionChoice.fingerprint} choice={cell.bookEditionChoice} disabled={disabled} onSelect={optionId => onSelectBookEdition(cell.id, optionId)} />}
     {cell.foreignChoice && onSelectForeignChoice && !isLoading && !isError && <div className="rounded-lg border border-primary/20 bg-primary/5 p-3">
       <p className="text-sm font-medium">{cell.foreignChoice.stage === "decision" ? "נמצאו כמה פסקי דין אפשריים. בחרו את הנכון:" : "נמצאו כמה מראי מקום מקבילים לאותו פסק דין. בחרו את מראה המקום הרצוי:"}</p>
       <p className="text-xs text-muted-foreground">הבחירה משתמשת בתוצאות שכבר נמצאו ואינה שולחת בקשה נוספת.</p>

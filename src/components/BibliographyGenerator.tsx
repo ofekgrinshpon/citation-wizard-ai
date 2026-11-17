@@ -1,3 +1,7 @@
+import { BookEditionChoiceButtons } from "./BookEditionChoiceButtons";
+import { selectBookEditionChoice, RUNNER_HOST, type BookEditionChoice } from "@/lib/citationPlanner";
+import { normalizeAbbreviations } from "@/data/abbreviations";
+import { useProjects } from "@/hooks/useProjects";
 import type { CitationManualChoice } from "../../supabase/functions/_shared/pastedCitation";
 import { CitationRequestStatusLink } from "@/components/CitationRequestStatusLink";
 import { ForeignSourcePicker } from "./ForeignSourcePicker";
@@ -22,6 +26,7 @@ import type { SourceType } from "@/data/abbreviations";
 type ReviewStatus = "ok" | "needs_choice" | "error" | "loading";
 
 interface ReviewItem {
+  bookEditionChoice?: BookEditionChoice;
   completion?: import("@/lib/runCitation").RunCitationResult["completion"];
   pastedCitation?: import("@/lib/runCitation").RunCitationResult["pastedCitation"];
   id: string;
@@ -87,7 +92,9 @@ const CATEGORY_TO_SOURCE_TYPE: Partial<Record<BibSourceCategory, SourceType>> = 
 
 export function BibliographyGenerator() {
   const { user } = useAuth();
-  const rowGuard = useCitationRowGuard(user?.id ?? null);
+  const { currentProject } = useProjects();
+  const reviewScope = `${user?.id ?? ""}:${currentProject?.id ?? ""}`;
+  const rowGuard = useCitationRowGuard(reviewScope);
   const { sortedEntries, addEntries, removeEntry, clearAll, moveEntry } = useBibliography();
   const draggedEntry = useRef<string | null>(null);
   const [moveNotice, setMoveNotice] = useState("");
@@ -111,7 +118,7 @@ export function BibliographyGenerator() {
     setLoading(false);
     setProgress(null);
     setServiceOutage(null);
-  }, [user?.id, rowGuard]);
+  }, [reviewScope, rowGuard]);
   /** Set when every row failed with the same service-level error (AI provider outage). */
   const [serviceOutage, setServiceOutage] = useState<string | null>(null);
 
@@ -205,19 +212,20 @@ export function BibliographyGenerator() {
         // Disambiguation/locally unusable success is already delivered. Keep
         // its exact result; the generic action may not start another paid call.
         recovery: Object.freeze({ retry: async () => result }),
-        sourceTypeOverride: sourceTypeHint,
+        sourceTypeOverride: sourceTypeHint ?? (result.bookEditionChoice ? "foreign_books" : undefined),
       };
     }
     return {
       rawInput,
-      status: "ok",
+      status: result.bookEditionChoice ? "needs_choice" : "ok",
+      bookEditionChoice: result.bookEditionChoice,
       citation,
       isVerified: result.fromVerifiedStore,
       completion: result.completion, pastedCitation: result.pastedCitation,
       options: [],
       warningMsg: result.warningMsg ?? warnings[0],
       warnings,
-      sourceTypeOverride: sourceTypeHint,
+      sourceTypeOverride: sourceTypeHint ?? (result.bookEditionChoice ? "foreign_books" : undefined),
     };
   };
 
@@ -356,7 +364,7 @@ export function BibliographyGenerator() {
   const updateItem = (id: string, patch: Partial<ReviewItem>) => {
     if ("editValue" in patch || "sourceTypeOverride" in patch) {
       rowGuard.invalidate(id);
-      patch = { ...patch, citationRetry: undefined, requestId: undefined, recovery: undefined };
+      patch = { ...patch, bookEditionChoice: undefined, ...(reviewItemsRef.current.find(it => it.id === id)?.bookEditionChoice ? { status: "error" as const } : {}), citationRetry: undefined, requestId: undefined, recovery: undefined };
     }
     setReviewItems((prev) => prev.map((it) => (it.id === id ? { ...it, ...patch } : it)));
   };
@@ -368,6 +376,26 @@ export function BibliographyGenerator() {
 
   const pickDisambiguation = (id: string, chosen: string) => {
     updateItem(id, { status: "ok", citation: cleanCitation(chosen), editValue: cleanCitation(chosen), options: [], completion: undefined, pastedCitation: undefined });
+  };
+
+  const pickEdition = (id: string, optionId: string) => {
+    const item = reviewItemsRef.current.find(it => it.id === id);
+    const choice = item?.bookEditionChoice;
+    if (!item || !choice || item.isEditing || item.status !== "needs_choice") return;
+    const current = item.rawInput;
+    const outcome = selectBookEditionChoice(choice, optionId, choice.rawInput === current ? current : normalizeAbbreviations(current), RUNNER_HOST);
+    rowGuard.invalidate(id);
+    setReviewItems(old => old.map(it => {
+      if (it.id !== id || it.bookEditionChoice !== choice || it.rawInput !== current) return it;
+      if (outcome.kind !== "resolved") return { ...it, bookEditionChoice: undefined, status: "error", errorMsg: "הנוסח השתנה או שהבחירה אינה תקינה. יש לבדוק שוב." };
+      const result = outcome.resolution;
+      const split = splitCitationWarnings(cleanCitation(result.citation));
+      return { ...it, bookEditionChoice: undefined, status: "ok", citation: split.citation, editValue: split.citation, isVerified: false, completion: result.completion, warningMsg: result.warningMsg, warnings: mergeWarnings(split.warnings, result.warningMsg), sourceTypeOverride: it.sourceTypeOverride ?? "foreign_books" };
+    }));
+  };
+  const bindEdition = (item: ReviewItem) => {
+    const handlers = new Map([...(item.bookEditionChoice?.options.map(option => option.id) ?? []), "keep-missing"].map(id => [id, rowGuard.bind(item.id, () => pickEdition(item.id, id))]));
+    return (id: string) => handlers.get(id)?.();
   };
 
   const startEdit = (id: string) => {
@@ -389,7 +417,7 @@ export function BibliographyGenerator() {
         const v = it.editValue.trim();
         if (!v) return it;
         if (v === it.citation) return { ...it, isEditing: false };
-        return { ...it, isEditing: false, citation: v, status: "ok", isVerified: false, options: [], errorMsg: undefined, warningMsg: undefined, warnings: undefined, completion: undefined, pastedCitation: undefined, citationRetry: undefined, requestId: undefined, recovery: undefined };
+        return { ...it, isEditing: false, bookEditionChoice: undefined, citation: v, status: "ok", isVerified: false, options: [], errorMsg: undefined, warningMsg: undefined, warnings: undefined, completion: undefined, pastedCitation: undefined, citationRetry: undefined, requestId: undefined, recovery: undefined };
       }),
     );
   };
@@ -412,7 +440,7 @@ export function BibliographyGenerator() {
     const plan = hintOverride === undefined && !explicitRetry && !recovery
       ? planForItem(user?.id, `bib:${item.classificationKey}`, query) : null;
     setReviewItems((prev) => prev.map((it) => it.id === id
-      ? { ...it, status: "loading", completion: undefined, pastedCitation: undefined, isEditing: false, sourceTypeOverride: hint, citationRetry: undefined, requestId: undefined } : it));
+      ? { ...it, bookEditionChoice: undefined, status: "loading", completion: undefined, pastedCitation: undefined, isEditing: false, sourceTypeOverride: hint, citationRetry: undefined, requestId: undefined } : it));
     try {
       const r = await lookupOneSafe(query, hint, job.isCurrent, explicitRetry ?? recovery, plan?.sourceType, plan?.manualChoice);
       if (!job.isCurrent()) return;
@@ -440,7 +468,7 @@ export function BibliographyGenerator() {
       const v = it.editValue?.trim();
       if (!v) return { ...it, isEditing: false };
       if (v === it.citation) return { ...it, isEditing: false };
-      return { ...it, isEditing: false, citation: v, status: "ok" as ReviewStatus, isVerified: false, options: [], errorMsg: undefined, warningMsg: undefined, warnings: undefined, completion: undefined, pastedCitation: undefined, citationRetry: undefined, requestId: undefined, recovery: undefined };
+      return { ...it, isEditing: false, bookEditionChoice: undefined, citation: v, status: "ok" as ReviewStatus, isVerified: false, options: [], errorMsg: undefined, warningMsg: undefined, warnings: undefined, completion: undefined, pastedCitation: undefined, citationRetry: undefined, requestId: undefined, recovery: undefined };
     });
     if (flushed !== reviewItems) setReviewItems(flushed);
 
@@ -653,6 +681,7 @@ export function BibliographyGenerator() {
               <ReviewRow
                 key={item.id}
                 item={item}
+                onPickEdition={bindEdition(item)}
                 onStartEdit={() => startEdit(item.id)}
                 onSaveEdit={() => saveEdit(item.id)}
                 onCancelEdit={() => cancelEdit(item.id)}
@@ -794,6 +823,7 @@ function StepBadge({ n, label, active, done }: { n: number; label: string; activ
 
 function ReviewRow({
   item,
+  onPickEdition,
   onStartEdit,
   onSaveEdit,
   onCancelEdit,
@@ -806,6 +836,7 @@ function ReviewRow({
   accountId,
 }: {
   item: ReviewItem;
+  onPickEdition: (id: string) => void;
   onStartEdit: () => void;
   onSaveEdit: () => void;
   onCancelEdit: () => void;
@@ -947,6 +978,8 @@ function ReviewRow({
             </button>
           </div>
         </div>
+      ) : item.bookEditionChoice && item.status === "needs_choice" ? (
+        <div className="space-y-2"><FormattedCitation text={item.citation} /><BookEditionChoiceButtons key={item.bookEditionChoice.fingerprint} choice={item.bookEditionChoice} onSelect={onPickEdition} /></div>
       ) : item.status === "needs_choice" ? (
         <div className="space-y-1.5">
           <p className="text-[11px] text-muted-foreground">בחר את הפסיקה הנכונה:</p>

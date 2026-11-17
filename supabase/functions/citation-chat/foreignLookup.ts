@@ -1,3 +1,4 @@
+import { extractBookPublicationEvidence } from "../_shared/citationPure/bookPublicationEvidence.ts";
 /**
  * Milestone 2B — grounded foreign source lookup.
  *
@@ -54,7 +55,7 @@ export interface ForeignLookupResult {
     string,
     { value: string; sourceUrl?: string; sourceTitle?: string; basis: GroundingBasis }
   >;
-  sources: Array<{ url: string; title?: string; snippet?: string; tier: "tier1" | "tier2" }>;
+  sources: Array<{ url: string; title?: string; snippet?: string; strong?: boolean; tier: "tier1" | "tier2" }>;
   identity: {
     matched: boolean;
     anchors: string[];
@@ -102,6 +103,8 @@ import {
   parseForeignArticleInput, articleRecordsFromSnippet, articleRecordFromPage,
   articleHeadingMatches, articleFieldMatches, enrichArticleAuthors, type ArticleRecord,
 } from "../_shared/foreignArticle.ts";
+import { extractBookIsbn, normalizeBookIsbn } from "../_shared/citationPure/bookIsbn.ts";
+import { eligibleBookCompletion } from "../_shared/citationPure/bookFinal.ts";
 import { extractWorkIdentifiers, normalizeDoi, normalizeWorkUrl } from "../_shared/workIdentifiers.ts";
 import {
   bindChainsToCaption, decisionLabel, extractLocationChains, groundDecisionFields, groupCaseDecisions,
@@ -636,6 +639,7 @@ async function fetchPageText(
   observer?: CitationDiagnosticObserver,
   tier: CitationDiagnosticTier = "tier1",
   budget?: CitationBudget,
+  accept?: string,
 ): Promise<string | null> {
   let status: number | null = null;
   let reading = false;
@@ -653,7 +657,7 @@ async function fetchPageText(
     const ctrl = new AbortController();
     const timer = setTimeout(() => { timedOut = true; ctrl.abort(); }, 10_000);
     try {
-      const resp = await doFetch(url, { signal: ctrl.signal });
+      const resp = await doFetch(url, { signal: ctrl.signal, ...(accept ? { headers: { Accept: accept } } : {}) });
       if (observer) status = resp.status;
       if (!resp.ok) {
         safeObserveCitationDiagnostic(observer, { type: "page", tier, status: "http_error", httpStatus: status });
@@ -911,7 +915,8 @@ async function lookupArticle(
       return;
     }
     inspected = true;
-    const page = await fetchPageText(source.url, doFetch, observer, tier, budget);
+    const page = await fetchPageText(source.url, doFetch, observer, tier, budget,
+      supplied.doi && normalizeDoi(source.url) === supplied.doi ? "application/x-bibtex" : undefined);
     if (!page) return;
     // Self-identifying HTML metadata or one complete exported article record;
     // never strip and scan page bodies containing references to other works.
@@ -922,6 +927,12 @@ async function lookupArticle(
     }
   };
   await discover("tier1");
+  // Exact DOI resolver rescue shares the same bounded page budget and validators.
+  if (!records.length && supplied.doi && !supplied.sourceUrl && !sources.some(source => normalizeDoi(source.url) === supplied.doi)) {
+    const url = `https://doi.org/${supplied.doi.split("/").map(encodeURIComponent).join("/")}`;
+    sources.unshift({ url, tier: "tier1", strong: true });
+    result.sources.push({ url, tier: "tier1" });
+  }
   await inspect("tier1");
   // An irrelevant strong host or a conflicting record no longer blocks rescue.
   if (!records.length && canChargeSearch(budget)) {
@@ -1141,6 +1152,51 @@ async function lookupStatute(
   return result;
 }
 
+/** Resolve one user-supplied public identifier, never send the pasted citation. */
+async function lookupBookIsbn(input: ForeignLookupInput, empty: ForeignLookupResult,
+  doFetch: typeof fetch, budget: CitationBudget): Promise<ForeignLookupResult> {
+  const isbn = extractBookIsbn(input.rawInput)?.isbn;
+  const local = eligibleBookCompletion("foreign_book", input.rawInput);
+  if (!isbn || !local || input.jurisdiction !== "OTHER") return empty;
+  const key = `ISBN:${isbn}`;
+  const endpoint = new URL("https://openlibrary.org/api/books");
+  endpoint.search = new URLSearchParams({ bibkeys: key, jscmd: "data", format: "json" }).toString();
+  const page = await fetchPageText(endpoint.href, (url, init) => doFetch(url, { ...init, redirect: "error" }),
+    undefined, "tier1", budget, "application/json");
+  if (!page || page.length > 256_000) return { ...empty, error: "isbn_lookup_unavailable" };
+  const obj = (x: unknown): Record<string, unknown> => x && typeof x === "object" && !Array.isArray(x) ? x as Record<string, unknown> : {};
+  const field = (x: unknown): string => typeof x === "string" && x.length <= 500 && !/[\p{Cc}\p{Cf}]/u.test(x) ? x.trim() : "";
+  try {
+    const rec = obj(obj(JSON.parse(page))[key]);
+    const ids = obj(rec.identifiers);
+    const isbnValues = [ids.isbn_10, ids.isbn_13].flatMap(v => Array.isArray(v) ? v : []);
+    if (!isbnValues.some(v => normalizeBookIsbn(field(v)) === isbn)) return empty;
+    const title = field(rec.title);
+    const subtitle = field(rec.subtitle);
+    const names = Array.isArray(rec.authors) ? rec.authors.map(v => field(obj(v).name)) : [];
+    const authors = names.length && names.length <= 20 && names.every(Boolean) ? names.join(", ") : "";
+    const date = field(rec.publish_date);
+    const years = date.match(/\b[12]\d{3}\b/g) ?? [];
+    const year = years.length === 1 && !/copyright|\bc\s*[12]\d{3}|[©?]/i.test(date) ? years[0] : "";
+    const bookTitle = subtitle ? `${title}: ${subtitle}` : title;
+    const supplied = local.fields as Record<string, string>;
+    const titleKey = (value: string) => value.normalize("NFKC").toLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim();
+    if (!title || (supplied.bookTitle && ![title, bookTitle].some(v => titleKey(v) === titleKey(supplied.bookTitle))) ||
+        (supplied.authors && (!authors || authorEvidenceStatus(supplied.authors, authors) !== "match")) ||
+        (supplied.year && year && supplied.year !== year) || supplied.edition || supplied.volume ||
+        (!supplied.year && !year) || (!supplied.authors && !authors)) return empty;
+    const sourceUrl = `https://openlibrary.org/isbn/${isbn}`;
+    const sourceTitle = `${bookTitle} — Open Library`;
+    const fields = Object.fromEntries(Object.entries({ bookTitle, authors, year }).filter(([k, v]) => v && !supplied[k]));
+    return { ...empty, fields,
+      grounded: Object.fromEntries(Object.keys(fields).map(k => [k, true])),
+      provenance: Object.fromEntries(Object.entries(fields).map(([k, value]) => [k, { value, sourceUrl, sourceTitle, basis: "structured_metadata" as const }])),
+      sources: [{ url: sourceUrl, title: sourceTitle, snippet: `ISBN: ${isbn}${year ? `; Publication year: ${year}` : ""}`, tier: "tier1" }],
+      identity: { matched: true, anchors: [`isbn:${isbn}`, ...(supplied.bookTitle ? [`title:${supplied.bookTitle}`] : [])], conflicts: [] },
+    };
+  } catch { return { ...empty, error: "isbn_lookup_unavailable" }; }
+}
+
 export async function runForeignLookup(
   input: ForeignLookupInput,
   deps?: LookupDeps,
@@ -1155,6 +1211,8 @@ export async function runForeignLookup(
     identity: { matched: false, anchors: [], conflicts: [] },
     diagnostics: { tier1Queried: false, tier2Fired: false },
   };
+  if (input.kind === "book" && extractBookIsbn(input.rawInput)) return lookupBookIsbn(
+    input, empty, deps?.fetchImpl ?? trackedFetch, deps?.budget ?? createCitationBudget());
   const apiKey = deps?.apiKey ?? null;
   if (!apiKey) {
     const result = input.kind === "journal_article"
@@ -1246,7 +1304,9 @@ export async function runForeignLookup(
       const jurs: Array<"US" | "UK"> = input.jurisdiction === "US" || input.jurisdiction === "UK" ? [input.jurisdiction] : ["US", "UK"];
       return jurs.some((j) => boundChains(s, j).length > 0 || nonLocationCase(s, j));
     }
-    const w = extractWorkFromEvidence(`${s.title ?? ""} ${s.snippet ?? ""}`, input.kind, s.title);
+    const w = input.kind === "book" || input.kind === "book_chapter"
+      ? extractBookPublicationEvidence(`${s.title ?? ""} ${s.snippet ?? ""}`, input.parsedFields?.bookTitle ?? titleHint ?? "")
+      : extractWorkFromEvidence(`${s.title ?? ""} ${s.snippet ?? ""}`, input.kind, s.title);
     return Object.values(w).some((v) => typeof v === "string" && v.length > 0);
   });
   const toSources = (rows: Array<{ title?: string; url?: string; snippet?: string; tier: "tier1" | "tier2" }>): LookupSource[] => {
@@ -1291,7 +1351,7 @@ export async function runForeignLookup(
   // Record sources + strength.
   const sources = toSources(results);
   for (const s of sources) {
-    empty.sources.push({ url: s.url, title: s.title, tier: s.tier, snippet: s.snippet } as LookupSource & { tier: "tier1" | "tier2" });
+    empty.sources.push({ url: s.url, title: s.title, tier: s.tier, snippet: s.snippet, ...(input.kind === "book" ? { strong: s.strong && matchesIdentity(s) } : {}) } as LookupSource & { tier: "tier1" | "tier2" });
   }
 
   // ── Identity matching ──
@@ -1484,6 +1544,7 @@ export async function runForeignLookup(
         decisionDate: c.decisionDate,
       };
     }
+    if (input.kind === "book" || input.kind === "book_chapter") return extractBookPublicationEvidence(text, input.parsedFields?.bookTitle ?? titleHint ?? "");
     const w = extractWorkFromEvidence(text, input.kind, pageTitle);
     return {
       volume: w.volume,
@@ -1611,7 +1672,11 @@ export async function runForeignLookup(
     const values = (field: string) => new Set((byField.get(field) ?? []).map((candidate) => candidate.value));
     // A year and an edition describe one publication. Disagreeing years mean the
     // edition stated by only one of those records is not a shared fact.
-    if (values("year").size > 1) { byField.delete("year"); byField.delete("edition"); }
+    if (values("year").size > 1) {
+      const years = [...values("year")].sort();
+      if (years.length <= 4) empty.identity.conflicts.push(`year:editions:${years.join(",")}`);
+      byField.delete("year"); byField.delete("edition");
+    }
     if (values("edition").size > 1) { byField.delete("edition"); byField.delete("year"); }
     const yearDonors = new Set((byField.get("year") ?? []).map((candidate) => candidate.donor.url));
     const editionDonors = new Set((byField.get("edition") ?? []).map((candidate) => candidate.donor.url));
