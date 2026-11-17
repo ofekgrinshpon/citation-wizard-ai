@@ -1,4 +1,5 @@
-import { mapEditedWordInput } from "@/lib/wordInputOverride";
+import { Pencil } from "lucide-react";
+import { mapEditedWordInput, wordEditCoordinates, editedProtection } from "@/lib/wordInputOverride";
 import { FormattedCitation } from "@/components/FormattedCitation";
 import { mapWordSources, validateWordSource, type WordMappedSource } from "@/lib/wordSourceMap";
 import { proposeWordRepeats, invalidateWordDependents } from "@/lib/wordRepeatContext";
@@ -119,6 +120,14 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
   const selectSpan = (noteId: string, start: number, end: number) => {
     if (lock.current || start === end) return;
     const note = session?.notes.find(n => n.id === noteId);
+    const edited = note && inputEdits[noteId];
+    if (note && edited !== undefined) {
+      const originalSpan = wordEditCoordinates(note.text,edited).toOriginal({start,end});
+      if (!originalSpan || note.text.slice(originalSpan.start,originalSpan.end) !== edited.slice(start,end)) {
+        setSelection(null);setError("אפשר להגן רק על הסבר שנשאר ללא שינוי ביחס למסמך המקורי.");return;
+      }
+      start=originalSpan.start;end=originalSpan.end;
+    }
     if (!note || start < 0 || end > note.text.length || /[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]/.test(note.text.slice(start, end))) {
       setSelection(null); setError("הבחירה חוצה תו שאינו נתמך. יש לבחור תווים שלמים."); return;
     }
@@ -128,26 +137,26 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
   const updateProtection = (next: Span[], noteId: string) => {
     if (lock.current || !session) return;
     const note = session.notes.find(n => n.id === noteId)!;
-    const plan = mapWordSources(note, next.filter(s => s.noteId === noteId));
+    const spans=next.filter(s => s.noteId === noteId);
+    const plan = inputEdits[noteId]===undefined ? mapWordSources(note,spans) : mapEditedWordInput(note,inputEdits[noteId],spans);
     if(rows.filter(r=>r.noteId!==noteId).length+plan.sources.length>1000){setError("ניתן לבדוק עד 1,000 מקורות במסמך אחד.");return;}
     epoch.current++;
-    setInputEdits(old=>{const copy={...old};delete copy[noteId];return copy;});
     setProtectedSpans(next);
     setRows(old => invalidateWordDependents([...old.filter(row => row.noteId !== noteId), ...plan.sources.map((source,part)=>({
       ...source,id:session.notes.indexOf(note)+1+part*250,noteId,originalText:note.text,
       output:null,status:"empty" as const,approved:false,
     }))],session.notes.map(n=>n.id),noteId).sort((a,b)=>session.notes.findIndex(n=>n.id===a.noteId)-session.notes.findIndex(n=>n.id===b.noteId)||a.start-b.start));
-    setSelection(null); setEditingRow(null); setError(""); setNotice("");
+    setSelection(null); setEditingRow(null); setError(plan.kind==='unresolved' ? plan.reason??"לא ניתן למפות את העריכה בבטחה." : ""); setNotice("");
   };
   const saveInputEdit = (noteId: string, value: string | undefined) => {
     if (lock.current || !session) return;
     const note=session.notes.find(n=>n.id===noteId);if(!note)return;
-    const plan=value===undefined?mapWordSources(note,[]):mapEditedWordInput(note,value);
+    const spans=protectedSpans.filter(s=>s.noteId===noteId);
+    const plan=value===undefined?mapWordSources(note,spans):mapEditedWordInput(note,value,spans);
     if(value!==undefined && plan.kind!=='mapped'){setError(plan.reason??"לא ניתן לשמור את הקלט.");return;}
     if(rows.filter(r=>r.noteId!==noteId).length+plan.sources.length>1000){setError("ניתן לבדוק עד 1,000 מקורות במסמך אחד.");return;}
     epoch.current++;
     setInputEdits(old=>{const next={...old};if(value===undefined)delete next[noteId];else next[noteId]=value;return next;});
-    setProtectedSpans(old=>old.filter(s=>s.noteId!==noteId));
     setRows(old=>invalidateWordDependents([...old.filter(r=>r.noteId!==noteId),...plan.sources.map((source,part)=>({
       ...source,id:session.notes.indexOf(note)+1+part*250,noteId,originalText:note.text,output:null,status:"empty" as const,approved:false,
     }))],session.notes.map(n=>n.id),noteId).sort((a,b)=>session.notes.findIndex(n=>n.id===a.noteId)-session.notes.findIndex(n=>n.id===b.noteId)||a.start-b.start));
@@ -195,7 +204,7 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
       const original=session.notes.find(n=>n.id===row.noteId);
       if(!original)continue;
       const edited=inputEdits[row.noteId];
-      const valid=edited===undefined?validateWordSource(original,protectedSpans.filter(p=>p.noteId===row.noteId),row):mapEditedWordInput(original,edited).sources.some(source=>source.sourceId===row.sourceId&&source.input===row.input&&source.start===row.start&&source.end===row.end);
+      const valid=edited===undefined?validateWordSource(original,protectedSpans.filter(p=>p.noteId===row.noteId),row):mapEditedWordInput(original,edited,protectedSpans.filter(p=>p.noteId===row.noteId)).sources.some(source=>source.sourceId===row.sourceId&&source.input===row.input&&source.start===row.start&&source.end===row.end);
       if(!valid)continue;
       const originalIssue=await checkStyledFootnote(session,{id:row.noteId,originalText:row.originalText,start:row.start,end:row.end,replacement:escapeCitationLiteral(row.originalText.slice(row.start,row.end)),approved:true},protectedSpans.filter(p=>p.noteId===row.noteId).map(p=>({...p,id:p.noteId,originalText:row.originalText})));
       if(!isCurrent()||stopBatch.current)break;
@@ -435,32 +444,36 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
             const note=session.notes.find(n=>n.id===entry.id);const skipped=session.skippedNotes?.find(n=>n.id===entry.id);
             const label=entry.number === null ? `הערה במיקום ${position+1} · מספר Word לא ידוע` : `הערת שוליים ${entry.number}`;
             if(!note)return <li key={entry.id} className="rounded-xl border p-4"><h5 className="font-semibold">{label}</h5><p>נשארת ללא שינוי: {skipped?.reason ?? "לא ניתן לערוך את ההערה בבטחה."}</p></li>;
-            const noteRows=rows.filter(row=>row.noteId===note.id);const activePlan=inputEdits[note.id]===undefined?mapWordSources(note,protectedSpans.filter(span=>span.noteId===note.id)):mapEditedWordInput(note,inputEdits[note.id]);
+            const noteRows=rows.filter(row=>row.noteId===note.id);const activePlan=inputEdits[note.id]===undefined?mapWordSources(note,protectedSpans.filter(span=>span.noteId===note.id)):mapEditedWordInput(note,inputEdits[note.id],protectedSpans.filter(span=>span.noteId===note.id));
+            const displayText=inputEdits[note.id]??note.text;
+            const displayCoordinates=wordEditCoordinates(note.text,displayText);
             const expanded=openNotes.has(note.id);const noteEditing=editingRow!==null&&protectedSpans[editingRow]?.noteId===note.id;
             const state=noteRows.some(r=>r.status==='error'||r.styleIssue)?'נשארת ללא שינוי או דורשת טיפול':noteRows.some(r=>r.approved)?'קיים תיקון שאושר':noteRows.some(r=>r.status==='loading')?'בבדיקה':noteRows.some(r=>r.output)?'ממתינה לאישור':activePlan.kind==='mapped'?'מוכנה לבדיקה':'נשארת ללא שינוי';
             return <li key={note.id} className="min-w-0 rounded-xl border border-border p-3 sm:p-4">
               <button type="button" aria-expanded={expanded} aria-controls={`${noteListId}-note-${position}`} className="min-h-11 w-full rounded text-right focus-visible:outline focus-visible:outline-2" onClick={()=>{setOpenNotes(old=>{const next=new Set(old);if(next.has(note.id))next.delete(note.id);else next.add(note.id);return next;});setSelection(null);setEditingRow(null);}}>
-                <span className="block font-semibold">{label} · {state}</span><span dir="auto" className="block break-words text-sm text-muted-foreground">{note.text.length>160?note.text.slice(0,160)+'…':note.text}</span>
+                <span className="block font-semibold">{label} · {state}</span><span dir="auto" className="block break-words text-sm text-muted-foreground">{displayText.length>160?displayText.slice(0,160)+'…':displayText}</span>
               </button>
               <div id={`${noteListId}-note-${position}`} role="region" aria-label={label} hidden={!expanded} className="space-y-4 pt-4">{expanded && <>
           {step === 1 && <>
-            <div className="space-y-2 rounded-lg border p-3">
+            <div className="relative rounded-xl border border-border bg-background p-3">
               {inputEditor?.noteId===note.id ? <>
                 <label className="block text-sm font-medium" htmlFor={`${noteListId}-edit-${position}`}>קלט לבדיקה · {label}</label>
-                <textarea id={`${noteListId}-edit-${position}`} dir="auto" className="min-h-32 w-full rounded border bg-background p-3 text-base" value={inputEditor.value} disabled={busy} onChange={e=>setInputEditor({noteId:note.id,value:e.target.value})}/>
-                <p className="text-sm text-muted-foreground">השאירו מקור אחד לבדיקה. שמירה מבטלת סימוני הסבר ותיקונים קודמים בהערה זו. לאחר בדיקה ואישור, התוצאה תחליף את ההערה כולה בעותק החדש; הקובץ המקורי לא ישתנה.</p>
+                <textarea autoFocus id={`${noteListId}-edit-${position}`} dir="auto" className="min-h-32 w-full rounded border bg-background p-3 text-base" value={inputEditor.value} disabled={busy} onChange={e=>setInputEditor({noteId:note.id,value:e.target.value})}/>
+                <p className="text-sm text-muted-foreground">ערכו את האזכור והשאירו הסברים מוגנים ללא שינוי. שמירה מבטלת תוצאות ואישורים קודמים. הקובץ המקורי לא משתנה.</p>
                 <div className="flex flex-wrap gap-2"><button type="button" className={primaryButton} disabled={busy || !inputEditor.value.trim()} onClick={()=>saveInputEdit(note.id,inputEditor.value)}>שמור קלט</button><button type="button" className={button} disabled={busy} onClick={()=>{setInputEditor(null);setError("");}}>ביטול עריכת קלט</button></div>
-              </> : <div className="flex flex-wrap gap-2"><button type="button" className={button} disabled={busy || blockedNotes.current.has(noteKey({noteId:note.id,originalText:note.text}))} onClick={()=>{setSelection(null);setEditingRow(null);setInputEditor({noteId:note.id,value:inputEdits[note.id]??note.text});}}>עריכת קלט · {label}</button>{inputEdits[note.id]!==undefined&&<button type="button" className={button} disabled={busy} onClick={()=>saveInputEdit(note.id,undefined)}>חזרה לקלט המקורי · {label}</button>}</div>}
-              {inputEdits[note.id]!==undefined&&<p className="text-sm">קלט ערוך נשמר לבדיקה. אישור התוצאה יחליף את ההערה כולה.</p>}
+              </> : <>
+                <div className="flex items-center justify-between gap-3"><span className="text-sm font-medium">נוסח ההערה</span><button type="button" aria-label={`עריכת קלט · ${label}`} title="עריכת ההערה" className="flex min-h-11 min-w-11 items-center justify-center rounded-lg border bg-background hover:bg-muted focus-visible:outline focus-visible:outline-2" disabled={busy || blockedNotes.current.has(noteKey({noteId:note.id,originalText:note.text}))} onClick={()=>{setSelection(null);setEditingRow(null);setInputEditor({noteId:note.id,value:displayText});}}><Pencil aria-hidden="true" size={18}/></button></div>
+                <WordNoteSelection key={note.id} text={displayText} number={position + 1} displayLabel={entry.number===null?`הערה במיקום ${position+1}`:`הערה ${entry.number}`} disabled={busy}
+                  spans={[...noteRows.flatMap(row=>{const span=displayCoordinates.toEdited(row);return span?[{...span,kind:"citation" as const}]:[];}), ...(editedProtection(note.text,displayText,protectedSpans.filter(span=>span.noteId===note.id))??[]).map(span=>({...span,kind:"explanation" as const}))]}
+                  onSelect={(start,end)=>selectSpan(note.id,start,end)} onInvalidSelection={()=>setSelection(old=>old?.noteId===note.id?null:old)} />
+                {inputEdits[note.id]!==undefined&&<><p className="text-sm">הנוסח הערוך נשמר לבדיקה. סמנו הסברים שיישארו ללא שינוי; ללא סימון הסבר, אישור התוצאה יחליף את ההערה כולה בעותק החדש.</p><button type="button" className={button} disabled={busy} onClick={()=>saveInputEdit(note.id,undefined)}>חזרה לקלט המקורי · {label}</button></>}
+              </>}
             </div>
-            <WordNoteSelection key={note.id} text={note.text} number={position + 1} displayLabel={entry.number===null?`הערה במיקום ${position+1}`:`הערה ${entry.number}`} disabled={busy || inputEdits[note.id]!==undefined || inputEditor?.noteId===note.id}
-              spans={[...noteRows.map(row => ({ ...row, kind: "citation" as const })), ...protectedSpans.filter(span => span.noteId === note.id).map(span => ({ ...span, kind: "explanation" as const }))]}
-              onSelect={(start, end) => selectSpan(note.id, start, end)} onInvalidSelection={()=>setSelection(old=>old?.noteId===note.id?null:old)} />
             <div className="space-y-3 rounded-xl bg-muted/40 p-3">
               <p className="text-sm" role="status">{noteEditing ? "סמנו מחדש את דברי ההסבר ושמרו." : "סימון הסבר הוא רשות. הטקסט המוגן יישאר במקומו המקורי."}</p>
               {selection?.noteId === note.id && <p className="break-words text-sm"><strong>הקטע שנבחר: </strong>{note.text.slice(selection.start, selection.end)}</p>}
               <div className="flex flex-wrap gap-2">
-                <button type="button" aria-label={session.notes.length>1?`${!noteEditing ? "סמן הסבר" : "שמור סימון הסבר"} · ${label}`:undefined} className={primaryButton} disabled={busy || inputEdits[note.id]!==undefined || selection?.noteId !== note.id} onClick={markSelection}>{!noteEditing ? "זה טקסט הסבר — לא לשנות" : "שמור סימון הסבר"}</button>
+                <button type="button" aria-label={session.notes.length>1?`${!noteEditing ? "סמן הסבר" : "שמור סימון הסבר"} · ${label}`:undefined} className={primaryButton} disabled={busy || inputEditor?.noteId===note.id || selection?.noteId !== note.id} onClick={markSelection}>{!noteEditing ? "זה טקסט הסבר — לא לשנות" : "שמור סימון הסבר"}</button>
                 {noteEditing && <button type="button" className={button} disabled={busy} onClick={() => {setEditingRow(null);setSelection(null);}}>בטל שינוי</button>}
               </div>
             </div>
@@ -472,7 +485,6 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
               </div>
             </div>)}
             {noteRows.map(row => <div key={row.id} className="space-y-2">
-              <p className="text-sm font-medium">התוכן שיישלח לבדיקה</p><p dir={lineDirection(row.input)} className="whitespace-pre-wrap break-words rounded-lg bg-blue-50 p-3 text-start text-sm text-blue-950">{row.input}</p>
               {row.styleIssue && <StyleIssueNotice issue={row.styleIssue} />}
             </div>)}
           </>}

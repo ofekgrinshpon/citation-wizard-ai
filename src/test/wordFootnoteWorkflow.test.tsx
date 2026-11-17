@@ -11,7 +11,7 @@ vi.mock('../components/CitationRequestStatusLink',()=>({CitationRequestStatusLin
 const text='explain; Author, Title (2020); ending';
 const note=(value=text)=>({id:'42',text:value,editableRanges:[{start:0,end:value.length}],paragraphRanges:[{start:0,end:value.length}]});
 async function upload(){const f=new File(['synthetic'],'paper.docx');Object.defineProperty(f,'arrayBuffer',{value:async()=>new ArrayBuffer(1)});fireEvent.change(screen.getByLabelText('מסמך DOCX'),{target:{files:[f]}});await screen.findByText('paper.docx');}
-function select(start:number,end:number){const el=screen.getByLabelText('טקסט מקורי של הערה במיקום 1') as HTMLTextAreaElement;el.setSelectionRange(start,end);fireEvent.select(el);}
+function select(start:number,end:number){const el=screen.getByLabelText('טקסט לסימון של הערה במיקום 1') as HTMLTextAreaElement;el.setSelectionRange(start,end);fireEvent.select(el);}
 function protect(start:number,end:number){select(start,end);fireEvent.click(screen.getByRole('button',{name:/^(זה טקסט הסבר|שמור סימון הסבר)/}));}
 function review(){fireEvent.click(screen.getByRole('button',{name:'המשך לבדיקת ההערות'}));}
 function generate(){fireEvent.click(screen.getByRole('button',{name:/^בדוק \d+ מקורות$/}));}
@@ -109,7 +109,7 @@ describe('Word default engine flow',()=>{
   const notes=order.filter((_,i)=>i!==1&&i!==29).map(x=>({...note('Repeated source (2020)'),id:x.id}));
   mocks.inspect.mockResolvedValue({notes,documentOrder:order,skippedNotes:[{id:order[1].id,reason:'מבנה לא נתמך'},{id:order[29].id,reason:'לא ניתן לערוך'}],skippedCount:2});
   render(<WordFootnoteWorkflow/>);await upload();const list=screen.getByRole('list',{name:'רשימת הערות שוליים'});expect(within(list).getAllByRole('listitem')).toHaveLength(39);expect(within(list).getAllByRole('listitem')[1]).toHaveTextContent('הערת שוליים 21');expect(within(list).getAllByRole('listitem')[1]).toHaveTextContent('נשארת ללא שינוי');expect(within(list).getAllByRole('listitem')[2]).toHaveTextContent('מספר Word לא ידוע');
-  const first=within(list).getByRole('button',{name:/הערת שוליים 20 ·/});expect(first).toHaveAttribute('aria-expanded','false');fireEvent.click(first);expect(first).toHaveAttribute('aria-expanded','true');expect(screen.getByLabelText('טקסט מקורי של הערה 20')).toHaveValue('Repeated source (2020)');fireEvent.click(first);expect(mocks.run).not.toHaveBeenCalled();review();expect(within(screen.getByRole('list',{name:'רשימת הערות שוליים'})).getAllByRole('listitem')).toHaveLength(39);fireEvent.click(screen.getByRole('button',{name:/הערת שוליים 58 ·/}));expect(screen.getByRole('button',{name:'בדוק אזכור 37'})).toBeInTheDocument();expect(mocks.run).not.toHaveBeenCalled();
+  const first=within(list).getByRole('button',{name:/הערת שוליים 20 ·/});expect(first).toHaveAttribute('aria-expanded','false');fireEvent.click(first);expect(first).toHaveAttribute('aria-expanded','true');expect(screen.getByLabelText('טקסט לסימון של הערה 20')).toHaveValue('Repeated source (2020)');fireEvent.click(first);expect(mocks.run).not.toHaveBeenCalled();review();expect(within(screen.getByRole('list',{name:'רשימת הערות שוליים'})).getAllByRole('listitem')).toHaveLength(39);fireEvent.click(screen.getByRole('button',{name:/הערת שוליים 58 ·/}));expect(screen.getByRole('button',{name:'בדוק אזכור 37'})).toBeInTheDocument();expect(mocks.run).not.toHaveBeenCalled();
  });
  it('checks only the chosen note and leaves another card untouched',async()=>{
   mocks.inspect.mockResolvedValue({notes:[{...note('First (2020)'),id:'70'},{...note('Second (2021)'),id:'3'}],skippedNotes:[]});render(<WordFootnoteWorkflow/>);await upload();review();fireEvent.click(screen.getByRole('button',{name:/הערה במיקום 2 ·/}));fireEvent.click(screen.getByRole('button',{name:'בדוק אזכור 2'}));await waitFor(()=>expect(mocks.run).toHaveBeenCalledTimes(1));expect(mocks.run.mock.calls[0][0].rawInput).toBe('Second (2021)');expect(await screen.findByLabelText('התיקון המוצע לאזכור 2')).toHaveValue('Corrected');fireEvent.click(screen.getByRole('button',{name:/הערה במיקום 1 ·/}));expect(screen.getByLabelText('התיקון המוצע לאזכור 1')).toHaveValue('');
@@ -118,19 +118,19 @@ describe('Word default engine flow',()=>{
   let resolve!:(v:any)=>void;mocks.run.mockImplementation(()=>new Promise(r=>resolve=r));mocks.inspect.mockResolvedValue({notes:[{...note('First (2020)'),id:'70'},{...note('Second (2021)'),id:'3'}],skippedNotes:[]});render(<WordFootnoteWorkflow/>);await upload();review();generate();await waitFor(()=>expect(mocks.run).toHaveBeenCalledTimes(1));expect(screen.getByText(/בודקים מקור 1 מתוך 2/)).toBeInTheDocument();fireEvent.click(screen.getByRole('button',{name:'עצור שליחת בקשות נוספות'}));expect(screen.getByText(/העצירה מתבצעת/)).toBeInTheDocument();await act(async()=>resolve({citation:'First',status:'valid',sourceType:'book'}));await screen.findByText(/הבדיקה נעצרה; בקשות נוספות/);expect(mocks.run).toHaveBeenCalledTimes(1);
  });
  it('does not call the provider for a refused link crossing and keeps the session usable',async()=>{
-  mocks.check.mockResolvedValueOnce('האזכור חוצה בין קישורים');render(<WordFootnoteWorkflow/>);await upload();review();generate();await screen.findByText(/לא ניתן לשמור את עיצוב האזכור בבטחה/);expect(screen.getByText('הסיבה: האזכור חוצה בין קישורים.')).toBeInTheDocument();expect(mocks.run).not.toHaveBeenCalled();expect(screen.getByRole('button',{name:'חזרה לטקסט הסבר שלא לשנות'})).toBeEnabled();back();expect(screen.getByLabelText('טקסט מקורי של הערה במיקום 1')).toHaveValue('Author, Title (2020)');
+  mocks.check.mockResolvedValueOnce('האזכור חוצה בין קישורים');render(<WordFootnoteWorkflow/>);await upload();review();generate();await screen.findByText(/לא ניתן לשמור את עיצוב האזכור בבטחה/);expect(screen.getByText('הסיבה: האזכור חוצה בין קישורים.')).toBeInTheDocument();expect(mocks.run).not.toHaveBeenCalled();expect(screen.getByRole('button',{name:'חזרה לטקסט הסבר שלא לשנות'})).toBeEnabled();back();expect(screen.getByLabelText('טקסט לסימון של הערה במיקום 1')).toHaveValue('Author, Title (2020)');
  });
  it('stops while a local preflight is pending before sending any request',async()=>{
   let resolve!:(v:any)=>void;mocks.check.mockImplementation(()=>new Promise(r=>resolve=r));render(<WordFootnoteWorkflow/>);await upload();review();generate();await waitFor(()=>expect(mocks.check).toHaveBeenCalledTimes(1));fireEvent.click(screen.getByRole('button',{name:'עצור שליחת בקשות נוספות'}));await act(async()=>resolve(null));await screen.findByText(/הבדיקה נעצרה; בקשות נוספות/);expect(mocks.run).not.toHaveBeenCalled();
  });
  it('keeps explanations isolated when two note cards are open',async()=>{
   mocks.inspect.mockResolvedValue({notes:[{...note('Alpha first (2020)'),id:'81'},{...note('Beta second (2021)'),id:'4'}],skippedNotes:[]});render(<WordFootnoteWorkflow/>);await upload();fireEvent.click(screen.getByRole('button',{name:/הערה במיקום 1 ·/}));fireEvent.click(screen.getByRole('button',{name:/הערה במיקום 2 ·/}));
-  const first=screen.getByLabelText('טקסט מקורי של הערה במיקום 1') as HTMLTextAreaElement;first.setSelectionRange(0,5);fireEvent.select(first);fireEvent.click(screen.getByRole('button',{name:/סמן הסבר · הערה במיקום 1/}));
-  const second=screen.getByLabelText('טקסט מקורי של הערה במיקום 2') as HTMLTextAreaElement;second.setSelectionRange(0,4);fireEvent.select(second);fireEvent.click(screen.getByRole('button',{name:/סמן הסבר · הערה במיקום 2/}));expect(screen.getByText('הסבר מוגן: Alpha')).toBeInTheDocument();expect(screen.getByText('הסבר מוגן: Beta')).toBeInTheDocument();expect(mocks.run).not.toHaveBeenCalled();
+  const first=screen.getByLabelText('טקסט לסימון של הערה במיקום 1') as HTMLTextAreaElement;first.setSelectionRange(0,5);fireEvent.select(first);fireEvent.click(screen.getByRole('button',{name:/סמן הסבר · הערה במיקום 1/}));
+  const second=screen.getByLabelText('טקסט לסימון של הערה במיקום 2') as HTMLTextAreaElement;second.setSelectionRange(0,4);fireEvent.select(second);fireEvent.click(screen.getByRole('button',{name:/סמן הסבר · הערה במיקום 2/}));expect(screen.getByText('הסבר מוגן: Alpha')).toBeInTheDocument();expect(screen.getByText('הסבר מוגן: Beta')).toBeInTheDocument();expect(mocks.run).not.toHaveBeenCalled();
  });
  it('clears a pending selection when a native range crosses two notes',async()=>{
   mocks.inspect.mockResolvedValue({notes:[{...note('First text (2020)'),id:'9'},{...note('First text (2020)'),id:'2'}],skippedNotes:[]});render(<WordFootnoteWorkflow/>);await upload();fireEvent.click(screen.getByRole('button',{name:/הערה במיקום 1 ·/}));fireEvent.click(screen.getByRole('button',{name:/הערה במיקום 2 ·/}));
-  const field=screen.getByLabelText('טקסט מקורי של הערה במיקום 1') as HTMLTextAreaElement;field.setSelectionRange(0,5);fireEvent.select(field);const button=screen.getByRole('button',{name:/סמן הסבר · הערה במיקום 1/});expect(button).toBeEnabled();
+  const field=screen.getByLabelText('טקסט לסימון של הערה במיקום 1') as HTMLTextAreaElement;field.setSelectionRange(0,5);fireEvent.select(field);const button=screen.getByRole('button',{name:/סמן הסבר · הערה במיקום 1/});expect(button).toBeEnabled();
   const first=screen.getByRole('group',{name:'טקסט הערה במיקום 1 עם הסימונים'}),second=screen.getByRole('group',{name:'טקסט הערה במיקום 2 עם הסימונים'});const range=document.createRange();range.setStart(first.querySelector('mark')!.firstChild!,0);range.setEnd(second.querySelector('mark')!.firstChild!,3);const selection=window.getSelection()!;selection.removeAllRanges();selection.addRange(range);fireEvent(document,new Event('selectionchange'));expect(button).toBeDisabled();selection.removeAllRanges();
  });
  it('offers an exact-offset two-tap alternative without native text selection',async()=>{
@@ -193,5 +193,42 @@ describe('Word preflight input editing',()=>{
  it('cancel preserves original, restoring clears approvals and repeated saves send nothing',async()=>{
   render(<WordFootnoteWorkflow/>);await upload();fireEvent.click(screen.getByRole('button',{name:/עריכת קלט ·/}));fireEvent.change(screen.getByLabelText(/קלט לבדיקה ·/),{target:{value:'Changed'}});fireEvent.click(screen.getByRole('button',{name:'ביטול עריכת קלט'}));
   fireEvent.click(screen.getByRole('button',{name:/עריכת קלט ·/}));expect(screen.getByLabelText(/קלט לבדיקה ·/)).toHaveValue('Author, Title (2020)');fireEvent.change(screen.getByLabelText(/קלט לבדיקה ·/),{target:{value:'Changed'}});fireEvent.click(screen.getByRole('button',{name:'שמור קלט'}));review();generate();await result();approve();back();fireEvent.click(screen.getByRole('button',{name:/חזרה לקלט המקורי ·/}));review();expect(screen.getByRole('button',{name:/המשך להורדה/})).toBeDisabled();expect(mocks.run).toHaveBeenCalledTimes(1);
+ });
+});
+
+describe('inline edited note protection',()=>{
+ const original='ס׳ 2 לחוק הגנת הצרכן, זו דוגמא לדברי הסבר שצריך לסמן.';
+ const explanation='זו דוגמא לדברי הסבר שצריך לסמן.';
+ function edit(value:string){fireEvent.click(screen.getByRole('button',{name:/עריכת קלט ·/}));fireEvent.change(screen.getByLabelText(/קלט לבדיקה ·/),{target:{value}});fireEvent.click(screen.getByRole('button',{name:'שמור קלט'}));}
+ it.each(['3','12345'])('edits section to %s, selects explanation, reviews and exports original coordinates',async(section)=>{
+  mocks.inspect.mockResolvedValue({notes:[note(original)],skippedNotes:[]});render(<WordFootnoteWorkflow/>);await upload();
+  const edited=original.replace('2',section);edit(edited);
+  expect(screen.getByRole('group',{name:'טקסט הערה במיקום 1 עם הסימונים'})).toHaveTextContent(edited);
+  expect(mocks.run).not.toHaveBeenCalled();
+  protect(edited.indexOf(explanation),edited.length);
+  expect(screen.getByText(`הסבר מוגן: ${explanation}`)).toBeInTheDocument();
+  review();generate();await result();
+  expect(mocks.run.mock.calls[0][0].rawInput).toContain(`ס׳ ${section} לחוק הגנת הצרכן`);
+  expect(mocks.run.mock.calls[0][0].rawInput).not.toContain(explanation);
+  approve();expect(screen.getByLabelText('תצוגת הערה במיקום 1')).toHaveTextContent(`Corrected, ${explanation}`);
+  fireEvent.click(screen.getByRole('button',{name:/המשך להורדה/}));fireEvent.click(screen.getByRole('button',{name:/הורדת עותק מתוקן/}));
+  await waitFor(()=>expect(mocks.embed).toHaveBeenCalledTimes(1));
+  expect(mocks.embed.mock.calls[0][1][0]).toMatchObject({originalText:original,start:0,end:original.indexOf(','),replacement:'Corrected'});
+  expect(mocks.embed.mock.calls[0][2][0]).toMatchObject({start:original.indexOf(explanation),end:original.length});
+ });
+ it('preserves earlier protection through length shifts, cancel and reset; fails closed on changing protected text',async()=>{
+  mocks.inspect.mockResolvedValue({notes:[note(original)],skippedNotes:[]});render(<WordFootnoteWorkflow/>);await upload();protect(original.indexOf(explanation),original.length);
+  edit(original.replace('2','12345'));expect(screen.getByText(`הסבר מוגן: ${explanation}`)).toBeInTheDocument();
+  edit(original.replace('2','12345').replace('דוגמא','שינוי'));
+  expect(screen.getByRole('alert')).toHaveTextContent('העריכה משנה הסבר מוגן');expect(mocks.run).not.toHaveBeenCalled();
+  fireEvent.click(screen.getByRole('button',{name:'ביטול עריכת קלט'}));
+  expect(screen.getByRole('group',{name:'טקסט הערה במיקום 1 עם הסימונים'})).toHaveTextContent(original.replace('2','12345'));
+  fireEvent.click(screen.getByRole('button',{name:/חזרה לקלט המקורי ·/}));
+  expect(screen.getByRole('group',{name:'טקסט הערה במיקום 1 עם הסימונים'})).toHaveTextContent(original);
+  expect(screen.getByText(`הסבר מוגן: ${explanation}`)).toBeInTheDocument();
+ });
+ it('does not allow changed text to masquerade as preserved explanation',async()=>{
+  mocks.inspect.mockResolvedValue({notes:[note(original)],skippedNotes:[]});render(<WordFootnoteWorkflow/>);await upload();edit(original.replace('2','12345'));
+  select(3,8);expect(screen.getByRole('button',{name:'זה טקסט הסבר — לא לשנות'})).toBeDisabled();expect(screen.getByRole('alert')).toHaveTextContent('אפשר להגן רק');
  });
 });

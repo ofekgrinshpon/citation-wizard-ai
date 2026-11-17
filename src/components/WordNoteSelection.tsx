@@ -2,7 +2,8 @@ import { useEffect, useRef, useState } from "react";
 
 interface MarkedSpan { start: number; end: number; kind: "citation" | "explanation" }
 
-/** The text stays in original UTF-16 coordinates; visual marks add no text. */
+/** Selection offsets belong to the displayed UTF-16 text; visual marks add no
+ * text. The caller rebinds edited selections to immutable DOCX coordinates. */
 export function WordNoteSelection({ text, number, displayLabel, spans, disabled, onSelect, onInvalidSelection }: {
   text: string; number: number; displayLabel?: string; spans: MarkedSpan[]; disabled: boolean;
   onSelect: (start: number, end: number) => void; onInvalidSelection?: () => void;
@@ -42,7 +43,7 @@ export function WordNoteSelection({ text, number, displayLabel, spans, disabled,
   return <div className="space-y-3">
     <p className="text-sm">סמנו טקסט הסבר שתרצו להשאיר ללא שינוי.</p>
     <div ref={root} role="group" aria-label={`טקסט ${displayLabel ?? `ההערה ${number}`} עם הסימונים`}
-      className={`whitespace-pre-wrap break-words rounded-xl border border-border bg-background p-4 text-base leading-8 ${disabled ? "select-none opacity-60" : "select-text"}`}>{pieces}</div>
+      className={`whitespace-pre-wrap break-words bg-background py-3 text-base leading-8 ${disabled ? "select-none opacity-60" : "select-text"}`}>{pieces}</div>
     <div className="flex flex-wrap gap-x-4 gap-y-2 text-xs text-foreground">
       <span><span aria-hidden="true" className="mr-1 inline-block h-3 w-3 border-b-2 border-blue-600 bg-blue-100" /> תוכן לבדיקה</span>
       <span><span aria-hidden="true" className="mr-1 inline-block h-3 w-3 border-b-2 border-dashed border-amber-700 bg-amber-100" /> הסבר מוגן (רשות)</span>
@@ -61,7 +62,7 @@ export function WordNoteSelection({ text, number, displayLabel, spans, disabled,
     <details className="text-sm">
       <summary className="cursor-pointer rounded py-2 text-primary focus-visible:outline focus-visible:outline-2">עזרה אופציונלית: סימון במקלדת</summary>
       <p className="mb-2 text-muted-foreground">אפשר לסמן ישירות בטקסט שמעל. אם נוח לכם להשתמש במקלדת: עברו לתיבה, סמנו בעזרת Shift והחצים, ואז עברו באמצעות Tab אל ״זה טקסט הסבר — לא לשנות״.</p>
-      <textarea aria-label={`טקסט מקורי של ${displayLabel ?? `הערה ${number}`}`} readOnly value={text} disabled={disabled}
+      <textarea aria-label={`טקסט לסימון של ${displayLabel ?? `הערה ${number}`}`} readOnly value={text} disabled={disabled}
         className="min-h-24 w-full rounded-lg border border-border bg-background p-3 text-base leading-7 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
         onSelect={event => onSelect(event.currentTarget.selectionStart, event.currentTarget.selectionEnd)} />
     </details>
