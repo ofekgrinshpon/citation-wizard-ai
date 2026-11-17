@@ -91,8 +91,8 @@ export function resolveBookCompletion(request: Record<string, unknown>, raw: str
     if (!p || p.basis !== "search_result_explicit") continue;
     const sources = (response as { sources?: Array<{ url: string; title?: string; snippet?: string }> })?.sources ?? [];
     const source = sources.find(s => s.url === p.sourceUrl);
-    const facts = extractBookPublicationEvidence(`${source?.title ?? ""} ${source?.snippet ?? ""}`, supplied.bookTitle ?? "",
-      kind === "book" ? supplied.authors : undefined);
+    const facts = extractBookPublicationEvidence([source?.title ?? "", source?.snippet ?? ""].join(kind === "book" ? "\n" : " "), supplied.bookTitle ?? "",
+      kind === "book" ? supplied.authors : undefined, { bookChapterContainer: kind === "book_chapter" });
     if (facts[key as "year" | "edition"] !== accepted.fields[key]) {
       delete accepted.fields[key]; delete accepted.provenance[key]; accepted.quarantined.push(key);
     }

@@ -8,7 +8,7 @@ function exactByline(expected: string, evidence: string): boolean {
 
 /** Check a title-bound byline even when a catalogue result omits its year. */
 export function bookCatalogueAuthorMatches(text: string, title: string, expected: string): boolean {
-  return titleOccurrences(text, title).some(match => {
+  return titleOccurrences(text, title, expected).some(match => {
     const afterTitle = text.slice((match.index ?? 0) + match[0].length).match(/^\s*(?:[.;|]|[–—]|-\s|by\b)\s*([^\n]{3,100})/i);
     const rest = afterTitle?.[1];
     if (!rest) return false;
@@ -17,16 +17,60 @@ export function bookCatalogueAuthorMatches(text: string, title: string, expected
   });
 }
 
-function titleOccurrences(text: string, title: string): RegExpMatchArray[] {
+/** A word boundary alone does not make a work title: it can be the last
+ * words of an unrelated title or subtitle. Only explicit record boundaries or
+ * an immediately adjacent byline may start the requested work. */
+export function bookTitleOccurrenceStartsRecord(text: string, index: number, expectedAuthor?: string): boolean {
+  const before = text.slice(0, index);
+  if (!before.trim()) return true;
+  if (/(?:\bof|\band|:|[-–—])\s*\n\s*$/i.test(before) && !/(?:^|\n)(?:Book\s+)?Title\s*:\s*$/i.test(before)) return false;
+  if (/\((?:[^()]{0,30}\s)?(?:17|18|19|20)\d{2}\)\.\s*$/.test(before)) return true;
+  // Newlines, pipes and semicolons delimit records. A colon or dash does not:
+  // both commonly introduce subtitles. Periods can belong to author initials.
+  const record = before.slice(Math.max(before.lastIndexOf("\n"), before.lastIndexOf("|"), before.lastIndexOf(";")) + 1).trim();
+  if (!record || /^(?:Book\s+)?Title\s*:\s*["“]?$/i.test(record)) return true;
+  if (record === '"' || record === "“") return true;
+  const byline = record.match(/^(.*?)\s*,\s*["“]?$/)?.[1];
+  if (!byline) return false;
+  if (expectedAuthor) {
+    if (exactByline(expectedAuthor, byline)) return true;
+    // Search results often concatenate a heading with the snippet. A repeated
+    // exact author followed by a comma still binds the snippet's title. Do not
+    // treat arbitrary prefix words as part of that byline.
+    const pieces = byline.split(/\s+/);
+    return Array.from({ length: Math.min(8, pieces.length) }, (_, i) => pieces.slice(-(i + 1)).join(" "))
+      .some(candidate => exactByline(expectedAuthor, candidate));
+  }
+  // Legacy surname-only citations remain supported. Multiword names require
+  // the expected-author argument so a different title cannot masquerade as one.
+  return /^[A-Z][a-z'’\-]{2,}$/.test(byline);
+}
+
+function titleOccurrences(text: string, title: string, expectedAuthor?: string, bookChapterContainer = false): RegExpMatchArray[] {
   if (!title.trim()) return [];
   const escape = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   const pattern = title.trim().split(/\s+/).map(escape).join("\\s+");
-  return [...text.matchAll(new RegExp(`(?<![\\p{L}\\p{N}])${pattern}(?![\\p{L}\\p{N}])`, "giu"))];
+  return [...text.matchAll(new RegExp(`(?<![\\p{L}\\p{N}])${pattern}(?![\\p{L}\\p{N}])`, "giu"))]
+    .filter(match => bookChapterContainer || bookTitleOccurrenceStartsRecord(text, match.index ?? 0, expectedAuthor));
+}
+
+/** A nonempty source heading must name the requested work, not merely
+ * contain its last words. A byline can precede the title only when supplied. */
+export function bookSourceHeadingMatches(heading: string, title: string, expectedAuthor?: string): boolean {
+  return titleOccurrences(heading, title, expectedAuthor).some(match => {
+    const before = heading.slice(0, match.index).trim();
+    const metadata = /^(?:Book\s+)?Title\s*:\s*["“]?$/i.test(before);
+    const byline = before.match(/^(.*?)\s*,\s*["“]?$/)?.[1];
+    if (before && before !== '"' && before !== "“" && !metadata && !(expectedAuthor && byline && exactByline(expectedAuthor, byline))) return false;
+    const after = heading.slice((match.index ?? 0) + match[0].length);
+    return !after.trim() || /^\s*(?:[.;|("”]|[-–—](?:\s|$)|by\b|:\s*(?:publication date|publication year|published)\b)/i.test(after);
+  });
 }
 
 /** Publication facts must belong to the requested work, not another date on its page. */
-export function extractBookPublicationEvidence(text: string, title: string, expectedAuthor?: string): { year?: string; edition?: string } {
-  const matches = titleOccurrences(text, title);
+export function extractBookPublicationEvidence(text: string, title: string, expectedAuthor?: string,
+  options?: { bookChapterContainer?: boolean }): { year?: string; edition?: string } {
+  const matches = titleOccurrences(text, title, expectedAuthor, options?.bookChapterContainer);
   const found: Array<{ year: string; edition?: string }> = [];
   for (const match of matches) {
     // A subtitle is part of the same title; never scan through a sentence into another work.

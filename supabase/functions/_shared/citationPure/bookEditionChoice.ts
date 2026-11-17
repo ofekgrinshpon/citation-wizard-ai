@@ -1,6 +1,6 @@
 import { acceptCitationCompletion } from "./completion.ts";
 import { authorEvidenceStatus } from "./authorNames.ts";
-import { bookCatalogueAuthorMatches, extractBookPublicationEvidence } from "./bookPublicationEvidence.ts";
+import { bookCatalogueAuthorMatches, bookSourceHeadingMatches, extractBookPublicationEvidence } from "./bookPublicationEvidence.ts";
 import { rawCitationFingerprint, suppliedLookupFieldsMatch } from "../pastedCitation.ts";
 export interface BookEditionChoiceOption { id: string; label: string; year: string; url: string; edition?: string }
 export interface BookEditionChoice {
@@ -28,11 +28,12 @@ export function buildBookEditionChoice(request: Record<string, unknown>, raw: st
   for (const s of r.sources.map(obj)) {
     try { const url = new URL(s.url); if (!["https:", "http:"].includes(url.protocol) || url.username || url.password) continue; } catch { continue; }
     if (s.strong !== true) continue;
+    if (!bookSourceHeadingMatches((typeof s.title === "string" && s.title.trim()) || (typeof s.snippet === "string" ? s.snippet : ""), supplied.bookTitle, supplied.authors)) continue;
     const texts = [s.title, s.snippet].filter(x => typeof x === "string");
     const statuses = texts.map(x => authorEvidenceStatus(supplied.authors, x));
     if (statuses.includes("conflict") || (!statuses.includes("match") &&
       !texts.some(x => bookCatalogueAuthorMatches(x, supplied.bookTitle, supplied.authors)))) continue;
-    const facts = extractBookPublicationEvidence(`${s.title ?? ""} ${s.snippet ?? ""}`, supplied.bookTitle, supplied.authors);
+    const facts = extractBookPublicationEvidence(`${s.title ?? ""}\n${s.snippet ?? ""}`, supplied.bookTitle, supplied.authors);
     if (!facts.year || !years.includes(facts.year) || (supplied.edition && (!facts.edition || !ordinal(supplied.edition) || ordinal(facts.edition) !== ordinal(supplied.edition)))) continue;
     grouped.set(facts.year, [...(grouped.get(facts.year) ?? []), { ...facts, year: facts.year, url: s.url }]);
   }

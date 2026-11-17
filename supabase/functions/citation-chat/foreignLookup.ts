@@ -1,4 +1,4 @@
-import { bookCatalogueAuthorMatches, extractBookPublicationEvidence } from "../_shared/citationPure/bookPublicationEvidence.ts";
+import { bookCatalogueAuthorMatches, bookSourceHeadingMatches, extractBookPublicationEvidence } from "../_shared/citationPure/bookPublicationEvidence.ts";
 /**
  * Milestone 2B — grounded foreign source lookup.
  *
@@ -204,6 +204,18 @@ function hostOf(url: string): string | null {
 
 function hostMatches(host: string, list: string[]): boolean {
   return list.some((d) => host === d || host.endsWith("." + d));
+}
+
+/** Oxford/Cambridge journal results are not bibliographic records for a book. */
+function isBookLookupJournalPage(url: string): boolean {
+  try {
+    const { hostname, pathname } = new URL(url);
+    if (hostname === "academic.oup.com") return /^\/[^/]+\/article(?:-abstract)?(?:\/|$)/i.test(pathname);
+    if (hostname === "www.cambridge.org" || hostname === "cambridge.org") return /^\/core\/journals(?:\/|$)/i.test(pathname);
+    return false;
+  } catch {
+    return false;
+  }
 }
 
 type SourceQuality = "official" | "database" | "publisher" | "repository" | "weak";
@@ -1262,7 +1274,11 @@ export async function runForeignLookup(
       return textContainsParty(ev, parties[0]) && textContainsParty(ev, parties[1]);
     }
     if (titleHint) {
-      if (!titleMatches(ev, titleHint)) return false;
+      if (input.kind === "book") {
+        // A snippet or URL mention must not overrule a different record's title.
+        if (isBookLookupJournalPage(s.url) ||
+          !bookSourceHeadingMatches(s.title?.trim() || s.snippet || "", titleHint, authorHint ?? undefined)) return false;
+      } else if (!titleMatches(ev, titleHint)) return false;
       if (authorHint) {
         const texts = [s.title, s.snippet].filter((text): text is string => !!text);
         const statuses = texts.map(text => authorEvidenceStatus(authorHint, text));
@@ -1301,7 +1317,8 @@ export async function runForeignLookup(
   };
   const bookPublication = (text: string) => extractBookPublicationEvidence(
     text, input.parsedFields?.bookTitle ?? titleHint ?? "",
-    input.kind === "book" ? authorHint ?? undefined : undefined);
+    input.kind === "book" ? authorHint ?? undefined : undefined, { bookChapterContainer: input.kind === "book_chapter" });
+  const sourceText = (s: LookupSource) => [s.title ?? "", s.snippet ?? ""].join(input.kind === "book" ? "\n" : " ");
   /** A search round is productive when an identity-matched strong source carries usable evidence. */
   const productive = (list: LookupSource[]): boolean => list.some((s) => {
     if (!s.strong || !matchesIdentity(s)) return false;
@@ -1310,7 +1327,7 @@ export async function runForeignLookup(
       return jurs.some((j) => boundChains(s, j).length > 0 || nonLocationCase(s, j));
     }
     const w = input.kind === "book" || input.kind === "book_chapter"
-      ? bookPublication(`${s.title ?? ""} ${s.snippet ?? ""}`)
+      ? bookPublication(sourceText(s))
       : extractWorkFromEvidence(`${s.title ?? ""} ${s.snippet ?? ""}`, input.kind, s.title);
     return Object.values(w).some((v) => typeof v === "string" && v.length > 0);
   });
@@ -1361,7 +1378,7 @@ export async function runForeignLookup(
         // The second query can return clearer metadata at the same URL. Do not
         // discard it on URL deduplication, or treat one URL as two editions.
         const usableTier2 = new Set(toSources(t2).filter(s => s.strong && matchesIdentity(s) &&
-          !!bookPublication(`${s.title ?? ""} ${s.snippet ?? ""}`).year).map(s => s.url));
+          !!bookPublication(sourceText(s)).year).map(s => s.url));
         results = results.filter(s => !s.url || !usableTier2.has(s.url));
       }
       results = [...results, ...t2];
@@ -1599,7 +1616,7 @@ export async function runForeignLookup(
   if (usable.length === 0) return empty;
 
   for (const s of usable) {
-    const ev = `${s.title ?? ""} ${s.snippet ?? ""}`;
+    const ev = sourceText(s);
     const f = fieldsForSource(ev, s.title);
     for (const [field, value] of Object.entries(f)) {
       if (!value) continue;
@@ -1637,7 +1654,7 @@ export async function runForeignLookup(
   // target) cluster apart; keep only the plurality cluster.
   {
     const sig = (c: Candidate) => {
-      const f = fieldsForSource(`${c.donor.title ?? ""} ${c.donor.snippet ?? ""}`);
+      const f = fieldsForSource(sourceText(c.donor));
       const vol = f.volume ?? f.reporterVolume ?? "";
       const pg = f.firstPage ?? "";
       const neu = f.neutral ?? "";

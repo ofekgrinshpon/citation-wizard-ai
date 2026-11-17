@@ -226,6 +226,53 @@ describe("real citation-chat handler", () => {
     expect(calls).toHaveLength(2);
   });
 
+  it("rejects the live Oxford review of another Smith book before year selection and tries publisher discovery", async () => {
+    const raw = "National Identity by Smith, Anthony D";
+    const plan = planned(raw).typed!;
+    const review = {
+      title: "Chosen Peoples: Sacred Sources of National Identity. By Anthony D ...",
+      url: "https://academic.oup.com/jaar/article-abstract/74/1/218/734845?redirectedFrom=fulltext",
+      snippet: "Chosen Peoples: Sacred Sources of National Identity. By Anthony D. Smith. Oxford University Press, 2003. 330 pages.",
+    };
+    const catalogue = {
+      title: "National Identity - Anthony D. Smith - Google Books",
+      url: "https://books.google.com/books/about/National_Identity.html?id=7quoQgAACAAJ",
+      snippet: "Penguin Books",
+    };
+    reset({ hits: [review, catalogue], secondHits: [
+      { ...catalogue, snippet: "National Identity. Anthony D. Smith. Penguin, 1991 - 227 pages." },
+      { title: "National Identity — Anthony D. Smith", url: "https://unpress.nevada.edu/9780874172041/national-identity/", snippet: "National Identity by Anthony D. Smith. Paperback. Published: March 1, 1993." },
+      review,
+    ] });
+    const posted = await post(raw, plan.foreignLookup, "handler-review-contamination");
+    expect(posted.body.foreignLookup).toMatchObject({
+      fields: {}, identity: { matched: true, conflicts: ["year:editions:1991,1993"] },
+      diagnostics: { tier1Queried: true, tier2Fired: true },
+    });
+    const evidence = (posted.body.foreignLookup as {sources: Array<{url: string; strong?: boolean}>}).sources;
+    expect(evidence.find(source => source.url === review.url)?.strong).toBe(false);
+    expect(calls).toHaveLength(2);
+    const rendered = resolveCitationResponse(plan, posted.body, CHAT_HOST);
+    expect(rendered.kind).toBe("terminal");
+    if (rendered.kind !== "terminal") throw new Error("Expected book result");
+    expect(rendered.resolution.bookEditionChoice?.options.map(option => option.year)).toEqual(["1991", "1993"]);
+  });
+
+  it("does not use a date from a result with a different heading or an Oxford journal review", async () => {
+    const raw = "National Identity by Smith, Anthony D";
+    const plan = planned(raw).typed!;
+    const conflicting = { title: "Another book — Anthony D. Smith", url: "https://press.example.edu/other",
+      snippet: "National Identity. Anthony D. Smith. Oxford University Press, 2003." };
+    const review = { title: "National Identity — Anthony D. Smith", url: "https://academic.oup.com/jaar/article-abstract/74/1/218/734845",
+      snippet: "National Identity (1992). Anthony D. Smith." };
+    reset({ hits: [conflicting, review] });
+    const posted = await post(raw, plan.foreignLookup, "handler-book-title-unconfirmed");
+    expect(posted.body.foreignLookup).toMatchObject({
+      fields: {}, identity: { matched: false }, diagnostics: { tier2Fired: true },
+    });
+    expect(calls).toHaveLength(2);
+  });
+
   it("cites the matching Smith edition and does not call the formatter", async () => {
     reset({ hits: [
       { title: "National Identity", url: "https://press.example.edu/joan", snippet: "Joan Other, National Identity (2001)." },
