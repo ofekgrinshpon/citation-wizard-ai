@@ -78,6 +78,13 @@
       "when": 1794309741078,
       "tag": "0010_move_dblink_out_of_public",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1794929690868,
+      "tag": "0011_restrict_legal_library_reads",
+      "breakpoints": true
     }
   ]
 }
