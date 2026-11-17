@@ -1,6 +1,6 @@
-/// <reference types="npm:@types/react@18.3.1" />
+/// <reference types="npm:@types/react@18" />
 
-import * as React from 'npm:react@18.3.1'
+import * as React from 'npm:react@18'
 import {
   Body,
   Button,

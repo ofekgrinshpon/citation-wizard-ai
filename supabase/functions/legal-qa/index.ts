@@ -393,7 +393,7 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
       Deno.env.get("SUPABASE_ANON_KEY")!,
       { global: { headers: { Authorization: authHeader } } },
     );
-    __userClientForRefund = userClient;
+    __userClientForRefund = userClient as ReturnType<typeof createClient>;
 
     // ── Account-level concurrency protection (protected operation) ──────
     // Case Summary keeps its own targeted pipeline; only the account-level
@@ -605,12 +605,12 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
           const kw = extractKeywords(q) || q;
           // deno-lint-ignore no-explicit-any
           const [textRes, emb] = await Promise.all([
-            adminClient.rpc("search_legal_chunks_text", { search_query: kw, match_count: 8 }).then((r: any) => r).catch(() => ({ data: null })),
+            Promise.resolve(adminClient.rpc("search_legal_chunks_text", { search_query: kw, match_count: 8 })).then((r: any) => r).catch(() => ({ data: null })),
             embed(q),
           ]);
           // deno-lint-ignore no-explicit-any
           const vecRes: any = emb
-            ? await adminClient.rpc("match_legal_chunks", { query_embedding: JSON.stringify(emb), match_threshold: 0.55, match_count: 8 }).then((r: any) => r).catch(() => ({ data: null }))
+            ? await Promise.resolve(adminClient.rpc("match_legal_chunks", { query_embedding: JSON.stringify(emb), match_threshold: 0.55, match_count: 8 })).then((r: any) => r).catch(() => ({ data: null }))
             : { data: null };
           // deno-lint-ignore no-explicit-any
           const merge = (rows: any[] | null, weight: number) => {

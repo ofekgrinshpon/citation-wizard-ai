@@ -864,6 +864,9 @@ export interface V2Telemetry {
   authority_recovery_candidates_attached?: number;
   authority_recovery_success?: number;
   authority_recovery?: Array<Record<string, unknown>>;
+  router_action?: string | null;
+  router_model_choice?: string | null;
+  router_reason?: string | null;
   /** Outbound URLs refused by the deterministic safety gate. */
   unsafe_urls_blocked?: number;
   /** Compact per-run egress state (direct official + court relay). */

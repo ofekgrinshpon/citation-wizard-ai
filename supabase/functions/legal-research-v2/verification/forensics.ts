@@ -67,14 +67,14 @@ export function buildVerificationForensics(
         (r) => r.claim_id === claim.claim_id && r.source_id === ev.source_id,
       );
       const vSource = v?.sources.find((s) => s.source_id === ev.source_id);
-      const failedAt = rejection ? STAGE_ORDER.indexOf(stageOf(rejection) as never) : null;
+      const failedAt = rejection ? STAGE_ORDER.indexOf(stageOf(rejection) as never) : -1;
       const reached = rejection ? (failedAt < 0 ? 4 : failedAt) : 4;
       rows.push({
         claim_id: claim.claim_id,
         proposition: claim.proposition,
         importance: claim.importance,
         source_id: ev.source_id,
-        quoted_span: vSource?.verified_span ?? ev.quoted_span,
+        quoted_span: vSource?.verified_span ?? ev.quoted_span ?? "",
         locator: ev.locator ?? null,
         body_read: mark(reached, 0, failedAt),
         identity: mark(reached, 1, failedAt),

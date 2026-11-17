@@ -215,10 +215,10 @@ export function guardPastedCitationRequest(body: { messages: Array<{ role: strin
   const manualJurisdiction = idJurisdiction ?? (isManualChoiceJurisdiction(objectChoice?.jurisdiction) ? objectChoice?.jurisdiction : undefined);
   const manual = objectChoice ? {
     ...(manualJurisdiction ? { jurisdiction: manualJurisdiction } : {}),
-    ...(typeof choice.subjurisdiction === "string" && choice.subjurisdiction.length <= 200 ? { subjurisdiction: choice.subjurisdiction } : {}),
-    ...(typeof choice.jurisdictionId === "string" && choice.jurisdictionId.length <= 200 ? { jurisdictionId: choice.jurisdictionId } : {}),
-    ...(typeof choice.sourceType === "string" && choice.sourceType.length <= 200 ? { sourceType: choice.sourceType } : {}),
-    ...(typeof choice.foreign === "boolean" ? { foreign: choice.foreign } : {}),
+    ...(typeof objectChoice.subjurisdiction === "string" && objectChoice.subjurisdiction.length <= 200 ? { subjurisdiction: objectChoice.subjurisdiction } : {}),
+    ...(typeof objectChoice.jurisdictionId === "string" && objectChoice.jurisdictionId.length <= 200 ? { jurisdictionId: objectChoice.jurisdictionId } : {}),
+    ...(typeof objectChoice.sourceType === "string" && objectChoice.sourceType.length <= 200 ? { sourceType: objectChoice.sourceType } : {}),
+    ...(typeof objectChoice.foreign === "boolean" ? { foreign: objectChoice.foreign } : {}),
   } : null;
   const c = buildPastedCitation(raw, manual);
   if (codeMalformed) { c.route = "preserve"; c.conflicts.push("manual_jurisdiction_malformed"); }

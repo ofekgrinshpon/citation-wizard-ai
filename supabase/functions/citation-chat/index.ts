@@ -1063,7 +1063,7 @@ const LEGISLATION_RESPONSE_REGEX = /(?:^|\n)\s*(?:סעיף\s+[^\s]+\s+ל)?(?:ח�
 const PINPOINT_REGEX = /(?:סעיף|ס['׳']|פסקה|פס['׳']|עמ['׳']|לפסק\s+דינ[וה]\s+של|בעמ['׳']|שם,|פיסקה|השופט[ת]?\s|הנשיא[ה]?\s)/;
 
 // ─── Citation Engine Data (mirrored from citationEngine.ts) ────
-const CITATION_ENGINE_TEMPLATES: Record<string, { rule: string; template: string; required: string[] }> = {
+const CITATION_ENGINE_TEMPLATES: Record<string, { rule: string; template: string; required: string[]; notes?: string }> = {
   "חקיקה ראשית": {
     rule: "כלל 2",
     template: "{שם החוק}, {שנה עברית}–{שנה לועזית}, {קובץ} {עמוד ראשון}.",
@@ -1705,7 +1705,7 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
       body.content = final.reply;
       // No new evidence fields: retain the framed final text plus only the
       // already-approved structured metadata. Live metadata stays transient.
-      result = citationRecoveryResult({ ...result, content: frameBookFinal(bookInput, creditRequestId, final.reply) });
+      result = citationRecoveryResult({ ...result, content: frameBookFinal(bookInput!, creditRequestId, final.reply) });
     }
     const completion = await usageGuard?.finish("succeeded", "citation_delivered", result ?? undefined);
     const recoveryAvailability = !usageGuard ? "unavailable" : completion?.confirmed ? "available" : "unconfirmed";

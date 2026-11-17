@@ -181,7 +181,7 @@ async function extractPdfTextViaConvertApi(
   }
   try {
     const form = new FormData();
-    form.append("File", new Blob([bytes], { type: "application/pdf" }), filename);
+    form.append("File", new Blob([bytes.slice()], { type: "application/pdf" }), filename);
     form.append("StoreFile", "true");
 
     const res = await fetchWithTimeout(

@@ -923,7 +923,7 @@ async function runPipeline(
 
     if (initialGate.requires_repair.length && agent.memo) {
       repairTriggered = true;
-      const callsBefore = agent.policy.search_calls + agent.policy.fetch_calls + agent.policy.lookup_calls;
+      const callsBefore = agent.policy.totalSearchCalls + agent.policy.fetch_calls + agent.policy.lookup_calls;
       const repaired = await runResearchAgent({
       allowAskUser: false,
       ...repairCheckpointOption(intake, (state: AgentStateJson) => saveCheckpoint(state, true)),
@@ -949,7 +949,7 @@ async function runPipeline(
         commit: agent.commit,
         stats: agent.stats,
       });
-      repairResearchCalls = repaired.policy.search_calls + repaired.policy.fetch_calls +
+      repairResearchCalls = repaired.policy.totalSearchCalls + repaired.policy.fetch_calls +
         repaired.policy.lookup_calls - callsBefore;
       if (repaired.memo?.answer_blocks?.length) {
         // Repaired memo goes through the SAME verification + temporal gate +
@@ -1161,7 +1161,7 @@ async function runPipeline(
     cited_source_ids: rendered.cited_source_ids,
   });
 
-  const telemetry: V2Telemetry = {
+  const telemetry: V2Telemetry & Record<string, unknown> = {
     run_id: intake.run_id,
     agent_steps: agent.policy.steps,
     search_calls: agent.policy.search_calls,
@@ -1271,7 +1271,7 @@ async function runPipeline(
       (s.bibliographic?.authors?.length ?? 0) > 0
     ).length,
     bibliographic_citations_rendered: rendered.footnotes.filter((f) =>
-      f.sources.some((x) =>
+      (f.sources ?? []).some((x) =>
         academicYield.rows.some((r) => r.source_id === x.source_id && r.has_bibliographic)
       )
     ).length,
@@ -1333,7 +1333,7 @@ async function runPipeline(
       agent.stats.same_work_agent_hint_used_for_equivalence,
     authority_recovery_candidates_attached: agent.stats.authority_recovery_candidates_attached,
     authority_recovery_success: agent.stats.authority_recovery_success,
-    authority_recovery: agent.stats.authority_recovery_records,
+    authority_recovery: agent.stats.authority_recovery_records as unknown as Array<Record<string, unknown>>,
     unsafe_urls_blocked: agent.stats.unsafe_urls_blocked,
     /** Pre-memo coverage reflection (agent_owned_coverage_check_v1). Diagnostic only. */
     memo_coverage_check_triggered: agent.stats.memo_coverage_check_triggered,
@@ -1757,7 +1757,7 @@ async function sweepStalledRuns(
       automatic_resume_count: prior + 1,
       ...(ok ? {} : { automatic_resume_triggered: true }),
     });
-    console.log(JSON.stringify({ watchdog: "auto_resume", run_id: row.run_id, ok, ...decision }));
+    console.log(JSON.stringify({ watchdog: "auto_resume", run_id: row.run_id, ok, ...(decision as unknown as Record<string, unknown>) }));
   }
   return { examined: rows.length, decisions };
 }

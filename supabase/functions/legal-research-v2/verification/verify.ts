@@ -264,7 +264,7 @@ export async function verifyMemo(opts: {
       }
 
       // CHECK 3 — verbatim span.
-      const span = spanMatcher(source.extracted_text, ev.quoted_span);
+      const span = spanMatcher(source.extracted_text, ev.quoted_span ?? "");
       if (!span.matched) {
         const reason = span.status === "too_short" ? "span_too_short" : "span_not_found";
         rejected.push({
