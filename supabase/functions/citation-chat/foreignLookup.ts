@@ -1,4 +1,4 @@
-import { extractBookPublicationEvidence } from "../_shared/citationPure/bookPublicationEvidence.ts";
+import { bookCatalogueAuthorMatches, extractBookPublicationEvidence } from "../_shared/citationPure/bookPublicationEvidence.ts";
 /**
  * Milestone 2B — grounded foreign source lookup.
  *
@@ -1264,8 +1264,10 @@ export async function runForeignLookup(
     if (titleHint) {
       if (!titleMatches(ev, titleHint)) return false;
       if (authorHint) {
-        const statuses = [s.title, s.snippet].filter((text): text is string => !!text).map((text) => authorEvidenceStatus(authorHint, text));
-        if (statuses.includes("conflict") || !statuses.includes("match")) return false;
+        const texts = [s.title, s.snippet].filter((text): text is string => !!text);
+        const statuses = texts.map(text => authorEvidenceStatus(authorHint, text));
+        if (statuses.includes("conflict") || (!statuses.includes("match") && !(input.kind === "book" && s.strong &&
+          texts.some(text => bookCatalogueAuthorMatches(text, titleHint, authorHint))))) return false;
       }
       return true;
     }
@@ -1297,6 +1299,9 @@ export async function runForeignLookup(
     const c = extractCaseFromEvidence(`${s.title ?? ""} ${s.snippet ?? ""}`, jur);
     return !!c && !(c.volume || c.reporter || c.neutral || c.ukSeries) && !!(c.databaseIdentifier || c.docket);
   };
+  const bookPublication = (text: string) => extractBookPublicationEvidence(
+    text, input.parsedFields?.bookTitle ?? titleHint ?? "",
+    input.kind === "book" ? authorHint ?? undefined : undefined);
   /** A search round is productive when an identity-matched strong source carries usable evidence. */
   const productive = (list: LookupSource[]): boolean => list.some((s) => {
     if (!s.strong || !matchesIdentity(s)) return false;
@@ -1305,7 +1310,7 @@ export async function runForeignLookup(
       return jurs.some((j) => boundChains(s, j).length > 0 || nonLocationCase(s, j));
     }
     const w = input.kind === "book" || input.kind === "book_chapter"
-      ? extractBookPublicationEvidence(`${s.title ?? ""} ${s.snippet ?? ""}`, input.parsedFields?.bookTitle ?? titleHint ?? "")
+      ? bookPublication(`${s.title ?? ""} ${s.snippet ?? ""}`)
       : extractWorkFromEvidence(`${s.title ?? ""} ${s.snippet ?? ""}`, input.kind, s.title);
     return Object.values(w).some((v) => typeof v === "string" && v.length > 0);
   });
@@ -1334,16 +1339,31 @@ export async function runForeignLookup(
   let budgetPage: { url: string; text: string } | null = null;
   if (!productive(toSources(results)) && canChargeSearch(budget)) {
     const identified = toSources(results).filter((source) => source.strong && matchesIdentity(source));
-    if (identified.length) {
+    // A Google Books catalogue hit may identify the work without exposing its
+    // publication date in the snippet. For an unpinned book, spend the same
+    // remaining slot on publisher/catalogue discovery instead of scraping it.
+    const explicitBook = input.kind === "book" ? input.parsedFields : undefined;
+    const publicationQuery = explicitBook?.bookTitle && explicitBook.authors && !explicitBook.year && !explicitBook.edition
+      ? `"${explicitBook.bookTitle}" ${explicitBook.authors} book publisher catalogue paperback ISBN publication date`
+      : null;
+    const hasGoogleCatalogueFirst = !!identified[0] && hostOf(identified[0].url) === "books.google.com";
+    if (identified.length && !(publicationQuery && hasGoogleCatalogueFirst)) {
       const best = identified[0];
       const text = await fetchPageText(best.url, doFetch, undefined, "tier1", budget);
       if (text) budgetPage = { url: best.url, text };
     } else {
       empty.diagnostics.tier2Fired = true;
-      const t2 = (await searchOnce(query, null, doFetch, apiKey, "foreign_search_tier2", undefined, "tier2", budget)).map((r) => ({
+      const t2 = (await searchOnce(publicationQuery ?? query, null, doFetch, apiKey, "foreign_search_tier2", undefined, "tier2", budget)).map((r) => ({
         ...r,
         tier: "tier2" as const,
       }));
+      if (publicationQuery) {
+        // The second query can return clearer metadata at the same URL. Do not
+        // discard it on URL deduplication, or treat one URL as two editions.
+        const usableTier2 = new Set(toSources(t2).filter(s => s.strong && matchesIdentity(s) &&
+          !!bookPublication(`${s.title ?? ""} ${s.snippet ?? ""}`).year).map(s => s.url));
+        results = results.filter(s => !s.url || !usableTier2.has(s.url));
+      }
       results = [...results, ...t2];
     }
   }
@@ -1544,7 +1564,7 @@ export async function runForeignLookup(
         decisionDate: c.decisionDate,
       };
     }
-    if (input.kind === "book" || input.kind === "book_chapter") return extractBookPublicationEvidence(text, input.parsedFields?.bookTitle ?? titleHint ?? "");
+    if (input.kind === "book" || input.kind === "book_chapter") return bookPublication(text);
     const w = extractWorkFromEvidence(text, input.kind, pageTitle);
     return {
       volume: w.volume,

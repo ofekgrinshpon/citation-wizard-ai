@@ -44,7 +44,7 @@ type Handler = (req: Request) => Promise<Response>;
 let handler: Handler;
 const calls: Array<{ url: string; body: string }> = [];
 const finishes: Record<string, unknown>[] = [];
-let script: { hits: Hit[]; page: string | null; throwOnSearch: number | null; searches: number; interruptBody: boolean };
+let script: { hits: Hit[]; secondHits?: Hit[]; page: string | null; throwOnSearch: number | null; searches: number; interruptBody: boolean };
 
 function installHandler() {
   const modules: Record<string, unknown> = {
@@ -64,7 +64,8 @@ function installHandler() {
         script.searches += 1;
         if (script.throwOnSearch === script.searches) throw new Error("socket hang up");
         if (script.interruptBody) return { ok: true, status: 200, text: async () => { throw new Error("body interrupted"); }, json: async () => { throw new Error("body interrupted"); } } as unknown as Response;
-        return new Response(JSON.stringify({ results: script.hits }), { status: 200 });
+        const hits = script.searches === 2 ? script.secondHits ?? script.hits : script.hits;
+        return new Response(JSON.stringify({ results: hits }), { status: 200 });
       }
       if (script.page === null) throw new Error("page fetch was not part of this fixture");
       return new Response(script.page, { status: 200 });
@@ -173,6 +174,56 @@ describe("real citation-chat handler", () => {
     const posted = await post(raw, plan.typed?.foreignLookup, "handler-book-no-guess");
     expect((posted.body.foreignLookup as {fields:Record<string,string>}).fields.year).toBeUndefined();
     expect(gatewayCalls()).toHaveLength(0);
+  });
+
+  it("takes a bound catalogue year without spending the fallback slot", async () => {
+    const raw = "National Identity by Smith, Anthony D";
+    const plan = planned(raw).typed!;
+    reset({ hits: [{
+      title: "National Identity - Anthony D. Smith - Google Books",
+      url: "https://books.google.com/books/about/National_Identity.html?id=7quoQgAACAAJ",
+      snippet: "National Identity. Anthony D. Smith. Penguin, 1991 - 227 pages.",
+    }] });
+    const posted = await post(raw, plan.foreignLookup, "handler-catalogue-year");
+    expect(posted.body.foreignLookup).toMatchObject({ fields: { year: "1991" }, diagnostics: { tier2Fired: false } });
+    const rendered = resolveCitationResponse(plan, posted.body, CHAT_HOST);
+    expect(rendered.kind).toBe("terminal");
+    if (rendered.kind !== "terminal") throw new Error("Expected book result");
+    expect(citationTextOnly(rendered.resolution.citation)).toContain("(1991)");
+    expect(rendered.resolution.bookEditionChoice).toBeUndefined();
+    expect(calls).toHaveLength(1);
+  });
+
+  it("uses the existing second slot for publisher discovery when the catalogue snippet has no year", async () => {
+    const raw = "National Identity by Smith, Anthony D";
+    const plan = planned(raw).typed!;
+    const catalogue = {
+      title: "National Identity - Anthony D. Smith - Google Books",
+      url: "https://books.google.com/books/about/National_Identity.html?id=7quoQgAACAAJ",
+      snippet: "National Identity. Anthony D. Smith. Penguin Books.",
+    };
+    reset({ hits: [catalogue], secondHits: [
+      { ...catalogue, snippet: "National Identity. Anthony D. Smith. Penguin, 1991 - 227 pages." },
+      { title: "National Identity — Anthony D. Smith", url: "https://unpress.nevada.edu/9780874172041/national-identity/", snippet: "National Identity. Anthony D. Smith. Paperback. Published: March 1, 1993. ISBN 9780874172041. About the author: Anthony D. Smith (1939–2016)." },
+      { title: "National Identity — John Smith", url: "https://catalogue.example.edu/unrelated", snippet: "National Identity. John Smith. Penguin, 1999." },
+    ] });
+    const posted = await post(raw, plan.foreignLookup, "handler-catalogue-fallback");
+    expect(posted.body.foreignLookup).toMatchObject({
+      fields: {}, identity: { conflicts: ["year:editions:1991,1993"] }, diagnostics: { tier2Fired: true },
+    });
+    const secondSearch = JSON.parse(searchCalls()[1].body);
+    expect(secondSearch.query).toContain('"National Identity"');
+    expect(secondSearch.query).toContain("publisher catalogue");
+    expect(secondSearch.search_domain_filter).toBeUndefined();
+    expect(calls).toHaveLength(2);
+    const rendered = resolveCitationResponse(plan, posted.body, CHAT_HOST);
+    expect(rendered.kind).toBe("terminal");
+    if (rendered.kind !== "terminal") throw new Error("Expected book result");
+    const choice = rendered.resolution.bookEditionChoice!;
+    expect(choice.options.map(option => option.year)).toEqual(["1991", "1993"]);
+    const choiceResult = bookFinal.selectBookEditionChoice(choice, "book-year-1993", raw);
+    expect(citationTextOnly(choiceResult?.citation ?? "")).toContain("(1993)");
+    expect(calls).toHaveLength(2);
   });
 
   it("cites the matching Smith edition and does not call the formatter", async () => {
