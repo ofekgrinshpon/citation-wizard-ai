@@ -1,7 +1,24 @@
-# Read-only consultation: no implementation
+# ייעוץ בלבד: אין שינוי, אין פריסה
 
-There is nothing to build. Approving or skipping this has no effect.
+אין במסמך הזה שלבי מימוש. הוא מסכם את התשובה לשאלה. אישור שלו לא יפעיל שום דבר.
 
-- I ran one aggregate query on the edge-function request logs for the last 30 minutes. It was filtered to `citation-pass-checkout` and `takbull-hosted-webhook` only. It returned 0 rows.
-- I can't see deployment versions or update times with the available tools.
-- `latest_commit_sha` shows repository state. It does not prove that anything is live.
+## האם יש דרך לפרוס את citation-chat בלי Build ובלי קרדיטים?
+לא. לא מצאתי דרך כזו בממשק ובחיבור ל-GitHub.
+
+- **חיבור GitHub:** בפרויקט שרץ על Lovable Cloud, דחיפה ל-main רק מסנכרנת את הקוד. היא לא פורסת פונקציות שרת ולא מריצה migrations.
+- **כפתור Publish / Update:** מפרסם רק את צד הלקוח. הוא לא פורס פונקציות שרת.
+- **פריסת פונקציית שרת:** קורית רק דרך הצ'אט, כלומר ב-Build שצורך קרדיטים. זה כולל פריסה מפורשת של citation-chat כמו בפריסות הקודמות.
+- **אין גישה מקבילה:** אין לוח בקרה של Supabase ואין פרטי גישה ל-CLI ב-Lovable Cloud.
+
+## דגלים
+- **CITATION_SOURCE_TRIAL (צד השרת):** אפשר להוסיף או לשנות אותו בהגדרות הפרויקט, במסך Secrets. הפונקציה קוראת אותו בזמן ריצה, ולא צריך לפרוס אותה מחדש. לא בדקתי בתור זה אם שמירה במסך הזה צורכת קרדיטים.
+- **VITE_CITATION_SOURCE_TRIAL (צד הלקוח):** הערך הזה נקבע בזמן בניית האתר. אין לו מסך הגדרות, וקובץ `.env` נוצר אוטומטית ואסור לערוך אותו. לכן צריך לקבע את הדגל בקוד שנדחף ל-GitHub ואז ללחוץ Publish → Update. אפשרות אחרת היא להשאיר את הדגל דולק כבר בבנייה, ולשלוט בניסוי בפועל דרך הדגל בצד השרת או דרך ההפעלה ב-SQL.
+
+## SQL
+אפשר להריץ migrations דרך הכלים שבצ'אט. דחיפה ל-GitHub לא מריצה אותן.
+
+## סדר מומלץ, אם וכאשר יאושר
+1. להריץ את ה-migration כשהוא כבוי.
+2. לפרוס את citation-chat ב-Build אחד מאושר.
+3. לפרסם את צד הלקוח.
+4. להפעיל את הניסוי.
