@@ -1,9 +1,11 @@
+import { hasBookModelEvidence, readBookModelEvidence, bookModelProofKey } from "./bookModelAdapter.ts";
 import { acceptCitationCompletion } from "./completion.ts";
 import { authorEvidenceStatus } from "./authorNames.ts";
 import { bookCatalogueAuthorMatches, bookSourceHeadingMatches, extractBookPublicationEvidence } from "./bookPublicationEvidence.ts";
 import { rawCitationFingerprint, suppliedLookupFieldsMatch } from "../pastedCitation.ts";
 export interface BookEditionChoiceOption { id: string; label: string; year: string; url: string; edition?: string }
 export interface BookEditionChoice {
+  modelProofKey?: string;
   version: 1; rawInput: string; fingerprint: string; options: BookEditionChoiceOption[];
   request: Record<string, unknown>; response: unknown; localFields: Record<string, string>;
   localSourceFields: ReturnType<typeof acceptCitationCompletion>["suppliedFields"]; fallbackMissing: string[];
@@ -20,6 +22,12 @@ export function buildBookEditionChoice(request: Record<string, unknown>, raw: st
   if (request.kind !== "book" || request.rawInput !== raw || supplied.year || supplied.isbn || !supplied.authors || !supplied.bookTitle ||
       !suppliedLookupFieldsMatch(raw, "book", { authors: supplied.authors, bookTitle: supplied.bookTitle }) ||
       !acceptCitationCompletion({ ...request, parsedFields: supplied }, raw, response).identityConfirmed) return null;
+  if (hasBookModelEvidence(response)) {
+    const evidence = readBookModelEvidence(request, raw, response, localFields);
+    if (!evidence || evidence.result.options.length < 2) return null;
+    const options = evidence.result.options.map(({ year, records }) => ({ id: `book-year-${year}`, label: year, year, url: evidence.urls.get(records[0].sourceId)! }));
+    return { version: 1, rawInput: raw, fingerprint: rawCitationFingerprint(raw), options, request, response, localFields, localSourceFields, fallbackMissing, modelProofKey: bookModelProofKey(response) };
+  }
   const conflicts = obj(r.identity).conflicts;
   if (!Array.isArray(conflicts) || conflicts.length !== 1 || typeof conflicts[0] !== "string" || !/^year:editions:(?:\d{4},){1,3}\d{4}$/.test(conflicts[0])) return null;
   const years = conflicts[0].slice("year:editions:".length).split(",");
@@ -47,9 +55,16 @@ export function buildBookEditionChoice(request: Record<string, unknown>, raw: st
 }
 export function selectedBookEditionResponse(choice: BookEditionChoice, optionId: string, currentRaw: string): { choice: BookEditionChoice; response: unknown } | null {
   if (choice.version !== 1 || choice.rawInput !== currentRaw || choice.fingerprint !== rawCitationFingerprint(currentRaw)) return null;
+  if (hasBookModelEvidence(choice.response) && choice.modelProofKey !== bookModelProofKey(choice.response)) return null;
   const validated = buildBookEditionChoice(choice.request, currentRaw, choice.response, choice.localFields, choice.localSourceFields, choice.fallbackMissing);
   const option = validated?.options.find(o => o.id === optionId);
   if (!validated || !option) return null;
+  if (hasBookModelEvidence(validated.response)) {
+    const r = obj(validated.response), e = obj(r.bookModelEvidence);
+    return { choice: validated, response: { ...r, fields: {}, grounded: {}, provenance: {},
+      identity: { ...r.identity, conflicts: [] },
+      bookModelEvidence: { ...e, records: e.records.filter((record: any) => record.year === option.year) } } };
+  }
   const r = obj(validated.response), source = r.sources.find((s: any) => s.url === option.url);
   const fields = { year: option.year, ...(option.edition ? { edition: option.edition } : {}) };
   return { choice: validated, response: { ...r, fields, grounded: Object.fromEntries(Object.keys(fields).map(k => [k, true])),

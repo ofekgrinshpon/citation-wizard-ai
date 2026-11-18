@@ -1,3 +1,4 @@
+import * as bookEvidenceRoute from "../../supabase/functions/citation-chat/bookEvidenceRoute";
 /**
  * Israeli party-name search (Branch B): one open-web complementary search
  * when the restricted legal domains return nothing relevant. Runs the real
@@ -143,6 +144,7 @@ function install() {
     "../_shared/citationDiagnosticGate.ts": diagnosticGate,
     "./foreignLookup.ts": { runForeignLookup, articleLookupFallback },
     "./statuteRoute.ts": statuteRoute,
+    "./bookEvidenceRoute.ts": bookEvidenceRoute,
     "./countryRoute.ts": countryRoute,
     "../_shared/citationPure/bookFinal.ts": bookFinal,
     "../_shared/citationPure/freeformInterpret.ts": freeformInterpret,

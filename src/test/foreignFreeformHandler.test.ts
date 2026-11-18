@@ -1,3 +1,4 @@
+import * as bookEvidenceRoute from "../../supabase/functions/citation-chat/bookEvidenceRoute";
 /**
  * The compiled citation-chat handler and the real runForeignLookup.
  * Network, auth, database and environment are fixtures. The handler,
@@ -84,6 +85,7 @@ function installHandler() {
     "../_shared/citationDiagnosticGate.ts": diagnosticGate,
     "./foreignLookup.ts": { runForeignLookup, articleLookupFallback },
     "./statuteRoute.ts": statuteRoute,
+    "./bookEvidenceRoute.ts": bookEvidenceRoute,
     "./countryRoute.ts": countryRoute,
     "../_shared/citationPure/bookFinal.ts": bookFinal,
     "../_shared/citationPure/freeformInterpret.ts": freeformInterpret,

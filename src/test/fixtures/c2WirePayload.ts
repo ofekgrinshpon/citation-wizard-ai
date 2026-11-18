@@ -1,3 +1,4 @@
+import * as bookEvidenceRoute from "../../../supabase/functions/citation-chat/bookEvidenceRoute";
 import { webcrypto } from "node:crypto";
 import { TextEncoder } from "node:util";
 import * as statuteRoute from "../../../supabase/functions/citation-chat/statuteRoute";
@@ -56,6 +57,7 @@ export async function c2AuthoritativePayload(f: WireFixture) {
     }, from: () => { const chain = { select: () => chain, eq: () => chain, or: () => chain, limit: async () => ({ data: [], error: null }) }; return chain; } };
   const code = ts.transpileModule(readFileSync("supabase/functions/citation-chat/index.ts", "utf8"), { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText;
   new Function("require", "exports", "Deno", "fetch", "crypto", "TextEncoder", code)((path: string) => {
+    if (path.includes("bookEvidenceRoute")) return bookEvidenceRoute;
     if (path.includes("http/server")) return { serve: (fn: typeof handler) => { handler = fn; } };
     if (path.includes("supabase-js")) return { createClient: () => client };
     if (path.includes("citationUsageGuard")) return usage;

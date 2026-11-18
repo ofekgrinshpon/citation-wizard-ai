@@ -1,3 +1,4 @@
+import * as bookEvidenceRoute from "../../supabase/functions/citation-chat/bookEvidenceRoute";
 /** Offline vertical retention gate: only auth, provider fetch and persistence are mocked. */
 import { readFileSync } from "node:fs";
 import { webcrypto } from "node:crypto";
@@ -99,6 +100,7 @@ async function vertical(f: { id: string; raw: string; type: "foreign_book" | "fo
   const makeHandler = (code: string) => {
     let handler: ((req: Request) => Promise<Response>) | undefined;
     const require = (path: string) => {
+      if (path.includes("bookEvidenceRoute")) return bookEvidenceRoute;
       if (path.includes("http/server")) return { serve: (fn: typeof handler) => { handler = fn; } };
       if (path.includes("supabase-js")) return { createClient: () => authClient };
       if (path.includes("citationUsageGuard")) return usage;

@@ -1,3 +1,4 @@
+import * as bookEvidenceRoute from "../../supabase/functions/citation-chat/bookEvidenceRoute";
 /** Actual deployed-handler source executed offline with dummy runtime and closed transports. */
 import { readFileSync } from "node:fs";
 import ts from "typescript";
@@ -18,6 +19,7 @@ function fixture() {
   const construct = vi.fn();
   const client = { auth: { getClaims: async () => ({ data: { claims: { sub: "synthetic-account" } }, error: null }) }, from: cache, rpc: claim };
   const require = (path: string) => {
+      if (path.includes("bookEvidenceRoute")) return bookEvidenceRoute;
     if (path.includes("http/server")) return { serve: (fn: typeof handler) => { handler = fn; } };
     if (path.includes("supabase-js")) return { createClient: () => client };
     if (path.includes("pastedCitation")) return pasted;

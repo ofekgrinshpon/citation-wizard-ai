@@ -1,3 +1,4 @@
+import { authorizeBookEvidence, bookEvidenceEnabled, evaluateBookEvidence } from "./bookEvidenceRoute.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { trackedFetch as telemetryTrackedFetch, withCostTelemetry, setTelemetryFromBody, recordZeroWork, type CostStage } from "../_shared/costTelemetry.ts";
@@ -1689,7 +1690,12 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
       Object.keys(source).every(key => ["url", "title", "tier", "snippet", "strong"].includes(key)) &&
       (!("snippet" in source) || typeof source.snippet === "string") &&
       (!("strong" in source) || typeof source.strong === "boolean"));
-    const retainedBody = knownSources ? { ...body, foreignLookup: { ...foreign,
+    // Model publication quotes are live-only, like discovery snippets. The
+    // envelope is constructed by our server route, never an inbound authority.
+    const retainedForeign = { ...foreign };
+    if (foreign?.kind === "book" && foreign.bookModelEvidence?.version === 1)
+      delete retainedForeign.bookModelEvidence;
+    const retainedBody = knownSources ? { ...body, foreignLookup: { ...retainedForeign,
       sources: foreign.sources.map((source: Record<string, unknown>) => ({
         url: source.url, ...("title" in source ? { title: source.title } : {}), tier: source.tier,
       })),
@@ -2082,12 +2088,24 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
         const parsedForLookup = freeformPrepared.action === "search" ? freeformPrepared.parsedFields : flParsed;
         const kindForLookup = freeformPrepared.action === "search" ? freeformPrepared.kind : flKind;
         const jurForLookup = freeformPrepared.action === "search" ? freeformPrepared.jurisdiction : flJur;
+        const bookEvidenceEnv = { ...freeformServerEnv, BOOK_EVIDENCE_MODEL_LIVE: Deno.env.get("BOOK_EVIDENCE_MODEL_LIVE") };
+        const bookEvidenceAdmin = kindForLookup === "book" && !parsedForLookup?.year && !parsedForLookup?.isbn &&
+          !!parsedForLookup?.bookTitle && !!parsedForLookup?.authors && bookEvidenceEnabled(bookEvidenceEnv) &&
+          await authorizeBookEvidence(async signal => {
+            const { data, error } = await userClient.from("user_roles").select("role")
+              .eq("user_id", userId).eq("role", "admin").abortSignal(signal).maybeSingle();
+            return !error && data?.role === "admin";
+          });
         const pplxKey = Deno.env.get("PERPLEXITY_API_KEY");
         if (pplxKey || kindForLookup === "journal_article" || kindForLookup === "book") {
           try {
             foreignLookupResult = await runForeignLookup(
               { kind: kindForLookup, jurisdiction: jurForLookup, rawInput: flRaw, parsedFields: parsedForLookup },
-              { apiKey: pplxKey, fetchImpl: trackedFetch, budget: citationBudget, ...(diagnostic ? { diagnosticObserver: diagnostic.collector.observe } : {}) },
+              { apiKey: pplxKey, fetchImpl: trackedFetch, budget: citationBudget,
+                ...(bookEvidenceAdmin ? { evaluateBookEvidence: (packet: Parameters<typeof evaluateBookEvidence>[0]) => evaluateBookEvidence(packet, {
+                  apiKey: LOVABLE_API_KEY, budget: citationBudget,
+                  fetchImpl: ((url, init) => trackedFetch(url, init, {stage:"freeform_parser"})) as typeof fetch,
+                }) } : {}), ...(diagnostic ? { diagnosticObserver: diagnostic.collector.observe } : {}) },
             );
           } catch (flErr) {
             markCitationProviderUnknown();
@@ -2100,6 +2118,7 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
           // Identity matched + at least one grounded new field → the client
           // renders deterministically; no model call needed for this request.
           if (
+            !!foreignLookupResult?.bookModelEvidence ||
             !!foreignLookupResult?.articleResolution ||
             (foreignLookupResult?.identity.matched && Object.keys(foreignLookupResult.fields).length > 0) ||
             (foreignLookupResult?.disambiguation && foreignLookupResult.disambiguation.length > 1) ||

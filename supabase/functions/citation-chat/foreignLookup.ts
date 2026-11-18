@@ -1,3 +1,4 @@
+import { publicBookText, projectBookEvidence, type BookEvidenceEvaluator, type BookModelEvidenceEnvelope } from "./bookEvidenceRoute.ts";
 import { bookCatalogueAuthorMatches, bookSourceHeadingMatches, extractBookPublicationEvidence } from "../_shared/citationPure/bookPublicationEvidence.ts";
 /**
  * Milestone 2B — grounded foreign source lookup.
@@ -9,7 +10,7 @@ import { bookCatalogueAuthorMatches, bookSourceHeadingMatches, extractBookPublic
  *   evidence (title/snippet/URL or one bounded page inspection) of an
  *   identity-matched, sufficiently strong source.
  *
- * This module NEVER formats a citation and NEVER asks a model for facts.
+ * This module never formats a citation. A separately gated book-only evaluator may interpret already retrieved public evidence.
  * Discovery = Perplexity Search API. Extraction = deterministic patterns
  * over returned evidence. Rendering stays in src/data/bluebook/.
  *
@@ -47,6 +48,7 @@ export type GroundingBasis =
   | "document_inspection";
 
 export interface ForeignLookupResult {
+  bookModelEvidence?: BookModelEvidenceEnvelope;
   kind: ForeignLookupKind;
   jurisdiction: ForeignLookupJurisdiction;
   fields: Record<string, string>;
@@ -82,6 +84,8 @@ export interface ForeignLookupResult {
 }
 
 export interface LookupDeps {
+  /** Supplied only by the authenticated, server-flagged admin route. */
+  evaluateBookEvidence?: BookEvidenceEvaluator;
   fetchImpl?: typeof fetch;
   apiKey?: string | null;
   /** Optional per-invocation observation only; never serialized into lookup results. */
@@ -1387,6 +1391,31 @@ export async function runForeignLookup(
 
   // Record sources + strength.
   const sources = toSources(results);
+  // Model interpretation is a separate, terminal, missing-year book route.
+  // It sees only already retrieved public text; never broadens retrieval caps.
+  if (deps?.evaluateBookEvidence && input.kind === "book" && !input.parsedFields?.year &&
+      input.parsedFields?.bookTitle && input.parsedFields?.authors && !input.parsedFields?.isbn) {
+    const publicSources = sources.filter(s => s.strong).slice(0, 4).map((s, i) => ({
+      id: `s${i}`, url: s.url, title: s.title,
+      text: (budgetPage?.url === s.url ? publicBookText(budgetPage.text) : null) ?? publicBookText(sourceText(s)) ?? "",
+    }));
+    const packet = {
+      title: input.parsedFields.bookTitle, author: input.parsedFields.authors,
+      ...(input.parsedFields.edition ? {edition:input.parsedFields.edition} : {}),
+      ...Object.fromEntries(["format","language","version"].filter(k => input.parsedFields?.[k]).map(k => [k,input.parsedFields![k]])),
+      sources: publicSources.map(({id,text})=>({id,text})),
+    };
+    let proposals: unknown = null;
+    if (publicSources.length && !budget.unknown && !input.parsedFields?.translators && !input.parsedFields?.editors) {
+      try { proposals = await deps.evaluateBookEvidence(packet); } catch { markBudgetUnknown(budget); }
+    }
+    empty.bookModelEvidence = projectBookEvidence(packet, proposals, publicSources);
+    empty.identity = {matched: empty.bookModelEvidence.records.length > 0, anchors: [`title:${packet.title}`, `author:${packet.author}`], conflicts: []};
+    // No legacy fields or regex-shaped invented snippets. Shared client validates
+    // this envelope against its bound input before rendering or offering choices.
+    return empty;
+  }
+
   for (const s of sources) {
     empty.sources.push({ url: s.url, title: s.title, tier: s.tier, snippet: s.snippet, ...(input.kind === "book" ? { strong: s.strong && matchesIdentity(s) } : {}) } as LookupSource & { tier: "tier1" | "tier2" });
   }

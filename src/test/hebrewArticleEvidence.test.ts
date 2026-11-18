@@ -1,3 +1,4 @@
+import * as bookEvidenceRoute from "../../supabase/functions/citation-chat/bookEvidenceRoute";
 import { AsyncLocalStorage } from "node:async_hooks";
 import { webcrypto } from "node:crypto";
 import { TextEncoder } from "node:util";
@@ -282,6 +283,7 @@ async function runHandler(options: { raw?: string; rawInputNull?: boolean; recor
       }) as typeof fetch });
     }, articleLookupFallback },
     "./statuteRoute.ts": statuteRoute,
+    "./bookEvidenceRoute.ts": bookEvidenceRoute,
     "./countryRoute.ts": countryRoute,
     "../_shared/citationPure/bookFinal.ts": bookFinal,
     "../_shared/citationPure/freeformInterpret.ts": freeformInterpret,

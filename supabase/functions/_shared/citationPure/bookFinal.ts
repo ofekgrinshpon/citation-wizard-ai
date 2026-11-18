@@ -1,3 +1,4 @@
+import { hasBookModelEvidence, readBookModelEvidence, bookModelProofKey } from "./bookModelAdapter.ts";
 import { buildBookEditionChoice, selectedBookEditionResponse, type BookEditionChoice } from "./bookEditionChoice.ts";
 import { extractBookPublicationEvidence } from "./bookPublicationEvidence.ts";
 export type { BookEditionChoice, BookEditionChoiceOption } from "./bookEditionChoice.ts";
@@ -97,6 +98,18 @@ export function resolveBookCompletion(request: Record<string, unknown>, raw: str
       delete accepted.fields[key]; delete accepted.provenance[key]; accepted.quarantined.push(key);
     }
   }
+  // An experimental envelope is terminal, including empty/invalid evidence.
+  // Never fall back to an unvalidated legacy year or edition alongside it.
+  if (hasBookModelEvidence(response)) {
+    for (const key of ["year", "edition"]) { delete accepted.fields[key]; delete accepted.provenance[key]; }
+    const evidence = readBookModelEvidence(request, raw, response, localFields);
+    if (accepted.identityConfirmed && evidence?.result.options.length === 1 && !supplied.year) {
+      const record = evidence.result.options[0].records[0];
+      accepted.fields.year = record.year;
+      accepted.provenance.year = { value: record.year, sourceUrl: evidence.urls.get(record.sourceId), basis: "model_quoted_publication", quote: record.quote, isbn: record.isbn };
+      accepted.quarantined = accepted.quarantined.filter(key => key !== "year");
+    }
+  }
   const bookEditionChoice = buildBookEditionChoice(request, raw, response, localFields, suppliedFields, fallbackMissing);
 
   const messages = {
@@ -131,6 +144,7 @@ export function resolveBookCompletion(request: Record<string, unknown>, raw: str
 /** Local choice only. Revalidate original evidence and exact input, never fetch. */
 export function selectBookEditionChoice(choice: BookEditionChoice, optionId: string, currentRaw: string): ReturnType<typeof resolveBookCompletion> | null {
   if (choice.version !== 1 || choice.rawInput !== currentRaw || choice.fingerprint !== rawCitationFingerprint(currentRaw)) return null;
+  if (hasBookModelEvidence(choice.response) && choice.modelProofKey !== bookModelProofKey(choice.response)) return null;
   const validated = buildBookEditionChoice(choice.request, currentRaw, choice.response, choice.localFields, choice.localSourceFields, choice.fallbackMissing);
   if (!validated) return null;
   if (optionId === "keep-missing") {
