@@ -2,7 +2,7 @@ import { authorizeBookEvidence, bookEvidenceEnabled, evaluateBookEvidence } from
 import { bookCrossrefTarget } from "./bookCrossrefTarget.ts";
 import { lookupBookCrossref } from "./bookCrossrefRoute.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { createClient } from "npm:@supabase/supabase-js@2.117.2";
 import { trackedFetch as telemetryTrackedFetch, withCostTelemetry, setTelemetryFromBody, recordZeroWork, type CostStage } from "../_shared/costTelemetry.ts";
 import { citationRecoveryInput } from "../_shared/citationRecovery.ts";
 import { CitationUsageGuard, citationFingerprint, citationRefundReceipt, isUnstructuredCitationRefusal, withCitationProviderOutcome, observeCitationProviderFetch, markCitationProviderUnknown } from "../_shared/citationUsageGuard.ts";

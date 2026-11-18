@@ -114,7 +114,7 @@ function install() {
   runInContext(compile(readFileSync(resolve(__dirname, "../../supabase/functions/_shared/citationUsageGuard.ts"), "utf8")), guardContext);
   const modules: Record<string, unknown> = {
     "https://deno.land/std@0.168.0/http/server.ts": { serve: (fn: Handler) => { handler = fn; } },
-    "https://esm.sh/@supabase/supabase-js@2": { createClient: () => ({
+    "npm:@supabase/supabase-js@2.117.2": { createClient: () => ({
       auth: { getClaims: async () => ({ data: { claims: { sub: "test-user" } }, error: null }) },
       rpc: async (name: string, args: Record<string, unknown>) => ({ data: name === "begin_citation_request"
         ? { ok: true, execute: true, status: "in_progress", request_id: args._request_id, retry_of_request_id: null, attempt_token: "fixture-attempt-token" }

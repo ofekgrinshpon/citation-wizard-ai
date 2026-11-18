@@ -254,7 +254,7 @@ async function runHandler(options: { raw?: string; rawInputNull?: boolean; recor
   };
   const modules: Record<string, unknown> = {
     "https://deno.land/std@0.168.0/http/server.ts": { serve: (f: typeof handler) => { handler = f; } },
-    "https://esm.sh/@supabase/supabase-js@2": { createClient: (_url: string, key: string, configuration?: unknown) => ({
+    "npm:@supabase/supabase-js@2.117.2": { createClient: (_url: string, key: string, configuration?: unknown) => ({
       ...client,
       rpc: (name: string, args: Record<string, unknown>) => {
         if (name === "begin_citation_request" || name === "finish_citation_request") claimClients.push({ key, options: configuration });
