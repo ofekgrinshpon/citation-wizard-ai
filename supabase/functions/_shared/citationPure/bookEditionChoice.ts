@@ -1,3 +1,4 @@
+import { readBookCrossrefEvidence } from "./bookCrossrefEvidence.ts";
 import { hasBookModelEvidence, readBookModelEvidence, bookModelProofKey } from "./bookModelAdapter.ts";
 import { acceptCitationCompletion } from "./completion.ts";
 import { authorEvidenceStatus } from "./authorNames.ts";
@@ -6,11 +7,20 @@ import { rawCitationFingerprint, suppliedLookupFieldsMatch } from "../pastedCita
 export interface BookEditionChoiceOption { id: string; label: string; year: string; url: string; edition?: string }
 export interface BookEditionChoice {
   modelProofKey?: string;
+  crossrefProofKey?: string;
   version: 1; rawInput: string; fingerprint: string; options: BookEditionChoiceOption[];
   request: Record<string, unknown>; response: unknown; localFields: Record<string, string>;
   localSourceFields: ReturnType<typeof acceptCitationCompletion>["suppliedFields"]; fallbackMissing: string[];
 }
 const obj = (v: unknown): Record<string, any> => v && typeof v === "object" && !Array.isArray(v) ? v as Record<string, any> : {};
+export const hasBookCrossrefEvidence = (response: unknown) => Object.prototype.hasOwnProperty.call(obj(response), "bookCrossrefEvidence");
+export function bookCrossrefProofKey(response: unknown): string {
+  try { return rawCitationFingerprint(JSON.stringify(response)); } catch { return "invalid"; }
+}
+export function bookCrossrefEdition(value: string): string {
+  const n = Number(value), suffix = n === 2 ? "d" : n === 3 ? "d" : n % 100 >= 11 && n % 100 <= 13 ? "th" : n % 10 === 1 ? "st" : n % 10 === 2 ? "d" : n % 10 === 3 ? "d" : "th";
+  return `${n}${suffix} ed.`;
+}
 function ordinal(v: string) {
   const words = ["first", "second", "third", "fourth", "fifth", "sixth", "seventh", "eighth", "ninth", "tenth"];
   const n = v.match(/^(\d+)(?:st|nd|rd|th|d)\s+ed/i);
@@ -22,6 +32,17 @@ export function buildBookEditionChoice(request: Record<string, unknown>, raw: st
   if (request.kind !== "book" || request.rawInput !== raw || supplied.year || supplied.isbn || !supplied.authors || !supplied.bookTitle ||
       !suppliedLookupFieldsMatch(raw, "book", { authors: supplied.authors, bookTitle: supplied.bookTitle }) ||
       !acceptCitationCompletion({ ...request, parsedFields: supplied }, raw, response).identityConfirmed) return null;
+  if (hasBookCrossrefEvidence(response)) {
+    const rows = readBookCrossrefEvidence(request, raw, response, localFields);
+    if (!rows || new Set(rows.map(row => row.edition)).size < 2) return null;
+    const editions = [...new Map(rows.map(row => [row.edition, row])).values()]
+      .sort((a, b) => Number(a.edition) - Number(b.edition));
+    const options = editions.map(row => ({ id: `book-crossref-${row.isbn}-${row.edition}-${row.year}`,
+      label: `${row.year} (${bookCrossrefEdition(row.edition)})`, year: row.year,
+      edition: bookCrossrefEdition(row.edition), url: `https://doi.org/${row.doi}` }));
+    return { version: 1, rawInput: raw, fingerprint: rawCitationFingerprint(raw), options, request, response,
+      localFields, localSourceFields, fallbackMissing, crossrefProofKey: bookCrossrefProofKey(response) };
+  }
   if (hasBookModelEvidence(response)) {
     const evidence = readBookModelEvidence(request, raw, response, localFields);
     if (!evidence || evidence.result.options.length < 2) return null;
@@ -53,12 +74,14 @@ export function buildBookEditionChoice(request: Record<string, unknown>, raw: st
   });
   return { version: 1, rawInput: raw, fingerprint: rawCitationFingerprint(raw), options, request, response, localFields, localSourceFields, fallbackMissing };
 }
-export function selectedBookEditionResponse(choice: BookEditionChoice, optionId: string, currentRaw: string): { choice: BookEditionChoice; response: unknown } | null {
+export function selectedBookEditionResponse(choice: BookEditionChoice, optionId: string, currentRaw: string): { choice: BookEditionChoice; response: unknown; crossrefSelection?: BookEditionChoiceOption } | null {
   if (choice.version !== 1 || choice.rawInput !== currentRaw || choice.fingerprint !== rawCitationFingerprint(currentRaw)) return null;
-  if (hasBookModelEvidence(choice.response) && choice.modelProofKey !== bookModelProofKey(choice.response)) return null;
+  if (hasBookCrossrefEvidence(choice.response) && choice.crossrefProofKey !== bookCrossrefProofKey(choice.response)) return null;
+  if (!hasBookCrossrefEvidence(choice.response) && hasBookModelEvidence(choice.response) && choice.modelProofKey !== bookModelProofKey(choice.response)) return null;
   const validated = buildBookEditionChoice(choice.request, currentRaw, choice.response, choice.localFields, choice.localSourceFields, choice.fallbackMissing);
   const option = validated?.options.find(o => o.id === optionId);
   if (!validated || !option) return null;
+  if (hasBookCrossrefEvidence(validated.response)) return { choice: validated, response: validated.response, crossrefSelection: option };
   if (hasBookModelEvidence(validated.response)) {
     const r = obj(validated.response), e = obj(r.bookModelEvidence);
     return { choice: validated, response: { ...r, fields: {}, grounded: {}, provenance: {},

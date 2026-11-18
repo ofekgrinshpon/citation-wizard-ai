@@ -1,0 +1,2150 @@
+{
+  "brownlie": {
+    "status": "ok",
+    "message-type": "work-list",
+    "message": {
+      "total-results": 571,
+      "items": [
+        {
+          "edition-number": "8",
+          "isbn-type": [
+            {
+              "value": "9780199699698",
+              "type": "print"
+            },
+            {
+              "value": "9780191764622",
+              "type": "electronic"
+            }
+          ],
+          "published-print": {
+            "date-parts": [
+              [
+                2012,
+                9,
+                27
+              ]
+            ]
+          },
+          "DOI": "10.1093/he/9780199699698.001.0001",
+          "type": "edited-book",
+          "title": [
+            "Brownlie's Principles of Public International Law"
+          ],
+          "author": [
+            {
+              "given": "James",
+              "family": "Crawford",
+              "sequence": "first",
+              "affiliation": [],
+              "role": [
+                {
+                  "vocabulary": "crossref",
+                  "role": "author"
+                }
+              ]
+            }
+          ],
+          "ISBN": [
+            "9780199699698",
+            "9780191764622"
+          ],
+          "URL": "https://doi.org/10.1093/he/9780199699698.001.0001",
+          "published": {
+            "date-parts": [
+              [
+                2012,
+                9,
+                27
+              ]
+            ]
+          }
+        },
+        {
+          "edition-number": "9",
+          "isbn-type": [
+            {
+              "value": "0198737440",
+              "type": "print"
+            },
+            {
+              "value": "9780198737445",
+              "type": "print"
+            },
+            {
+              "value": "9780191876370",
+              "type": "electronic"
+            }
+          ],
+          "published-print": {
+            "date-parts": [
+              [
+                2019,
+                7,
+                9
+              ]
+            ]
+          },
+          "DOI": "10.1093/he/9780198737445.001.0001",
+          "type": "book",
+          "title": [
+            "Brownlie's Principles of Public International Law"
+          ],
+          "author": [
+            {
+              "given": "James",
+              "family": "Crawford",
+              "sequence": "first",
+              "affiliation": [
+                {
+                  "name": "Judge of the International Court of Justice and former Whewell Professor of International Law, University of Cambridge"
+                }
+              ],
+              "role": [
+                {
+                  "vocabulary": "crossref",
+                  "role": "author"
+                }
+              ]
+            }
+          ],
+          "ISBN": [
+            "0198737440",
+            "9780198737445",
+            "9780191876370"
+          ],
+          "URL": "https://doi.org/10.1093/he/9780198737445.001.0001",
+          "published": {
+            "date-parts": [
+              [
+                2019,
+                7,
+                9
+              ]
+            ]
+          }
+        },
+        {
+          "isbn-type": [
+            {
+              "value": "9789004268098",
+              "type": "electronic"
+            },
+            {
+              "value": "9789004268081",
+              "type": "print"
+            }
+          ],
+          "published-print": {
+            "date-parts": [
+              [
+                2014,
+                4,
+                29
+              ]
+            ]
+          },
+          "DOI": "10.1163/9789004268098",
+          "type": "monograph",
+          "title": [
+            "Chance, Order, Change: The Course of International Law, General Course on Public International Law"
+          ],
+          "author": [
+            {
+              "given": "James",
+              "family": "Crawford",
+              "sequence": "first",
+              "affiliation": [],
+              "role": [
+                {
+                  "vocabulary": "crossref",
+                  "role": "author"
+                }
+              ]
+            }
+          ],
+          "ISBN": [
+            "9789004268098",
+            "9789004268081"
+          ],
+          "URL": "https://doi.org/10.1163/9789004268098",
+          "published": {
+            "date-parts": [
+              [
+                2014,
+                4,
+                29
+              ]
+            ]
+          }
+        },
+        {
+          "edition-number": "2",
+          "isbn-type": [
+            {
+              "value": "0199228426",
+              "type": "print"
+            },
+            {
+              "value": "9780199228423",
+              "type": "print"
+            },
+            {
+              "value": "9780191714375",
+              "type": "electronic"
+            }
+          ],
+          "published-print": {
+            "date-parts": [
+              [
+                2007,
+                3,
+                15
+              ]
+            ]
+          },
+          "DOI": "10.1093/acprof:oso/9780199228423.001.0001",
+          "type": "book",
+          "title": [
+            "The Creation of States in International Law"
+          ],
+          "author": [
+            {
+              "given": "James R.",
+              "family": "Crawford",
+              "sequence": "first",
+              "affiliation": [
+                {
+                  "name": "Whewell Professor of International Law, University of Cambridge"
+                }
+              ],
+              "role": [
+                {
+                  "vocabulary": "crossref",
+                  "role": "author"
+                }
+              ]
+            }
+          ],
+          "ISBN": [
+            "0199228426",
+            "9780199228423",
+            "9780191714375"
+          ],
+          "URL": "https://doi.org/10.1093/acprof:oso/9780199228423.001.0001",
+          "published": {
+            "date-parts": [
+              [
+                2007,
+                3,
+                15
+              ]
+            ]
+          }
+        },
+        {
+          "edition-number": "2",
+          "isbn-type": [
+            {
+              "value": "9781108635448",
+              "type": "electronic"
+            },
+            {
+              "value": "9781108727716",
+              "type": "print"
+            }
+          ],
+          "published-print": {
+            "date-parts": [
+              [
+                2020,
+                3,
+                12
+              ]
+            ]
+          },
+          "DOI": "10.1017/9781108635448",
+          "type": "monograph",
+          "title": [
+            "International Humanitarian Law"
+          ],
+          "author": [
+            {
+              "given": "Emily",
+              "family": "Crawford",
+              "sequence": "first",
+              "affiliation": [],
+              "role": [
+                {
+                  "vocabulary": "crossref",
+                  "role": "author"
+                }
+              ]
+            },
+            {
+              "given": "Alison",
+              "family": "Pert",
+              "sequence": "additional",
+              "affiliation": [],
+              "role": [
+                {
+                  "vocabulary": "crossref",
+                  "role": "author"
+                }
+              ]
+            }
+          ],
+          "ISBN": [
+            "9781108635448",
+            "9781108727716"
+          ],
+          "URL": "https://doi.org/10.1017/9781108635448",
+          "published": {
+            "date-parts": [
+              [
+                2020,
+                3,
+                12
+              ]
+            ]
+          }
+        },
+        {
+          "edition-number": "3",
+          "isbn-type": [
+            {
+              "value": "9781009326681",
+              "type": "electronic"
+            },
+            {
+              "value": "9781009326704",
+              "type": "print"
+            },
+            {
+              "value": "9781009326728",
+              "type": "print"
+            }
+          ],
+          "published-print": {
+            "date-parts": [
+              [
+                2024,
+                5,
+                9
+              ]
+            ]
+          },
+          "DOI": "10.1017/9781009326681",
+          "type": "monograph",
+          "title": [
+            "International Humanitarian Law"
+          ],
+          "author": [
+            {
+              "given": "Emily",
+              "family": "Crawford",
+              "sequence": "first",
+              "affiliation": [],
+              "role": [
+                {
+                  "vocabulary": "crossref",
+                  "role": "author"
+                }
+              ]
+            },
+            {
+              "given": "Alison",
+              "family": "Pert",
+              "sequence": "additional",
+              "affiliation": [],
+              "role": [
+                {
+                  "vocabulary": "crossref",
+                  "role": "author"
+                }
+              ]
+            }
+          ],
+          "ISBN": [
+            "9781009326681",
+            "9781009326704",
+            "9781009326728"
+          ],
+          "URL": "https://doi.org/10.1017/9781009326681",
+          "published": {
+            "date-parts": [
+              [
+                2024,
+                5,
+                9
+              ]
+            ]
+          }
+        },
+        {
+          "edition-number": "1",
+          "isbn-type": [
+            {
+              "value": "9781107116177",
+              "type": "print"
+            },
+            {
+              "value": "9781316337028",
+              "type": "electronic"
+            },
+            {
+              "value": "9781107537095",
+              "type": "print"
+            }
+          ],
+          "published-print": {
+            "date-parts": [
+              [
+                2015,
+                9,
+                24
+              ]
+            ]
+          },
+          "DOI": "10.1017/cbo9781316337028",
+          "type": "monograph",
+          "title": [
+            "International Humanitarian Law"
+          ],
+          "author": [
+            {
+              "given": "Emily",
+              "family": "Crawford",
+              "sequence": "first",
+              "affiliation": [],
+              "role": [
+                {
+                  "vocabulary": "crossref",
+                  "role": "author"
+                }
+              ]
+            },
+            {
+              "given": "Alison",
+              "family": "Pert",
+              "sequence": "additional",
+              "affiliation": [],
+              "role": [
+                {
+                  "vocabulary": "crossref",
+                  "role": "author"
+                }
+              ]
+            }
+          ],
+          "subtitle": [
+            ""
+          ],
+          "ISBN": [
+            "9781107116177",
+            "9781316337028",
+            "9781107537095"
+          ],
+          "URL": "https://doi.org/10.1017/cbo9781316337028",
+          "published": {
+            "date-parts": [
+              [
+                2015,
+                9,
+                24
+              ]
+            ]
+          }
+        },
+        {
+          "edition-number": "1",
+          "isbn-type": [
+            {
+              "value": "0198819854",
+              "type": "print"
+            },
+            {
+              "value": "9780198819851",
+              "type": "print"
+            },
+            {
+              "value": "9780191860119",
+              "type": "electronic"
+            }
+          ],
+          "published-print": {
+            "date-parts": [
+              [
+                2021,
+                12,
+                23
+              ]
+            ]
+          },
+          "DOI": "10.1093/oso/9780198819851.001.0001",
+          "type": "edited-book",
+          "title": [
+            "Non-Binding Norms in International Humanitarian Law"
+          ],
+          "author": [
+            {
+              "given": "Emily",
+              "family": "Crawford",
+              "sequence": "first",
+              "affiliation": [
+                {
+                  "name": "Associate Professor, Sydney Law School"
+                }
+              ],
+              "role": [
+                {
+                  "vocabulary": "crossref",
+                  "role": "author"
+                }
+              ]
+            }
+          ],
+          "subtitle": [
+            "Efficacy, Legitimacy, and Legality"
+          ],
+          "ISBN": [
+            "0198819854",
+            "9780198819851",
+            "9780191860119"
+          ],
+          "URL": "https://doi.org/10.1093/oso/9780198819851.001.0001",
+          "published": {
+            "date-parts": [
+              [
+                2021,
+                12,
+                23
+              ]
+            ]
+          }
+        },
+        {
+          "isbn-type": [
+            {
+              "value": "9789047421375",
+              "type": "electronic"
+            },
+            {
+              "value": "9789004154919",
+              "type": "print"
+            }
+          ],
+          "published-print": {
+            "date-parts": [
+              [
+                2007,
+                1,
+                1
+              ]
+            ]
+          },
+          "DOI": "10.1163/ej.9789004154919.i-468",
+          "type": "monograph",
+          "title": [
+            "Peoples and International Law"
+          ],
+          "author": [
+            {
+              "given": "James",
+              "family": "Summers",
+              "sequence": "first",
+              "affiliation": [],
+              "role": [
+                {
+                  "vocabulary": "crossref",
+                  "role": "author"
+                }
+              ]
+            }
+          ],
+          "subtitle": [
+            "How Nationalism and Self-Determination Shape a Contemporary Law of Nations"
+          ],
+          "ISBN": [
+            "9789047421375",
+            "9789004154919"
+          ],
+          "URL": "https://doi.org/10.1163/ej.9789004154919.i-468",
+          "published": {
+            "date-parts": [
+              [
+                2007,
+                1,
+                1
+              ]
+            ]
+          }
+        },
+        {
+          "isbn-type": [
+            {
+              "value": "9789004232969",
+              "type": "electronic"
+            },
+            {
+              "value": "9789004232945",
+              "type": "print"
+            }
+          ],
+          "published-print": {
+            "date-parts": [
+              [
+                2007,
+                1,
+                1
+              ]
+            ]
+          },
+          "DOI": "10.1163/9789004232969",
+          "type": "monograph",
+          "title": [
+            "Peoples and International Law"
+          ],
+          "author": [
+            {
+              "given": "James",
+              "family": "Summers",
+              "sequence": "first",
+              "affiliation": [],
+              "role": [
+                {
+                  "vocabulary": "crossref",
+                  "role": "author"
+                }
+              ]
+            }
+          ],
+          "subtitle": [
+            "Second Revised Edition"
+          ],
+          "ISBN": [
+            "9789004232969",
+            "9789004232945"
+          ],
+          "URL": "https://doi.org/10.1163/9789004232969",
+          "published": {
+            "date-parts": [
+              [
+                2007,
+                1,
+                1
+              ]
+            ]
+          }
+        },
+        {
+          "isbn-type": [
+            {
+              "value": "9780231888615",
+              "type": "electronic"
+            }
+          ],
+          "published-print": {
+            "date-parts": [
+              [
+                1961,
+                12,
+                31
+              ]
+            ]
+          },
+          "DOI": "10.7312/bonb92418",
+          "type": "edited-book",
+          "title": [
+            "Principles of Public Utility Rates"
+          ],
+          "author": [
+            {
+              "given": "James C.",
+              "family": "Bonbright",
+              "sequence": "first",
+              "affiliation": [],
+              "role": [
+                {
+                  "vocabulary": "crossref",
+                  "role": "author"
+                }
+              ]
+            }
+          ],
+          "ISBN": [
+            "9780231888615"
+          ],
+          "URL": "https://doi.org/10.7312/bonb92418",
+          "published": {
+            "date-parts": [
+              [
+                1961,
+                12,
+                31
+              ]
+            ]
+          }
+        },
+        {
+          "edition-number": "1",
+          "isbn-type": [
+            {
+              "value": "9781108500241",
+              "type": "electronic"
+            },
+            {
+              "value": "9781108423885",
+              "type": "print"
+            },
+            {
+              "value": "9781108436649",
+              "type": "print"
+            }
+          ],
+          "published-print": {
+            "date-parts": [
+              [
+                2021,
+                7,
+                22
+              ]
+            ]
+          },
+          "DOI": "10.1017/9781108500241",
+          "type": "monograph",
+          "title": [
+            "International Economic Law"
+          ],
+          "author": [
+            {
+              "given": "Le\u00efla",
+              "family": "Choukroune",
+              "sequence": "first",
+              "affiliation": [],
+              "role": [
+                {
+                  "vocabulary": "crossref",
+                  "role": "author"
+                }
+              ]
+            },
+            {
+              "given": "James J.",
+              "family": "Nedumpara",
+              "sequence": "additional",
+              "affiliation": [],
+              "role": [
+                {
+                  "vocabulary": "crossref",
+                  "role": "author"
+                }
+              ]
+            }
+          ],
+          "subtitle": [
+            "Text, Cases and Materials"
+          ],
+          "ISBN": [
+            "9781108500241",
+            "9781108423885",
+            "9781108436649"
+          ],
+          "URL": "https://doi.org/10.1017/9781108500241",
+          "published": {
+            "date-parts": [
+              [
+                2021,
+                7,
+                22
+              ]
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "smith": {
+    "status": "ok",
+    "message-type": "work-list",
+    "message": {
+      "total-results": 174,
+      "items": [
+        {
+          "edition-number": "0",
+          "isbn-type": [
+            {
+              "value": "9781317317111",
+              "type": "electronic"
+            }
+          ],
+          "DOI": "10.4324/9781315653785",
+          "type": "monograph",
+          "title": [
+            "British Historians and National Identity"
+          ],
+          "author": [
+            {
+              "given": "Anthony Leon",
+              "family": "Brundage",
+              "sequence": "first",
+              "affiliation": [],
+              "role": [
+                {
+                  "role": "author",
+                  "vocabulary": "crossref"
+                }
+              ]
+            }
+          ],
+          "ISBN": [
+            "9781317317111"
+          ],
+          "URL": "https://doi.org/10.4324/9781315653785",
+          "published": {
+            "date-parts": [
+              [
+                2015,
+                10,
+                6
+              ]
+            ]
+          }
+        },
+        {
+          "edition-number": "1",
+          "isbn-type": [
+            {
+              "value": "9781350030800",
+              "type": "electronic"
+            },
+            {
+              "value": "9781350030787",
+              "type": "print"
+            }
+          ],
+          "published-print": {
+            "date-parts": [
+              [
+                2018
+              ]
+            ]
+          },
+          "DOI": "10.5040/9781350030800",
+          "type": "book",
+          "title": [
+            "Mass Media, Consumerism and National Identity in Postwar Japan"
+          ],
+          "author": [
+            {
+              "given": "Martyn David",
+              "family": "Smith",
+              "sequence": "first",
+              "affiliation": [],
+              "role": [
+                {
+                  "vocabulary": "crossref",
+                  "role": "author"
+                }
+              ]
+            }
+          ],
+          "ISBN": [
+            "9781350030800",
+            "9781350030787"
+          ],
+          "URL": "https://doi.org/10.5040/9781350030800",
+          "published": {
+            "date-parts": [
+              [
+                2018
+              ]
+            ]
+          }
+        },
+        {
+          "isbn-type": [
+            {
+              "value": "9781787079137",
+              "type": "electronic"
+            },
+            {
+              "value": "9781787079038",
+              "type": "electronic"
+            },
+            {
+              "value": "9781787079144",
+              "type": "electronic"
+            },
+            {
+              "value": "9781787079021",
+              "type": "electronic"
+            }
+          ],
+          "published-print": {
+            "date-parts": [
+              [
+                2020,
+                2,
+                28
+              ]
+            ]
+          },
+          "DOI": "10.3726/b11665",
+          "type": "monograph",
+          "title": [
+            "Poetic Canons, Cultural Memory and Russian National Identity after 1991"
+          ],
+          "author": [
+            {
+              "given": "Katharine",
+              "family": "Hodgson",
+              "sequence": "first",
+              "affiliation": [],
+              "role": [
+                {
+                  "role": "author",
+                  "vocabulary": "crossref"
+                }
+              ]
+            },
+            {
+              "given": "Alexandra",
+              "family": "Smith",
+              "sequence": "additional",
+              "affiliation": [],
+              "role": [
+                {
+                  "role": "author",
+                  "vocabulary": "crossref"
+                }
+              ]
+            }
+          ],
+          "ISBN": [
+            "9781787079137",
+            "9781787079038",
+            "9781787079144",
+            "9781787079021"
+          ],
+          "URL": "https://doi.org/10.3726/b11665",
+          "published": {
+            "date-parts": [
+              [
+                2020,
+                2,
+                28
+              ]
+            ]
+          }
+        },
+        {
+          "edition-number": "0",
+          "isbn-type": [
+            {
+              "value": "9781135043735",
+              "type": "electronic"
+            }
+          ],
+          "DOI": "10.4324/9780203402221",
+          "type": "book",
+          "title": [
+            "Identity Troubles"
+          ],
+          "author": [
+            {
+              "given": "Anthony",
+              "family": "Elliott",
+              "sequence": "first",
+              "affiliation": [],
+              "role": [
+                {
+                  "vocabulary": "crossref",
+                  "role": "author"
+                }
+              ]
+            }
+          ],
+          "ISBN": [
+            "9781135043735"
+          ],
+          "URL": "https://doi.org/10.4324/9780203402221",
+          "published": {
+            "date-parts": [
+              [
+                2015,
+                10,
+                29
+              ]
+            ]
+          }
+        },
+        {
+          "published-print": {
+            "date-parts": [
+              [
+                2018,
+                9,
+                20
+              ]
+            ]
+          },
+          "DOI": "10.3366/edinburgh/9781474423939.003.0006",
+          "type": "edited-book",
+          "title": [
+            "Resisting Identity"
+          ],
+          "author": [
+            {
+              "given": "Jennifer J.",
+              "family": "Smith",
+              "sequence": "first",
+              "affiliation": [],
+              "role": [
+                {
+                  "vocabulary": "crossref",
+                  "role": "author"
+                }
+              ]
+            }
+          ],
+          "URL": "https://doi.org/10.3366/edinburgh/9781474423939.003.0006",
+          "published": {
+            "date-parts": [
+              [
+                2018,
+                9,
+                20
+              ]
+            ]
+          }
+        },
+        {
+          "isbn-type": [
+            {
+              "value": "9780691254777",
+              "type": "electronic"
+            },
+            {
+              "value": "069125477X",
+              "type": "electronic"
+            }
+          ],
+          "published-print": {
+            "date-parts": [
+              [
+                2023,
+                10,
+                3
+              ]
+            ]
+          },
+          "DOI": "10.2307/jj.2036759",
+          "type": "monograph",
+          "title": [
+            "The Ethics of Identity"
+          ],
+          "author": [
+            {
+              "given": "KWAME ANTHONY",
+              "family": "APPIAH",
+              "sequence": "first",
+              "affiliation": [],
+              "role": [
+                {
+                  "vocabulary": "crossref",
+                  "role": "author"
+                }
+              ]
+            }
+          ],
+          "ISBN": [
+            "9780691254777",
+            "069125477X"
+          ],
+          "URL": "https://doi.org/10.2307/jj.2036759",
+          "published": {
+            "date-parts": [
+              [
+                2023,
+                10,
+                3
+              ]
+            ]
+          }
+        },
+        {
+          "isbn-type": [
+            {
+              "value": "9780691254777",
+              "type": "electronic"
+            }
+          ],
+          "published-print": {
+            "date-parts": [
+              [
+                2005,
+                12,
+                31
+              ]
+            ]
+          },
+          "DOI": "10.1515/9780691254777",
+          "type": "edited-book",
+          "title": [
+            "The Ethics of Identity"
+          ],
+          "author": [
+            {
+              "given": "Kwame Anthony",
+              "family": "Appiah",
+              "sequence": "first",
+              "affiliation": [],
+              "role": [
+                {
+                  "vocabulary": "crossref",
+                  "role": "author"
+                }
+              ]
+            }
+          ],
+          "ISBN": [
+            "9780691254777"
+          ],
+          "URL": "https://doi.org/10.1515/9780691254777",
+          "published": {
+            "date-parts": [
+              [
+                2005,
+                12,
+                31
+              ]
+            ]
+          }
+        },
+        {
+          "isbn-type": [
+            {
+              "value": "9781400826193",
+              "type": "electronic"
+            }
+          ],
+          "published-print": {
+            "date-parts": [
+              [
+                2005,
+                12,
+                31
+              ]
+            ]
+          },
+          "DOI": "10.1515/9781400826193",
+          "type": "edited-book",
+          "title": [
+            "The Ethics of Identity"
+          ],
+          "author": [
+            {
+              "given": "Kwame Anthony",
+              "family": "Appiah",
+              "sequence": "first",
+              "affiliation": [],
+              "role": [
+                {
+                  "vocabulary": "crossref",
+                  "role": "author"
+                }
+              ]
+            }
+          ],
+          "ISBN": [
+            "9781400826193"
+          ],
+          "URL": "https://doi.org/10.1515/9781400826193",
+          "published": {
+            "date-parts": [
+              [
+                2005,
+                12,
+                31
+              ]
+            ]
+          }
+        },
+        {
+          "isbn-type": [
+            {
+              "value": "9781400826193",
+              "type": "electronic"
+            },
+            {
+              "value": "1400826195",
+              "type": "electronic"
+            },
+            {
+              "value": "9780691130286",
+              "type": "print"
+            }
+          ],
+          "published-print": {
+            "date-parts": [
+              [
+                2010,
+                6,
+                28
+              ]
+            ]
+          },
+          "DOI": "10.2307/j.ctt7t9f0",
+          "type": "monograph",
+          "title": [
+            "The Ethics of Identity"
+          ],
+          "author": [
+            {
+              "given": "KWAME ANTHONY",
+              "family": "APPIAH",
+              "sequence": "first",
+              "affiliation": [],
+              "role": [
+                {
+                  "vocabulary": "crossref",
+                  "role": "author"
+                }
+              ]
+            }
+          ],
+          "ISBN": [
+            "9781400826193",
+            "1400826195",
+            "9780691130286"
+          ],
+          "URL": "https://doi.org/10.2307/j.ctt7t9f0",
+          "published": {
+            "date-parts": [
+              [
+                2010,
+                6,
+                28
+              ]
+            ]
+          }
+        },
+        {
+          "edition-number": "1",
+          "isbn-type": [
+            {
+              "value": "9798216432692",
+              "type": "electronic"
+            },
+            {
+              "value": "9781666933710",
+              "type": "print"
+            }
+          ],
+          "published-print": {
+            "date-parts": [
+              [
+                2024
+              ]
+            ]
+          },
+          "DOI": "10.5040/9798216432692",
+          "type": "book",
+          "title": [
+            "Governors Go National"
+          ],
+          "author": [
+            {
+              "given": "Anthony",
+              "family": "Sparacino",
+              "sequence": "first",
+              "affiliation": [],
+              "role": [
+                {
+                  "vocabulary": "crossref",
+                  "role": "author"
+                }
+              ]
+            }
+          ],
+          "subtitle": [
+            "The Democratic and Republican Governors Associations and the Nationalization of American Party Politics"
+          ],
+          "ISBN": [
+            "9798216432692",
+            "9781666933710"
+          ],
+          "URL": "https://doi.org/10.5040/9798216432692",
+          "published": {
+            "date-parts": [
+              [
+                2024
+              ]
+            ]
+          }
+        },
+        {
+          "isbn-type": [
+            {
+              "value": "9781412922432",
+              "type": "print"
+            },
+            {
+              "value": "9781446213698",
+              "type": "electronic"
+            }
+          ],
+          "published-print": {
+            "date-parts": [
+              [
+                2009
+              ]
+            ]
+          },
+          "DOI": "10.4135/9781446213698",
+          "type": "monograph",
+          "title": [
+            "Identity in Question"
+          ],
+          "author": [
+            {
+              "given": "Anthony",
+              "family": "Elliott",
+              "sequence": "first",
+              "affiliation": [],
+              "role": [
+                {
+                  "vocabulary": "crossref",
+                  "role": "author"
+                }
+              ]
+            },
+            {
+              "given": "Paul",
+              "family": "du Gay",
+              "sequence": "additional",
+              "affiliation": [],
+              "role": [
+                {
+                  "vocabulary": "crossref",
+                  "role": "author"
+                }
+              ]
+            }
+          ],
+          "ISBN": [
+            "9781412922432",
+            "9781446213698"
+          ],
+          "URL": "https://doi.org/10.4135/9781446213698",
+          "published": {
+            "date-parts": [
+              [
+                2009
+              ]
+            ]
+          }
+        },
+        {
+          "published-print": {
+            "date-parts": [
+              [
+                2016,
+                12,
+                5
+              ]
+            ]
+          },
+          "DOI": "10.1093/oxfordhb/9780199689576.013.20",
+          "type": "edited-book",
+          "title": [
+            "Organizational Identity and Innovation"
+          ],
+          "author": [
+            {
+              "given": "Callen",
+              "family": "Anthony",
+              "sequence": "additional",
+              "affiliation": [],
+              "role": [
+                {
+                  "vocabulary": "crossref",
+                  "role": "author"
+                }
+              ]
+            },
+            {
+              "given": "Mary",
+              "family": "Tripsas",
+              "sequence": "additional",
+              "affiliation": [],
+              "role": [
+                {
+                  "vocabulary": "crossref",
+                  "role": "author"
+                }
+              ]
+            }
+          ],
+          "editor": [
+            {
+              "given": "Michael G.",
+              "family": "Pratt",
+              "sequence": "first",
+              "affiliation": [],
+              "role": [
+                {
+                  "vocabulary": "crossref",
+                  "role": "editor"
+                }
+              ]
+            },
+            {
+              "given": "Majken",
+              "family": "Schultz",
+              "sequence": "additional",
+              "affiliation": [],
+              "role": [
+                {
+                  "vocabulary": "crossref",
+                  "role": "editor"
+                }
+              ]
+            },
+            {
+              "given": "Blake E.",
+              "family": "Ashforth",
+              "sequence": "additional",
+              "affiliation": [],
+              "role": [
+                {
+                  "vocabulary": "crossref",
+                  "role": "editor"
+                }
+              ]
+            },
+            {
+              "given": "Davide",
+              "family": "Ravasi",
+              "sequence": "additional",
+              "affiliation": [],
+              "role": [
+                {
+                  "vocabulary": "crossref",
+                  "role": "editor"
+                }
+              ]
+            }
+          ],
+          "URL": "https://doi.org/10.1093/oxfordhb/9780199689576.013.20",
+          "published": {
+            "date-parts": [
+              [
+                2016,
+                12,
+                5
+              ]
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "whish": {
+    "status": "ok",
+    "message-type": "work-list",
+    "message": {
+      "total-results": 588,
+      "items": [
+        {
+          "edition-number": "10",
+          "isbn-type": [
+            {
+              "value": "0198836325",
+              "type": "print"
+            },
+            {
+              "value": "9780198836322",
+              "type": "print"
+            },
+            {
+              "value": "9780191939808",
+              "type": "electronic"
+            }
+          ],
+          "published-print": {
+            "date-parts": [
+              [
+                2021,
+                8,
+                26
+              ]
+            ]
+          },
+          "DOI": "10.1093/he/9780198836322.001.0001",
+          "type": "book",
+          "title": [
+            "Competition Law"
+          ],
+          "author": [
+            {
+              "given": "Richard",
+              "family": "Whish",
+              "sequence": "first",
+              "affiliation": [],
+              "role": [
+                {
+                  "vocabulary": "crossref",
+                  "role": "author"
+                }
+              ]
+            },
+            {
+              "given": "David",
+              "family": "Bailey",
+              "sequence": "additional",
+              "affiliation": [],
+              "role": [
+                {
+                  "vocabulary": "crossref",
+                  "role": "author"
+                }
+              ]
+            }
+          ],
+          "ISBN": [
+            "0198836325",
+            "9780198836322",
+            "9780191939808"
+          ],
+          "URL": "https://doi.org/10.1093/he/9780198836322.001.0001",
+          "published": {
+            "date-parts": [
+              [
+                2021,
+                8,
+                26
+              ]
+            ]
+          }
+        },
+        {
+          "isbn-type": [
+            {
+              "value": "9780199660377",
+              "type": "electronic"
+            }
+          ],
+          "published-print": {
+            "date-parts": [
+              [
+                2015,
+                1,
+                1
+              ]
+            ]
+          },
+          "DOI": "10.1093/law:ocl/9780199660377.001.0001",
+          "type": "monograph",
+          "title": [
+            "Competition Law"
+          ],
+          "author": [
+            {
+              "given": "Richard",
+              "family": "Whish",
+              "sequence": "first",
+              "affiliation": [],
+              "role": [
+                {
+                  "vocabulary": "crossref",
+                  "role": "author"
+                }
+              ]
+            },
+            {
+              "given": "David",
+              "family": "Bailey",
+              "sequence": "additional",
+              "affiliation": [],
+              "role": [
+                {
+                  "vocabulary": "crossref",
+                  "role": "author"
+                }
+              ]
+            }
+          ],
+          "ISBN": [
+            "9780199660377"
+          ],
+          "URL": "https://doi.org/10.1093/law:ocl/9780199660377.001.0001",
+          "published": {
+            "date-parts": [
+              [
+                2015,
+                1,
+                1
+              ]
+            ]
+          }
+        },
+        {
+          "edition-number": "11",
+          "isbn-type": [
+            {
+              "value": "019890603X",
+              "type": "print"
+            },
+            {
+              "value": "9780198906032",
+              "type": "print"
+            },
+            {
+              "value": "9780198906063",
+              "type": "electronic"
+            }
+          ],
+          "published-print": {
+            "date-parts": [
+              [
+                2024,
+                7,
+                31
+              ]
+            ]
+          },
+          "DOI": "10.1093/he/9780198906032.001.0001",
+          "type": "book",
+          "title": [
+            "Competition Law"
+          ],
+          "author": [
+            {
+              "given": "Richard",
+              "family": "Whish",
+              "sequence": "first",
+              "affiliation": [
+                {
+                  "name": "Emeritus Professor; QC Honoris Causa, King's College London"
+                }
+              ],
+              "role": [
+                {
+                  "vocabulary": "crossref",
+                  "role": "author"
+                }
+              ]
+            },
+            {
+              "given": "David",
+              "family": "Bailey",
+              "sequence": "additional",
+              "affiliation": [
+                {
+                  "name": "Professor of Practice; Barrister, King's College London; Brick Court Chambers"
+                }
+              ],
+              "role": [
+                {
+                  "vocabulary": "crossref",
+                  "role": "author"
+                }
+              ]
+            }
+          ],
+          "ISBN": [
+            "019890603X",
+            "9780198906032",
+            "9780198906063"
+          ],
+          "URL": "https://doi.org/10.1093/he/9780198906032.001.0001",
+          "published": {
+            "date-parts": [
+              [
+                2024,
+                7,
+                31
+              ]
+            ]
+          }
+        },
+        {
+          "edition-number": "9",
+          "isbn-type": [
+            {
+              "value": "0198779062",
+              "type": "print"
+            },
+            {
+              "value": "9780198779063",
+              "type": "print"
+            },
+            {
+              "value": "9780191838545",
+              "type": "electronic"
+            }
+          ],
+          "published-print": {
+            "date-parts": [
+              [
+                2018,
+                7,
+                26
+              ]
+            ]
+          },
+          "DOI": "10.1093/law-ocl/9780198779063.001.0001",
+          "type": "book",
+          "title": [
+            "Competition Law"
+          ],
+          "author": [
+            {
+              "given": "Richard",
+              "family": "Whish",
+              "sequence": "first",
+              "affiliation": [],
+              "role": [
+                {
+                  "vocabulary": "crossref",
+                  "role": "author"
+                }
+              ]
+            },
+            {
+              "given": "David",
+              "family": "Bailey",
+              "sequence": "additional",
+              "affiliation": [],
+              "role": [
+                {
+                  "vocabulary": "crossref",
+                  "role": "author"
+                }
+              ]
+            }
+          ],
+          "ISBN": [
+            "0198779062",
+            "9780198779063",
+            "9780191838545"
+          ],
+          "URL": "https://doi.org/10.1093/law-ocl/9780198779063.001.0001",
+          "published": {
+            "date-parts": [
+              [
+                2018,
+                7,
+                26
+              ]
+            ]
+          }
+        },
+        {
+          "isbn-type": [
+            {
+              "value": "9780199586554",
+              "type": "print"
+            }
+          ],
+          "published-print": {
+            "date-parts": [
+              [
+                2012
+              ]
+            ]
+          },
+          "DOI": "10.1093/he/9780199586554.001.0001",
+          "type": "edited-book",
+          "title": [
+            "Competition Law"
+          ],
+          "author": [
+            {
+              "given": "Whish",
+              "family": "Richard",
+              "sequence": "first",
+              "affiliation": [],
+              "role": [
+                {
+                  "vocabulary": "crossref",
+                  "role": "author"
+                }
+              ]
+            },
+            {
+              "given": "David",
+              "family": "Bailey",
+              "sequence": "additional",
+              "affiliation": [],
+              "role": [
+                {
+                  "vocabulary": "crossref",
+                  "role": "author"
+                }
+              ]
+            }
+          ],
+          "ISBN": [
+            "9780199586554"
+          ],
+          "URL": "https://doi.org/10.1093/he/9780199586554.001.0001",
+          "published": {
+            "date-parts": [
+              [
+                2012
+              ]
+            ]
+          }
+        },
+        {
+          "isbn-type": [
+            {
+              "value": "9780199667871",
+              "type": "print"
+            }
+          ],
+          "published-print": {
+            "date-parts": [
+              [
+                2013
+              ]
+            ]
+          },
+          "DOI": "10.1093/law/9780199667871.001.0001",
+          "type": "edited-book",
+          "title": [
+            "Bellamy and Child: European Law of Competition"
+          ],
+          "author": [
+            {
+              "given": "David",
+              "family": "Bailey",
+              "sequence": "first",
+              "affiliation": [],
+              "role": [
+                {
+                  "vocabulary": "crossref",
+                  "role": "author"
+                }
+              ]
+            },
+            {
+              "given": "Vivien",
+              "family": "Rose",
+              "sequence": "additional",
+              "affiliation": [],
+              "role": [
+                {
+                  "vocabulary": "crossref",
+                  "role": "author"
+                }
+              ]
+            }
+          ],
+          "ISBN": [
+            "9780199667871"
+          ],
+          "URL": "https://doi.org/10.1093/law/9780199667871.001.0001",
+          "published": {
+            "date-parts": [
+              [
+                2013
+              ]
+            ]
+          }
+        },
+        {
+          "edition-number": "1",
+          "isbn-type": [
+            {
+              "value": "019872747X",
+              "type": "print"
+            },
+            {
+              "value": "9780198727477",
+              "type": "print"
+            },
+            {
+              "value": "9780191793622",
+              "type": "electronic"
+            }
+          ],
+          "published-print": {
+            "date-parts": [
+              [
+                2020,
+                8,
+                27
+              ]
+            ]
+          },
+          "DOI": "10.1093/oso/9780198727477.001.0001",
+          "type": "edited-book",
+          "title": [
+            "Competition Law and Antitrust"
+          ],
+          "author": [
+            {
+              "given": "David J.",
+              "family": "Gerber",
+              "sequence": "first",
+              "affiliation": [
+                {
+                  "name": "University Distinguished Professor of Law, Chicago-Kent College of Law"
+                }
+              ],
+              "role": [
+                {
+                  "vocabulary": "crossref",
+                  "role": "author"
+                }
+              ]
+            }
+          ],
+          "ISBN": [
+            "019872747X",
+            "9780198727477",
+            "9780191793622"
+          ],
+          "URL": "https://doi.org/10.1093/oso/9780198727477.001.0001",
+          "published": {
+            "date-parts": [
+              [
+                2020,
+                8,
+                27
+              ]
+            ]
+          }
+        },
+        {
+          "edition-number": "0",
+          "isbn-type": [
+            {
+              "value": "9781134090792",
+              "type": "electronic"
+            }
+          ],
+          "DOI": "10.4324/9780203383179",
+          "type": "monograph",
+          "title": [
+            "Competition Law and Financial Services"
+          ],
+          "author": [
+            {
+              "given": "David",
+              "family": "Harrison",
+              "sequence": "first",
+              "affiliation": [],
+              "role": [
+                {
+                  "vocabulary": "crossref",
+                  "role": "author"
+                }
+              ]
+            }
+          ],
+          "ISBN": [
+            "9781134090792"
+          ],
+          "URL": "https://doi.org/10.4324/9780203383179",
+          "published": {
+            "date-parts": [
+              [
+                2014,
+                3,
+                14
+              ]
+            ]
+          }
+        },
+        {
+          "isbn-type": [
+            {
+              "value": "9780199244010",
+              "type": "print"
+            }
+          ],
+          "published-print": {
+            "date-parts": [
+              [
+                2001,
+                3,
+                29
+              ]
+            ]
+          },
+          "DOI": "10.1093/acprof:oso/9780199244010.001.0001",
+          "type": "monograph",
+          "title": [
+            "Law and Competition in Twentieth-Century Europe"
+          ],
+          "author": [
+            {
+              "given": "David",
+              "family": "Gerber",
+              "sequence": "first",
+              "affiliation": [],
+              "role": [
+                {
+                  "vocabulary": "crossref",
+                  "role": "author"
+                }
+              ]
+            }
+          ],
+          "ISBN": [
+            "9780199244010"
+          ],
+          "URL": "https://doi.org/10.1093/acprof:oso/9780199244010.001.0001",
+          "published": {
+            "date-parts": [
+              [
+                2001,
+                3,
+                29
+              ]
+            ]
+          }
+        },
+        {
+          "isbn-type": [
+            {
+              "value": "9780198259183",
+              "type": "print"
+            }
+          ],
+          "published-print": {
+            "date-parts": [
+              [
+                2004,
+                1,
+                29
+              ]
+            ]
+          },
+          "DOI": "10.1093/acprof:oso/9780198259183.001.0001",
+          "type": "monograph",
+          "title": [
+            "Intellectual Property Rights in EU Law Volume I: Free Movement and Competition Law"
+          ],
+          "author": [
+            {
+              "given": "David T.",
+              "family": "Keeling",
+              "sequence": "first",
+              "affiliation": [],
+              "role": [
+                {
+                  "vocabulary": "crossref",
+                  "role": "author"
+                }
+              ]
+            }
+          ],
+          "ISBN": [
+            "9780198259183"
+          ],
+          "URL": "https://doi.org/10.1093/acprof:oso/9780198259183.001.0001",
+          "published": {
+            "date-parts": [
+              [
+                2004,
+                1,
+                29
+              ]
+            ]
+          }
+        },
+        {
+          "edition-number": "0",
+          "isbn-type": [
+            {
+              "value": "9781315619262",
+              "type": "electronic"
+            }
+          ],
+          "DOI": "10.4324/9781315619262",
+          "type": "book",
+          "title": [
+            "Construction Law"
+          ],
+          "author": [
+            {
+              "given": "Julian",
+              "family": "Bailey",
+              "sequence": "first",
+              "affiliation": [],
+              "role": [
+                {
+                  "vocabulary": "crossref",
+                  "role": "author"
+                }
+              ]
+            }
+          ],
+          "subtitle": [
+            "Volume III"
+          ],
+          "ISBN": [
+            "9781315619262"
+          ],
+          "URL": "https://doi.org/10.4324/9781315619262",
+          "published": {
+            "date-parts": [
+              [
+                2016,
+                7,
+                22
+              ]
+            ]
+          }
+        },
+        {
+          "edition-number": "0",
+          "isbn-type": [
+            {
+              "value": "9781317627258",
+              "type": "electronic"
+            }
+          ],
+          "DOI": "10.4324/9781315755465",
+          "type": "book",
+          "title": [
+            "Construction Law"
+          ],
+          "author": [
+            {
+              "given": "Julian",
+              "family": "Bailey",
+              "sequence": "first",
+              "affiliation": [],
+              "role": [
+                {
+                  "vocabulary": "crossref",
+                  "role": "author"
+                }
+              ]
+            }
+          ],
+          "ISBN": [
+            "9781317627258"
+          ],
+          "URL": "https://doi.org/10.4324/9781315755465",
+          "published": {
+            "date-parts": [
+              [
+                2016,
+                10,
+                4
+              ]
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

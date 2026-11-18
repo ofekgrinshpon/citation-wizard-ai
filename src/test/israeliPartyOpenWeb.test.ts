@@ -1,4 +1,6 @@
 import * as bookEvidenceRoute from "../../supabase/functions/citation-chat/bookEvidenceRoute";
+import * as bookCrossrefTarget from "../../supabase/functions/citation-chat/bookCrossrefTarget";
+import * as bookCrossrefRoute from "../../supabase/functions/citation-chat/bookCrossrefRoute";
 /**
  * Israeli party-name search (Branch B): one open-web complementary search
  * when the restricted legal domains return nothing relevant. Runs the real
@@ -145,6 +147,8 @@ function install() {
     "./foreignLookup.ts": { runForeignLookup, articleLookupFallback },
     "./statuteRoute.ts": statuteRoute,
     "./bookEvidenceRoute.ts": bookEvidenceRoute,
+    "./bookCrossrefTarget.ts": bookCrossrefTarget,
+    "./bookCrossrefRoute.ts": bookCrossrefRoute,
     "./countryRoute.ts": countryRoute,
     "../_shared/citationPure/bookFinal.ts": bookFinal,
     "../_shared/citationPure/freeformInterpret.ts": freeformInterpret,

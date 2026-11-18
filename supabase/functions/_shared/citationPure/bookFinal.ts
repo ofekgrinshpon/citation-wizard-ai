@@ -1,5 +1,6 @@
+import { readBookCrossrefEvidence } from "./bookCrossrefEvidence.ts";
 import { hasBookModelEvidence, readBookModelEvidence, bookModelProofKey } from "./bookModelAdapter.ts";
-import { buildBookEditionChoice, selectedBookEditionResponse, type BookEditionChoice } from "./bookEditionChoice.ts";
+import { hasBookCrossrefEvidence, bookCrossrefProofKey, buildBookEditionChoice, selectedBookEditionResponse, type BookEditionChoice } from "./bookEditionChoice.ts";
 import { extractBookPublicationEvidence } from "./bookPublicationEvidence.ts";
 export type { BookEditionChoice, BookEditionChoiceOption } from "./bookEditionChoice.ts";
 /** Bounded book completion and final-text framing. Pure, shared by server and clients.
@@ -114,7 +115,22 @@ export function resolveBookCompletion(request: Record<string, unknown>, raw: str
   // An experimental envelope is terminal, including empty/invalid evidence.
   // Never fall back to an unvalidated legacy year or edition alongside it.
   let renderSuppliedBook = false;
-  if (hasBookModelEvidence(response)) {
+  if (hasBookCrossrefEvidence(response)) {
+    // This proof channel is choice-only. One row is not permission to fill a
+    // year, and neither legacy fields nor a hidden model envelope can donate it.
+    const rows = readBookCrossrefEvidence(request, raw, response, localFields);
+    const local = kind === "book" && !supplied.year ? eligibleBookCompletion(type, raw) : null;
+    const securelyBound = !!local && request.kind === "book" && request.jurisdiction === "OTHER" && request.rawInput === raw &&
+      Object.keys(supplied).length === Object.keys(local.wire).length &&
+      Object.entries(local.wire).every(([key, value]) => supplied[key] === value) &&
+      Object.keys((request.parsedFields ?? {}) as Record<string, unknown>).length === Object.keys(local.wire).length &&
+      Object.entries(local.wire).every(([key,value]) => (request.parsedFields as Record<string,unknown>)[key] === value);
+    accepted.fields = {}; accepted.provenance = {};
+    const multiple = rows !== null && new Set(rows.map(row => row.edition)).size >= 2;
+    accepted.identityConfirmed = accepted.identityConfirmed && multiple;
+    if (!accepted.identityConfirmed && (!accepted.reason || accepted.reason === "identity" || accepted.reason === "unavailable")) accepted.reason = "identity";
+    renderSuppliedBook = securelyBound && (accepted.reason === "identity" || accepted.reason === "unavailable");
+  } else if (hasBookModelEvidence(response)) {
     for (const key of ["year", "edition"]) { delete accepted.fields[key]; delete accepted.provenance[key]; }
     const evidence = readBookModelEvidence(request, raw, response, localFields);
     // A clean pilot abstention still permits formatting facts supplied by the
@@ -169,7 +185,8 @@ export function resolveBookCompletion(request: Record<string, unknown>, raw: str
 /** Local choice only. Revalidate original evidence and exact input, never fetch. */
 export function selectBookEditionChoice(choice: BookEditionChoice, optionId: string, currentRaw: string): ReturnType<typeof resolveBookCompletion> | null {
   if (choice.version !== 1 || choice.rawInput !== currentRaw || choice.fingerprint !== rawCitationFingerprint(currentRaw)) return null;
-  if (hasBookModelEvidence(choice.response) && choice.modelProofKey !== bookModelProofKey(choice.response)) return null;
+  if (hasBookCrossrefEvidence(choice.response) && choice.crossrefProofKey !== bookCrossrefProofKey(choice.response)) return null;
+  if (!hasBookCrossrefEvidence(choice.response) && hasBookModelEvidence(choice.response) && choice.modelProofKey !== bookModelProofKey(choice.response)) return null;
   const validated = buildBookEditionChoice(choice.request, currentRaw, choice.response, choice.localFields, choice.localSourceFields, choice.fallbackMissing);
   if (!validated) return null;
   if (optionId === "keep-missing") {
@@ -182,6 +199,23 @@ export function selectBookEditionChoice(choice: BookEditionChoice, optionId: str
   const selected = selectedBookEditionResponse(validated, optionId, currentRaw);
   if (!selected) return null;
   const result = resolveBookCompletion(validated.request, currentRaw, selected.response, validated.localFields, validated.localSourceFields, validated.fallbackMissing);
+  if (selected.crossrefSelection) {
+    // Only this explicit, revalidated local click applies a row. No response
+    // flag can request automatic selection on the render/recovery path.
+    const option = selected.crossrefSelection;
+    const supplied = { ...(validated.request.parsedFields as Record<string,string>), ...validated.localFields };
+    const fields = { year: option.year, edition: option.edition!, ...supplied };
+    const rendered = renderBookFields("book", fields);
+    result.citation = rendered.citation;
+    result.completion.fields = { year: option.year, edition: option.edition! };
+    result.completion.provenance = Object.fromEntries(Object.entries(result.completion.fields).map(([key,value]) =>
+      [key,{value,sourceUrl:option.url,basis:"structured_metadata"}]));
+    result.completion.missing = rendered.missing;
+    result.completion.completeness = rendered.missing.length ? "partial" : "complete";
+    const warnings = [...rendered.warnings, ...(rendered.missing.length ? [`חסרים פרטים: ${bookMissingSummary("foreign_book",rendered.missing)}`] : [])];
+    result.warningMsg = warnings[0]; result.status = warnings.length ? "warning" : "valid";
+    result.reply = result.citation + (warnings.length ? "\n⚠️ " + warnings.join(" ") : "");
+  }
   if (!result.completion.fields.year) return null;
   delete result.bookEditionChoice;
   return result;
@@ -251,7 +285,7 @@ export function prepareBookAwareCitationDelivery(
 ) {
   const foreign = recoveryObject(body.foreignLookup) ? body.foreignLookup : null;
   const isBook = foreign?.kind === "book" || foreign?.kind === "book_chapter";
-  const pilot = foreign?.kind === "book" && "bookModelEvidence" in foreign;
+  const pilot = foreign?.kind === "book" && ("bookCrossrefEvidence" in foreign || "bookModelEvidence" in foreign);
   const sources = foreign?.sources;
   // This projection is only for known service-produced book evidence. Other
   // unexpected shapes still fail the approved retention validator.
@@ -261,7 +295,12 @@ export function prepareBookAwareCitationDelivery(
     (!("snippet" in source) || typeof source.snippet === "string") &&
     (!("strong" in source) || typeof source.strong === "boolean"));
   const retainedForeign = { ...foreign };
-  if (pilot && recoveryObject(foreign?.bookModelEvidence) && foreign.bookModelEvidence.version === 1)
+  if (pilot && recoveryObject(foreign?.bookCrossrefEvidence) && foreign.bookCrossrefEvidence.version === 1) {
+    delete retainedForeign.bookCrossrefEvidence;
+    // Crossref is authoritative for this transient channel; an older envelope
+    // cannot affect rendering or leak its evidence into retained JSON.
+    delete retainedForeign.bookModelEvidence;
+  } else if (pilot && recoveryObject(foreign?.bookModelEvidence) && foreign.bookModelEvidence.version === 1)
     delete retainedForeign.bookModelEvidence;
   const retainedBody = knownSources ? { ...body, foreignLookup: { ...retainedForeign,
     sources: sources.map((source: Record<string, unknown>) => ({

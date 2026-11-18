@@ -1,4 +1,7 @@
 import * as bookEvidenceRoute from "../../supabase/functions/citation-chat/bookEvidenceRoute";
+import * as bookCrossrefTarget from "../../supabase/functions/citation-chat/bookCrossrefTarget";
+import { lookupBookCrossref } from "../../supabase/functions/citation-chat/bookCrossrefRoute";
+import crossrefFrozen from "./fixtures/bookCrossrefRoute.frozen.json";
 /** Offline vertical retention gate: only auth, provider fetch and persistence are mocked. */
 import { readFileSync } from "node:fs";
 import { webcrypto } from "node:crypto";
@@ -25,7 +28,7 @@ const client = vi.hoisted(() => ({ session: vi.fn(), invoke: vi.fn(), from: vi.f
 vi.mock("@/integrations/supabase/client", () => ({ supabase: {
   auth: { getSession: client.session }, functions: { invoke: client.invoke }, from: client.from,
 } }));
-const owner = "retention-owner", requestId = "retention-request-0001";
+const owner = "660f8776-1cf2-4af3-aa53-1fbefd85bb13", requestId = "retention-request-0001";
 const compile = (path: string) => ts.transpileModule(readFileSync(path, "utf8"), {
   compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
 }).outputText;
@@ -50,6 +53,17 @@ async function vertical(f: { id: string; raw: string; type: "foreign_book" | "fo
   const plan = c2WirePlan(f);
   const request = plan.foreignLookup;
   if (!request) throw new Error("Missing request");
+  const crossrefMode = mode.startsWith("crossref-");
+  const crossrefRole = vi.fn(async () => { throw Error("No user-role lookup for public metadata"); });
+  const crossrefProvider = vi.fn(async (raw: string) => {
+    const u=new URL(raw);
+    if(u.hostname!=="api.crossref.org" || u.pathname!=="/works")throw Error("Unexpected provider lookup");
+    const reply=mode==="crossref-empty" ? crossrefFrozen.smith : crossrefFrozen.brownlie;
+    return new Response(JSON.stringify(reply),{headers:{"Content-Type":"application/json"}});
+  });
+  const crossref = vi.fn(async (target: {title:string;author:string}, _deps: {fetchImpl:typeof fetch}) =>
+    lookupBookCrossref(target,{fetchImpl:crossrefProvider as typeof fetch}));
+  const env = {BOOK_CROSSREF_LOOKUP: crossrefMode && mode!=="crossref-off" ? undefined : "off"} as Record<string,string|undefined>;
   const chapter = f.type === "foreign_book_chapter";
   const name = chapter ? "Quiet Rules — Jane Doe, Synthetic Collection" : "Jane Doe, Synthetic Collection";
   const donor = { title: `${name} (2nd ed. 2020)`, snippet: `Jane Doe, ${chapter ? "Quiet Rules, in " : ""}Synthetic Collection (2nd ed. 2020).`, url: "https://press.example.edu/collection/quiet-rules" };
@@ -97,15 +111,17 @@ async function vertical(f: { id: string; raw: string; type: "foreign_book" | "fo
       refundReceipt: { status: "retained", refunded: false, units_refunded: 0, request_id: retainedRequestId },
     }], nextCursor: null }, error: null };
   });
-  const authClient = { auth: { getClaims: async () => ({ data: { claims: { sub: owner } }, error: null }) }, rpc,
+  const authClient = { auth: { getClaims: async () => ({ data: { claims: { sub: mode==="crossref-other"?"b5daeb90-6df5-48bb-bd17-ca6925e298bd":owner } }, error: null }) }, rpc,
     from: () => {
-      const chain = { select: () => chain, eq: () => chain, or: () => chain, limit: async () => ({ data: [], error: null }) };
+      const chain = { select: () => chain, eq: () => chain, or: () => chain, abortSignal: () => chain, maybeSingle: crossrefRole, limit: async () => ({ data: [], error: null }) };
       return chain;
     } };
   const makeHandler = (code: string) => {
     let handler: ((req: Request) => Promise<Response>) | undefined;
     const require = (path: string) => {
       if (path.includes("bookEvidenceRoute")) return bookEvidenceRoute;
+      if (path.includes("bookCrossrefTarget")) return bookCrossrefTarget;
+      if (path.includes("bookCrossrefRoute")) return { lookupBookCrossref: crossref };
       if (path.includes("http/server")) return { serve: (fn: typeof handler) => { handler = fn; } };
       if (path.includes("supabase-js")) return { createClient: () => authClient };
       if (path.includes("citationUsageGuard")) return usage;
@@ -121,7 +137,7 @@ async function vertical(f: { id: string; raw: string; type: "foreign_book" | "fo
       if (path.includes("citationDiagnosticGate")) return { isCitationDiagnosticPreflight: () => false };
       return {};
     };
-    new Function("require", "exports", "Deno", "fetch", code)(require, {}, { env: { get: () => "offline-only" } }, () => { throw new Error("Generic fetch forbidden"); });
+    new Function("require", "exports", "Deno", "fetch", code)(require, {}, { env: { get: (key: string) => key in env ? env[key] : "offline-only" } }, () => { throw new Error("Generic fetch forbidden"); });
     return async (body: unknown) => {
       if (!handler) throw new Error("Missing handler");
       return handler(new Request("https://fixture.invalid", { method: "POST", headers: { Authorization: "Bearer offline" }, body: JSON.stringify(body) }));
@@ -148,7 +164,7 @@ async function vertical(f: { id: string; raw: string; type: "foreign_book" | "fo
       } };
     return chain;
   });
-  return { plan, body, response, rpc, search, lookup, writes, retainedResult, donor,
+  return { plan, body, response, rpc, search, lookup, writes, retainedResult, donor, crossref, crossrefRole, crossrefProvider,
     mutateRequestId: (value: string) => { retainedRequestId = value; },
     mutateResult: (mutate: (result: recovery.CitationRecoveryResult) => void) => {
       const result = recovery.citationRecoveryResult(retainedResult);
@@ -381,5 +397,55 @@ describe("C2 real retention → recovery → history", () => {
     expect(client.invoke).not.toHaveBeenCalled(); expect(h.writes).toHaveLength(0);
     await expect(saveRecoveredCitationHistory({ requestId, projectId: null, expectedAccountId: owner, formattedOutput: "not current", isResultCurrent: () => false })).rejects.toThrow("CITATION_HISTORY_STALE");
     expect(h.rpc).toHaveBeenCalledTimes(2);
+  });
+});
+describe("regular Crossref release path", () => {
+  const brownlie = { id: "pilot-brownlie", raw: "Brownlie's Principles of Public International Law by James Crawford", type:"foreign_book" as const };
+  const smith = { id: "pilot-smith", raw: "National Identity by Anthony D. Smith", type:"foreign_book" as const };
+  it("routes only the title and author to Crossref; settles once, retains no proof, and resolves a selection without IO", async () => {
+    const h=await vertical(brownlie,"crossref-success",true);
+    expect(h.response.ok).toBe(true);
+    expect(h.crossref).toHaveBeenCalledExactlyOnceWith({title:"Brownlie's Principles of Public International Law",author:"James Crawford"},{fetchImpl:expect.any(Function)});
+    expect(h.lookup).not.toHaveBeenCalled();
+    expect(h.search).not.toHaveBeenCalled();
+    expect(h.body.content).toContain("[חסר: שנה]");
+    const fresh=resolveCitationResponse(h.plan,h.body,CHAT_HOST);
+    if(fresh.kind!=="terminal")throw Error("Not terminal");
+    const choice=fresh.resolution.bookEditionChoice;
+    expect(choice?.options.map(o=>o.year)).toEqual(["2012","2019"]);
+    if(!choice)throw Error("No choices");
+    expect(bookFinal.selectBookEditionChoice(choice,choice.options[1].id,brownlie.raw)?.reply).toContain("9th ed. 2019");
+    expect(h.crossref).toHaveBeenCalledTimes(1);
+    expect(h.crossrefProvider).toHaveBeenCalledTimes(1);
+    expect(h.crossrefRole).not.toHaveBeenCalled();
+    expect(JSON.stringify(h.retainedResult)).not.toMatch(/bookCrossrefEvidence|9780198737445|doi.org/);
+    expect(h.rpc.mock.calls.filter(([n])=>n==="finish_citation_request")).toHaveLength(1);
+    const record=await readCitationRecovery(owner,requestId);
+    expect(record&&renderCitationRecovery(record)?.formattedOutput).toBe(h.body.content);
+  });
+  it("preserves the legacy lookup after a miss and keeps an unverified year missing",async()=>{
+    const h=await vertical(smith,"crossref-empty");
+    expect(h.response.ok).toBe(true);
+    expect(h.crossref).toHaveBeenCalledTimes(1);
+    expect(h.crossrefProvider).toHaveBeenCalledTimes(1);
+    expect(h.lookup).toHaveBeenCalledTimes(1);
+    expect(h.body.content).toContain("[חסר: שנה]");
+    const f=resolveCitationResponse(h.plan,h.body,CHAT_HOST);
+    if(f.kind!=="terminal")throw Error("No reply");
+    expect(f.resolution.bookEditionChoice).toBeUndefined();
+  });
+  it("does not require an owner or admin role",async()=>{
+    const h=await vertical(brownlie,"crossref-other");
+    expect(h.response.ok).toBe(true);
+    expect(h.crossref).toHaveBeenCalledTimes(1);
+    expect(h.crossrefRole).not.toHaveBeenCalled();
+  });
+  it("leaves the old flow unchanged when the kill switch is off",async()=>{
+    const h=await vertical(brownlie,"crossref-off");
+    expect(h.response.ok).toBe(true);
+    expect(h.crossref).not.toHaveBeenCalled();
+    expect(h.lookup).toHaveBeenCalledTimes(1);
+    expect(h.body.foreignLookup?.bookCrossrefEvidence).toBeUndefined();
+    expect(h.crossrefRole).not.toHaveBeenCalled();
   });
 });

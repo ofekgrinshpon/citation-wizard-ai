@@ -1,4 +1,6 @@
 import * as bookEvidenceRoute from "../../supabase/functions/citation-chat/bookEvidenceRoute";
+import * as bookCrossrefTarget from "../../supabase/functions/citation-chat/bookCrossrefTarget";
+import * as bookCrossrefRoute from "../../supabase/functions/citation-chat/bookCrossrefRoute";
 /**
  * The compiled citation-chat handler and the real runForeignLookup.
  * Network, auth, database and environment are fixtures. The handler,
@@ -86,6 +88,8 @@ function installHandler() {
     "./foreignLookup.ts": { runForeignLookup, articleLookupFallback },
     "./statuteRoute.ts": statuteRoute,
     "./bookEvidenceRoute.ts": bookEvidenceRoute,
+    "./bookCrossrefTarget.ts": bookCrossrefTarget,
+    "./bookCrossrefRoute.ts": bookCrossrefRoute,
     "./countryRoute.ts": countryRoute,
     "../_shared/citationPure/bookFinal.ts": bookFinal,
     "../_shared/citationPure/freeformInterpret.ts": freeformInterpret,

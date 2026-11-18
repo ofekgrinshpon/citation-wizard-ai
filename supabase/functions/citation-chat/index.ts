@@ -1,4 +1,6 @@
 import { authorizeBookEvidence, bookEvidenceEnabled, evaluateBookEvidence } from "./bookEvidenceRoute.ts";
+import { bookCrossrefTarget } from "./bookCrossrefTarget.ts";
+import { lookupBookCrossref } from "./bookCrossrefRoute.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { trackedFetch as telemetryTrackedFetch, withCostTelemetry, setTelemetryFromBody, recordZeroWork, type CostStage } from "../_shared/costTelemetry.ts";
@@ -2015,6 +2017,29 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       }));
     }
+    // This additive public-metadata lookup performs no additional paid model
+    // or search. If it doesn't prove choices, existing lookup still runs.
+    const crossrefSetting = Deno.env.get("BOOK_CROSSREF_LOOKUP");
+    const crossrefTarget = userId && (crossrefSetting === undefined || crossrefSetting === "on")
+      ? bookCrossrefTarget(crossrefSetting, bookInput) : null;
+    const crossrefBody = (proof: Awaited<ReturnType<typeof lookupBookCrossref>>) => {
+      const choices = new Set(proof.rows.map(row => row.edition)).size >= 2;
+      const result = {
+        kind: "book", jurisdiction: "OTHER", fields: {}, grounded: {}, provenance: {}, sources: [],
+        identity: { matched: choices, anchors: choices && crossrefTarget ?
+          [`title:${crossrefTarget.title}`, `author:${crossrefTarget.author}`] : [], conflicts: [] },
+        diagnostics: { tier1Queried: true, tier2Fired: false },
+        bookCrossrefEvidence: choices ? proof : { version: 1, rows: [] },
+      } satisfies ForeignLookupResult & { bookCrossrefEvidence: typeof proof };
+      return completeResponse(new Response(JSON.stringify({ content: "", foreignLookup: result,
+        ...diagnosticEnvelope("lookup_complete") }), { headers: { ...corsHeaders, "Content-Type": "application/json" } }));
+    };
+    if (crossrefTarget) {
+      const proof = await lookupBookCrossref(crossrefTarget, {
+        fetchImpl: ((url, init) => trackedFetch(url, init, { stage: "book_retrieval_tier1" })) as typeof fetch,
+      }).catch(() => ({ version: 1 as const, rows: [] }));
+      if (new Set(proof.rows.map(row => row.edition)).size >= 2) return crossrefBody(proof);
+    }
     if (foreignLookupRequest && foreignLookupRequest.enabled === true) {
       const flKind = foreignLookupRequest.kind;
       const flJur = foreignLookupRequest.jurisdiction;
@@ -2109,6 +2134,7 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
         // is unavailable or unmatched. Settlement stays with completeResponse;
         // no generic generation, resend or new refund policy is introduced.
         if (kindForLookup === "book" || kindForLookup === "book_chapter") {
+          if (crossrefTarget && kindForLookup === "book") return crossrefBody({ version: 1, rows: [] });
           const result: ForeignLookupResult = foreignLookupResult ?? withFreeformFields({
             kind: kindForLookup, jurisdiction: jurForLookup, fields: {}, grounded: {}, provenance: {}, sources: [],
             identity: { matched: false, anchors: [], conflicts: [] },
