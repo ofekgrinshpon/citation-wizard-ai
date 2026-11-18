@@ -38,8 +38,8 @@ describe('generic source-grounded book evidence',()=>{
   expect(validate([{...record,title:packet.title+' An Introduction',quote:q}],p).records).toHaveLength(0);
   expect(validate([{...record,quote:q}],{...p,title:full}).records).toHaveLength(0);
  });
- it('accepts whitespace normalization only',()=>{expect(run({quote:quote.replaceAll(' ','\n ')}).records).toHaveLength(1);expect(run({quote:quote.replace('Publication','…')}).records).toHaveLength(0);});
- for(const [field,value] of [['title','A Different Book'],['author','J. X. Vale'],['year','1992'],['isbn','9780140328721'],['sourceId','other'],['kind','review'],['format','audiobook'],['format','unknown'],['translated',true],['isbn','9780306406158'],['year',1991]])it(`rejects ${field} ${value}`,()=>expect(run({[field]:value}).records).toHaveLength(0));
+ it('accepts whitespace normalization only',()=>{expect(run({quote:quote.replace(/ /g,'\n ')}).records).toHaveLength(1);expect(run({quote:quote.replace('Publication','…')}).records).toHaveLength(0);});
+ for(const [field,value] of ([['title','A Different Book'],['author','J. X. Vale'],['year','1992'],['isbn','9780140328721'],['sourceId','other'],['kind','review'],['format','audiobook'],['format','unknown'],['translated',true],['isbn','9780306406158'],['year',1991]] as Array<[string,unknown]>))it(`rejects ${field} ${value}`,()=>expect(run({[field]:value}).records).toHaveLength(0));
  it('rejects unquoted author and title even with matching model claims',()=>{const q='Publication 1991. ISBN 9780306406157.';expect(run({quote:q},{...packet,sources:[{id:'s',text:q}]}).records).toHaveLength(0);});
  it('does not infer full forenames from initials',()=>expect(run({author:'John Richard Vale'}).records).toHaveLength(0));
  it('supports original-language exact works without English-only rules',()=>{const q='Émile Durand. La pensée. Publication 1991. ISBN 9780306406157.';const p={title:'La pensée',author:'Émile Durand',sources:[{id:'s',text:q}]};expect(validate([{...record,title:p.title,author:p.author,quote:q}],p).records).toHaveLength(1);});

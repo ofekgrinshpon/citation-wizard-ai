@@ -16,7 +16,7 @@ it("requires existing retention gate and respects pilot kill switch",()=>{
 });
 it("fails closed when role check fails",async()=>{expect(await authorizeBookEvidence(async()=>false)).toBe(false);expect(await authorizeBookEvidence(async()=>{throw Error();})).toBe(false);});
 it("sends source-only data once, charges shared model budget, no tools",async()=>{
- const budget=createCitationBudget(); const fetchImpl=vi.fn(async()=>new Response(JSON.stringify({choices:[{finish_reason:"stop",message:{content:JSON.stringify({records:[record]})}}]})));
+ const budget=createCitationBudget(); const fetchImpl=vi.fn(async(_url: string, _init: RequestInit)=>new Response(JSON.stringify({choices:[{finish_reason:"stop",message:{content:JSON.stringify({records:[record]})}}]})));
  const result=await evaluateBookEvidence({...packet,title:"PRIVATE_TARGET_SENTINEL"}, {apiKey:"test",budget,fetchImpl:fetchImpl as typeof fetch});
  expect(result).toEqual([record]);expect(budget.modelCalls).toBe(1);expect(fetchImpl).toHaveBeenCalledTimes(1);
  const body=JSON.parse(fetchImpl.mock.calls[0][1].body as string);expect(JSON.stringify(body)).not.toContain("PRIVATE_TARGET_SENTINEL");expect(body.tools).toBeUndefined();expect(body.max_tokens).toBe(2400);

@@ -93,7 +93,7 @@ export function publicBookText(raw: string): string | null {
       const n = Number.parseInt(hex || dec, hex ? 16 : 10);
       return n > 0 && n <= 0x10ffff ? String.fromCodePoint(n) : " ";
     })
-    .replace(/&(amp|quot|apos|lt|gt|nbsp);/gi, (_m, k) => ({amp:"&",quot:'"',apos:"'",lt:"<",gt:">",nbsp:" "}[k.toLowerCase()] || " "))
+    .replace(/&(amp|quot|apos|lt|gt|nbsp);/gi, (_m, k: string) => (({amp:"&",quot:'"',apos:"'",lt:"<",gt:">",nbsp:" "} as Record<string, string>)[k.toLowerCase()] || " "))
     .replace(/\s+/g," ").trim();
   if (text.length < 40 || (text.match(/\p{L}/gu)?.length ?? 0) < text.length / 4) return null;
   return text.slice(0,4000);
