@@ -42,6 +42,8 @@ interface Props {
   onRemove: (id: number) => void;
   disabled?: boolean;
   regenerationDisabled?: boolean;
+  /** Blocks new engine work without locking approval/export of existing results. */
+  newRequestDisabled?: boolean;
   /** Word review shows the exact selected document text, even if the search input is edited. */
   wordOriginal?: string;
   wordLabel?: string;
@@ -130,6 +132,7 @@ export function FootnoteReviewCard({
   onRemove,
   disabled,
   regenerationDisabled,
+  newRequestDisabled,
   wordOriginal,
   wordNeedsRevalidation,
   wordApprovalDisabled,
@@ -193,7 +196,7 @@ export function FootnoteReviewCard({
               onChange={event => onInputChange(cell.id, event.target.value)}
               className="mt-1 w-full resize-y rounded-lg border border-border bg-background p-3 text-base leading-7 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary" />
           </label>
-          <button type="button" disabled={disabled || regenerationDisabled || isLoading || !(wordCheckText ?? cell.input).trim()} onClick={() => onRegenerate(cell.id)}
+          <button type="button" disabled={disabled || regenerationDisabled || newRequestDisabled || isLoading || !(wordCheckText ?? cell.input).trim()} onClick={() => onRegenerate(cell.id)}
             className="min-h-11 rounded-lg border border-primary px-4 py-2 text-sm font-medium text-primary focus-visible:outline focus-visible:outline-2 disabled:opacity-50">בדוק את הנוסח הזה</button>
           <p className="text-xs text-muted-foreground">בדיקה נוספת משתמשת במכסת החשבון.</p>
         </div>}
@@ -207,7 +210,7 @@ export function FootnoteReviewCard({
         </label>
         {cell.output && !wordNeedsRevalidation && <div aria-label={`תצוגה מעוצבת לאזכור ${cell.id}`} dir={lineDirection(cell.output)} className="mt-2 whitespace-pre-wrap text-start"><FormattedCitation text={cell.output} /></div>}
         {wordNeedsRevalidation && <div className="mt-2 space-y-2"><p className="text-sm text-amber-800">הנוסח נערך. יש לבדוק אותו שוב כדי להחיל את כללי העיצוב לפני אישורו.</p>
-          <button type="button" disabled={disabled || regenerationDisabled || isLoading || !draftOutput.trim()} onClick={() => onRegenerate(cell.id)}
+          <button type="button" disabled={disabled || regenerationDisabled || newRequestDisabled || isLoading || !draftOutput.trim()} onClick={() => onRegenerate(cell.id)}
             className="min-h-11 rounded-lg border border-primary px-4 py-2 text-sm font-medium text-primary focus-visible:outline focus-visible:outline-2 disabled:opacity-50">בדוק את הנוסח שנערך</button></div>}
         {isIsraeliCase && cell.output && !wordNeedsRevalidation && !isLoading && !isError && <div className="mt-2">
           <button type="button" aria-expanded={showPartyCheck} onClick={() => setShowPartyCheck(v => !v)} title="בדיקת שמות צדדים (כלל 18.4.4)"
@@ -230,14 +233,14 @@ export function FootnoteReviewCard({
     {cell.retryChoice && onSelectRetry && !isLoading && !isError && <div className="space-y-2 rounded-lg border border-primary/20 bg-primary/5 p-3">
       {cell.retryChoice.kind === "israeli" ? <>
         <p className="text-sm font-medium">נמצאו כמה פסקי דין אפשריים. בחרו את הנכון:</p>
-        <div className="space-y-2">{cell.retryChoice.options.map((option, index) => <button key={`${index}|${option.label}`} type="button" disabled={disabled || regenerationDisabled}
+        <div className="space-y-2">{cell.retryChoice.options.map((option, index) => <button key={`${index}|${option.label}`} type="button" disabled={disabled || regenerationDisabled || newRequestDisabled}
           onClick={() => onSelectRetry(cell.id, { kind: "israeli", selection: option.selection })}
           className="block min-h-11 w-full rounded-lg border border-primary/30 bg-background p-2 text-start text-sm hover:bg-primary/10 focus-visible:outline focus-visible:outline-2 disabled:opacity-50">
           <span dir={lineDirection(option.label)}><FormattedCitation text={escapeCitationLiteral(option.label)} /></span></button>)}</div>
       </> : <>
         <p className="text-sm font-medium">נמצאו פסקי דין בשם זה ביותר ממדינה אחת. בחרו את המדינה, ונבדוק שוב רק בה:</p>
         {cell.retryChoice.countries.map(group => <div key={group.country} className="space-y-1">
-          <button type="button" disabled={disabled || regenerationDisabled} onClick={() => onSelectRetry(cell.id, { kind: "country", country: group.country })}
+          <button type="button" disabled={disabled || regenerationDisabled || newRequestDisabled} onClick={() => onSelectRetry(cell.id, { kind: "country", country: group.country })}
             className="min-h-11 rounded-lg border border-primary bg-background px-4 py-2 text-sm font-medium text-primary hover:bg-primary/10 focus-visible:outline focus-visible:outline-2 disabled:opacity-50">{COUNTRY_LABELS[group.country]}</button>
           <ul className="space-y-1 ps-4 text-xs text-muted-foreground">{group.options.map(option => <li key={option.url} dir="ltr" className="break-words text-left">
             <a href={option.url} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-foreground">{option.label}</a></li>)}</ul>
@@ -260,7 +263,7 @@ export function FootnoteReviewCard({
           {[...TYPE_OPTIONS, ...FOREIGN_TYPE_OPTIONS.map(option => option.type)].map(type => <option key={type} value={type}>{SOURCE_TYPE_LABELS[type]}</option>)}
         </select></label>
         <p className="text-xs text-muted-foreground">בדיקה נוספת משתמשת במכסת החשבון ושולחת את הנוסח לבדיקה.</p>
-        <button type="button" aria-label={`${cell.output ? "בדוק שוב" : "בדוק"} אזכור ${cell.id}`} disabled={disabled || regenerationDisabled || isLoading || !cell.input.trim()} onClick={() => onRegenerate(cell.id)}
+        <button type="button" aria-label={`${cell.output ? "בדוק שוב" : "בדוק"} אזכור ${cell.id}`} disabled={disabled || regenerationDisabled || newRequestDisabled || isLoading || !cell.input.trim()} onClick={() => onRegenerate(cell.id)}
           className="min-h-11 rounded-lg border border-border px-4 py-2 focus-visible:outline focus-visible:outline-2 disabled:opacity-50">{cell.output ? "בדוק שוב" : "בדוק"}</button>
       </div>
     </details>
@@ -379,7 +382,7 @@ export function FootnoteReviewCard({
       {foreignScope && isForeignSourceType(activeType) && (
         <ForeignSourcePicker accountId={foreignScope.accountId} itemKey={foreignScope.itemKey} input={cell.input}
           hostDetectedLabel={activeType !== "foreign" ? SOURCE_TYPE_LABELS[activeType] : undefined}
-          onRegenerate={() => onRegenerate(cell.id)} regenerateDisabled={disabled || regenerationDisabled || isLoading || !cell.input.trim()} />
+          onRegenerate={() => onRegenerate(cell.id)} regenerateDisabled={disabled || regenerationDisabled || newRequestDisabled || isLoading || !cell.input.trim()} />
       )}
 
       {/* Output */}
@@ -403,7 +406,7 @@ export function FootnoteReviewCard({
             </div>}
             <button
               onClick={() => onRegenerate(cell.id)}
-              disabled={disabled || regenerationDisabled || !cell.input.trim()}
+              disabled={disabled || regenerationDisabled || newRequestDisabled || !cell.input.trim()}
               className="text-[11px] px-2.5 py-1 rounded-md bg-destructive/10 text-destructive hover:bg-destructive/20 disabled:opacity-40 font-medium transition-colors"
             >
               🔄 נסה שוב
@@ -441,7 +444,7 @@ export function FootnoteReviewCard({
       <div className="flex items-center gap-2 flex-wrap">
         <button
           onClick={() => onRegenerate(cell.id)}
-          disabled={disabled || regenerationDisabled || isLoading || !cell.input.trim()}
+          disabled={disabled || regenerationDisabled || newRequestDisabled || isLoading || !cell.input.trim()}
           className="text-[11px] px-2.5 py-1 rounded-md bg-secondary/15 text-secondary hover:bg-secondary/25 disabled:opacity-40 font-medium transition-colors"
         >
           🔄 הפק מחדש

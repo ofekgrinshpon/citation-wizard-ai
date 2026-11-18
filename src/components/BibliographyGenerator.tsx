@@ -1,3 +1,4 @@
+import { TRIAL_SOURCE_LIMIT, trialQuotaReachedMessage } from "@/lib/citationTrialQuota";
 import { BookEditionChoiceButtons } from "./BookEditionChoiceButtons";
 import { selectBookEditionChoice, RUNNER_HOST, type BookEditionChoice } from "@/lib/citationPlanner";
 import { normalizeAbbreviations } from "@/data/abbreviations";
@@ -90,7 +91,13 @@ const CATEGORY_TO_SOURCE_TYPE: Partial<Record<BibSourceCategory, SourceType>> = 
 };
 
 
-export function BibliographyGenerator() {
+export interface BibliographySourceQuota {
+  /** Server-authoritative number of sources remaining; absent/null means paid flow. */
+  remaining: number;
+  loading?: boolean;
+}
+
+export function BibliographyGenerator({ sourceQuota = null }: { sourceQuota?: BibliographySourceQuota | null } = {}) {
   const { user } = useAuth();
   const { currentProject } = useProjects();
   const reviewScope = `${user?.id ?? ""}:${currentProject?.id ?? ""}`;
@@ -106,6 +113,18 @@ export function BibliographyGenerator() {
   };
   const [rawText, setRawText] = useState("");
   const [loading, setLoading] = useState(false);
+  const rawLines = useMemo(() => rawText.split("\n").map(line => line.trim()).filter(Boolean), [rawText]);
+  const trialLimit = sourceQuota ? Math.max(0, Math.floor(Number.isFinite(sourceQuota.remaining) ? sourceQuota.remaining : 0)) : null;
+  const [selection, setSelection] = useState<{ text: string; indexes: number[] }>({ text: "", indexes: [] });
+  // Bind selection to this exact pasted list. A changed list never inherits row indexes.
+  const selectedIndexes = trialLimit === null ? rawLines.map((_, i) => i)
+    : (selection.text === rawText ? selection.indexes : rawLines.map((_, i) => i).slice(0, trialLimit)).slice(0, trialLimit);
+  const toggleSelected = (index: number) => {
+    if (loading || sourceQuota?.loading || trialLimit === null) return;
+    const next = selectedIndexes.includes(index) ? selectedIndexes.filter(i => i !== index)
+      : selectedIndexes.length < trialLimit ? [...selectedIndexes, index] : selectedIndexes;
+    setSelection({ text: rawText, indexes: next });
+  };
   const [progress, setProgress] = useState<{ done: number; total: number } | null>(null);
   const [reviewItems, setReviewItems] = useState<ReviewItem[]>([]);
   const reviewItemsRef = useRef(reviewItems);
@@ -114,6 +133,7 @@ export function BibliographyGenerator() {
     rowGuard.invalidate();
     setReviewItems([]);
     setRawText("");
+    setSelection({ text: "", indexes: [] });
     draggedEntry.current = null; setMoveNotice("");
     setLoading(false);
     setProgress(null);
@@ -262,10 +282,10 @@ export function BibliographyGenerator() {
   };
 
   const processRawList = async () => {
-    const lines = rawText
-      .split("\n")
-      .map((l) => l.trim())
-      .filter(Boolean);
+    if (sourceQuota?.loading || loading) return;
+    const selected = new Set(selectedIndexes);
+    const lines = rawLines.filter((_, i) => selected.has(i));
+    const untouched = rawLines.filter((_, i) => !selected.has(i));
     if (lines.length === 0) {
       toast.error("אנא הזן מקורות לעיבוד");
       return;
@@ -298,7 +318,12 @@ export function BibliographyGenerator() {
       );
 
       if (!job.isCurrent()) return;
-      const newItems: ReviewItem[] = results.map((r, i) => {
+      const deferred = new Set<number>();
+      const newItems = results.map<ReviewItem | null>((r, i) => {
+        if (!r.ok && r.error instanceof CitationRunError && r.error.code === TRIAL_SOURCE_LIMIT) {
+          deferred.add(i);
+          return null;
+        }
         const base: Omit<ReviewItem, "id" | "isEditing" | "editValue" | "classificationKey"> = r.ok
           ? r.value!
           : {
@@ -324,7 +349,7 @@ export function BibliographyGenerator() {
           isEditing: false,
           editValue: base.citation || base.rawInput,
         };
-      });
+      }).filter((item): item is ReviewItem => item !== null);
 
       // One shared service-level failure (AI provider outage / rate limit) →
       // show a single banner instead of a wall of identical red rows.
@@ -339,13 +364,20 @@ export function BibliographyGenerator() {
         failedCodes.every((c) => c === failedCodes[0]);
 
       setReviewItems((prev) => [...prev, ...newItems]);
-      setRawText("");
+      let selectedIndex = 0;
+      const remainingText = (deferred.size === 0 ? untouched : rawLines.filter((_, i) =>
+        !selected.has(i) || deferred.has(selectedIndex++))).join("\n");
+      setRawText(remainingText);
+      // Do not automatically start another batch or select leftovers on completion.
+      setSelection({ text: remainingText, indexes: [] });
 
       const okCount = newItems.filter((i) => i.status === "ok").length;
       const warnCount = newItems.filter((i) => i.status === "ok" && (i.warningMsg || /\[חסר:/.test(i.citation))).length;
       const errorCount = newItems.filter((i) => i.status === "error").length;
 
-      if (allFailedSameService) {
+      if (deferred.size) {
+        toast.info(trialQuotaReachedMessage);
+      } else if (allFailedSameService) {
         const first = results.find((r) => !r.ok)?.error as CitationRunError;
         setServiceOutage(first.userMessage);
         toast.error(first.userMessage);
@@ -429,7 +461,14 @@ export function BibliographyGenerator() {
   const retryLookup = async (id: string, hintOverride?: BibSourceCategory, explicitRetry?: CitationRunRetry) => {
     const item = reviewItemsRef.current.find((i) => i.id === id);
     if (!item || (explicitRetry && (item.citationRetry !== explicitRetry || hintOverride !== undefined))) return;
-    const recovery = hintOverride === undefined ? item.recovery : undefined;
+    if (sourceQuota?.loading) return;
+    const recovery = hintOverride === undefined && !explicitRetry ? item.recovery : undefined;
+    // Re-reading the same server request stays available. A confirmed-failure
+    // successor or a new classification is new work and still needs quota.
+    if (trialLimit === 0 && !recovery) {
+      toast.error("המכסה החינמית הסתיימה. התוצאות שכבר התקבלו נשארות זמינות.");
+      return;
+    }
     const countryLocal = item.pastedCitation?.jurisdiction === "AU" || item.pastedCitation?.jurisdiction === "CA";
     const query = explicitRetry || recovery || (countryLocal && !item.isEditing) ? item.rawInput : item.editValue?.trim() || item.citation?.trim() || item.rawInput;
     if (!query) return;
@@ -641,9 +680,31 @@ export function BibliographyGenerator() {
           className="w-full min-h-[120px] bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-ring/60 transition-all resize-none"
           disabled={loading}
         />
+        {sourceQuota && (
+          <div className="mt-3 space-y-2" aria-label="בחירת מקורות במסגרת המכסה">
+            <p className="text-xs text-muted-foreground" role="status">
+              {sourceQuota.loading ? "בודק את המכסה שנותרה…" : `נותרו ${trialLimit} מקורות במכסה החינמית המשותפת. נבחרו ${selectedIndexes.length}.`}
+              {" "}אפשר לבטל סימון ולבחור מקור אחר לפני הבדיקה.
+            </p>
+            {rawLines.map((line, index) => {
+              const selected = selectedIndexes.includes(index);
+              return <div key={`${index}:${line}`} className="rounded-lg border border-border p-3">
+                <label className="flex items-start gap-2 text-sm text-foreground">
+                  <input type="checkbox" checked={selected} onChange={() => toggleSelected(index)}
+                    disabled={loading || sourceQuota.loading || (!selected && selectedIndexes.length >= (trialLimit ?? 0))}
+                    aria-label={`בחר מקור ${index + 1}: ${line}`} className="mt-1 shrink-0" />
+                  <span className="break-words min-w-0" dir="auto">{line}</span>
+                </label>
+                <div className={`mt-2 rounded bg-muted p-2 text-xs text-muted-foreground ${selected ? "" : "opacity-60"}`}>
+                  {selected ? "מוכן לבדיקה לאחר אישור" : "לא נבדק במסגרת המכסה"}
+                </div>
+              </div>;
+            })}
+          </div>
+        )}
         <button
           onClick={processRawList}
-          disabled={loading || !rawText.trim()}
+          disabled={loading || !rawText.trim() || sourceQuota?.loading || selectedIndexes.length === 0}
           className="mt-3 w-full py-3 rounded-xl font-semibold text-sm transition-all disabled:opacity-40 disabled:cursor-not-allowed"
           style={{
             background: loading || !rawText.trim() ? "hsl(var(--muted))" : "var(--gradient-primary)",

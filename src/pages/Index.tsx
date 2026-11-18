@@ -21,6 +21,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { useOffice } from "@/hooks/useOffice";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useCredits } from "@/hooks/useCredits";
+import { useCitationSourceQuota } from "@/hooks/useCitationSourceQuota";
+import { accountForLocalCitation, CITATION_TRIAL_LIMIT, trialQuotaReachedMessage, trialQuotaUnavailableMessage, TRIAL_SOURCE_LIMIT } from "@/lib/citationTrialQuota";
 import { useProjects } from "@/hooks/useProjects";
 import { useActivityLog } from "@/hooks/useActivityLog";
 import { normalizeAbbreviations, detectSourceType, SOURCE_TYPE_LABELS, type SourceType, RULE_REFERENCES } from "@/data/abbreviations";
@@ -250,6 +252,8 @@ const Index = () => {
   const { isOfficeAddin } = useOffice();
   const navigate = useNavigate();
   const subscription = useSubscription();
+  const { sourceQuota, quotaError, refreshQuota } = useCitationSourceQuota(user?.id);
+  const quotaBlocksNew = !!sourceQuota && (sourceQuota.loading || sourceQuota.remaining <= 0);
   const { billingPeriodEndsAt, planMeta } = useCredits();
 
   const { log: logActivity } = useActivityLog();
@@ -304,7 +308,27 @@ const Index = () => {
     );
   }
 
+  const accountLocal = async (rawInput: string, requestId = crypto.randomUUID(), guard?: () => boolean) => {
+    const revision = citationRevision.current;
+    const valid = () => citationRevision.current === revision &&
+      citationScope.current.accountId === user?.id &&
+      citationScope.current.projectId === projectId && citationScope.current.mode === mode &&
+      (!guard || guard());
+    try {
+      await accountForLocalCitation(requestId, rawInput, valid);
+    } catch (error) {
+      if (!valid()) throw Object.assign(new Error("CITATION_RETRY_STALE"), { handled: true });
+      toast.error(error instanceof Error ? error.message : trialQuotaUnavailableMessage);
+      throw Object.assign(error instanceof Error ? error : new Error(trialQuotaUnavailableMessage), { handled: true });
+    }
+  };
+
   const callAPI = async (userMessage: string, history: Message[], telemetry?: CostTelemetry, article?: { sourceType: SourceType; rawInput: string; manual?: boolean; manualChoice?: CitationManualChoice | null }, onSuccess?: (reply: string, isCurrent: () => boolean, historyRequestId?: string, typed?: boolean, resolution?: import("@/lib/citationPlanner").CitationResolution) => Promise<void> | void) => {
+    if (quotaBlocksNew) {
+      const message = sourceQuota?.loading ? trialQuotaUnavailableMessage : trialQuotaReachedMessage;
+      toast.error(message);
+      throw Object.assign(new Error(message), { handled: true });
+    }
     // Bind to the render that started the outer handler, not whichever account
     // happens to be current after asynchronous classification/cache work.
     const scope = { accountId: user?.id, projectId, mode };
@@ -326,6 +350,7 @@ const Index = () => {
     const freeformBypassesPreserve = !article?.manual && !article?.manualChoice && foreignFreeformSourceType(canonicalRaw) !== null;
     const local = evidence.preserve && !freeformBypassesPreserve ? { origin: "preserve" as const, resolution: evidence.preserve } : planLocalCitation(planInput, CHAT_HOST);
     if ("resolution" in local) {
+      if (local.origin !== "preserve") await accountLocal(canonicalRaw, requestId, isCurrent);
       if (local.origin !== "preserve") reportZeroWork(telemetry, "local_foreign_formatter", "deterministic");
       if (local.origin !== "statute_local" && !isCurrent()) throw Object.assign(new Error("CITATION_RETRY_STALE"), { handled: true });
       await onSuccess?.(local.resolution.reply, isCurrent, undefined, true, local.resolution);
@@ -358,7 +383,7 @@ const Index = () => {
 
       if (!isCurrent()) throw Object.assign(new Error("CITATION_RETRY_STALE"), { handled: true });
       if (errorInfo) {
-        if (errorInfo.requestId && !errorInfo.isInvalidInput) {
+        if (errorInfo.requestId && !errorInfo.isInvalidInput && errorInfo.code !== TRIAL_SOURCE_LIMIT) {
           setCitationStatus({ requestId: errorInfo.requestId, isCurrent });
         }
         if (errorInfo.citationRetry && onSuccess) {
@@ -401,7 +426,7 @@ const Index = () => {
   };
 
   const startCitationRetry = async (offer: IndexCitationRetry) => {
-    if (citationRetryBusy.current || citationRetryRef.current !== offer || !offer.isCurrent()) return;
+    if (citationRetryBusy.current || citationRetryRef.current !== offer || !offer.isCurrent() || quotaBlocksNew) return;
     const ticket = {};
     citationRetryBusy.current = ticket;
     citationRetryRef.current = null;
@@ -523,11 +548,12 @@ const Index = () => {
               sourceType: verifiedMatch.source_type,
             })
           );
+          await accountLocal(rawText);
           setMessages([
             ...newMessages,
             { role: "assistant", content: `✓ מקור מאומת\n🏷️ ${verifiedCategory}\n${verifiedMatch.full_citation}` },
           ]);
-          await subscription.incrementCount();
+          if (!sourceQuota) await subscription.incrementCount();
           setLoading(false);
           return;
         }
@@ -644,9 +670,13 @@ const Index = () => {
     }
   };
 
-  const handleSuggestionAccept = () => {
-    if (!pendingSuggestion) return;
+  const handleSuggestionAccept = async () => {
+    if (!pendingSuggestion || loading || quotaBlocksNew) return;
     const { suggestion, rawInput, telemetry } = pendingSuggestion;
+    setLoading(true);
+    try { await accountLocal(rawInput); }
+    catch { return; }
+    finally { setLoading(false); }
     reportZeroWork(telemetry, "client_verified_store");
     const verifiedReply = suggestion.full_citation;
     const verifiedCategory = getVerifiedCategoryLabel(
@@ -661,7 +691,7 @@ const Index = () => {
       ...prev,
       { role: "assistant", content: `✓ מקור מאומת\n🏷️ ${verifiedCategory}\n${verifiedReply}` },
     ]);
-    subscription.incrementCount();
+    if (!sourceQuota) void subscription.incrementCount();
     supabase.from("citation_history").insert([{
       raw_input: rawInput,
       formatted_output: verifiedReply,
@@ -723,6 +753,10 @@ const Index = () => {
   const handleSend = async () => {
     const rawText = input.trim();
     if (!rawText || loading) return;
+    if (quotaBlocksNew) {
+      toast.error(sourceQuota?.loading ? trialQuotaUnavailableMessage : trialQuotaReachedMessage);
+      return;
+    }
 
     // Pre-validate: prevent charging credits for gibberish / empty / non-legal input.
     const validation = validateCitationInput(rawText);
@@ -734,7 +768,7 @@ const Index = () => {
     }
 
     const PINPOINT_RE = /(?:סעיף|ס['׳']|פסקה|פס['׳']|עמ['׳']|לפסק\s+דינ[וה]\s+של|בעמ['׳']|שם,|פיסקה|השופט[ת]?\s|הנשיא[ה]?\s)/;
-    if (!subscription.loading && subscription.isLimitReached) return;
+    if (!sourceQuota && !subscription.loading && subscription.isLimitReached) return;
 
     // Step 1: Normalize abbreviations (sync)
     const normalized = normalizeAbbreviations(rawText);
@@ -829,12 +863,13 @@ const Index = () => {
             })
           );
           const verifiedReply = verifiedMatch.full_citation;
+          await accountLocal(rawText);
           setMessages([
             ...newMessages,
             { role: "assistant", content: `✓ מקור מאומת\n🏷️ ${verifiedCategory}\n${verifiedReply}` },
           ]);
           reportZeroWork(tel, "client_verified_store");
-          await subscription.incrementCount();
+          if (!sourceQuota) await subscription.incrementCount();
 
           supabase.from("citation_history").insert([{
             raw_input: fullRawInput,
@@ -1054,7 +1089,7 @@ const Index = () => {
   return (
     <div className={`flex flex-col h-screen font-sans bg-background text-foreground ${isOfficeAddin ? "compact-mode" : ""}`}>
       {/* Guest Limit Modal */}
-      {!subscription.loading && subscription.isLimitReached && (
+      {!sourceQuota && !subscription.loading && subscription.isLimitReached && (
         <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ direction: "rtl" }}>
           <div className="absolute inset-0 bg-foreground/40 backdrop-blur-sm" />
           <div className="relative bg-card border border-border rounded-2xl p-6 max-w-sm mx-4 shadow-lg text-center animate-fade-in">
@@ -1096,7 +1131,11 @@ const Index = () => {
           </div>
 
           <div className="flex items-center gap-1.5 sm:gap-2">
-            {!subscription.isSubscribed && (
+            {sourceQuota && !sourceQuota.loading ? (
+              <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-md" dir="rtl">
+                נותרו {sourceQuota.remaining} מתוך {CITATION_TRIAL_LIMIT} אזכורים בחינם
+              </span>
+            ) : !sourceQuota && !subscription.isSubscribed && (
               <span className="text-[9px] sm:text-[10px] text-muted-foreground bg-muted px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-md">
                 {subscription.remaining}/{subscription.limit} אזכורים
               </span>
@@ -1165,10 +1204,18 @@ const Index = () => {
           className="flex-1 overflow-y-auto px-3 sm:px-4"
           style={{ maxWidth: 860, margin: "0 auto", width: "100%" }}
         >
+        {sourceQuota && (quotaError || (!sourceQuota.loading && sourceQuota.remaining === 0)) && (
+          <div role="status" dir="rtl" className="my-3 rounded-lg border border-border bg-muted/50 p-3 text-sm">
+            {quotaError ? trialQuotaUnavailableMessage : trialQuotaReachedMessage}{" "}
+            {quotaError
+              ? <button type="button" className="underline" onClick={() => void refreshQuota()}>בדיקה מחדש</button>
+              : <button type="button" className="underline" onClick={() => navigate("/profile?tab=account")}>לעמוד החשבון</button>}
+          </div>
+        )}
         {mode === "batch" ? (
-          <FootnotesSection />
+          <FootnotesSection sourceQuota={sourceQuota} />
         ) : mode === "bibliography" ? (
-          <BibliographyGenerator />
+          <BibliographyGenerator sourceQuota={sourceQuota} />
         ) : mode === "legalqa" ? (
           <LegalQAChat
             onResultSaved={() => setQaRefreshKey(k => k + 1)}
@@ -1296,6 +1343,7 @@ const Index = () => {
                                   })
                                 );
                                 const verifiedReply = verifiedMatch.full_citation;
+                                await accountLocal(newContent);
                                 setMessages([
                                   ...updatedMessages,
                                   { role: "assistant", content: `✓ מקור מאומת\n🏷️ ${verifiedCategory}\n${verifiedReply}` },
@@ -1520,7 +1568,7 @@ const Index = () => {
               {citationRetry && (
                 <div className="my-4 rounded-lg border border-border p-3 text-sm" role="status">
                   <p>{citationRetryDisclosure(citationRetry.descriptor)}</p>
-                  <button type="button" disabled={loading} className="mt-2 rounded border px-3 py-2"
+                  <button type="button" disabled={loading || quotaBlocksNew} className="mt-2 rounded border px-3 py-2"
                     onClick={() => void startCitationRetry(citationRetry)}>ניסיון חדש</button>
                 </div>
               )}
@@ -1571,8 +1619,13 @@ const Index = () => {
                 value={input}
                 onChange={(value) => { clearCitationRetry(); setInput(value); }}
                 onKeyDown={handleKeyDown}
-                onSelectCitation={(citation) => {
+                onSelectCitation={async (citation) => {
+                  if (loading || quotaBlocksNew) return;
                   clearCitationRetry();
+                  setLoading(true);
+                  try { await accountLocal(citation); }
+                  catch { return; }
+                  finally { setLoading(false); }
                   setInput("");
                   const newMessages: Message[] = [
                     ...messages,
@@ -1588,7 +1641,7 @@ const Index = () => {
               />
               <button
                 onClick={handleSend}
-                disabled={loading || !input.trim()}
+                disabled={loading || quotaBlocksNew || !input.trim()}
                 className="btn-send px-4 py-2.5 m-1.5 text-primary-foreground text-base flex-shrink-0 disabled:text-muted-foreground"
               >
                 {loading ? (

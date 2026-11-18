@@ -1,5 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
 import { citationRequests, citationRefundReceipt, type CitationRetryDescriptor } from "@/lib/citationRequestIdentity";
+import { refreshCitationSourceQuota, TRIAL_SOURCE_LIMIT, trialQuotaReachedMessage } from "@/lib/citationTrialQuota";
 export { citationRetryDisclosure, type CitationRetryDescriptor } from "@/lib/citationRequestIdentity";
 
 export interface EdgeErrorInfo {
@@ -117,6 +118,7 @@ function messageFor(status: number | null, code: string | null, body: Record<str
   if (code === "OPERATION_IN_PROGRESS") {
     return serverHe || "יש כרגע פעולה פעילה ב-ReLex. ניתן להתחיל פעולה חדשה לאחר שהיא תסתיים.";
   }
+  if (code === TRIAL_SOURCE_LIMIT || (code === "INSUFFICIENT_CREDITS" && body?.block_reason === "trial_exhausted")) return trialQuotaReachedMessage;
   if (code === "INSUFFICIENT_CREDITS") {
     const required = body?.required;
     return required
@@ -152,7 +154,8 @@ export async function parseFunctionError(
 ): Promise<EdgeErrorInfo> {
   const status = extractStatus(error);
   const body = (await extractBody(error)) ?? fallbackBody ?? null;
-  const code = typeof body?.error === "string" ? body.error : null;
+  const rawCode = typeof body?.error === "string" ? body.error : null;
+  const code = rawCode === "INSUFFICIENT_CREDITS" && body?.block_reason === "trial_exhausted" ? TRIAL_SOURCE_LIMIT : rawCode;
   const requestId = (body?.request_id ?? body?.requestId) as string | null ?? null;
 
   const info: EdgeErrorInfo = {
@@ -162,7 +165,7 @@ export async function parseFunctionError(
       ? ` מזהה בקשה: ${requestId}` : ""),
     requestId,
     required: typeof body?.required === "number" ? (body.required as number) : undefined,
-    isInsufficientCredits: code === "INSUFFICIENT_CREDITS",
+    isInsufficientCredits: code === "INSUFFICIENT_CREDITS" || code === TRIAL_SOURCE_LIMIT,
     isOperationInProgress: code === "OPERATION_IN_PROGRESS" ||
       (code === "REQUEST_ALREADY_STARTED" && body?.status === "in_progress"),
     isAuthExpired: status === 401 || status === 403,
@@ -338,6 +341,8 @@ export async function invokeFunction<T = unknown>(
     const code = error instanceof Error && ["REQUEST_RECOVERY_LIMIT", "CITATION_RETRY_STALE", "CITATION_RECOVERY_STORAGE_UNAVAILABLE", "REQUEST_FINGERPRINT_MISMATCH", "REQUEST_ID_ALREADY_USED"].includes(error.message)
       ? error.message : "REQUEST_OUTCOME_UNKNOWN";
     return { data: null, errorInfo: await parseFunctionError(error, { error: code }) };
+  } finally {
+    refreshCitationSourceQuota();
   }
 }
 

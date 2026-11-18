@@ -14,6 +14,7 @@ import { FootnoteReviewCard, type ReviewCardCell } from "./FootnoteReviewCard";
 import { useAuth } from "@/hooks/useAuth";
 import { useProjects } from "@/hooks/useProjects";
 import { runCitation } from "@/lib/runCitation";
+import { TRIAL_SOURCE_LIMIT, trialQuotaReachedMessage } from "@/lib/citationTrialQuota";
 import { selectForeignCaseChoice, selectBookEditionChoice, WORD_HOST } from "@/lib/citationPlanner";
 import { normalizeAbbreviations, SOURCE_TYPE_LABELS } from "@/data/abbreviations";
 import { lineDirection } from "@/lib/textDirection";
@@ -48,7 +49,8 @@ function hostForeignLabel(type: string | undefined): string | undefined {
   return (SOURCE_TYPE_LABELS as Record<string, string>)[type];
 }
 
-export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: boolean) => void }) {
+export type WordSourceQuota = { remaining: number; loading?: boolean };
+export function WordFootnoteWorkflow({ onBusyChange, sourceQuota }: { onBusyChange?: (busy: boolean) => void; sourceQuota?: WordSourceQuota }) {
   const { user } = useAuth();
   const { currentProject } = useProjects();
   const noteListId=useId();
@@ -60,12 +62,29 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
   const stepHeading = useRef<HTMLHeadingElement>(null);
   useEffect(() => { stepHeading.current?.focus(); }, [step]);
   const [rows, setRows] = useState<Row[]>([]);
+  const [busy, setBusy] = useState(false);
+  const [selectedSourceIds, setSelectedSourceIds] = useState<Set<string>>(new Set());
+  const sourceMapKey = rows.map(row => `${row.sourceId}:${row.input}`).join("\n");
+  const quotaLimit = sourceQuota && !sourceQuota.loading && Number.isFinite(sourceQuota.remaining)
+    ? Math.max(0, Math.floor(sourceQuota.remaining)) : 0;
+  const selectionMap = useRef("");
+  // Reconcile only the local selection. The authenticated server still reserves
+  // each source before any engine work, including races with another tab.
+  useEffect(() => {
+    if (!sourceQuota || sourceQuota.loading || busy) return;
+    const remapped = selectionMap.current !== sourceMapKey;
+    selectionMap.current = sourceMapKey;
+    setSelectedSourceIds(previous => {
+      const available = rows.filter(r => !r.output && r.status !== "error" && !r.bookEditionChoice && !r.foreignChoice && !r.retryChoice);
+      const candidates = remapped ? available : available.filter(r => previous.has(r.sourceId));
+      return new Set(candidates.slice(0, quotaLimit).map(r => r.sourceId));
+    });
+  }, [sourceMapKey, quotaLimit, sourceQuota?.loading, busy, !!sourceQuota]);
   const [protectedSpans, setProtectedSpans] = useState<Span[]>([]);
   const [inputEdits, setInputEdits] = useState<Record<string,string>>({});
   const [inputEditor, setInputEditor] = useState<{noteId:string; value:string}|null>(null);
   const [selection, setSelection] = useState<Span | null>(null);
 
-  const [busy, setBusy] = useState(false);
   const [batchProgress,setBatchProgress]=useState<{current:number;total:number;stopping:boolean}|null>(null);
   const stopBatch=useRef(false);
   useEffect(() => { onBusyChange?.(busy); return () => onBusyChange?.(false); }, [busy, onBusyChange]);
@@ -85,6 +104,7 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
 
   const clear = () => {
     epoch.current++;
+    selectionMap.current = ""; setSelectedSourceIds(new Set());
     setInputEdits({}); setInputEditor(null);
     setStep(0); setOpenNotes(new Set()); setEditingRow(null);
     lock.current = false;stopBatch.current=false;setBatchProgress(null);
@@ -181,10 +201,10 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
   };
   /** `retry` (single row only): a chosen result option or country, sent as one new check. */
   const generate = async (onlyId?: number, retry?: { rawInput?: string; resultSelection?: boolean; patch?: Partial<Row> }) => {
-    if (lock.current || !session) return;
-    const selected = rows.filter(row => row.end > row.start && row.input.trim() && !blockedNotes.current.has(noteKey(row)) && (onlyId === undefined ? !row.output && row.status !== "error" && !row.bookEditionChoice && !row.foreignChoice && !row.retryChoice : row.id === onlyId))
+    if (lock.current || !session || (sourceQuota && (sourceQuota.loading || quotaLimit === 0))) return;
+    const selected = rows.filter(row => row.end > row.start && row.input.trim() && (!sourceQuota || (onlyId !== undefined && (!!row.output || !!row.retryChoice)) || selectedSourceIds.has(row.sourceId)) && !blockedNotes.current.has(noteKey(row)) && (onlyId === undefined ? !row.output && row.status !== "error" && !row.bookEditionChoice && !row.foreignChoice && !row.retryChoice : row.id === onlyId))
       .map(row => retry?.patch && row.id === onlyId ? { ...row, ...retry.patch } : row);
-    if (!selected.length) return;
+    if (!selected.length || (sourceQuota && selected.length > quotaLimit)) return;
     lock.current = true;stopBatch.current=false;setBatchProgress({current:0,total:selected.length,stopping:false}); setBusy(true); setError(""); setNotice(""); setBatchDone(false);
     setRows(old=>{
       let next=old;
@@ -196,6 +216,7 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
     const owner = scope;
     const isCurrent = () => version === epoch.current && owner === currentScope.current;
     const batch = newTelemetryBatch("footnotes");
+    let exhaustedDuringRun = false;
     // Sequential, no automatic retry. Reset/navigation invalidate delivery and further dispatch.
     for (const [index,row] of selected.entries()) {
       if (!isCurrent() || stopBatch.current) break;
@@ -226,7 +247,16 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
         setRows(old => old.map(r => r.id === row.id ? { ...r, output: result.citation, fullOutput:result.citation, repeatProposal:false,needsStyleRevalidation:false,manualDraft:undefined,styleIssue,
           completion: result.completion, pastedCitation: result.pastedCitation, bookEditionChoice: result.bookEditionChoice, foreignChoice: result.foreignChoice, retryChoice: result.retryChoice, status: row.classification?.warning ? "warning" : result.status, detectedType: result.sourceType, warningMsg: [result.warningMsg, row.classification?.warning].filter(Boolean).join(" · ") || undefined, errorMsg: undefined, approved: false } : r));
       } catch (e) {
-        const failure = e && typeof e === "object" ? e as { requestId?: string; userMessage?: string } : {};
+        const failure = e && typeof e === "object" ? e as { code?: string; requestId?: string; userMessage?: string } : {};
+        if (failure.code === TRIAL_SOURCE_LIMIT) {
+          if (owner === currentScope.current) blockedNotes.current.delete(noteKey(row));
+          if (isCurrent()) {
+            setRows(old => old.map(r => r.id === row.id ? { ...r, ...row } : r));
+            setNotice(trialQuotaReachedMessage);
+          }
+          exhaustedDuringRun = true;
+          break;
+        }
         const requestId = failure.requestId;
         const message = failure.userMessage || "ההפקה לא הושלמה. לא ננסה שוב אוטומטית.";
         if (owner === currentScope.current) {
@@ -239,7 +269,7 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
       }
     }
     if (isCurrent()) {
-      if(!stopBatch.current&&onlyId===undefined&&selected.length){
+      if(!stopBatch.current&&!exhaustedDuringRun&&onlyId===undefined&&selected.length){
         // Open every checked note so proposals are visible, and show a completion banner.
         const checked=new Set(selected.map(r=>r.noteId));
         setOpenNotes(old=>new Set([...old,...checked]));
@@ -384,7 +414,7 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
   const knownOrder = session?.documentOrder ?? [];
   const knownIds = new Set(knownOrder.map(item=>item.id));
   const noteOrder = session ? [...knownOrder,...[...session.notes,...(session.skippedNotes??[])].filter(n=>!knownIds.has(n.id)).map(n=>({id:n.id,number:null}))] : [];
-  const readyRows = rows.filter(row => row.input.trim()
+  const readyRows = rows.filter(row => (!sourceQuota || (!sourceQuota.loading && selectedSourceIds.has(row.sourceId))) && row.input.trim()
     && !row.output && row.status !== "error" && !row.bookEditionChoice && !row.foreignChoice && !row.retryChoice && !blockedNotes.current.has(noteKey(row)));
   const readyCount=readyRows.length;
   const goToStep = (next: number) => {
@@ -443,7 +473,12 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
         {!session.notes.length && <p>לא נמצאו הערות שאפשר לערוך בבטחה. המסמך נשאר ללא שינוי. אפשר לבחור מסמך אחר.</p>}
         {step === 1 && <p className="text-sm leading-6">אין חובה לסמן דבר. <strong>בלי סימוני הסבר, כל תוכן ההערה נשלח למנוע האזכור.</strong> אם יש דברי הסבר, סמנו אותם כדי שלא יישלחו ולא ישתנו. הערות שדורשות פיצול בטוח יישארו ללא שינוי.</p>}
         {step === 2 && <div className="space-y-3 rounded-xl bg-primary/5 p-4">
-          <p className="text-sm">מתוכננות עד {readyCount} בקשות למקורות מתוך {new Set(readyRows.map(r=>r.noteId)).size} הערות. דברי הסבר מוגנים אינם נשלחים. אין כאן הבטחה למספר חיובים: המנוע הקיים קובע את פעולות האיתור וההשלמה ואת השימוש במכסת החשבון.</p>
+          {sourceQuota && <div role="status" className="space-y-1 text-sm">
+            <p className="font-semibold">{sourceQuota.loading ? "בודקים את המכסה הזמינה…" : `נותרו ${quotaLimit} מקורות בחינם · ${readyCount} נבחרו לבדיקה`}</p>
+            <p>המכסה משותפת לאזכור מהיר, להערות שוליים ולביבליוגרפיה. אפשר לבטל סימון ולבחור מקור אחר לפני הבדיקה. יתר המקורות לא נשלחים לבדיקה ונשארים ללא שינוי בקובץ Word.</p>
+            {!sourceQuota.loading && quotaLimit === 0 && <p>המכסה החינמית הסתיימה. התוצאות שכבר הופקו עדיין זמינות לאישור ולהורדה.</p>}
+          </div>}
+          <p className="text-sm">מתוכננות עד {readyCount} בקשות למקורות מתוך {new Set(readyRows.map(r=>r.noteId)).size} הערות. דברי הסבר מוגנים אינם נשלחים. {sourceQuota ? "כל מקור שנבחר נספר בנפרד, גם כשיש כמה מקורות באותה הערה." : "אין כאן הבטחה למספר חיובים: המנוע הקיים קובע את פעולות האיתור וההשלמה ואת השימוש במכסת החשבון."}</p>
           <button type="button" className={primaryButton} disabled={busy || !readyCount} onClick={() => void generate()}>{busy ? "הבדיקה מתבצעת…" : readyCount ? `בדוק ${readyCount} מקורות` : "אין הערות נוספות לבדיקה"}</button>
           {batchProgress && <div role="status" aria-live="polite"><p>{batchProgress.stopping?"העצירה מתבצעת; בקשה שכבר נשלחה תושלם ועשויה להשתמש במכסת החשבון. לא יישלחו בקשות נוספות.":`בודקים מקור ${batchProgress.current} מתוך ${batchProgress.total}.`}</p><button type="button" className={button} disabled={batchProgress.stopping} onClick={()=>{stopBatch.current=true;setBatchProgress(old=>old?{...old,stopping:true}:old);}}>עצור שליחת בקשות נוספות</button></div>}
           {batchDone && !busy && <div role="status" className="rounded-lg border border-primary/30 bg-background p-3 text-sm">
@@ -530,6 +565,18 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
           {step === 2 && <>
             <p className="text-sm text-muted-foreground">התוצאה היא הצעה לבדיקה ולא אישור לדיוק משפטי. השוו למקור לפני אישור.</p>
             {noteRows.map(row => <div key={row.id} className="space-y-3">
+              {sourceQuota && !row.output && row.status !== "error" && !row.bookEditionChoice && !row.foreignChoice && !row.retryChoice && <label className="flex min-h-11 items-center gap-3 rounded-lg border p-3 text-sm">
+                <input type="checkbox" className="h-5 w-5" aria-label={`בחירת מקור ${noteRows.indexOf(row)+1} · ${label}`} checked={selectedSourceIds.has(row.sourceId)}
+                  disabled={busy || sourceQuota.loading || (!selectedSourceIds.has(row.sourceId) && selectedSourceIds.size >= quotaLimit)}
+                  onChange={e => { const checked = e.target.checked; setSelectedSourceIds(old => { const next = new Set(old); if (checked && next.size < quotaLimit) next.add(row.sourceId); else next.delete(row.sourceId); return next; }); }} />
+                <span>מקור {noteRows.indexOf(row)+1} · {selectedSourceIds.has(row.sourceId) ? "נבחר לבדיקה" : "לא נבחר לבדיקה"}</span>
+              </label>}
+              {sourceQuota && !selectedSourceIds.has(row.sourceId) && !row.output && row.status !== "error" && !row.bookEditionChoice && !row.foreignChoice && !row.retryChoice ? <div className="space-y-2">
+                <p className="text-xs font-medium">המקור במסמך</p>
+                <p dir="auto" className="whitespace-pre-wrap break-words rounded-lg border bg-background p-3 text-sm">{row.originalText.slice(row.start, row.end)}</p>
+                <div className="rounded-lg border border-dashed bg-muted/40 p-4 text-sm text-muted-foreground"><span aria-hidden="true" className="mb-2 block h-3 w-2/3 rounded bg-muted blur-[2px]" />לא נבדק במסגרת המכסה</div>
+              </div> : <>
+
               {row.repeatProposal && <p className="rounded-lg bg-blue-50 p-3 text-sm text-blue-950">הצעה לאזכור חוזר לפי ההקשר במסמך — יש לאשר את הנוסח המוצג.</p>}
               {row.styleIssue && <StyleIssueNotice issue={row.styleIssue} />}
               {isForeignSourceType(row.sourceTypeOverride ?? row.detectedType ?? "unknown") && <fieldset disabled={busy}><ForeignSourcePicker transient
@@ -539,7 +586,7 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
                   if ((row.classification?.effectiveKey ?? "") !== (plan?.effectiveKey ?? "")) changeRow(row.id,{classification:plan,classificationRecord:record,output:null,status:"empty"});
                 }} /></fieldset>}
               <FootnoteReviewCard cell={row} wordLabel={`מקור ${noteRows.indexOf(row)+1} בהערה הפתוחה`} wordOriginal={row.originalText.slice(row.start, row.end)} wordNeedsRevalidation={!!row.needsStyleRevalidation} wordApprovalDisabled={!!row.styleIssue || !!row.bookEditionChoice} disabled={busy}
-                regenerationDisabled={row.status === "error" || blockedNotes.current.has(noteKey(row))} hideRemove
+                newRequestDisabled={!!sourceQuota && (sourceQuota.loading || quotaLimit === 0)} regenerationDisabled={row.status === "error" || blockedNotes.current.has(noteKey(row))} hideRemove
                 wordCheckText={row.manualDraft ?? row.input}
                 // The document text stays bound to its note; an edit only changes what the next check sends.
                 onInputChange={(id, value) => changeRow(id, { manualDraft: value === row.input ? undefined : value, output: null, status: "empty", warningMsg: undefined, needsStyleRevalidation: false, styleIssue: null })}
@@ -551,6 +598,7 @@ export function WordFootnoteWorkflow({ onBusyChange }: { onBusyChange?: (busy: b
                 });}}
                 onRegenerate={id => { if (rows.find(item => item.id === id)?.status !== "error") void generate(id); }} onRemove={() => {}}
                 onSelectBookEdition={(id, optionId) => void selectEdition(id, optionId)} onSelectForeignChoice={(id, optionId) => void selectChoice(id, optionId)} onSelectRetry={selectRetry} />
+              </>}
             </div>)}
           </>}
           {step >= 2 && <details open={step === 3} className="rounded-xl border border-border p-3 text-sm" key={`preview-${step}-${note.id}`}>

@@ -1,3 +1,5 @@
+import { useCitationSourceQuota } from "@/hooks/useCitationSourceQuota";
+import { CITATION_TRIAL_LIMIT } from "@/lib/citationTrialQuota";
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
@@ -88,6 +90,7 @@ function formatLedgerReason(raw: string | null): string {
 const Profile = () => {
   const { user, signOut, loading: authLoading } = useAuth();
   const { isAdmin, referralCode } = useCredits();
+  const { sourceQuota, quotaError, refreshQuota } = useCitationSourceQuota(user?.id);
   const {
     status: usage,
     loading: usageLoading,
@@ -243,7 +246,17 @@ const Profile = () => {
                   </button>
                 </div>
 
-                {usageLoading && !usage ? (
+                {sourceQuota ? (
+                  <div className="space-y-2 text-sm" role="status">
+                    {quotaError ? <>
+                      <p>לא ניתן היה לטעון את מכסת ההתנסות.</p>
+                      <button type="button" className="underline" onClick={() => void refreshQuota()}>בדיקה מחדש</button>
+                    </> : sourceQuota.loading ? <p>בודק את מכסת ההתנסות…</p> : <>
+                      <p className="font-semibold">נותרו {sourceQuota.remaining} מתוך {CITATION_TRIAL_LIMIT} מקורות בחינם</p>
+                      <p className="text-muted-foreground">מכסה חד־פעמית משותפת לאזכור מהיר, הערות שוליים ב־Word וביבליוגרפיה. אפשר להמשיך לצפות ולהשתמש בתוצאות שכבר הופקו.</p>
+                    </>}
+                  </div>
+                ) : usageLoading && !usage ? (
                   <p role="status" aria-live="polite" className="text-sm text-muted-foreground">טוען נתוני מכסה…</p>
                 ) : usageError || !usage ? (
                   <div role="alert" className="text-sm text-destructive flex items-center gap-3 flex-wrap">

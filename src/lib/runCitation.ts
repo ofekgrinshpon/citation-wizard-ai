@@ -20,6 +20,7 @@ import { validateCitationInput } from "@/lib/citationInputValidation";
 import { extractCitationFromResponse } from "@/lib/citationUtils";
 import { invokeFunction, retryCitationFunction } from "@/lib/functionError";
 import type { CitationRetryDescriptor } from "@/lib/citationRequestIdentity";
+import { accountForLocalCitation, type CitationTrialQuotaError, TRIAL_SOURCE_LIMIT } from "@/lib/citationTrialQuota";
 import { handleRefundResponse } from "@/lib/refundResponse";
 import { renderForeignCitation, renderForeignDetection } from "@/data/bluebook";
 import { citationTextOnly } from "@/lib/citationSegments";
@@ -168,6 +169,15 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
     throw new CitationRunError({ code: "CITATION_INPUT_CHANGED", userMessage: "הקלט או החשבון השתנו. לא נשלחה בקשה לעיבוד." });
   }
   const rawInput = opts.rawInput.trim();
+  const chargeLocal = async () => {
+    try {
+      await accountForLocalCitation(crypto.randomUUID(), rawInput, opts.isResultCurrent);
+    } catch (error) {
+      const quota = error as CitationTrialQuotaError;
+      throw new CitationRunError({ code: quota.code || "TRIAL_QUOTA_UNAVAILABLE",
+        userMessage: quota.message, isInsufficientCredits: quota.code === TRIAL_SOURCE_LIMIT });
+    }
+  };
 
   // Batch B: evidence and manual conflicts are planned before any cache/classifier.
   const evidence = planCitationEvidence(opts.rawInput, opts.manualChoice ?? citationManualChoice(opts.overrideType));
@@ -183,7 +193,10 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
   if (pasted.country && pasted.local && !freeformBypassesPreserve) {
     const sourceType: SourceType = pasted.country.family === "case" ? "foreign_case_other" : "foreign";
     const local = planLocalCitation({ evidence, sourceType, input: opts.rawInput, isPinpoint: false, manual: !!opts.manualChoice || !!opts.overrideType }, RUNNER_HOST);
-    if ("resolution" in local) return { ...local.resolution, sourceType, sourceLabel: SOURCE_TYPE_LABELS[sourceType], fromVerifiedStore: false, status: "warning", telemetry: opts.telemetry };
+    if ("resolution" in local) {
+      if (local.origin !== "preserve") await chargeLocal();
+      return { ...local.resolution, sourceType, sourceLabel: SOURCE_TYPE_LABELS[sourceType], fromVerifiedStore: false, status: "warning", telemetry: opts.telemetry };
+    }
   }
 
   const inputCheck = validateCitationInput(rawInput);
@@ -229,6 +242,7 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
   const planInput = { evidence, sourceType, input: normalized, isPinpoint, manual: !!opts.overrideType };
   const gate = planCapabilityGate(planInput);
   if (gate) {
+    if (gate.origin !== "preserve") await chargeLocal();
     reportZeroWork(opts.telemetry, "local_foreign_formatter", "deterministic");
     observeCitationDiagnostic(opts.diagnostic, rawInput, "deterministic");
     return { sourceType, sourceLabel, ...gate.resolution, telemetry: opts.telemetry, fromVerifiedStore: false };
@@ -262,6 +276,7 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
     const cacheRender = cachedArticle ?? reRendered;
     const cacheWarnings = [...(cacheRender?.warnings ?? [])];
     if (cacheRender?.missing.length) cacheWarnings.push(`חסרים פרטים: ${getMissingFieldsSummary(sourceType, cacheRender.missing)}`);
+    await chargeLocal();
     // Classifier cost (if any) stays attached to the same telemetryRequestId.
     reportZeroWork(opts.telemetry, "client_verified_store", "cache_hit");
     observeCitationDiagnostic(opts.diagnostic, rawInput, "cache_hit");
@@ -283,6 +298,7 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
     if (local.origin === "unreported_local" && opts.isResultCurrent && !opts.isResultCurrent()) {
       throw new CitationRunError({ code: "CITATION_INPUT_CHANGED", userMessage: "הקלט או החשבון השתנו. התוצאה לא נשמרה." });
     }
+    if (local.origin !== "preserve") await chargeLocal();
     reportZeroWork(opts.telemetry, "local_foreign_formatter", "deterministic");
     if (local.origin !== "pasted_local") observeCitationDiagnostic(opts.diagnostic, rawInput, "deterministic");
     return { sourceType, sourceLabel, ...local.resolution, telemetry: opts.telemetry, fromVerifiedStore: false };
@@ -344,8 +360,8 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
         userMessage: errorInfo.message,
         isInvalidInput: errorInfo.isInvalidInput,
         isInsufficientCredits: errorInfo.isInsufficientCredits,
-        requestId: errorInfo.isInvalidInput ? undefined : errorInfo.requestId ?? undefined,
-        recovery: Object.freeze({ retry: (isCurrent?: () => boolean) => invokePrepared(undefined, isCurrent) }),
+        requestId: errorInfo.isInvalidInput || errorInfo.code === TRIAL_SOURCE_LIMIT ? undefined : errorInfo.requestId ?? undefined,
+        recovery: errorInfo.code === TRIAL_SOURCE_LIMIT ? undefined : Object.freeze({ retry: (isCurrent?: () => boolean) => invokePrepared(undefined, isCurrent) }),
         citationRetry: errorInfo.citationRetry ? Object.freeze({
           descriptor: errorInfo.citationRetry,
           retry: (isCurrent?: () => boolean) => invokePrepared(errorInfo.citationRetry, isCurrent),

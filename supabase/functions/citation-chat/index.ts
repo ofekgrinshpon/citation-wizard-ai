@@ -1896,7 +1896,40 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
 
             const bestMatch = rankedMatches[0]?.candidate as { full_citation: string } | undefined;
             const hasPinpoint = articleRequest ? !!articleRequest.pinpoint : PINPOINT_REGEX.test(userInput);
-            if (bestMatch && !hasPinpoint && (!articleRequest || (hasVerifiedCandidates && resolveHebrewArticle(articleRequest, articleEvidence).conflicts.length === 0))) {
+            // Cache calls never start provider work. Trial accounts use the
+            // same own-account debit as deterministic frontend outputs. Keep
+            // legacy paid retry behavior, but route trial successors through
+            // their existing claim/ancestry guard.
+            const trialCacheAccounting = Deno.env.get("CITATION_SOURCE_TRIAL") !== "false";
+            const canUseVerifiedMatch = bestMatch && !hasPinpoint &&
+              (!articleRequest || (hasVerifiedCandidates && resolveHebrewArticle(articleRequest, articleEvidence).conflicts.length === 0));
+            let skipCacheForTrialRetry = false;
+            if (canUseVerifiedMatch && trialCacheAccounting && retryOfRequestId !== undefined) {
+              try {
+                const { data, error } = await userClient.rpc("get_citation_trial_status");
+                skipCacheForTrialRetry = !!error || data?.ok !== true || data.limited !== false;
+              } catch { skipCacheForTrialRetry = true; }
+            }
+            if (canUseVerifiedMatch && !skipCacheForTrialRetry) {
+              if (trialCacheAccounting && retryOfRequestId === undefined) {
+                let cacheDebit: Record<string, unknown> | null = null;
+                try {
+                  const { data, error } = await userClient.rpc("consume_local_citation_trial", {
+                    _request_id: clientReqId, _fingerprint: await citationFingerprint(recoveryInput), _expected_user: userId,
+                  });
+                  if (!error && data && typeof data === "object" && !Array.isArray(data)) cacheDebit = data;
+                } catch { /* Fail closed rather than returning a result or starting the provider. */ }
+                if (cacheDebit?.ok !== true) {
+                  const reported = cacheDebit?.error;
+                  const error = reported === "TRIAL_EXHAUSTED" || reported === "REQUEST_ID_ALREADY_USED" ||
+                    reported === "REQUEST_FINGERPRINT_MISMATCH" ? reported : "REQUEST_OUTCOME_UNKNOWN";
+                  return new Response(JSON.stringify({ error, requestId: creditRequestId,
+                    ...(error === "REQUEST_OUTCOME_UNKNOWN" ? { status: "unknown" } : {}) }), {
+                    status: error === "TRIAL_EXHAUSTED" ? 402 : error === "REQUEST_OUTCOME_UNKNOWN" ? 503 : 409,
+                    headers: { ...corsHeaders, "Content-Type": "application/json" },
+                  });
+                }
+              }
               console.log(
                 `[credit] free_path=verified_source_hit user=${userId ?? "unknown"} request_id=${creditRequestId} amount=0`,
               );
