@@ -2,7 +2,7 @@ import { authorizeBookEvidence, bookEvidenceEnabled, evaluateBookEvidence } from
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { trackedFetch as telemetryTrackedFetch, withCostTelemetry, setTelemetryFromBody, recordZeroWork, type CostStage } from "../_shared/costTelemetry.ts";
-import { citationRecoveryInput, citationRecoveryResult } from "../_shared/citationRecovery.ts";
+import { citationRecoveryInput } from "../_shared/citationRecovery.ts";
 import { CitationUsageGuard, citationFingerprint, citationRefundReceipt, isUnstructuredCitationRefusal, withCitationProviderOutcome, observeCitationProviderFetch, markCitationProviderUnknown } from "../_shared/citationUsageGuard.ts";
 
 // Request-scoped failure observation survives retrieval helpers that catch and
@@ -80,7 +80,7 @@ import {
 import { normalizeHebrewNumberRanges } from "../_shared/hebrewNumberRange.ts";
 import { runForeignLookup, articleLookupFallback, type ForeignLookupResult } from "./foreignLookup.ts";
 import { bindFreeformLookup, chargeModel, createCitationBudget, freeformAwaitingModel, freeformLiveEnabled, freeformParserTransportAvailable, markBudgetUnknown, resolveFreeformBeforeLookup, type FreeformParserTransport } from "../_shared/citationPure/freeformInterpret.ts";
-import { boundBookCompletion, resolveBookCompletion, frameBookFinal } from "../_shared/citationPure/bookFinal.ts";
+import { prepareBookAwareCitationDelivery } from "../_shared/citationPure/bookFinal.ts";
 import type { CitationRecoveryInput } from "../_shared/citationRecovery.ts";
 import { isStatuteLookupRequest, validateStatuteRequest, resolveStatuteLookup } from "./statuteRoute.ts";
 import { isCountryLookupRequest, resolveCountryLookup, validateCountryRequest } from "./countryRoute.ts";
@@ -1679,40 +1679,7 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
       receipt: settlement?.refundReceipt };
   };
   const completeResponse = async (response: Response) => {
-    const body = await response.clone().json();
-    // Trusted lookup delivery only: snippets are discovery evidence, not part
-    // of the approved retention envelope. Reject every other unexpected key;
-    // never repair arbitrary invalid fields or change the live response.
-    const foreign = body.foreignLookup;
-    const projectSources = foreign && ["book", "book_chapter"].includes(foreign.kind) && Array.isArray(foreign.sources);
-    const knownSources = projectSources && foreign.sources.every((source: unknown) =>
-      source !== null && typeof source === "object" && !Array.isArray(source) &&
-      Object.keys(source).every(key => ["url", "title", "tier", "snippet", "strong"].includes(key)) &&
-      (!("snippet" in source) || typeof source.snippet === "string") &&
-      (!("strong" in source) || typeof source.strong === "boolean"));
-    // Model publication quotes are live-only, like discovery snippets. The
-    // envelope is constructed by our server route, never an inbound authority.
-    const retainedForeign = { ...foreign };
-    if (foreign?.kind === "book" && foreign.bookModelEvidence?.version === 1)
-      delete retainedForeign.bookModelEvidence;
-    const retainedBody = knownSources ? { ...body, foreignLookup: { ...retainedForeign,
-      sources: foreign.sources.map((source: Record<string, unknown>) => ({
-        url: source.url, ...("title" in source ? { title: source.title } : {}), tier: source.tier,
-      })),
-    } } : body;
-    let result = citationRecoveryResult(retainedBody);
-    // Content authority is the existing service-owned terminal write, not a
-    // client flag. Validate the unchanged structured shape first, then compute
-    // once with full live evidence. Never salvage a malformed result via text.
-    const book = bookInput && boundBookCompletion(bookInput);
-    if (result && book && creditRequestId && foreign && ["book", "book_chapter"].includes(foreign.kind)) {
-      const localFields = Object.fromEntries(Object.entries(book.local.fields).filter((entry): entry is [string, string] => typeof entry[1] === "string"));
-      const final = resolveBookCompletion(book.request, book.raw, foreign, localFields, book.local.suppliedFields, book.bound.missing);
-      body.content = final.reply;
-      // No new evidence fields: retain the framed final text plus only the
-      // already-approved structured metadata. Live metadata stays transient.
-      result = citationRecoveryResult({ ...result, content: frameBookFinal(bookInput!, creditRequestId, final.reply) });
-    }
+    const { body, result } = prepareBookAwareCitationDelivery(await response.clone().json(), bookInput, creditRequestId, pastedContract?.rawInput);
     const completion = await usageGuard?.finish("succeeded", "citation_delivered", result ?? undefined);
     const recoveryAvailability = !usageGuard ? "unavailable" : completion?.confirmed ? "available" : "unconfirmed";
     const headers = new Headers(response.headers);

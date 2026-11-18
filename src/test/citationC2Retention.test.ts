@@ -56,6 +56,11 @@ async function vertical(f: { id: string; raw: string; type: "foreign_book" | "fo
   if (mode === "snippet-only") donor.title = "Jane Doe, Synthetic Collection (2nd ed. 2020)";
   const search = vi.fn(async () => new Response(JSON.stringify({ results: [donor] })));
   const lookup = vi.fn(async (input: Parameters<typeof runForeignLookup>[0]) => {
+    if (mode === "empty-book-pilot") return {
+      kind: "book" as const, jurisdiction: "OTHER" as const, fields: {}, grounded: {}, provenance: {}, sources: [],
+      identity: { matched: false, anchors: [], conflicts: [] }, diagnostics: { tier1Queried: true, tier2Fired: false },
+      bookModelEvidence: { version: 1 as const, records: [], sources: [] },
+    };
     const result = await runForeignLookup(input, { apiKey: "offline", fetchImpl: search });
     if (mode === "unmatched") { result.identity.matched = false; result.identity.conflicts.push("unmatched"); }
     if (mode === "error") result.error = "lookup_failed";
@@ -158,6 +163,29 @@ async function vertical(f: { id: string; raw: string; type: "foreign_book" | "fo
 }
 
 describe("C2 real retention → recovery → history", () => {
+  it.each(["National Identity by Anthony D. Smith", "Brownlie's Principles of Public International Law by James Crawford"])
+    ("empty pilot lookup is a visible partial answer on first delivery, recovery, and history: %s", async raw => {
+      const h = await vertical({ id: "empty-book-pilot", raw, type: "foreign_book" }, "empty-book-pilot", true);
+      expect(h.response.ok).toBe(true);
+      expect(h.body.content).toContain("[חסר: שנה]");
+      expect(h.body.recoveryAvailability).toBe("available");
+      const live = resolveCitationResponse(h.plan, h.body, CHAT_HOST);
+      if (live.kind !== "terminal") throw new Error("No terminal delivery");
+      expect(live.resolution.reply).toBe(h.body.content);
+      expect(live.resolution.bookEditionChoice).toBeUndefined();
+      const record = await readCitationRecovery(owner, requestId);
+      if (!record) throw new Error("Missing recovery");
+      const rendered = renderCitationRecovery(record);
+      expect(rendered?.formattedOutput).toBe(h.body.content);
+      if (!rendered) throw new Error("Missing rendered result");
+      await saveRecoveredCitationHistory({ requestId, projectId: "project-one", expectedAccountId: owner, formattedOutput: rendered.formattedOutput });
+      expect(h.writes[0]).toMatchObject({ formatted_output: h.body.content, raw_input: raw, citation_request_id: requestId });
+      expect(JSON.stringify(h.retainedResult)).not.toContain("bookModelEvidence");
+      expect(h.rpc.mock.calls.filter(([name]) => name === "finish_citation_request")).toHaveLength(1);
+      expect(h.lookup).toHaveBeenCalledTimes(1);
+      expect(fetch).not.toHaveBeenCalled();
+    });
+
   it.each([...C2_WIRE.map(f => ({ ...f, mode: "complete" })), { ...C2_WIRE[2], id: "snippet-only", mode: "snippet-only" }])
     ("JSONB nested key reordering keeps $id authoritative citation and history", async f => {
       const h = await vertical(f, f.mode, true);

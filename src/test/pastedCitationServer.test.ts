@@ -5,6 +5,7 @@ import ts from "typescript";
 import { describe, expect, it, vi } from "vitest";
 import * as pasted from "../../supabase/functions/_shared/pastedCitation";
 import * as recovery from "../../supabase/functions/_shared/citationRecovery";
+import * as bookFinal from "../../supabase/functions/_shared/citationPure/bookFinal";
 import * as prefixes from "../../supabase/functions/_shared/caseTypePrefixes";
 import * as statute from "../../supabase/functions/citation-chat/statuteRoute";
 import * as country from "../../supabase/functions/citation-chat/countryRoute";
@@ -25,6 +26,7 @@ function fixture() {
     if (path.includes("supabase-js")) return { createClient: () => client };
     if (path.includes("pastedCitation")) return pasted;
     if (path.includes("citationRecovery")) return recovery;
+    if (path.includes("citationPure/bookFinal")) return bookFinal;
     if (path.includes("caseTypePrefixes")) return prefixes;
     if (path.includes("statuteRoute")) return statute;
     if (path.includes("countryRoute")) return country;

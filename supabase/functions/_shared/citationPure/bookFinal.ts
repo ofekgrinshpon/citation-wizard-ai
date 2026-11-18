@@ -12,7 +12,7 @@ import { acceptCitationCompletion } from "./completion.ts";
 import { renderBook, renderBookChapter, type RenderResult } from "./render.ts";
 import { escapeCitationLiteral, unescapeCitationLiteral, splitCitationWarnings } from "./segments.ts";
 import { guardPastedCitationRequest, suppliedLookupFieldsMatch, rawCitationFingerprint } from "../pastedCitation.ts";
-import type { CitationRecoveryInput } from "../citationRecovery.ts";
+import { citationRecoveryResult, recoveryObject, type CitationRecoveryInput } from "../citationRecovery.ts";
 
 export function renderBookFields(kind: "book" | "book_chapter", fields: Record<string, unknown>): RenderResult {
   const literal = Object.fromEntries(Object.entries(fields).map(([k, v]) => [k, typeof v === "string" ? escapeCitationLiteral(v) : v]));
@@ -27,6 +27,19 @@ export function eligibleBookCompletion(type: string | null, raw: string) {
   if (identifier && !identifier.isbn) return null;
   if (identifier && !identifier.text) return { kind: "book" as const, fields: {}, wire: {}, suppliedFields: undefined };
   const work = extractBookWork(identifier?.text ?? raw);
+  // The deterministic free-form planner also emits typed missing-year books.
+  // Rebuild exactly those fields for final rendering/replay; do not reinterpret
+  // a recognized formal work, a chapter, or a model-only free-form handoff.
+  if (!identifier && !work && type === "foreign_book") {
+    const handoff = prepareFreeformHandoff(raw);
+    if (handoff?.mode === "search" && handoff.request.kind === "book" && handoff.request.jurisdiction === "OTHER") {
+      const wire = handoff.request.parsedFields;
+      if (!wire.year && wire.authors && wire.bookTitle && suppliedLookupFieldsMatch(raw, "book", wire)) {
+        return { kind: "book" as const, fields: { ...wire }, wire: { ...wire }, suppliedFields: undefined };
+      }
+    }
+  }
+
   if (identifier && (!work || work.preserve || work.fields.unparsedRemainder || !work.explicitNew)) {
     const handoff = prepareFreeformHandoff(identifier.text);
     if (handoff?.mode !== "search" || handoff.request.kind !== "book") return null;
@@ -100,9 +113,20 @@ export function resolveBookCompletion(request: Record<string, unknown>, raw: str
   }
   // An experimental envelope is terminal, including empty/invalid evidence.
   // Never fall back to an unvalidated legacy year or edition alongside it.
+  let renderSuppliedBook = false;
   if (hasBookModelEvidence(response)) {
     for (const key of ["year", "edition"]) { delete accepted.fields[key]; delete accepted.provenance[key]; }
     const evidence = readBookModelEvidence(request, raw, response, localFields);
+    // A clean pilot abstention still permits formatting facts supplied by the
+    // user. This does not verify identity, fill a year, or accept provider fields.
+    const local = kind === "book" && !supplied.year ? eligibleBookCompletion(type, raw) : null;
+    const modelIdentity = (response as { identity?: { matched?: unknown; conflicts?: unknown } })?.identity;
+    renderSuppliedBook = !!local && !!evidence && evidence.result.records.length === 0 && evidence.result.rejected.length === 0 &&
+      modelIdentity?.matched === false && Array.isArray(modelIdentity.conflicts) && modelIdentity.conflicts.length === 0 &&
+      (accepted.reason === "identity" || accepted.reason === "unavailable") &&
+      Object.keys(supplied).length === Object.keys(local.wire).length &&
+      Object.entries(local.wire).every(([key, value]) => supplied[key] === value);
+
     if (accepted.identityConfirmed && evidence?.result.options.length === 1 && !supplied.year) {
       const record = evidence.result.options[0].records[0];
       accepted.fields.year = record.year;
@@ -123,7 +147,8 @@ export function resolveBookCompletion(request: Record<string, unknown>, raw: str
   };
   const warnings: string[] = accepted.reason ? [messages[accepted.reason]] : [];
   if (accepted.quarantined.length) warnings.push("פרטים סותרים או ללא ראיות מספקות לא שולבו: " + accepted.quarantined.join(", ") + ".");
-  const rendered = accepted.identityConfirmed ? renderBookFields(kind, { ...accepted.fields, ...supplied }) : null;
+  const rendered = accepted.identityConfirmed ? renderBookFields(kind, { ...accepted.fields, ...supplied })
+    : renderSuppliedBook ? renderBookFields("book", supplied) : null;
   const fl = response && typeof response === "object" ? response as { identity?: { conflicts?: unknown[] } } : null;
   if (accepted.identityConfirmed && Array.isArray(fl?.identity?.conflicts) && fl.identity.conflicts.length) {
     const marker = fl.identity.conflicts.find(c => typeof c === "string" && /^year:editions:(?:\d{4},){1,3}\d{4}$/.test(c)) as string | undefined;
@@ -218,3 +243,53 @@ export function readBookFinal(content: unknown, input: CitationRecoveryInput, re
   } catch { return null; }
 }
 export const hasBookFinalFrame = (content: unknown) => typeof content === "string" && content.startsWith("relex:book-final:");
+
+/** Finalize a server-produced response before status is written. The pilot's
+ * evidence may be transient; a user-visible citation or warning must not be. */
+export function prepareBookAwareCitationDelivery(
+  body: Record<string, unknown>, input: CitationRecoveryInput | null, requestId: string | null, guardedRaw?: string,
+) {
+  const foreign = recoveryObject(body.foreignLookup) ? body.foreignLookup : null;
+  const isBook = foreign?.kind === "book" || foreign?.kind === "book_chapter";
+  const pilot = foreign?.kind === "book" && "bookModelEvidence" in foreign;
+  const sources = foreign?.sources;
+  // This projection is only for known service-produced book evidence. Other
+  // unexpected shapes still fail the approved retention validator.
+  const knownSources = isBook && Array.isArray(sources) && sources.every(source =>
+    recoveryObject(source) &&
+    Object.keys(source).every(key => ["url", "title", "tier", "snippet", "strong"].includes(key)) &&
+    (!("snippet" in source) || typeof source.snippet === "string") &&
+    (!("strong" in source) || typeof source.strong === "boolean"));
+  const retainedForeign = { ...foreign };
+  if (pilot && recoveryObject(foreign?.bookModelEvidence) && foreign.bookModelEvidence.version === 1)
+    delete retainedForeign.bookModelEvidence;
+  const retainedBody = knownSources ? { ...body, foreignLookup: { ...retainedForeign,
+    sources: sources.map((source: Record<string, unknown>) => ({
+      url: source.url, ...("title" in source ? { title: source.title } : {}), tier: source.tier,
+    })),
+  } } : body;
+
+  const result = citationRecoveryResult(retainedBody);
+  const book = input && boundBookCompletion(input);
+  const pilotBound = book?.request.kind === foreign?.kind && book?.request.jurisdiction === foreign?.jurisdiction;
+  if (result && book && input && requestId && isBook && (!pilot || pilotBound)) {
+    const localFields = Object.fromEntries(Object.entries(book.local.fields).filter((entry): entry is [string, string] => typeof entry[1] === "string"));
+    const final = resolveBookCompletion(book.request, book.raw, foreign, localFields, book.local.suppliedFields, book.bound.missing);
+    // Compute with full evidence; retain framed final text, not the proofs.
+    const framed = citationRecoveryResult({ ...result, content: frameBookFinal(input, requestId, final.reply) });
+    if (!pilot || (framed && final.reply.trim())) {
+      return { body: { ...body, content: final.reply }, result: framed };
+    }
+  }
+  if (pilot) {
+    // A rejected or unbindable pilot result may neither claim an edition nor
+    // settle a blank success. Keep only the guarded input and a visible warning.
+    const raw = guardedRaw?.trim();
+    const content = (raw ? escapeCitationLiteral(raw) + "\n" : "") +
+      "⚠️ לא ניתן היה לאמת את תוצאת החיפוש לספר; לא הושלמו פרטי פרסום.";
+    const fallback: Record<string, unknown> = { ...body, content };
+    delete fallback.foreignLookup;
+    return { body: fallback, result: citationRecoveryResult({ content }) };
+  }
+  return { body, result };
+}
