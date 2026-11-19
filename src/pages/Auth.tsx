@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { afterSignIn, isReferralDestination, setOAuthReferralDestination } from "@/lib/referralDestination";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate, useSearchParams, Navigate } from "react-router-dom";
 import { useOffice } from "@/hooks/useOffice";
@@ -12,6 +13,7 @@ import { LEGAL_VERSION } from "@/content/legal/version";
 
 const Auth = () => {
   const [searchParams] = useSearchParams();
+  const referralDestination = isReferralDestination(searchParams);
   const initialMode = searchParams.get("mode") !== "signup";
   const [isLogin, setIsLogin] = useState(initialMode);
   const [email, setEmail] = useState("");
@@ -59,15 +61,18 @@ const Auth = () => {
     }
     (async () => {
       try {
+        setOAuthReferralDestination(referralDestination);
         const result = await lovable.auth.signInWithOAuth("google", {
           redirect_uri: `${window.location.origin}/auth-redirect`,
           extraParams: { prompt: "select_account" },
         });
         if (result.error) {
+          setOAuthReferralDestination(false);
           console.error("[ReLex] Google OAuth error:", result.error);
           toast.error("שגיאה בהתחברות עם Google");
         }
       } catch (err: any) {
+        setOAuthReferralDestination(false);
         console.error("[ReLex] Google OAuth exception:", err);
         toast.error("שגיאה בהתחברות עם Google");
       }
@@ -83,10 +88,7 @@ const Auth = () => {
   }
 
   if (user) {
-    const addinParam = isOfficeAddin ? "?addin=1" : "";
-    // Don't wait for role resolution — always route to /app
-    // Admins can navigate to /admin manually; this prevents heavy dashboard from blocking login
-    return <Navigate to={`/app${addinParam}`} replace />;
+    return <Navigate to={afterSignIn(isOfficeAddin, referralDestination)} replace />;
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -96,8 +98,9 @@ const Auth = () => {
       if (isLogin) {
         const { error } = await signIn(email, password);
         if (error) throw error;
+        setOAuthReferralDestination(false);
         toast.success("התחברת בהצלחה!");
-        const target = isOfficeAddin ? "/app?addin=1" : "/app";
+        const target = afterSignIn(isOfficeAddin, referralDestination);
         navigate(target, { replace: true });
       } else {
         if (!acceptedLegal) {
@@ -253,18 +256,22 @@ const Auth = () => {
                     params.set("mode", isLogin ? "login" : "signup");
                     if (refCode) params.set("ref", refCode);
                     params.set("oauth", "google");
+                    if (referralDestination) params.set("next", "referral");
                     window.location.replace(`${PUBLIC_SITE_URL}/auth?${params.toString()}`);
                     return;
                   }
+                  setOAuthReferralDestination(referralDestination);
                   const result = await lovable.auth.signInWithOAuth("google", {
                     redirect_uri: `${window.location.origin}/auth-redirect`,
                     extraParams: { prompt: "select_account" },
                   });
                   if (result.error) {
+                    setOAuthReferralDestination(false);
                     console.error("[ReLex] Google OAuth error:", result.error);
                     toast.error("שגיאה בהתחברות עם Google");
                   }
                 } catch (err: any) {
+                  setOAuthReferralDestination(false);
                   console.error("[ReLex] Google OAuth exception:", err);
                   toast.error("שגיאה בהתחברות עם Google");
                 }

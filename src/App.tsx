@@ -1,4 +1,5 @@
-import { useEffect } from "react";
+import { afterSignIn, hasOAuthReferralDestination, setOAuthReferralDestination } from "@/lib/referralDestination";
+import { useEffect, useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, MemoryRouter, Route, Routes, Navigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -70,6 +71,10 @@ function AuthLoadingSpinner() {
 
 function AuthRedirect() {
   const { user, isAdmin, loading, isAdminResolved } = useAuth();
+  const [referralDestination] = useState(hasOAuthReferralDestination);
+  useEffect(() => {
+    if (user) setOAuthReferralDestination(false);
+  }, [user]);
 
   // Google signup doesn't go through signUp(), so stamp the consent the user
   // gave on the Auth page once their session exists. The RPC only ever fills
@@ -92,9 +97,7 @@ function AuthRedirect() {
 
   if (!user) return <Navigate to={`/auth${addinSuffix ? `?${addinSuffix.slice(1)}` : ""}`} replace />;
 
-  // Always route to /app after login — admins can navigate to /admin manually
-  // This prevents the heavy admin dashboard from blocking the post-login experience
-  return <Navigate to={`/app${addinSuffix}`} replace />;
+  return <Navigate to={afterSignIn(!!addinSuffix, referralDestination)} replace />;
 }
 
 const App = () => (
