@@ -346,6 +346,137 @@ export type Database = {
           },
         ]
       }
+      citation_referral_awards: {
+        Row: {
+          created_at: string
+          fingerprint: string
+          referee_id: string
+          referrer_id: string
+          request_id: string
+          route: string
+        }
+        Insert: {
+          created_at?: string
+          fingerprint: string
+          referee_id: string
+          referrer_id: string
+          request_id: string
+          route: string
+        }
+        Update: {
+          created_at?: string
+          fingerprint?: string
+          referee_id?: string
+          referrer_id?: string
+          request_id?: string
+          route?: string
+        }
+        Relationships: []
+      }
+      citation_referral_config: {
+        Row: {
+          activated_at: string | null
+          enabled: boolean
+          singleton: boolean
+        }
+        Insert: {
+          activated_at?: string | null
+          enabled?: boolean
+          singleton?: boolean
+        }
+        Update: {
+          activated_at?: string | null
+          enabled?: boolean
+          singleton?: boolean
+        }
+        Relationships: []
+      }
+      citation_source_grants: {
+        Row: {
+          created_at: string
+          referral_id: string
+          sources: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          referral_id: string
+          sources: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          referral_id?: string
+          sources?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "citation_source_grants_referral_id_fkey"
+            columns: ["referral_id"]
+            isOneToOne: false
+            referencedRelation: "citation_referral_awards"
+            referencedColumns: ["referee_id"]
+          },
+          {
+            foreignKeyName: "citation_source_grants_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      citation_trial_config: {
+        Row: {
+          enabled: boolean
+          singleton: boolean
+        }
+        Insert: {
+          enabled?: boolean
+          singleton?: boolean
+        }
+        Update: {
+          enabled?: boolean
+          singleton?: boolean
+        }
+        Relationships: []
+      }
+      citation_trial_sources: {
+        Row: {
+          created_at: string
+          fingerprint: string
+          request_id: string
+          route: string
+          state: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          fingerprint: string
+          request_id: string
+          route: string
+          state: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          fingerprint?: string
+          request_id?: string
+          route?: string
+          state?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "citation_trial_sources_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       citation_usage_requests: {
         Row: {
           attempt_token: string
@@ -1664,6 +1795,11 @@ export type Database = {
         Args: { _request_id: string; _user_id: string }
         Returns: Json
       }
+      _citation_source_bonus: { Args: { _user_id: string }; Returns: number }
+      _citation_trial_limited: {
+        Args: { _prof: Database["public"]["Tables"]["profiles"]["Row"] }
+        Returns: boolean
+      }
       _generate_referral_code: { Args: never; Returns: string }
       _plan_credits: { Args: { _plan: string }; Returns: number }
       _plan_is_paid: { Args: { _plan: string }; Returns: boolean }
@@ -1714,8 +1850,25 @@ export type Database = {
         }
         Returns: string
       }
+      confirm_citation_referral_success: {
+        Args: {
+          _fingerprint: string
+          _request_id: string
+          _route: string
+          _user_id: string
+        }
+        Returns: Json
+      }
       consume_credits: {
         Args: { _amount: number; _reason: string; _request_id: string }
+        Returns: Json
+      }
+      consume_local_citation_trial: {
+        Args: {
+          _expected_user: string
+          _fingerprint: string
+          _request_id: string
+        }
         Returns: Json
       }
       consume_usage_batch: {
@@ -1747,6 +1900,7 @@ export type Database = {
         }
         Returns: Json
       }
+      get_citation_trial_status: { Args: never; Returns: Json }
       get_usage_status: { Args: never; Returns: Json }
       grant_referral_bonus_if_eligible: {
         Args: { _user_id: string }
