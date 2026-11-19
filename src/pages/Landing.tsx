@@ -8,6 +8,7 @@ import { GeometricBackground } from "@/components/GeometricBackground";
 import { ContactSection } from "@/components/ContactSection";
 
 import { ChevronDown } from "lucide-react";
+import { HomeCitationDemo } from "@/components/launch/HomeCitationDemo";
 import { LaunchPricing } from "@/components/launch/LaunchPricing";
 import { WordLaunchGuide } from "@/components/launch/WordLaunchGuide";
 import guideCitationImg from "@/assets/guide/citation.jpg.asset.json";
@@ -188,7 +189,7 @@ const Landing = () => {
       </header>
 
       {/* Hero Section */}
-      <section className="min-h-[calc(100vh-3.5rem)] md:min-h-[calc(100vh-4rem)] flex flex-col items-center justify-center px-4 relative z-10">
+      <section className="min-h-[calc(100vh-3.5rem)] md:min-h-[calc(100vh-4rem)] flex flex-col items-center justify-center px-4 pt-6 pb-36 md:pb-28 relative z-10">
         {/* Glassmorphism card */}
         <div
           className="text-center space-y-6 max-w-lg w-full px-8 py-12 rounded-2xl relative"
@@ -213,6 +214,7 @@ const Landing = () => {
             <span className="w-1 h-1 rounded-full bg-border" />
             <span className="flex items-center gap-1">📚 ספרות</span>
           </div>
+          <HomeCitationDemo />
           <div className="space-y-3 pt-4">
             <button
               onClick={() => navigate("/auth?mode=signup")}
@@ -321,3 +323,4 @@ const Landing = () => {
 };
 
 export default Landing;
+
