@@ -1,3 +1,4 @@
+import { isGoogleReferralEnabled } from "@/lib/googleReferralIntent";
 import { useCitationSourceQuota } from "@/hooks/useCitationSourceQuota";
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
@@ -90,6 +91,13 @@ const Profile = () => {
   const { user, signOut, loading: authLoading } = useAuth();
   const { isAdmin, referralCode } = useCredits();
   const { sourceQuota, quotaError, referralSourcesEnabled, sourceReferralsGranted, refreshQuota } = useCitationSourceQuota(user?.id);
+  const [googleReferralEnabled, setGoogleReferralEnabled] = useState(false);
+  useEffect(() => {
+    if (!referralSourcesEnabled) return;
+    let active = true;
+    void isGoogleReferralEnabled().then(enabled => { if (active) setGoogleReferralEnabled(enabled); });
+    return () => { active = false; };
+  }, [referralSourcesEnabled]);
   const {
     status: usage,
     loading: usageLoading,
@@ -398,7 +406,7 @@ const Profile = () => {
                 <h3 className="text-foreground font-bold text-base mb-1">הזמן חברים ל-ReLex</h3>
                 <p className="text-sm text-muted-foreground">
                   {referralSourcesEnabled
-                    ? "כשחבר חדש נרשם דרך הקישור שלך עם אימייל וסיסמה (לא דרך Google) ומשלים אזכור תקין ראשון שנבדק בשרת, כל אחד מכם מקבל 10 מקורות נוספים למכסה החינמית. עיבוד שמתבצע רק בדפדפן אינו מזכה בבונוס."
+                    ? `כשחבר חדש נרשם דרך הקישור שלך ${googleReferralEnabled ? "עם אימייל וסיסמה או עם Google" : "עם אימייל וסיסמה (לא דרך Google)"} ומשלים אזכור תקין ראשון שנבדק בשרת, כל אחד מכם מקבל 10 מקורות נוספים למכסה החינמית. עיבוד שמתבצע רק בדפדפן אינו מזכה בבונוס.`
                     : "הזמן חברים ל-ReLex, וכשחבר חדש נרשם דרך הקישור שלך עם אימייל וסיסמה (לא דרך Google) ומבצע את הפעולה הראשונה, שניכם מקבלים תוספת שימוש."}
                 </p>
               </div>

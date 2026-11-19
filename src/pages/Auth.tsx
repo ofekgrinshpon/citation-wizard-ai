@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { clearGoogleReferralIntent, clearStoredReferralCode, isGoogleReferralEnabled, normalizeGoogleReferralCode, prepareGoogleReferralIntent, readGoogleReferralIntent } from "@/lib/googleReferralIntent";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate, useSearchParams, Navigate } from "react-router-dom";
 import { useOffice } from "@/hooks/useOffice";
@@ -37,6 +38,37 @@ const Auth = () => {
   const visibleReferralCode = referralInUrl && referralInUrl.length >= 4 && referralInUrl.length <= 16
     ? referralInUrl.toUpperCase()
     : refCode;
+  const explicitGoogleReferral = normalizeGoogleReferralCode(referralInUrl);
+  const [googleReferralCodeEnabled, setGoogleReferralCodeEnabled] = useState<string | null>(null);
+  const googleReferralProbe = useRef<{ code: string; promise: Promise<boolean> } | null>(null);
+  useEffect(() => {
+    if (isLogin || isOfficeAddin || !explicitGoogleReferral) return;
+    let active = true;
+    const promise = isGoogleReferralEnabled();
+    googleReferralProbe.current = { code: explicitGoogleReferral, promise };
+    void promise.then(enabled => {
+      if (active) setGoogleReferralCodeEnabled(enabled ? explicitGoogleReferral : null);
+    });
+    return () => { active = false; };
+  }, [isLogin, isOfficeAddin, explicitGoogleReferral]);
+  const googleReferralEnabled = !isOfficeAddin && googleReferralCodeEnabled === explicitGoogleReferral && !!explicitGoogleReferral;
+
+  const oauthInFlight = useRef(false);
+  const oauthPageActive = useRef(false);
+  useEffect(() => {
+    oauthPageActive.current = true;
+    return () => { oauthPageActive.current = false; };
+  }, []);
+  const [oauthStarting, setOAuthStarting] = useState(false);
+  const prepareReferralForOAuth = async (code: string) => {
+    // The mint request itself always checks availability server-side; do not
+    // wait for the read-only copy probe or race it to decide whether to mint.
+    const prepared = await prepareGoogleReferralIntent(code);
+    const probe = googleReferralProbe.current;
+    if (!prepared && probe?.code === code && await probe.promise && oauthPageActive.current) {
+      toast.info("לא ניתן היה להכין את שיוך ההזמנה. הרשמה דרך Google תמשיך, אבל ייתכן שלא תזכה בבונוס.");
+    }
+  };
 
   useEffect(() => {
     const mode = searchParams.get("mode");
@@ -48,7 +80,9 @@ const Auth = () => {
   useEffect(() => {
     if (searchParams.get("oauth") !== "google") return;
     if (!isCanonicalHost()) return;
-    if (user) return;
+    if (user || oauthInFlight.current) return;
+    oauthInFlight.current = true;
+    setOAuthStarting(true);
     // Strip the trigger from the URL so a refresh doesn't re-fire it.
     const cleaned = new URLSearchParams(searchParams);
     cleaned.delete("oauth");
@@ -59,20 +93,33 @@ const Auth = () => {
     }
     (async () => {
       try {
+        const code = searchParams.get("mode") === "signup" ? explicitGoogleReferral : null;
+        if (code) await prepareReferralForOAuth(code);
+        else clearGoogleReferralIntent();
+        if (!oauthPageActive.current) { clearGoogleReferralIntent(); return; }
         const result = await lovable.auth.signInWithOAuth("google", {
           redirect_uri: `${window.location.origin}/auth-redirect`,
           extraParams: { prompt: "select_account" },
         });
         if (result.error) {
+          clearGoogleReferralIntent();
           console.error("[ReLex] Google OAuth error:", result.error);
           toast.error("שגיאה בהתחברות עם Google");
         }
       } catch (err: any) {
+        clearGoogleReferralIntent();
         console.error("[ReLex] Google OAuth exception:", err);
         toast.error("שגיאה בהתחברות עם Google");
+      } finally {
+        oauthInFlight.current = false;
+        setOAuthStarting(false);
       }
     })();
   }, [searchParams, user]);
+
+  useEffect(() => {
+    if (user && !readGoogleReferralIntent()) clearStoredReferralCode();
+  }, [user?.id]);
 
   if (authLoading) {
     return (
@@ -83,6 +130,9 @@ const Auth = () => {
   }
 
   if (user) {
+    if (!isOfficeAddin && user.app_metadata?.provider === "google" && readGoogleReferralIntent()) {
+      return <Navigate to="/auth-redirect" replace />;
+    }
     const addinParam = isOfficeAddin ? "?addin=1" : "";
     // Don't wait for role resolution — always route to /app
     // Admins can navigate to /admin manually; this prevents heavy dashboard from blocking login
@@ -91,11 +141,14 @@ const Auth = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (oauthInFlight.current) return;
     setLoading(true);
     try {
       if (isLogin) {
         const { error } = await signIn(email, password);
         if (error) throw error;
+        clearGoogleReferralIntent();
+        clearStoredReferralCode();
         toast.success("התחברת בהצלחה!");
         const target = isOfficeAddin ? "/app?addin=1" : "/app";
         navigate(target, { replace: true });
@@ -107,7 +160,8 @@ const Auth = () => {
         const { error } = await signUp(email, password, fullName, refCode || undefined, true);
         if (error) throw error;
         toast.success("נרשמת בהצלחה! בדוק את האימייל לאימות.");
-        try { sessionStorage.removeItem("relex_ref_code"); } catch { /* ignore */ }
+        clearGoogleReferralIntent();
+        clearStoredReferralCode();
       }
     } catch (err: any) {
       toast.error(err.message || "שגיאה בהתחברות");
@@ -131,7 +185,9 @@ const Auth = () => {
 
         {visibleReferralCode && !isLogin && (
           <div className="rounded-lg border border-primary/30 bg-primary/5 px-3 py-2 text-xs text-foreground text-center">
-            🎁 הגעת דרך קישור הזמנה (<span className="font-mono">{visibleReferralCode}</span>). כדי לקבל את בונוס ההזמנה, יש להירשם עם אימייל וסיסמה, לא דרך Google.
+            🎁 הגעת דרך קישור הזמנה (<span className="font-mono">{visibleReferralCode}</span>). {googleReferralEnabled
+              ? "כדי לקבל את בונוס ההזמנה, אפשר להירשם עם אימייל וסיסמה או עם Google."
+              : "כדי לקבל את בונוס ההזמנה, יש להירשם עם אימייל וסיסמה, לא דרך Google."}
           </div>
         )}
 
@@ -213,7 +269,7 @@ const Auth = () => {
             )}
             <button
               type="submit"
-              disabled={loading || (!isLogin && !acceptedLegal)}
+              disabled={loading || oauthStarting || (!isLogin && !acceptedLegal)}
               className="w-full py-3 rounded-xl font-semibold text-sm text-primary-foreground transition-all disabled:opacity-50"
               style={{ background: "var(--gradient-primary)" }}
             >
@@ -228,7 +284,9 @@ const Auth = () => {
 
 
           <button
+            disabled={oauthStarting || loading}
             onClick={async () => {
+              if (oauthInFlight.current) return;
               if (!isLogin && !acceptedLegal) {
                 toast.error("יש לאשר את תנאי השימוש ומדיניות הפרטיות");
                 return;
@@ -245,28 +303,38 @@ const Auth = () => {
                   toast.error(err.message || "שגיאה בהתחברות עם Google");
                 }
               } else {
+                oauthInFlight.current = true;
+                setOAuthStarting(true);
                 try {
                   // Force OAuth to start from the canonical ReLex domain so users
                   // never see the oauth.lovable.app broker flash on preview hosts.
                   if (shouldRedirectOAuthToCanonicalHost()) {
                     const params = new URLSearchParams();
                     params.set("mode", isLogin ? "login" : "signup");
-                    if (refCode) params.set("ref", refCode);
+                    if (!isLogin && explicitGoogleReferral) params.set("ref", explicitGoogleReferral);
                     params.set("oauth", "google");
                     window.location.replace(`${PUBLIC_SITE_URL}/auth?${params.toString()}`);
                     return;
                   }
+                  if (!isLogin && explicitGoogleReferral) await prepareReferralForOAuth(explicitGoogleReferral);
+                  else clearGoogleReferralIntent();
+                  if (!oauthPageActive.current) { clearGoogleReferralIntent(); return; }
                   const result = await lovable.auth.signInWithOAuth("google", {
                     redirect_uri: `${window.location.origin}/auth-redirect`,
                     extraParams: { prompt: "select_account" },
                   });
                   if (result.error) {
+                    clearGoogleReferralIntent();
                     console.error("[ReLex] Google OAuth error:", result.error);
                     toast.error("שגיאה בהתחברות עם Google");
                   }
                 } catch (err: any) {
+                  clearGoogleReferralIntent();
                   console.error("[ReLex] Google OAuth exception:", err);
                   toast.error("שגיאה בהתחברות עם Google");
+                } finally {
+                  oauthInFlight.current = false;
+                  setOAuthStarting(false);
                 }
               }
             }}

@@ -1,4 +1,6 @@
-import { useEffect } from "react";
+import { claimGoogleReferralIntent, clearGoogleReferralIntent, clearStoredReferralCode, readGoogleReferralIntent } from "@/lib/googleReferralIntent";
+import { toast } from "sonner";
+import { useEffect, useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, MemoryRouter, Route, Routes, Navigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -70,6 +72,35 @@ function AuthLoadingSpinner() {
 
 function AuthRedirect() {
   const { user, isAdmin, loading, isAdminResolved } = useAuth();
+  const [intent] = useState(readGoogleReferralIntent);
+  const [settledAccountId, setSettledAccountId] = useState<string | null>(null);
+  const accountId = user?.id;
+  const provider = user?.app_metadata?.provider;
+  const addinSuffix = new URLSearchParams(window.location.search).get("addin") === "1" ? "?addin=1" : "";
+
+  useEffect(() => {
+    if (loading) return;
+    if (!intent || !accountId || provider !== "google" || addinSuffix) {
+      if (intent) {
+        clearGoogleReferralIntent(intent.token);
+        if (accountId) clearStoredReferralCode();
+      } else {
+        clearGoogleReferralIntent();
+        if (provider === "google") clearStoredReferralCode();
+      }
+      return;
+    }
+    let active = true;
+    void claimGoogleReferralIntent(intent.token, accountId).then(outcome => {
+      if (!active) return;
+      clearGoogleReferralIntent(intent.token);
+      clearStoredReferralCode();
+      if (outcome === "unverified") toast.info("לא הצלחנו לוודא שההזמנה שויכה לחשבון.");
+      if (outcome === "not-linked") toast.info("ההזמנה לא שויכה לחשבון הזה.");
+      setSettledAccountId(accountId);
+    });
+    return () => { active = false; };
+  }, [accountId, addinSuffix, intent, loading, provider]);
 
   // Google signup doesn't go through signUp(), so stamp the consent the user
   // gave on the Auth page once their session exists. The RPC only ever fills
@@ -84,13 +115,14 @@ function AuthRedirect() {
   }, [user]);
 
   // Wait for both session hydration AND role resolution
-  if (loading || (user && !isAdminResolved)) {
+  if (loading || (user && !isAdminResolved) || (intent && !addinSuffix && provider === "google" && accountId && settledAccountId !== accountId)) {
     return <AuthLoadingSpinner />;
   }
 
-  const addinSuffix = new URLSearchParams(window.location.search).get("addin") === "1" ? "?addin=1" : "";
-
-  if (!user) return <Navigate to={`/auth${addinSuffix ? `?${addinSuffix.slice(1)}` : ""}`} replace />;
+  if (!user) {
+    const signup = !addinSuffix && intent ? new URLSearchParams({ mode: "signup", ref: intent.referralCode }) : null;
+    return <Navigate to={signup ? `/auth?${signup}` : `/auth${addinSuffix ? `?${addinSuffix.slice(1)}` : ""}`} replace />;
+  }
 
   // Always route to /app after login — admins can navigate to /admin manually
   // This prevents the heavy admin dashboard from blocking the post-login experience
