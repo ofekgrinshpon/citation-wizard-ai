@@ -51,7 +51,6 @@ describe("batch A real runCitation boundary", () => {
     "BVerfG, Urteil vom 15. Januar 1958, 1 BvR 400/51, BVerfGE 7, 198",
     "BVerfG 1 BvR 400/51",
     "BVerfG 1 BvR 400/51 — הערה C## Guide: x^^2 & A**B",
-    "400/51",
   ])("preserves unsafe docket without classifier/cache/provider: %s", async (rawInput) => {
     const r = await runCitation({ rawInput });
     expect(citationToPlain(r.citation)).toBe(rawInput);

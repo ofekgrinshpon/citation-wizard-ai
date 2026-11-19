@@ -1,3 +1,4 @@
+import { needsNeutralDocketLookup } from "../../supabase/functions/_shared/pastedCitation";
 /**
  * Batch B — shared pure citation planner and typed response resolver.
  *
@@ -152,6 +153,7 @@ export function needsBoundBookLookup(st: SourceType | null, raw: string): boolea
 export function planLocalCitation(p: LocalPlanInput, caps: CitationHostCapabilities): { origin: LocalOrigin; resolution: CitationResolution } | { origin: null; statutePrep: StatutePreparation | null } {
   const { pasted } = p.evidence;
   const st = p.sourceType;
+  if (needsNeutralDocketLookup(pasted.contract)) return { origin: null, statutePrep: null };
   // Bounded AU/CA completion: the typed request is the only next step.
   if (pasted.countryLookup) return { origin: null, statutePrep: null };
   if (pasted.country && pasted.local) return { origin: pasted.contract.route === "preserve" ? "preserve" : "deterministic", resolution: { ...pasted.local, status: "warning", pastedCitation: pasted.contract, sourceType: pasted.country.family === "case" ? "foreign_case_other" : "foreign" } };
@@ -386,6 +388,18 @@ export type ResponseResolution =
 /** One terminal acceptance path for every existing typed request; legacy requests alone hand off. */
 export function resolveCitationResponse(plan: TypedPlan, data: Record<string, unknown> | null, caps: CitationHostCapabilities): ResponseResolution {
   const contract = plan.evidence.pasted.contract;
+  if (needsNeutralDocketLookup(contract)) {
+    const citation = escapeCitationLiteral(contract.rawInput);
+    const warningMsg = "נדרש זיהוי של סוג ההליך, בית המשפט או שמות הצדדים; לא נבחר פסק דין אוטומטית.";
+    const bound = data?.pastedCitation as PastedCitationContract | undefined;
+    const content = typeof data?.content === "string" ? data.content : "";
+    const valid = bound?.fingerprint === contract.fingerprint && bound.rawInput === contract.rawInput &&
+      needsNeutralDocketLookup(bound) && content.startsWith(`${citation}\n⚠️ `);
+    return { kind: "terminal", origin: "safety", resolution: {
+      citation, reply: valid ? content : `${citation}\n⚠️ ${warningMsg}`, warningMsg,
+      status: "warning", sourceType: "unknown", pastedCitation: contract,
+    } };
+  }
   const safety = readPastedCitationSafety(contract, data);
   if (safety) return { kind: "terminal", origin: "safety", resolution: { ...safety, status: "warning", pastedCitation: contract } };
   if (plan.kind === "legacy" || !plan.foreignLookup) return { kind: "legacy" };

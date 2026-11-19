@@ -33,7 +33,7 @@ function fixture() {
     if (path.includes("freeformInterpret")) return freeformInterpret;
     if (path.includes("citationDiagnosticGate")) return { isCitationDiagnosticPreflight: () => false };
     if (path.includes("costTelemetry")) return { withCostTelemetry: (_: unknown, fn: () => unknown) => fn(), setTelemetryFromBody: () => {}, trackedFetch: provider };
-    if (path.includes("citationUsageGuard")) return { withCitationProviderOutcome: (fn: () => unknown) => fn(), CitationUsageGuard: class { constructor() { construct(); } begin = claim; finish = async () => {}; }, citationFingerprint: async () => "offline-fingerprint" };
+    if (path.includes("citationUsageGuard")) return { citationProviderOutcomeUnknown: () => false, withCitationProviderOutcome: (fn: () => unknown) => fn(), CitationUsageGuard: class { constructor() { construct(); } begin = claim; finish = async () => {}; }, citationFingerprint: async () => "offline-fingerprint" };
     // Imports not exercised by this pre-cache safety branch remain inaccessible.
     return {};
   };
@@ -77,7 +77,7 @@ describe("batch A actual server pre-cache route guard", () => {
     expect(h.construct).toHaveBeenCalledTimes(1); expect(h.claim).toHaveBeenCalledTimes(1);
     expect(h.provider).not.toHaveBeenCalled(); expect(h.cache).not.toHaveBeenCalled();
   });
-  it.each(["BVerfG 1 BvR 400/51", "BVerfG, Urteil vom 15. Januar 1958, 1 BvR 400/51, BVerfGE 7, 198", "400/51",
+  it.each(["BVerfG 1 BvR 400/51", "BVerfG, Urteil vom 15. Januar 1958, 1 BvR 400/51, BVerfGE 7, 198",
     "Brown v. Board of Education, 347 U.S. 483 (1954)"])("%s cannot reach Israeli cache/search/provider", async raw => {
     const h = fixture();
     const r = await h.invoke({ messages: [{ role: "user", content: raw }] });

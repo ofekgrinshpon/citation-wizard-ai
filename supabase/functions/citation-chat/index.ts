@@ -1,3 +1,4 @@
+import { resolveNeutralDocket } from "./neutralDocket.ts";
 import { authorizeBookEvidence, bookEvidenceEnabled, evaluateBookEvidence } from "./bookEvidenceRoute.ts";
 import { bookCrossrefTarget } from "./bookCrossrefTarget.ts";
 import { lookupBookCrossref } from "./bookCrossrefRoute.ts";
@@ -90,7 +91,7 @@ import { boundBookCompletion, prepareBookAwareCitationDelivery, resolveBookCompl
 import type { CitationRecoveryInput } from "../_shared/citationRecovery.ts";
 import { isStatuteLookupRequest, validateStatuteRequest, resolveStatuteLookup } from "./statuteRoute.ts";
 import { isCountryLookupRequest, resolveCountryLookup, validateCountryRequest } from "./countryRoute.ts";
-import { guardPastedCitationRequest, pastedCitationWarning, suppliedLookupFieldsMatch, type PastedCitationContract } from "../_shared/pastedCitation.ts";
+import { guardPastedCitationRequest, needsNeutralDocketLookup, pastedCitationWarning, suppliedLookupFieldsMatch, type PastedCitationContract } from "../_shared/pastedCitation.ts";
 import { createCitationDiagnosticCollector } from "../_shared/citationDiagnostic.ts";
 import { authorizeCitationDiagnostic, isCitationDiagnosticPreflight, CITATION_DIAGNOSTIC_BUILD, CITATION_DIAGNOSTIC_PARSER } from "../_shared/citationDiagnosticGate.ts";
 import { normalizeEditorPlacement } from "../_shared/articleCitationValidator.ts";
@@ -1871,6 +1872,24 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
     }
 
     pastedContract = guardPastedCitationRequest({ messages, rawInput, foreignLookup: foreignLookupRequest, pastedCitation: requestBody.pastedCitation });
+    // Re-derive binding before any classifier, fuzzy cache, usage claim or provider.
+    // This is an authenticated catalog lookup, never evidence that a numeric docket is Israeli.
+    if (needsNeutralDocketLookup(pastedContract) && !foreignLookupRequest) {
+      const content = await resolveNeutralDocket(pastedContract.rawInput, async (docket) => {
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), 1600);
+        try {
+          const { data, error } = await userClient.from("verified_sources")
+            .select("full_citation, source_type, verification_status")
+            .eq("verification_status", "verified").ilike("full_citation", `%${docket}%`).limit(21).abortSignal(controller.signal);
+          if (error) throw new Error("Catalog unavailable");
+          return data;
+        } finally { clearTimeout(timer); }
+      });
+      return completeResponse(new Response(JSON.stringify({ content }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      }));
+    }
     const preservePasted = () => completeResponse(new Response(JSON.stringify({
       content: `${pastedContract?.rawInput ?? ""}\n⚠️ ${pastedContract ? pastedCitationWarning(pastedContract) : "חסרים פרטים"}`,
     }), { headers: { ...corsHeaders, "Content-Type": "application/json" } }));

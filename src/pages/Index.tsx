@@ -1,3 +1,4 @@
+import { needsNeutralDocketLookup } from "../../supabase/functions/_shared/pastedCitation";
 import { useState, useRef, useEffect } from "react";
 import { applyOverride, chatClassificationKey, planGeneration, reconcileRecord, type GenerationPlan } from "@/lib/foreignClassification";
 import { quickOverride, type QuickCountryId } from "@/lib/foreignQuickPick";
@@ -801,7 +802,9 @@ const Index = () => {
     const tel = sourceTelemetry(newTelemetryBatch("uniform_citation"));
     const pasted = preparePastedCitation(rawText.replace(/^\s*\[בחירת תוצאה\]\s*/, ""));
     const freeformType = foreignFreeformSourceType(rawText);
-    const resolved = freeformType
+    const resolved = needsNeutralDocketLookup(pasted.contract)
+      ? { sourceType: "unknown" as SourceType, source: "regex" as const }
+      : freeformType
       ? { sourceType: freeformType, source: "regex" as const }
       : pasted.local || pasted.contract.sourceKind === "case" && pasted.contract.route === "foreign"
       ? { sourceType: pasted.country ? (pasted.country.family === "case" ? "foreign_case_other" : "foreign") : pasted.detection?.sourceType ?? (pasted.contract.jurisdiction === "US" ? "foreign_case_us" : "foreign_case_other") as SourceType, source: "regex" as const }
@@ -851,7 +854,7 @@ const Index = () => {
     try {
       const fullRawInput = buildFullRawInput(rawText, messages);
       const isPinpoint = PINPOINT_RE.test(rawText);
-      const verifiedMatch = pasted.local || needsBoundBookLookup(sourceType, normalized) ? null : compatibleArticleCache(sourceType, normalized, await findVerifiedSourceMatch(normalized));
+      const verifiedMatch = pasted.local || needsNeutralDocketLookup(pasted.contract) || needsBoundBookLookup(sourceType, normalized) ? null : compatibleArticleCache(sourceType, normalized, await findVerifiedSourceMatch(normalized));
 
       // Short-circuit only for direct/canonical verified matches — aliases go through suggestion UI
       if (verifiedMatch && !isPinpoint) {
@@ -891,7 +894,7 @@ const Index = () => {
 
       // Check for similar (fuzzy) verified source match
       if (!isPinpoint && !pasted.local) {
-        const similarMatch = needsBoundBookLookup(sourceType, normalized) ? null : compatibleArticleCache(sourceType, normalized, verifiedMatch ?? await findSimilarVerifiedSource(normalized));
+        const similarMatch = needsNeutralDocketLookup(pasted.contract) || needsBoundBookLookup(sourceType, normalized) ? null : compatibleArticleCache(sourceType, normalized, verifiedMatch ?? await findSimilarVerifiedSource(normalized));
         if (similarMatch) {
           setPendingSuggestion({
             suggestion: similarMatch,
@@ -1323,7 +1326,8 @@ const Index = () => {
                           try {
                             const editTel = sourceTelemetry(newTelemetryBatch("uniform_citation"));
                             const normalized = normalizeAbbreviations(newContent);
-                            const sourceType = foreignFreeformSourceType(normalized) ?? detectSourceType(normalized);
+                            const editPasted = preparePastedCitation(newContent);
+                            const sourceType = needsNeutralDocketLookup(editPasted.contract) ? "unknown" : foreignFreeformSourceType(normalized) ?? detectSourceType(normalized);
                             const sourceLabel = SOURCE_TYPE_LABELS[sourceType];
                             let prompt = normalized;
                             if (sourceType !== "unknown") {
@@ -1332,7 +1336,7 @@ const Index = () => {
                             }
 
                             // Check verified sources first
-                            const verifiedMatch = preparePastedCitation(newContent).country || needsBoundBookLookup(sourceType, normalized) ? null : compatibleArticleCache(sourceType, normalized, await findVerifiedSourceMatch(normalized));
+                            const verifiedMatch = editPasted.country || needsNeutralDocketLookup(editPasted.contract) || needsBoundBookLookup(sourceType, normalized) ? null : compatibleArticleCache(sourceType, normalized, await findVerifiedSourceMatch(normalized));
                             if (verifiedMatch) {
                               const normalizedSourceName = normalizeAbbreviations(verifiedMatch.source_name).toLowerCase();
                               const comparableInput = sourceType === "foreign_journal_article" ? normalized.toLowerCase() : normalized;

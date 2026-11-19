@@ -138,6 +138,19 @@ export function articleRawInput(prompt: string, rawInput?: unknown): string {
     .replace(/\n?══ מקור מאומת[\s\S]*$/g, "").trim();
 }
 
+// A bare title is supplied identity, not evidence of publication metadata. A
+// colon or an opening quotation can belong to the title, including its subtitle.
+// Keep labeled, multi-record and natural-language requests on their existing paths.
+function bareArticleTitle(raw: string): string | undefined {
+  const text = raw.trim();
+  if (!text || text.length > 600 || text.split(/\s+/).length > 70 ||
+      /[;\n|]|https?:\/\//.test(text) || PINPOINT.test(text) ||
+      Object.values(LABELS).some(label => new RegExp(`(?:^|[;\\n|])\\s*${label}\\s*:`).test(text))) return undefined;
+  // Remove only a quotation pair enclosing the WHOLE title, never inner quotes.
+  const wrapped = text.match(/^["“]([^"“”]+)["”]\.?$/);
+  return wrapped ? wrapped[1] : text.replace(/\.$/, "");
+}
+
 export function createHebrewArticleRequest(raw: string, inBook = false): ArticleRequest {
   const kind = inBook ? "article_in_book" : "journal";
   const citation = citationRecords(raw.replace(PINPOINT, "").replace(/[,;]\s*\.?\s*$/, ""), kind)[0];
@@ -146,9 +159,10 @@ export function createHebrewArticleRequest(raw: string, inBook = false): Article
   const natural = raw.match(/(?:המאמר|מאמר)\s+של\s+(.+?)\s+(?:על|בנושא|בעניין)\s+(.+?)(?:[,;\n]|\s+ב?עמוד|\.$|$)/);
   if (natural && !supplied.author) supplied.author = natural[1].trim();
   if (!supplied.articleTitle) {
+    const bare = !natural && !citation ? bareArticleTitle(raw) : undefined;
     const quoted = raw.match(/["“]([^"”]{3,})["”]/);
-    if (quoted) supplied.articleTitle = quoted[1];
-    else if (!natural && !/[;\n:]|(?:עמוד|מאמר של|שנת|כרך)/.test(raw) && raw.trim().split(/\s+/).length <= 16) supplied.articleTitle = raw.trim().replace(/\.$/, "");
+    if (bare) supplied.articleTitle = bare;
+    else if (quoted) supplied.articleTitle = quoted[1];
   }
   return { raw, kind, supplied, topic: natural?.[2]?.trim().replace(/["“”]/g, "") || "", pinpoint,
     suppliedCitation: citation?.quote,

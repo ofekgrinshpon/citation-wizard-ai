@@ -37,6 +37,14 @@ export interface PastedCitationContract {
   identityVerified: false;
   route: "israeli" | "foreign" | "existing" | "preserve";
 }
+/** Only a single two-part docket. No prefix, country, prose, date or modern three-part form. */
+export function isBareDocketOnly(raw: string): boolean {
+  return /^\s*\d{1,6}\/\d{2,4}\s*$/.test(raw);
+}
+export function needsNeutralDocketLookup(c: PastedCitationContract): boolean {
+  return isBareDocketOnly(c.rawInput) && !c.manualChoice && c.jurisdiction === "UNKNOWN" &&
+    c.sourceKind === "case" && c.route === "existing" && !c.conflicts.length && !c.unsupported.length;
+}
 export function rawCitationFingerprint(raw: string): string {
   let hash = 0x811c9dc5;
   for (let i = 0; i < raw.length; i++) { hash ^= raw.charCodeAt(i); hash = Math.imul(hash, 0x01000193) >>> 0; }
@@ -160,7 +168,8 @@ export function buildPastedCitation(raw: string, manual: CitationManualChoice | 
     // Disabled country packs block country-scoped families only; enabled general literature keeps its template.
     isPlannedJurisdiction(jurisdiction) && !(isGeneralFamily(manualKind ?? sourceKind) && sourceKind !== "case") ? [`rulepack_planned_disabled:${jurisdiction}`] :
     manual?.jurisdiction === "UNKNOWN" && (manual.jurisdictionId || manual.subjurisdiction) && caseInput ? ["jurisdiction_formatter_unknown"] : [];
-  const route = conflicts.length || unsupported.length || (!!bare && detected === "UNKNOWN" && !foreignShape)
+  const neutralDocket = isBareDocketOnly(raw) && !manual && detected === "UNKNOWN";
+  const route = conflicts.length || unsupported.length || (!!bare && !neutralDocket && detected === "UNKNOWN" && !foreignShape)
     ? "preserve" : detected === "IL" ? "israeli" : detected !== "UNKNOWN" || foreignShape || manual?.foreign ? "foreign" : "existing";
   if (country) {
     for (const [key, f] of Object.entries(country.fields)) fields[key] = { value: f.value, state: "supplied", provenance: "supplied_text", spans: f.spans };

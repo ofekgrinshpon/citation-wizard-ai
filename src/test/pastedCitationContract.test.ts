@@ -60,7 +60,7 @@ describe("batch A pure supplied-evidence contract", () => {
     [DE, "DE", "preserve"], ["BVerfG 1 BvR 400/51", "DE", "preserve"],
     ['ע"א 1234/20 כהן נ׳ לוי (נבו 2.3.2021)', "IL", "israeli"], ['ע"א 1234/20', "IL", "israeli"],
     ["1234/20 כהן נ׳ לוי", "IL", "israeli"], [US, "US", "foreign"],
-    ["Brown v. Board of Education", "UNKNOWN", "foreign"], ["400/51", "UNKNOWN", "preserve"],
+    ["Brown v. Board of Education", "UNKNOWN", "foreign"], ["400/51", "UNKNOWN", "existing"],
     ["Some Unknown Court 400/51", "UNKNOWN", "preserve"],
     ["BVerfG 1 BvR 400/51 — הערה", "DE", "preserve"],
   ])("%s routes using text evidence only", (raw, jurisdiction, route) => {

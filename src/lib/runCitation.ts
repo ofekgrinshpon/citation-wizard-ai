@@ -1,3 +1,4 @@
+import { needsNeutralDocketLookup } from "../../supabase/functions/_shared/pastedCitation";
 import { telemetryBody, reportZeroWork, type CostTelemetry } from "@/lib/costTelemetry";
 import {
   normalizeAbbreviations,
@@ -223,7 +224,9 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
 
   let sourceType: SourceType;
   const freeformType = opts.overrideType || opts.manualChoice ? null : foreignFreeformSourceType(normalized);
-  if (freeformType) {
+  if (needsNeutralDocketLookup(pasted.contract)) {
+    sourceType = "unknown";
+  } else if (freeformType) {
     sourceType = freeformType;
   } else if (opts.overrideType) {
     sourceType = opts.overrideType;
@@ -260,7 +263,7 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
   // 1) Verified-source store first — a direct hit costs no credit.
   let verifiedMatch: VerifiedSourceMatch | null = null;
   // AU/CA completion requests never read the verified store (pasted safety precedes cache).
-  if (opts.useVerifiedStore !== false && !pasted.countryLookup && !needsBoundBookLookup(sourceType, normalized)) {
+  if (opts.useVerifiedStore !== false && !needsNeutralDocketLookup(pasted.contract) && !pasted.countryLookup && !needsBoundBookLookup(sourceType, normalized)) {
     try {
       verifiedMatch = await findVerifiedSourceMatch(normalized);
     } catch {

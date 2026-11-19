@@ -92,6 +92,14 @@ describe("batch B before/after differential — runner (Batch/Bibliography share
       // text, status, labels, provenance (pastedCitation), warnings, source type
       // C1 deliberately replaces ungrounded typed-case acceptance and local
       // book presentation; all other before/after result parity remains exact.
+      // Intentional neutral-catalog route replaces the old unconditional local preserve.
+      if (fx.name === "bare numeric") {
+        const result = after.ok as {citation:string;sourceType:string;status:string};
+        expect(result.citation).toBe(fx.raw); expect(result.sourceType).toBe("unknown"); expect(result.status).toBe("warning");
+        expect(m.invoke).toHaveBeenCalledTimes(1); expect(m.classifier).not.toHaveBeenCalled(); expect(m.cache).not.toHaveBeenCalled();
+        expect(m.invoke.mock.calls[0][1].foreignLookup).toBeUndefined();
+        return;
+      }
       const changedCase = ["US case incomplete", "unsupported manual Canada"].includes(fx.name) && (rname !== "safety_mismatch" || fx.name === "unsupported manual Canada");
       const changedBook = ["book", "chapter labelled"].includes(fx.name);
       if (changedCase) {
@@ -125,9 +133,10 @@ describe("batch B required runner behaviours", () => {
     expect(r.status).toBe("warning"); expect(r.reply).not.toContain("ע\"א");
     expect(m.invoke).not.toHaveBeenCalled(); expect(m.cache).not.toHaveBeenCalled(); expect(m.classifier).not.toHaveBeenCalled();
   });
-  it("bare numeric unknown preserved without request", async () => {
+  it("bare numeric unknown queries only neutral server catalog", async () => {
+    m.invoke.mockResolvedValue({data:{content:"UNSAFE"},errorInfo:null});
     const r = await runCitation({ rawInput: "400/51" });
-    expect(r.citation).toBe("400/51"); expect(m.invoke).not.toHaveBeenCalled();
+    expect(r.citation).toBe("400/51"); expect(r.sourceType).toBe("unknown"); expect(m.invoke).toHaveBeenCalledTimes(1); expect(m.classifier).not.toHaveBeenCalled(); expect(m.cache).not.toHaveBeenCalled();
   });
   it("manual book on case is terminal conflict with zero requests", async () => {
     const r = await runCitation({ rawInput: "Brown v. Board of Education", overrideType: "foreign_book" });
