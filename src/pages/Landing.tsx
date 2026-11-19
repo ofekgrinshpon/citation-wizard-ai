@@ -1,7 +1,6 @@
 import { GuideIllustration } from "@/components/guide/GuideIllustration";
 import { useRef, useEffect, useState, type RefObject } from "react";
-import { useNavigate, Navigate, Link } from "react-router-dom";
-import { REFERRAL_SIGN_IN } from "@/lib/referralDestination";
+import { useNavigate, Navigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useOffice } from "@/hooks/useOffice";
 import { ReLexLogo } from "@/components/ReLexLogo";
@@ -250,12 +249,6 @@ const Landing = () => {
           <span className="text-sm font-medium">איך זה עובד?</span>
           <ChevronDown className="w-8 h-8" />
         </button>
-        <Link
-          to={REFERRAL_SIGN_IN}
-          className="absolute bottom-5 md:bottom-0 left-1/2 -translate-x-1/2 z-10 inline-flex min-h-7 items-center whitespace-nowrap text-xs font-medium text-primary hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
-        >
-          קבל עוד אזכורים
-        </Link>
       </section>
 
       {/* Capabilities Section */}

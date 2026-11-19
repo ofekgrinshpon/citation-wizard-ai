@@ -1,15 +1,17 @@
 import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
+import { useOffice } from "@/hooks/useOffice";
 import { useAuth } from "@/hooks/useAuth";
 import { useProjects } from "@/hooks/useProjects";
 import { useCredits } from "@/hooks/useCredits";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Pencil, Infinity as InfinityIcon, HelpCircle } from "lucide-react";
+import { Pencil, Infinity as InfinityIcon, HelpCircle, Gift } from "lucide-react";
 import { UserGuideModal } from "@/components/guide/UserGuideModal";
 
 export function AppSidebar() {
   const { user, isAdmin } = useAuth();
+  const { isOfficeAddin } = useOffice();
   const navigate = useNavigate();
   const { projects, currentProject, setCurrentProjectId, createProject, renameProject, deleteProject, loading: projectsLoading } = useProjects();
   const { planMeta, isAdmin: isAdminCredits } = useCredits();
@@ -219,6 +221,16 @@ export function AppSidebar() {
         <HelpCircle size={14} />
         <span>איך זה עובד?</span>
       </button>
+
+      {user && !isOfficeAddin && (
+        <button
+          onClick={() => navigate("/profile?tab=referral")}
+          className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm text-primary hover:bg-muted transition-colors text-right w-full"
+        >
+          <Gift size={14} aria-hidden="true" />
+          <span>קבל עוד אזכורים</span>
+        </button>
+      )}
 
       <UserGuideModal open={guideOpen} onOpenChange={setGuideOpen} />
 
