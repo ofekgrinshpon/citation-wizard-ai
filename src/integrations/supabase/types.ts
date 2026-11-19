@@ -769,6 +769,24 @@ export type Database = {
         }
         Relationships: []
       }
+      google_referral_config: {
+        Row: {
+          activated_at: string | null
+          enabled: boolean
+          singleton: boolean
+        }
+        Insert: {
+          activated_at?: string | null
+          enabled?: boolean
+          singleton?: boolean
+        }
+        Update: {
+          activated_at?: string | null
+          enabled?: boolean
+          singleton?: boolean
+        }
+        Relationships: []
+      }
       legal_document_chunks: {
         Row: {
           chunk_index: number
@@ -1835,10 +1853,15 @@ export type Database = {
         }
         Returns: Json
       }
+      begin_google_referral_intent: {
+        Args: { _referral_code: string }
+        Returns: Json
+      }
       bulk_update_legal_chunk_embeddings: {
         Args: { payload: Json }
         Returns: number
       }
+      claim_google_referral_intent: { Args: { _token: string }; Returns: Json }
       cleanup_citation_recovery: { Args: { _limit?: number }; Returns: number }
       cleanup_email_unsubscribe_tokens: { Args: never; Returns: number }
       compute_verified_source_identity: {
@@ -1901,6 +1924,7 @@ export type Database = {
         Returns: Json
       }
       get_citation_trial_status: { Args: never; Returns: Json }
+      get_google_referral_enabled: { Args: never; Returns: boolean }
       get_usage_status: { Args: never; Returns: Json }
       grant_referral_bonus_if_eligible: {
         Args: { _user_id: string }
