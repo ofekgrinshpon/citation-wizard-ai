@@ -32,6 +32,11 @@ const Auth = () => {
     }
   }, [searchParams]);
   const refCode = (typeof window !== "undefined" && sessionStorage.getItem("relex_ref_code")) || null;
+  // The invitation notice must appear on the first render, before storage is set by the effect.
+  const referralInUrl = searchParams.get("ref");
+  const visibleReferralCode = referralInUrl && referralInUrl.length >= 4 && referralInUrl.length <= 16
+    ? referralInUrl.toUpperCase()
+    : refCode;
 
   useEffect(() => {
     const mode = searchParams.get("mode");
@@ -124,9 +129,9 @@ const Auth = () => {
           </p>
         </div>
 
-        {refCode && !isLogin && (
+        {visibleReferralCode && !isLogin && (
           <div className="rounded-lg border border-primary/30 bg-primary/5 px-3 py-2 text-xs text-foreground text-center">
-            🎁 הצטרפת דרך הזמנה (<span className="font-mono">{refCode}</span>) — לאחר הפעולה הראשונה שלך תקבלו שניכם תוספת שימוש.
+            🎁 הגעת דרך קישור הזמנה (<span className="font-mono">{visibleReferralCode}</span>). כדי לקבל את בונוס ההזמנה, יש להירשם עם אימייל וסיסמה, לא דרך Google.
           </div>
         )}
 

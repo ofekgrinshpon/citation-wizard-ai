@@ -36,6 +36,25 @@ describe("source quota client accounting", () => {
     rpc.mockResolvedValue({ error: null, data: { ok: true, enabled: true, limited: true, remaining: 15 } });
     await expect(fetchCitationTrialStatus()).rejects.toThrow("TRIAL_QUOTA_UNAVAILABLE");
   });
+  it("accepts earned referral limits, never more remaining than the server total, and keeps paid users unlimited", async () => {
+    const { parseTrialStatus } = await reimport(true);
+    const status = { ok: true, enabled: true, limited: true, limit: 25, remaining: 24, referral_sources_enabled: true, referrals_granted: 2 };
+    expect(parseTrialStatus(status)).toMatchObject({ limited: true, limit: 25, remaining: 24, referralSourcesEnabled: true, referralsGranted: 2 });
+    expect(parseTrialStatus({ ...status, remaining: 26 })).toBeNull();
+    expect(parseTrialStatus({ ...status, limit: undefined })).toBeNull();
+    expect(parseTrialStatus({ ...status, limit: Number.MAX_SAFE_INTEGER + 1 })).toBeNull();
+    expect(parseTrialStatus({ ...status, limited: false, remaining: null })).toMatchObject({ limited: false, remaining: null, referralSourcesEnabled: true });
+    expect(parseTrialStatus({ ...status, enabled: false, limited: false, remaining: null })).toMatchObject({ referralSourcesEnabled: false });
+  });
+  it("accepts a valid local debit above the old cap, but not above the returned limit", async () => {
+    const { accountForLocalCitation } = await reimport(true);
+    rpc.mockResolvedValueOnce({ error: null, data: { ok: true, limited: true, limit: 15, remaining: 14 } });
+    await expect(accountForLocalCitation("referral-debit", "a valid citation")).resolves.toBeUndefined();
+    rpc.mockResolvedValueOnce({ error: null, data: { ok: true, limited: true, limit: 15, remaining: 16 } });
+    await expect(accountForLocalCitation("bad-debit", "a valid citation")).rejects.toMatchObject({ code: "TRIAL_QUOTA_UNAVAILABLE" });
+    rpc.mockResolvedValueOnce({ error: null, data: { ok: true, limited: false } });
+    await expect(accountForLocalCitation("paid", "a valid citation")).resolves.toBeUndefined();
+  });
   it("uses a bound account and source fingerprint, never sends local source text", async () => {
     const { accountForLocalCitation } = await reimport(true);
     rpc.mockResolvedValueOnce({ error: null, data: { ok: true, limited: true, remaining: 4 } });

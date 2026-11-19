@@ -12,6 +12,11 @@ export function markCitationProviderUnknown(): void {
   if (state) state.unknown = true;
 }
 
+/** No referral award from an invocation with uncertain provider work. */
+export function citationProviderOutcomeUnknown(): boolean {
+  return providerOutcomes.getStore()?.unknown === true;
+}
+
 type ProviderContract = "none" | "formatter" | "lookup" | "search";
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -207,3 +212,4 @@ export class CitationUsageGuard {
     }
   }
 }
+

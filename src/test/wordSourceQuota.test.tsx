@@ -50,6 +50,16 @@ describe('Word source-level shared trial selection', () => {
     await waitFor(() => expect(mocks.run).toHaveBeenCalledTimes(1));
     expect(mocks.run.mock.calls[0][0].rawInput).toBe(second);
   });
+  it('admits a six-source document within a referral-expanded quota', async () => {
+    mocks.inspect.mockResolvedValue({
+      notes: Array.from({ length: 6 }, (_, i) => ({ id: String(i + 42), text: first, editableRanges: [{ start: 0, end: first.length }], paragraphRanges: [{ start: 0, end: first.length }] })),
+      skippedNotes: [],
+    });
+    render(<WordFootnoteWorkflow sourceQuota={{ remaining: 14 }} />); await upload();
+    expect(screen.getByText('נותרו 14 מקורות בחינם · 6 נבחרו לבדיקה')).toBeVisible();
+    fireEvent.click(screen.getByRole('button', { name: 'בדוק 6 מקורות' }));
+    await waitFor(() => expect(mocks.run).toHaveBeenCalledTimes(6));
+  });
   it('blocks zero and loading quotas, then preselects only after loaded', async () => {
     const view = render(<WordFootnoteWorkflow sourceQuota={{ remaining: 5, loading: true }} />); await upload();
     expect(screen.getByRole('button', { name: 'אין הערות נוספות לבדיקה' })).toBeDisabled();

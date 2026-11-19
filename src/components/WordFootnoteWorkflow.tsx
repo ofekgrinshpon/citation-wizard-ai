@@ -49,7 +49,7 @@ function hostForeignLabel(type: string | undefined): string | undefined {
   return (SOURCE_TYPE_LABELS as Record<string, string>)[type];
 }
 
-export type WordSourceQuota = { remaining: number; loading?: boolean };
+export type WordSourceQuota = { remaining: number; loading?: boolean; referralPending?: boolean };
 export function WordFootnoteWorkflow({ onBusyChange, sourceQuota }: { onBusyChange?: (busy: boolean) => void; sourceQuota?: WordSourceQuota }) {
   const { user } = useAuth();
   const { currentProject } = useProjects();
@@ -235,7 +235,7 @@ export function WordFootnoteWorkflow({ onBusyChange, sourceQuota }: { onBusyChan
       try {
         const result = await runCitation({ rawInput: retry?.rawInput ?? row.manualDraft ?? row.input, overrideType: row.classification?.sourceType ?? row.sourceTypeOverride, manualChoice: row.classification?.manualChoice,
           projectId: currentProject?.id, useVerifiedStore: !retry?.resultSelection, isResultCurrent: isCurrent, recordChoices: true, resultSelection: retry?.resultSelection,
-          telemetry: sourceTelemetry(batch) });
+          referralAccountId: sourceQuota?.referralPending ? user?.id : undefined, telemetry: sourceTelemetry(batch) });
         if (owner === currentScope.current) blockedNotes.current.delete(noteKey(row));
         if (!isCurrent()) break;
         if (hasMultipleSourceSignals(citationTextOnly(result.citation)) || isUnboundRepeatReference(citationTextOnly(result.citation))) {

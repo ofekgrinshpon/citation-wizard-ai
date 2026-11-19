@@ -95,6 +95,7 @@ export interface BibliographySourceQuota {
   /** Server-authoritative number of sources remaining; absent/null means paid flow. */
   remaining: number;
   loading?: boolean;
+  referralPending?: boolean;
 }
 
 export function BibliographyGenerator({ sourceQuota = null }: { sourceQuota?: BibliographySourceQuota | null } = {}) {
@@ -212,6 +213,7 @@ export function BibliographyGenerator({ sourceQuota = null }: { sourceQuota?: Bi
       overrideType,
       ...(manualChoice ? { manualChoice } : {}),
       useVerifiedStore: true,
+      referralAccountId: sourceQuota?.referralPending ? user?.id : undefined,
       telemetry,
     });
 

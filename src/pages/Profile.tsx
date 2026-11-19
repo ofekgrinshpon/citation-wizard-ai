@@ -1,5 +1,4 @@
 import { useCitationSourceQuota } from "@/hooks/useCitationSourceQuota";
-import { CITATION_TRIAL_LIMIT } from "@/lib/citationTrialQuota";
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
@@ -90,7 +89,7 @@ function formatLedgerReason(raw: string | null): string {
 const Profile = () => {
   const { user, signOut, loading: authLoading } = useAuth();
   const { isAdmin, referralCode } = useCredits();
-  const { sourceQuota, quotaError, refreshQuota } = useCitationSourceQuota(user?.id);
+  const { sourceQuota, quotaError, referralSourcesEnabled, sourceReferralsGranted, refreshQuota } = useCitationSourceQuota(user?.id);
   const {
     status: usage,
     loading: usageLoading,
@@ -252,7 +251,7 @@ const Profile = () => {
                       <p>לא ניתן היה לטעון את מכסת ההתנסות.</p>
                       <button type="button" className="underline" onClick={() => void refreshQuota()}>בדיקה מחדש</button>
                     </> : sourceQuota.loading ? <p>בודק את מכסת ההתנסות…</p> : <>
-                      <p className="font-semibold">נותרו {sourceQuota.remaining} מתוך {CITATION_TRIAL_LIMIT} מקורות בחינם</p>
+                      <p className="font-semibold">נותרו {sourceQuota.remaining} מתוך {sourceQuota.limit} מקורות בחינם</p>
                       <p className="text-muted-foreground">מכסה חד־פעמית משותפת לאזכור מהיר, הערות שוליים ב־Word וביבליוגרפיה. אפשר להמשיך לצפות ולהשתמש בתוצאות שכבר הופקו.</p>
                     </>}
                   </div>
@@ -398,7 +397,9 @@ const Profile = () => {
               <div>
                 <h3 className="text-foreground font-bold text-base mb-1">הזמן חברים ל-ReLex</h3>
                 <p className="text-sm text-muted-foreground">
-                  הזמן חברים ל-ReLex, וכשחבר חדש נרשם דרך הקישור שלך ומבצע את הפעולה הראשונה — שניכם מקבלים תוספת שימוש.
+                  {referralSourcesEnabled
+                    ? "כשחבר חדש נרשם דרך הקישור שלך עם אימייל וסיסמה (לא דרך Google) ומשלים אזכור תקין ראשון שנבדק בשרת, כל אחד מכם מקבל 10 מקורות נוספים למכסה החינמית. עיבוד שמתבצע רק בדפדפן אינו מזכה בבונוס."
+                    : "הזמן חברים ל-ReLex, וכשחבר חדש נרשם דרך הקישור שלך עם אימייל וסיסמה (לא דרך Google) ומבצע את הפעולה הראשונה, שניכם מקבלים תוספת שימוש."}
                 </p>
               </div>
 
@@ -427,7 +428,7 @@ const Profile = () => {
 
               <div className="flex items-center justify-between border-t border-border pt-3">
                 <span className="text-sm text-muted-foreground">חברים שהצטרפו וזכו בבונוס</span>
-                <span className="font-bold text-primary tabular-nums">{referralsGranted}</span>
+                <span className="font-bold text-primary tabular-nums">{referralSourcesEnabled ? sourceReferralsGranted ?? "—" : referralsGranted}</span>
               </div>
             </div>
           </TabsContent>

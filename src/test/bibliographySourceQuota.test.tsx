@@ -35,6 +35,13 @@ describe("bibliography source quota selection", () => {
     expect(screen.getAllByRole("checkbox").every(box => !(box as HTMLInputElement).checked)).toBe(true);
     expect(screen.getByRole("button", { name: /שלח לבדיקה/ })).toBeDisabled();
   });
+  it("uses the referral remainder beyond the original five-source cap", async () => {
+    render(<App remaining={14} />);
+    fireEvent.change(screen.getByRole("textbox"), { target: { value: Array.from({ length: 6 }, (_, i) => `Source ${i + 1}`).join("\n") } });
+    expect(screen.getAllByRole("checkbox").every(box => (box as HTMLInputElement).checked)).toBe(true);
+    await act(async () => fireEvent.click(screen.getByRole("button", { name: /שלח לבדיקה/ })));
+    expect(b.runCitation).toHaveBeenCalledTimes(6);
+  });
   it("blocks at zero/loading and preserves saved bibliography without engine work", () => {
     const app = render(<App remaining={0} />); paste();
     expect(screen.getByRole("button", { name: /שלח לבדיקה/ })).toBeDisabled();

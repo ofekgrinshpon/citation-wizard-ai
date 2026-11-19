@@ -20,6 +20,7 @@ import { validateCitationInput } from "@/lib/citationInputValidation";
 import { extractCitationFromResponse } from "@/lib/citationUtils";
 import { invokeFunction, retryCitationFunction } from "@/lib/functionError";
 import type { CitationRetryDescriptor } from "@/lib/citationRequestIdentity";
+import { accountForReferralVerifiedSource } from "@/lib/referralVerifiedSource";
 import { accountForLocalCitation, type CitationTrialQuotaError, TRIAL_SOURCE_LIMIT } from "@/lib/citationTrialQuota";
 import { handleRefundResponse } from "@/lib/refundResponse";
 import { renderForeignCitation, renderForeignDetection } from "@/data/bluebook";
@@ -108,6 +109,8 @@ export interface RunCitationOptions {
    * match is returned as-is (no engine call, no credit charge).
    */
   useVerifiedStore?: boolean;
+  /** Current invited account, only when its source-quota status says reward pending. */
+  referralAccountId?: string;
   /** Cost-telemetry attribution (never billing). */
   telemetry?: CostTelemetry;
   /** Temporary admin-only observer activation, prepared by the diagnostic readiness check. */
@@ -169,9 +172,15 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
     throw new CitationRunError({ code: "CITATION_INPUT_CHANGED", userMessage: "הקלט או החשבון השתנו. לא נשלחה בקשה לעיבוד." });
   }
   const rawInput = opts.rawInput.trim();
-  const chargeLocal = async () => {
+  const chargeLocal = async (verifiedSourceId?: string) => {
+    const id = crypto.randomUUID();
     try {
-      await accountForLocalCitation(crypto.randomUUID(), rawInput, opts.isResultCurrent);
+      if (verifiedSourceId && opts.referralAccountId && opts.isResultCurrent) {
+        const canonical = await accountForReferralVerifiedSource(id, verifiedSourceId, opts.referralAccountId, opts.isResultCurrent);
+        if (canonical !== null) return canonical;
+      }
+      await accountForLocalCitation(id, rawInput, opts.isResultCurrent);
+      return null;
     } catch (error) {
       const quota = error as CitationTrialQuotaError;
       throw new CitationRunError({ code: quota.code || "TRIAL_QUOTA_UNAVAILABLE",
@@ -276,14 +285,18 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
     const cacheRender = cachedArticle ?? reRendered;
     const cacheWarnings = [...(cacheRender?.warnings ?? [])];
     if (cacheRender?.missing.length) cacheWarnings.push(`חסרים פרטים: ${getMissingFieldsSummary(sourceType, cacheRender.missing)}`);
-    await chargeLocal();
+    // Attest only an unchanged complete canonical record; do not replace an
+    // adapted or warning-bearing output, and never send the pasted text for a referral.
+    const serverCitation = await chargeLocal(citation === verifiedMatch.full_citation && cacheWarnings.length === 0
+      ? verifiedMatch.id : undefined);
+    const deliveredCitation = serverCitation ?? citation;
     // Classifier cost (if any) stays attached to the same telemetryRequestId.
     reportZeroWork(opts.telemetry, "client_verified_store", "cache_hit");
     observeCitationDiagnostic(opts.diagnostic, rawInput, "cache_hit");
     return {
       telemetry: opts.telemetry,
-      reply: cacheWarnings.length ? `${citation}\n⚠️ ${cacheWarnings.join(" ")}` : citation,
-      citation,
+      reply: cacheWarnings.length ? `${deliveredCitation}\n⚠️ ${cacheWarnings.join(" ")}` : deliveredCitation,
+      citation: deliveredCitation,
       sourceType,
       sourceLabel: verifiedMatch.source_type || sourceLabel,
       fromVerifiedStore: true,

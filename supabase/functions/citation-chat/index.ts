@@ -5,7 +5,11 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.117.2";
 import { trackedFetch as telemetryTrackedFetch, withCostTelemetry, setTelemetryFromBody, recordZeroWork, type CostStage } from "../_shared/costTelemetry.ts";
 import { citationRecoveryInput } from "../_shared/citationRecovery.ts";
-import { CitationUsageGuard, citationFingerprint, citationRefundReceipt, isUnstructuredCitationRefusal, withCitationProviderOutcome, observeCitationProviderFetch, markCitationProviderUnknown } from "../_shared/citationUsageGuard.ts";
+import { CitationUsageGuard, citationFingerprint, citationRefundReceipt, isUnstructuredCitationRefusal, withCitationProviderOutcome, observeCitationProviderFetch, markCitationProviderUnknown, citationProviderOutcomeUnknown } from "../_shared/citationUsageGuard.ts";
+import { cleanSingleCitation, completeLegacyReferralCitation, deliverVerifiedReferralCitation, parseReferralVerifiedSourceBody, usableVerifiedReferralCitation } from "./referralQualification.ts";
+import { acceptCountryResponse } from "../_shared/citationPure/countryLookup.ts";
+import { acceptCitationCompletion } from "../_shared/citationPure/completion.ts";
+import { renderJournalArticle, renderUkCase, renderUkStatute, renderUsCase, renderUsStatute } from "../_shared/citationPure/render.ts";
 
 // Request-scoped failure observation survives retrieval helpers that catch and
 // preserve the input. It cannot cross concurrent requests or telemetry IDs.
@@ -81,12 +85,12 @@ import {
 } from "../_shared/trustedHosts.ts";
 import { normalizeHebrewNumberRanges } from "../_shared/hebrewNumberRange.ts";
 import { runForeignLookup, articleLookupFallback, type ForeignLookupResult } from "./foreignLookup.ts";
-import { bindFreeformLookup, chargeModel, createCitationBudget, freeformAwaitingModel, freeformLiveEnabled, freeformParserTransportAvailable, markBudgetUnknown, resolveFreeformBeforeLookup, type FreeformParserTransport } from "../_shared/citationPure/freeformInterpret.ts";
-import { prepareBookAwareCitationDelivery } from "../_shared/citationPure/bookFinal.ts";
+import { bindFreeformLookup, chargeModel, createCitationBudget, bindFreeformResponseFields, freeformAwaitingModel, freeformLiveEnabled, freeformParserTransportAvailable, markBudgetUnknown, resolveFreeformBeforeLookup, type FreeformParserTransport } from "../_shared/citationPure/freeformInterpret.ts";
+import { boundBookCompletion, prepareBookAwareCitationDelivery, resolveBookCompletion } from "../_shared/citationPure/bookFinal.ts";
 import type { CitationRecoveryInput } from "../_shared/citationRecovery.ts";
 import { isStatuteLookupRequest, validateStatuteRequest, resolveStatuteLookup } from "./statuteRoute.ts";
 import { isCountryLookupRequest, resolveCountryLookup, validateCountryRequest } from "./countryRoute.ts";
-import { guardPastedCitationRequest, pastedCitationWarning, type PastedCitationContract } from "../_shared/pastedCitation.ts";
+import { guardPastedCitationRequest, pastedCitationWarning, suppliedLookupFieldsMatch, type PastedCitationContract } from "../_shared/pastedCitation.ts";
 import { createCitationDiagnosticCollector } from "../_shared/citationDiagnostic.ts";
 import { authorizeCitationDiagnostic, isCitationDiagnosticPreflight, CITATION_DIAGNOSTIC_BUILD, CITATION_DIAGNOSTIC_PARSER } from "../_shared/citationDiagnosticGate.ts";
 import { normalizeEditorPlacement } from "../_shared/articleCitationValidator.ts";
@@ -1680,9 +1684,82 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
       status: settlement?.confirmed ? "failed" as const : "unknown" as const,
       receipt: settlement?.refundReceipt };
   };
-  const completeResponse = async (response: Response) => {
+  let referralProviderFingerprint: string | null = null;
+  const confirmReferral = async (requestId: string, fingerprint: string, route: "local" | "provider") => {
+    const key = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+    if (!key) return false;
+    try {
+      const client = createClient(SUPABASE_URL_ENV, key);
+      const { data, error } = await client.rpc("confirm_citation_referral_success", {
+        _user_id: userId, _request_id: requestId, _fingerprint: fingerprint, _route: route,
+      }).abortSignal(AbortSignal.timeout(1600));
+      return !error && data?.granted === true;
+    } catch {
+      // Bonus accounting cannot invalidate an otherwise usable citation.
+      // Never log the citation or request input.
+      return false;
+    }
+  };
+  const completeResponse = async (
+    response: Response,
+    eligibility: "never" | "legacy" | "article" | "country" | "typed" = "never",
+    cacheFingerprint?: string,
+  ) => {
     const { body, result } = prepareBookAwareCitationDelivery(await response.clone().json(), bookInput, creditRequestId, pastedContract?.rawInput);
     const completion = await usageGuard?.finish("succeeded", "citation_delivered", result ?? undefined);
+    let referralBonusGranted = false;
+    if (response.ok && !citationProviderOutcomeUnknown() && creditRequestId) {
+      let qualifies = false;
+      try {
+        if (cacheFingerprint) {
+          qualifies = usableVerifiedReferralCitation(body.content);
+        } else if (completion?.confirmed && result && referralProviderFingerprint) {
+          if (eligibility === "legacy") qualifies = !body.foreignLookup && completeLegacyReferralCitation(body.content);
+          if (eligibility === "article") qualifies = !!cleanSingleCitation(body.content);
+          if (eligibility === "country" && bookInput?.foreignLookup) {
+            const country = validateCountryRequest(bookInput.foreignLookup);
+            qualifies = !!country && acceptCountryResponse(country, country.rawInput, body.foreignLookup).kind === "done";
+          }
+          if (eligibility === "typed" && bookInput && body.foreignLookup) {
+            const book = boundBookCompletion(bookInput);
+            if (book) {
+              const localFields = Object.fromEntries(Object.entries(book.local.fields)
+                .filter((entry): entry is [string, string] => typeof entry[1] === "string"));
+              const resolved = resolveBookCompletion(book.request, book.raw, body.foreignLookup,
+                localFields, book.local.suppliedFields, book.bound.missing);
+              qualifies = !resolved.bookEditionChoice && resolved.completion.completeness === "complete" &&
+                resolved.status === "valid" && !!cleanSingleCitation(resolved.citation);
+            } else if (bookInput.foreignLookup && pastedContract?.route !== "preserve") {
+              const incoming = bookInput.foreignLookup;
+              const raw = bookInput.rawInput ?? (typeof incoming.rawInput === "string" ? incoming.rawInput : "");
+              const lookup = body.foreignLookup as ForeignLookupResult;
+              const request = bindFreeformResponseFields(incoming, raw, lookup);
+              // Choice envelopes, quarantined fields, and incomplete renderers
+              // do not qualify. Never count metadata extraction by itself.
+              if (raw && typeof request.kind === "string" && suppliedLookupFieldsMatch(raw, request.kind, request.parsedFields) &&
+                !lookup.locationChoiceRequired && (lookup.disambiguation?.length ?? 0) < 2 &&
+                (lookup.caseDecisions?.length ?? 0) < 2) {
+                const accepted = acceptCitationCompletion(request, raw, lookup);
+                if (accepted.identityConfirmed && !accepted.reason && !accepted.conflicts.length && !accepted.quarantined.length &&
+                    lookup.identity.conflicts.length === 0 && Object.keys(accepted.fields).length) {
+                  const f = { ...accepted.fields, ...(request.parsedFields as Record<string, string>) };
+                  const jurisdiction = accepted.jurisdiction;
+                  const rendered = request.kind === "case" ? jurisdiction === "US" ? renderUsCase(f) : jurisdiction === "UK" ? renderUkCase(f) : null
+                    : request.kind === "statute" ? jurisdiction === "US" ? renderUsStatute(f) : jurisdiction === "UK" ? renderUkStatute(f) : null
+                    : request.kind === "journal_article" && lookup.articleResolution === "resolved" ? renderJournalArticle(f) : null;
+                  qualifies = !!rendered && !rendered.missing.length && !rendered.warnings.length && !rendered.unrepresented?.length &&
+                    !!cleanSingleCitation(rendered.citation);
+                }
+              }
+            }
+          }
+        }
+      } catch { /* An unrecognized outcome is not a success. */ }
+      if (qualifies) {
+        const proof = cacheFingerprint ?? referralProviderFingerprint;
+        if (proof) referralBonusGranted = await confirmReferral(creditRequestId, proof, cacheFingerprint ? "local" : "provider");
+      }
+    }
     const recoveryAvailability = !usageGuard ? "unavailable" : completion?.confirmed ? "available" : "unconfirmed";
     const headers = new Headers(response.headers);
     if (usageGuard && !completion?.confirmed) {
@@ -1690,7 +1767,7 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
       // the live answer usable and let read-only recovery establish durability.
       headers.set("X-Usage-Status", "unconfirmed");
     }
-    return new Response(JSON.stringify({ ...body, ...(pastedContract ? { pastedCitation: pastedContract } : {}), requestId: creditRequestId, recoveryAvailability }), {
+    return new Response(JSON.stringify({ ...body, ...(pastedContract ? { pastedCitation: pastedContract } : {}), requestId: creditRequestId, recoveryAvailability, ...(referralBonusGranted ? { referralBonusGranted: true } : {}) }), {
       status: response.status, headers,
     });
   };
@@ -1707,6 +1784,29 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
       return new Response(JSON.stringify({ error: "INVALID_INPUT", messageHe: INVALID_INPUT_MSG_HE }), {
         status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
+    }
+    if (Object.hasOwn(requestBody, "referralVerifiedSource")) {
+      const headers = { ...corsHeaders, "Content-Type": "application/json" };
+      const fail = (error: string, status: number) => new Response(JSON.stringify({ error }), { status, headers });
+      const parsed = parseReferralVerifiedSourceBody(requestBody);
+      if (!parsed) return fail("INVALID_REQUEST", 400);
+      // Re-fetch the approved record using the caller's read policy. No raw
+      // local input is sent, and no client assertion can approve a citation.
+      const fingerprint = await citationFingerprint({
+        messages: [{ role: "user", content: "verified-source:" + parsed.sourceId }],
+        rawInput: null, foreignLookup: null, batchId: null,
+      });
+      const delivery = await deliverVerifiedReferralCitation({
+        fetchSource: () => userClient.from("verified_sources").select("full_citation, source_type")
+          .eq("id", parsed.sourceId).eq("verification_status", "verified").maybeSingle(),
+        debit: () => userClient.rpc("consume_local_citation_trial", {
+          _request_id: parsed.requestId, _fingerprint: fingerprint, _expected_user: userId,
+        }),
+        confirm: () => confirmReferral(parsed.requestId, fingerprint, "local"),
+      });
+      if (!delivery.ok) return fail(delivery.code, delivery.status);
+      return new Response(JSON.stringify({ content: delivery.content, sourceType: delivery.sourceType,
+        requestId: parsed.requestId, ...(delivery.referralBonusGranted ? { referralBonusGranted: true } : {}) }), { status: 200, headers });
     }
     // Observation identifiers never authorize execution or determine billing.
     setTelemetryFromBody(requestBody, "uniform_citation");
@@ -1911,11 +2011,13 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
               } catch { skipCacheForTrialRetry = true; }
             }
             if (canUseVerifiedMatch && !skipCacheForTrialRetry) {
+              let verifiedFingerprint: string | undefined;
               if (trialCacheAccounting && retryOfRequestId === undefined) {
                 let cacheDebit: Record<string, unknown> | null = null;
                 try {
+                  verifiedFingerprint = await citationFingerprint(recoveryInput);
                   const { data, error } = await userClient.rpc("consume_local_citation_trial", {
-                    _request_id: clientReqId, _fingerprint: await citationFingerprint(recoveryInput), _expected_user: userId,
+                    _request_id: clientReqId, _fingerprint: verifiedFingerprint, _expected_user: userId,
                   });
                   if (!error && data && typeof data === "object" && !Array.isArray(data)) cacheDebit = data;
                 } catch { /* Fail closed rather than returning a result or starting the provider. */ }
@@ -1936,7 +2038,7 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
               recordZeroWork("server_verified_store", "cache_hit");
               return completeResponse(new Response(JSON.stringify({ content: articleRequest ? articleContent() : bestMatch.full_citation }), {
                 headers: { ...corsHeaders, "Content-Type": "application/json" },
-              }));
+              }), "never", verifiedFingerprint);
             }
             if (!articleRequest && bestMatch && hasPinpoint) {
               verifiedHint = `\n\n══ מקור מאומת (הפניה נקודתית) ══\nהמקור המאומת: ${bestMatch.full_citation}\n══ המשתמש מבקש הפניה נקודתית (pinpoint). שלב את ההפניה הנקודתית עם המקור המאומת לפי כללי האזכור האחיד. אל תשנה את הנתונים מהמקור המאומת. ══`;
@@ -1964,6 +2066,7 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
       createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY), userId, clientReqId,
     );
     const fingerprint = await citationFingerprint(recoveryInput);
+    referralProviderFingerprint = fingerprint;
     const claim = await usageGuard.begin(fingerprint, usageBatchId, retryOfRequestId ?? null, recoveryInput);
     if (claim.ok !== true || claim.execute !== true) {
       const error = typeof claim.error === "string" ? claim.error
@@ -2033,7 +2136,7 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
       return completeResponse(new Response(JSON.stringify({ content: "", foreignLookup: countryResult,
         ...diagnosticEnvelope(countryResult.error === "lookup_failed" ? "lookup_failed" : "lookup_complete") }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
-      }));
+      }), "country");
     }
     if (statuteRequest) {
       const statuteResult = await resolveStatuteLookup(foreignLookupRequest, {
@@ -2048,7 +2151,7 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
       return completeResponse(new Response(JSON.stringify({ content: "", foreignLookup: statuteResult,
         ...diagnosticEnvelope(statuteResult.error === "lookup_failed" ? "lookup_failed" : "lookup_complete") }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
-      }));
+      }), "typed");
     }
     // This additive public-metadata lookup performs no additional paid model
     // or search. If it doesn't prove choices, existing lookup still runs.
@@ -2160,7 +2263,7 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
             return completeResponse(new Response(JSON.stringify({ content: "", foreignLookup: foreignLookupResult,
               ...diagnosticEnvelope(foreignLookupResult?.error === "lookup_failed" ? "lookup_failed" : "lookup_complete") }), {
               headers: { ...corsHeaders, "Content-Type": "application/json" },
-            }));
+            }), "typed");
           }
         }
         // Existing typed book/chapter requests are terminal even when discovery
@@ -3721,7 +3824,7 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
       // calls on this path. The existing usage reservation above is unchanged.
       return completeResponse(new Response(JSON.stringify({ content: articleContent() }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
-      }));
+      }), isCompleteHebrewArticle(resolveHebrewArticle(articleRequest, articleEvidence)) ? "article" : "never");
     }
 
     // Non-journal article families retain the baseline orchestration below.
@@ -4195,7 +4298,7 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
       {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       },
-    ));
+    ), "legacy");
   } catch (e) {
     console.error("chat error:", e);
     // Transport failures, timeout and unexpected exceptions cannot establish
@@ -4208,3 +4311,4 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
     );
   }
 })));
+

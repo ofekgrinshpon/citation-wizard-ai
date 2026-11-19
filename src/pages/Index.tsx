@@ -21,8 +21,9 @@ import { useAuth } from "@/hooks/useAuth";
 import { useOffice } from "@/hooks/useOffice";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useCredits } from "@/hooks/useCredits";
+import { accountForReferralVerifiedSource } from "@/lib/referralVerifiedSource";
 import { useCitationSourceQuota } from "@/hooks/useCitationSourceQuota";
-import { accountForLocalCitation, CITATION_TRIAL_LIMIT, trialQuotaReachedMessage, trialQuotaUnavailableMessage, TRIAL_SOURCE_LIMIT } from "@/lib/citationTrialQuota";
+import { accountForLocalCitation, trialQuotaReachedMessage, trialQuotaUnavailableMessage, TRIAL_SOURCE_LIMIT } from "@/lib/citationTrialQuota";
 import { useProjects } from "@/hooks/useProjects";
 import { useActivityLog } from "@/hooks/useActivityLog";
 import { normalizeAbbreviations, detectSourceType, SOURCE_TYPE_LABELS, type SourceType, RULE_REFERENCES } from "@/data/abbreviations";
@@ -252,7 +253,7 @@ const Index = () => {
   const { isOfficeAddin } = useOffice();
   const navigate = useNavigate();
   const subscription = useSubscription();
-  const { sourceQuota, quotaError, refreshQuota } = useCitationSourceQuota(user?.id);
+  const { sourceQuota, quotaError, referralPending, refreshQuota } = useCitationSourceQuota(user?.id);
   const quotaBlocksNew = !!sourceQuota && (sourceQuota.loading || sourceQuota.remaining <= 0);
   const { billingPeriodEndsAt, planMeta } = useCredits();
 
@@ -308,14 +309,19 @@ const Index = () => {
     );
   }
 
-  const accountLocal = async (rawInput: string, requestId = crypto.randomUUID(), guard?: () => boolean) => {
+  const accountLocal = async (rawInput: string, requestId = crypto.randomUUID(), guard?: () => boolean, verifiedSourceId?: string) => {
     const revision = citationRevision.current;
     const valid = () => citationRevision.current === revision &&
       citationScope.current.accountId === user?.id &&
       citationScope.current.projectId === projectId && citationScope.current.mode === mode &&
       (!guard || guard());
     try {
+      if (referralPending && sourceQuota && !sourceQuota.loading && user?.id && verifiedSourceId) {
+        const verified = await accountForReferralVerifiedSource(requestId, verifiedSourceId, user.id, valid);
+        if (verified !== null) return verified;
+      }
       await accountForLocalCitation(requestId, rawInput, valid);
+      return null;
     } catch (error) {
       if (!valid()) throw Object.assign(new Error("CITATION_RETRY_STALE"), { handled: true });
       toast.error(error instanceof Error ? error.message : trialQuotaUnavailableMessage);
@@ -548,10 +554,10 @@ const Index = () => {
               sourceType: verifiedMatch.source_type,
             })
           );
-          await accountLocal(rawText);
+          const verifiedReply = (await accountLocal(rawText, undefined, undefined, verifiedMatch.id)) ?? verifiedMatch.full_citation;
           setMessages([
             ...newMessages,
-            { role: "assistant", content: `✓ מקור מאומת\n🏷️ ${verifiedCategory}\n${verifiedMatch.full_citation}` },
+            { role: "assistant", content: `✓ מקור מאומת\n🏷️ ${verifiedCategory}\n${verifiedReply}` },
           ]);
           if (!sourceQuota) await subscription.incrementCount();
           setLoading(false);
@@ -674,11 +680,12 @@ const Index = () => {
     if (!pendingSuggestion || loading || quotaBlocksNew) return;
     const { suggestion, rawInput, telemetry } = pendingSuggestion;
     setLoading(true);
-    try { await accountLocal(rawInput); }
+    let serverCitation: string | null;
+    try { serverCitation = await accountLocal(rawInput, undefined, undefined, suggestion.id); }
     catch { return; }
     finally { setLoading(false); }
     reportZeroWork(telemetry, "client_verified_store");
-    const verifiedReply = suggestion.full_citation;
+    const verifiedReply = serverCitation ?? suggestion.full_citation;
     const verifiedCategory = getVerifiedCategoryLabel(
       classifyVerifiedSource({
         rawInput: suggestion.source_name,
@@ -862,8 +869,7 @@ const Index = () => {
               sourceType: verifiedMatch.source_type,
             })
           );
-          const verifiedReply = verifiedMatch.full_citation;
-          await accountLocal(rawText);
+          const verifiedReply = (await accountLocal(rawText, undefined, undefined, verifiedMatch.id)) ?? verifiedMatch.full_citation;
           setMessages([
             ...newMessages,
             { role: "assistant", content: `✓ מקור מאומת\n🏷️ ${verifiedCategory}\n${verifiedReply}` },
@@ -1133,7 +1139,7 @@ const Index = () => {
           <div className="flex items-center gap-1.5 sm:gap-2">
             {sourceQuota && !sourceQuota.loading ? (
               <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-md" dir="rtl">
-                נותרו {sourceQuota.remaining} מתוך {CITATION_TRIAL_LIMIT} אזכורים בחינם
+                נותרו {sourceQuota.remaining} מתוך {sourceQuota.limit} אזכורים בחינם
               </span>
             ) : !sourceQuota && !subscription.isSubscribed && (
               <span className="text-[9px] sm:text-[10px] text-muted-foreground bg-muted px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-md">
@@ -1342,8 +1348,7 @@ const Index = () => {
                                     sourceType: verifiedMatch.source_type,
                                   })
                                 );
-                                const verifiedReply = verifiedMatch.full_citation;
-                                await accountLocal(newContent);
+                                const verifiedReply = (await accountLocal(newContent, undefined, undefined, verifiedMatch.id)) ?? verifiedMatch.full_citation;
                                 setMessages([
                                   ...updatedMessages,
                                   { role: "assistant", content: `✓ מקור מאומת\n🏷️ ${verifiedCategory}\n${verifiedReply}` },
@@ -1619,18 +1624,19 @@ const Index = () => {
                 value={input}
                 onChange={(value) => { clearCitationRetry(); setInput(value); }}
                 onKeyDown={handleKeyDown}
-                onSelectCitation={async (citation) => {
+                onSelectCitation={async (citation, source) => {
                   if (loading || quotaBlocksNew) return;
                   clearCitationRetry();
                   setLoading(true);
-                  try { await accountLocal(citation); }
+                  let serverCitation: string | null;
+                  try { serverCitation = await accountLocal(citation, undefined, undefined, source?.id); }
                   catch { return; }
                   finally { setLoading(false); }
                   setInput("");
                   const newMessages: Message[] = [
                     ...messages,
                     { role: "user", content: citation },
-                    { role: "assistant", content: `✓ מאומת\n${citation}` },
+                    { role: "assistant", content: `✓ מאומת\n${serverCitation ?? citation}` },
                   ];
                   setMessages(newMessages);
                 }}

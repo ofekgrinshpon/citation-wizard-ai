@@ -1,24 +1,43 @@
 import { supabase } from "@/integrations/supabase/client";
 
-export const CITATION_TRIAL_LIMIT = 5;
+const LEGACY_TRIAL_LIMIT = 5;
 export const TRIAL_SOURCE_LIMIT = "TRIAL_EXHAUSTED";
 export const CITATION_TRIAL_CHANGED = "relex:citation-trial-changed";
 export const isCitationTrialConfigured = import.meta.env.VITE_CITATION_SOURCE_TRIAL !== "false";
 
-export type CitationSourceQuota = { remaining: number; loading?: boolean };
+export type CitationSourceQuota = { remaining: number; limit: number; loading?: boolean; referralPending?: boolean };
 type TrialQuotaRpc = (name: string, args?: Record<string, unknown>) => PromiseLike<{ data: unknown; error: unknown }>;
-type TrialStatus = { ok: boolean; enabled: boolean; limited: boolean; remaining: number | null };
+type TrialStatus = { ok: true; enabled: boolean; limited: boolean; limit: number; remaining: number | null; referralSourcesEnabled: boolean; referralsGranted: number | null; referralPending: boolean };
 const rpc = (name: string, args?: Record<string, unknown>) =>
   (supabase.rpc as unknown as TrialQuotaRpc).call(supabase, name, args);
+
+function isNonnegativeCount(value: unknown): value is number {
+  return typeof value === "number" && Number.isSafeInteger(value) && value >= 0;
+}
+
+function parseTrialLimit(value: unknown): number | null {
+  if (value === undefined) return LEGACY_TRIAL_LIMIT; // Compatibility during coordinated rollout.
+  return isNonnegativeCount(value) && value >= LEGACY_TRIAL_LIMIT ? value : null;
+}
 
 export function parseTrialStatus(value: unknown): TrialStatus | null {
   if (!value || typeof value !== "object") return null;
   const r = value as Record<string, unknown>;
   if (r.ok !== true || typeof r.enabled !== "boolean" || typeof r.limited !== "boolean") return null;
   if (!r.enabled && r.limited) return null;
-  if (r.limited && (typeof r.remaining !== "number" || !Number.isInteger(r.remaining) ||
-      r.remaining < 0 || r.remaining > CITATION_TRIAL_LIMIT)) return null;
-  return { ok: true, enabled: r.enabled, limited: r.limited, remaining: r.limited ? r.remaining as number : null };
+  const referralSourcesEnabled = r.referral_sources_enabled === true;
+  if (r.referral_sources_enabled !== undefined && typeof r.referral_sources_enabled !== "boolean") return null;
+  if (r.limited && referralSourcesEnabled && r.limit === undefined) return null;
+  const limit = parseTrialLimit(r.limit);
+  if (r.limited && (limit === null || !isNonnegativeCount(r.remaining) || r.remaining > limit)) return null;
+  return {
+    ok: true, enabled: r.enabled, limited: r.limited,
+    limit: limit ?? LEGACY_TRIAL_LIMIT,
+    remaining: r.limited ? r.remaining as number : null,
+    referralSourcesEnabled: r.enabled && referralSourcesEnabled,
+    referralsGranted: isNonnegativeCount(r.referrals_granted) ? r.referrals_granted : null,
+    referralPending: r.enabled && referralSourcesEnabled && r.referral_pending === true,
+  };
 }
 
 export async function fetchCitationTrialStatus(): Promise<TrialStatus> {
@@ -81,8 +100,10 @@ export async function accountForLocalCitation(
   }
   ensureCurrent();
   const debit = (result ?? {}) as Record<string, unknown>;
+  const debitLimit = parseTrialLimit(debit.limit);
   if (debit.ok === true && (debit.limited === false || (debit.limited === true &&
-      Number.isInteger(debit.remaining) && Number(debit.remaining) >= 0 && Number(debit.remaining) < CITATION_TRIAL_LIMIT))) return;
+      debitLimit !== null && isNonnegativeCount(debit.remaining) &&
+      (debit.limit === undefined ? debit.remaining < debitLimit : debit.remaining <= debitLimit)))) return;
   if (debit.error === "CITATION_RETRY_STALE") throw new CitationTrialQuotaError("CITATION_RETRY_STALE", "הקלט או החשבון השתנו.");
   if (debit.error === TRIAL_SOURCE_LIMIT) {
     throw new CitationTrialQuotaError(TRIAL_SOURCE_LIMIT, trialQuotaReachedMessage);
