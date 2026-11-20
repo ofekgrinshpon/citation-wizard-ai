@@ -1,3 +1,6 @@
+import { buildHebrewArticleValidation } from "../_shared/hebrewArticleValidation.ts";
+import { PADI_EVIDENCE_DOMAINS, verifiedPadiPublication } from "../_shared/padiPublicationEvidence.ts";
+import { isHebrewBookTitleQuery, projectHebrewBookProof, buildHebrewBookChoice, hebrewBookPartial, selectHebrewBook } from "../_shared/citationPure/hebrewBookChoice.ts";
 import { resolveNeutralDocket } from "./neutralDocket.ts";
 import { authorizeBookEvidence, bookEvidenceEnabled, evaluateBookEvidence } from "./bookEvidenceRoute.ts";
 import { bookCrossrefTarget } from "./bookCrossrefTarget.ts";
@@ -1963,7 +1966,10 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
     const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
     const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 
-    if (pastedContract.route !== "foreign" && SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY && userInput.length >= 2 && !["journal_article", "book", "book_chapter"].includes(foreignLookupRequest?.kind) && !statuteRequest) {
+    const earlyBookClass = userInput.match(/\[סיווג אוטומטי:\s*([^\]]+)\]/)?.[1];
+    const earlyBookRaw = userInput.replace(/\[סיווג אוטומטי:\s*[^\]]+\]\s*/, "").replace(/\n?══ מנוע אזכור[\s\S]*?══════════════════════════════════\n?/m, "").trim();
+    const titleBookNeedsLookup = !articleRequest && !!earlyBookClass && /ספרות|ספר/.test(earlyBookClass) && !/מאמר|פרק/.test(earlyBookClass) && isHebrewBookTitleQuery(earlyBookRaw);
+    if (!titleBookNeedsLookup && pastedContract.route !== "foreign" && SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY && userInput.length >= 2 && !["journal_article", "book", "book_chapter"].includes(foreignLookupRequest?.kind) && !statuteRequest) {
       try {
         const sb = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
         const searchTerm = articleRequest?.raw || userInput
@@ -2814,11 +2820,11 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
                         },
                         body: JSON.stringify({
                           model: "sonar-pro",
-                          search_domain_filter: ["nevo.co.il", "court.gov.il", "supreme.court.gov.il", "takdin.co.il", "lite.takdin.co.il", "psakdin.co.il"],
+                          search_domain_filter: PADI_EVIDENCE_DOMAINS,
                           messages: [
                             {
                               role: "system",
-                              content: `בדוק האם פסק דין ישראלי פורסם בפד"י (פסקי דין). החזר JSON בלבד:
+                              content: `בדוק האם פסק דין ישראלי פורסם בפד"י (פסקי דין), באמצעות מאגר משפטי מהימן או פרסום רשמי של הממשלה או הכנסת הכולל אזכור מלא עם סוג ההליך, המספר, הצדדים, כרך, חלק, עמוד ושנה באותו מקטע. החזר JSON בלבד:
 {"isPublished":true/false,"padi_volume":"כרך","padi_part":"חלק","padi_page":"עמוד ראשון"}
 אם לא מצאת ציון פד"י, החזר {"isPublished":false}`,
                             },
@@ -2831,41 +2837,21 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
                       }, { stage: "case_publication_check" });
                       if (verifyResp.ok) {
                         const vData = await verifyResp.json();
-                        const vContent = vData.choices?.[0]?.message?.content || "";
-                        console.log("[case-law] Verification search result:", vContent);
-                        const vJson = vContent.match(/\{[\s\S]*\}/);
-                        if (vJson) {
-                          const vParsed = JSON.parse(vJson[0]);
-                          if (vParsed.isPublished && vParsed.padi_volume && vParsed.padi_volume.trim() !== "") {
-                            // ── Sanity-check the override before accepting ──
-                            // 1. The volume must be in PADI_VOLUME_YEAR_RANGES.
-                            // 2. The decision year (from parsed) must fall within
-                            //    that window (±2y already baked into the ranges).
-                            // 3. ≥1 trusted citation URL must contain the docket.
-                            const vol = String(vParsed.padi_volume).trim();
-                            const range = PADI_VOLUME_YEAR_RANGES[vol];
-                            const decisionYearStr = String(parsed.year || "").trim()
-                              || (String(parsed.date || "").match(/(\d{4})/)?.[1] ?? "");
-                            const decisionYear = decisionYearStr ? parseInt(decisionYearStr, 10) : NaN;
-                            const yearOk = !range || (Number.isFinite(decisionYear)
-                              && decisionYear >= range[0] - 2 && decisionYear <= range[1] + 2);
-                            const docketOk = !docketAnchor
-                              || anyUrlContainsDocket(vData.citations, docketAnchor);
-                            const volKnown = !!range; // unknown vol → don't trust the override
-                            const docketConflict = padiVolumeDocketConflict(vol, docketAnchor?.year);
-                            if (yearOk && docketOk && volKnown && !docketConflict) {
-                              console.log(`[case-law] Verification found פד"י publication! Overriding.`);
-                              parsed.isPublished = true;
-                              parsed.padi_volume = vParsed.padi_volume;
-                              parsed.padi_part = vParsed.padi_part || parsed.padi_part;
-                              parsed.padi_page = vParsed.padi_page || parsed.padi_page;
-                              parsed.confidence = "high";
-                            } else {
-                              console.log(`[case-law] padi_override_rejected vol=${vol} year=${decisionYearStr} vol_known=${volKnown} year_ok=${yearOk} docket_ok=${docketOk} docket_conflict=${docketConflict ?? "none"}`);
-                            }
-
-                          }
+                        const decisionYear = String(parsed.year || "").trim()
+                          || (String(parsed.date || "").match(/(\d{4})/)?.[1] ?? "");
+                        const proof = verifiedPadiPublication({ caseType, caseNumber: caseNum,
+                          party1: String(parsed.party1 || ""), party2: String(parsed.party2 || ""), decisionYear }, vData);
+                        const range = proof ? PADI_VOLUME_YEAR_RANGES[proof.padi_volume] : null;
+                        const yearOk = !range || (Number(decisionYear) >= range[0] && Number(decisionYear) <= range[1]);
+                        if (proof && yearOk && !padiVolumeDocketConflict(proof.padi_volume, docketAnchor?.year)) {
+                          // All fields come from the same grounded citation. Never carry over a stale part/page.
+                          parsed.isPublished = true;
+                          parsed.padi_volume = proof.padi_volume;
+                          parsed.padi_part = proof.padi_part;
+                          parsed.padi_page = proof.padi_page;
+                          parsed.confidence = "high";
                         }
+
                       }
                     } catch (verifyErr) {
                       console.error("[case-law] Verification search error:", verifyErr);
@@ -3272,6 +3258,7 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
                   const verifyPadiPublication = async (
                     caseType: string,
                     caseNumber: string,
+                    party1: string, party2: string, decisionYear: string,
                   ): Promise<{ verified: boolean; padi_volume?: string; padi_part?: string; padi_page?: string; year?: string } | null> => {
                     try {
                       const fullRef = `${caseType} ${caseNumber}`;
@@ -3283,11 +3270,11 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
                         },
                         body: JSON.stringify({
                           model: "sonar-pro",
-                          search_domain_filter: TRUSTED_PUB_DOMAINS,
+                          search_domain_filter: PADI_EVIDENCE_DOMAINS,
                           messages: [
                             {
                               role: "system",
-                              content: `בדוק האם פסק דין ישראלי פורסם בפד"י, רק על סמך מקורות מהימנים (nevo / supreme.court.gov.il / court.gov.il / psakdin). אל תשתמש ב-takdin. החזר JSON בלבד:\n{"isPublished":true/false,"padi_volume":"כרך","padi_part":"חלק","padi_page":"עמוד ראשון","year":"YYYY"}\nאם לא ראית במפורש "פ"ד <כרך> <עמוד>" יחד עם מספר התיק, החזר {"isPublished":false}.`,
+                              content: `בדוק האם פסק דין ישראלי פורסם בפד"י, רק על סמך מקורות מהימנים (nevo / supreme.court.gov.il / court.gov.il / psakdin), או פרסום רשמי באתר הממשלה או הכנסת. חפש אזכור מלא עם סוג ההליך, המספר, שני הצדדים, כרך, חלק, עמוד ושנה באותו מקטע. אל תשתמש ב-takdin. החזר JSON בלבד:\n{"isPublished":true/false,"padi_volume":"כרך","padi_part":"חלק","padi_page":"עמוד ראשון","year":"YYYY"}\nאם לא ראית במפורש "פ"ד <כרך> <עמוד>" יחד עם מספר התיק, החזר {"isPublished":false}.`,
                             },
                             {
                               role: "user",
@@ -3298,22 +3285,11 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
                       }, { stage: "case_publication_check" });
                       if (!verifyResp.ok) return null;
                       const vData = await verifyResp.json();
-                      const vContent = vData.choices?.[0]?.message?.content || "";
-                      const vJson = vContent.match(/\{[\s\S]*\}/);
-                      if (!vJson) return null;
-                      const vParsed = JSON.parse(
-                        vJson[0].replace(/([\u0590-\u05FF])"([\u0590-\u05FF])/g, "$1\u05F4$2"),
-                      );
-                      if (vParsed.isPublished && vParsed.padi_volume && String(vParsed.padi_volume).trim()) {
-                        return {
-                          verified: true,
-                          padi_volume: String(vParsed.padi_volume).trim(),
-                          padi_part: vParsed.padi_part ? String(vParsed.padi_part).trim() : "",
-                          padi_page: vParsed.padi_page ? String(vParsed.padi_page).trim() : "",
-                          year: vParsed.year ? String(vParsed.year).trim() : "",
-                        };
-                      }
-                      return { verified: false };
+                      const proof = verifiedPadiPublication({ caseType, caseNumber, party1, party2, decisionYear }, vData);
+                      const range = proof ? PADI_VOLUME_YEAR_RANGES[proof.padi_volume] : null;
+                      if (!proof ||
+                          (range && (Number(decisionYear) < range[0] || Number(decisionYear) > range[1]))) return { verified: false };
+                      return { verified: true, ...proof };
                     } catch (e) {
                       console.error("[case-law] verifyPadiPublication error:", e);
                       return null;
@@ -3341,12 +3317,13 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
                       `dy=${dy} ry=${ry} trustedUrl=${trusted} suspect=${suspect} src=${r.source_url ?? "none"}`,
                     );
                     if (!suspect) continue;
-                    const v = await verifyPadiPublication(String(r.caseType || userCaseTypeNorm || ""), String(r.caseNumber || ""));
+                    const v = await verifyPadiPublication(String(r.caseType || userCaseTypeNorm || ""), String(r.caseNumber || ""),
+                      String(r.party1 || ""), String(r.party2 || ""), String(r.year || "").trim() || (String(r.date || "").match(/(\d{4})/)?.[1] ?? ""));
                     if (v && v.verified && v.padi_volume) {
                       console.log(`[case-law] pub-guard: verified, overriding padi_* for ${r.caseType} ${r.caseNumber}`);
                       r.padi_volume = v.padi_volume;
-                      if (v.padi_part) r.padi_part = v.padi_part;
-                      if (v.padi_page) r.padi_page = v.padi_page;
+                      r.padi_part = v.padi_part || "";
+                      r.padi_page = v.padi_page || "";
                       if (v.year) r.year = v.year;
                       r.isPublished = true;
                     } else {
@@ -3638,6 +3615,7 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
 
           if (bookQuery.length > 2) {
             console.log(`[book] Searching Perplexity for: ${bookQuery}`);
+            const titleOnlyBook = !!isBook && !/מאמר|פרק/.test(classMatch?.[1] || "") && isHebrewBookTitleQuery(bookQuery);
             const bookSearchQuery = `מצא את הספר המשפטי/אקדמי הישראלי "${bookQuery}". ציין: 1) שם המחבר/ים המלא (ללא תארים אקדמיים/צבאיים), 2) שם הספר המלא, 3) שנת פרסום לועזית, 4) שנת פרסום עברית אם קיימת, 5) מהדורה (רק אם יש יותר ממהדורה אחת), 6) שם העורך אם יש, 7) שם המתרגם אם יש, 8) מספר כרכים אם יש, 9) שם ההוצאה לאור, 10) האם המחבר הוא מוסד/גוף ציבורי.`;
 
             const bookRun = await perplexityWithFallback(
@@ -3650,6 +3628,7 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
                     role: "system",
                     content: `אתה עוזר מחקר משפטי ישראלי. החזר תשובה בפורמט JSON בלבד.
 חפש את פרטי הספר המשפטי/אקדמי הישראלי. מצא את כל הפרטים הביבליוגרפיים.
+אם הקלט הוא שם ספר בלבד, אל תבחר מחבר או מהדורה אחת. הוסף למבנה JSON מערך candidates עם כל הרשומות השונות שנמצאו (עד 8), כל אחת {bookTitle,author,sourceUrl}. העדף עמוד ספר בהוצאה לאור או קטלוג ספרייה. אל תכלול מאמרים, פרקים או פסקי דין. בקש מהמקורות פרטי מחבר ושנת פרסום מפורשים; שנה שלא מופיעה תישאר ריקה.
 הפורמט:
 {"found":true/false,"author":"שם המחבר/ים (ללא תארים)","bookTitle":"שם הספר המלא","year":2019,"hebrewYear":"התשע\\"ט","edition":"מהדורה שנייה","editor":"שם העורך","translator":"שם המתרגם","volumes":"מספר כרכים","publisher":"הוצאה לאור","isInstitutional":false}
 אם לא מצאת מקור מפורש המייחס את הספר למחבר כלשהו, החזר {"found":false}. אל תנחש מחבר.
@@ -3674,6 +3653,19 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
               const bookCitations = bookData.citations;
               const bookSearchResults = bookData.search_results;
               console.log(`[book] Perplexity raw response: ${bookContent.substring(0, 300)}`);
+              if (titleOnlyBook) {
+                let parsed: Record<string, unknown> = {};
+                try { parsed = JSON.parse(bookContent.trim().replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "")); } catch { /* fail partial */ }
+                const candidates = Array.isArray(parsed.candidates) ? parsed.candidates :
+                  (parsed.bookTitle && parsed.author && parsed.sourceUrl ? [parsed] : []);
+                const proof = projectHebrewBookProof({ candidates, search_results: bookSearchResults });
+                const choice = buildHebrewBookChoice(bookQuery, proof);
+                const single = choice?.options.length === 1 ? selectHebrewBook(choice, choice.options[0].id, bookQuery) : null;
+                return completeResponse(new Response(JSON.stringify({
+                  content: single?.reply ?? (isBook || choice ? hebrewBookPartial(bookQuery) : `${bookQuery}\n⚠️ לא זוהה ספר תואם במקור. אם הכוונה לספר, הוסיפו מחבר או בחרו בסוג מקור ספר.`), sourceType: isBook || choice ? "book" : "unknown", hebrewBookLookup: { version: 1, rawInput: bookQuery },
+                  ...(choice ? { hebrewBookChoice: choice } : {}),
+                }), { headers: { ...corsHeaders, "Content-Type": "application/json" } }));
+              }
               const bookJsonMatch = bookContent.match(/\{[\s\S]*?\}/);
               if (bookJsonMatch) {
                 try {
@@ -3797,6 +3789,10 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
         console.error("[book] search error:", e);
       }
     }
+    if (!articleRequest && isBook && !/מאמר|פרק/.test(classMatch?.[1] || "") && !hasVerifiedCandidates && isHebrewBookTitleQuery(cleanedForBookCheck)) {
+      return completeResponse(new Response(JSON.stringify({ content: isBook ? hebrewBookPartial(cleanedForBookCheck) : `${cleanedForBookCheck}\n⚠️ לא זוהה ספר תואם במקור. יש להבהיר את סוג המקור.`, sourceType: isBook ? "book" : "unknown", hebrewBookLookup: { version: 1, rawInput: cleanedForBookCheck } }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }));
+    }
 
     // Article facts are resolved before formatting. Neither cache hints nor
     // the generic free-form formatter may supply or overwrite these fields.
@@ -3841,9 +3837,13 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
       }
       // Same Rule 24 template and shared normalizers; zero formatter provider
       // calls on this path. The existing usage reservation above is unchanged.
-      return completeResponse(new Response(JSON.stringify({ content: articleContent() }), {
+      const articleResolution = resolveHebrewArticle(articleRequest, articleEvidence);
+      const content = articleContent();
+      return completeResponse(new Response(JSON.stringify({ content,
+        hebrewArticleValidation: buildHebrewArticleValidation(articleRequest.raw, content, articleResolution.fields),
+      }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
-      }), isCompleteHebrewArticle(resolveHebrewArticle(articleRequest, articleEvidence)) ? "article" : "never");
+      }), isCompleteHebrewArticle(articleResolution) ? "article" : "never");
     }
 
     // Non-journal article families retain the baseline orchestration below.

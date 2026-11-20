@@ -1,4 +1,5 @@
 import { BookEditionChoiceButtons } from "./BookEditionChoiceButtons";
+import { HebrewBookChoiceButtons } from "./HebrewBookChoiceButtons";
 import { useState } from "react";
 import { AlertTriangle } from "lucide-react";
 import { FormattedCitation } from "./FormattedCitation";
@@ -29,6 +30,7 @@ interface Message {
   completion?: import("@/lib/citationCompletion").CompletionAcceptance;
   pastedCitation?: import("../../supabase/functions/_shared/pastedCitation").PastedCitationContract;
   bookEditionChoice?: import("@/lib/citationPlanner").BookEditionChoice;
+  hebrewBookChoice?: import("@/lib/citationPlanner").CitationResolution["hebrewBookChoice"];
   foreignChoice?: import("@/lib/foreignCaseChoice").ForeignCaseChoice;
   countryQuestion?: import("@/lib/countryQuestion").CountryQuestion;
 }
@@ -48,6 +50,7 @@ interface MessageBubbleProps {
   onSelectOption?: (optionText: string) => void;
   /** Record-bound foreign case choice (chat only). */
   /** Returns false when the choice was not applied, so the options unlock. */
+  onSelectHebrewBookChoice?: (optionId: string) => boolean | void;
   onSelectBookEditionChoice?: (optionId: string) => boolean | void;
   onSelectForeignChoice?: (optionId: string) => boolean | void;
   /** "Which country?" answer (chat only); false keeps the buttons usable. */
@@ -56,7 +59,7 @@ interface MessageBubbleProps {
   foreignScope?: { accountId: string | null | undefined; itemKey: string; input: string };
 }
 
-export function MessageBubble({ msg: rawMsg, detectedType, onChangeSourceType, onEdit, onUpdateAssistantContent, onSelectOption, onSelectBookEditionChoice, onSelectForeignChoice, onAnswerCountry, foreignScope }: MessageBubbleProps) {
+export function MessageBubble({ msg: rawMsg, detectedType, onChangeSourceType, onEdit, onUpdateAssistantContent, onSelectOption, onSelectBookEditionChoice, onSelectHebrewBookChoice, onSelectForeignChoice, onAnswerCountry, foreignScope }: MessageBubbleProps) {
   // Rule 1.10 safety net: enforce Hebrew number-range order on display/copy,
   // including cached messages produced before the server-side fix.
   const msg: Message = rawMsg.role === "assistant"
@@ -64,6 +67,7 @@ export function MessageBubble({ msg: rawMsg, detectedType, onChangeSourceType, o
     : rawMsg;
   const isUser = msg.role === "user";
   const bookEditionChoice = !isUser && onSelectBookEditionChoice ? msg.bookEditionChoice : undefined;
+  const hebrewBookChoice = !isUser && onSelectHebrewBookChoice ? msg.hebrewBookChoice : undefined;
   const foreignChoice = !isUser && onSelectForeignChoice ? msg.foreignChoice : undefined;
   const countryQuestion = !isUser && onAnswerCountry ? msg.countryQuestion : undefined;
   const { isOfficeAddin, hasDocumentAccess } = useOffice();
@@ -234,7 +238,7 @@ export function MessageBubble({ msg: rawMsg, detectedType, onChangeSourceType, o
             {msg.content.split("\n").map((line, i) => {
               if (!line.trim()) return <br key={i} />;
               // The numbered options are shown as record-bound buttons below.
-              if ((foreignChoice || bookEditionChoice) && i > 0 && /^\d+\.\s/.test(line.trim())) return null;
+              if ((foreignChoice || bookEditionChoice || hebrewBookChoice) && i > 0 && /^\d+\.\s/.test(line.trim())) return null;
 
               if (isRuleLine(line)) {
                 const ruleNum = extractRuleNumber(line);
@@ -321,6 +325,7 @@ export function MessageBubble({ msg: rawMsg, detectedType, onChangeSourceType, o
               );
             })}
 
+            {hebrewBookChoice && <HebrewBookChoiceButtons key={hebrewBookChoice.fingerprint} choice={hebrewBookChoice} onSelect={onSelectHebrewBookChoice!} />}
             {bookEditionChoice && <BookEditionChoiceButtons key={bookEditionChoice.fingerprint} choice={bookEditionChoice} onSelect={onSelectBookEditionChoice!} />}
             {foreignChoice && (
               <ForeignCaseChoiceButtons key={`${foreignChoice.stage}|${foreignChoice.options.map((o) => o.id).join(",")}`} choice={foreignChoice} onSelect={onSelectForeignChoice!} />
@@ -342,7 +347,7 @@ export function MessageBubble({ msg: rawMsg, detectedType, onChangeSourceType, o
               </div>
             )}
 
-            <div className={`absolute top-2 left-2 flex gap-1 transition-opacity ${isOfficeAddin ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}>
+            {!hebrewBookChoice && <div className={`absolute top-2 left-2 flex gap-1 transition-opacity ${isOfficeAddin ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}>
               <button
                 onClick={copyContent}
                 className="text-xs bg-surface hover:bg-surface-hover border border-border rounded-md px-2 py-1 text-muted-foreground hover:text-foreground"
@@ -350,7 +355,7 @@ export function MessageBubble({ msg: rawMsg, detectedType, onChangeSourceType, o
               >
                 📋
               </button>
-            </div>
+            </div>}
 
             {showPartyCheck && (
               <PartyNameCheck

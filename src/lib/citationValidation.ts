@@ -9,6 +9,8 @@ import { CITATION_RULES, type CitationRuleSet, validateCitation, getRequiredFiel
 import { type SourceType, RULE_REFERENCES } from "@/data/abbreviations";
 import { bookMissingSummary } from "../../supabase/functions/_shared/citationPure/bookFinal.ts";
 
+import { readRenderedHebrewArticleFields, readHebrewArticleValidation } from "../../supabase/functions/_shared/hebrewArticleValidation";
+
 // Map abbreviation.ts source types to citationEngine keys
 const ENGINE_KEY_MAP: Record<SourceType, string> = {
   case_law_published: "case_law_published",
@@ -192,21 +194,9 @@ function extractFieldsFromResponse(response: string, sourceType: SourceType): Re
     if (translatorMatch) fields.translator = translatorMatch[0].trim();
   }
 
-  // Article patterns
-  if (sourceType === "article") {
-    const authorMatch = response.match(/^([^"]+?)\s+"/);
-    if (authorMatch) fields.author = authorMatch[1].trim();
-    const articleMatch = response.match(/"([^"]+)"/);
-    if (articleMatch) fields.articleTitle = articleMatch[1];
-    const journalMatch = response.match(/\*\*([^*]+)\*\*/);
-    if (journalMatch) fields.journalName = journalMatch[1];
-    const volMatch = response.match(/\*\*[^*]+\*\*\s+([א-ת]+|\d+)/);
-    if (volMatch) fields.volume = volMatch[1];
-    const pageMatch = response.match(/\*\*[^*]+\*\*\s+(?:[א-ת]+|\d+)\s*(?:\([^)]+\))?\s+(\d+)/);
-    if (pageMatch) fields.firstPage = pageMatch[1];
-    const yearMatch = response.match(/\((\d{4})\)/);
-    if (yearMatch) fields.year = yearMatch[1];
-  }
+  // Validate the citation's structural slots, not regex hits in source notes.
+  // This also retains a page when the optional journal volume is absent.
+  if (sourceType === "article") return readRenderedHebrewArticleFields(response);
 
   // Internet
   if (sourceType === "internet") {
@@ -653,4 +643,15 @@ export function buildEnginePromptHint(sourceType: SourceType): string {
   hint += `══════════════════════════════════\n`;
 
   return hint;
+}
+
+/** Prefer the bound server field projection; legacy responses use rendered slots.
+ * Completeness only: this result never authorizes bibliography completion. */
+export function validateHebrewArticleResponse(content: string, rawInput: string, envelope: unknown): CitationValidationResult {
+  const fields = readHebrewArticleValidation(envelope, rawInput, content);
+  if (!fields) return validateAIResponse(content, "article");
+  const ruleSet = getRuleSet("article")!;
+  const missingFields = validateCitation("article", fields);
+  return { isComplete: missingFields.length === 0, missingFields, primaryRule: ruleSet.primaryRule,
+    ruleTitle: ruleSet.ruleTitle, template: ruleSet.template, ruleSet, effectiveSourceType: "article" };
 }

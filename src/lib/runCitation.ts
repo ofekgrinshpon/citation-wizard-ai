@@ -9,6 +9,7 @@ import { resolveSourceType } from "@/lib/sourceTypeClassifier";
 import {
   buildEnginePromptHint,
   validateAIResponse,
+  validateHebrewArticleResponse,
   getMissingFieldsSummary,
 } from "@/lib/citationValidation";
 import {
@@ -126,6 +127,7 @@ export interface RunCitationResult {
   /** Present only with `recordChoices`: options built from the lookup's own records. */
   foreignChoice?: ForeignCaseChoice;
   bookEditionChoice?: import("@/lib/citationPlanner").BookEditionChoice;
+  hebrewBookChoice?: import("@/lib/citationPlanner").HebrewBookChoice;
   /** Word review: options without records; choosing one sends one new check. */
   retryChoice?: RetryChoice;
   completion?: import("@/lib/citationCompletion").CompletionAcceptance;
@@ -438,7 +440,9 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
     }
 
     // 5) Rule validation — append a concrete missing-field warning.
-    const validation = validateAIResponse(reply, effectiveSourceType);
+    const validation = effectiveSourceType === "article"
+      ? validateHebrewArticleResponse(reply, opts.rawInput, data?.hebrewArticleValidation)
+      : validateAIResponse(reply, effectiveSourceType);
     let finalReply = reply;
     let warningMsg: string | undefined;
     if (!validation.isComplete && validation.missingFields.length > 0) {

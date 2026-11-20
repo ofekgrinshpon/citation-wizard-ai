@@ -1,3 +1,11 @@
+import * as referralQualificationModule from "../../supabase/functions/citation-chat/referralQualification";
+import * as citationRenderModule from "../../supabase/functions/_shared/citationPure/render";
+import * as countryLookupModule from "../../supabase/functions/_shared/citationPure/countryLookup";
+import * as citationCompletionModule from "../../supabase/functions/_shared/citationPure/completion";
+import * as neutralDocket from "../../supabase/functions/citation-chat/neutralDocket";
+import * as padiPublicationEvidence from "../../supabase/functions/_shared/padiPublicationEvidence";
+import * as articleValidation from "../../supabase/functions/_shared/hebrewArticleValidation";
+import * as hebrewBookChoice from "../../supabase/functions/_shared/citationPure/hebrewBookChoice";
 import * as bookEvidenceRoute from "../../supabase/functions/citation-chat/bookEvidenceRoute";
 import * as bookCrossrefTarget from "../../supabase/functions/citation-chat/bookCrossrefTarget";
 import * as bookCrossrefRoute from "../../supabase/functions/citation-chat/bookCrossrefRoute";
@@ -253,6 +261,14 @@ async function runHandler(options: { raw?: string; rawInputNull?: boolean; recor
     return new Response(JSON.stringify({ choices: [{ message: { content: JSON.stringify(candidate) } }], citations: [result().url], search_results: options.fallback && !isFallback ? [] : options.records || [result()] }));
   };
   const modules: Record<string, unknown> = {
+    "./referralQualification.ts": referralQualificationModule,
+    "../_shared/citationPure/render.ts": citationRenderModule,
+    "../_shared/citationPure/countryLookup.ts": countryLookupModule,
+    "../_shared/citationPure/completion.ts": citationCompletionModule,
+    "./neutralDocket.ts": neutralDocket,
+    "../_shared/padiPublicationEvidence.ts": padiPublicationEvidence,
+    "../_shared/hebrewArticleValidation.ts": articleValidation,
+    "../_shared/citationPure/hebrewBookChoice.ts": hebrewBookChoice,
     "https://deno.land/std@0.168.0/http/server.ts": { serve: (f: typeof handler) => { handler = f; } },
     "npm:@supabase/supabase-js@2.117.2": { createClient: (_url: string, key: string, configuration?: unknown) => ({
       ...client,
@@ -1014,4 +1030,22 @@ describe("durable execution inputs and results through actual citation handler",
     const terminal = r.rpc.mock.calls.filter(([name]) => name === "finish_citation_request");
     expect(terminal).toHaveLength(1); expect(terminal[0][1]).toMatchObject({ _outcome: "unknown", _result: null });
   });
+});
+
+describe('title-only Hebrew books on the real handler',()=>{
+ const raw='דיני חוזים';
+ const records=[{title:'דיני חוזים - מחבר א',url:'https://nevo.co.il/book/a',snippet:'שנת פרסום: 2019'},{title:'דיני חוזים - מחבר ב',url:'https://nli.org.il/book/b',snippet:'שנת פרסום: 2020'}];
+ const candidates=records.map((s,i)=>({bookTitle:raw,author:i?'מחבר ב':'מחבר א',sourceUrl:s.url}));
+ it('returns two grounded choices, bypasses legacy cache, no formatter/author-check, strips proof on recovery',async()=>{
+  const r=await runHandler({raw,label:'ספר',candidate:{found:true,candidates},records,cached:[{full_citation:'שגוי 1999'}]});
+  expect(r.status).toBe(200);expect(r.body.hebrewBookChoice.options).toHaveLength(2);expect(r.body.content).toContain('[חסר: מחבר]');
+  expect(r.calls.every(x=>!['formatter','author_check','biblio_fallback'].includes(x.stage))).toBe(true);
+  const stored=r.rpc.mock.calls.find(([name])=>name==='finish_citation_request')?.[1]._result;
+  expect(stored).not.toHaveProperty("hebrewBookChoice");expect(JSON.stringify(stored)).not.toContain('snippet');
+ });
+ it('one grounded work is rendered, unsupported model year stays missing',async()=>{
+  const r=await runHandler({raw,label:'ספר',candidate:{found:true,candidates:[{...candidates[0],year:1999}]},records:[{...records[0],snippet:'copyright 1999'}]});
+  expect(r.body.content).toContain('מחבר א');expect(r.body.content).toContain('[חסר: שנה]');expect(r.body.content).not.toContain('1999');
+ });
+
 });

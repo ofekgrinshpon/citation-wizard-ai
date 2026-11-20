@@ -1,3 +1,5 @@
+import { readHebrewBookChoice, selectHebrewBook, hebrewBookPartial, isHebrewBookTitleQuery, type HebrewBookChoice } from "../../supabase/functions/_shared/citationPure/hebrewBookChoice.ts";
+export type { HebrewBookChoice } from "../../supabase/functions/_shared/citationPure/hebrewBookChoice.ts";
 import { needsNeutralDocketLookup } from "../../supabase/functions/_shared/pastedCitation";
 /**
  * Batch B — shared pure citation planner and typed response resolver.
@@ -88,6 +90,7 @@ export interface CitationResolution {
   /** Chat only: record-bound foreign case choice (in memory, never persisted). */
   foreignChoice?: ForeignCaseChoice;
   bookEditionChoice?: BookEditionChoice;
+  hebrewBookChoice?: HebrewBookChoice;
   /** Chat only: ask which country a case is from instead of guessing (in memory, input-bound). */
   countryQuestion?: CountryQuestion;
   /** Word only: results without records; choosing one sends one new, disclosed check. */
@@ -146,7 +149,7 @@ export function foreignFreeformSourceType(raw: string): SourceType | null {
 
 /** An exact supplied ISBN must be resolved against a record for that edition. */
 export function needsBoundBookLookup(st: SourceType | null, raw: string): boolean {
-  return st === "foreign_book" && extractBookIsbn(raw) !== null;
+  return (st === "foreign_book" && extractBookIsbn(raw) !== null) || (st === "book" && isHebrewBookTitleQuery(raw));
 }
 
 /** Phase 2 — terminal local outcomes (render or preserve). Null → continue to typed planning. */
@@ -402,6 +405,16 @@ export function resolveCitationResponse(plan: TypedPlan, data: Record<string, un
   }
   const safety = readPastedCitationSafety(contract, data);
   if (safety) return { kind: "terminal", origin: "safety", resolution: { ...safety, status: "warning", pastedCitation: contract } };
+  const hebrewMarker = data?.hebrewBookLookup as {version?:number;rawInput?:string} | undefined;
+  if ((plan.sourceType === "book" || plan.sourceType === "unknown" || !plan.sourceType) && !plan.caseRequest && !plan.articleRequest && hebrewMarker?.version === 1 && hebrewMarker.rawInput === contract.rawInput && isHebrewBookTitleQuery(contract.rawInput)) {
+    const validated = readHebrewBookChoice(data?.hebrewBookChoice, contract.rawInput);
+    const single = validated?.options.length === 1 ? selectHebrewBook(validated, validated.options[0].id, contract.rawInput) : null;
+    if (single) return { kind: "terminal", origin: "disambiguation", resolution: single };
+    const choice = caps.host === "chat" ? validated : null;
+    if (!validated && data?.sourceType === "unknown") return { kind: "terminal", origin: "disambiguation", resolution: { citation: escapeCitationLiteral(contract.rawInput), reply: `${escapeCitationLiteral(contract.rawInput)}\n⚠️ לא זוהה ספר תואם במקור. יש להבהיר את סוג המקור.`, status: "warning", sourceType: "unknown" } };
+    const reply = hebrewBookPartial(contract.rawInput);
+    return { kind: "terminal", origin: "disambiguation", resolution: { reply, citation: reply.split("\n")[0], status: "warning", sourceType: "book", sourceLabel: "ספר", warningMsg: "לא נבחר ספר או מהדורה אוטומטית", ...(choice ? {hebrewBookChoice:choice} : {}) } };
+  }
   if (plan.kind === "legacy" || !plan.foreignLookup) return { kind: "legacy" };
   const response = data?.foreignLookup;
   if (plan.evidence.pasted.countryLookup && (plan.foreignLookup.jurisdiction === "AU" || plan.foreignLookup.jurisdiction === "CA")) {
@@ -586,4 +599,10 @@ export function selectForeignCaseChoice(choice: ForeignCaseChoice, optionId: str
   if (resolved.kind !== "terminal" || resolved.origin === "disambiguation") return { kind: "invalid" };
   const { foreignChoice: _ignored, ...resolution } = resolved.resolution;
   return { kind: "resolved", resolution };
+}
+
+export function selectHebrewBookChoice(choice:HebrewBookChoice,optionId:string,currentRawInput:string): {kind:"resolved";resolution:CitationResolution}|{kind:"invalid"|"stale"} {
+ if(choice.rawInput!==currentRawInput)return {kind:"stale"};
+ const result=selectHebrewBook(choice,optionId,currentRawInput);
+ return result?{kind:"resolved",resolution:result}:{kind:"invalid"};
 }

@@ -1,3 +1,11 @@
+import * as referralQualificationModule from "../../supabase/functions/citation-chat/referralQualification";
+import * as citationRenderModule from "../../supabase/functions/_shared/citationPure/render";
+import * as countryLookupModule from "../../supabase/functions/_shared/citationPure/countryLookup";
+import * as citationCompletionModule from "../../supabase/functions/_shared/citationPure/completion";
+import * as neutralDocket from "../../supabase/functions/citation-chat/neutralDocket";
+import * as padiPublicationEvidence from "../../supabase/functions/_shared/padiPublicationEvidence";
+import * as articleValidation from "../../supabase/functions/_shared/hebrewArticleValidation";
+import * as hebrewBookChoice from "../../supabase/functions/_shared/citationPure/hebrewBookChoice";
 import * as bookEvidenceRoute from "../../supabase/functions/citation-chat/bookEvidenceRoute";
 import * as bookCrossrefTarget from "../../supabase/functions/citation-chat/bookCrossrefTarget";
 import * as bookCrossrefRoute from "../../supabase/functions/citation-chat/bookCrossrefRoute";
@@ -51,6 +59,14 @@ let script: { hits: Hit[]; secondHits?: Hit[]; page: string | null; throwOnSearc
 
 function installHandler() {
   const modules: Record<string, unknown> = {
+    "./referralQualification.ts": referralQualificationModule,
+    "../_shared/citationPure/render.ts": citationRenderModule,
+    "../_shared/citationPure/countryLookup.ts": countryLookupModule,
+    "../_shared/citationPure/completion.ts": citationCompletionModule,
+    "./neutralDocket.ts": neutralDocket,
+    "../_shared/padiPublicationEvidence.ts": padiPublicationEvidence,
+    "../_shared/hebrewArticleValidation.ts": articleValidation,
+    "../_shared/citationPure/hebrewBookChoice.ts": hebrewBookChoice,
     "https://deno.land/std@0.168.0/http/server.ts": { serve: (fn: Handler) => { handler = fn; } },
     "npm:@supabase/supabase-js@2.117.2": { createClient: () => ({
       auth: { getClaims: async () => ({ data: { claims: { sub: "test-user" } }, error: null }) },

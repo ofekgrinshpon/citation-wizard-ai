@@ -1,3 +1,11 @@
+import * as articleValidation from "../../supabase/functions/_shared/hebrewArticleValidation";
+import * as pure_render from "../../supabase/functions/_shared/citationPure/render";
+import * as pure_completion from "../../supabase/functions/_shared/citationPure/completion";
+import * as pure_countryLookup from "../../supabase/functions/_shared/citationPure/countryLookup";
+import * as referralQualification from "../../supabase/functions/citation-chat/referralQualification";
+import * as padiEvidence from "../../supabase/functions/_shared/padiPublicationEvidence";
+import * as neutralDocket from "../../supabase/functions/citation-chat/neutralDocket";
+import * as hebrewBookChoice from "../../supabase/functions/_shared/citationPure/hebrewBookChoice";
 import * as bookEvidenceRoute from "../../supabase/functions/citation-chat/bookEvidenceRoute";
 import * as bookCrossrefTarget from "../../supabase/functions/citation-chat/bookCrossrefTarget";
 import * as bookCrossrefRoute from "../../supabase/functions/citation-chat/bookCrossrefRoute";
@@ -98,7 +106,7 @@ type Handler = (req: Request) => Promise<Response>;
 let handler: Handler;
 type Call = { url: string; body: Record<string, unknown> };
 const calls: Call[] = [];
-let fixture: { tier1: unknown; openWeb: unknown; openWebSearch: unknown[]; verify: unknown; date: unknown };
+let fixture: { tier1: unknown; openWeb: unknown; openWebSearch: unknown[]; verify: unknown; verifySearch?: unknown[]; date: unknown };
 
 const chat = (content: unknown, extra: Record<string, unknown> = {}) =>
   new Response(JSON.stringify({ choices: [{ message: { content: typeof content === "string" ? content : JSON.stringify(content) } }], ...extra }), { status: 200 });
@@ -113,6 +121,8 @@ function install() {
   const compile = (input: string) => ts.transpileModule(input, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText;
   runInContext(compile(readFileSync(resolve(__dirname, "../../supabase/functions/_shared/citationUsageGuard.ts"), "utf8")), guardContext);
   const modules: Record<string, unknown> = {
+    "../_shared/hebrewArticleValidation.ts": articleValidation,
+    "../_shared/citationPure/hebrewBookChoice.ts": hebrewBookChoice,
     "https://deno.land/std@0.168.0/http/server.ts": { serve: (fn: Handler) => { handler = fn; } },
     "npm:@supabase/supabase-js@2.117.2": { createClient: () => ({
       auth: { getClaims: async () => ({ data: { claims: { sub: "test-user" } }, error: null }) },
@@ -129,12 +139,18 @@ function install() {
       if (url.includes("ai.gateway.lovable.dev")) return chat("formatter-fixture");
       if (isTier1Party(call)) return chat(fixture.tier1, { citations: [] });
       if (isOpenWebParty(call)) return chat(fixture.openWeb, { search_results: fixture.openWebSearch, citations: fixture.openWebSearch.map((r) => (r as { url: string }).url) });
-      if (contentOf(call).includes("פורסם בפד")) return chat(fixture.verify);
+      if (contentOf(call).includes("פורסם בפד")) return chat(fixture.verify, { search_results: fixture.verifySearch ?? [] });
       return chat(fixture.date);
     }, withCostTelemetry: (_n: string, fn: () => unknown) => fn(), setTelemetryFromBody: () => {}, recordZeroWork: () => {} },
     "../_shared/hebrewArticleEvidence.ts": articles,
     "../_shared/caseTypePrefixes.ts": dockets,
     "../_shared/pastedCitation.ts": pastedCitation,
+    "../_shared/padiPublicationEvidence.ts": padiEvidence,
+    "./neutralDocket.ts": neutralDocket,
+    "./referralQualification.ts": referralQualification,
+    "../_shared/citationPure/render.ts": pure_render,
+    "../_shared/citationPure/completion.ts": pure_completion,
+    "../_shared/citationPure/countryLookup.ts": pure_countryLookup,
     "../_shared/trustedHosts.ts": hosts,
     "../_shared/caseLawQuery.ts": caseLawQuery,
     "../_shared/hebrewNumberRange.ts": ranges,
@@ -185,7 +201,7 @@ beforeAll(() => {
 
 describe("party-name search with an open-web complementary pass", () => {
   it("finds the docket on the open web when the legal databases return nothing", async () => {
-    reset({ openWeb: { results: [KOL_HAAM] }, openWebSearch: [WIKI], verify: { isPublished: true, padi_volume: "ז", padi_page: "871", year: "1953" }, date: { date: "16.10.1953", year: "1953" } });
+    reset({ openWeb: { results: [KOL_HAAM] }, openWebSearch: [WIKI], verify: { isPublished: true, padi_volume: "ז", padi_page: "871", year: "1953" }, verifySearch: [{ ...WIKI, url: "https://www.gov.il/reports/kol-haam.pdf" }], date: { date: "16.10.1953", year: "1953" } });
     const prompt = await post("קול העם נ' שר הפנים", "party-openweb-0001");
     expect(calls.filter(isTier1Party)).toHaveLength(1);
     expect(calls.filter(isOpenWebParty)).toHaveLength(1);

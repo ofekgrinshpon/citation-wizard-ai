@@ -13,6 +13,8 @@ import { c1ServerPayload, C1_REDIGI } from "./fixtures/c1ServerPayload";
 import { COUNTRY_LOCAL_FIXTURES, COUNTRY_LOCAL_QA_FIXTURES, COUNTRY_PARTIAL_FIXTURES } from "./fixtures/countryLocalFixtures";
 import { findVerifiedSourceMatch } from "@/lib/verifiedSources";
 import { saveCitationHistoryRecord } from "@/lib/citationHistorySave";
+import { SOURCE_TYPE_LABELS } from "@/data/abbreviations";
+import { buildHebrewBookChoice } from "../../supabase/functions/_shared/citationPure/hebrewBookChoice";
 import { cleanup } from "@testing-library/react";
 import { runCitation } from "@/lib/runCitation";
 import { C2_BOOK, C2_CHAPTER, C2_MODES, c2Payload, C2_CORRECTION_MODES, c2CorrectionPayload } from "./fixtures/c2BookPayload";
@@ -26,6 +28,7 @@ vi.mock("@/hooks/useAuth", () => ({ useAuth: () => ({ user: { id: "acct-1" }, is
 vi.mock("@/hooks/useOffice", () => ({ useOffice: () => ({ isOfficeAddin: true }) }));
 vi.mock("@/hooks/useSubscription", () => ({ useSubscription: () => ({ loading: false, isLimitReached: false, isSubscribed: true, remaining: 1, limit: 1, incrementCount: vi.fn() }) }));
 vi.mock("@/hooks/useCredits", () => ({ useCredits: () => ({ billingPeriodEndsAt: null, planMeta: { label: "x" } }) }));
+vi.mock("@/hooks/useCitationSourceQuota", () => ({ useCitationSourceQuota: () => ({ sourceQuota: undefined, quotaError: false, referralPending: false, refreshQuota: vi.fn() }) }));
 vi.mock("@/hooks/useProjects", () => ({ useProjects: () => ({ currentProject: null }) }));
 vi.mock("@/hooks/useActivityLog", () => ({ useActivityLog: () => ({ log: vi.fn() }) }));
 vi.mock("@/integrations/supabase/client", () => {
@@ -46,9 +49,11 @@ vi.mock("@/lib/citationHistorySave", () => ({ saveCitationHistoryRecord: vi.fn()
 vi.mock("@/lib/foreignClassificationStore", () => ({ recordGeneration: m.recordGeneration, clearItemsWithPrefix: vi.fn(), loadRecord: vi.fn(() => undefined), saveRecord: vi.fn() }));
 vi.mock("sonner", () => ({ toast: Object.assign(vi.fn(), { error: vi.fn(), info: vi.fn(), success: vi.fn(), warning: vi.fn(), message: vi.fn() }) }));
 vi.mock("@/components/MessageBubble", () => ({
-  MessageBubble: ({ msg, onChangeSourceType, onAnswerCountry }: { msg: { role: string; content: string; countryQuestion?: { options: { id: string }[] } }; onChangeSourceType?: (t: string, p: unknown) => void; onAnswerCountry?: (c: string) => unknown }) => (m.bubble(msg),
+  MessageBubble: ({ msg, detectedType, onChangeSourceType, onAnswerCountry, onSelectHebrewBookChoice }: { detectedType?: string; msg: { role: string; content: string; countryQuestion?: { options: { id: string }[] }; hebrewBookChoice?: { options: { id: string; author: string }[] } }; onSelectHebrewBookChoice?: (c: string) => unknown; onChangeSourceType?: (t: string, p: unknown) => void; onAnswerCountry?: (c: string) => unknown }) => (m.bubble({ ...msg, detectedType }),
     <div data-testid={`bubble-${msg.role}`}>
       <span>{msg.content}</span>
+      {onSelectHebrewBookChoice && msg.hebrewBookChoice?.options.map(o =>
+        <button key={o.id} type="button" onClick={() => onSelectHebrewBookChoice(o.id)}>{o.author}</button>)}
       {onAnswerCountry && msg.countryQuestion?.options.map((o) => (
         <button key={o.id} type="button" onClick={() => onAnswerCountry(o.id)}>{`country-${o.id}`}</button>
       ))}
@@ -614,6 +619,59 @@ vi.mock("@/lib/citationPlanner", async (original) => {
     resolveCitationResponse: (p: Parameters<typeof a.resolveCitationResponse>[0], d: Parameters<typeof a.resolveCitationResponse>[1], c: Parameters<typeof a.resolveCitationResponse>[2]) => { plannerHosts.add(c.host + ":resolve"); return a.resolveCitationResponse(p, d, c); },
   };
 });
+describe("Hebrew quick citation: response and history", () => {
+  it("uses the same published case classification in the bubble and history", async () => {
+    m.classify.mockResolvedValue({ sourceType: "case_law_database", source: "regex" });
+    m.invoke.mockResolvedValue({ data: { content: 'ע"פ 5121/98 יששכרוב נ׳ התובע הצבאי, פ"ד סא(1) 461 (2006).' }, errorInfo: null });
+    await mountChat();
+    await send('ע"פ 5121/98');
+    const latest = m.bubble.mock.calls.map(([msg]) => msg).filter(msg => msg.role === "assistant").at(-1);
+    expect(latest?.detectedType).toBe("case_law_published");
+    expect(saveCitationHistoryRecord).toHaveBeenCalledWith(expect.objectContaining({
+      source_type: SOURCE_TYPE_LABELS.case_law_published,
+      formatted_output: expect.stringContaining('סא(1) 461'),
+    }), undefined, expect.any(Function));
+  });
+  it("waits for a Hebrew book selection and records it without a second engine call", async () => {
+    const rawInput = "דיני חוזים";
+    const choice = buildHebrewBookChoice(rawInput, {
+      candidates: [
+        { title: rawInput, author: "מחבר ראשון", sourceUrl: "https://www.nli.org.il/book-a" },
+        { title: rawInput, author: "מחבר שני", sourceUrl: "https://biupress.co.il/book-b" },
+      ],
+      sources: [
+        { title: "דיני חוזים - מחבר ראשון", url: "https://www.nli.org.il/book-a", snippet: "שנת פרסום: 2019" },
+        { title: "דיני חוזים - מחבר שני", url: "https://biupress.co.il/book-b", snippet: "שנת פרסום: 2020" },
+      ],
+    });
+    expect(choice).not.toBeNull();
+    m.classify.mockResolvedValue({ sourceType: "book", source: "regex" });
+    m.invoke.mockResolvedValue({ data: { content: "תוצאה חלקית", sourceType: "book",
+      hebrewBookLookup: { version: 1, rawInput }, hebrewBookChoice: choice }, errorInfo: null });
+    await mountChat();
+    await send(rawInput);
+    const option = screen.getByRole("button", { name: "מחבר שני" });
+    expect(saveCitationHistoryRecord).not.toHaveBeenCalled();
+    await act(async () => fireEvent.click(option));
+    expect(m.invoke).toHaveBeenCalledTimes(1);
+    expect(saveCitationHistoryRecord).toHaveBeenCalledWith(expect.objectContaining({
+      formatted_output: expect.stringContaining("מחבר שני"),
+      source_type: SOURCE_TYPE_LABELS.book,
+    }), undefined, expect.any(Function));
+    expect(screen.queryByRole("button", { name: "מחבר שני" })).toBeNull();
+  });
+  it("does not add a false missing-field warning to a complete Hebrew article", async () => {
+    m.classify.mockResolvedValue({ sourceType: "article", source: "regex" });
+    const rawInput = 'פיצוי נאות: על סעדים וצדק בדיני הנטילה השלטונית בישראל';
+    const content = 'שי שטרן "פיצוי נאות: על סעדים וצדק בדיני הנטילה השלטונית בישראל" **עיוני משפט** מא 141 (2018).';
+    const fields = { author: "שי שטרן", articleTitle: rawInput, journalName: "עיוני משפט", volume: "מא", firstPage: "141", year: "2018" };
+    m.invoke.mockResolvedValue({ data: { content, hebrewArticleValidation: { version: 1, rawInput, content, fields } }, errorInfo: null });
+    await mountChat();
+    await send(rawInput);
+    expect(m.bubble.mock.calls.map(([msg]) => msg).filter(msg => msg.role === "assistant").at(-1)?.content).toBe(content);
+  });
+});
+
 afterAll(() => { expect(plannerHosts.has("chat")).toBe(true); expect(plannerHosts.has("chat:resolve")).toBe(true); });
 
 // Actual Index initial/manual and local saved chat replay; only IO boundaries mocked.
