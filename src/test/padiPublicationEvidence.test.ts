@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { readFileSync } from "node:fs";
 import ts from "typescript";
-import { verifiedPadiPublication, PADI_EVIDENCE_DOMAINS } from "../../supabase/functions/_shared/padiPublicationEvidence";
+import { verifiedPadiPublication, PADI_EVIDENCE_DOMAINS, findTypedPadiEvidence, mergeTypedPadiEvidence, readTypedDecisionDate, typedSupremeFilingYear } from "../../supabase/functions/_shared/padiPublicationEvidence";
 const target = {caseType:'ע״א',caseNumber:'140/00',party1:'עיזבון המנוח מיכאל אטינגר',party2:'החברה לשיקום ופיתוח הרובע היהודי בעיר העתיקה בירושלים בע״מ',decisionYear:'2004'};
 const citation = `ע״א 140/00 ${target.party1} נ׳ ${target.party2}, פ״ד נח(4) 486 (2004)`;
 const result = (snippet=citation,url='https://www.gov.il/BlobFolder/reports/interest/he/insurance_companies_a.pdf')=>({url,snippet});
@@ -37,10 +37,11 @@ describe('actual docket second-pass integration, offline',()=>{
  const block=code.slice(code.indexOf('// ── Secondary verification:'),code.indexOf('// Reconcile decision date/year'));
  const js=ts.transpileModule(`async function check(){${block}\nreturn parsed;}`,{compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.CommonJS}}).outputText;
  async function run(data:unknown,year='2004',docketYear='00') {
+  const typedPadi=false, typedEvidence={kind:'none'};
   const parsed={found:true,isPublished:false,party1:target.party1,party2:target.party2,year,padi_part:'9',padi_page:'999'};
   const fetch=vi.fn(async(_url: string, _init: {body: string})=>({ok:true,json:async()=>data}));
-  const fn=new Function('parsed','trackedFetch','verifiedPadiPublication','PADI_EVIDENCE_DOMAINS','PADI_VOLUME_YEAR_RANGES','padiVolumeDocketConflict','isLowerCourt','docketCourt','fullCaseRef','caseType','caseNum','docketAnchor','PERPLEXITY_API_KEY',`${js};return check();`);
-  const value=await fn(parsed,fetch,verifiedPadiPublication,PADI_EVIDENCE_DOMAINS,{נח:[2003,2005]},(_:string,y:string)=>y==='18'?'impossible':null,()=>false,null,'ע״א 140/00',target.caseType,target.caseNumber,{year:docketYear},'offline');
+  const fn=new Function('parsed','trackedFetch','verifiedPadiPublication','PADI_EVIDENCE_DOMAINS','PADI_VOLUME_YEAR_RANGES','padiVolumeDocketConflict','isLowerCourt','docketCourt','fullCaseRef','caseType','caseNum','docketAnchor','PERPLEXITY_API_KEY','typedPadi','typedEvidence',`${js};return check();`);
+  const value=await fn(parsed,fetch,verifiedPadiPublication,PADI_EVIDENCE_DOMAINS,{נח:[2003,2005]},(_:string,y:string)=>y==='18'?'impossible':null,()=>false,null,'ע״א 140/00',target.caseType,target.caseNumber,{year:docketYear},'offline',typedPadi,typedEvidence);
   return {value,fetch};
  }
  it('uses existing one request, adopts exact full tuple, no URL-docket requirement',async()=>{
@@ -53,5 +54,60 @@ describe('actual docket second-pass integration, offline',()=>{
  it('keeps filing-year and decision-year safeguards',async()=>{
   expect((await run(payload(result()),'2004','18')).value.isPublished).toBe(false);
   expect((await run(payload(result()),'2021')).value.isPublished).toBe(false);
+ });
+});
+
+describe("typed Supreme reporter/decision binding", () => {
+ const kol = {caseType:'בג״ץ', caseNumber:'73/53', party1:'חברת קול העם בע״מ', party2:'שר הפנים', filingYear:1953};
+ const pin = {caseType:'בג״ץ', caseNumber:'1843/93', party1:'פנחסי', party2:'כנסת ישראל', filingYear:1993};
+ const pin93 = 'בג״ץ 1843/93 פנחסי נ׳ כנסת ישראל, פ״ד מח(4) 492 (1993)';
+ const pin95 = 'בג״ץ 1843/93 פנחסי נ׳ כנסת ישראל, פ״ד מט(1) 661 (17.1.1995)';
+ it.each([['53',1953],['1953',1953],['24',2024],['93',1993],['49',1949],['38',null],['2053',null]])("resolves filing suffix %s as %s without changing dockets", (suffix, year) => {
+   expect(typedSupremeFilingYear(suffix, 2026)).toBe(year);
+ });
+ it("does not choose if future dates make the century genuinely ambiguous", () => {
+   expect(typedSupremeFilingYear("53", 2053)).toBeNull();
+ });
+ it("accepts an exact quote-free type, doubled docket year, curly quotes, optional reporter part and explicit date", () => {
+   const snippet = 'בגץ 73/1953 חברת “קול העם” בע״מ נ׳ שר הפנים, פ״ד ז 871 (1953), ניתן ביום 16.10.1953';
+   expect(findTypedPadiEvidence(kol,payload({...result(snippet),date:'1995-01-17'}))).toEqual({
+     kind:'verified', publication:{padi_volume:'ז',padi_part:'',padi_page:'871',year:'1953'},date:'16.10.1953',
+   });
+ });
+ it("handles presentation-only dash and quote variants without permitting unrelated captions", () => {
+   const ad = {caseType:'בג״ץ',caseNumber:'1113/99',party1:'עדאלה - המרכז המשפטי לזכויות המיעוט הערבי בישראל',party2:'השר לענייני דתות',filingYear:1999};
+   const curr = 'בג״ץ 1113/99 עדאלה—המרכז המשפטי לזכויות המיעוט הערבי בישראל נ’ השר לענייני דתות, פ״ד נ״ד(2) 164 (2000)';
+   const old = curr.replace('1113/99','240/98').replace('נ״ד(2) 164 (2000)','נב(5) 167 (1998)');
+   expect(findTypedPadiEvidence(ad,payload(result(curr)))).toMatchObject({kind:'verified',publication:{padi_volume:'נד',padi_part:'2',padi_page:'164',year:'2000'},date:null});
+   expect(findTypedPadiEvidence(ad,payload(result('בג״ץ 1113/99 '+old)))).toEqual({kind:'none'});
+   expect(findTypedPadiEvidence(ad,payload(result(curr.replace('השר לענייני דתות','אדם אחר'))))).toEqual({kind:'none'});
+ });
+ it("recognizes real reporter punctuation and a single attached Hebrew preposition without reclassifying", () => {
+   const t = {...kol,caseType:'ע״א',caseNumber:'5604/94',party1:'חמד',party2:'מדינת ישראל',filingYear:1994};
+   const s = 'בע״א 5604/94 חמד נ׳ מדינת ישראל, פ"ד נח(2), עמ׳ 498, (2004)';
+   expect(findTypedPadiEvidence(t,payload(result(s)))).toMatchObject({kind:'verified',publication:{padi_page:'498',year:'2004'}});
+   expect(findTypedPadiEvidence({...t,caseType:'ע״מ'},payload(result(s.replace('בע״א','בע״מ'))))).toEqual({kind:'none'});
+ });
+ it("keeps first page 5 when the same citation includes pinpoint 15", () => {
+   const t = {...kol,caseNumber:'7/48',party1:'אל-כרבוטלי',party2:'שר הביטחון',filingYear:1948};
+   const s = 'בג״ץ 7/48 אל־כרבוטלי נ׳ שר הביטחון, פ״ד ב 5, 15 (1949)';
+   expect(findTypedPadiEvidence(t,payload(result(s)))).toMatchObject({kind:'verified',publication:{padi_page:'5',year:'1949'}});
+ });
+ it("never binds reporter evidence across results or to different proceeding types / court qualifiers", () => {
+   expect(findTypedPadiEvidence(pin,payload(result(pin93.split('פ״ד')[0]),result('פ״ד מח(4) 492 (1993)')))).toEqual({kind:'none'});
+   expect(findTypedPadiEvidence(pin,payload(result(pin93.replace('בג״ץ','ע״א'))))).toEqual({kind:'none'});
+   expect(findTypedPadiEvidence(pin,payload(result(pin93.replace('בג״ץ','בג״ץ (מחוזי ת״א)'))))).toEqual({kind:'none'});
+   expect(findTypedPadiEvidence(pin,payload(result(pin93,'https://he.afiklaw.com/caselaw/4390')))).toEqual({kind:'none'});
+ });
+ it("does not pick one of two reporter/date records under the same docket", () => {
+   expect(findTypedPadiEvidence(pin,payload(result(pin93+'; '+pin95)))).toEqual({kind:'conflict'});
+   expect(mergeTypedPadiEvidence(findTypedPadiEvidence(pin,payload(result(pin93))),findTypedPadiEvidence(pin,payload(result(pin95))))).toEqual({kind:'conflict'});
+   expect(findTypedPadiEvidence(pin,payload(result(pin93),result(pin93)))).toMatchObject({kind:'verified',publication:{year:'1993'},date:null});
+ });
+ it("rejects impossible dates and surfaces contradictory attached dates", () => {
+   expect(readTypedDecisionDate('2022-12-77')).toBeNull();
+   expect(readTypedDecisionDate('29.2.2023')).toBeNull();
+   expect(readTypedDecisionDate('2004-02-29')).toEqual({year:'2004',date:'29.2.2004'});
+   expect(findTypedPadiEvidence(pin,payload(result(pin93+', ניתן ביום 17.1.1995')))).toEqual({kind:'conflict'});
  });
 });

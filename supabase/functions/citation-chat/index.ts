@@ -1,5 +1,5 @@
 import { buildHebrewArticleValidation } from "../_shared/hebrewArticleValidation.ts";
-import { PADI_EVIDENCE_DOMAINS, verifiedPadiPublication } from "../_shared/padiPublicationEvidence.ts";
+import { PADI_EVIDENCE_DOMAINS, verifiedPadiPublication, findTypedPadiEvidence, mergeTypedPadiEvidence, typedPadiDraftMatches, typedPadiMarker, typedSupremeFilingYear, type TypedPadiEvidence, type TypedPadiTarget } from "../_shared/padiPublicationEvidence.ts";
 import { isHebrewBookTitleQuery, projectHebrewBookProof, buildHebrewBookChoice, hebrewBookPartial, selectHebrewBook } from "../_shared/citationPure/hebrewBookChoice.ts";
 import { resolveNeutralDocket } from "./neutralDocket.ts";
 import { authorizeBookEvidence, bookEvidenceEnabled, evaluateBookEvidence } from "./bookEvidenceRoute.ts";
@@ -350,10 +350,10 @@ function docketFilingYear(docketYear: string | undefined | null): number | null 
 function padiVolumeDocketConflict(
   volume: string,
   docketYear: string | undefined | null,
+  filed = docketFilingYear(docketYear),
 ): string | null {
   const vol = (volume || "").trim();
   if (!vol) return null;
-  const filed = docketFilingYear(docketYear);
   if (filed === null) return null;
   const range = PADI_VOLUME_YEAR_RANGES[vol];
   if (range) {
@@ -2323,6 +2323,7 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
     // Bounded foreign completion never escapes into Israeli docket enrichment or the generic model on failure.
     if (pastedContract.route === "foreign" && pastedContract.sourceKind === "case") return preservePasted();
     let caseLawHint = "";
+    let typedPadiOutput: { target: TypedPadiTarget; evidence: TypedPadiEvidence } | null = null;
     let caseLawOverrideLabel: string | null = null;
     const classMatch = userInput.match(/\[סיווג אוטומטי:\s*([^\]]+)\]/);
     
@@ -2457,6 +2458,14 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
             // Three-part lower-court dockets keep all segments (number,
             // month, year) so 1477-12-22 never collapses to 1477/12.
             const docketAnchor: DocketId | null = extractDocket(fullCaseRef) ?? parseDocketNumber(caseNum);
+            const typedPadi = !!caseNumberMatch && docketCourt === "supreme" &&
+              !!docketAnchor && !isThreePartDocket(docketAnchor) &&
+              ![...pastedContract.rawInput.matchAll(typedPadiMarker)].length;
+            const typedFiling = typedPadi && docketAnchor ? typedSupremeFilingYear(docketAnchor.year) : null;
+            if (typedPadi) {
+              typedPadiOutput = { target: { caseType, caseNumber: caseNum, filingYear: typedFiling, party1: "", party2: "" },
+                evidence: { kind: "none" } };
+            }
             const docketMatchIndices = (text: string): number[] => {
               if (!docketAnchor) return [];
               const re = new RegExp(docketPatternSource(docketAnchor, { yearAliases: true }), "g");
@@ -2486,6 +2495,9 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
               if (jsonMatch) {
                 try {
                   let parsed = JSON.parse(jsonMatch[0]);
+                  const proposedTypedParties = typedPadi
+                    ? { party1: String(parsed.party1 || ""), party2: String(parsed.party2 || "") }
+                    : null;
 
                   // ── Strict party-source agreement check (kills adjacent-case / cited-precedent contamination) ──
                   // The Perplexity snippet for a Supreme Court PDF often excerpts a paragraph
@@ -2508,6 +2520,7 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
                   // fallback below can reuse the same anchored source set.
                   let anchoredResultsOuter: Array<Record<string, unknown>> = [];
                   let citationUrlsOuter: string[] = [];
+                  let groundedFollowupEvidence: unknown = null;
                   if (docketAnchor) {
                     // Anchor against BOTH structured search_results AND raw citation URLs.
                     // Some sonar-pro responses populate only `citations` (no
@@ -2781,12 +2794,54 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
 
 
 
+                  // Only explicitly typed, two-part Supreme dockets take this route.
+                  // Filing-century resolution is for verification, not retry eligibility
+                  // or the user-visible docket. Never use it as a decision date.
+                  const typedTarget = (): TypedPadiTarget => ({
+                    caseType, caseNumber: caseNum, filingYear: typedFiling,
+                    party1: String(parsed.party1 || proposedTypedParties?.party1 || ""),
+                    party2: String(parsed.party2 || proposedTypedParties?.party2 || ""),
+                  });
+                  let typedEvidence: TypedPadiEvidence = { kind: "none" };
+                  const applyTypedEvidence = () => {
+                    if (typedEvidence.kind === "verified" && typedFiling !== null) {
+                      const { publication, date } = typedEvidence;
+                      const decision = Number(publication.year);
+                      const range = PADI_VOLUME_YEAR_RANGES[publication.padi_volume];
+                      if (decision >= typedFiling && decision <= new Date().getUTCFullYear() &&
+                          (!range || decision >= range[0] && decision <= range[1]) &&
+                          !padiVolumeDocketConflict(publication.padi_volume, docketAnchor?.year, typedFiling)) {
+                        const { party1, party2 } = typedTarget();
+                        Object.assign(parsed, publication, { party1, party2, isPublished: true, date: date ?? "", confidence: "high" });
+                        partyMismatch = false;
+                        return;
+                      }
+                    }
+                    const claimed = parsed.isPublished || parsed.padi_volume;
+                    if (claimed) dropPublication(parsed, "typed decision has no compatible, exact reporter proof");
+                    if (claimed || typedEvidence.kind === "conflict") parsed.confidence = "low";
+                    if (typedEvidence.kind === "conflict") {
+                      parsed.date = "";
+                      parsed.year = "";
+                    }
+                  };
+                  if (typedPadi && parsed.found) {
+                    typedEvidence = mergeTypedPadiEvidence(
+                      findTypedPadiEvidence(typedTarget(), pData),
+                      findTypedPadiEvidence(typedTarget(), groundedFollowupEvidence),
+                    );
+                    applyTypedEvidence();
+                  } else if (typedPadi && parsed.isPublished) {
+                    dropPublication(parsed, "typed decision lacks a verified caption");
+                    parsed.confidence = "low";
+                  }
+
                   // ── First-pass publication gate ──
                   // The SECOND-pass path below already validates an פ"ד override
                   // (known volume + year fit + docket in a citation URL), but a
                   // first-pass `isPublished:true` used to bypass all of it — which
                   // is how בג"ץ 5555/18 acquired a fabricated "פ"ד נד(1) 1".
-                  if (parsed.found && parsed.isPublished && parsed.padi_volume) {
+                  if (!typedPadi && parsed.found && parsed.isPublished && parsed.padi_volume) {
                     const vol = String(parsed.padi_volume).trim();
                     const conflict = padiVolumeDocketConflict(vol, docketAnchor?.year);
                     if (conflict) {
@@ -2809,7 +2864,8 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
                   // ── Secondary verification: if Perplexity says not published, double-check with a focused query ──
 
                   // פ"ד exists only for the Supreme Court — never verify it for lower courts.
-                  if (parsed.found && !parsed.isPublished && !isLowerCourt(docketCourt)) {
+                  if (parsed.found && !parsed.isPublished && !isLowerCourt(docketCourt) &&
+                      (!typedPadi || typedEvidence.kind !== "conflict")) {
                     console.log(`[case-law] First search says unpublished for ${fullCaseRef}, running verification search...`);
                     try {
                       const verifyResp = await trackedFetch("https://api.perplexity.ai/chat/completions", {
@@ -2837,19 +2893,24 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
                       }, { stage: "case_publication_check" });
                       if (verifyResp.ok) {
                         const vData = await verifyResp.json();
-                        const decisionYear = String(parsed.year || "").trim()
-                          || (String(parsed.date || "").match(/(\d{4})/)?.[1] ?? "");
-                        const proof = verifiedPadiPublication({ caseType, caseNumber: caseNum,
-                          party1: String(parsed.party1 || ""), party2: String(parsed.party2 || ""), decisionYear }, vData);
-                        const range = proof ? PADI_VOLUME_YEAR_RANGES[proof.padi_volume] : null;
-                        const yearOk = !range || (Number(decisionYear) >= range[0] && Number(decisionYear) <= range[1]);
-                        if (proof && yearOk && !padiVolumeDocketConflict(proof.padi_volume, docketAnchor?.year)) {
-                          // All fields come from the same grounded citation. Never carry over a stale part/page.
-                          parsed.isPublished = true;
-                          parsed.padi_volume = proof.padi_volume;
-                          parsed.padi_part = proof.padi_part;
-                          parsed.padi_page = proof.padi_page;
-                          parsed.confidence = "high";
+                        if (typedPadi) {
+                          typedEvidence = mergeTypedPadiEvidence(typedEvidence, findTypedPadiEvidence(typedTarget(), vData));
+                          applyTypedEvidence();
+                        } else {
+                          const decisionYear = String(parsed.year || "").trim()
+                            || (String(parsed.date || "").match(/(\d{4})/)?.[1] ?? "");
+                          const proof = verifiedPadiPublication({ caseType, caseNumber: caseNum,
+                            party1: String(parsed.party1 || ""), party2: String(parsed.party2 || ""), decisionYear }, vData);
+                          const range = proof ? PADI_VOLUME_YEAR_RANGES[proof.padi_volume] : null;
+                          const yearOk = !range || (Number(decisionYear) >= range[0] && Number(decisionYear) <= range[1]);
+                          if (proof && yearOk && !padiVolumeDocketConflict(proof.padi_volume, docketAnchor?.year)) {
+                            // All fields come from the same grounded citation. Never carry over a stale part/page.
+                            parsed.isPublished = true;
+                            parsed.padi_volume = proof.padi_volume;
+                            parsed.padi_part = proof.padi_part;
+                            parsed.padi_page = proof.padi_page;
+                            parsed.confidence = "high";
+                          }
                         }
 
                       }
@@ -2860,7 +2921,10 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
 
                   // Reconcile decision date/year for published cases (Rule 18).
                   // First-pass `date`/`year` is often the volume's print year or fabricated.
-                  await reconcilePublishedDate(PERPLEXITY_API_KEY, caseType, caseNum, parsed);
+                  // Typed publication already contains its own decision year (and perhaps
+                  // day/month). Neither generated output nor a different same-docket page
+                  // may overwrite that immutable bundle.
+                  if (!typedPadi) await reconcilePublishedDate(PERPLEXITY_API_KEY, caseType, caseNum, parsed);
 
                   // ── Own-case page date (authoritative) ──
                   // A trusted result whose URL or TITLE identifies *this* docket
@@ -2868,13 +2932,14 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
                   // date (the court PDF for בג"ץ 5555/18 reports 2021-07-08).
                   // It outranks the model's date, which is routinely lifted from
                   // a neighbouring judgment in the same result set.
-                  if (docketAnchor && anchoredResultsOuter.length > 0) {
+                  if (docketAnchor && anchoredResultsOuter.length > 0 &&
+                      (!typedPadi || !parsed.isPublished && typedEvidence.kind !== "conflict")) {
                     const ownCase = anchoredResultsOuter.filter((r) =>
                       typeof r.url === "string"
                       && isTrustedHost(r.url, TRUSTED_LEGAL)
                       && (urlContainsDocket(r.url, docketAnchor) || textContainsDocket(r.title, docketAnchor)),
                     );
-                    const filed = docketFilingYear(docketAnchor.year);
+                    const filed = typedPadi ? typedFiling : docketFilingYear(docketAnchor.year);
                     for (const r of ownCase) {
                       const m = (typeof r.date === "string" ? r.date.trim() : "").match(/^(\d{4})-(\d{2})-(\d{2})$/);
                       if (!m) continue;
@@ -2907,6 +2972,19 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
                   }
 
 
+                  if (typedPadi) {
+                    if (parsed.isPublished && (p1Role || p2Role)) {
+                      dropPublication(parsed, "typed decision lacks a usable party caption");
+                      parsed.date = "";
+                      parsed.year = "";
+                    }
+                    typedPadiOutput = {
+                      target: typedTarget(),
+                      evidence: typedEvidence.kind === "conflict" || parsed.isPublished
+                        ? typedEvidence : { kind: "none" },
+                    };
+                  }
+
                   // Normalize databaseName from Perplexity citation URLs (lite.takdin → תקדין,
                   // supremedecisions.court.gov.il → אר״ש, etc). Overrides free-form strings.
                   if (!parsed.isPublished && !(docketCourt === "district_historic" && isPrintedDistrictRef(parsed.databaseName))) {
@@ -2929,7 +3007,9 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
                   // rather than silently hiding the citation behind a wrong fallback.
                   const dataIsUsable = parsed.found && (hasValidParties || partyMismatch) && (hasValidDate || hasValidPublication);
                   
-                  if (dataIsUsable) {
+                  if (typedEvidence.kind === "conflict") {
+                    caseLawHint = `\n\n══ חיפוש פסק דין ══\nנמצאו פרטי הכרעה סותרים לאותו תיק ${fullCaseRef}. הסבר שאין אזכור מאומת. אל תבחר אחת מההכרעות ואל תציג אזכור משולב.\n══`;
+                  } else if (dataIsUsable) {
                     // For a bare docket (no prefix in the user's input) the case-type
                     // comes from the search — but the DOCKET NUMBER always stays the
                     // one the user asked for.
@@ -2967,7 +3047,7 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
                     }
                     if (hasValidDate) {
                       details += `תאריך: ${parsed.date}\n`;
-                    } else {
+                    } else if (!typedPadi || !parsed.isPublished) {
                       details += `תאריך: [חסר: תאריך] — לא אומת תאריך מתן פסק הדין. כתוב [חסר: תאריך] ואל תסיק שנה מכרך פ"ד או מכל מקור אחר.\n`;
                     }
                     if (parsed.year && parsed.year.trim() !== "") details += `שנה: ${parsed.year}\n`;
@@ -4302,6 +4382,15 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
       /^\s*(?:["'״׳]?\s*)?(העוזר[^\n]*|המערכת[^\n]*מזהה[^\n]*|מכיוון שמדובר[^\n]*|אני\s+(?:מזהה|מבין|מבחין)[^\n]*|שלב\s*\d+[^\n]*)\n+/u,
       "",
     );
+
+    if (typedPadiOutput && !typedPadiDraftMatches(typedPadiOutput.target, typedPadiOutput.evidence, content) &&
+        !isUnstructuredCitationRefusal(content)) {
+      const warning = typedPadiOutput.evidence.kind === "conflict"
+        ? "נמצאו פרטי הכרעה סותרים לאותו תיק; לא הופק אזכור מאומת."
+        : "פרטי הפרסום או שנת ההכרעה לא אומתו באזכור שהופק.";
+      return completeResponse(new Response(JSON.stringify({ content: `${pastedContract.rawInput}\n⚠️ ${warning}` }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }));
+    }
 
     if (isUnstructuredCitationRefusal(content)) {
       // This is not reliable proof of a refundable failure or useful delivery.

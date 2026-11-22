@@ -106,7 +106,8 @@ type Handler = (req: Request) => Promise<Response>;
 let handler: Handler;
 type Call = { url: string; body: Record<string, unknown> };
 const calls: Call[] = [];
-let fixture: { tier1: unknown; openWeb: unknown; openWebSearch: unknown[]; verify: unknown; verifySearch?: unknown[]; date: unknown };
+let fixture: { tier1: unknown; openWeb: unknown; openWebSearch: unknown[]; verify: unknown; verifySearch?: unknown[]; date: unknown;
+  docket?: unknown; docketSearch?: unknown[]; formatter?: string };
 
 const chat = (content: unknown, extra: Record<string, unknown> = {}) =>
   new Response(JSON.stringify({ choices: [{ message: { content: typeof content === "string" ? content : JSON.stringify(content) } }], ...extra }), { status: 200 });
@@ -136,7 +137,10 @@ function install() {
       const body = JSON.parse(String(init?.body ?? "{}"));
       const call = { url, body };
       calls.push(call);
-      if (url.includes("ai.gateway.lovable.dev")) return chat("formatter-fixture");
+      if (url.includes("ai.gateway.lovable.dev")) return chat(fixture.formatter ?? "formatter-fixture");
+      if (fixture.docket && url.includes("perplexity") && !("search_domain_filter" in body) && !isOpenWebParty(call)) {
+        return chat(fixture.docket, { search_results: fixture.docketSearch ?? [] });
+      }
       if (isTier1Party(call)) return chat(fixture.tier1, { citations: [] });
       if (isOpenWebParty(call)) return chat(fixture.openWeb, { search_results: fixture.openWebSearch, citations: fixture.openWebSearch.map((r) => (r as { url: string }).url) });
       if (contentOf(call).includes("פורסם בפד")) return chat(fixture.verify, { search_results: fixture.verifySearch ?? [] });
@@ -178,7 +182,7 @@ function install() {
   fetch: () => { throw new Error("Unmocked network is prohibited"); } }));
 }
 
-async function post(raw: string, id: string) {
+async function postResponse(raw: string, id: string) {
   const content = `[סיווג אוטומטי: פסיקה (דפוס)]\n${raw}`;
   const res = await handler(new Request("https://local.test/citation-chat", {
     method: "POST", headers: { Authorization: "Bearer mock-token", "Content-Type": "application/json" },
@@ -186,7 +190,10 @@ async function post(raw: string, id: string) {
   }));
   expect(res.status).toBe(200);
   const gateway = calls.find((c) => c.url.includes("ai.gateway.lovable.dev"));
-  return gateway ? JSON.stringify(gateway.body.messages) : "";
+  return { prompt: gateway ? JSON.stringify(gateway.body.messages) : "", body: await res.json() };
+}
+async function post(raw: string, id: string) {
+  return (await postResponse(raw, id)).prompt;
 }
 
 function reset(next: Partial<typeof fixture>) {
@@ -240,5 +247,109 @@ describe("party-name search with an open-web complementary pass", () => {
     await post("קול העם נ' שר הפנים", "party-openweb-0004");
     expect(calls.filter(isTier1Party)).toHaveLength(1);
     expect(calls.filter(isOpenWebParty)).toHaveLength(0);
+  });
+});
+
+describe("typed Supreme reporter verification through the real handler, offline", () => {
+  const raw = 'בג״ץ 73/53';
+  const kol = 'בג״ץ 73/53 **חברת קול העם בע״מ** נ׳ **שר הפנים**, פ״ד ז 871 (1953).';
+  const govRow = (snippet: string) => ({ title: raw, url:'https://www.gov.il/fixture', snippet });
+  const publicationChecks = () => calls.filter((c) => c.url.includes("perplexity") && Array.isArray(c.body.search_domain_filter) && contentOf(c).includes("פורסם בפד"));
+  const mainDocket = () => calls.filter((c) => c.url.includes("perplexity") && !("search_domain_filter" in c.body));
+  it("keeps historical year, correct reporter without part, and literal docket, with no new provider call", async () => {
+    reset({ docket:{...KOL_HAAM,year:'2053',date:'16.10.2053'}, docketSearch:[govRow(kol)], formatter:kol });
+    const {body,prompt} = await postResponse(raw, "typed-padi-00001");
+    expect(body.content).toBe(kol);
+    expect(prompt).toContain("שנה: 1953");
+    expect(prompt).not.toContain("2053");
+    expect(mainDocket()).toHaveLength(1);
+    expect(publicationChecks()).toHaveLength(0);
+    expect(calls).toHaveLength(2);
+  });
+  it("binds a four-digit historical source without changing the user's docket", async () => {
+    reset({ docket: KOL_HAAM,
+      docketSearch: [{ title:"פסק דין", url:"https://www.gov.il/fixture", snippet:kol.replace("73/53","73/1953") }],
+      formatter:kol });
+    const {body} = await postResponse(raw, "typed-padi-00011");
+    expect(body.content).toBe(kol);
+    expect(mainDocket()).toHaveLength(2); // unchanged unanchored party follow-up, not an old-docket retry
+    expect(publicationChecks()).toHaveLength(0);
+    expect(calls.some((c) => contentOf(c).includes("משנת 1953"))).toBe(false);
+  });
+  it("retains a supplied paragraph pinpoint without comparing it as reporter page", async () => {
+    const pin = kol.replace(" (1953)", ", פס׳ 3 לפסק דינו של השופט ברק (1953)");
+    reset({ docket: KOL_HAAM, docketSearch:[govRow(kol)], formatter:pin });
+    expect((await postResponse(raw+" פס׳ 3 לפסק דינו של השופט ברק", "typed-padi-00012")).body.content).toBe(pin);
+  });
+  it("uses the existing filtered second pass if initial evidence lacks the reporter", async () => {
+    reset({ docket:{...KOL_HAAM,isPublished:false,padi_volume:'',padi_page:''},
+      docketSearch:[govRow(kol.split(', פ״ד')[0])], verifySearch:[govRow(kol)], formatter:kol });
+    const {body,prompt} = await postResponse(raw, "typed-padi-00002");
+    expect(body.content).toBe(kol);
+    expect(prompt).toContain("שנה: 1953");
+    expect(mainDocket()).toHaveLength(1);
+    expect(publicationChecks()).toHaveLength(1);
+    expect(publicationChecks()[0].body.search_domain_filter).toEqual(padiEvidence.PADI_EVIDENCE_DOMAINS);
+    expect(calls).toHaveLength(3);
+  });
+  it("does not invoke a newly eligible historical retry on a miss", async () => {
+    reset({ docket:{found:false}, docketSearch:[], formatter:'לא נמצא מקור.' });
+    await postResponse(raw, "typed-padi-00003");
+    expect(mainDocket()).toHaveLength(1);
+    expect(publicationChecks()).toHaveLength(0);
+  });
+  it("prevents a misformatted valid bundle, including a missing, changed or unproven reporter", async () => {
+    for (const [n,draft] of [kol.replace("871","877"),kol.replace("(1953)","(1995)"),kol.replace(" 73/53 "," 73/1953 "),kol.split(', פ״ד')[0]].entries()) {
+      reset({ docket:KOL_HAAM, docketSearch:[govRow(kol)], formatter:draft });
+      const {body} = await postResponse(raw, `typed-padi-draft-000${n}`);
+      expect(body.content).toBe(raw+'\n⚠️ פרטי הפרסום או שנת ההכרעה לא אומתו באזכור שהופק.');
+    }
+  });
+  it("does not permit Adalah's cross-reference or a fabricated modern reporter through the formatter", async () => {
+    const a = 'בג״ץ 1113/99', earlier = 'בג״ץ 240/98';
+    const p1 = 'עדאלה - המרכז המשפטי לזכויות המיעוט הערבי בישראל', p2 = 'השר לענייני דתות';
+    const bad = `${a} ${p1} נ׳ ${p2}, פ״ד נב(5) 167 (2000).`;
+    reset({ docket:{...KOL_HAAM,caseNumber:'1113/99',party1:p1,party2:p2,year:'2000',date:'18.4.2000',padi_volume:'נב',padi_part:'5',padi_page:'167'},
+      docketSearch:[{ title:a, url:'https://supreme.court.gov.il/1113-99',date:'2000-04-18',snippet:bad.replace(a,earlier)}],formatter:bad });
+    const ad = await postResponse(a, "typed-padi-00004");
+    expect(ad.prompt).not.toContain("167");
+    expect(ad.body.content).not.toContain("167");
+    const h='בג״ץ 5555/18', fake=`${h} חסון נ׳ כנסת ישראל, פ״ד נד(1) 1 (2021).`;
+    reset({ docket:{...KOL_HAAM,caseNumber:'5555/18',party1:'חסון',party2:'כנסת ישראל',date:'8.7.2021',year:'2021',padi_volume:'נד',padi_part:'1',padi_page:'1'},
+      docketSearch:[{title:h,url:'https://supreme.court.gov.il/5555-18',date:'2021-07-08',snippet:fake}],formatter:fake });
+    const hz=await postResponse(h,"typed-padi-00005");
+    expect(hz.body.content).not.toContain('נד(1) 1');
+    reset({ docket:{...KOL_HAAM,isPublished:false,padi_volume:'',padi_page:'',caseNumber:'5555/18',party1:'חסון',party2:'כנסת ישראל',date:'8.7.2021',year:'2021'},
+      docketSearch:[{title:h,url:'https://supreme.court.gov.il/5555-18',date:'2021-07-08',snippet:'חסון נ׳ כנסת ישראל'}],
+      formatter:`${h} **חסון** נ׳ **כנסת ישראל** (אר״ש 8.7.2021).` });
+    const db=await postResponse(h,"typed-padi-00006");
+    expect(db.body.content).toContain('אר״ש 8.7.2021');
+  });
+  it("locks Panḥasi's reporter year before a different same-docket date, then withholds a result on two proof records", async () => {
+    const p = 'בג״ץ 1843/93';
+    const a = `${p} **פנחסי** נ׳ **כנסת ישראל**, פ״ד מח(4) 492 (1993).`;
+    const b = `${p} **פנחסי** נ׳ **כנסת ישראל**, פ״ד מט(1) 661 (17.1.1995).`;
+    const row = (snippet: string) => ({title:p,url:'https://supreme.court.gov.il/1843-93',date:'1995-01-17',snippet});
+    const model = {...KOL_HAAM,caseNumber:'1843/93',party1:'פנחסי',party2:'כנסת ישראל',year:'1995',date:'17.1.1995'};
+    reset({ docket:model,docketSearch:[row(a)],formatter:a });
+    const single = await postResponse(p, "typed-padi-00007");
+    expect(single.prompt).toContain("שנה: 1993");
+    expect(single.prompt).not.toContain("17.1.1995");
+    expect(single.body.content).toBe(a);
+    reset({ docket:model,docketSearch:[row(a+" " + b)],formatter:a });
+    const conflict = await postResponse(p, "typed-padi-00008");
+    expect(conflict.prompt).toContain("פרטי הכרעה סותרים");
+    expect(conflict.body.content).toBe(p+'\n⚠️ נמצאו פרטי הכרעה סותרים לאותו תיק; לא הופק אזכור מאומת.');
+    expect(publicationChecks()).toHaveLength(0);
+  });
+  it("does not change explicitly lower-court or already supplied printed-reference paths", async () => {
+    const lower = 'עש״א 1477-12-22';
+    const original = `${lower} **הקיבוץ המאוחד** נ׳ **רשות הפטנטים** (אר״ש 9.4.2024).`;
+    reset({ docket:{...KOL_HAAM,isPublished:false,padi_volume:'',padi_page:'',caseType:'עש״א',caseNumber:'1477-12-22',party1:'הקיבוץ המאוחד',party2:'רשות הפטנטים',date:'9.4.2024',year:'2024'},
+      docketSearch:[{title:lower,url:'https://court.gov.il/1477-12-22',date:'2024-04-09',snippet:'הקיבוץ המאוחד נ׳ רשות הפטנטים'}],formatter:original });
+    expect((await postResponse(lower, "typed-padi-00009")).body.content).toBe(original);
+    expect(publicationChecks()).toHaveLength(0);
+    reset({ docket:{found:false},formatter:kol });
+    expect((await postResponse(kol.replaceAll("**", ""), "typed-padi-00010")).body.content).toBe(kol);
   });
 });
