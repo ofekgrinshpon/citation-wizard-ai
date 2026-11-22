@@ -262,6 +262,25 @@ export function resolveHebrewArticle(request: ArticleRequest, evidence: ArticleE
   return { request, fields, provenance, conflicts, matched: matching.length > 0 && !ambiguous };
 }
 
+/** Classify an existing book-to-journal fallback only when the complete
+ * publication tuple is attested by one record. Do not create a new lookup. */
+export function groundedHebrewJournalFallback(raw: string, proposed: Record<string, unknown>, results: unknown): ArticleFields | null {
+  const request = createHebrewArticleRequest(raw);
+  const journal = clean(proposed.journalName);
+  const identity = { author: clean(proposed.author), articleTitle: clean(proposed.title) };
+  if (!journal || !request.supplied.articleTitle || request.topic || !articleIdentityMatches(request, identity)) return null;
+  const evidence = collectHebrewArticleEvidence(request, proposed, results);
+  const resolution = resolveHebrewArticle(request, evidence);
+  if (!resolution.matched || resolution.conflicts.length) return null;
+  const witness = evidence.find(({ fields: f }) =>
+    f.author && same(f.author, identity.author) && f.articleTitle && f.journalName && same(f.journalName, journal) &&
+    !/^(?:בתוך|בספר)\s/.test(f.journalName) &&
+    f.firstPage && (f.year || f.hebrewYear) &&
+    (["author", "articleTitle", "journalName", "volume", "notebook", "firstPage", "year", "hebrewYear"] as const).every(field =>
+      !resolution.fields[field] || !!f[field] && same(f[field]!, resolution.fields[field]!)));
+  return witness?.fields ?? null;
+}
+
 /** Cached text still needs the same requested-work identity. Its provenance is
  * an internal record label, not a fabricated external source URL. */
 export function cachedHebrewArticleEvidence(request: ArticleRequest, citation: string, sourceName: string): ArticleEvidence[] {

@@ -1,4 +1,4 @@
-import { buildHebrewArticleValidation } from "../_shared/hebrewArticleValidation.ts";
+import { buildGroundedHebrewJournalResultType, buildHebrewArticleValidation } from "../_shared/hebrewArticleValidation.ts";
 import { PADI_EVIDENCE_DOMAINS, verifiedPadiPublication, findTypedPadiEvidence, mergeTypedPadiEvidence, typedPadiDraftMatches, typedPadiMarker, typedSupremeFilingYear, type TypedPadiEvidence, type TypedPadiTarget } from "../_shared/padiPublicationEvidence.ts";
 import { isHebrewBookTitleQuery, projectHebrewBookProof, buildHebrewBookChoice, hebrewBookPartial, selectHebrewBook } from "../_shared/citationPure/hebrewBookChoice.ts";
 import { resolveNeutralDocket } from "./neutralDocket.ts";
@@ -99,7 +99,7 @@ import { createCitationDiagnosticCollector } from "../_shared/citationDiagnostic
 import { authorizeCitationDiagnostic, isCitationDiagnosticPreflight, CITATION_DIAGNOSTIC_BUILD, CITATION_DIAGNOSTIC_PARSER } from "../_shared/citationDiagnosticGate.ts";
 import { normalizeEditorPlacement } from "../_shared/articleCitationValidator.ts";
 import {
-  articleRawInput, createHebrewArticleRequest, collectHebrewArticleEvidence,
+  articleRawInput, createHebrewArticleRequest, collectHebrewArticleEvidence, groundedHebrewJournalFallback,
   resolveHebrewArticle, renderHebrewArticle, isCompleteHebrewArticle,
   cachedHebrewArticleEvidence,
   type ArticleEvidence,
@@ -3675,6 +3675,7 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
 
     // ── Book (ספר) search via Perplexity ──
     let bookHint = "";
+    let groundedBookFallback: ReturnType<typeof groundedHebrewJournalFallback> = null;
     const isBook = classMatch && /ספרות|ספר/.test(classMatch[1]);
     const isUnknown = classMatch && /לא מזוהה|אחר/.test(classMatch[1]);
     const noClassTag = !classMatch;
@@ -3857,7 +3858,16 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
                 if (!bookHint || /חיפוש ספר ══\nלא נמצאו/.test(bookHint)) {
                   const fb = await fallbackBiblioSearch(PERPLEXITY_API_KEY, bookQuery, "article");
                   console.log(`[book] fallback=article hit=${!!fb} kind=${fb?.kind || "none"}`);
-                  if (fb) { bookHint = fb.hint; }
+                  if (fb) {
+                    bookHint = fb.hint;
+                    if (isBook && !/מאמר|פרק|לועז|אנגלי|זר/.test(classMatch?.[1] ?? "") &&
+                        fb.kind === "journal" && ["existing", "israeli"].includes(pastedContract.route) &&
+                        /[א-ת]/.test(pastedContract.rawInput) && !foreignLookupRequest) {
+                      groundedBookFallback = groundedHebrewJournalFallback(
+                        pastedContract.rawInput, fb.proposed, fb.searchResults,
+                      );
+                    }
+                  }
                 }
               }
             } else {
@@ -4401,8 +4411,12 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
       }), { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
+    const groundedJournalResultType = groundedBookFallback && buildGroundedHebrewJournalResultType(
+      pastedContract.rawInput, content, groundedBookFallback,
+    );
     return completeResponse(new Response(
-      JSON.stringify(foreignLookupResult ? { content, foreignLookup: foreignLookupResult } : { content }),
+      JSON.stringify(foreignLookupResult ? { content, foreignLookup: foreignLookupResult } :
+        groundedJournalResultType ? { content, groundedJournalResultType } : { content }),
       {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       },

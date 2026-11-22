@@ -1049,3 +1049,52 @@ describe('title-only Hebrew books on the real handler',()=>{
  });
 
 });
+
+describe("grounded Hebrew journal result type after an initial book guess", () => {
+  const raw = "המהפכה החוקתית: זכויות יסוד מוגנות";
+  const author = "אהרן ברק";
+  const full = `${author} "${raw}" משפט וממשל א 9 (1992).`;
+  const rendered = full.replace("משפט וממשל", "**משפט וממשל**");
+  // Offline stand-ins, not a capture from Perplexity or a PDF-extraction claim.
+  const record = (snippet: string, title = raw) =>
+    ({ url: "https://law.haifa.ac.il/wp-content/uploads/2021/11/1-barak-2.pdf", title, snippet });
+  const proposedJournal = { found: true, kind: "journal", title: raw, author, journalName: "משפט וממשל", volume: "א", firstPage: "9", year: 1992 };
+  const runFallback = (records: ReturnType<typeof record>[], formatterReply = rendered, proposal = proposedJournal) =>
+    runHandler({ label: "ספר", raw, candidate: { found: false }, formatterReply,
+      providerJsonStage: "biblio_fallback",
+      stageJson: { choices: [{ message: { content: JSON.stringify(proposal) } }], search_results: records },
+    });
+
+  it("keeps the formatter response and usage unchanged, and emits the type only after a matched one-record proof", async () => {
+    const r = await runFallback([record(full)]);
+    expect(r.status).toBe(200);
+    expect(r.body.content).toBe(rendered);
+    expect(r.calls.map(c => c.stage)).toEqual(["book_retrieval_tier1", "biblio_fallback", "formatter"]);
+    expect(articleValidation.readGroundedHebrewJournalResultType(r.body.groundedJournalResultType, raw, rendered)).toBe("article");
+    expect(articleValidation.readGroundedHebrewJournalResultType(r.body.groundedJournalResultType, raw + ".", rendered)).toBeNull();
+    expect(articleValidation.readGroundedHebrewJournalResultType(r.body.groundedJournalResultType, raw, rendered + " ")).toBeNull();
+    expect(r.rpc.mock.calls.find(([name]) => name === "finish_citation_request")?.[1]._result).toEqual({ content: rendered });
+  });
+
+  it.each([
+    ["prose author", [record(`הרצאה ששימשה בסיס לרשימתו של המחבר "${raw}"`)], rendered],
+    ["same-author different PDF", [record(`${author} "על תפקידי כשופט" משפט וממשל ז 33 (2004).`)], rendered],
+    ["same title conflicting author", [record(full), record(full.replace(author, "מחבר אחר"))], rendered],
+    ["formatter changes year", [record(full)], rendered.replace("1992", "1993")],
+  ] as const)("does not relabel on %s", async (_name, records, formatterReply) => {
+    const r = await runFallback([...records], formatterReply);
+    expect(r.status).toBe(200);
+    expect(r.body.content).toBe(formatterReply);
+    expect(r.body).not.toHaveProperty("groundedJournalResultType");
+  });
+
+  it("does not relabel an ordinary book or accept a chapter proposal as a journal", async () => {
+    const r = await runHandler({ raw: "דיני חוזים", label: "ספר",
+      candidate: { found: true, candidates: [{ bookTitle: "דיני חוזים", author, sourceUrl: "https://nli.org.il/book/a" }] },
+      records: [{ title: `דיני חוזים - ${author}`, url: "https://nli.org.il/book/a", snippet: "שנת פרסום: 2016" }] });
+    expect(r.body.sourceType).toBe("book");
+    expect(r.body).not.toHaveProperty("groundedJournalResultType");
+    expect((await runFallback([record(full)], rendered, { ...proposedJournal, kind: "article_in_book" })).body)
+      .not.toHaveProperty("groundedJournalResultType");
+  });
+});

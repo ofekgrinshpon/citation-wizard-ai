@@ -1,3 +1,4 @@
+import { readGroundedHebrewJournalResultType } from "../../supabase/functions/_shared/hebrewArticleValidation";
 import { SOURCE_TYPE_LABELS, type SourceType } from "@/data/abbreviations";
 import { citationTextOnly } from "@/lib/citationSegments";
 
@@ -10,4 +11,11 @@ export function getCitationResultType(requested: SourceType, extractedCitation: 
     /[,\s](?:פ["״]ד|פד["״]ע|פ["״]מ)\s+(?:[א-ת]+[׳']?|\d+)(?:\s*\(\d+\))?\s+\d+\b/.test(citation);
   const type = published ? "case_law_published" : requested;
   return { type, label: type === "unknown" ? null : SOURCE_TYPE_LABELS[type] };
+}
+
+
+/** The book guess only yields to the server's bound, evidence-checked result. */
+export function getGroundedJournalType(requested: SourceType | undefined, rawInput: string, response: Record<string, unknown> | null | undefined): "article" | undefined {
+  if (requested !== "book" || typeof response?.content !== "string") return;
+  return readGroundedHebrewJournalResultType(response.groundedJournalResultType, rawInput, response.content) ?? undefined;
 }

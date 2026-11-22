@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { SOURCE_TYPE_LABELS } from "@/data/abbreviations";
-import { getCitationResultType } from "./citationResultType";
+import { getCitationResultType, getGroundedJournalType } from "./citationResultType";
 
 describe("quick citation result classification", () => {
   it.each([
@@ -25,5 +25,25 @@ describe("quick citation result classification", () => {
   it("does not infer a case category for a different route", () => {
     expect(getCitationResultType("unknown", 'ע״א 140/00 אטינגר, פ״ד נח(4) 486 (2004).'))
       .toEqual({ type: "unknown", label: null });
+  });
+});
+
+
+describe("verified journal result after an initial book guess", () => {
+  const raw = "המהפכה החוקתית: זכויות יסוד מוגנות";
+  const content = `אהרן ברק "${raw}" **משפט וממשל** א 9 (1992).`;
+  const groundedJournalResultType = { version: 1, type: "article", rawInput: raw, content };
+  const displayAndHistory = (data: { content: string; groundedJournalResultType?: unknown }) =>
+    getCitationResultType(getGroundedJournalType("book", raw, data) ?? "book", data.content);
+
+  it("uses the accepted article type for both the badge and history label", () => {
+    expect(displayAndHistory({ content, groundedJournalResultType })).toEqual({ type: "article", label: SOURCE_TYPE_LABELS.article });
+  });
+
+  it("ignores even a correct-looking citation without the server's binding", () => {
+    expect(displayAndHistory({ content })).toEqual({ type: "book", label: SOURCE_TYPE_LABELS.book });
+    expect(displayAndHistory({ content, groundedJournalResultType: { ...groundedJournalResultType, rawInput: raw + "." } }).type).toBe("book");
+    expect(displayAndHistory({ content: content.replace("1992", "1993"), groundedJournalResultType }).type).toBe("book");
+    expect(getGroundedJournalType("unknown", raw, { content, groundedJournalResultType })).toBeUndefined();
   });
 });

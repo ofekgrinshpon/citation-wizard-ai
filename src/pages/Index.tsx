@@ -77,7 +77,7 @@ interface IndexCitationRetry {
 import { validateCitationInput } from "@/lib/citationInputValidation";
 import { handleRefundResponse } from "@/lib/refundResponse";
 import { saveCitationHistoryRecord } from "@/lib/citationHistorySave";
-import { getCitationResultType } from "@/lib/citationResultType";
+import { getCitationResultType, getGroundedJournalType } from "@/lib/citationResultType";
 import { articleRequestFields, compatibleArticleCache, renderForeignArticleLookup, type ForeignArticleLookupResponse } from "@/lib/foreignArticleAdapter";
 import { prepareForeignStatute, renderForeignStatuteLookup, renderStatuteLocal } from "@/lib/foreignStatuteAdapter";
 import { renderUsUnreportedLocal } from "@/lib/usUnreportedLocal";
@@ -333,7 +333,7 @@ const Index = () => {
     }
   };
 
-  const callAPI = async (userMessage: string, history: Message[], telemetry?: CostTelemetry, article?: { sourceType: SourceType; rawInput: string; manual?: boolean; manualChoice?: CitationManualChoice | null }, onSuccess?: (reply: string, isCurrent: () => boolean, historyRequestId?: string, typed?: boolean, resolution?: import("@/lib/citationPlanner").CitationResolution) => Promise<void> | void) => {
+  const callAPI = async (userMessage: string, history: Message[], telemetry?: CostTelemetry, article?: { sourceType: SourceType; rawInput: string; manual?: boolean; manualChoice?: CitationManualChoice | null }, onSuccess?: (reply: string, isCurrent: () => boolean, historyRequestId?: string, typed?: boolean, resolution?: import("@/lib/citationPlanner").CitationResolution, groundedSourceType?: "article") => Promise<void> | void) => {
     if (quotaBlocksNew) {
       const message = sourceQuota?.loading ? trialQuotaUnavailableMessage : trialQuotaReachedMessage;
       toast.error(message);
@@ -432,7 +432,11 @@ const Index = () => {
         completed = true;
         const historyRequestId = typeof data?.requestId === "string" &&
           ["available", "unconfirmed"].includes(String(data.recoveryAvailability)) ? data.requestId : undefined;
-        await onSuccess?.(reply, isCurrent, historyRequestId, plan.kind === "typed" || !!statuteRequest || !!safety || !!caseRequest, resolved.kind === "terminal" ? resolved.resolution : undefined);
+        const groundedSourceType = !article?.manual && resolved.kind === "legacy"
+          ? getGroundedJournalType(article?.sourceType, pasted.contract.rawInput, data)
+          : undefined;
+        await onSuccess?.(reply, isCurrent, historyRequestId, plan.kind === "typed" || !!statuteRequest || !!safety || !!caseRequest,
+          resolved.kind === "terminal" ? resolved.resolution : undefined, groundedSourceType);
       }
       if (!isCurrent()) throw Object.assign(new Error("CITATION_RETRY_STALE"), { handled: true });
       return reply;
@@ -731,10 +735,10 @@ const Index = () => {
         const engineHint = buildEnginePromptHint(sourceType as SourceType);
         prompt = `[סיווג אוטומטי: ${sourceLabel}]\n${engineHint}${normalized}`;
       }
-      const onCitationSuccess = async (reply: string, isCurrent: () => boolean, historyRequestId?: string, _typed?: boolean, resolution?: import("@/lib/citationPlanner").CitationResolution) => {
+      const onCitationSuccess = async (reply: string, isCurrent: () => boolean, historyRequestId?: string, _typed?: boolean, resolution?: import("@/lib/citationPlanner").CitationResolution, groundedSourceType?: "article") => {
         const assistantIndex = messages.length;
         const extractedCitation = extractCitationFromResponse(reply);
-        const { type: effectiveSourceType, label: effectiveSourceLabel } = getCitationResultType(resolution?.sourceType === "book" ? "book" : sourceType, extractedCitation);
+        const { type: effectiveSourceType, label: effectiveSourceLabel } = getCitationResultType(groundedSourceType ?? (resolution?.sourceType === "book" ? "book" : sourceType), extractedCitation);
         setMessages((prev) => [...prev, { role: "assistant", content: reply, completion: resolution?.completion, pastedCitation: resolution?.pastedCitation, foreignChoice: resolution?.foreignChoice, bookEditionChoice: resolution?.bookEditionChoice, bookEditionChoiceAccountId: user?.id, hebrewBookChoice: resolution?.hebrewBookChoice, hebrewBookChoiceAccountId: user?.id, countryQuestion: resolution?.countryQuestion }]);
         setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: effectiveSourceType }));
         setMessageRawInputs((prev) => ({ ...prev, [assistantIndex]: rawInput }));
@@ -930,12 +934,12 @@ const Index = () => {
         prompt = `${prompt}\n\n══ מקור מאומת (${verifiedCategory}) ══\nהשתמש בפרטים הבאים מהמקור המאומת כדי להשלים את האזכור:\nשם: ${verifiedMatch.source_name}\nאזכור מלא: ${verifiedMatch.full_citation}\n══════════════════════════════════`;
       }
 
-      const onCitationSuccess = async (reply: string, isCurrent: () => boolean, historyRequestId?: string, typed?: boolean, resolution?: import("@/lib/citationPlanner").CitationResolution) => {
+      const onCitationSuccess = async (reply: string, isCurrent: () => boolean, historyRequestId?: string, typed?: boolean, resolution?: import("@/lib/citationPlanner").CitationResolution, groundedSourceType?: "article") => {
         const assistantIndex = newMessages.length;
 
         // Display, history and verification use the same result classification.
         const extractedCitation = extractCitationFromResponse(reply);
-        const { type: effectiveSourceType, label: effectiveSourceLabel } = getCitationResultType(resolution?.sourceType === "book" ? "book" : sourceType, extractedCitation);
+        const { type: effectiveSourceType, label: effectiveSourceLabel } = getCitationResultType(groundedSourceType ?? (resolution?.sourceType === "book" ? "book" : sourceType), extractedCitation);
 
         // Post-response validation using the citation engine
         let finalReply = reply;
@@ -1373,10 +1377,10 @@ const Index = () => {
                                 });
                               }
                             } else {
-                              const onCitationSuccess = async (reply: string, isCurrent: () => boolean, historyRequestId?: string, _typed?: boolean, resolution?: import("@/lib/citationPlanner").CitationResolution) => {
+                              const onCitationSuccess = async (reply: string, isCurrent: () => boolean, historyRequestId?: string, _typed?: boolean, resolution?: import("@/lib/citationPlanner").CitationResolution, groundedSourceType?: "article") => {
                                 const assistantIndex = updatedMessages.length;
                                 setMessages([...updatedMessages, { role: "assistant", content: reply, completion: resolution?.completion, pastedCitation: resolution?.pastedCitation, foreignChoice: resolution?.foreignChoice, bookEditionChoice: resolution?.bookEditionChoice, bookEditionChoiceAccountId: user?.id, hebrewBookChoice: resolution?.hebrewBookChoice, hebrewBookChoiceAccountId: user?.id, countryQuestion: resolution?.countryQuestion }]);
-                                setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: sourceType as SourceType }));
+                                setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: groundedSourceType ?? (sourceType as SourceType) }));
                                 setMessageRawInputs((prev) => ({ ...prev, [assistantIndex]: newContent }));
 
                                 const extractedCitation = extractCitationFromResponse(reply);
@@ -1384,7 +1388,7 @@ const Index = () => {
                                 const isVerifiedClean = !resolution?.bookEditionChoice && !resolution?.hebrewBookChoice && !resolution?.foreignChoice && !/\[חסר:/.test(reply) && !/⚠️/.test(reply);
                                 const isFragment = !extractedCitation || extractedCitation.length < 10;
                                 if (isVerifiedClean && !isFragment) {
-                                  await saveVerifiedSource(newContent, extractedCitation, sourceType !== "unknown" ? sourceLabel : null, undefined, editTel, isCurrent);
+                                  await saveVerifiedSource(newContent, extractedCitation, groundedSourceType ? SOURCE_TYPE_LABELS[groundedSourceType] : sourceType !== "unknown" ? sourceLabel : null, undefined, editTel, isCurrent);
                                 }
                               };
                               await callAPI(prompt, updatedMessages.slice(0, i), editTel, { sourceType, rawInput: normalized }, onCitationSuccess);

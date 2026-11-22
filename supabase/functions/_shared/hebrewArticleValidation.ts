@@ -1,3 +1,5 @@
+import { normalizeArticleText, type ArticleFields } from "./hebrewArticleEvidence.ts";
+
 /** Rendered citation structure only, never publication verification or evidence. */
 export function readRenderedHebrewArticleFields(response: string): Record<string, string> {
   // Sources, explanatory warnings and their years/pages cannot fill citation slots.
@@ -61,4 +63,32 @@ export function readHebrewArticleValidation(value: unknown, rawInput: string, co
   }
   if (!fields.year) fields.year = fields.hebrewYear || fields.newspaperDate || (/^(?:\d{4}|ה?ת[א-ת"״׳']{2,7})$/.test(fields.volume || '') ? fields.volume : '');
   return fields;
+}
+
+
+// Receipt about this response's source type, not a new set of citation facts.
+// Projection intentionally excludes URLs and provider snippets.
+export interface GroundedHebrewJournalResultType {
+  version: 1;
+  type: "article";
+  rawInput: string;
+  content: string;
+}
+
+export function buildGroundedHebrewJournalResultType(rawInput: string, content: string, proof: ArticleFields): GroundedHebrewJournalResultType | null {
+  if (!rawInput || rawInput.length > 2000 || content.length > 8000 || /\[חסר\s*:|⚠️/.test(content)) return null;
+  const actual = readRenderedHebrewArticleFields(content);
+  const expected = { ...proof, year: proof.year || proof.hebrewYear };
+  if (!expected.author || !expected.articleTitle || !expected.journalName || !expected.firstPage || !expected.year) return null;
+  for (const key of ["author", "articleTitle", "journalName", "volume", "notebook", "firstPage", "year"] as const) {
+    if (normalizeArticleText(actual[key] || "") !== normalizeArticleText(expected[key] || "")) return null;
+  }
+  return { version: 1, type: "article", rawInput, content };
+}
+
+export function readGroundedHebrewJournalResultType(value: unknown, rawInput: string, content: string): "article" | null {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+  const v = value as Partial<GroundedHebrewJournalResultType>;
+  return Object.keys(v).length === 4 && v.version === 1 && v.type === "article" &&
+    v.rawInput === rawInput && v.content === content ? "article" : null;
 }
