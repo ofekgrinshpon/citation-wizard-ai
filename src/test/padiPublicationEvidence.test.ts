@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { readFileSync } from "node:fs";
 import ts from "typescript";
-import { verifiedPadiPublication, PADI_EVIDENCE_DOMAINS, findTypedPadiEvidence, findTypedPadiCitation, mergeTypedPadiEvidence, readTypedDecisionDate, typedSupremeFilingYear } from "../../supabase/functions/_shared/padiPublicationEvidence";
+import { verifiedPadiPublication, PADI_EVIDENCE_DOMAINS, findTypedPadiEvidence, findTypedPadiCitation, mergeTypedPadiEvidence, readTypedDecisionDate, typedSupremeFilingYear, typedPadiDraftMatches } from "../../supabase/functions/_shared/padiPublicationEvidence";
 const target = {caseType:'ע״א',caseNumber:'140/00',party1:'עיזבון המנוח מיכאל אטינגר',party2:'החברה לשיקום ופיתוח הרובע היהודי בעיר העתיקה בירושלים בע״מ',decisionYear:'2004'};
 const citation = `ע״א 140/00 ${target.party1} נ׳ ${target.party2}, פ״ד נח(4) 486 (2004)`;
 const result = (snippet=citation,url='https://www.gov.il/BlobFolder/reports/interest/he/insurance_companies_a.pdf')=>({url,snippet});
@@ -187,5 +187,45 @@ describe("recognized Israeli case repositories (afiklaw, psikan)", () => {
  });
  it.each(['https://afiklaw.com.evil.test/x','https://notafiklaw.com/x','http://he.afiklaw.com/x','https://psikan.com.example.org/x','https://www.takdin.co.il/x'])("rejects lookalike or excluded host %s", url => {
    expect(findTypedPadiCitation(mizrahi,[payload({url,snippet:full})])).toEqual({kind:'none'});
+ });
+});
+
+describe("source reporter without a parenthesized year (repository headings)", () => {
+ const mizrahi = {caseType:'ע״א', caseNumber:'6821/93', filingYear:1993};
+ const head = 'עא 6821/93 בנק המזרחי המאוחד בע"מ נ\' מגדל כפר שיתופי, פ"ד מט(4) 221';
+ const afik = (snippet:string) => ({url:'https://he.afiklaw.com/caselaw/4390', snippet});
+ const scraper = {url:'https://israel.com/he/court-rulings/ca-6821-93', snippet:'ע"א 6821/93 בנק המזרחי נ\' מיגדל (1.1.2005)'};
+ const expected = {kind:'verified',party1:'בנק המזרחי המאוחד בע"מ',party2:'מגדל כפר שיתופי',
+   publication:{padi_volume:'מט',padi_part:'4',padi_page:'221',year:'1995'},date:'9.11.1995'};
+ it("Bank Mizrahi: the Afik heading with the date on the next line binds parties, פ״ד and year", () => {
+   expect(findTypedPadiCitation(mizrahi,[payload(scraper,afik(`${head} · פסקי דין · אפיק ושות׳\n09 נובמבר 1995`))])).toEqual(expected);
+ });
+ it("reads a numeric or ב-prefixed Hebrew-month date the same way", () => {
+   expect(findTypedPadiCitation(mizrahi,[payload(afik(`${head}\n9.11.1995`))])).toEqual(expected);
+   expect(findTypedPadiCitation(mizrahi,[payload(afik(`${head}, ניתן 9 בנובמבר 1995`))])).toEqual(expected);
+ });
+ it("never takes the year from the volume alone: no date means no proof", () => {
+   expect(findTypedPadiCitation(mizrahi,[payload(afik(head))])).toEqual({kind:'none'});
+   expect(findTypedPadiCitation(mizrahi,[payload(afik(`${head} · פסקי דין · אפיק ושות׳`))])).toEqual({kind:'none'});
+ });
+ it("rejects a date that is far away, after other numbers, impossible, or after another docket", () => {
+   expect(findTypedPadiCitation(mizrahi,[payload(afik(`${head} ${'מילים רבות בדף '.repeat(6)}9.11.1995`))])).toEqual({kind:'none'});
+   expect(findTypedPadiCitation(mizrahi,[payload(afik(`${head} עמודים 30\n9.11.1995`))])).toEqual({kind:'none'});
+   expect(findTypedPadiCitation(mizrahi,[payload(afik(`${head}\n31 נובמבר 1995`))])).toEqual({kind:'none'});
+   expect(findTypedPadiCitation(mizrahi,[payload(afik(`${head}; ע"א 4628/93 מדינת ישראל נ' אפרופים 9.11.1995`))])).toEqual({kind:'none'});
+ });
+ it("a detached date that disagrees with another trusted source's year is a conflict", () => {
+   const nevo = {url:'https://www.nevo.co.il/a', snippet:'ע״א 6821/93 בנק המזרחי המאוחד בע"מ נ\' מגדל כפר שיתופי, פ״ד מט(4) 221 (1996)'};
+   expect(findTypedPadiCitation(mizrahi,[payload(afik(`${head}\n9.11.1995`),nevo)])).toEqual({kind:'conflict'});
+ });
+ it("untrusted hosts still never count, even with the date", () => {
+   expect(findTypedPadiCitation(mizrahi,[payload({...afik(`${head}\n9.11.1995`),url:'https://israel.com/he/x'})])).toEqual({kind:'none'});
+ });
+ it("the formatted answer itself must still print the year", () => {
+   const t = {...mizrahi,party1:'בנק המזרחי המאוחד בע"מ',party2:'מגדל כפר שיתופי'};
+   const ev = findTypedPadiEvidence(t,payload(afik(`${head}\n9.11.1995`)));
+   expect(ev).toMatchObject({kind:'verified',publication:{year:'1995'},date:'9.11.1995'});
+   expect(typedPadiDraftMatches(t,ev,`ע"א 6821/93 בנק המזרחי המאוחד בע"מ נ' מגדל כפר שיתופי, פ"ד מט(4) 221 (1995)`)).toBe(true);
+   expect(typedPadiDraftMatches(t,ev,`ע"א 6821/93 בנק המזרחי המאוחד בע"מ נ' מגדל כפר שיתופי, פ"ד מט(4) 221`)).toBe(false);
  });
 });

@@ -80,7 +80,50 @@ const typedDocketMatches = () => /(?<![\p{L}\p{N}])([א-ת]{1,5}(?:["״'׳][א-�
 
 // One reporter grammar for both scanners. The pinpoint range accepts every
 // dash form, so already-normalized text (" - ") matches exactly as before.
-const typedReporterRe = () => /פ["״]ד\s+([א-ת](?:["״'׳]?[א-ת]){0,3})\s*(?:\(\s*([1-9])\s*\))?(?:\s*,\s*|\s+)(?:(?:עמ[׳'״"]|עמוד)\s*)?([1-9]\d{0,3})(?:\s*,\s*[1-9]\d{0,3}(?:\s*[-־‐‑‒–—]\s*[1-9]\d{0,3})?)?\s*,?\s*\(\s*((?:19|20)\d{2}|\d{1,2}\.\d{1,2}\.(?:19|20)\d{2})\s*\)/;
+const typedReporterHead = String.raw`פ["״]ד\s+([א-ת](?:["״'׳]?[א-ת]){0,3})\s*(?:\(\s*([1-9])\s*\))?(?:\s*,\s*|\s+)(?:(?:עמ[׳'״"]|עמוד)\s*)?([1-9]\d{0,3})(?:\s*,\s*[1-9]\d{0,3}(?:\s*[-־‐‑‒–—]\s*[1-9]\d{0,3})?)?`;
+const typedReporterYear = String.raw`\s*,?\s*\(\s*((?:19|20)\d{2}|\d{1,2}\.\d{1,2}\.(?:19|20)\d{2})\s*\)`;
+const typedReporterRe = () => new RegExp(typedReporterHead + typedReporterYear);
+// Source pages (e.g. repository headings) may stop at the first page, with the
+// decision date on the next line instead of "(year)" after it.
+const typedBareReporterRe = () => new RegExp(`${typedReporterHead}(?!\\d)(?:${typedReporterYear})?`);
+
+const HEBREW_MONTHS: Record<string, number> = {
+  ינואר: 1, פברואר: 2, מרץ: 3, מרס: 3, אפריל: 4, מאי: 5, יוני: 6,
+  יולי: 7, אוגוסט: 8, ספטמבר: 9, אוקטובר: 10, נובמבר: 11, דצמבר: 12,
+};
+const detachedDateRe = new RegExp(
+  `(?<!\\d)(\\d{1,2})(?:\\.(\\d{1,2})\\.|\\s+ב?(${Object.keys(HEBREW_MONTHS).join("|")})\\s+)((?:19|20)\\d{2})(?!\\d)`, "u");
+
+interface TypedReporterUnit {
+  reporter: RegExpExecArray;
+  year: string;
+  reportedDate: { year: string; date: string } | null;
+  following: string;
+}
+
+/** The reporter of one citation block plus its decision year. With a
+ * parenthesized year/date the result is exactly the strict grammar. Without
+ * one (source pages only), the year comes only from the nearest full decision
+ * date after the first page, separated by at most 60 digit-free characters
+ * (no other number, page, reporter or docket in between). Never from the
+ * volume table, a search-result date or a model value. */
+function readTypedReporter(block: string, allowDetachedDate: boolean): TypedReporterUnit | null {
+  const reporter = (allowDetachedDate ? typedBareReporterRe() : typedReporterRe()).exec(block);
+  if (!reporter) return null;
+  const following = block.slice(reporter.index + reporter[0].length);
+  if (reporter[4]) {
+    const reportedDate = readTypedDecisionDate(reporter[4]);
+    const year = reportedDate?.year ?? (/^(19|20)\d{2}$/.test(reporter[4]) ? reporter[4] : null);
+    return year ? { reporter, year, reportedDate, following } : null;
+  }
+  const found = detachedDateRe.exec(following);
+  if (!found || found.index > 60 || /\d|פ\s*["״]\s*ד/u.test(following.slice(0, found.index))) return null;
+  const month = found[2] ?? String(HEBREW_MONTHS[found[3]]);
+  const reportedDate = readTypedDecisionDate(`${Number(found[1])}.${Number(month)}.${found[4]}`);
+  return reportedDate
+    ? { reporter, year: reportedDate.year, reportedDate, following: following.slice(found.index + found[0].length) }
+    : null;
+}
 
 export function readTypedDecisionDate(raw: unknown): { year: string; date: string } | null {
   if (typeof raw !== "string") return null;
@@ -110,7 +153,9 @@ export function mergeTypedPadiEvidence(a: TypedPadiEvidence, b: TypedPadiEvidenc
 
 /** The decision year/full date is part of the same source citation, not a
  * separate same-docket search-result date or a model's suggested value. */
-function scanTypedPadiEvidence(target: TypedPadiTarget, snippets: readonly string[]): TypedPadiEvidence {
+function scanTypedPadiEvidence(
+  target: TypedPadiTarget, snippets: readonly string[], allowDetachedDate = true,
+): TypedPadiEvidence {
   const docket = /^(\d{1,6})\/(\d{2}|\d{4})$/.exec(target.caseNumber);
   const type = typedCaseType(target.caseType);
   const left = typedCaption(target.party1), right = typedCaption(target.party2);
@@ -133,14 +178,11 @@ function scanTypedPadiEvidence(target: TypedPadiTarget, snippets: readonly strin
           (here[3] !== docket[2] && !bareYear && !fullYear)) continue;
       const start = (here.index ?? 0) + here[0].length;
       const block = source.slice(start, Math.min(start + 700, matches[i + 1]?.index ?? source.length));
-      const reporter = typedReporterRe().exec(block);
-      if (!reporter || !exactCaptions.includes(typedCaption(block.slice(0, reporter.index)))) continue;
-      const reportedDate = readTypedDecisionDate(reporter[4]);
-      const year = reportedDate?.year ?? (/^(19|20)\d{2}$/.test(reporter[4]) ? reporter[4] : null);
-      if (!year) continue;
+      const unit = readTypedReporter(block, allowDetachedDate);
+      if (!unit || !exactCaptions.includes(typedCaption(block.slice(0, unit.reporter.index)))) continue;
+      const { reporter, year, reportedDate, following } = unit;
       // Permit an immediately attached, explicitly labelled decision date,
       // never dates separated by prose, another docket, or result metadata.
-      const following = block.slice(reporter.index + reporter[0].length);
       const labelled = /^\s*,?\s*(?:ניתן|ניתנה) ביום\s+(\d{1,2}\.\d{1,2}\.(?:19|20)\d{2})(?!\d)/.exec(following);
       const attachedDate = readTypedDecisionDate(labelled?.[1]);
       if (attachedDate && (attachedDate.year !== year || reportedDate && reportedDate.date !== attachedDate.date)) {
@@ -204,9 +246,9 @@ export function findTypedPadiCitation(
       if (!exactType || Number(here[2]) !== Number(docket[1]) || !yearOk) continue;
       const start = (here.index ?? 0) + here[0].length;
       const block = source.slice(start, Math.min(start + 700, matches[i + 1]?.index ?? source.length));
-      const reporter = typedReporterRe().exec(block);
-      if (!reporter) continue;
-      const caption = block.slice(0, reporter.index).replace(/[\s,]+$/u, "").trim();
+      const unit = readTypedReporter(block, true);
+      if (!unit) continue;
+      const caption = block.slice(0, unit.reporter.index).replace(/[\s,]+$/u, "").trim();
       if (/[;\n]|פ\s*["״]\s*ד/u.test(caption)) continue;
       const parts = caption.split(/\s+(?:נ['׳]|נגד)\s+/u);
       if (parts.length !== 2) continue;
@@ -242,7 +284,8 @@ export function typedPadiDraftMatches(
   // Formatting may add a user's paragraph/judge pinpoint after the first
   // page. It isn't source evidence and must not be mistaken for that page.
   const check = lines[0].replace(/,\s*(?:פס['׳]|פיסקה|פסקה|פסקאות)\s*[1-9]\d{0,3}(?:\s*[-–—]\s*[1-9]\d{0,3})?(?:\s+לפסק\s+דינ[וה]\s+של\s+(?:השופט(?:ת)?|הנשיא(?:ה)?)\s+[א-ת]['׳״" .א-ת־-]{0,35})?(?=\s*\((?:19|20)\d{2}\))/u, "");
-  const parsed = scanTypedPadiEvidence({ ...target, filingYear: null }, [check]);
+  // Drafts keep the strict grammar: the printed year must be in the citation.
+  const parsed = scanTypedPadiEvidence({ ...target, filingYear: null }, [check], false);
   return parsed.kind === "verified" &&
     JSON.stringify(parsed.publication) === JSON.stringify(evidence.publication) &&
     (!parsed.date || parsed.date === evidence.date);
