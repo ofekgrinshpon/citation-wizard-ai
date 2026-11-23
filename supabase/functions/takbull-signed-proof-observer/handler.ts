@@ -18,10 +18,10 @@ const txFields = new Set(["transactionid","transactioninternalnumber","transacti
 const receiptFields = new Set(["documentid","invoiceid","receiptid","documentnumber","invoicenumber","receiptnumber"]);
 const statusFields = new Set(["status","statuscode","transactionstatus","orderstatus","responsecode"]);
 const isObj = (x: unknown): x is Record<string, unknown> => !!x && typeof x === "object" && !Array.isArray(x);
-type Arm = { start: number; end: number; run: string; demand?: string; order?: string; orderRef?: string };
+type Arm = { start: number; end: number; run: string; demand?: string; order?: string; orderRef?: string; customerTestRef?: string; customerTestAmountMinor?: 100 | 3900 };
 type Deps = { config: () => string | undefined; key: () => string | undefined; log: (safeLine: string) => void;
   now?: () => number; readTimeoutMs?: number };
-const approvedConfigKeys = new Set(["start","end","run","demand","order","orderRef"]);
+const approvedConfigKeys = new Set(["start","end","run","demand","order","orderRef","customerTestRef","customerTestAmountMinor"]);
 function instant(x: unknown): number {
   if (typeof x !== "string" || !utc.test(x)) return NaN;
   const n = Date.parse(x);
@@ -31,15 +31,19 @@ function getArm(raw: unknown, now: number): Arm | null {
   if (typeof raw !== "string" || raw.length===0 || raw.length>768) return null;
   const val: unknown=JSON.parse(raw);
   if (!isObj(val) || Object.keys(val).some((k)=>!approvedConfigKeys.has(k))) return null;
-  const { run, demand, order, orderRef } = val;
+  const { run, demand, order, orderRef, customerTestRef, customerTestAmountMinor } = val;
   const start=instant(val.start),end=instant(val.end);
   if (!(Number.isFinite(now) && now>=start && now<end && end-start<=MAX_WINDOW_MS)) return null;
   if (typeof run!=="string" || !marker.test(run)) return null;
   if (demand!==undefined && (typeof demand!=="string" || !uuid.test(demand))) return null;
   if (order!==undefined && (typeof order!=="string" || !/^\d{1,16}$/.test(order))) return null;
   if (orderRef!==undefined && (typeof orderRef!=="string" || !ref.test(orderRef))) return null;
-  if (!demand && !order && !orderRef) return null;
-  return { start,end,run,demand:demand?.toLowerCase(),order,orderRef };
+  if (customerTestRef!==undefined && (typeof customerTestRef!=="string" || !/^rlx_[0-9a-f]{32}$/.test(customerTestRef))) return null;
+  // A strict single-lane diagnostic: other IDs cannot satisfy this test.
+  if (customerTestRef && (demand || order || orderRef)) return null;
+  if (customerTestAmountMinor!==undefined && (!customerTestRef || (customerTestAmountMinor!==100 && customerTestAmountMinor!==3900))) return null;
+  if (!demand && !order && !orderRef && !customerTestRef) return null;
+  return { start,end,run,demand:demand?.toLowerCase(),order,orderRef,customerTestRef,customerTestAmountMinor };
 }
 function parseSignature(header: string | null) {
   if (!header || header.length>HEADER_MAX) return null;
@@ -80,6 +84,8 @@ async function boundedBytes(req: Request, timeoutMs: number): Promise<Uint8Array
 function project(payload: unknown, arm: Arm) {
   if (!isObj(payload)) return { kind: "invalid_body" } as const;
   let fields=0, amounts=0, currencies=0, differentAmount=false, differentCurrency=false;
+  const expectedAmountMinor=arm.customerTestAmountMinor??100;
+  let cidSeen=false, cidMatched=false, cidDifferent=false;
   const result={ demandMatched:false, orderMatched:false, referenceMatched:false, hasTransaction:false, hasReceipt:false, hasStatus:false, hasAction:false };
   function walk(obj: Record<string, unknown>, allowWrappers: boolean) {
     for (const [k,v] of Object.entries(obj)) {
@@ -87,12 +93,18 @@ function project(payload: unknown, arm: Arm) {
       const name=k.length<=64?k.toLowerCase().replace(/[ _-]/g,""):"";
       if (allowWrappers && wrappers.has(name) && isObj(v)) {walk(v,false);continue;}
       const str=typeof v==="string"?v:typeof v==="number" && Number.isSafeInteger(v)?String(v):null;
+      if (arm.customerTestRef && k==="c_id") {
+        cidSeen=true;
+        if (v===arm.customerTestRef) cidMatched=true; else cidDifferent=true;
+      }
       if (demandFields.has(name) && str && uuid.test(str) && str.toLowerCase()===arm.demand) result.demandMatched=true;
       if (orderFields.has(name) && str && str===arm.order) result.orderMatched=true;
       if (referenceFields.has(name) && str && str===arm.orderRef) result.referenceMatched=true;
       if (amountFields.has(name)) {
         amounts++;
-        if (!(v===1 || (typeof v==="string" && /^1(?:\.0{1,2})?$/.test(v)))) differentAmount=true;
+        const expectedWhole=String(expectedAmountMinor/100);
+        if (!(v===expectedAmountMinor/100 || (typeof v==="string" &&
+          (v===expectedWhole || v===expectedWhole+".0" || v===expectedWhole+".00")))) differentAmount=true;
       }
       if (currencyFields.has(name)) {
         currencies++;
@@ -106,6 +118,13 @@ function project(payload: unknown, arm: Arm) {
   }
   walk(payload,true);
   if (fields>200) return { kind: "invalid_body" } as const;
+  if (arm.customerTestRef) {
+    if (!cidSeen) return { kind: "hosted_cid_absent" } as const;
+    if (!cidMatched || cidDifferent) return { kind: "hosted_cid_mismatch" } as const;
+    if (amounts===0 || differentAmount || differentCurrency) return { kind: "hosted_amount_not_confirmed" } as const;
+    return { kind: "projected", value: {...result,hostedCidMatched:true,amount:"expected",
+      currency:currencies===0?"absent":"expected"} } as const;
+  }
   if (!(result.demandMatched || result.orderMatched || result.referenceMatched))
     return { kind: "order_mismatch" } as const;
   return { kind: "projected", value: {...result,amount:amounts===0?"absent":differentAmount?"other":"expected",
@@ -118,7 +137,8 @@ export function createTakbullSignedProofObserver(deps: Deps) {
   // exactly-once guarantee across replicas; logs are observation, not a ledger.
   let observedRun = "";
   type RejectReason = "signature_missing" | "signature_malformed" | "timestamp" | "key_unusable"
-    | "signature_mismatch" | "invalid_body" | "order_mismatch" | "unsupported_media";
+    | "signature_mismatch" | "invalid_body" | "order_mismatch" | "unsupported_media"
+    | "hosted_cid_absent" | "hosted_cid_mismatch" | "hosted_amount_not_confirmed";
   let diagnosticArm = "";
   const emitted = new Set<RejectReason>();
   const diagnose = (arm: Arm, reason: RejectReason) => {
