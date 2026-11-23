@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { CITATION_OFFERS, type CitationOfferId } from "@/lib/citationOffers";
 
 type OrderStatus = {
@@ -26,6 +25,7 @@ export function useCitationManualBaseBuyer(enabled: boolean) {
     setBusy(true);
     setError("");
     try {
+      const { supabase } = await import("@/integrations/supabase/client");
       const { data, error: failure } = await supabase.functions.invoke("takbull-manual-base", {
         body: offer ? { action: "request", offer } : { action: "status" },
       });

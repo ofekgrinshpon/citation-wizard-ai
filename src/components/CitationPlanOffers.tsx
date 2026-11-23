@@ -21,7 +21,7 @@ export function CitationPlanOffers() {
       </article>)}
     </div>
     <p className="text-sm text-muted-foreground">{CITATION_ONE_TIME_DISCLOSURE}</p>
-    <p className="text-sm text-muted-foreground">{CITATION_UNIT_DISCLOSURE}</p>
+    <p className="text-sm text-muted-foreground">{enabled ? "המכסה נספרת לפי מקור חדש שנבדק, ולא לפי מסמך. שימוש חוזר באותה תוצאה קיימת אינו מחייב בדיקה חדשה." : CITATION_UNIT_DISCLOSURE}</p>
     {enabled ? <CitationManualBaseBuyerStatus state={buyer} /> : <p id={unavailableNoteId} role="note" className="text-sm font-medium">{CITATION_CHECKOUT_NOT_OPEN}</p>}
   </div>;
 }
