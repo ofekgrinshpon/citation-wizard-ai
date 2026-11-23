@@ -19,6 +19,8 @@ CREATE TABLE private.takbull_pilot_orders (
  merchant_ref text NOT NULL CHECK(length(merchant_ref) BETWEEN 1 AND 128),
  parent_pass uuid REFERENCES private.takbull_pilot_orders(id),
  requested_at timestamptz NOT NULL DEFAULT clock_timestamp(),
+ cancelled_at timestamptz,
+ CHECK(cancelled_at IS NULL OR cancelled_at>=requested_at),
  UNIQUE(id,user_id),
  CHECK((offer_id='citation_week_pass_v1' AND amount_minor=3900 AND sources=100 AND parent_pass IS NULL)
     OR (offer_id='citation_month_pass_v1' AND amount_minor=6500 AND sources=250 AND parent_pass IS NULL)
@@ -30,10 +32,13 @@ CREATE TABLE private.takbull_pilot_receipts (
  order_id uuid PRIMARY KEY REFERENCES private.takbull_pilot_orders(id),
  transaction_ref text UNIQUE NOT NULL CHECK(transaction_ref ~ '^[A-Za-z0-9_-]{1,128}$'),
  document_ref text UNIQUE NOT NULL CHECK(document_ref ~ '^[A-Za-z0-9_-]{1,128}$'),
- starts_at timestamptz NOT NULL,
- ends_at timestamptz NOT NULL,
+ paid_at timestamptz NOT NULL,
+ starts_at timestamptz,
+ ends_at timestamptz,
+ unfulfilled_reason text CHECK(unfulfilled_reason IN ('DISABLED_RECONCILE','CANCELLED_RECONCILE','LATE_PAYMENT_RECONCILE','ACTIVATION_WINDOW_ELAPSED','EXPIRED_RECONCILE','OVERLAPPING_PASS_RECONCILE')),
  recorded_at timestamptz NOT NULL DEFAULT clock_timestamp(),
- CHECK(ends_at>starts_at)
+ CHECK((starts_at IS NULL AND ends_at IS NULL AND unfulfilled_reason IS NOT NULL) OR
+ (starts_at IS NOT NULL AND ends_at IS NOT NULL AND unfulfilled_reason IS NULL AND starts_at>=paid_at AND ends_at>starts_at))
 );
 CREATE TABLE private.takbull_pilot_refunds (
  order_id uuid PRIMARY KEY REFERENCES private.takbull_pilot_receipts(order_id),
@@ -85,7 +90,7 @@ BEGIN
  -- Avoid accumulating duplicate pending checkout rows. One owner lock protects creation.
  SELECT o.id INTO order_number FROM private.takbull_pilot_orders o
  WHERE o.user_id=_user_id AND o.offer_id=_offer_id AND o.parent_pass IS NOT DISTINCT FROM pass_id
- AND o.merchant_ref=cfg.verified_merchant_ref AND o.requested_at>clock_timestamp()-interval '30 minutes'
+ AND o.cancelled_at IS NULL AND o.merchant_ref=cfg.verified_merchant_ref AND o.requested_at>clock_timestamp()-interval '30 minutes'
  AND NOT EXISTS(SELECT 1 FROM private.takbull_pilot_receipts r WHERE r.order_id=o.id)
  ORDER BY o.requested_at DESC LIMIT 1;
  IF NOT FOUND THEN
@@ -105,54 +110,80 @@ CREATE FUNCTION public.takbull_pilot_record_payment(_verified_order_ref uuid,_me
  _paid_at timestamptz) RETURNS jsonb
 LANGUAGE plpgsql SECURITY DEFINER SET search_path=pg_catalog AS $$
 DECLARE cfg private.takbull_pilot_config; o private.takbull_pilot_orders; paid private.takbull_pilot_receipts;
- ending timestamptz; now_at timestamptz; added uuid;
+ ending timestamptz; now_at timestamptz; added uuid; reason text;
 BEGIN
  PERFORM public._require_usage_service();
  SELECT * INTO cfg FROM private.takbull_pilot_config WHERE singleton FOR SHARE;
- IF cfg.enabled IS DISTINCT FROM true THEN RETURN jsonb_build_object('ok',false,'code','DISABLED'); END IF;
  SELECT * INTO o FROM private.takbull_pilot_orders WHERE id=_verified_order_ref;
  IF NOT FOUND THEN RETURN jsonb_build_object('ok',false,'code','MISMATCH'); END IF;
  PERFORM 1 FROM public.profiles WHERE id=o.user_id FOR NO KEY UPDATE;
  IF NOT FOUND THEN RETURN jsonb_build_object('ok',false,'code','MISMATCH'); END IF;
+ SELECT * INTO o FROM private.takbull_pilot_orders WHERE id=_verified_order_ref;
  now_at:=clock_timestamp();
  IF _observed_outcome IS DISTINCT FROM 'confirmed_one_time_charge' OR
     o.amount_minor IS DISTINCT FROM _amount_minor OR o.currency IS DISTINCT FROM _currency OR
-    o.merchant_ref IS DISTINCT FROM _merchant_ref OR cfg.verified_merchant_ref IS DISTINCT FROM _merchant_ref OR
+    o.merchant_ref IS DISTINCT FROM _merchant_ref OR
     _transaction_ref IS NULL OR _transaction_ref !~ '^[A-Za-z0-9_-]{1,128}$' OR
     _document_ref IS NULL OR _document_ref !~ '^[A-Za-z0-9_-]{1,128}$' OR
-    _paid_at IS NULL OR _paid_at<o.requested_at OR _paid_at>o.requested_at+interval '30 minutes' OR _paid_at>now_at THEN
+    _paid_at IS NULL OR _paid_at<o.requested_at OR _paid_at>now_at THEN
   RETURN jsonb_build_object('ok',false,'code','MISMATCH');
  END IF;
  SELECT * INTO paid FROM private.takbull_pilot_receipts WHERE order_id=o.id;
  IF FOUND THEN
-  IF paid.transaction_ref=_transaction_ref AND paid.document_ref=_document_ref AND paid.starts_at=_paid_at AND
+  IF paid.transaction_ref=_transaction_ref AND paid.document_ref=_document_ref AND paid.paid_at=_paid_at AND
      NOT EXISTS(SELECT 1 FROM private.takbull_pilot_refunds WHERE order_id=o.id) THEN
-   RETURN jsonb_build_object('ok',true,'replayed',true,'expires_at',paid.ends_at);
+   RETURN jsonb_build_object('ok',true,'replayed',true,'fulfilled',paid.starts_at IS NOT NULL,'code',paid.unfulfilled_reason,'activated_at',paid.starts_at,'expires_at',paid.ends_at);
   END IF;
   RETURN jsonb_build_object('ok',false,'code','CONFLICTING_OR_REVOKED_RECEIPT');
  END IF;
- IF o.parent_pass IS NOT NULL THEN
+ IF cfg.enabled IS DISTINCT FROM true OR cfg.verified_merchant_ref IS DISTINCT FROM _merchant_ref THEN
+  reason:='DISABLED_RECONCILE';
+ ELSIF o.cancelled_at IS NOT NULL THEN
+  reason:='CANCELLED_RECONCILE';
+ ELSIF _paid_at>o.requested_at+interval '30 minutes' THEN
+  reason:='LATE_PAYMENT_RECONCILE';
+ ELSIF now_at>_paid_at+interval '24 hours' THEN
+  reason:='ACTIVATION_WINDOW_ELAPSED';
+ ELSIF o.parent_pass IS NOT NULL THEN
   SELECT r.ends_at INTO ending FROM private.takbull_pilot_receipts r
   WHERE r.order_id=o.parent_pass AND r.starts_at<=_paid_at AND r.ends_at>now_at
    AND NOT EXISTS(SELECT 1 FROM private.takbull_pilot_refunds x WHERE x.order_id=o.parent_pass);
+  IF ending IS NULL THEN reason:='EXPIRED_RECONCILE'; END IF;
  ELSE
-  -- Explicit duration: week = 7 days; month = one local calendar month.
-  ending:=CASE WHEN o.offer_id='citation_week_pass_v1' THEN _paid_at+interval '168 hours'
-    ELSE (((_paid_at AT TIME ZONE 'Asia/Jerusalem')+interval '1 month') AT TIME ZONE 'Asia/Jerusalem') END;
+  -- Paid time proves settlement; only first successful fulfillment controls duration.
+  ending:=CASE WHEN o.offer_id='citation_week_pass_v1' THEN now_at+interval '168 hours'
+    ELSE (((now_at AT TIME ZONE 'Asia/Jerusalem')+interval '1 month') AT TIME ZONE 'Asia/Jerusalem') END;
   IF EXISTS(SELECT 1 FROM private.takbull_pilot_orders prior JOIN private.takbull_pilot_receipts r ON r.order_id=prior.id
-    WHERE prior.user_id=o.user_id AND prior.parent_pass IS NULL AND r.starts_at<ending AND r.ends_at>_paid_at
+    WHERE prior.user_id=o.user_id AND prior.parent_pass IS NULL AND r.starts_at<ending AND r.ends_at>now_at
     AND NOT EXISTS(SELECT 1 FROM private.takbull_pilot_refunds x WHERE x.order_id=prior.id)) THEN
-   RETURN jsonb_build_object('ok',false,'code','OVERLAPPING_PASS_RECONCILE');
+   reason:='OVERLAPPING_PASS_RECONCILE';
   END IF;
  END IF;
- IF ending IS NULL OR ending<=now_at THEN RETURN jsonb_build_object('ok',false,'code','EXPIRED_RECONCILE'); END IF;
- INSERT INTO private.takbull_pilot_receipts(order_id,transaction_ref,document_ref,starts_at,ends_at)
- VALUES(o.id,_transaction_ref,_document_ref,_paid_at,ending) ON CONFLICT DO NOTHING RETURNING order_id INTO added;
+ IF reason IS NOT NULL THEN ending:=NULL; END IF;
+ INSERT INTO private.takbull_pilot_receipts(order_id,transaction_ref,document_ref,paid_at,starts_at,ends_at,unfulfilled_reason)
+ VALUES(o.id,_transaction_ref,_document_ref,_paid_at,CASE WHEN reason IS NULL THEN now_at END,ending,reason)
+ ON CONFLICT DO NOTHING RETURNING order_id INTO added;
  IF added IS NULL THEN RETURN jsonb_build_object('ok',false,'code','ALREADY_USED_EVIDENCE'); END IF;
- -- This is an auditable entitlement receipt only. Not a legacy credit grant.
- RETURN jsonb_build_object('ok',true,'replayed',false,'expires_at',ending);
+ RETURN jsonb_build_object('ok',true,'replayed',false,'fulfilled',reason IS NULL,'code',reason,
+  'activated_at',CASE WHEN reason IS NULL THEN now_at END,'expires_at',ending);
 END;
 $$;
+
+-- Trusted operator/verified owner cancellation. No provider cancellation is implied.
+-- A racing settled charge is still recorded, but never granted after cancellation.
+CREATE FUNCTION public.takbull_pilot_cancel_pending(_user_id uuid,_order_ref uuid) RETURNS jsonb
+LANGUAGE plpgsql SECURITY DEFINER SET search_path=pg_catalog AS $$
+BEGIN
+ PERFORM public._require_usage_service();
+ PERFORM 1 FROM public.profiles WHERE id=_user_id FOR NO KEY UPDATE;
+ UPDATE private.takbull_pilot_orders o SET cancelled_at=COALESCE(o.cancelled_at,clock_timestamp())
+ WHERE o.user_id=_user_id AND o.id=_order_ref AND NOT EXISTS
+ (SELECT 1 FROM private.takbull_pilot_receipts r WHERE r.order_id=o.id);
+ RETURN jsonb_build_object('ok',FOUND);
+END;
+$$;
+REVOKE ALL ON FUNCTION public.takbull_pilot_cancel_pending(uuid,uuid) FROM PUBLIC,anon,authenticated,service_role;
+GRANT EXECUTE ON FUNCTION public.takbull_pilot_cancel_pending(uuid,uuid) TO service_role;
 
 -- Full refund only. Like confirmation, this records authenticated merchant
 -- evidence; it does not contact Takbull or create a refund. Partial and charge-

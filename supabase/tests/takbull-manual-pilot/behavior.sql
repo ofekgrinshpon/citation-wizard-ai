@@ -3,7 +3,7 @@ BEGIN;
 DO $$
 DECLARE a CONSTANT uuid:='10000000-0000-4000-a000-000000000000';
  b CONSTANT uuid:='20000000-0000-4000-a000-000000000000';
- o uuid; supplement uuid; other uuid; another uuid; time_paid timestamptz; extra_time timestamptz; result jsonb; expiry timestamptz;
+ o uuid; cancelled uuid; late uuid; supplement uuid; other uuid; another uuid; time_paid timestamptz; extra_time timestamptz; result jsonb; expiry timestamptz; activation timestamptz;
 BEGIN
  PERFORM set_config('test.rpc_role','service_role',true);
  PERFORM set_config('test.uid',a::text,true);
@@ -18,16 +18,21 @@ BEGIN
  o:=(result->>'order_id')::uuid;
  PERFORM test_assert(o IS NOT NULL AND result->>'amount_minor'='6500','server catalogue');
  PERFORM test_assert(takbull_pilot_prepare(a,'citation_month_pass_v1')->>'order_id'=o::text,'same open order');
- time_paid:=clock_timestamp();
+ -- Backdate this synthetic order to prove a delay does not shorten the pass.
+ UPDATE private.takbull_pilot_orders SET requested_at=clock_timestamp()-interval '12 hours' WHERE id=o;
+ time_paid:=clock_timestamp()-interval '11 hours 50 minutes';
  PERFORM test_assert(takbull_pilot_record_payment(o,'other','A','D',6500,'ILS','confirmed_one_time_charge',time_paid)->>'code'='MISMATCH','foreign merchant');
  PERFORM test_assert(takbull_pilot_record_payment(o,'synthetic','A','D',1,'ILS','confirmed_one_time_charge',time_paid)->>'code'='MISMATCH','incorrect amount');
  PERFORM test_assert(takbull_pilot_record_payment(o,'synthetic','A','D',6500,'USD','confirmed_one_time_charge',time_paid)->>'code'='MISMATCH','incorrect currency');
  PERFORM test_assert(takbull_pilot_record_payment(o,'synthetic','A','D',6500,'ILS','failed',time_paid)->>'code'='MISMATCH','failed charge');
  PERFORM test_assert(takbull_pilot_my_entitlement()->>'active'='false','pending does not grant');
  result:=takbull_pilot_record_payment(o,'synthetic','A','D',6500,'ILS','confirmed_one_time_charge',time_paid);
- expiry:=(result->>'expires_at')::timestamptz;
- PERFORM test_assert(result->>'ok'='true' AND expiry=(((time_paid AT TIME ZONE 'Asia/Jerusalem')+interval '1 month') AT TIME ZONE 'Asia/Jerusalem'),'calendar month receipt');
- PERFORM test_assert(takbull_pilot_record_payment(o,'synthetic','A','D',6500,'ILS','confirmed_one_time_charge',time_paid)->>'replayed'='true','same payment replay idempotent');
+ expiry:=(result->>'expires_at')::timestamptz; activation:=(result->>'activated_at')::timestamptz;
+ PERFORM test_assert(activation>time_paid+interval '11 hours' AND result->>'fulfilled'='true','fulfillment clock independent of charge');
+ PERFORM test_assert(result->>'ok'='true' AND expiry=(((activation AT TIME ZONE 'Asia/Jerusalem')+interval '1 month') AT TIME ZONE 'Asia/Jerusalem'),'calendar month receipt');
+ result:=takbull_pilot_record_payment(o,'synthetic','A','D',6500,'ILS','confirmed_one_time_charge',time_paid);
+ PERFORM test_assert(result->>'replayed'='true' AND (result->>'activated_at')::timestamptz=activation
+ AND (result->>'expires_at')::timestamptz=expiry,'replay preserves original activation and expiry');
  PERFORM test_assert(takbull_pilot_record_payment(o,'synthetic','B','E',6500,'ILS','confirmed_one_time_charge',time_paid)->>'code'='CONFLICTING_OR_REVOKED_RECEIPT','conflicting replay denied');
  other:=(takbull_pilot_prepare(b,'citation_month_pass_v1')->>'order_id')::uuid;
  PERFORM test_assert(takbull_pilot_record_payment(other,'synthetic','A','X',6500,'ILS','confirmed_one_time_charge',clock_timestamp())->>'code'='ALREADY_USED_EVIDENCE','duplicate evidence across accounts');
@@ -50,6 +55,19 @@ BEGIN
  PERFORM test_assert(takbull_pilot_record_full_refund(o,'synthetic','A','R2','RD2','confirmed_full_refund')->>'ok'='true','base refund recorded');
  PERFORM test_assert(takbull_pilot_my_entitlement()->>'active'='false','refunded pass inactive');
  PERFORM test_assert(takbull_pilot_record_payment(another,'synthetic','T2','TD2',1500,'ILS','confirmed_one_time_charge',clock_timestamp())->>'code'='EXPIRED_RECONCILE','supplement never transfers across passes');
+ PERFORM test_assert((SELECT starts_at IS NULL AND paid_at IS NOT NULL FROM private.takbull_pilot_receipts WHERE order_id=another),'expired add-on remains auditable');
+ PERFORM test_assert(takbull_pilot_record_full_refund(another,'synthetic','T2','R3','RD3','confirmed_full_refund')->>'ok'='true','refund verified unfulfilled add-on');
+ cancelled:=(takbull_pilot_prepare(a,'citation_week_pass_v1')->>'order_id')::uuid;
+ PERFORM test_assert(takbull_pilot_cancel_pending(b,cancelled)->>'ok'='false','cannot cancel other owner');
+ PERFORM test_assert(takbull_pilot_cancel_pending(a,cancelled)->>'ok'='true','cancel before fulfillment');
+ result:=takbull_pilot_record_payment(cancelled,'synthetic','T3','TD3',3900,'ILS','confirmed_one_time_charge',clock_timestamp());
+ PERFORM test_assert(result->>'ok'='true' AND result->>'fulfilled'='false' AND result->>'code'='CANCELLED_RECONCILE','settled cancelled payment recorded without grant');
+ PERFORM test_assert(takbull_pilot_record_full_refund(cancelled,'synthetic','T3','R4','RD4','confirmed_full_refund')->>'ok'='true','refund verified unfulfilled base');
+ late:=(takbull_pilot_prepare(a,'citation_week_pass_v1')->>'order_id')::uuid;
+ UPDATE private.takbull_pilot_orders SET requested_at=clock_timestamp()-interval '26 hours' WHERE id=late;
+ result:=takbull_pilot_record_payment(late,'synthetic','T4','TD4',3900,'ILS','confirmed_one_time_charge',clock_timestamp()-interval '25 hours 45 minutes');
+ PERFORM test_assert(result->>'fulfilled'='false' AND result->>'code'='ACTIVATION_WINDOW_ELAPSED','late activation records but never grants');
+ PERFORM test_assert(takbull_pilot_my_entitlement()->>'active'='false','unfulfilled and refunded receipts never activate');
 END;
 $$;
 ROLLBACK;

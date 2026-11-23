@@ -80,7 +80,7 @@ BEGIN
  attempt:=(out->>'attempt_token')::uuid;
  PERFORM lab_assert(attempt IS NOT NULL,'in-flight paid request');
  -- Synthetic clock transition in fixture: never rewrite production receipts.
- UPDATE private.takbull_pilot_receipts SET starts_at=clock_timestamp()-interval '7 days',ends_at=clock_timestamp()-interval '1 hour'
+ UPDATE private.takbull_pilot_receipts SET paid_at=clock_timestamp()-interval '8 days',starts_at=clock_timestamp()-interval '7 days',ends_at=clock_timestamp()-interval '1 hour'
  WHERE order_id IN (cycle,supplement);
  PERFORM lab_assert(get_citation_trial_status()->>'limit'='5','base and add-on expire together');
  out:=public.finish_citation_request(uid,'before-expiry',attempt,'failed',NULL,NULL);
