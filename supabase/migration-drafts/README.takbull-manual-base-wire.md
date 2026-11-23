@@ -75,3 +75,25 @@
   suite: src/test/takbullManualBaseHandler.test.ts. TSX syntax transform is not
   browser evidence. Production link issuance, queue load, mobile UI, pending-order
   repair, and duplicate charge/refund rehearsal were not tested end-to-end.
+
+## Buyer draft and connected local verification
+
+The signed-in account offers render the two base request buttons only when
+`VITE_TAKBULL_MANUAL_BASE_BUYER=true`. This is independent of the admin, Edge
+and DB gates. Requests send only the base offer ID and do not charge a card.
+There is no provider checkout URL accepted, persisted or shown. Once an operator
+records an independently confirmed demand, the account directs the buyer to the
+email sent by Takbull; confirm that operator workflow before turning on sales.
+The active status is derived from the real private paid-source meter and only
+shows their own remaining/total/expiry. The public landing is unchanged.
+
+Use esbuild to compile the Edge handler to an ESM file, then invoke
+`node supabase/tests/takbull-manual-base/roundtrip.mjs <pglite-dist-index.js>
+<compiled-handler.mjs> <disposable baseline SQL> <paid-meter/setup.sql>
+<exact live baseline functions sql> <1500.sql> <1600.sql> <1700.sql>`.
+This executes actual handler and ledger/meter for synthetic buyer and admin:
+both amounts, no top-up, wrong owner/role/demand, issue, settlement, replay,
+paid quota before and after source debit, and refund. Auth transport and
+Takbull evidence are mocked; no live provider or production deployment.
+`takbullManualBaseBuyer.test.tsx` renders separate gated/active customer and
+operator states with mocked RPC responses.

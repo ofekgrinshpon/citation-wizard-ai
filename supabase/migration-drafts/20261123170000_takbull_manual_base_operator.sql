@@ -23,7 +23,7 @@ REVOKE ALL ON FUNCTION private.takbull_manual_require_admin(uuid) FROM PUBLIC,an
 
 CREATE FUNCTION public.takbull_manual_base_intent(_owner uuid,_offer text DEFAULT NULL) RETURNS jsonb
 LANGUAGE plpgsql SECURITY DEFINER SET search_path=pg_catalog AS $$
-DECLARE cfg private.takbull_pilot_config; o private.takbull_pilot_orders; price int; quota int;
+DECLARE cfg private.takbull_pilot_config; o private.takbull_pilot_orders; price int; quota int; pass uuid; amount_remaining int; meter_limit int; expires timestamptz; now_at timestamptz;
 BEGIN
  PERFORM public._require_usage_service();
  SELECT * INTO cfg FROM private.takbull_pilot_config WHERE singleton FOR SHARE;
@@ -50,7 +50,15 @@ BEGIN
   VALUES(_owner,_offer,price,quota,cfg.verified_merchant_ref,true) RETURNING * INTO o;
  END IF;
  IF o.id IS NULL THEN RETURN jsonb_build_object('ok',true,'status','none'); END IF;
+ now_at:=clock_timestamp();
+ pass:=private.takbull_pilot_active_pass(_owner,now_at);
+ IF pass=o.id THEN
+  SELECT COALESCE(sum(capacity),0),COALESCE(sum(greatest(0,capacity-used)),0),max(ends_at)
+   INTO meter_limit,amount_remaining,expires
+   FROM private.takbull_pilot_usable_buckets(_owner,pass,now_at);
+ END IF;
  RETURN jsonb_build_object('ok',true,'order_id',o.id,'offer',o.offer_id,'amount_minor',o.amount_minor,'currency','ILS',
+  'sources_included',meter_limit,'sources_remaining',amount_remaining,'expires_at',expires,
   'status',CASE
    WHEN EXISTS(SELECT 1 FROM private.takbull_pilot_refunds x WHERE x.order_id=o.id) THEN 'refunded'
    WHEN EXISTS(SELECT 1 FROM private.takbull_pilot_receipts r WHERE r.order_id=o.id AND r.ends_at>clock_timestamp()) THEN 'active'
