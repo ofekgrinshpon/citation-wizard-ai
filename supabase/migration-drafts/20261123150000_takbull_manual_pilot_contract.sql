@@ -20,6 +20,11 @@ CREATE TABLE private.takbull_pilot_orders (
  parent_pass uuid REFERENCES private.takbull_pilot_orders(id),
  requested_at timestamptz NOT NULL DEFAULT clock_timestamp(),
  cancelled_at timestamptz,
+ manual_base boolean NOT NULL DEFAULT false,
+ demand_ref text UNIQUE CHECK(demand_ref ~ '^[A-Za-z0-9_-]{1,128}$'),
+ demand_issued_at timestamptz,
+ CHECK((demand_ref IS NULL)=(demand_issued_at IS NULL)),
+ CHECK(NOT manual_base OR parent_pass IS NULL),
  CHECK(cancelled_at IS NULL OR cancelled_at>=requested_at),
  UNIQUE(id,user_id),
  CHECK((offer_id='citation_week_pass_v1' AND amount_minor=3900 AND sources=100 AND parent_pass IS NULL)
@@ -90,7 +95,7 @@ BEGIN
  -- Avoid accumulating duplicate pending checkout rows. One owner lock protects creation.
  SELECT o.id INTO order_number FROM private.takbull_pilot_orders o
  WHERE o.user_id=_user_id AND o.offer_id=_offer_id AND o.parent_pass IS NOT DISTINCT FROM pass_id
- AND o.cancelled_at IS NULL AND o.merchant_ref=cfg.verified_merchant_ref AND o.requested_at>clock_timestamp()-interval '30 minutes'
+ AND NOT o.manual_base AND o.cancelled_at IS NULL AND o.merchant_ref=cfg.verified_merchant_ref AND o.requested_at>clock_timestamp()-interval '30 minutes'
  AND NOT EXISTS(SELECT 1 FROM private.takbull_pilot_receipts r WHERE r.order_id=o.id)
  ORDER BY o.requested_at DESC LIMIT 1;
  IF NOT FOUND THEN
@@ -125,7 +130,8 @@ BEGIN
     o.merchant_ref IS DISTINCT FROM _merchant_ref OR
     _transaction_ref IS NULL OR _transaction_ref !~ '^[A-Za-z0-9_-]{1,128}$' OR
     _document_ref IS NULL OR _document_ref !~ '^[A-Za-z0-9_-]{1,128}$' OR
-    _paid_at IS NULL OR _paid_at<o.requested_at OR _paid_at>now_at THEN
+    (o.manual_base AND o.demand_issued_at IS NULL) OR
+    _paid_at IS NULL OR _paid_at<COALESCE(o.demand_issued_at,o.requested_at) OR _paid_at>now_at THEN
   RETURN jsonb_build_object('ok',false,'code','MISMATCH');
  END IF;
  SELECT * INTO paid FROM private.takbull_pilot_receipts WHERE order_id=o.id;
@@ -140,7 +146,7 @@ BEGIN
   reason:='DISABLED_RECONCILE';
  ELSIF o.cancelled_at IS NOT NULL THEN
   reason:='CANCELLED_RECONCILE';
- ELSIF _paid_at>o.requested_at+interval '30 minutes' THEN
+ ELSIF _paid_at>COALESCE(o.demand_issued_at,o.requested_at)+interval '30 minutes' THEN
   reason:='LATE_PAYMENT_RECONCILE';
  ELSIF now_at>_paid_at+interval '24 hours' THEN
   reason:='ACTIVATION_WINDOW_ELAPSED';
