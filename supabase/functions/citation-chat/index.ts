@@ -1,5 +1,6 @@
 import { buildGroundedHebrewJournalResultType, buildHebrewArticleValidation } from "../_shared/hebrewArticleValidation.ts";
 import { PADI_EVIDENCE_DOMAINS, verifiedPadiPublication, findTypedPadiEvidence, findTypedPadiCitation, mergeTypedPadiEvidence, typedPadiDraftMatches, typedPadiMarker, typedSupremeFilingYear, type TypedPadiEvidence, type TypedPadiTarget } from "../_shared/padiPublicationEvidence.ts";
+import { isRoleWordParty } from "../_shared/partyRoleWords.ts";
 import { isHebrewBookTitleQuery, projectHebrewBookProof, buildHebrewBookChoice, hebrewBookPartial, selectHebrewBook } from "../_shared/citationPure/hebrewBookChoice.ts";
 import { resolveNeutralDocket } from "./neutralDocket.ts";
 import { authorizeBookEvidence, bookEvidenceEnabled, evaluateBookEvidence } from "./bookEvidenceRoute.ts";
@@ -2982,9 +2983,9 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
                   // "העותרים" / "המשיבים" and friends are procedural roles the
                   // model falls back to when it cannot read the caption; they
                   // must render as [חסר: שמות צדדים], never as a party.
-                  const ROLE_WORDS = /^(?:ה?עותר(?:ים|ת)?|ה?משיב(?:ים|ה)?|ה?מערער(?:ים|ת)?|ה?מבקש(?:ים|ת)?|ה?נאשם|ה?נאשמים|ה?תובע(?:ים|ת)?|ה?נתבע(?:ים|ת)?|פלוני|אלמוני|צד א|צד ב)$/;
-                  const p1Role = typeof parsed.party1 === "string" && ROLE_WORDS.test(parsed.party1.trim());
-                  const p2Role = typeof parsed.party2 === "string" && ROLE_WORDS.test(parsed.party2.trim());
+                  // Anonymized names (פלוני/אלמוני) are real party names, not roles.
+                  const p1Role = isRoleWordParty(parsed.party1);
+                  const p2Role = isRoleWordParty(parsed.party2);
                   if (p1Role || p2Role) {
                     console.log(`[case-law] role_word_parties_dropped party1="${parsed.party1}" party2="${parsed.party2}"`);
                     parsed.party1 = "";
