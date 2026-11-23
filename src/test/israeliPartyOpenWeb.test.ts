@@ -350,6 +350,6 @@ describe("typed Supreme reporter verification through the real handler, offline"
     expect((await postResponse(lower, "typed-padi-00009")).body.content).toBe(original);
     expect(publicationChecks()).toHaveLength(0);
     reset({ docket:{found:false},formatter:kol });
-    expect((await postResponse(kol.replaceAll("**", ""), "typed-padi-00010")).body.content).toBe(kol);
+    expect((await postResponse(kol.split("**").join(""), "typed-padi-00010")).body.content).toBe(kol);
   });
 });

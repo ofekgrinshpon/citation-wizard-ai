@@ -74,6 +74,10 @@ const typedProcPrefixes = new Set(CASE_TYPE_PREFIXES.map(typedCaseType));
 // Every proceeding-like token is a boundary, even if not itself admissible.
 const typedDocketMatches = () => /(?<![\p{L}\p{N}])([א-ת]{1,5}(?:["״'׳][א-ת]{0,4})?)\s+(\d{1,6})\s*\/\s*(\d{4}|\d{2})(?![\d/\s]*\/|\d)/gu;
 
+// One reporter grammar for both scanners. The pinpoint range accepts every
+// dash form, so already-normalized text (" - ") matches exactly as before.
+const typedReporterRe = () => /פ["״]ד\s+([א-ת](?:["״'׳]?[א-ת]){0,3})\s*(?:\(\s*([1-9])\s*\))?(?:\s*,\s*|\s+)(?:(?:עמ[׳'״"]|עמוד)\s*)?([1-9]\d{0,3})(?:\s*,\s*[1-9]\d{0,3}(?:\s*[-־‐‑‒–—]\s*[1-9]\d{0,3})?)?\s*,?\s*\(\s*((?:19|20)\d{2}|\d{1,2}\.\d{1,2}\.(?:19|20)\d{2})\s*\)/;
+
 export function readTypedDecisionDate(raw: unknown): { year: string; date: string } | null {
   if (typeof raw !== "string") return null;
   const s = raw.trim();
@@ -125,7 +129,7 @@ function scanTypedPadiEvidence(target: TypedPadiTarget, snippets: readonly strin
           (here[3] !== docket[2] && !bareYear && !fullYear)) continue;
       const start = (here.index ?? 0) + here[0].length;
       const block = source.slice(start, Math.min(start + 700, matches[i + 1]?.index ?? source.length));
-      const reporter = /פ["״]ד\s+([א-ת](?:["״'׳]?[א-ת]){0,3})\s*(?:\(\s*([1-9])\s*\))?(?:\s*,\s*|\s+)(?:(?:עמ[׳'״"]|עמוד)\s*)?([1-9]\d{0,3})(?:\s*,\s*[1-9]\d{0,3}(?:\s*-\s*[1-9]\d{0,3})?)?\s*,?\s*\(\s*((?:19|20)\d{2}|\d{1,2}\.\d{1,2}\.(?:19|20)\d{2})\s*\)/.exec(block);
+      const reporter = typedReporterRe().exec(block);
       if (!reporter || !exactCaptions.includes(typedCaption(block.slice(0, reporter.index)))) continue;
       const reportedDate = readTypedDecisionDate(reporter[4]);
       const year = reportedDate?.year ?? (/^(19|20)\d{2}$/.test(reporter[4]) ? reporter[4] : null);
@@ -150,13 +154,69 @@ function scanTypedPadiEvidence(target: TypedPadiTarget, snippets: readonly strin
   return evidence;
 }
 
-export function findTypedPadiEvidence(target: TypedPadiTarget, payload: unknown): TypedPadiEvidence {
+function trustedTypedSnippets(payload: unknown): string[] {
   const candidates = (payload as { search_results?: unknown } | null)?.search_results;
-  if (!Array.isArray(candidates) || candidates.length > 60) return { kind: "none" };
-  const snippets = candidates.flatMap((row) =>
+  if (!Array.isArray(candidates) || candidates.length > 60) return [];
+  return candidates.flatMap((row) =>
     row && typeof row === "object" && trusted(row.url) &&
     typeof row.snippet === "string" && row.snippet.length <= 12000 ? [row.snippet] : []);
-  return scanTypedPadiEvidence(target, snippets);
+}
+
+export function findTypedPadiEvidence(target: TypedPadiTarget, payload: unknown): TypedPadiEvidence {
+  return scanTypedPadiEvidence(target, trustedTypedSnippets(payload));
+}
+
+export type TypedPadiCitation =
+  | { kind: "none" | "conflict" }
+  | { kind: "verified"; party1: string; party2: string; publication: PadiPublication; date: string | null };
+
+/** Reads one complete citation unit — exact proceeding type + docket, both
+ * party names, and its פ"ד — from trusted snippets only. The caption is
+ * taken verbatim from that unit (no spelling variants or fuzzy matching) and
+ * then re-proved by the exact scanner above across every trusted snippet.
+ * Two different captions or reporters for this docket is a conflict; callers
+ * then keep their existing route unchanged. */
+export function findTypedPadiCitation(
+  target: Omit<TypedPadiTarget, "party1" | "party2">, payloads: readonly unknown[],
+): TypedPadiCitation {
+  const docket = /^(\d{1,6})\/(\d{2}|\d{4})$/.exec(target.caseNumber);
+  const type = typedCaseType(target.caseType);
+  if (!docket || !typedProcPrefixes.has(type) || target.filingYear === null) return { kind: "none" };
+  const snippets = payloads.flatMap(trustedTypedSnippets);
+  const captions = new Map<string, { party1: string; party2: string }>();
+  for (const snippet of snippets) {
+    // Same-length cleanup only, so the caption keeps its original spelling/dashes.
+    const source = snippet.normalize("NFKC")
+      .replace(/[\u061c\u200e\u200f\u202a-\u202e\u2066-\u2069]/g, "")
+      .replace(/[“”]/g, '"').replace(/[‘’]/g, "'");
+    const matches = [...source.matchAll(typedDocketMatches())];
+    for (let i = 0; i < matches.length; i++) {
+      const here = matches[i];
+      const sourceType = typedCaseType(here[1]);
+      const exactType = sourceType === type ||
+        ((type === "עא" || type === "בגץ") && !typedProcPrefixes.has(sourceType) && sourceType === `ב${type}`);
+      const yearOk = here[3] === docket[2] || String(target.filingYear).slice(-2) === here[3] ||
+        String(target.filingYear) === here[3];
+      if (!exactType || Number(here[2]) !== Number(docket[1]) || !yearOk) continue;
+      const start = (here.index ?? 0) + here[0].length;
+      const block = source.slice(start, Math.min(start + 700, matches[i + 1]?.index ?? source.length));
+      const reporter = typedReporterRe().exec(block);
+      if (!reporter) continue;
+      const caption = block.slice(0, reporter.index).replace(/[\s,]+$/u, "").trim();
+      if (/[;\n]|פ\s*["״]\s*ד/u.test(caption)) continue;
+      const parts = caption.split(/\s+(?:נ['׳]|נגד)\s+/u);
+      if (parts.length !== 2) continue;
+      const [party1, party2] = parts.map((p) => p.trim());
+      if (![party1, party2].every((p) => p.length >= 2 && p.length <= 150 && /[א-ת]/.test(p))) continue;
+      const key = `${typedCaption(party1)}\u0000${typedCaption(party2)}`;
+      if (!captions.has(key)) captions.set(key, { party1, party2 });
+    }
+  }
+  if (captions.size === 0) return { kind: "none" };
+  if (captions.size > 1) return { kind: "conflict" };
+  const parties = [...captions.values()][0];
+  const proof = scanTypedPadiEvidence({ ...target, ...parties }, snippets);
+  return proof.kind === "verified" ? { kind: "verified", ...parties, publication: proof.publication, date: proof.date } : proof;
 }
 
 // This tests a draft against independently bound source evidence. Draft text

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { readFileSync } from "node:fs";
 import ts from "typescript";
-import { verifiedPadiPublication, PADI_EVIDENCE_DOMAINS, findTypedPadiEvidence, mergeTypedPadiEvidence, readTypedDecisionDate, typedSupremeFilingYear } from "../../supabase/functions/_shared/padiPublicationEvidence";
+import { verifiedPadiPublication, PADI_EVIDENCE_DOMAINS, findTypedPadiEvidence, findTypedPadiCitation, mergeTypedPadiEvidence, readTypedDecisionDate, typedSupremeFilingYear } from "../../supabase/functions/_shared/padiPublicationEvidence";
 const target = {caseType:'ע״א',caseNumber:'140/00',party1:'עיזבון המנוח מיכאל אטינגר',party2:'החברה לשיקום ופיתוח הרובע היהודי בעיר העתיקה בירושלים בע״מ',decisionYear:'2004'};
 const citation = `ע״א 140/00 ${target.party1} נ׳ ${target.party2}, פ״ד נח(4) 486 (2004)`;
 const result = (snippet=citation,url='https://www.gov.il/BlobFolder/reports/interest/he/insurance_companies_a.pdf')=>({url,snippet});
@@ -109,5 +109,56 @@ describe("typed Supreme reporter/decision binding", () => {
    expect(readTypedDecisionDate('29.2.2023')).toBeNull();
    expect(readTypedDecisionDate('2004-02-29')).toEqual({year:'2004',date:'29.2.2004'});
    expect(findTypedPadiEvidence(pin,payload(result(pin93+', ניתן ביום 17.1.1995')))).toEqual({kind:'conflict'});
+ });
+});
+
+describe("typed Supreme citation unit: docket + parties + reporter from one trusted citation", () => {
+ const mizrahi = {caseType:'ע״א', caseNumber:'6821/93', filingYear:1993};
+ const full = 'ע״א 6821/93 בנק המזרחי המאוחד בע״מ נ׳ מגדל כפר שיתופי, פ״ד מט(4) 221 (1995)';
+ const scraper = {url:'https://israel.com/he/court-rulings/ca-6821-93', snippet:'ע"א 6821/93 בנק המזרחי נ\' מיגדל (1.1.2005)'};
+ const nevo = (snippet:string, url='https://www.nevo.co.il/psika_html/elyon/93068210.htm') => ({url, snippet});
+ it("Bank Mizrahi: a weaker scraper caption no longer blocks the trusted printed citation", () => {
+   const pData = payload(scraper), vData = payload(nevo(`כפי שנפסק ב${full}, ניתן ביום 9.11.1995`));
+   // Old failure: the scraper spelling cannot match the trusted citation.
+   expect(findTypedPadiEvidence({...mizrahi,party1:'בנק המזרחי',party2:'מיגדל'},vData)).toEqual({kind:'none'});
+   const bound = findTypedPadiCitation(mizrahi,[pData,null,vData]);
+   expect(bound).toEqual({kind:'verified',party1:'בנק המזרחי המאוחד בע״מ',party2:'מגדל כפר שיתופי',
+     publication:{padi_volume:'מט',padi_part:'4',padi_page:'221',year:'1995'},date:'9.11.1995'});
+   if (bound.kind!=='verified') throw new Error('unreachable');
+   expect(findTypedPadiEvidence({...mizrahi,party1:bound.party1,party2:bound.party2},vData)).toMatchObject({kind:'verified',publication:{padi_page:'221'}});
+ });
+ it("no trusted complete citation: no change (untrusted hosts are not added)", () => {
+   expect(findTypedPadiCitation(mizrahi,[payload(scraper)])).toEqual({kind:'none'});
+   expect(findTypedPadiCitation(mizrahi,[payload(nevo(full,'https://he.afiklaw.com/caselaw/4390'))])).toEqual({kind:'none'});
+   expect(findTypedPadiCitation(mizrahi,[payload(nevo('ע״א 6821/93 בנק המזרחי המאוחד בע״מ נ׳ מגדל כפר שיתופי (9.11.1995)'))])).toEqual({kind:'none'});
+   expect(findTypedPadiCitation(mizrahi,[payload(nevo(full.replace('ע״א','רע״א')))])).toEqual({kind:'none'});
+   expect(findTypedPadiCitation(mizrahi,[payload(nevo(full.replace('6821/93','6821/94')))])).toEqual({kind:'none'});
+ });
+ it("trusted sources that disagree on names or reporter leave the existing route unchanged", () => {
+   expect(findTypedPadiCitation(mizrahi,[payload(nevo(full),nevo(full.replace('בנק המזרחי המאוחד בע״מ','בנק המזרחי'),'https://www.gov.il/x.pdf'))])).toEqual({kind:'conflict'});
+   expect(findTypedPadiCitation(mizrahi,[payload(nevo(full)),payload(nevo(full.replace('221','222'),'https://fs.knesset.gov.il/a.pdf'))])).toEqual({kind:'conflict'});
+   expect(findTypedPadiCitation(mizrahi,[payload(nevo(full),nevo(full))])).toMatchObject({kind:'verified',publication:{padi_page:'221'}});
+ });
+ it("already-working typed cases bind to the same parties and reporter as before", () => {
+   const cases: Array<[{caseType:string;caseNumber:string;filingYear:number}, string, string, string, string]> = [
+     [{caseType:'בג״ץ',caseNumber:'73/53',filingYear:1953},'בג״ץ 73/53 חברת “קול העם” בע״מ נ׳ שר הפנים, פ״ד ז 871 (1953)','חברת "קול העם" בע״מ','שר הפנים','871'],
+     [{caseType:'ע״א',caseNumber:'4628/93',filingYear:1993},'ע״א 4628/93 מדינת ישראל נ׳ אפרופים שיכון ויזום (1991) בע״מ, פ״ד מט(2) 265 (1995)','מדינת ישראל','אפרופים שיכון ויזום (1991) בע״מ','265'],
+     [{caseType:'ע״א',caseNumber:'5604/94',filingYear:1994},'בע״א 5604/94 חמד נ׳ מדינת ישראל, פ"ד נח(2), עמ׳ 498, (2004)','חמד','מדינת ישראל','498'],
+     [{caseType:'בג״ץ',caseNumber:'7/48',filingYear:1948},'בג״ץ 7/48 אל־כרבוטלי נ׳ שר הביטחון, פ״ד ב 5, 15 (1949)','אל־כרבוטלי','שר הביטחון','5'],
+   ];
+   for (const [t, s, party1, party2, page] of cases) {
+     const bound = findTypedPadiCitation(t,[payload(result(s))]);
+     expect(bound).toMatchObject({kind:'verified',party1,party2,publication:{padi_page:page}});
+     // Same proof the existing exact gate already gave with those parties.
+     expect(findTypedPadiEvidence({...t,party1,party2},payload(result(s)))).toMatchObject({kind:'verified',publication:{padi_page:page}});
+   }
+ });
+ it("a page citing two dockets never gives 6821/93 the other docket's reporter", () => {
+   const afropim = 'ע״א 4628/93 מדינת ישראל נ׳ אפרופים שיכון ויזום (1991) בע״מ, פ״ד מט(2) 265 (1995)';
+   expect(findTypedPadiCitation(mizrahi,[payload(nevo(`ע״א 6821/93 פלוני נ׳ אלמוני; ${afropim}`))])).toEqual({kind:'none'});
+   expect(findTypedPadiCitation(mizrahi,[payload(nevo(`כפי שנקבע בע״א 6821/93, ראו ${afropim}`))])).toEqual({kind:'none'});
+   expect(findTypedPadiCitation(mizrahi,[payload(nevo(`ע״א 6821/93 בנק המזרחי המאוחד בע״מ נ׳ מגדל כפר שיתופי (ראו גם ${afropim})`))])).toEqual({kind:'none'});
+   expect(findTypedPadiCitation(mizrahi,[payload(nevo(`${afropim}; ${full}`))])).toMatchObject({kind:'verified',party2:'מגדל כפר שיתופי',publication:{padi_volume:'מט',padi_part:'4',padi_page:'221'}});
+   expect(findTypedPadiCitation({caseType:'ע״א',caseNumber:'4628/93',filingYear:1993},[payload(nevo(`${full}; ${afropim}`))])).toMatchObject({kind:'verified',party1:'מדינת ישראל',publication:{padi_volume:'מט',padi_part:'2',padi_page:'265'}});
  });
 });

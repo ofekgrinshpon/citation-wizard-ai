@@ -1,5 +1,5 @@
 import { buildGroundedHebrewJournalResultType, buildHebrewArticleValidation } from "../_shared/hebrewArticleValidation.ts";
-import { PADI_EVIDENCE_DOMAINS, verifiedPadiPublication, findTypedPadiEvidence, mergeTypedPadiEvidence, typedPadiDraftMatches, typedPadiMarker, typedSupremeFilingYear, type TypedPadiEvidence, type TypedPadiTarget } from "../_shared/padiPublicationEvidence.ts";
+import { PADI_EVIDENCE_DOMAINS, verifiedPadiPublication, findTypedPadiEvidence, findTypedPadiCitation, mergeTypedPadiEvidence, typedPadiDraftMatches, typedPadiMarker, typedSupremeFilingYear, type TypedPadiEvidence, type TypedPadiTarget } from "../_shared/padiPublicationEvidence.ts";
 import { isHebrewBookTitleQuery, projectHebrewBookProof, buildHebrewBookChoice, hebrewBookPartial, selectHebrewBook } from "../_shared/citationPure/hebrewBookChoice.ts";
 import { resolveNeutralDocket } from "./neutralDocket.ts";
 import { authorizeBookEvidence, bookEvidenceEnabled, evaluateBookEvidence } from "./bookEvidenceRoute.ts";
@@ -2803,14 +2803,32 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
                     party2: String(parsed.party2 || proposedTypedParties?.party2 || ""),
                   });
                   let typedEvidence: TypedPadiEvidence = { kind: "none" };
+                  const typedPublicationCompatible = (publication: { padi_volume: string; year: string }): boolean => {
+                    if (typedFiling === null) return false;
+                    const decision = Number(publication.year);
+                    const range = PADI_VOLUME_YEAR_RANGES[publication.padi_volume];
+                    return decision >= typedFiling && decision <= new Date().getUTCFullYear() &&
+                      (!range || decision >= range[0] && decision <= range[1]) &&
+                      !padiVolumeDocketConflict(publication.padi_volume, docketAnchor?.year, typedFiling);
+                  };
+                  // A trusted source quoting this exact docket, both parties and
+                  // its פ"ד as one citation supplies all three together, so a
+                  // weaker caption from another site cannot block the reporter
+                  // proof. Absent, conflicting or incompatible: no change at all.
+                  const adoptTypedCitation = (payloads: unknown[]): boolean => {
+                    const bound = findTypedPadiCitation({ caseType, caseNumber: caseNum, filingYear: typedFiling }, payloads);
+                    if (bound.kind !== "verified" || !typedPublicationCompatible(bound.publication)) return false;
+                    if (bound.party1 !== parsed.party1 || bound.party2 !== parsed.party2) {
+                      console.log(`[case-law] typed_citation_bound parties from trusted citation: "${bound.party1}" נ' "${bound.party2}" (had "${parsed.party1 ?? ""}" נ' "${parsed.party2 ?? ""}")`);
+                    }
+                    parsed.party1 = bound.party1;
+                    parsed.party2 = bound.party2;
+                    return true;
+                  };
                   const applyTypedEvidence = () => {
                     if (typedEvidence.kind === "verified" && typedFiling !== null) {
                       const { publication, date } = typedEvidence;
-                      const decision = Number(publication.year);
-                      const range = PADI_VOLUME_YEAR_RANGES[publication.padi_volume];
-                      if (decision >= typedFiling && decision <= new Date().getUTCFullYear() &&
-                          (!range || decision >= range[0] && decision <= range[1]) &&
-                          !padiVolumeDocketConflict(publication.padi_volume, docketAnchor?.year, typedFiling)) {
+                      if (typedPublicationCompatible(publication)) {
                         const { party1, party2 } = typedTarget();
                         Object.assign(parsed, publication, { party1, party2, isPublished: true, date: date ?? "", confidence: "high" });
                         partyMismatch = false;
@@ -2826,6 +2844,7 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
                     }
                   };
                   if (typedPadi && parsed.found) {
+                    adoptTypedCitation([pData, groundedFollowupEvidence]);
                     typedEvidence = mergeTypedPadiEvidence(
                       findTypedPadiEvidence(typedTarget(), pData),
                       findTypedPadiEvidence(typedTarget(), groundedFollowupEvidence),
@@ -2894,7 +2913,10 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
                       if (verifyResp.ok) {
                         const vData = await verifyResp.json();
                         if (typedPadi) {
-                          typedEvidence = mergeTypedPadiEvidence(typedEvidence, findTypedPadiEvidence(typedTarget(), vData));
+                          typedEvidence = adoptTypedCitation([pData, groundedFollowupEvidence, vData])
+                            ? [pData, groundedFollowupEvidence, vData].reduce<TypedPadiEvidence>(
+                              (acc, data) => mergeTypedPadiEvidence(acc, findTypedPadiEvidence(typedTarget(), data)), { kind: "none" })
+                            : mergeTypedPadiEvidence(typedEvidence, findTypedPadiEvidence(typedTarget(), vData));
                           applyTypedEvidence();
                         } else {
                           const decisionYear = String(parsed.year || "").trim()
