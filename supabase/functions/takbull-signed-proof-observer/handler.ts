@@ -116,6 +116,9 @@ export function createTakbullSignedProofObserver(deps: Deps) {
   // exactly-once guarantee across replicas; logs are observation, not a ledger.
   let observedRun = "";
   return async (req: Request): Promise<Response> => {
+    // Temporary test route: GET answers empty 200 before clock, config, body or
+    // secret reads, and logs nothing. POST verification below is unchanged.
+    if (req.method === "GET") return reply(200);
     const now=deps.now??Date.now;
     try {
       const arm=getArm(deps.config(),now());
