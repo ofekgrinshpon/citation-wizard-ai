@@ -78,7 +78,7 @@ async function boundedBytes(req: Request, timeoutMs: number): Promise<Uint8Array
 }
 
 function project(payload: unknown, arm: Arm) {
-  if (!isObj(payload)) return null;
+  if (!isObj(payload)) return { kind: "invalid_body" } as const;
   let fields=0, amounts=0, currencies=0, differentAmount=false, differentCurrency=false;
   const result={ demandMatched:false, orderMatched:false, referenceMatched:false, hasTransaction:false, hasReceipt:false, hasStatus:false, hasAction:false };
   function walk(obj: Record<string, unknown>, allowWrappers: boolean) {
@@ -105,9 +105,11 @@ function project(payload: unknown, arm: Arm) {
     }
   }
   walk(payload,true);
-  return fields<=200 && (result.demandMatched || result.orderMatched || result.referenceMatched)
-    ? {...result,amount:amounts===0?"absent":differentAmount?"other":"expected",
-      currency:currencies===0?"absent":differentCurrency?"other":"expected"} : null;
+  if (fields>200) return { kind: "invalid_body" } as const;
+  if (!(result.demandMatched || result.orderMatched || result.referenceMatched))
+    return { kind: "order_mismatch" } as const;
+  return { kind: "projected", value: {...result,amount:amounts===0?"absent":differentAmount?"other":"expected",
+    currency:currencies===0?"absent":differentCurrency?"other":"expected"} } as const;
 }
 const reply = (status: number) => new Response(null,{status,headers:{"Cache-Control":"no-store","X-Content-Type-Options":"nosniff"}});
 /** Diagnostic only. No database, authorization grants, external calls or raw logs. */
@@ -115,6 +117,18 @@ export function createTakbullSignedProofObserver(deps: Deps) {
   // Suppress retries for the configured proof in this warm instance. Not an
   // exactly-once guarantee across replicas; logs are observation, not a ledger.
   let observedRun = "";
+  type RejectReason = "signature_missing" | "signature_malformed" | "timestamp" | "key_unusable"
+    | "signature_mismatch" | "invalid_body" | "order_mismatch" | "unsupported_media";
+  let diagnosticArm = "";
+  const emitted = new Set<RejectReason>();
+  const diagnose = (arm: Arm, reason: RejectReason) => {
+    const id = arm.start+"-"+arm.end+"-"+arm.run;
+    if (diagnosticArm !== id) { diagnosticArm = id; emitted.clear(); }
+    if (emitted.has(reason)) return;
+    emitted.add(reason);
+    try { deps.log(JSON.stringify({ marker: "TAKBULL_SIGNED_DIAG_V1", run: arm.run, reason })); }
+    catch { /* best effort only; never alter public responses */ }
+  };
   return async (req: Request): Promise<Response> => {
     // Temporary test route: GET answers empty 200 before clock, config, body or
     // secret reads, and logs nothing. POST verification below is unchanged.
@@ -124,22 +138,43 @@ export function createTakbullSignedProofObserver(deps: Deps) {
       const arm=getArm(deps.config(),now());
       if (!arm) return reply(404);
       if (req.method!=="POST") return reply(405);
-      if (req.headers.get("content-type")?.split(";",1)[0].trim().toLowerCase()!=="application/json") return reply(415);
+      const reject = (status: number, reason: RejectReason) => {
+        try { const t=now(); if (Number.isFinite(t) && t>=arm.start && t<arm.end) diagnose(arm, reason); } catch { /* diagnostic only */ }
+        return reply(status);
+      };
+      if (req.headers.get("content-type")?.split(";",1)[0].trim().toLowerCase()!=="application/json")
+        return reject(415,"unsupported_media");
       const contentEncoding=req.headers.get("content-encoding");
-      if (contentEncoding!==null && contentEncoding.toLowerCase()!=="identity") return reply(415);
-      const entry=parseSignature(req.headers.get("x-takbull-signature"));
-      const key=deps.key();
-      if (!entry || !fresh(entry.time,now(),arm) || typeof key!=="string" || key.length<16 || key.length>256) return reply(401);
-      const body=await boundedBytes(req,deps.readTimeoutMs??2500);
-      if (!body || !fresh(entry.time,now(),arm)) return reply(401);
+      if (contentEncoding!==null && contentEncoding.toLowerCase()!=="identity")
+        return reject(415,"unsupported_media");
+      const header=req.headers.get("x-takbull-signature");
+      const entry=parseSignature(header);
+      let key: string | undefined;
+      try { key=deps.key(); }
+      catch { return reject(401,"key_unusable"); }
+      if (!entry) return reject(401,header===null?"signature_missing":"signature_malformed");
+      if (!fresh(entry.time,now(),arm)) return reject(401,"timestamp");
+      if (typeof key!=="string" || key.length<16 || key.length>256) return reject(401,"key_unusable");
+      let body: Awaited<ReturnType<typeof boundedBytes>>;
+      try { body=await boundedBytes(req,deps.readTimeoutMs??2500); }
+      catch { return reject(401,"invalid_body"); }
+      if (!body) return reject(401,"invalid_body");
+      if (!fresh(entry.time,now(),arm)) return reject(401,"timestamp");
       const prefix=encoder.encode(entry.t+".");
       const bytes=new Uint8Array(prefix.length+body.length);
       bytes.set(prefix); bytes.set(body,prefix.length);
-      const imported=await crypto.subtle.importKey("raw",encoder.encode(key),{name:"HMAC",hash:"SHA-256"},false,["verify"]);
-      if (!(await crypto.subtle.verify("HMAC",imported,entry.sig,bytes)) || !fresh(entry.time,now(),arm)) return reply(401);
+      let imported: CryptoKey;
+      try { imported=await crypto.subtle.importKey("raw",encoder.encode(key),{name:"HMAC",hash:"SHA-256"},false,["verify"]); }
+      catch { return reject(401,"key_unusable"); }
+      if (!(await crypto.subtle.verify("HMAC",imported,entry.sig,bytes))) return reject(401,"signature_mismatch");
+      if (!fresh(entry.time,now(),arm)) return reject(401,"timestamp");
       // Verify bytes before decoding; no normalization, reserialization or body logging.
-      const projected=project(JSON.parse(new TextDecoder("utf-8",{fatal:true,ignoreBOM:true}).decode(body)),arm);
-      if (!projected) return reply(401);
+      let parsed: unknown;
+      try { parsed=JSON.parse(new TextDecoder("utf-8",{fatal:true,ignoreBOM:true}).decode(body)); }
+      catch { return reject(401,"invalid_body"); }
+      const projection=project(parsed,arm);
+      if (projection.kind!=="projected") return reject(401,projection.kind);
+      const projected=projection.value;
       if (observedRun!==arm.run) {
         deps.log(JSON.stringify({marker:"TAKBULL_SIGNED_PROOF_V1",run:arm.run,
           authenticated:true,...projected}));
