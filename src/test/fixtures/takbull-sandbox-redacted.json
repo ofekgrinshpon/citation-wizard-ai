@@ -1,0 +1,67 @@
+{
+  "merchantSettings": {
+    "success": true,
+    "errorCode": 0,
+    "mid": "demo_mid"
+  },
+  "order": {
+    "uniqId": "sandbox_order_01",
+    "order_reference": "relex_order_01",
+    "orderStatus": 3,
+    "currency": "ILS",
+    "orderTotalSum": 1.0,
+    "dealType": 1,
+    "numberOfPayments": 1,
+    "authorizeOnly": false,
+    "saveToken": false,
+    "createDocument": true,
+    "documentType": 400,
+    "transactions": [
+      {
+        "id": 123,
+        "transactionId": "sandbox_transaction_01",
+        "status": 1,
+        "statusCode": 0,
+        "transactionType": 10,
+        "dealType": 1,
+        "numberOfPayments": 1,
+        "refundAmount": 0.0,
+        "currency": "ILS",
+        "amount": 1.0,
+        "isDocumentCreated": true,
+        "transactionDate": "2026-11-23T15:42:52.3154758",
+        "invoiceId": 456,
+        "documentNumber": 789
+      }
+    ],
+    "invoices": [
+      {
+        "id": 456,
+        "uniqId": "sandbox_receipt_01",
+        "documentNumber": 789,
+        "mid": "demo_mid",
+        "currency": "ILS",
+        "documentType": 400,
+        "isDocumentOpen": false,
+        "isNegativeDocument": false,
+        "isTemplate": false,
+        "totalPriceWithTax": 1.0,
+        "transactions": [
+          {
+            "id": 123,
+            "transactionId": "sandbox_transaction_01"
+          }
+        ]
+      }
+    ]
+  },
+  "validation": {
+    "internalCode": 0,
+    "providerCode": 0,
+    "orderStatus": 3,
+    "tranSactionStatus": 0,
+    "dealType": 1,
+    "isSubscriptionPayment": false,
+    "amount": 1.0
+  }
+}
