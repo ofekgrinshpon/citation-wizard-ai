@@ -228,4 +228,10 @@ describe("source reporter without a parenthesized year (repository headings)", (
    expect(typedPadiDraftMatches(t,ev,`ע"א 6821/93 בנק המזרחי המאוחד בע"מ נ' מגדל כפר שיתופי, פ"ד מט(4) 221 (1995)`)).toBe(true);
    expect(typedPadiDraftMatches(t,ev,`ע"א 6821/93 בנק המזרחי המאוחד בע"מ נ' מגדל כפר שיתופי, פ"ד מט(4) 221`)).toBe(false);
  });
+ it("Rule 18: a paragraph/judge pinpoint before the closing year is still the verified citation", () => {
+   const t = {...mizrahi,party1:'בנק המזרחי המאוחד בע"מ',party2:'מגדל כפר שיתופי'};
+   const ev = findTypedPadiEvidence(t,payload(afik(`${head}\n9.11.1995`)));
+   expect(typedPadiDraftMatches(t,ev,`ע"א 6821/93 בנק המזרחי המאוחד בע"מ נ' מגדל כפר שיתופי, פ"ד מט(4) 221, פס' 3 לפסק דינו של הנשיא ברק (1995).`)).toBe(true);
+   expect(typedPadiDraftMatches(t,ev,`ע"א 6821/93 בנק המזרחי המאוחד בע"מ נ' מגדל כפר שיתופי, פ"ד מט(4) 222, פס' 3 לפסק דינו של הנשיא ברק (1995).`)).toBe(false);
+ });
 });
