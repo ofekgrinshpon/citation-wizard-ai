@@ -12,7 +12,7 @@ import { HomeCitationDemo } from "@/components/launch/HomeCitationDemo";
 import { LaunchPricing } from "@/components/launch/LaunchPricing";
 import { WordLaunchGuide } from "@/components/launch/WordLaunchGuide";
 import guideCitationImg from "@/assets/guide/citation.jpg.asset.json";
-import guideFootnotesImg from "@/assets/guide/footnotes.jpg.asset.json";
+import guideFootnotesImg from "@/assets/guide/footnotes-approved.webp";
 import guideBibliographyImg from "@/assets/guide/bibliography.jpg.asset.json";
 
 function useInView(ref: RefObject<HTMLElement | null>, threshold = 0.15) {
@@ -31,6 +31,7 @@ type Capability = {
   title: string;
   description: string;
   image: string;
+  imageAlt?: string;
   highlight?: boolean;
   chips?: string[];
 };
@@ -45,8 +46,9 @@ const capabilities: Capability[] = [
   {
     title: "הערות שוליים",
     description:
-      "המקורות שלכם, לפי סדר ההופעה — עם אזכור חוזר במקרים נתמכים ובדיקה לפני השימוש.",
-    image: guideFootnotesImg.url,
+      "משווים בין ההערה המקורית לתיקון המוצע ומחליטים מה ייכנס לעותק ה־Word החדש.",
+    image: guideFootnotesImg,
+    imageAlt: "צילום מסך: נוסח הערת שוליים לצד אזכור מלא של בנק המזרחי, שאושר לעותק החדש",
   },
   {
     title: "ביבליוגרפיה",
@@ -70,7 +72,7 @@ function CapabilityCard({ cap, index }: { cap: Capability; index: number }) {
       } ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
     >
     
-      <div className="mb-4"><GuideIllustration src={cap.image} alt={cap.title} label={cap.title} /></div>
+      <div className="mb-4"><GuideIllustration src={cap.image} alt={cap.imageAlt ?? cap.title} label={cap.title} /></div>
       <h3 className="text-lg md:text-xl font-bold text-foreground mb-2">
         {cap.title}
       </h3>
