@@ -49,3 +49,6 @@ project_id = "ioktiqcffungtlsmlkcv"
     verify_jwt = false
   [functions.research-pdf-extract]
     verify_jwt = true
+
+[functions.takbull-signed-proof-observer]
+verify_jwt = false
