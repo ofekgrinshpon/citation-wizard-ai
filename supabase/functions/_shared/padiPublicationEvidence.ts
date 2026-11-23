@@ -1,7 +1,11 @@
 /** Printed-reporter proof only. Never discovers a case or infers its identity/year. */
 import { CASE_DOCKET_RE, CASE_TYPE_PREFIXES } from "./caseTypePrefixes.ts";
 
-export const PADI_EVIDENCE_DOMAINS = ["nevo.co.il", "court.gov.il", "supreme.court.gov.il", "psakdin.co.il", "gov.il", "knesset.gov.il"];
+/** Public Israeli case-law repositories that quote full printed citations.
+ * They count only through the same complete-citation grammar as every other
+ * host (exact type + docket, caption, פ"ד, year in one bounded block). */
+export const PADI_CASE_REPOSITORY_DOMAINS = ["afiklaw.com", "psikan.com"];
+export const PADI_EVIDENCE_DOMAINS = ["nevo.co.il", "court.gov.il", "supreme.court.gov.il", "psakdin.co.il", "gov.il", "knesset.gov.il", ...PADI_CASE_REPOSITORY_DOMAINS];
 export interface PadiTarget { caseType: string; caseNumber: string; party1: string; party2: string; decisionYear: string }
 export interface PadiPublication { padi_volume: string; padi_part: string; padi_page: string; year: string }
 const normalize = (text: string) => text.normalize("NFKC").replace(/[\u200e\u200f\u202a-\u202e]/g, "")

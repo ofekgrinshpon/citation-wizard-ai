@@ -97,7 +97,7 @@ describe("typed Supreme reporter/decision binding", () => {
    expect(findTypedPadiEvidence(pin,payload(result(pin93.split('פ״ד')[0]),result('פ״ד מח(4) 492 (1993)')))).toEqual({kind:'none'});
    expect(findTypedPadiEvidence(pin,payload(result(pin93.replace('בג״ץ','ע״א'))))).toEqual({kind:'none'});
    expect(findTypedPadiEvidence(pin,payload(result(pin93.replace('בג״ץ','בג״ץ (מחוזי ת״א)'))))).toEqual({kind:'none'});
-   expect(findTypedPadiEvidence(pin,payload(result(pin93,'https://he.afiklaw.com/caselaw/4390')))).toEqual({kind:'none'});
+   expect(findTypedPadiEvidence(pin,payload(result(pin93,'https://israel.com/he/court-rulings/x')))).toEqual({kind:'none'});
  });
  it("does not pick one of two reporter/date records under the same docket", () => {
    expect(findTypedPadiEvidence(pin,payload(result(pin93+'; '+pin95)))).toEqual({kind:'conflict'});
@@ -129,7 +129,7 @@ describe("typed Supreme citation unit: docket + parties + reporter from one trus
  });
  it("no trusted complete citation: no change (untrusted hosts are not added)", () => {
    expect(findTypedPadiCitation(mizrahi,[payload(scraper)])).toEqual({kind:'none'});
-   expect(findTypedPadiCitation(mizrahi,[payload(nevo(full,'https://he.afiklaw.com/caselaw/4390'))])).toEqual({kind:'none'});
+   expect(findTypedPadiCitation(mizrahi,[payload(nevo(full,'https://israel.com/he/court-rulings/ca-6821-93'))])).toEqual({kind:'none'});
    expect(findTypedPadiCitation(mizrahi,[payload(nevo('ע״א 6821/93 בנק המזרחי המאוחד בע״מ נ׳ מגדל כפר שיתופי (9.11.1995)'))])).toEqual({kind:'none'});
    expect(findTypedPadiCitation(mizrahi,[payload(nevo(full.replace('ע״א','רע״א')))])).toEqual({kind:'none'});
    expect(findTypedPadiCitation(mizrahi,[payload(nevo(full.replace('6821/93','6821/94')))])).toEqual({kind:'none'});
@@ -160,5 +160,32 @@ describe("typed Supreme citation unit: docket + parties + reporter from one trus
    expect(findTypedPadiCitation(mizrahi,[payload(nevo(`ע״א 6821/93 בנק המזרחי המאוחד בע״מ נ׳ מגדל כפר שיתופי (ראו גם ${afropim})`))])).toEqual({kind:'none'});
    expect(findTypedPadiCitation(mizrahi,[payload(nevo(`${afropim}; ${full}`))])).toMatchObject({kind:'verified',party2:'מגדל כפר שיתופי',publication:{padi_volume:'מט',padi_part:'4',padi_page:'221'}});
    expect(findTypedPadiCitation({caseType:'ע״א',caseNumber:'4628/93',filingYear:1993},[payload(nevo(`${full}; ${afropim}`))])).toMatchObject({kind:'verified',party1:'מדינת ישראל',publication:{padi_volume:'מט',padi_part:'2',padi_page:'265'}});
+ });
+});
+
+describe("recognized Israeli case repositories (afiklaw, psikan)", () => {
+ const mizrahi = {caseType:'ע״א', caseNumber:'6821/93', filingYear:1993};
+ const full = 'ע״א 6821/93 בנק המזרחי המאוחד בע״מ נ׳ מגדל כפר שיתופי, פ״ד מט(4) 221 (1995)';
+ const scraper = {url:'https://israel.com/he/court-rulings/ca-6821-93', snippet:'ע"א 6821/93 בנק המזרחי נ\' מיגדל (1.1.2005)'};
+ it("are part of the printed-reporter search filter", () => {
+   expect(PADI_EVIDENCE_DOMAINS).toEqual(expect.arrayContaining(['afiklaw.com','psikan.com']));
+   expect(PADI_EVIDENCE_DOMAINS).not.toContain('takdin.co.il');
+ });
+ it("Bank Mizrahi: the afiklaw citation supplies parties and פ״ד despite the scraper spelling", () => {
+   const bound = findTypedPadiCitation(mizrahi,[payload(scraper,{url:'https://he.afiklaw.com/caselaw/4390',snippet:full})]);
+   expect(bound).toEqual({kind:'verified',party1:'בנק המזרחי המאוחד בע״מ',party2:'מגדל כפר שיתופי',
+     publication:{padi_volume:'מט',padi_part:'4',padi_page:'221',year:'1995'},date:null});
+ });
+ it("psikan counts for the exact same-block citation only", () => {
+   const t = {caseType:'ע״א',caseNumber:'5604/94',filingYear:1994};
+   const s = 'ע״א 5604/94 חמד נ׳ מדינת ישראל, פ״ד נח(2) 498 (2004)';
+   expect(findTypedPadiCitation(t,[payload({url:'https://psikan.com/rulings/x',snippet:s})])).toMatchObject({kind:'verified',party1:'חמד',party2:'מדינת ישראל',publication:{padi_page:'498'}});
+   expect(findTypedPadiCitation(t,[payload({url:'https://psikan.com/rulings/x',snippet:`ע״א 5604/94 חמד נ׳ מדינת ישראל; ${full}`})])).toEqual({kind:'none'});
+ });
+ it("a repository disagreeing with another trusted source is a conflict, not a winner", () => {
+   expect(findTypedPadiCitation(mizrahi,[payload({url:'https://he.afiklaw.com/caselaw/4390',snippet:full},{url:'https://www.nevo.co.il/a',snippet:full.replace('221','222')})])).toEqual({kind:'conflict'});
+ });
+ it.each(['https://afiklaw.com.evil.test/x','https://notafiklaw.com/x','http://he.afiklaw.com/x','https://psikan.com.example.org/x','https://www.takdin.co.il/x'])("rejects lookalike or excluded host %s", url => {
+   expect(findTypedPadiCitation(mizrahi,[payload({url,snippet:full})])).toEqual({kind:'none'});
  });
 });
