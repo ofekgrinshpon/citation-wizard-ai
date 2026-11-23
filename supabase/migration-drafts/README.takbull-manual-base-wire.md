@@ -81,9 +81,7 @@
 The signed-in account offers render the two base request buttons only when
 `VITE_TAKBULL_MANUAL_BASE_BUYER=true`. This is independent of the admin, Edge
 and DB gates. Requests send only the base offer ID and do not charge a card.
-There is no provider checkout URL accepted, persisted or shown. Once an operator
-records an independently confirmed demand, the account directs the buyer to the
-email sent by Takbull; confirm that operator workflow before turning on sales.
+No arbitrary URL is accepted or persisted. Once an operator records an independently confirmed Takbull demand UUID, the matching buyer receives a link constructed from the fixed merchant payment origin/path. It is withheld when not issued, settled, refunded, cancelled or expired. ReLex hiding the link cannot revoke a URL already copied or detect unrecorded provider payment. Before launch independently verify provider dashboard correlation and duplicate prevention; a UUID alone is not proof of settlement.
 The active status is derived from the real private paid-source meter and only
 shows their own remaining/total/expiry. The public landing is unchanged.
 

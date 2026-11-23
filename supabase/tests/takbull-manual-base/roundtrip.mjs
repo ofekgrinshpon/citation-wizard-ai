@@ -45,7 +45,7 @@ try {
     assert.equal(request.sources_remaining,null);
     assert.equal((await call("other",{ action:"status",owner:buyer })).status,"none");
     assert.equal((await call("buyer",{ action:"request",offer })).order_id,request.order_id);
-    const evidence = { order:request.order_id, attest:true, merchant:"synthetic", demand:"demand"+n, amountMinor:price, currency:"ILS" };
+    const evidence = { order:request.order_id, attest:true, merchant:"synthetic", demand:`abcdef0${n}-1111-4000-a000-abcdefabcdef`, amountMinor:price, currency:"ILS" };
     const charge = { ...evidence, action:"settle",transaction:"transaction"+n,document:"document"+n };
     const now = () => new Date().toISOString();
     // Pin fixture request at least one millisecond earlier than the provider's
@@ -54,12 +54,18 @@ try {
     assert.equal((await call("buyer",{ ...evidence, action:"issue", at:now() })).http,403);
     assert.equal((await call("admin",{ ...charge,at:now() })).ok,false);
     assert.equal((await call("admin",{ ...evidence,action:"issue",at:now() })).ok,true);
-    assert.equal((await call("buyer",{ action:"status" })).status,"demand_issued");
+    const payable = await call("buyer",{ action:"status" });
+    assert.equal(payable.status,"demand_issued");
+    assert.equal(payable.payment_url,"https://api.takbull.co.il/PaymentGateway/PaymentRequest?orderUniqId="+evidence.demand);
+    assert.equal(payable.payable_provider_id,undefined);
+    assert.equal((await call("other",{ action:"status",owner:buyer })).payment_url,undefined);
+    assert.equal((await call("admin",{ ...evidence,action:"issue",demand:"abcdef55-1111-4000-a000-abcdefabcdef",at:now() })).ok,false);
     const paid = { ...charge, at:now() };
     assert.equal((await call("admin",{ ...paid,demand:"wrong" })).ok,false);
     assert.equal((await call("admin",paid)).fulfilled,true);
     const active = await call("buyer",{ action:"status" });
     assert.equal(active.status,"active");
+    assert.equal(active.payment_url,undefined);
     assert.equal(active.sources_remaining,count);
     assert.equal(active.sources_included,count);
     const duplicate = await call("admin",paid);
@@ -75,9 +81,23 @@ try {
       transaction:paid.transaction, refund:"refund"+n,document:"credit"+n })).ok,true);
     const refunded = await call("buyer",{ action:"status" });
     assert.equal(refunded.status,"refunded");
+    assert.equal(refunded.payment_url,undefined);
     assert.equal(refunded.sources_remaining,null);
     assert.equal((await call("admin",paid)).ok,false);
   }
+  const order = (await call("other",{ action:"request",offer:"citation_week_pass_v1" })).order_id;
+  const demand = "abcdef99-1111-4000-a000-abcdefabcdef";
+  await db.query("UPDATE private.takbull_pilot_orders SET requested_at=clock_timestamp()-interval '32 minutes' WHERE id=$1",[order]);
+  await db.query("UPDATE private.takbull_pilot_orders SET demand_ref='LegacyProviderId',demand_issued_at=clock_timestamp() WHERE id=$1",[order]);
+  assert.equal((await call("other",{ action:"status" })).payment_url,undefined);
+  await db.query("UPDATE private.takbull_pilot_orders SET demand_ref=NULL,demand_issued_at=NULL WHERE id=$1",[order]);
+  const at = new Date(Date.now()-31*60*1000).toISOString();
+  assert.equal((await call("admin",{ action:"issue",order,ats:"ignored",at,attest:true,merchant:"synthetic",demand,amountMinor:3900,currency:"ILS" })).ok,true);
+  const expired = await call("other",{ action:"status" });
+  assert.equal(expired.status,"demand_expired"); assert.equal(expired.payment_url,undefined);
+  await db.query("SELECT public.takbull_pilot_cancel_pending($1,$2)",[other,order]);
+  const cancelled = await call("other",{ action:"status" });
+  assert.equal(cancelled.status,"cancelled"); assert.equal(cancelled.payment_url,undefined);
   console.log("PASS: 100/250 buyer→admin→payment→quota debit→refund, replay, wrong owner and auth, no top-up");
 } finally {
   await db.close();

@@ -82,7 +82,7 @@ export default function TakbullManualBasePanel() {
         {field("observedOrder", "מזהה הזמנה כפי שמופיע בתקבול")}
         {field("merchant", "מזהה בית העסק בתקבול")}
         {action !== "refund" && <>
-          {field("demand", "מזהה דרישת תשלום בתקבול")}
+          {field("demand", "מזהה UUID של דרישת התשלום (orderUniqId)")}
           {field("amount", "סכום בשקלים כפי שמופיע בתקבול")}
           {field("at", action === "issue" ? "מועד יצירת הדרישה, כולל אזור זמן" : "מועד החיוב, כולל אזור זמן", "YYYY-MM-DDTHH:mm:ss+02:00")}
         </>}

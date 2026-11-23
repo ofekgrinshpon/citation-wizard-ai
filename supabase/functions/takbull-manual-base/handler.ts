@@ -1,3 +1,5 @@
+import { toTakbullManualPayLink } from "../_shared/takbullManualPayLink.ts";
+
 type Args = Record<string, string | number | null>;
 type Dependencies = {
   enabled: boolean;
@@ -45,7 +47,7 @@ export async function handleTakbullManualBase(req: Request, deps: Dependencies):
       const evidence = { _actor: actor, _merchant: body.merchant };
       const money = [3900, 6500].includes(body.amountMinor) && body.currency === "ILS";
       if (action === "issue") {
-        if (!money || !is(body.demand, id) || !validStamp(body.at)) return bad();
+        if (!money || !is(body.demand, uuid) || !validStamp(body.at)) return bad();
         name = "takbull_manual_base_issue";
         args = { _actor: actor, _order: body.order, _observed_merchant: body.merchant, _amount_minor: body.amountMinor, _currency: body.currency, _demand_ref: body.demand, _issued_at: body.at };
       } else if (action === "settle") {
@@ -60,6 +62,12 @@ export async function handleTakbullManualBase(req: Request, deps: Dependencies):
     }
     const { data, error } = await deps.rpc(name, args);
     if (error) return respond(error.code === "42501" ? 403 : 503, { ok: false, code: error.code === "42501" ? "FORBIDDEN" : "UNAVAILABLE" });
+    if (name === "takbull_manual_base_intent" && data && typeof data === "object") {
+      const { payable_provider_id, payable_until, payment_url: _ignored, ...safe } = data as Record<string, unknown>;
+      const url = safe.status === "demand_issued" && validStamp(payable_until) &&
+        Date.parse(payable_until) > Date.now() ? toTakbullManualPayLink(payable_provider_id) : null;
+      return respond(200, { ...safe, ...(url ? { payment_url: url, payable_until } : {}) });
+    }
     return respond(200, data);
   } catch (err) {
     return err instanceof SyntaxError ? respond(400, { ok: false, code: "BAD_REQUEST" }) : respond(503, { ok: false, code: "UNAVAILABLE" });

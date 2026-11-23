@@ -23,7 +23,7 @@ REVOKE ALL ON FUNCTION private.takbull_manual_require_admin(uuid) FROM PUBLIC,an
 
 CREATE FUNCTION public.takbull_manual_base_intent(_owner uuid,_offer text DEFAULT NULL) RETURNS jsonb
 LANGUAGE plpgsql SECURITY DEFINER SET search_path=pg_catalog AS $$
-DECLARE cfg private.takbull_pilot_config; o private.takbull_pilot_orders; price int; quota int; pass uuid; amount_remaining int; meter_limit int; expires timestamptz; now_at timestamptz;
+DECLARE cfg private.takbull_pilot_config; o private.takbull_pilot_orders; price int; quota int; pass uuid; amount_remaining int; meter_limit int; expires timestamptz; now_at timestamptz; payable_until timestamptz; order_status text;
 BEGIN
  PERFORM public._require_usage_service();
  SELECT * INTO cfg FROM private.takbull_pilot_config WHERE singleton FOR SHARE;
@@ -57,16 +57,23 @@ BEGIN
    INTO meter_limit,amount_remaining,expires
    FROM private.takbull_pilot_usable_buckets(_owner,pass,now_at);
  END IF;
- RETURN jsonb_build_object('ok',true,'order_id',o.id,'offer',o.offer_id,'amount_minor',o.amount_minor,'currency','ILS',
-  'sources_included',meter_limit,'sources_remaining',amount_remaining,'expires_at',expires,
-  'status',CASE
+ order_status:=CASE
    WHEN EXISTS(SELECT 1 FROM private.takbull_pilot_refunds x WHERE x.order_id=o.id) THEN 'refunded'
-   WHEN EXISTS(SELECT 1 FROM private.takbull_pilot_receipts r WHERE r.order_id=o.id AND r.ends_at>clock_timestamp()) THEN 'active'
+   WHEN EXISTS(SELECT 1 FROM private.takbull_pilot_receipts r WHERE r.order_id=o.id AND r.ends_at>now_at) THEN 'active'
    WHEN EXISTS(SELECT 1 FROM private.takbull_pilot_receipts r WHERE r.order_id=o.id AND r.ends_at IS NOT NULL) THEN 'expired'
    WHEN EXISTS(SELECT 1 FROM private.takbull_pilot_receipts r WHERE r.order_id=o.id) THEN 'reconcile'
    WHEN o.cancelled_at IS NOT NULL THEN 'cancelled'
+   WHEN o.demand_ref IS NOT NULL AND o.demand_issued_at+interval '30 minutes'<=now_at THEN 'demand_expired'
    WHEN o.demand_ref IS NOT NULL THEN 'demand_issued'
-   ELSE 'requested' END);
+   ELSE 'requested' END;
+ IF order_status='demand_issued' AND cfg.enabled IS TRUE AND o.merchant_ref=cfg.verified_merchant_ref
+   AND pass IS NULL AND o.demand_issued_at<=now_at
+   AND o.demand_ref ~ '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$' THEN
+  payable_until:=o.demand_issued_at+interval '30 minutes';
+ END IF;
+ RETURN jsonb_build_object('ok',true,'order_id',o.id,'offer',o.offer_id,'amount_minor',o.amount_minor,'currency','ILS',
+  'sources_included',meter_limit,'sources_remaining',amount_remaining,'expires_at',expires,'status',order_status,
+  'payable_provider_id',CASE WHEN payable_until IS NOT NULL THEN o.demand_ref END,'payable_until',payable_until);
 END;
 $$;
 
@@ -95,16 +102,16 @@ BEGIN
  IF NOT FOUND THEN RETURN jsonb_build_object('ok',false,'code','MISMATCH'); END IF;
  PERFORM 1 FROM public.profiles WHERE id=o.user_id FOR NO KEY UPDATE;
  SELECT * INTO o FROM private.takbull_pilot_orders WHERE id=_order;
- IF o.cancelled_at IS NOT NULL OR _demand_ref IS NULL OR _demand_ref !~ '^[A-Za-z0-9_-]{1,128}$'
+ IF o.cancelled_at IS NOT NULL OR _demand_ref IS NULL OR lower(_demand_ref) !~ '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
   OR _observed_merchant IS DISTINCT FROM o.merchant_ref OR _amount_minor IS DISTINCT FROM o.amount_minor
   OR _currency IS DISTINCT FROM o.currency OR _issued_at IS NULL OR _issued_at<o.requested_at OR _issued_at>clock_timestamp() THEN
   RETURN jsonb_build_object('ok',false,'code','MISMATCH');
  END IF;
  IF o.demand_ref IS NOT NULL THEN
-  RETURN jsonb_build_object('ok',o.demand_ref=_demand_ref AND o.demand_issued_at=_issued_at,'replayed',true);
+  RETURN jsonb_build_object('ok',o.demand_ref=lower(_demand_ref) AND o.demand_issued_at=_issued_at,'replayed',true);
  END IF;
  BEGIN
-  UPDATE private.takbull_pilot_orders SET demand_ref=_demand_ref,demand_issued_at=_issued_at WHERE id=_order;
+  UPDATE private.takbull_pilot_orders SET demand_ref=lower(_demand_ref),demand_issued_at=_issued_at WHERE id=_order;
  EXCEPTION WHEN unique_violation THEN RETURN jsonb_build_object('ok',false,'code','ALREADY_USED_EVIDENCE');
  END;
  INSERT INTO private.takbull_manual_operator_audit(actor_id,order_id,action) VALUES(_actor,_order,'issued');
@@ -122,7 +129,7 @@ DECLARE o private.takbull_pilot_orders; outcome jsonb;
 BEGIN
  PERFORM private.takbull_manual_require_admin(_actor);
  SELECT * INTO o FROM private.takbull_pilot_orders WHERE id=_observed_order AND manual_base;
- IF NOT FOUND OR _observed_demand IS NULL OR _observed_demand IS DISTINCT FROM o.demand_ref OR _paid_at IS NULL OR _paid_at<o.demand_issued_at THEN
+ IF NOT FOUND OR _observed_demand IS NULL OR o.demand_ref IS DISTINCT FROM (CASE WHEN lower(o.demand_ref) ~ '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$' THEN lower(_observed_demand) ELSE _observed_demand END) OR _paid_at IS NULL OR _paid_at<o.demand_issued_at THEN
   RETURN jsonb_build_object('ok',false,'code','MISMATCH');
  END IF;
  -- The core settlement enforces profile lock, unique receipts, window, price,
