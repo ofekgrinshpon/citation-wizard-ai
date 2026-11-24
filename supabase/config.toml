@@ -52,3 +52,6 @@ project_id = "ioktiqcffungtlsmlkcv"
 
 [functions.takbull-signed-proof-observer]
 verify_jwt = false
+
+[functions.takbull-page-observer]
+verify_jwt = false
