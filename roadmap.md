@@ -6,7 +6,9 @@
 - [x] Connect checkout and account purchase status.
 - [x] Use owner-confirmed payment page https://paypage.takbull.co.il/3CxDl.
 - [x] Verify documented completed/success status codes and local HMAC/ledger flow.
-- [ ] Deploy checkout and the dedicated page handler; enable administrator pilot only.
+- [x] Deploy checkout and the dedicated page handler; enable administrator pilot only (83b7ebe4).
+- [x] Local regressions: 61 server/payment and 10 account/UI tests; edge checks and automatic app compilation passed.
+- [x] Authenticated owner checkout returned 200; own pending order read back through the UI; provider navigation was blocked (no payment). Forged return parameters did not grant a package; signed-out public checkout stayed closed.
 - [ ] Verify the live dedicated-page payment and resend on the owner's account — requires the owner's payment.
 - [ ] Public activation and site publication — blocked until the owner's live payment and duplicate-delivery check succeed.
 
