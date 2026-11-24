@@ -14,6 +14,7 @@ import StatCard from "@/components/admin/StatCard";
 import UsageDashboard from "@/components/admin/UsageDashboard";
 import SourceCategoryView from "@/components/admin/SourceCategoryView";
 import UsersTable from "@/components/admin/UsersTable";
+import TakbullManualBasePanel from "@/components/admin/TakbullManualBasePanel";
 import { ContactMessagesTable } from "@/components/admin/ContactMessagesTable";
 import VerifiedSourcesTable, { type VerifiedSourceRow } from "@/components/admin/VerifiedSourcesTable";
 import {
@@ -22,6 +23,8 @@ import {
   ensureVerifiedSources,
   type VerifiedSourceCategory,
 } from "@/lib/verifiedSources";
+
+const manualBaseAdminEnabled = import.meta.env.VITE_TAKBULL_MANUAL_BASE_ADMIN === "true";
 
 interface CitationRecord {
   id: string;
@@ -833,7 +836,9 @@ const Admin = () => {
                 </Button>
               </div>
             </div>
+            {manualBaseAdminEnabled && isAdmin && <TakbullManualBasePanel />}
             <UsersTable
+              hideLegacyAllocations={manualBaseAdminEnabled}
               users={users}
               usage={userUsage}
               adminUserIds={adminUserIds}

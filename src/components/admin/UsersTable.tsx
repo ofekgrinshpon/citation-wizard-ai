@@ -53,6 +53,7 @@ interface LedgerRow {
 
 interface UsersTableProps {
   users: UserProfile[];
+  hideLegacyAllocations?: boolean;
   usage?: Record<string, UserUsage>;
   adminUserIds?: Set<string>;
   onUserUpdated?: (userId: string, patch: Partial<UserProfile>) => void;
@@ -65,7 +66,7 @@ const PLAN_OPTIONS: PlanId[] = ["trial", "week", "month", "semester", "admin"];
 const fmtDate = (iso: string | null) =>
   iso ? new Date(iso).toLocaleString("he-IL", { dateStyle: "short", timeStyle: "short" }) : "—";
 
-const UsersTable = ({ users, usage = {}, adminUserIds, onUserUpdated }: UsersTableProps) => {
+const UsersTable = ({ users, usage = {}, adminUserIds, onUserUpdated, hideLegacyAllocations }: UsersTableProps) => {
   const [search, setSearch] = useState("");
   const [busyUserId, setBusyUserId] = useState<string | null>(null);
   const [topupDrafts, setTopupDrafts] = useState<Record<string, string>>({});
@@ -213,7 +214,7 @@ const UsersTable = ({ users, usage = {}, adminUserIds, onUserUpdated }: UsersTab
                       </td>
 
                       <td className="px-4 py-3">
-                        <Select
+                        {hideLegacyAllocations ? <span className="text-xs">{PLANS[planValue]?.label ?? planValue}</span> : <Select
                           value={planValue}
                           onValueChange={(v) => handlePlanChange(u.id, v as PlanId)}
                           disabled={busyUserId === u.id}
@@ -237,7 +238,7 @@ const UsersTable = ({ users, usage = {}, adminUserIds, onUserUpdated }: UsersTab
                               </SelectItem>
                             ))}
                           </SelectContent>
-                        </Select>
+                        </Select>}
                       </td>
                       <td className="px-4 py-3 text-xs">
                         {isUnlimited ? (
@@ -285,7 +286,7 @@ const UsersTable = ({ users, usage = {}, adminUserIds, onUserUpdated }: UsersTab
                       </td>
 
                       <td className="px-4 py-3">
-                        <div className="flex gap-1">
+                        {hideLegacyAllocations ? <span className="text-muted-foreground">—</span> : <div className="flex gap-1">
                           <Input
                             type="number"
                             min={1}
@@ -306,7 +307,7 @@ const UsersTable = ({ users, usage = {}, adminUserIds, onUserUpdated }: UsersTab
                           >
                             הוסף
                           </Button>
-                        </div>
+                        </div>}
                       </td>
                       <td className="px-4 py-3">
                         {u.referral_code ? (
