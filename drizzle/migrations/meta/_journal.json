@@ -85,6 +85,20 @@
       "when": 1794929690868,
       "tag": "0011_restrict_legal_library_reads",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1795544116259,
+      "tag": "0012_citation_pass_checkout",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1795544299317,
+      "tag": "0013_citation_pass_owner_pilot",
+      "breakpoints": true
     }
   ]
 }

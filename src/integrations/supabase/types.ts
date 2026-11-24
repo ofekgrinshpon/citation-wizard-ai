@@ -314,6 +314,135 @@ export type Database = {
           },
         ]
       }
+      citation_pass_config: {
+        Row: {
+          checkout_enabled: boolean
+          currency: string
+          page_id: string
+          page_url: string | null
+          settlement_enabled: boolean
+          singleton: boolean
+        }
+        Insert: {
+          checkout_enabled?: boolean
+          currency?: string
+          page_id?: string
+          page_url?: string | null
+          settlement_enabled?: boolean
+          singleton?: boolean
+        }
+        Update: {
+          checkout_enabled?: boolean
+          currency?: string
+          page_id?: string
+          page_url?: string | null
+          settlement_enabled?: boolean
+          singleton?: boolean
+        }
+        Relationships: []
+      }
+      citation_pass_orders: {
+        Row: {
+          activated_at: string | null
+          amount_ils: number
+          created_at: string
+          expires_at: string | null
+          id: string
+          offer_id: string
+          provider_order_number: string | null
+          reference: string
+          source_count: number
+          sources_remaining: number
+          status: string
+          transaction_id: string | null
+          user_id: string
+        }
+        Insert: {
+          activated_at?: string | null
+          amount_ils: number
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          offer_id: string
+          provider_order_number?: string | null
+          reference?: string
+          source_count: number
+          sources_remaining: number
+          status?: string
+          transaction_id?: string | null
+          user_id: string
+        }
+        Update: {
+          activated_at?: string | null
+          amount_ils?: number
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          offer_id?: string
+          provider_order_number?: string | null
+          reference?: string
+          source_count?: number
+          sources_remaining?: number
+          status?: string
+          transaction_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "citation_pass_orders_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      citation_pass_usage: {
+        Row: {
+          created_at: string
+          order_id: string
+          request_id: string
+          state: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          order_id: string
+          request_id: string
+          state?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          order_id?: string
+          request_id?: string
+          state?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "citation_pass_usage_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "citation_pass_orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "citation_pass_usage_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "citation_pass_usage_user_id_request_id_fkey"
+            columns: ["user_id", "request_id"]
+            isOneToOne: true
+            referencedRelation: "citation_usage_requests"
+            referencedColumns: ["user_id", "request_id"]
+          },
+        ]
+      }
       citation_recovery_payloads: {
         Row: {
           expires_at: string
@@ -1861,6 +1990,10 @@ export type Database = {
         Args: { payload: Json }
         Returns: number
       }
+      citation_pass_expiry: {
+        Args: { _offer_id: string; _start: string }
+        Returns: string
+      }
       claim_google_referral_intent: { Args: { _token: string }; Returns: Json }
       cleanup_citation_recovery: { Args: { _limit?: number }; Returns: number }
       cleanup_email_unsubscribe_tokens: { Args: never; Returns: number }
@@ -1903,6 +2036,10 @@ export type Database = {
         }
         Returns: Json
       }
+      create_citation_pass_order: {
+        Args: { _offer_id: string; _user_id: string }
+        Returns: Json
+      }
       delete_email: {
         Args: { message_id: number; queue_name: string }
         Returns: boolean
@@ -1923,6 +2060,8 @@ export type Database = {
         }
         Returns: Json
       }
+      get_citation_checkout_status: { Args: never; Returns: Json }
+      get_citation_pass_status: { Args: never; Returns: Json }
       get_citation_trial_status: { Args: never; Returns: Json }
       get_google_referral_enabled: { Args: never; Returns: boolean }
       get_usage_status: { Args: never; Returns: Json }
@@ -2117,6 +2256,18 @@ export type Database = {
       }
       set_user_plan: {
         Args: { _new_plan: string; _user_id: string }
+        Returns: Json
+      }
+      settle_citation_pass_order: {
+        Args: {
+          _amount_ils: number
+          _currency: string
+          _order_number: string
+          _order_status: number
+          _reference: string
+          _status_code: number
+          _transaction_id: string
+        }
         Returns: Json
       }
       settle_ordinary_native_spend: {

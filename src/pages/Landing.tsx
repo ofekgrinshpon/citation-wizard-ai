@@ -2,6 +2,7 @@ import { GuideIllustration } from "@/components/guide/GuideIllustration";
 import { useRef, useEffect, useState, type RefObject } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { useCitationCheckoutReady } from "@/hooks/useCitationPasses";
 import { useOffice } from "@/hooks/useOffice";
 import { ReLexLogo } from "@/components/ReLexLogo";
 import { GeometricBackground } from "@/components/GeometricBackground";
@@ -97,6 +98,7 @@ function CapabilityCard({ cap, index }: { cap: Capability; index: number }) {
 
 const Landing = () => {
   const { user, loading: authLoading } = useAuth();
+  const checkoutReady = useCitationCheckoutReady(user?.id);
   const { isOfficeAddin } = useOffice();
   const navigate = useNavigate();
   const howRef = useRef<HTMLDivElement>(null);
@@ -295,7 +297,7 @@ const Landing = () => {
           </p>
         </div>
 
-        <LaunchPricing />
+        <LaunchPricing enabled={checkoutReady} onSignIn={() => navigate('/auth?mode=login')} />
       </section>
 
       {/* Contact Section */}

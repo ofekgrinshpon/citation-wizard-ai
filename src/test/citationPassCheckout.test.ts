@@ -109,12 +109,27 @@ describe("citation-pass-checkout (not ready)", () => {
     expect(ALLOWED_ORIGINS).toEqual(expect.arrayContaining(["https://relexlm.com", "https://www.relexlm.com", "https://citation-wizard-ai.lovable.app"]));
   });
 
-  it("the handler source has no provider, database, credit or secret access", () => {
-    for (const path of ["supabase/functions/citation-pass-checkout/handler.ts", "supabase/functions/citation-pass-checkout/index.ts"]) {
-      const src = readFileSync(path, "utf8");
-      for (const banned of ["takbull", "fetch(", ".from(", ".rpc(", "SERVICE_ROLE", "credits", "topup", "getClaims", "atob(", "jwtDecode"]) expect(src.toLowerCase()).not.toContain(banned.toLowerCase());
-    }
-    expect(readFileSync("supabase/functions/citation-pass-checkout/index.ts", "utf8")).toContain("auth.getUser()");
+  it("creates a pending per-checkout order only when authenticated and the server contract is enabled", async () => {
+    const createOrder = vi.fn(async () => ({ reference: `rlx_${"a".repeat(32)}`, orderId: "test-order", pageUrl: "https://paypage.takbull.co.il/3CxDl" }));
+    const res = await handleCitationPassCheckout(req(), { getUser: okUser(), getConfig: async () => ({ enabled: true, pageUrl: "https://paypage.takbull.co.il/3CxDl" }), createOrder });
+    expect(createOrder).toHaveBeenCalledWith("00000000-0000-4000-8000-000000000001", "citation_week_pass_v1");
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({ activated: false, orderId: "test-order", offerId: "citation_week_pass_v1", checkoutUrl: `https://paypage.takbull.co.il/3CxDl?c_id=rlx_${"a".repeat(32)}` });
+  });
+  it("does not create an order for a rejected login, disabled contract or invalid configured URL", async () => {
+    const createOrder = vi.fn(async () => null);
+    const enabled = { getConfig: async () => ({ enabled: true, pageUrl: "https://paypage.takbull.co.il/3CxDl" }), createOrder };
+    await handleCitationPassCheckout(req(), { ...enabled, getUser: async () => null });
+    await handleCitationPassCheckout(req(), { ...enabled, getUser: okUser(), getConfig: async () => ({ enabled: false, pageUrl: "https://paypage.takbull.co.il/3CxDl" }) });
+    await handleCitationPassCheckout(req(), { ...enabled, getUser: okUser(), getConfig: async () => ({ enabled: true, pageUrl: "https://evil.test/3CxDl" }) });
+    expect(createOrder).not.toHaveBeenCalled();
+  });
+  it("a lost order-creation response never produces an unbound payment URL or auto-retry", async () => {
+    const createOrder = vi.fn(async () => { throw new Error("unknown commit"); });
+    const res = await handleCitationPassCheckout(req(), { getUser: okUser(), getConfig: async () => ({ enabled: true, pageUrl: "https://paypage.takbull.co.il/3CxDl" }), createOrder });
+    expect(res.status).toBe(503);
+    expect((await res.json()).activated).toBe(false);
+    expect(createOrder).toHaveBeenCalledTimes(1);
   });
 });
 
@@ -152,7 +167,7 @@ describe("takbull-hosted-webhook (closed)", () => {
 
   it("existing function auth settings are not loosened for the new functions", () => {
     const toml = readFileSync("supabase/config.toml", "utf8");
-    expect(toml).not.toContain("citation-pass-checkout");
+    expect(toml).toContain("[functions.citation-pass-checkout]\nverify_jwt = false");
     expect(toml).not.toContain("takbull-hosted-webhook");
   });
 });

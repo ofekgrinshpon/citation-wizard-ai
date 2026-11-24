@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { format } from "date-fns";
-import { CitationPlanOffers } from "@/components/CitationPlanOffers";
+import { CitationPassAccount } from "@/components/CitationPassAccount";
 import { useUsage, WINDOW_LEVEL_LABEL, PERIOD_LEVEL_LABEL } from "@/hooks/useUsage";
 import { UsageLimitsInfoDialog } from "@/components/usage/UsageLimitsInfoDialog";
 import { TopupOptions } from "@/components/usage/TopupOptions";
@@ -345,12 +345,7 @@ const Profile = () => {
               </div>
 
               {/* Plan options */}
-              {!isAdmin && (
-                <div className="bg-card border border-border rounded-xl p-6">
-                  <h4 className="text-sm font-bold text-foreground mb-3">מסלולי אזכורים — בקרוב</h4>
-                  <CitationPlanOffers />
-                </div>
-              )}
+              <CitationPassAccount />
 
               {/* Usage add-ons */}
               {!isAdmin && (usage?.canPurchaseTopup ?? false) && (

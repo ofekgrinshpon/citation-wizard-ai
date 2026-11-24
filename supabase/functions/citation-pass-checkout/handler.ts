@@ -1,11 +1,10 @@
 /**
  * Pure checkout handler (dependencies injected so it is testable outside Deno).
- * Deliberately NOT READY: it never creates an order, calls a payment provider,
- * issues a URL, writes to the database or grants anything. A verified user with
- * a valid allowlisted offer receives 503 CITATION_PASS_CHECKOUT_NOT_READY.
- * There is no fallthrough to legacy credit/top-up logic.
+ * Closed unless the server's dedicated-page settlement contract is enabled.
+ * Authenticated checkout creates a unique pending order; it never grants access.
  */
 import { findCitationPassOffer } from "../_shared/citationPassOffers.ts";
+import { pageCheckoutUrl } from "../_shared/takbullPagePayment.ts";
 
 export const ALLOWED_ORIGINS: readonly string[] = Object.freeze([
   "https://relexlm.com",
@@ -20,6 +19,8 @@ export const BODY_TIME_CAP_MS = 3000;
 export interface CheckoutDeps {
   /** Must verify the bearer token with the auth server (auth.getUser), never decode locally. */
   getUser: (authorization: string) => Promise<{ id: string } | null>;
+  getConfig?: (authorization: string) => Promise<{ enabled: boolean; pageUrl: string | null }>;
+  createOrder?: (userId: string, offerId: string) => Promise<{ reference: string; orderId: string; pageUrl: string } | null>;
   timeCapMs?: number;
 }
 
@@ -116,6 +117,16 @@ export async function handleCitationPassCheckout(req: Request, deps: CheckoutDep
 
   const offer = findCitationPassOffer((parsed as Record<string, unknown>).offerId);
   if (!offer) return json(origin, 400, { error: "UNKNOWN_OFFER" });
+
+  try {
+    const config = await deps.getConfig?.(authorization);
+    if (config?.enabled === true && deps.createOrder && pageCheckoutUrl(config.pageUrl, `rlx_${"a".repeat(32)}`)) {
+      const order = await deps.createOrder(user.id, offer.id);
+      const checkoutUrl = order?.pageUrl === config.pageUrl ? pageCheckoutUrl(order.pageUrl, order.reference) : null;
+      if (!order || !checkoutUrl) return json(origin, 503, { error: "CHECKOUT_UNAVAILABLE" });
+      return json(origin, 200, { checkoutUrl, orderId: order.orderId, offerId: offer.id });
+    }
+  } catch { return json(origin, 503, { error: "CHECKOUT_UNAVAILABLE" }); }
 
   return json(origin, 503, {
     error: "CITATION_PASS_CHECKOUT_NOT_READY",

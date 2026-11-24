@@ -1,5 +1,15 @@
 # Roadmap — research → memo → draft handoff (legal-research-v2)
 
+## Takbull one-time checkout (2026-11-24)
+- [x] Build purchase-specific pending orders and atomic, idempotent settlement.
+- [x] Integrate paid source allowances without altering legacy plans.
+- [x] Connect checkout and account purchase status.
+- [x] Use owner-confirmed payment page https://paypage.takbull.co.il/3CxDl.
+- [x] Verify documented completed/success status codes and local HMAC/ledger flow.
+- [ ] Deploy checkout and the dedicated page handler; enable administrator pilot only.
+- [ ] Verify the live dedicated-page payment and resend on the owner's account — requires the owner's payment.
+- [ ] Public activation and site publication — blocked until the owner's live payment and duplicate-delivery check succeed.
+
 ## Word review fixes (requested Nov 10)
 - [x] Foreign rulings from several countries: choose the country, then one new check.
 - [x] Israeli rulings list: choice buttons instead of a "2." prefix; single numbered line loses its number.

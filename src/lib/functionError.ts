@@ -119,6 +119,7 @@ function messageFor(status: number | null, code: string | null, body: Record<str
     return serverHe || "יש כרגע פעולה פעילה ב-ReLex. ניתן להתחיל פעולה חדשה לאחר שהיא תסתיים.";
   }
   if (code === TRIAL_SOURCE_LIMIT || (code === "INSUFFICIENT_CREDITS" && body?.block_reason === "trial_exhausted")) return trialQuotaReachedMessage;
+  if (code === "INSUFFICIENT_CREDITS" && body?.block_reason === "pass_exhausted") return "מכסת חבילת האזכורים נוצלה. אפשר לרכוש חבילה נוספת בעמוד החשבון.";
   if (code === "INSUFFICIENT_CREDITS") {
     const required = body?.required;
     return required

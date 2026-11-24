@@ -55,3 +55,6 @@ verify_jwt = false
 
 [functions.takbull-page-observer]
 verify_jwt = false
+
+[functions.citation-pass-checkout]
+verify_jwt = false

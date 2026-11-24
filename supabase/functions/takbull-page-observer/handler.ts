@@ -16,6 +16,8 @@ type Deps = {
   readActive: () => boolean;
   readPageKey: () => string | undefined;
   record: (entry: Observation) => void;
+  /** Returns disabled while still observational. Never called before HMAC proof. */
+  settle?: (payload: unknown) => Promise<"disabled" | "accepted" | "rejected" | "unavailable">;
   now?: () => number;
   timeoutMs?: number;
 };
@@ -60,7 +62,7 @@ async function readBody(req: Request, timeout: number): Promise<Uint8Array<Array
 function classify(x: unknown): Observation | null {
   if (!x || typeof x !== "object" || Array.isArray(x)) return null;
   const o = x as Record<string, unknown>;
-  const has = (k: string) => Object.hasOwn(o, k);
+  const has = (k: string) => Object.prototype.hasOwnProperty.call(o, k);
   return {
     marker: "TAKBULL_PAGE_OBSERVATION_V1",
     flatReference: typeof o.ExternalCustomerId === "string" && /^rlx_[0-9a-f]{32}$/.test(o.ExternalCustomerId),
@@ -98,9 +100,16 @@ export function createTakbullPageObserver(deps: Deps) {
       const verifier = await crypto.subtle.importKey("raw", encoder.encode(key), { name: "HMAC", hash: "SHA-256" }, false, ["verify"]);
       if (!await crypto.subtle.verify("HMAC", verifier, entry.mac, signed) || !fresh(entry.signedAt)) return reply(401);
       if (deps.readActive() !== true || deps.readPageKey() !== key) return reply(404);
-      let projected: Observation | null;
-      try { projected = classify(JSON.parse(new TextDecoder("utf-8", { fatal: true, ignoreBOM: true }).decode(bytes))); }
+      let payload: unknown;
+      try { payload = JSON.parse(new TextDecoder("utf-8", { fatal: true, ignoreBOM: true }).decode(bytes)); }
       catch { return reply(400); }
+      if (deps.settle) {
+        const result = await deps.settle(payload);
+        if (result === "accepted") return reply(204);
+        if (result === "rejected") return reply(422);
+        if (result === "unavailable") return reply(503);
+      }
+      const projected = classify(payload);
       if (projected) {
         const category = JSON.stringify(projected);
         if (observed.size < 64 && !observed.has(category)) {
@@ -108,7 +117,7 @@ export function createTakbullPageObserver(deps: Deps) {
           try { deps.record(projected); } catch { /* no retries based on logging */ }
         }
       }
-      // Authenticated delivery ack only. Never an order, access grant, or receipt verification.
+      // Disabled settlement: authenticated observation ack only, no access grant.
       return reply(204);
     } catch { return reply(503); }
   };
