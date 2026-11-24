@@ -18,10 +18,10 @@ const txFields = new Set(["transactionid","transactioninternalnumber","transacti
 const receiptFields = new Set(["documentid","invoiceid","receiptid","documentnumber","invoicenumber","receiptnumber"]);
 const statusFields = new Set(["status","statuscode","transactionstatus","orderstatus","responsecode"]);
 const isObj = (x: unknown): x is Record<string, unknown> => !!x && typeof x === "object" && !Array.isArray(x);
-type Arm = { start: number; end: number; run: string; demand?: string; order?: string; orderRef?: string; customerTestRef?: string; customerTestAmountMinor?: 100 | 3900 };
+type Arm = { start: number; end: number; run: string; demand?: string; order?: string; orderRef?: string; customerTestRef?: string; customerTestAmountMinor?: 100 | 3900; observeExternalCustomerId?: true };
 type Deps = { config: () => string | undefined; key: () => string | undefined; log: (safeLine: string) => void;
   now?: () => number; readTimeoutMs?: number };
-const approvedConfigKeys = new Set(["start","end","run","demand","order","orderRef","customerTestRef","customerTestAmountMinor"]);
+const approvedConfigKeys = new Set(["start","end","run","demand","order","orderRef","customerTestRef","customerTestAmountMinor","observeExternalCustomerId"]);
 function instant(x: unknown): number {
   if (typeof x !== "string" || !utc.test(x)) return NaN;
   const n = Date.parse(x);
@@ -31,7 +31,7 @@ function getArm(raw: unknown, now: number): Arm | null {
   if (typeof raw !== "string" || raw.length===0 || raw.length>768) return null;
   const val: unknown=JSON.parse(raw);
   if (!isObj(val) || Object.keys(val).some((k)=>!approvedConfigKeys.has(k))) return null;
-  const { run, demand, order, orderRef, customerTestRef, customerTestAmountMinor } = val;
+  const { run, demand, order, orderRef, customerTestRef, customerTestAmountMinor, observeExternalCustomerId } = val;
   const start=instant(val.start),end=instant(val.end);
   if (!(Number.isFinite(now) && now>=start && now<end && end-start<=MAX_WINDOW_MS)) return null;
   if (typeof run!=="string" || !marker.test(run)) return null;
@@ -41,9 +41,10 @@ function getArm(raw: unknown, now: number): Arm | null {
   if (customerTestRef!==undefined && (typeof customerTestRef!=="string" || !/^rlx_[0-9a-f]{32}$/.test(customerTestRef))) return null;
   // A strict single-lane diagnostic: other IDs cannot satisfy this test.
   if (customerTestRef && (demand || order || orderRef)) return null;
+  if (observeExternalCustomerId!==undefined && (observeExternalCustomerId!==true || !customerTestRef)) return null;
   if (customerTestAmountMinor!==undefined && (!customerTestRef || (customerTestAmountMinor!==100 && customerTestAmountMinor!==3900))) return null;
   if (!demand && !order && !orderRef && !customerTestRef) return null;
-  return { start,end,run,demand:demand?.toLowerCase(),order,orderRef,customerTestRef,customerTestAmountMinor };
+  return { start,end,run,demand:demand?.toLowerCase(),order,orderRef,customerTestRef,customerTestAmountMinor,observeExternalCustomerId };
 }
 function parseSignature(header: string | null) {
   if (!header || header.length>HEADER_MAX) return null;
@@ -130,6 +131,33 @@ function project(payload: unknown, arm: Arm) {
   return { kind: "projected", value: {...result,amount:amounts===0?"absent":differentAmount?"other":"expected",
     currency:currencies===0?"absent":differentCurrency?"other":"expected"} } as const;
 }
+// Exact candidate shapes only. Presence/equality is diagnostic, not a verified
+// order/reference, settled payment, or entitlement. Never emit the field value.
+function externalCustomerObservation(payload: unknown, expected: string) {
+  if (!isObj(payload)) return null;
+  const own=(v:unknown,k:string)=>isObj(v) && Object.hasOwn(v,k);
+  const order=own(payload,"order")?payload.order:null;
+  const scopes=[payload,order].filter(isObj);
+  const paths:unknown[]=[];
+  let ambiguous=false;
+  for(const scope of scopes) {
+    const customers=Object.keys(scope).filter(k=>k.toLowerCase()==="customer");
+    if(customers.length>1) ambiguous=true;
+    for (const [customerKey,externalKey] of [["Customer","ExternalCustomerId"],["customer","externalCustomerId"]]) {
+      if(!own(scope,customerKey)) continue;
+      const customer=scope[customerKey];
+      if(!isObj(customer)) continue;
+      if(Object.keys(customer).filter(k=>k.toLowerCase()==="externalcustomerid").length>1) ambiguous=true;
+      if(own(customer,externalKey)) paths.push(customer[externalKey]);
+    }
+  }
+  const hasOld=own(payload,"c_id") || scopes.some(o=>own(o,"c_id")) ||
+    ["data","payload","order","transaction","result"].some(k=>own(payload,k)&&own(payload[k],"c_id"));
+  if(ambiguous || paths.length>1) return hasOld?"external_ambiguous_with_cid":"external_ambiguous";
+  if(!paths.length) return hasOld?"external_missing_with_cid":"external_missing";
+  if(paths[0]!==expected) return hasOld?"external_unrelated_with_cid":"external_unrelated";
+  return hasOld?"external_matching_with_cid":"external_matching";
+}
 const reply = (status: number) => new Response(null,{status,headers:{"Cache-Control":"no-store","X-Content-Type-Options":"nosniff"}});
 /** Diagnostic only. No database, authorization grants, external calls or raw logs. */
 export function createTakbullSignedProofObserver(deps: Deps) {
@@ -138,7 +166,11 @@ export function createTakbullSignedProofObserver(deps: Deps) {
   let observedRun = "";
   type RejectReason = "signature_missing" | "signature_malformed" | "timestamp" | "key_unusable"
     | "signature_mismatch" | "invalid_body" | "order_mismatch" | "unsupported_media"
-    | "hosted_cid_absent" | "hosted_cid_mismatch" | "hosted_amount_not_confirmed";
+    | "hosted_cid_absent" | "hosted_cid_mismatch" | "hosted_amount_not_confirmed"
+    | "external_ambiguous" | "external_ambiguous_with_cid"
+    | "external_missing" | "external_missing_with_cid"
+    | "external_unrelated" | "external_unrelated_with_cid"
+    | "external_matching" | "external_matching_with_cid";
   let diagnosticArm = "";
   const emitted = new Set<RejectReason>();
   const diagnose = (arm: Arm, reason: RejectReason) => {
@@ -193,6 +225,13 @@ export function createTakbullSignedProofObserver(deps: Deps) {
       try { parsed=JSON.parse(new TextDecoder("utf-8",{fatal:true,ignoreBOM:true}).decode(body)); }
       catch { return reject(401,"invalid_body"); }
       const projection=project(parsed,arm);
+      if (arm.observeExternalCustomerId && arm.customerTestRef && projection.kind!=="invalid_body") {
+        try {
+          const observation=externalCustomerObservation(parsed,arm.customerTestRef);
+          const t=now();
+          if (observation && Number.isFinite(t) && t>=arm.start && t<arm.end) diagnose(arm,observation);
+        } catch { /* diagnostic only; never affect response */ }
+      }
       if (projection.kind!=="projected") return reject(401,projection.kind);
       const projected=projection.value;
       if (observedRun!==arm.run) {
