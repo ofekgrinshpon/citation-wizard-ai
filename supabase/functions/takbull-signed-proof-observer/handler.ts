@@ -139,7 +139,9 @@ function externalCustomerObservation(payload: unknown, expected: string) {
   const order=own(payload,"order")?payload.order:null;
   const scopes=[payload,order].filter(isObj);
   const paths:unknown[]=[];
-  let ambiguous=false;
+  const hasFlat=own(payload,"ExternalCustomerId");
+  if(hasFlat) paths.push(payload.ExternalCustomerId);
+  let ambiguous=hasFlat && Object.keys(payload).filter(k=>k.toLowerCase()==="externalcustomerid").length>1;
   for(const scope of scopes) {
     const customers=Object.keys(scope).filter(k=>k.toLowerCase()==="customer");
     if(customers.length>1) ambiguous=true;
@@ -155,6 +157,10 @@ function externalCustomerObservation(payload: unknown, expected: string) {
     ["data","payload","order","transaction","result"].some(k=>own(payload,k)&&own(payload[k],"c_id"));
   if(ambiguous || paths.length>1) return hasOld?"external_ambiguous_with_cid":"external_ambiguous";
   if(!paths.length) return hasOld?"external_missing_with_cid":"external_missing";
+  if(hasFlat) {
+    if(paths[0]!==expected) return hasOld?"external_flat_unrelated_with_cid":"external_flat_unrelated";
+    return hasOld?"external_flat_matching_with_cid":"external_flat_matching";
+  }
   if(paths[0]!==expected) return hasOld?"external_unrelated_with_cid":"external_unrelated";
   return hasOld?"external_matching_with_cid":"external_matching";
 }
@@ -170,7 +176,9 @@ export function createTakbullSignedProofObserver(deps: Deps) {
     | "external_ambiguous" | "external_ambiguous_with_cid"
     | "external_missing" | "external_missing_with_cid"
     | "external_unrelated" | "external_unrelated_with_cid"
-    | "external_matching" | "external_matching_with_cid";
+    | "external_matching" | "external_matching_with_cid"
+    | "external_flat_unrelated" | "external_flat_unrelated_with_cid"
+    | "external_flat_matching" | "external_flat_matching_with_cid";
   let diagnosticArm = "";
   const emitted = new Set<RejectReason>();
   const diagnose = (arm: Arm, reason: RejectReason) => {
