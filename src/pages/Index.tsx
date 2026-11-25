@@ -86,7 +86,10 @@ import { renderPeriodicalLocal } from "@/lib/periodicalLocal";
 import { renderBookLocal } from "@/lib/bookLocal";
 import { citationManualChoice, preparePastedCitation } from "@/lib/pastedCitationAdapter";
 import { planCitationEvidence, planLocalCitation, planTypedRequest, resolveCitationResponse, selectForeignCaseChoice, selectBookEditionChoice, selectHebrewBookChoice, needsBoundBookLookup, foreignFreeformSourceType, CHAT_HOST } from "@/lib/citationPlanner";
-import { useCitationPasses } from "@/hooks/useCitationPasses";
+import { useCitationCheckoutReady, useCitationPasses } from "@/hooks/useCitationPasses";
+import { CitationPackPrompt } from "@/components/CitationPackPrompt";
+import { CitationPassPurchaseOptions } from "@/components/CitationPassAccount";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { activePassSummary } from "@/lib/citationPassHeader";
 import type { CitationManualChoice } from "../../supabase/functions/_shared/pastedCitation";
 
@@ -259,11 +262,36 @@ const Index = () => {
   const { isOfficeAddin } = useOffice();
   const navigate = useNavigate();
   const subscription = useSubscription();
+  const checkoutReady = useCitationCheckoutReady(user?.id);
+  const [packsOpen, setPacksOpen] = useState(false);
+  const packTrigger = useRef<HTMLElement | null>(null);
+  const packPromptRef = useRef<HTMLDivElement>(null);
+  const canChoosePack = !!user && checkoutReady && !isOfficeAddin;
+  useEffect(() => { setPacksOpen(false); }, [user?.id, canChoosePack]);
+  const showPacks = (event: React.MouseEvent<HTMLButtonElement>) => {
+    if (!canChoosePack) return;
+    packTrigger.current = event.currentTarget;
+    setPacksOpen(true);
+  };
   const paidPasses = useCitationPasses(user?.id);
   const paidPass = paidPasses.resolved && !paidPasses.error ? activePassSummary(paidPasses.passes) : null;
   const paidPassPending = !!user && !paidPasses.resolved;
   const { sourceQuota, quotaError, referralPending, refreshQuota } = useCitationSourceQuota(user?.id);
   const quotaBlocksNew = !!sourceQuota && (sourceQuota.loading || sourceQuota.remaining <= 0);
+  const showTrialPackPrompt = canChoosePack && !paidPass && !quotaError &&
+    !!sourceQuota && !sourceQuota.loading && sourceQuota.remaining === 0;
+  useEffect(() => {
+    if (showTrialPackPrompt && mode === "freetext" && !loading && messages[messages.length - 1]?.role === "assistant") {
+      chatEndRef.current?.scrollIntoView?.({ behavior: "smooth" });
+    }
+  }, [showTrialPackPrompt, mode, loading, messages]);
+  const revealTrialPackPrompt = () => {
+    const prompt = showTrialPackPrompt ? packPromptRef.current : null;
+    if (!prompt) return false;
+    prompt.scrollIntoView?.({ block: "nearest" });
+    prompt.focus({ preventScroll: true });
+    return true;
+  };
   const { billingPeriodEndsAt, planMeta } = useCredits();
 
   const { log: logActivity } = useActivityLog();
@@ -341,7 +369,7 @@ const Index = () => {
   const callAPI = async (userMessage: string, history: Message[], telemetry?: CostTelemetry, article?: { sourceType: SourceType; rawInput: string; manual?: boolean; manualChoice?: CitationManualChoice | null }, onSuccess?: (reply: string, isCurrent: () => boolean, historyRequestId?: string, typed?: boolean, resolution?: import("@/lib/citationPlanner").CitationResolution, groundedSourceType?: "article") => Promise<void> | void) => {
     if (quotaBlocksNew) {
       const message = sourceQuota?.loading ? trialQuotaUnavailableMessage : trialQuotaReachedMessage;
-      toast.error(message);
+      if (!revealTrialPackPrompt()) toast.error(message);
       throw Object.assign(new Error(message), { handled: true });
     }
     // Bind to the render that started the outer handler, not whichever account
@@ -780,7 +808,7 @@ const Index = () => {
     const rawText = input.trim();
     if (!rawText || loading) return;
     if (quotaBlocksNew) {
-      toast.error(sourceQuota?.loading ? trialQuotaUnavailableMessage : trialQuotaReachedMessage);
+      if (!revealTrialPackPrompt()) toast.error(sourceQuota?.loading ? trialQuotaUnavailableMessage : trialQuotaReachedMessage);
       return;
     }
 
@@ -1110,6 +1138,21 @@ const Index = () => {
 
   return (
     <div className={`flex flex-col h-screen font-sans bg-background text-foreground ${isOfficeAddin ? "compact-mode" : ""}`}>
+      <Dialog open={canChoosePack && packsOpen} onOpenChange={setPacksOpen}>
+        <DialogContent dir="rtl" className="max-h-[90dvh] w-[calc(100%_-_2rem)] max-w-2xl overflow-y-auto"
+          onCloseAutoFocus={event => {
+            if (packTrigger.current?.isConnected) {
+              event.preventDefault();
+              packTrigger.current.focus();
+            }
+          }}>
+          <DialogHeader className="pr-7 text-right sm:text-right">
+            <DialogTitle>חבילות אזכורים</DialogTitle>
+            <DialogDescription>בחרו חבילה להמשך עבודה ב־ReLex.</DialogDescription>
+          </DialogHeader>
+          <CitationPassPurchaseOptions key={user?.id} ready={canChoosePack} />
+        </DialogContent>
+      </Dialog>
       {/* Guest Limit Modal */}
       {!sourceQuota && !subscription.loading && subscription.isLimitReached && (
         <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ direction: "rtl" }}>
@@ -1152,7 +1195,7 @@ const Index = () => {
             </p>
           </div>
 
-          <div className="flex items-center gap-1.5 sm:gap-2">
+          <div className="flex min-w-0 flex-wrap items-center justify-end gap-1.5 sm:gap-2">
             {paidPass ? (
               <span className="text-[9px] sm:text-xs text-muted-foreground bg-muted px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-md" dir="rtl">
                 נותרו {paidPass.remaining} אזכורים בחבילה
@@ -1165,6 +1208,12 @@ const Index = () => {
               <span className="text-[9px] sm:text-[10px] text-muted-foreground bg-muted px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-md">
                 {subscription.remaining}/{subscription.limit} אזכורים
               </span>
+            )}
+            {canChoosePack && (
+              <button type="button" onClick={showPacks} aria-haspopup="dialog"
+                className="shrink-0 rounded px-1.5 py-1 text-[10px] font-medium text-primary hover:underline focus-visible:outline focus-visible:outline-primary sm:text-xs">
+                חבילות אזכורים
+              </button>
             )}
             <button
               onClick={async () => {
@@ -1230,7 +1279,10 @@ const Index = () => {
           className="flex-1 overflow-y-auto px-3 sm:px-4"
           style={{ maxWidth: 860, margin: "0 auto", width: "100%" }}
         >
-        {sourceQuota && (quotaError || (!sourceQuota.loading && sourceQuota.remaining === 0)) && (
+        {showTrialPackPrompt && (mode === "batch" || mode === "bibliography") && (
+          <div ref={packPromptRef} tabIndex={-1}><CitationPackPrompt onChoose={showPacks} /></div>
+        )}
+        {(!showTrialPackPrompt || mode === "legalqa") && sourceQuota && (quotaError || (!sourceQuota.loading && sourceQuota.remaining === 0)) && (
           <div role="status" dir="rtl" className="my-3 rounded-lg border border-border bg-muted/50 p-3 text-sm">
             {quotaError ? trialQuotaUnavailableMessage : trialQuotaReachedMessage}{" "}
             {quotaError
@@ -1618,6 +1670,9 @@ const Index = () => {
                     onCancel={handleIntegrityCancel}
                   />
                 </div>
+              )}
+              {showTrialPackPrompt && (
+                <div ref={packPromptRef} tabIndex={-1}><CitationPackPrompt onChoose={showPacks} /></div>
               )}
               <div ref={chatEndRef} />
               {citationStatus?.isCurrent() && <div className="my-3">

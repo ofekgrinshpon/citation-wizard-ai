@@ -35,19 +35,24 @@ export function CitationPassStatusList() {
   </div>;
 }
 
-export function CitationPassAccount() {
+export function CitationPassPurchaseOptions({ ready }: { ready: boolean }) {
   const { user } = useAuth();
-  const ready = useCitationCheckoutReady(user?.id);
   const [busy, setBusy] = useState<CitationOfferId | null>(null);
   const purchase = async (offerId: CitationOfferId) => {
-    if (!user || busy) return;
+    if (!user || !ready || busy) return;
     setBusy(offerId);
     try { window.location.assign(await startCitationPassCheckout(offerId)); }
     catch { toast.error("לא ניתן לפתוח כרגע את עמוד התשלום. לא בוצע חיוב ב-ReLex."); setBusy(null); }
   };
+  return <CitationPlanOffers enabled={ready && !!user} busy={busy} onPurchase={offerId => void purchase(offerId)} />;
+}
+
+export function CitationPassAccount() {
+  const { user } = useAuth();
+  const ready = useCitationCheckoutReady(user?.id);
   return <section dir="rtl" className="space-y-5 border-t border-border pt-6">
     <CitationPassStatusList />
     <h3 className="font-bold">רכישת חבילת אזכורים</h3>
-    <CitationPlanOffers enabled={ready && !!user} busy={busy} onPurchase={offerId => void purchase(offerId)} />
+    <CitationPassPurchaseOptions key={user?.id} ready={ready} />
   </section>;
 }
