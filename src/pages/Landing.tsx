@@ -11,6 +11,7 @@ import { ContactSection } from "@/components/ContactSection";
 import { ChevronDown } from "lucide-react";
 import { HomeCitationDemo } from "@/components/launch/HomeCitationDemo";
 import { LaunchPricing } from "@/components/launch/LaunchPricing";
+import { HowItWorksTabs } from "@/components/launch/HowItWorksTabs";
 import { WordLaunchGuide } from "@/components/launch/WordLaunchGuide";
 import guideCitationImg from "@/assets/guide/citation.jpg.asset.json";
 import guideFootnotesImg from "@/assets/guide/footnotes-approved.webp";
@@ -257,20 +258,7 @@ const Landing = () => {
 
       {/* Capabilities Section */}
       <section ref={howRef} className="py-16 px-4 max-w-6xl mx-auto relative z-10">
-        <div className="text-center mb-12 space-y-3">
-          <h2 className="text-2xl md:text-3xl font-bold text-foreground">
-            מהמקור ועד רשימת המקורות
-          </h2>
-          <p className="text-muted-foreground text-sm md:text-base max-w-2xl mx-auto">
-            אזכור אחיד, הערות שוליים וביבליוגרפיה — עם בדיקה שלכם לפני השילוב בעבודה.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {capabilities.map((cap, i) => (
-            <CapabilityCard key={cap.title} cap={cap} index={i} />
-          ))}
-        </div>
+        <HowItWorksTabs />
 
         <div className="mt-8"><WordLaunchGuide /></div>
         <p className="text-center text-sm text-muted-foreground mt-6">התוצאות דורשות בדיקה מול המקורות. אין תמיכה בכל סוג מקור או בכל עיצוב Word.</p>
