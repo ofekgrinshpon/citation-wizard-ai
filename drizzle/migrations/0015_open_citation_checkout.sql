@@ -1,0 +1,1 @@
+UPDATE public.citation_pass_config SET checkout_enabled = true WHERE singleton = true;
