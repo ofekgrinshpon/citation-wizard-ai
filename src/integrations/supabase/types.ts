@@ -349,6 +349,7 @@ export type Database = {
           expires_at: string | null
           id: string
           offer_id: string
+          original_offer_id: string | null
           provider_order_number: string | null
           reference: string
           source_count: number
@@ -364,6 +365,7 @@ export type Database = {
           expires_at?: string | null
           id?: string
           offer_id: string
+          original_offer_id?: string | null
           provider_order_number?: string | null
           reference?: string
           source_count: number
@@ -379,6 +381,7 @@ export type Database = {
           expires_at?: string | null
           id?: string
           offer_id?: string
+          original_offer_id?: string | null
           provider_order_number?: string | null
           reference?: string
           source_count?: number
