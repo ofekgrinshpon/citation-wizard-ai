@@ -17,7 +17,7 @@ async function scalar(sql: string, args: unknown[] = []) {
 async function create(userId = userA, offerId = week) {
   return scalar("select public.create_citation_pass_order($1,$2) as value", [userId, offerId]);
 }
-async function settle(reference: string, txn = "101", order = "8", amount = 39, currency: string | null = null, status = 2, code = 0) {
+async function settle(reference: string, txn = "101", order = "8", amount = 39, currency: string | null = null, status: number | null = 2, code = 0) {
   return scalar("select public.settle_citation_pass_order($1,$2,$3,$4,$5,$6,$7) as value", [reference, txn, order, amount, currency, status, code]);
 }
 async function claim(requestId: string, userId = userA, batchId: string | null = null, retry: string | null = null) {
@@ -37,6 +37,7 @@ beforeAll(async () => {
   // exact-definition drift gate stays intact in the production draft.
   const migration = readFileSync("supabase/migration-drafts/20261124180000_citation_pass_checkout.sql", "utf8").replace(/DO \$gate\$[\s\S]*?\$gate\$;/, "");
   await db.exec(migration);
+  await db.exec(readFileSync("supabase/migration-drafts/20261125195300_takbull_page_completed_status.sql", "utf8"));
   await db.exec(readFileSync("supabase/migration-drafts/20261124181500_citation_pass_owner_pilot.sql", "utf8"));
   await db.exec("INSERT INTO public.citation_pass_config(singleton) VALUES(true);");
 }, 30000);
@@ -61,7 +62,7 @@ describe("atomic one-time purchase and paid source ledger (real local PostgreSQL
     expect(result.activated).toBe(false);
     const reference = new URL(result.checkoutUrl).searchParams.get("c_id");
     if (!reference) throw new Error("Missing local order reference");
-    const payload = { ExternalCustomerId: reference, TransactionId: 101, OrderNumber: 8, OrderTotalSum: 39, OrderStatus: 2, StatusCode: 0 };
+    const payload = { ExternalCustomerId: reference, TransactionId: 101, OrderNumber: 8, OrderTotalSum: 39, OrderStatus: 3, StatusCode: 0, Action: null };
     const keyText = "local-synthetic-key-not-a-real-merchant-secret";
     const t = String(Math.floor(Date.now() / 1000));
     const body = JSON.stringify(payload);
@@ -123,7 +124,7 @@ describe("atomic one-time purchase and paid source ledger (real local PostgreSQL
   });
   it("rejects non-success status, conflicting currency, or missing transaction", async () => {
     const o = await create();
-    for (const args of [[o.reference, "101", "8", 39, "USD", 2, 0], [o.reference, "101", "8", 39, null, 0, 0], [o.reference, "101", "8", 39, null, 2, 1], [o.reference, "", "8", 39, null, 2, 0]] as const) {
+    for (const args of [[o.reference, "101", "8", 39, "USD", 2, 0], [o.reference, "101", "8", 39, null, 0, 0], [o.reference, "101", "8", 39, null, 2, 1], [o.reference, "101", "8", 39, null, 3, 1], [o.reference, "101", "8", 39, null, null, 0], [o.reference, "", "8", 39, null, 2, 0]] as const) {
       expect((await settle(args[0], args[1], args[2], args[3], args[4], args[5], args[6])).error).toBe("PAYMENT_REJECTED");
     }
   });

@@ -7,7 +7,7 @@ export interface TakbullPagePayment {
   orderNumber: string;
   amountIls: 39 | 65;
   currency: "ILS" | null;
-  orderStatus: 2;
+  orderStatus: 2 | 3;
   statusCode: 0;
   offerId: CitationPassOfferId;
 }
@@ -24,8 +24,8 @@ export function readTakbullPagePayment(value: unknown): TakbullPagePayment | nul
   if (typeof o.ExternalCustomerId !== "string" || !/^rlx_[0-9a-f]{32}$/.test(o.ExternalCustomerId)) return null;
   const transactionId = positiveId(o.TransactionId);
   const orderNumber = positiveId(o.OrderNumber);
-  if (!transactionId || !orderNumber || o.OrderStatus !== 2 || o.StatusCode !== 0) return null;
-  if (has("Action") && o.Action !== "Charge") return null;
+  if (!transactionId || !orderNumber || (o.OrderStatus !== 2 && o.OrderStatus !== 3) || o.StatusCode !== 0) return null;
+  if (has("Action") && o.Action !== "Charge" && o.Action !== null) return null;
   if (has("IsSubscriptionPayment") && o.IsSubscriptionPayment !== false) return null;
   // Absent currency is accepted only by the server's pinned ILS-page contract.
   // Explicit conflicting, null or malformed currency never qualifies.
@@ -36,7 +36,7 @@ export function readTakbullPagePayment(value: unknown): TakbullPagePayment | nul
   const offer = findCitationPassOffer(offerId);
   if (!offer || offer.priceIls !== amountIls) return null;
   return { reference: o.ExternalCustomerId, transactionId, orderNumber, amountIls,
-    currency: has("Currency") ? "ILS" : null, orderStatus: 2, statusCode: 0, offerId };
+    currency: has("Currency") ? "ILS" : null, orderStatus: o.OrderStatus, statusCode: 0, offerId };
 }
 
 /** The configured owner-supplied URL, never a guessed payment route. */

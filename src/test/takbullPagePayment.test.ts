@@ -14,12 +14,20 @@ describe("dedicated signed page payment projection", () => {
   it("rejects other prices and nonnumeric amounts", () => {
     for (const OrderTotalSum of [1, 15, 38.99, 39.01, 3900, "39", null]) expect(readTakbullPagePayment({ ...payment, OrderTotalSum })).toBeNull();
   });
-  it("requires completed order 2 and successful processing 0 together", () => {
-    for (const OrderStatus of [0, 1, 3, 4, 5, "2", undefined]) expect(readTakbullPagePayment({ ...payment, OrderStatus })).toBeNull();
+  it("accepts observed page order status 3 without changing the status sent to settlement", () => {
+    expect(readTakbullPagePayment({ ...payment, OrderStatus: 3 })).toMatchObject({ orderStatus: 3, statusCode: 0 });
+  });
+  it("accepts the observed explicit null action", () => {
+    expect(readTakbullPagePayment({ ...payment, OrderStatus: 3, Action: null })).toMatchObject({ orderStatus: 3 });
+  });
+  it("requires completed order 2 or 3 and successful processing 0 together", () => {
+    for (const OrderStatus of [0, 1, 4, 5, "2", "3", null, undefined]) expect(readTakbullPagePayment({ ...payment, OrderStatus })).toBeNull();
     for (const StatusCode of [1, "0", undefined]) expect(readTakbullPagePayment({ ...payment, StatusCode })).toBeNull();
+    expect(readTakbullPagePayment({ ...payment, OrderStatus: 3, StatusCode: 1, Action: null })).toBeNull();
   });
   it("does not accept a refund or subscription as a purchase", () => {
     expect(readTakbullPagePayment({ ...payment, Action: "Refund" })).toBeNull();
+    for (const Action of ["Void", "", 0, false, undefined]) expect(readTakbullPagePayment({ ...payment, OrderStatus: 3, Action })).toBeNull();
     expect(readTakbullPagePayment({ ...payment, IsSubscriptionPayment: true })).toBeNull();
   });
   it("rejects explicit non-ILS or malformed currency", () => {

@@ -90,7 +90,7 @@ describe("raw-body HMAC gates payment settlement", () => {
   });
   it("failed status is never handed to the ledger", async () => {
     const settle = vi.fn(async () => ({ ok: true }));
-    expect(await settleAuthenticatedPagePayment({ ...payload, OrderStatus: 3 }, { enabled: async () => true, settle })).toBe("rejected");
+    expect(await settleAuthenticatedPagePayment({ ...payload, OrderStatus: 4 }, { enabled: async () => true, settle })).toBe("rejected");
     expect(settle).not.toHaveBeenCalled();
   });
   it("a lost database response never triggers another settlement or claims success", async () => {

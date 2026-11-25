@@ -1,6 +1,7 @@
 # Roadmap — research → memo → draft handoff (legal-research-v2)
 
 ## Takbull one-time checkout (2026-11-24)
+- [x] Accept the observed signed page callback (OrderStatus 3, Action null); 64 local payment tests passed; deployed only the page receiver and hash-gated settlement status guard, retaining service-only privileges.
 - [x] Build purchase-specific pending orders and atomic, idempotent settlement.
 - [x] Integrate paid source allowances without altering legacy plans.
 - [x] Connect checkout and account purchase status.
@@ -9,7 +10,7 @@
 - [x] Deploy checkout and the dedicated page handler; enable administrator pilot only (83b7ebe4).
 - [x] Local regressions: 61 server/payment and 10 account/UI tests; edge checks and automatic app compilation passed.
 - [x] Authenticated owner checkout returned 200; own pending order read back through the UI; provider navigation was blocked (no payment). Forged return parameters did not grant a package; signed-out public checkout stayed closed.
-- [ ] Verify the live dedicated-page payment and resend on the owner's account — requires the owner's payment.
+- [ ] Verify the live dedicated-page payment and duplicate resend on the owner's account — requires Takbull to resend the signed callback after the status fix; no new payment requested.
 - [ ] Public activation and site publication — blocked until the owner's live payment and duplicate-delivery check succeed.
 
 ## Word review fixes (requested Nov 10)
