@@ -9,10 +9,16 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { runForeignLookup, type ForeignLookupInput } from "../../supabase/functions/citation-chat/foreignLookup";
 import { citationTextOnly } from "@/lib/citationSegments";
 
-const m = vi.hoisted(() => ({ invoke: vi.fn(), classify: vi.fn(), bubble: vi.fn(), searches: 0 }));
+const m = vi.hoisted(() => ({ invoke: vi.fn(), classify: vi.fn(), bubble: vi.fn(), searches: 0, checkoutReady: false, office: true, trial: null as { remaining: number; limit: number; loading?: boolean } | null }));
 
 vi.mock("@/hooks/useAuth", () => ({ useAuth: () => ({ user: { id: "acct-1" }, isAdmin: false, loading: false, signOut: vi.fn() }) }));
-vi.mock("@/hooks/useOffice", () => ({ useOffice: () => ({ isOfficeAddin: true }) }));
+vi.mock("@/hooks/useOffice", () => ({ useOffice: () => ({ isOfficeAddin: m.office }) }));
+vi.mock("@/hooks/useCitationSourceQuota", () => ({ useCitationSourceQuota: () => ({
+  sourceQuota: m.trial ?? undefined, quotaError: false, referralPending: false, refreshQuota: vi.fn(),
+}) }));
+vi.mock("@/lib/citationPassClient", () => ({
+  citationCheckoutReady: async () => m.checkoutReady, citationPassStatus: async () => [], startCitationPassCheckout: vi.fn(),
+}));
 vi.mock("@/hooks/useSubscription", () => ({ useSubscription: () => ({ loading: false, isLimitReached: false, isSubscribed: true, remaining: 1, limit: 1, incrementCount: vi.fn() }) }));
 vi.mock("@/hooks/useCredits", () => ({ useCredits: () => ({ billingPeriodEndsAt: null, planMeta: { label: "x" } }) }));
 vi.mock("@/hooks/useProjects", () => ({ useProjects: () => ({ currentProject: null }) }));
@@ -66,6 +72,9 @@ const DONOGHUE = { title: "Donoghue v Stevenson [1932] UKHL 100 (26 May 1932)", 
 beforeEach(() => {
   vi.clearAllMocks();
   m.searches = 0;
+  m.checkoutReady = false;
+  m.office = true;
+  m.trial = null;
   localStorage.clear();
   Element.prototype.scrollIntoView = vi.fn();
   vi.stubGlobal("fetch", vi.fn(() => { throw new Error("Live network forbidden"); }));
@@ -82,8 +91,9 @@ beforeEach(() => {
 
 async function mountChat() {
   const { default: Index } = await import("@/pages/Index");
-  render(<MemoryRouter><Index /></MemoryRouter>);
+  const view = render(<MemoryRouter><Index /></MemoryRouter>);
   fireEvent.click(screen.getByRole("button", { name: /אזכור מהיר/ }));
+  return { ...view, Index };
 }
 async function send(text: string) {
   fireEvent.change(screen.getByLabelText("citation-input"), { target: { value: text } });
@@ -164,5 +174,46 @@ describe("message bubble — record-bound options", () => {
     expect(onSelect).toHaveBeenCalledWith("UK|schl|1932||31");
     expect(screen.getByRole("button", { name: "1. [1932] AC 562" })).toBeDisabled();
     expect(screen.getByRole("link", { name: "מקור לאפשרות 1" })).toHaveAttribute("href", "https://www.bailii.org/a");
+  });
+});
+
+describe("chat page — in-app citation packages", () => {
+  it("keeps purchase prompts hidden while checkout is closed", async () => {
+    m.office = false;
+    m.trial = { remaining: 0, limit: 5 };
+    await mountChat();
+    expect(screen.getByRole("button", { name: "לעמוד החשבון" })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "חבילות אזכורים" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "לבחירת חבילה" })).toBeNull();
+  });
+
+  it("opens the actual package chooser from the main header before the free quota runs out", async () => {
+    m.office = false;
+    m.checkoutReady = true;
+    m.trial = { remaining: 1, limit: 5 };
+    await mountChat();
+    fireEvent.click(await screen.findByRole("button", { name: "חבילות אזכורים" }));
+    expect(await screen.findByRole("dialog", { name: "חבילות אזכורים" })).toBeInTheDocument();
+    expect(screen.getAllByRole("button", { name: /^רכישת / })).toHaveLength(2);
+    expect(screen.queryByRole("button", { name: "לבחירת חבילה" })).toBeNull();
+  });
+
+  it("offers packages when free quota reaches zero and does not send a blocked citation", async () => {
+    m.office = false;
+    m.checkoutReady = true;
+    m.trial = { remaining: 1, limit: 5 };
+    const { rerender, Index } = await mountChat();
+    await screen.findByRole("button", { name: "חבילות אזכורים" });
+    expect(screen.queryByRole("button", { name: "לבחירת חבילה" })).toBeNull();
+    m.trial = { remaining: 0, limit: 5 };
+    rerender(<MemoryRouter><Index /></MemoryRouter>);
+    const choose = await screen.findByRole("button", { name: "לבחירת חבילה" });
+    expect(screen.queryByRole("dialog")).toBeNull();
+    expect(screen.getByText("ניצלת את כל האזכורים החינמיים. רוצה להמשיך?")).toBeInTheDocument();
+    await send("Donoghue v Stevenson");
+    expect(m.invoke).not.toHaveBeenCalled();
+    expect((await import("sonner")).toast.error).not.toHaveBeenCalled();
+    fireEvent.click(choose);
+    expect(await screen.findByRole("dialog", { name: "חבילות אזכורים" })).toBeInTheDocument();
   });
 });
