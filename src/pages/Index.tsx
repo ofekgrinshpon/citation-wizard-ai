@@ -86,6 +86,8 @@ import { renderPeriodicalLocal } from "@/lib/periodicalLocal";
 import { renderBookLocal } from "@/lib/bookLocal";
 import { citationManualChoice, preparePastedCitation } from "@/lib/pastedCitationAdapter";
 import { planCitationEvidence, planLocalCitation, planTypedRequest, resolveCitationResponse, selectForeignCaseChoice, selectBookEditionChoice, selectHebrewBookChoice, needsBoundBookLookup, foreignFreeformSourceType, CHAT_HOST } from "@/lib/citationPlanner";
+import { useCitationPasses } from "@/hooks/useCitationPasses";
+import { activePassSummary } from "@/lib/citationPassHeader";
 import type { CitationManualChoice } from "../../supabase/functions/_shared/pastedCitation";
 
 interface PendingVerification {
@@ -257,6 +259,9 @@ const Index = () => {
   const { isOfficeAddin } = useOffice();
   const navigate = useNavigate();
   const subscription = useSubscription();
+  const paidPasses = useCitationPasses(user?.id);
+  const paidPass = paidPasses.resolved && !paidPasses.error ? activePassSummary(paidPasses.passes) : null;
+  const paidPassPending = !!user && !paidPasses.resolved;
   const { sourceQuota, quotaError, referralPending, refreshQuota } = useCitationSourceQuota(user?.id);
   const quotaBlocksNew = !!sourceQuota && (sourceQuota.loading || sourceQuota.remaining <= 0);
   const { billingPeriodEndsAt, planMeta } = useCredits();
@@ -1148,7 +1153,11 @@ const Index = () => {
           </div>
 
           <div className="flex items-center gap-1.5 sm:gap-2">
-            {sourceQuota && !sourceQuota.loading ? (
+            {paidPass ? (
+              <span className="text-[9px] sm:text-xs text-muted-foreground bg-muted px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-md" dir="rtl">
+                נותרו {paidPass.remaining} אזכורים בחבילה
+              </span>
+            ) : paidPassPending ? null : sourceQuota && !sourceQuota.loading ? (
               <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-md" dir="rtl">
                 נותרו {sourceQuota.remaining} מתוך {sourceQuota.limit} אזכורים בחינם
               </span>

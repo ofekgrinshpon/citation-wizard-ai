@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { CITATION_TRIAL_CHANGED } from "@/lib/citationTrialQuota";
 import { citationCheckoutReady, citationPassStatus, type CitationPassStatus } from "@/lib/citationPassClient";
 
 export function useCitationCheckoutReady(accountId?: string) {
@@ -33,7 +34,8 @@ export function useCitationPasses(userId: string | undefined) {
     void refresh();
     const onFocus = () => void refresh();
     window.addEventListener("focus", onFocus);
-    return () => { ++scope.current.seq; window.removeEventListener("focus", onFocus); };
+    window.addEventListener(CITATION_TRIAL_CHANGED, onFocus);
+    return () => { ++scope.current.seq; window.removeEventListener("focus", onFocus); window.removeEventListener(CITATION_TRIAL_CHANGED, onFocus); };
   }, [refresh]);
   const scoped = state?.userId === userId ? state : undefined;
   useEffect(() => {
@@ -41,5 +43,5 @@ export function useCitationPasses(userId: string | undefined) {
     const timer = setInterval(() => void refresh(), 10000);
     return () => clearInterval(timer);
   }, [scoped, refresh]);
-  return { passes: scoped?.passes ?? [], error: scoped?.error ?? false, loading, refresh };
+  return { passes: scoped?.passes ?? [], error: scoped?.error ?? false, resolved: !!scoped, loading, refresh };
 }

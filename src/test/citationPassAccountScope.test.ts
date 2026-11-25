@@ -22,3 +22,14 @@ describe("purchase status stays isolated per signed-in account", () => {
     expect(result.current.passes).toEqual([]);
   });
 });
+describe("header pass count refreshes after usage", () => {
+  it("re-reads the pass status when a source is used", async () => {
+    const { CITATION_TRIAL_CHANGED } = await import("@/lib/citationTrialQuota");
+    vi.mocked(citationPassStatus).mockResolvedValue([]);
+    const { result } = renderHook(() => useCitationPasses("account-A"));
+    await waitFor(() => expect(result.current.resolved).toBe(true));
+    const calls = vi.mocked(citationPassStatus).mock.calls.length;
+    window.dispatchEvent(new Event(CITATION_TRIAL_CHANGED));
+    await waitFor(() => expect(vi.mocked(citationPassStatus).mock.calls.length).toBe(calls + 1));
+  });
+});
