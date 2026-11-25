@@ -233,5 +233,8 @@ describe("source reporter without a parenthesized year (repository headings)", (
    const ev = findTypedPadiEvidence(t,payload(afik(`${head}\n9.11.1995`)));
    expect(typedPadiDraftMatches(t,ev,`ע"א 6821/93 בנק המזרחי המאוחד בע"מ נ' מגדל כפר שיתופי, פ"ד מט(4) 221, פס' 3 לפסק דינו של הנשיא ברק (1995).`)).toBe(true);
    expect(typedPadiDraftMatches(t,ev,`ע"א 6821/93 בנק המזרחי המאוחד בע"מ נ' מגדל כפר שיתופי, פ"ד מט(4) 222, פס' 3 לפסק דינו של הנשיא ברק (1995).`)).toBe(false);
+  expect(typedPadiDraftMatches(t,ev,`ע"א 6821/93 בנק המזרחי המאוחד בע"מ נ' מגדל כפר שיתופי, פ"ד מט(4) 221, פס' 3 לפסק דינו של ברק (1995).`)).toBe(true);
+  expect(typedPadiDraftMatches(t,ev,`ע"א 6821/93 בנק המזרחי המאוחד בע"מ נ' מגדל כפר שיתופי, פ"ד מט(4) 221, פס' 3 לפסק דינו של המשנה לנשיא ברק (1995).`)).toBe(true);
+  expect(typedPadiDraftMatches(t,ev,`ע"א 6821/93 בנק המזרחי המאוחד בע"מ נ' מגדל כפר שיתופי, פ"ד מט(4) 222, פס' 3 לפסק דינו של ברק (1995).`)).toBe(false);
  });
 });

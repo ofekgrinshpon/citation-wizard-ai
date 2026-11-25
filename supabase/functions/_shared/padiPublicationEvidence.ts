@@ -283,7 +283,7 @@ export function typedPadiDraftMatches(
   }
   // Formatting may add a user's paragraph/judge pinpoint after the first
   // page. It isn't source evidence and must not be mistaken for that page.
-  const check = lines[0].replace(/,\s*(?:פס['׳]|פיסקה|פסקה|פסקאות)\s*[1-9]\d{0,3}(?:\s*[-–—]\s*[1-9]\d{0,3})?(?:\s+לפסק\s+דינ[וה]\s+של\s+(?:השופט(?:ת)?|הנשיא(?:ה)?)\s+[א-ת]['׳״" .א-ת־-]{0,35})?(?=\s*\((?:19|20)\d{2}\))/u, "");
+  const check = lines[0].replace(/,\s*(?:פס['׳]|פיסקה|פסקה|פסקאות)\s*[1-9]\d{0,3}(?:\s*[-–—]\s*[1-9]\d{0,3})?(?:\s+לפסק\s+דינ[וה]\s+של\s+(?:(?:השופט(?:ת)?|המשנה\s+לנשיא(?:ה)?|הנשיא(?:ה)?)\s+)?[א-ת]['׳״" .א-ת־-]{0,35})?(?=\s*\((?:19|20)\d{2}\))/u, "");
   // Drafts keep the strict grammar: the printed year must be in the citation.
   const parsed = scanTypedPadiEvidence({ ...target, filingYear: null }, [check], false);
   return parsed.kind === "verified" &&
