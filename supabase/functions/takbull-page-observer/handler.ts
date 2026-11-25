@@ -18,9 +18,13 @@ type Deps = {
   record: (entry: Observation) => void;
   /** Returns disabled while still observational. Never called before HMAC proof. */
   settle?: (payload: unknown) => Promise<"disabled" | "accepted" | "rejected" | "unavailable">;
+  /** Fixed categorical reason for a 401 only; never request-derived data. */
+  reject?: (reason: RejectReason) => void;
   now?: () => number;
   timeoutMs?: number;
 };
+
+export type RejectReason = "header_missing" | "header_malformed" | "timestamp_skew" | "body_read_failed" | "signature_mismatch";
 
 const reply = (status: number) => new Response(null, {
   status, headers: { "Cache-Control": "no-store", "X-Content-Type-Options": "nosniff" },
@@ -82,6 +86,10 @@ export function createTakbullPageObserver(deps: Deps) {
     const instant = now();
     return Number.isFinite(instant) && instant - t <= MAX_AGE_MS && t - instant <= MAX_FUTURE_MS;
   };
+  const deny = (reason: RejectReason) => {
+    try { deps.reject?.(reason); } catch { /* logging never changes the response */ }
+    return reply(401);
+  };
   return async (req: Request): Promise<Response> => {
     try {
       if (deps.readActive() !== true) return reply(404);
@@ -90,15 +98,20 @@ export function createTakbullPageObserver(deps: Deps) {
       if (req.method !== "POST") return reply(405);
       if (req.headers.get("content-type")?.split(";", 1)[0].trim().toLowerCase() !== "application/json" ||
           ![null, "identity"].includes(req.headers.get("content-encoding"))) return reply(415);
-      const entry = parseHeader(req.headers.get("x-takbull-signature"));
-      if (!entry || !fresh(entry.signedAt)) return reply(401);
+      const header = req.headers.get("x-takbull-signature");
+      if (header === null) return deny("header_missing");
+      const entry = parseHeader(header);
+      if (!entry) return deny("header_malformed");
+      if (!fresh(entry.signedAt)) return deny("timestamp_skew");
       const bytes = await readBody(req, deps.timeoutMs ?? 2500);
-      if (!bytes || !fresh(entry.signedAt)) return reply(401);
+      if (!bytes) return deny("body_read_failed");
+      if (!fresh(entry.signedAt)) return deny("timestamp_skew");
       const prefix = encoder.encode(entry.t + ".");
       const signed = new Uint8Array(prefix.length + bytes.length);
       signed.set(prefix); signed.set(bytes, prefix.length);
       const verifier = await crypto.subtle.importKey("raw", encoder.encode(key), { name: "HMAC", hash: "SHA-256" }, false, ["verify"]);
-      if (!await crypto.subtle.verify("HMAC", verifier, entry.mac, signed) || !fresh(entry.signedAt)) return reply(401);
+      if (!await crypto.subtle.verify("HMAC", verifier, entry.mac, signed)) return deny("signature_mismatch");
+      if (!fresh(entry.signedAt)) return deny("timestamp_skew");
       if (deps.readActive() !== true || deps.readPageKey() !== key) return reply(404);
       let payload: unknown;
       try { payload = JSON.parse(new TextDecoder("utf-8", { fatal: true, ignoreBOM: true }).decode(bytes)); }

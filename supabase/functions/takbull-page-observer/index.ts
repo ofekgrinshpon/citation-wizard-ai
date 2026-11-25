@@ -7,6 +7,7 @@ Deno.serve(createTakbullPageObserver({
   // Never fall back to the signing key used by the merchant-global webhook.
   readPageKey: () => Deno.env.get("TAKBULL_PAGE_WEBHOOK_HMAC_KEY"),
   record: (entry) => console.info(JSON.stringify(entry)),
+  reject: (reason) => console.warn(`TAKBULL_PAGE_REJECT_V1 ${reason}`),
   settle: async (payload) => {
     const url = Deno.env.get("SUPABASE_URL");
     const key = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
