@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { CITATION_TRIAL_CHANGED, fetchCitationTrialStatus, isCitationTrialConfigured, type CitationSourceQuota } from "@/lib/citationTrialQuota";
 
 export function useCitationSourceQuota(accountId: string | undefined) {
-  const [state, setState] = useState<{ accountId: string; quota: CitationSourceQuota | undefined; error: boolean; referralSourcesEnabled: boolean; referralsGranted: number | null; referralPending: boolean }>();
+  const [state, setState] = useState<{ accountId: string; quota: CitationSourceQuota | undefined; error: boolean; referralSourcesEnabled: boolean; referralsGranted: number | null; referralPending: boolean; freeRemaining: number }>();
   const activeAccount = useRef(accountId);
   activeAccount.current = accountId;
   const version = useRef(0);
@@ -13,11 +13,11 @@ export function useCitationSourceQuota(accountId: string | undefined) {
       const status = await fetchCitationTrialStatus();
       if (id === version.current && activeAccount.current === accountId) setState({
         accountId, quota: status.enabled && status.limited ? { remaining: status.remaining ?? 0, limit: status.limit, ...(status.referralPending ? { referralPending: true } : {}) } : undefined, error: false,
-        referralSourcesEnabled: status.referralSourcesEnabled, referralsGranted: status.referralsGranted, referralPending: status.referralPending,
+        referralSourcesEnabled: status.referralSourcesEnabled, referralsGranted: status.referralsGranted, referralPending: status.referralPending, freeRemaining: status.freeRemaining ?? 0,
       });
     } catch {
       if (id === version.current && activeAccount.current === accountId) setState({
-        accountId, quota: { remaining: 0, limit: 0, loading: true }, error: true, referralSourcesEnabled: false, referralsGranted: null, referralPending: false,
+        accountId, quota: { remaining: 0, limit: 0, loading: true }, error: true, referralSourcesEnabled: false, referralsGranted: null, referralPending: false, freeRemaining: 0,
       });
     }
   }, [accountId]);
@@ -41,6 +41,7 @@ export function useCitationSourceQuota(accountId: string | undefined) {
     referralSourcesEnabled: !!(active && state?.accountId === accountId && state.referralSourcesEnabled),
     referralPending: !!(active && state?.accountId === accountId && state.referralPending),
     sourceReferralsGranted: active && state?.accountId === accountId ? state.referralsGranted : null,
+    freeRemaining: active && state?.accountId === accountId && !state.error ? state.freeRemaining : 0,
     refreshQuota: refresh,
   };
 }

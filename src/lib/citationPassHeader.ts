@@ -10,11 +10,12 @@ export function passSourcesRemaining(pass: CitationPassStatus): number {
 /**
  * Header summary following the server quota rule: while any settled pass is unexpired,
  * new sources draw from paid passes only (earliest expiry first) and never fall back to
- * the free trial — so an exhausted unexpired pass shows 0. Returns null when no paid pass applies.
+ * the account's remaining free + referral sources (pooled into the count). Returns null when no paid pass applies.
  */
-export function activePassSummary(passes: CitationPassStatus[], now = Date.now()): { remaining: number } | null {
+export function activePassSummary(passes: CitationPassStatus[], now = Date.now(), freeRemaining = 0): { remaining: number } | null {
   const live = passes.filter(p => (p.status === "active" || p.status === "exhausted") && p.expiresAt && Date.parse(p.expiresAt) > now);
   if (live.length === 0) return null;
   const remaining = live.filter(p => p.status === "active").reduce((sum, p) => sum + passSourcesRemaining(p), 0);
-  return { remaining };
+  // Pooled: once passes are used up, the server draws from the free + referral allowance.
+  return { remaining: remaining + Math.max(0, freeRemaining) };
 }

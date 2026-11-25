@@ -274,9 +274,9 @@ const Index = () => {
     setPacksOpen(true);
   };
   const paidPasses = useCitationPasses(user?.id);
-  const paidPass = paidPasses.resolved && !paidPasses.error ? activePassSummary(paidPasses.passes) : null;
+  const { sourceQuota, quotaError, referralPending, refreshQuota, freeRemaining } = useCitationSourceQuota(user?.id);
+  const paidPass = paidPasses.resolved && !paidPasses.error ? activePassSummary(paidPasses.passes, Date.now(), freeRemaining) : null;
   const paidPassPending = !!user && !paidPasses.resolved;
-  const { sourceQuota, quotaError, referralPending, refreshQuota } = useCitationSourceQuota(user?.id);
   const quotaBlocksNew = !!sourceQuota && (sourceQuota.loading || sourceQuota.remaining <= 0);
   const showTrialPackPrompt = canChoosePack && !paidPass && !quotaError &&
     !!sourceQuota && !sourceQuota.loading && sourceQuota.remaining === 0;

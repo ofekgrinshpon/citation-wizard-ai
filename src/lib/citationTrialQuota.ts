@@ -7,7 +7,7 @@ export const isCitationTrialConfigured = import.meta.env.VITE_CITATION_SOURCE_TR
 
 export type CitationSourceQuota = { remaining: number; limit: number; loading?: boolean; referralPending?: boolean };
 type TrialQuotaRpc = (name: string, args?: Record<string, unknown>) => PromiseLike<{ data: unknown; error: unknown }>;
-type TrialStatus = { ok: true; enabled: boolean; limited: boolean; limit: number; remaining: number | null; referralSourcesEnabled: boolean; referralsGranted: number | null; referralPending: boolean };
+type TrialStatus = { ok: true; enabled: boolean; limited: boolean; limit: number; remaining: number | null; referralSourcesEnabled: boolean; referralsGranted: number | null; referralPending: boolean; freeRemaining?: number };
 const rpc = (name: string, args?: Record<string, unknown>) =>
   (supabase.rpc as unknown as TrialQuotaRpc).call(supabase, name, args);
 
@@ -34,6 +34,8 @@ export function parseTrialStatus(value: unknown): TrialStatus | null {
     ok: true, enabled: r.enabled, limited: r.limited,
     limit: limit ?? LEGACY_TRIAL_LIMIT,
     remaining: r.limited ? r.remaining as number : null,
+    // Free + referral sources left; the server pools them after a paid pass is used up.
+    freeRemaining: r.enabled && isNonnegativeCount(r.remaining) ? r.remaining : 0,
     referralSourcesEnabled: r.enabled && referralSourcesEnabled,
     referralsGranted: isNonnegativeCount(r.referrals_granted) ? r.referrals_granted : null,
     referralPending: r.enabled && referralSourcesEnabled && r.referral_pending === true,

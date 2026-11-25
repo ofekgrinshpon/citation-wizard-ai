@@ -40,6 +40,7 @@ beforeAll(async () => {
   await db.exec(readFileSync("supabase/migration-drafts/20261125195300_takbull_page_completed_status.sql", "utf8"));
   await db.exec(readFileSync("supabase/migration-drafts/20261124181500_citation_pass_owner_pilot.sql", "utf8"));
   await db.exec(readFileSync("supabase/migration-drafts/20261125220000_takbull_settle_paid_package.sql", "utf8"));
+  await db.exec(readFileSync("supabase/migration-drafts/20261125223000_pool_free_sources_after_pass.sql", "utf8"));
   await db.exec("INSERT INTO public.citation_pass_config(singleton) VALUES(true);");
 }, 30000);
 beforeEach(async () => {
@@ -191,11 +192,23 @@ describe("atomic one-time purchase and paid source ledger (real local PostgreSQL
     expect(await remaining(o.reference)).toBe(99);
     expect(await scalar("select result as value from public.citation_recovery_payloads where request_id='source-success'")).toEqual({});
   });
-  it("an exhausted active pass blocks new paid work without debiting the old trial", async () => {
+  it("an active pass is used before free sources", async () => {
+    const o = await create(); await settle(o.reference);
+    expect((await claim("source-pass-first")).citation_pass).toBe(true);
+    expect(await scalar("select count(*)::integer as value from public.citation_trial_sources")).toBe(0);
+  });
+  it("an exhausted active pass draws from the remaining free sources (pooled)", async () => {
     const o = await create(); await settle(o.reference);
     await db.query("update public.citation_pass_orders set sources_remaining=0 where reference=$1", [o.reference]);
-    expect((await claim("source-exhausted")).block_reason).toBe("pass_exhausted");
-    expect(await scalar("select count(*)::integer as value from public.citation_trial_sources")).toBe(0);
+    const c = await claim("source-exhausted");
+    expect(c.trial).toBe(true);
+    expect(await scalar("select count(*)::integer as value from public.citation_trial_sources")).toBe(1);
+  });
+  it("an exhausted pass with no free sources left blocks new work", async () => {
+    const o = await create(); await settle(o.reference);
+    await db.query("update public.citation_pass_orders set sources_remaining=0 where reference=$1", [o.reference]);
+    for (let i = 0; i < 5; i++) await db.query("insert into public.citation_trial_sources values($1,$2,$3,'local','succeeded')", [userA, `used-${i}`, "b".repeat(64)]);
+    expect((await claim("source-none")).block_reason).toBe("trial_exhausted");
   });
   it("accounts without an active paid pass retain the original trial path", async () => {
     expect((await claim("legacy-source")).trial).toBe(true);
