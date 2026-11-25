@@ -1,5 +1,5 @@
 import { useState } from "react";
-import citationImg from "@/assets/guide/citation-nachmani.png.asset.json";
+import citationImg from "@/assets/guide/citation-example.png.asset.json";
 import footnotesImg from "@/assets/guide/footnotes-approved.webp";
 import bibliographyImg from "@/assets/guide/bibliography-sorted.png.asset.json";
 

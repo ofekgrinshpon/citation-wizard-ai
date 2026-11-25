@@ -12,7 +12,7 @@ import { ChevronDown } from "lucide-react";
 import { HomeCitationDemo } from "@/components/launch/HomeCitationDemo";
 import { LaunchPricing } from "@/components/launch/LaunchPricing";
 import { HowItWorksTabs } from "@/components/launch/HowItWorksTabs";
-import { WordLaunchGuide } from "@/components/launch/WordLaunchGuide";
+import { CitationCounter } from "@/components/launch/CitationCounter";
 import guideCitationImg from "@/assets/guide/citation.jpg.asset.json";
 import guideFootnotesImg from "@/assets/guide/footnotes-approved.webp";
 import guideBibliographyImg from "@/assets/guide/bibliography.jpg.asset.json";
@@ -260,7 +260,7 @@ const Landing = () => {
       <section ref={howRef} className="py-16 px-4 max-w-6xl mx-auto relative z-10">
         <HowItWorksTabs />
 
-        <div className="mt-8"><WordLaunchGuide /></div>
+        <div className="mt-8"><CitationCounter /></div>
         <p className="text-center text-sm text-muted-foreground mt-6">התוצאות דורשות בדיקה מול המקורות. אין תמיכה בכל סוג מקור או בכל עיצוב Word.</p>
 
         <div className="text-center mt-16">
