@@ -1,8 +1,9 @@
 import { createTakbullPageObserver } from "./handler.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { settleAuthenticatedPagePayment } from "../_shared/takbullPageSettlement.ts";
+import { describeRequest } from "./shape.ts";
 
-Deno.serve(createTakbullPageObserver({
+const observer = createTakbullPageObserver({
   readActive: () => Deno.env.get("TAKBULL_PAGE_OBSERVE_ONLY") === "true",
   // Never fall back to the signing key used by the merchant-global webhook.
   readPageKey: () => Deno.env.get("TAKBULL_PAGE_WEBHOOK_HMAC_KEY"),
@@ -27,4 +28,16 @@ Deno.serve(createTakbullPageObserver({
       },
     });
   },
-}));
+});
+
+// Every request also logs one name/size/type-only shape line with the response status.
+Deno.serve(async (req) => {
+  let copy: Request | null = null;
+  try { copy = req.clone(); } catch { /* shape logging never affects the response */ }
+  const [res, shape] = await Promise.all([
+    observer(req),
+    copy ? describeRequest(copy).catch(() => null) : Promise.resolve(null),
+  ]);
+  try { console.info(JSON.stringify({ ...(shape ?? { marker: "TAKBULL_PAGE_REQUEST_SHAPE_V1", unavailable: true }), status: res.status })); } catch { /* ignore */ }
+  return res;
+});
