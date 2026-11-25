@@ -39,6 +39,7 @@ beforeAll(async () => {
   await db.exec(migration);
   await db.exec(readFileSync("supabase/migration-drafts/20261125195300_takbull_page_completed_status.sql", "utf8"));
   await db.exec(readFileSync("supabase/migration-drafts/20261124181500_citation_pass_owner_pilot.sql", "utf8"));
+  await db.exec(readFileSync("supabase/migration-drafts/20261125220000_takbull_settle_paid_package.sql", "utf8"));
   await db.exec("INSERT INTO public.citation_pass_config(singleton) VALUES(true);");
 }, 30000);
 beforeEach(async () => {
@@ -51,9 +52,9 @@ afterEach(async () => { await db.exec("ROLLBACK;"); });
 afterAll(async () => { await db?.close(); });
 
 describe("atomic one-time purchase and paid source ledger (real local PostgreSQL)", () => {
-  it("authenticated checkout → signed callback → own account read-back → resend → paid citation works end-to-end locally", async () => {
+  it("monthly intent → signed weekly payment → own account read-back → resend → paid citation works end-to-end locally", async () => {
     const checkout = await handleCitationPassCheckout(new Request("https://synthetic.test/checkout", {
-      method: "POST", headers: { Authorization: "Bearer synthetic-auth-token", "Content-Type": "application/json", Origin: "https://relexlm.com" }, body: JSON.stringify({ offerId: week }),
+      method: "POST", headers: { Authorization: "Bearer synthetic-auth-token", "Content-Type": "application/json", Origin: "https://relexlm.com" }, body: JSON.stringify({ offerId: month }),
     }), {
       getUser: async () => ({ id: userA }), getConfig: async () => ({ enabled: true, pageUrl: "https://paypage.takbull.co.il/3CxDl" }),
       createOrder: async (userId, offerId) => { const o = await create(userId, offerId); return { reference: o.reference, orderId: o.order_id, pageUrl: o.page_url }; },
@@ -72,7 +73,9 @@ describe("atomic one-time purchase and paid source ledger (real local PostgreSQL
       settle: value => settleAuthenticatedPagePayment(value, { enabled: async () => true,
         settle: payment => settle(payment.reference, payment.transactionId, payment.orderNumber, payment.amountIls, payment.currency, payment.orderStatus, payment.statusCode) }),
     });
-    const callback = () => new Request("https://synthetic.test/webhook", { method: "POST", headers: { "Content-Type": "application/json", "x-takbull-signature": `t=${t},v1=${mac}` }, body });
+    const callback = (withSignature = true) => new Request("https://synthetic.test/webhook", { method: "POST", headers: { "Content-Type": "application/json", ...(withSignature ? { "x-takbull-signature": `t=${t},v1=${mac}` } : {}) }, body });
+    expect((await observer(callback(false))).status).toBe(401);
+    expect((await scalar("select public.get_citation_pass_status() as value")).passes[0]).toMatchObject({ offer_id: month, status: "pending" });
     expect((await observer(callback())).status).toBe(204);
     expect((await scalar("select public.get_citation_pass_status() as value")).passes[0]).toMatchObject({ offer_id: week, status: "active", used_ratio: 0 });
     expect((await observer(callback())).status).toBe(204);
@@ -117,9 +120,23 @@ describe("atomic one-time purchase and paid source ledger (real local PostgreSQL
     expect((await settle(`rlx_${"b".repeat(32)}`)).error).toBe("ORDER_NOT_FOUND");
     expect(await scalar("select status as value from public.citation_pass_orders where reference=$1", [o.reference])).toBe("pending");
   });
-  it("rejects a different selected amount without granting anything", async () => {
+  it.each([[week, 65, month, 250], [month, 39, week, 100]] as const)(
+    "reconciles %s when %i ILS was paid, audits the intent, and never resets a settled pass",
+    async (intent, amount, offer, quota) => {
+      const o = await create(userA, intent);
+      expect(await settle(o.reference, "101", "8", amount, "ILS", 3)).toEqual({ ok: true, replayed: false });
+      const row = () => scalar(`select jsonb_build_array(status,offer_id,original_offer_id,amount_ils,source_count,sources_remaining,
+        expires_at=public.citation_pass_expiry(activated_at,$2)) as value from public.citation_pass_orders where reference=$1`, [o.reference, offer]);
+      expect(await row()).toEqual(["settled", offer, intent, amount, quota, quota, true]);
+      expect((await claim("one-reconciled-source")).execute).toBe(true);
+      expect(await settle(o.reference, "101", "8", amount, "ILS", 3)).toEqual({ ok: true, replayed: true });
+      expect((await settle(o.reference, "101", "8", amount === 39 ? 65 : 39, "ILS", 3)).error).toBe("SETTLEMENT_CONFLICT");
+      expect(await row()).toEqual(["settled", offer, intent, amount, quota, quota - 1, true]);
+    },
+  );
+  it("rejects a non-catalogue price without changing the pending order", async () => {
     const o = await create();
-    expect((await settle(o.reference, "101", "8", 65)).error).toBe("AMOUNT_MISMATCH");
+    expect((await settle(o.reference, "101", "8", 50)).error).toBe("PAYMENT_REJECTED");
     expect(await scalar("select status as value from public.citation_pass_orders where reference=$1", [o.reference])).toBe("pending");
   });
   it("rejects non-success status, conflicting currency, or missing transaction", async () => {
