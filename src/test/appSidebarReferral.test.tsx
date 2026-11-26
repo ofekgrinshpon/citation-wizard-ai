@@ -28,17 +28,25 @@ it("adds the referral directly after help and unmounts the menu when routed", as
   renderMenu();
   const help = screen.getByRole("button", { name: "איך זה עובד?" });
   const referral = screen.getByRole("button", { name: "קבל עוד אזכורים" });
+  const contact = screen.getByRole("link", { name: "צור קשר" });
+  expect(referral.nextElementSibling).toBe(contact);
+  expect(contact).toHaveAttribute("href", "/contact");
+  expect(contact).toHaveAttribute("target", "_blank");
+  expect(contact).toHaveAttribute("rel", "noopener noreferrer");
   expect(help.nextElementSibling).toBe(referral);
   expect(referral.className).toBe(help.className);
   fireEvent.click(referral);
   expect(await screen.findByText("/profile?tab=referral")).toBeTruthy();
   expect(screen.queryByRole("button", { name: "קבל עוד אזכורים" })).toBeNull();
+  expect(screen.queryByRole("link", { name: "צור קשר" })).toBeNull();
 });
 it("does not expose the shortcut in Office or to signed-out visitors", () => {
   mock.isOfficeAddin = true;
   renderMenu();
   expect(screen.queryByRole("button", { name: "קבל עוד אזכורים" })).toBeNull();
+  expect(screen.queryByRole("link", { name: "צור קשר" })).toBeNull();
   cleanup(); mock.isOfficeAddin = false; mock.signedIn = false;
   renderMenu();
   expect(screen.queryByRole("button", { name: "קבל עוד אזכורים" })).toBeNull();
+  expect(screen.queryByRole("link", { name: "צור קשר" })).toBeNull();
 });
