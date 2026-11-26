@@ -1,5 +1,11 @@
 # Roadmap — research → memo → draft handoff (legal-research-v2)
 
+## Bibliography publication (2026-11-26)
+- [x] Add input-bound foreign decision/report choices; no search on selection and no unresolved row export. 307 offline regressions passed (1 skipped).
+- [x] Deploy reviewed citation-chat package (submitted SHA-256 3a010d47de66bb7f1aa380f53ab0f02c65cefae8a8499d127ea716ebd714df11); live Friedmann search returned 200, preserved supplied journal but still lacked first page/year. Donoghue returned 200; subsequent live choice check blocked by current account quota. No quota changes or uncertain retries.
+- [ ] Publish the bibliography fix after the successful compile and completed basic security scan.
+- [ ] Complete live article evidence coverage — blocked on an identifiable publication record in discovery results; no raw provider snippets are retained.
+
 ## Hebrew journal articles (2026-11-26, local only)
 - [x] Preserve partial supplied journals and bind unquoted identities to source records, never word-count guesses.
 - [x] Read publication fields from the target academic record; generated JSON is never publication evidence. Reuse the existing second search for missing fields; public academic HTML only, no redirects or crawling.

@@ -34,6 +34,8 @@ import { BibliographyProvider, useBibliography } from "@/hooks/useBibliography";
 import { c1ServerPayload } from "./fixtures/c1ServerPayload";
 import { buildPastedCitation } from "../../supabase/functions/_shared/pastedCitation";
 import { acceptCitationCompletion } from "@/lib/citationCompletion";
+import { runForeignLookup, type ForeignLookupInput } from "../../supabase/functions/citation-chat/foreignLookup";
+import { planCitationEvidence, planLocalCitation, planTypedRequest, resolveCitationResponse, WORD_HOST } from "@/lib/citationPlanner";
 import { renderForeignCitation } from "@/data/bluebook";
 
 const ARTICLE = "Ronald H. Coase, ##The Problem of Social Cost##, 3 ^^J.L. & Econ.^^ 1 (1960).";
@@ -202,4 +204,69 @@ it('invalidates an edition choice when the citation is manually edited',async()=
   const stale=await screen.findByRole('button',{name:'1993'});fireEvent.click(screen.getByRole('button',{name:/✏️ ערוך/}));
   fireEvent.change(screen.getByPlaceholderText('הקלד את האזכור המלא...'),{target:{value:'Manual book (2001)'}});fireEvent.click(screen.getByRole('button',{name:'שמור'}));fireEvent.click(stale);
   expect(screen.queryByRole('group',{name:'בחירת מהדורת הספר'})).not.toBeInTheDocument();expect(screen.getByText('Manual book (2001)')).toBeInTheDocument();expect(b.runCitation).toHaveBeenCalledTimes(1);
+});
+
+async function foreignResult(raw = "Donoghue v Stevenson [1932]") {
+  const evidence = planCitationEvidence(raw, null);
+  const input = { evidence, sourceType: null, input: raw, isPinpoint: false, manual: false };
+  const local = planLocalCitation(input, WORD_HOST);
+  const plan = planTypedRequest({ ...input, statutePrep: "statutePrep" in local ? local.statutePrep : null, canonicalRaw: raw }, WORD_HOST);
+  if (!plan.foreignLookup) throw new Error("Missing request");
+  const response = await runForeignLookup(plan.foreignLookup as unknown as ForeignLookupInput, {
+    apiKey: "offline-only", fetchImpl: (async () => new Response(JSON.stringify({ results: [{
+      title: "Donoghue v Stevenson [1932] UKHL 100 (26 May 1932)",
+      url: "https://www.bailii.org/uk/cases/UKHL/1932/100.html",
+      snippet: "Donoghue v Stevenson [1932] UKHL 100, [1932] AC 562, 1932 SC (HL) 31."
+    }] }))) as typeof fetch,
+  });
+  const result = resolveCitationResponse(plan, { foreignLookup: response }, WORD_HOST);
+  if (result.kind !== "terminal" || !result.resolution.foreignChoice) throw new Error("Missing choice");
+  return { ...result.resolution, fromVerifiedStore: false };
+}
+
+describe("bibliography foreign report choices", () => {
+  it("blocks unresolved export, selects the exact report without another request and persists only the citation", async () => {
+    b.runCitation.mockResolvedValue(await foreignResult());
+    mount();
+    fireEvent.change(screen.getByRole("textbox"), { target: { value: "Donoghue v Stevenson [1932]" } });
+    fireEvent.click(screen.getByRole("button", { name: /שלח לבדיקה/ }));
+    const choice = await screen.findByRole("button", { name: /1\. \[1932\] AC 562/ });
+    expect(screen.getByRole("button", { name: /הוסף הכל לביבליוגרפיה/ })).toBeDisabled();
+    expect(b.runCitation).toHaveBeenCalledWith(expect.objectContaining({ recordChoices: true }));
+    fireEvent.click(choice);
+    await waitFor(() => expect(screen.getByRole("button", { name: /הוסף הכל לביבליוגרפיה/ })).toBeEnabled());
+    fireEvent.click(screen.getByRole("button", { name: /הוסף הכל לביבליוגרפיה/ }));
+    const stored = JSON.parse(localStorage.getItem("bibliography_entries_bib-project") ?? "[]");
+    expect(stored).toHaveLength(1);
+    expect(stored[0].fullCitation).toContain("[1932] AC 562");
+    expect(stored[0].fullCitation).not.toContain("SC (HL)");
+    expect(stored[0].sourceType).toBe("foreign_caselaw");
+    expect(stored[0]).not.toHaveProperty("foreignChoice");
+    expect(b.runCitation).toHaveBeenCalledTimes(1);
+  });
+  for (const scope of ["account", "project"] as const) it(`rejects old report choices after ${scope} change`, async () => {
+    b.runCitation.mockResolvedValue(await foreignResult());
+    const view = mount();
+    fireEvent.change(screen.getByRole("textbox"), { target: { value: "Donoghue v Stevenson [1932]" } });
+    fireEvent.click(screen.getByRole("button", { name: /שלח לבדיקה/ }));
+    const stale = await screen.findByRole("button", { name: /1\. \[1932\] AC 562/ });
+    b[scope] = "other";
+    view.rerender(<TooltipProvider><BibliographyProvider><BibliographyGenerator /></BibliographyProvider></TooltipProvider>);
+    fireEvent.click(stale);
+    expect(JSON.stringify(localStorage)).not.toContain("AC 562");
+    expect(b.runCitation).toHaveBeenCalledTimes(1);
+  });
+  it("invalidates record selection when input is edited", async () => {
+    b.runCitation.mockResolvedValue(await foreignResult()); mount();
+    fireEvent.change(screen.getByRole("textbox"), { target: { value: "Donoghue v Stevenson [1932]" } });
+    fireEvent.click(screen.getByRole("button", { name: /שלח לבדיקה/ }));
+    const stale = await screen.findByRole("button", { name: /1\. \[1932\] AC 562/ });
+    fireEvent.click(screen.getByRole("button", { name: /✏️ ערוך/ }));
+    fireEvent.change(screen.getByPlaceholderText("הקלד את האזכור המלא..."), { target: { value: "Manual case (2001)" } });
+    fireEvent.click(screen.getByRole("button", { name: "שמור" })); fireEvent.click(stale);
+    fireEvent.click(screen.getByRole("button", { name: /הוסף הכל לביבליוגרפיה/ }));
+    const stored = JSON.parse(localStorage.getItem("bibliography_entries_bib-project") ?? "[]");
+    expect(stored[0].fullCitation).toBe("Manual case (2001)");
+    expect(b.runCitation).toHaveBeenCalledTimes(1);
+  });
 });

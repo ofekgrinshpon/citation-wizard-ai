@@ -21,6 +21,7 @@ const boundary = vi.hoisted(() => ({
 }));
 vi.mock("@/integrations/supabase/client", () => ({ supabase: {
   functions: { invoke: boundary.invoke },
+  rpc: vi.fn(async () => ({ data: { ok: true, limited: false }, error: null })),
   auth: { getSession: boundary.getSession, getUser: boundary.getUser, refreshSession: boundary.refreshSession },
   from: () => ({ insert: boundary.insert }),
 } }));

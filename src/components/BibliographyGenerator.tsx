@@ -1,6 +1,8 @@
 import { TRIAL_SOURCE_LIMIT, trialQuotaReachedMessage } from "@/lib/citationTrialQuota";
+import { ForeignCaseChoiceButtons } from "./ForeignCaseChoiceButtons";
+import type { ForeignCaseChoice } from "@/lib/foreignCaseChoice";
 import { BookEditionChoiceButtons } from "./BookEditionChoiceButtons";
-import { selectBookEditionChoice, RUNNER_HOST, type BookEditionChoice } from "@/lib/citationPlanner";
+import { selectBookEditionChoice, selectForeignCaseChoice, WORD_HOST, RUNNER_HOST, type BookEditionChoice } from "@/lib/citationPlanner";
 import { normalizeAbbreviations } from "@/data/abbreviations";
 import { useProjects } from "@/hooks/useProjects";
 import type { CitationManualChoice } from "../../supabase/functions/_shared/pastedCitation";
@@ -27,6 +29,7 @@ import type { SourceType } from "@/data/abbreviations";
 type ReviewStatus = "ok" | "needs_choice" | "error" | "loading";
 
 interface ReviewItem {
+  foreignChoice?: ForeignCaseChoice;
   bookEditionChoice?: BookEditionChoice;
   completion?: import("@/lib/runCitation").RunCitationResult["completion"];
   pastedCitation?: import("@/lib/runCitation").RunCitationResult["pastedCitation"];
@@ -213,6 +216,7 @@ export function BibliographyGenerator({ sourceQuota = null }: { sourceQuota?: Bi
       overrideType,
       ...(manualChoice ? { manualChoice } : {}),
       useVerifiedStore: true,
+      recordChoices: true,
       referralAccountId: sourceQuota?.referralPending ? user?.id : undefined,
       telemetry,
     });
@@ -222,6 +226,15 @@ export function BibliographyGenerator({ sourceQuota = null }: { sourceQuota?: Bi
     const citation = split.citation;
     // runCitation may carry warnings only in reply/warningMsg: retain them all.
     const warnings = mergeWarnings(split.warnings, splitCitationWarnings(result.reply || "").warnings, result.warningMsg);
+    if (result.foreignChoice) {
+      return {
+        rawInput, status: "needs_choice", citation: "", isVerified: false,
+        options: [], foreignChoice: result.foreignChoice,
+        completion: result.completion, pastedCitation: result.pastedCitation,
+        sourceTypeOverride: "foreign_caselaw",
+        recovery: Object.freeze({ retry: async () => result }),
+      };
+    }
     if (!citation) {
       return {
         rawInput,
@@ -398,7 +411,7 @@ export function BibliographyGenerator({ sourceQuota = null }: { sourceQuota?: Bi
   const updateItem = (id: string, patch: Partial<ReviewItem>) => {
     if ("editValue" in patch || "sourceTypeOverride" in patch) {
       rowGuard.invalidate(id);
-      patch = { ...patch, bookEditionChoice: undefined, ...(reviewItemsRef.current.find(it => it.id === id)?.bookEditionChoice ? { status: "error" as const } : {}), citationRetry: undefined, requestId: undefined, recovery: undefined };
+      patch = { ...patch, foreignChoice: undefined, bookEditionChoice: undefined, ...((reviewItemsRef.current.find(it => it.id === id)?.bookEditionChoice || reviewItemsRef.current.find(it => it.id === id)?.foreignChoice) ? { status: "error" as const } : {}), citationRetry: undefined, requestId: undefined, recovery: undefined };
     }
     setReviewItems((prev) => prev.map((it) => (it.id === id ? { ...it, ...patch } : it)));
   };
@@ -412,6 +425,36 @@ export function BibliographyGenerator({ sourceQuota = null }: { sourceQuota?: Bi
     updateItem(id, { status: "ok", citation: cleanCitation(chosen), editValue: cleanCitation(chosen), options: [], completion: undefined, pastedCitation: undefined });
   };
 
+  const pickForeign = (id: string, optionId: string): boolean => {
+    const item = reviewItemsRef.current.find(it => it.id === id);
+    const choice = item?.foreignChoice;
+    if (!item || !choice || item.isEditing || item.status !== "needs_choice") return false;
+    const raw = item.rawInput;
+    const outcome = selectForeignCaseChoice(choice, optionId, [raw, normalizeAbbreviations(raw)], WORD_HOST);
+    if (outcome.kind !== "resolved") return false;
+    const result = outcome.resolution;
+    const split = splitCitationWarnings(cleanCitation(result.citation));
+    rowGuard.invalidate(id);
+    setReviewItems(old => old.map(it => {
+      if (it.id !== id || it.foreignChoice !== choice || it.rawInput !== raw) return it;
+      return { ...it, foreignChoice: result.foreignChoice,
+        status: result.foreignChoice ? "needs_choice" : "ok",
+        citation: split.citation, editValue: split.citation || raw, isVerified: false,
+        completion: result.completion, pastedCitation: result.pastedCitation,
+        warningMsg: result.warningMsg, warnings: mergeWarnings(split.warnings, result.warningMsg),
+        errorMsg: undefined, recovery: undefined, sourceTypeOverride: "foreign_caselaw" };
+    }));
+    return true;
+  };
+  const bindForeign = (item: ReviewItem) => {
+    const handlers = new Map((item.foreignChoice?.options ?? []).map(option => {
+      let applied = false;
+      const guarded = rowGuard.bind(item.id, () => { applied = pickForeign(item.id, option.id); });
+      return [option.id, () => { applied = false; guarded(); return applied; }] as const;
+    }));
+    return (id: string): boolean => handlers.get(id)?.() ?? false;
+  };
+
   const pickEdition = (id: string, optionId: string) => {
     const item = reviewItemsRef.current.find(it => it.id === id);
     const choice = item?.bookEditionChoice;
@@ -421,10 +464,10 @@ export function BibliographyGenerator({ sourceQuota = null }: { sourceQuota?: Bi
     rowGuard.invalidate(id);
     setReviewItems(old => old.map(it => {
       if (it.id !== id || it.bookEditionChoice !== choice || it.rawInput !== current) return it;
-      if (outcome.kind !== "resolved") return { ...it, bookEditionChoice: undefined, status: "error", errorMsg: "הנוסח השתנה או שהבחירה אינה תקינה. יש לבדוק שוב." };
+      if (outcome.kind !== "resolved") return { ...it, foreignChoice: undefined, bookEditionChoice: undefined, status: "error", errorMsg: "הנוסח השתנה או שהבחירה אינה תקינה. יש לבדוק שוב." };
       const result = outcome.resolution;
       const split = splitCitationWarnings(cleanCitation(result.citation));
-      return { ...it, bookEditionChoice: undefined, status: "ok", citation: split.citation, editValue: split.citation, isVerified: false, completion: result.completion, warningMsg: result.warningMsg, warnings: mergeWarnings(split.warnings, result.warningMsg), sourceTypeOverride: it.sourceTypeOverride ?? "foreign_books" };
+      return { ...it, foreignChoice: undefined, bookEditionChoice: undefined, status: "ok", citation: split.citation, editValue: split.citation, isVerified: false, completion: result.completion, warningMsg: result.warningMsg, warnings: mergeWarnings(split.warnings, result.warningMsg), sourceTypeOverride: it.sourceTypeOverride ?? "foreign_books" };
     }));
   };
   const bindEdition = (item: ReviewItem) => {
@@ -451,7 +494,7 @@ export function BibliographyGenerator({ sourceQuota = null }: { sourceQuota?: Bi
         const v = it.editValue.trim();
         if (!v) return it;
         if (v === it.citation) return { ...it, isEditing: false };
-        return { ...it, isEditing: false, bookEditionChoice: undefined, citation: v, status: "ok", isVerified: false, options: [], errorMsg: undefined, warningMsg: undefined, warnings: undefined, completion: undefined, pastedCitation: undefined, citationRetry: undefined, requestId: undefined, recovery: undefined };
+        return { ...it, isEditing: false, foreignChoice: undefined, bookEditionChoice: undefined, citation: v, status: "ok", isVerified: false, options: [], errorMsg: undefined, warningMsg: undefined, warnings: undefined, completion: undefined, pastedCitation: undefined, citationRetry: undefined, requestId: undefined, recovery: undefined };
       }),
     );
   };
@@ -481,7 +524,7 @@ export function BibliographyGenerator({ sourceQuota = null }: { sourceQuota?: Bi
     const plan = hintOverride === undefined && !explicitRetry && !recovery
       ? planForItem(user?.id, `bib:${item.classificationKey}`, query) : null;
     setReviewItems((prev) => prev.map((it) => it.id === id
-      ? { ...it, bookEditionChoice: undefined, status: "loading", completion: undefined, pastedCitation: undefined, isEditing: false, sourceTypeOverride: hint, citationRetry: undefined, requestId: undefined } : it));
+      ? { ...it, foreignChoice: undefined, bookEditionChoice: undefined, status: "loading", completion: undefined, pastedCitation: undefined, isEditing: false, sourceTypeOverride: hint, citationRetry: undefined, requestId: undefined } : it));
     try {
       const r = await lookupOneSafe(query, hint, job.isCurrent, explicitRetry ?? recovery, plan?.sourceType, plan?.manualChoice);
       if (!job.isCurrent()) return;
@@ -509,7 +552,7 @@ export function BibliographyGenerator({ sourceQuota = null }: { sourceQuota?: Bi
       const v = it.editValue?.trim();
       if (!v) return { ...it, isEditing: false };
       if (v === it.citation) return { ...it, isEditing: false };
-      return { ...it, isEditing: false, bookEditionChoice: undefined, citation: v, status: "ok" as ReviewStatus, isVerified: false, options: [], errorMsg: undefined, warningMsg: undefined, warnings: undefined, completion: undefined, pastedCitation: undefined, citationRetry: undefined, requestId: undefined, recovery: undefined };
+      return { ...it, isEditing: false, foreignChoice: undefined, bookEditionChoice: undefined, citation: v, status: "ok" as ReviewStatus, isVerified: false, options: [], errorMsg: undefined, warningMsg: undefined, warnings: undefined, completion: undefined, pastedCitation: undefined, citationRetry: undefined, requestId: undefined, recovery: undefined };
     });
     if (flushed !== reviewItems) setReviewItems(flushed);
 
@@ -745,6 +788,7 @@ export function BibliographyGenerator({ sourceQuota = null }: { sourceQuota?: Bi
                 key={item.id}
                 item={item}
                 onPickEdition={bindEdition(item)}
+                onPickForeign={bindForeign(item)}
                 onStartEdit={() => startEdit(item.id)}
                 onSaveEdit={() => saveEdit(item.id)}
                 onCancelEdit={() => cancelEdit(item.id)}
@@ -887,6 +931,7 @@ function StepBadge({ n, label, active, done }: { n: number; label: string; activ
 function ReviewRow({
   item,
   onPickEdition,
+  onPickForeign,
   onStartEdit,
   onSaveEdit,
   onCancelEdit,
@@ -900,6 +945,7 @@ function ReviewRow({
 }: {
   item: ReviewItem;
   onPickEdition: (id: string) => void;
+  onPickForeign: (id: string) => boolean;
   onStartEdit: () => void;
   onSaveEdit: () => void;
   onCancelEdit: () => void;
@@ -1041,6 +1087,8 @@ function ReviewRow({
             </button>
           </div>
         </div>
+      ) : item.foreignChoice && item.status === "needs_choice" ? (
+        <ForeignCaseChoiceButtons key={`${item.foreignChoice.fingerprint}|${item.foreignChoice.stage}|${item.foreignChoice.options.map(o => o.id).join(",")}`} choice={item.foreignChoice} onSelect={onPickForeign} />
       ) : item.bookEditionChoice && item.status === "needs_choice" ? (
         <div className="space-y-2"><FormattedCitation text={item.citation} /><BookEditionChoiceButtons key={item.bookEditionChoice.fingerprint} choice={item.bookEditionChoice} onSelect={onPickEdition} /></div>
       ) : item.status === "needs_choice" ? (
