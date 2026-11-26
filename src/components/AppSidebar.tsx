@@ -6,7 +6,7 @@ import { useProjects } from "@/hooks/useProjects";
 import { useCredits } from "@/hooks/useCredits";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Pencil, Infinity as InfinityIcon, HelpCircle, Gift } from "lucide-react";
+import { Pencil, Infinity as InfinityIcon, HelpCircle, Gift, Mail } from "lucide-react";
 import { UserGuideModal } from "@/components/guide/UserGuideModal";
 
 export function AppSidebar() {
@@ -230,6 +230,19 @@ export function AppSidebar() {
           <Gift size={14} aria-hidden="true" />
           <span>קבל עוד אזכורים</span>
         </button>
+      )}
+
+      {user && !isOfficeAddin && (
+        <a
+          href="/contact"
+          target="_blank"
+          rel="noopener noreferrer"
+          title="נפתח בלשונית חדשה"
+          className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm text-primary hover:bg-muted transition-colors text-right w-full"
+        >
+          <Mail size={14} aria-hidden="true" />
+          <span>צור קשר</span>
+        </a>
       )}
 
       <UserGuideModal open={guideOpen} onOpenChange={setGuideOpen} />
