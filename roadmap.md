@@ -3,7 +3,7 @@
 ## Bibliography publication (2026-11-26)
 - [x] Add input-bound foreign decision/report choices; no search on selection and no unresolved row export. 307 offline regressions passed (1 skipped).
 - [x] Deploy reviewed citation-chat package (submitted SHA-256 3a010d47de66bb7f1aa380f53ab0f02c65cefae8a8499d127ea716ebd714df11); live Friedmann search returned 200, preserved supplied journal but still lacked first page/year. Donoghue returned 200; subsequent live choice check blocked by current account quota. No quota changes or uncertain retries.
-- [ ] Publish the bibliography fix after the successful compile and completed basic security scan.
+- [x] Requested site publication at https://relexlm.com after successful compile/basic security checks; completion is not yet confirmed.
 - [ ] Complete live article evidence coverage — blocked on an identifiable publication record in discovery results; no raw provider snippets are retained.
 
 ## Hebrew journal articles (2026-11-26, local only)
