@@ -7,13 +7,30 @@ export function passSourcesRemaining(pass: CitationPassStatus): number {
   return Math.max(0, total - Math.round(pass.usedRatio * total));
 }
 
+/** Only settled passes still within their purchased term, even if their quota is spent. */
+export function unexpiredSettledCitationPasses(passes: CitationPassStatus[], now = Date.now()) {
+  return passes.filter(p => (p.status === "active" || p.status === "exhausted") &&
+    p.expiresAt !== null && Date.parse(p.expiresAt) > now);
+}
+
+export function sidebarCitationPassLabel(passes: CitationPassStatus[], now = Date.now()): string | null {
+  const settled = unexpiredSettledCitationPasses(passes, now);
+  const active = settled.filter(p => p.status === "active");
+  if (active.length > 1) return `${active.length} חבילות אזכורים פעילות`;
+  const single = active[0] ?? settled[0];
+  if (!single) return null;
+  if (active.length === 0 && settled.length > 1) return "מכסת החבילות נוצלה";
+  const label = single.offerId === "citation_week_pass_v1" ? "חבילה שבועית" : "חבילה חודשית";
+  return active.length ? `${label} פעילה` : `${label} · המכסה נוצלה`;
+}
+
 /**
  * Header summary following the server quota rule: while any settled pass is unexpired,
  * new sources draw from paid passes only (earliest expiry first) and never fall back to
  * the account's remaining free + referral sources (pooled into the count). Returns null when no paid pass applies.
  */
 export function activePassSummary(passes: CitationPassStatus[], now = Date.now(), freeRemaining = 0): { remaining: number } | null {
-  const live = passes.filter(p => (p.status === "active" || p.status === "exhausted") && p.expiresAt && Date.parse(p.expiresAt) > now);
+  const live = unexpiredSettledCitationPasses(passes, now);
   if (live.length === 0) return null;
   const remaining = live.filter(p => p.status === "active").reduce((sum, p) => sum + passSourcesRemaining(p), 0);
   // Pooled: once passes are used up, the server draws from the free + referral allowance.

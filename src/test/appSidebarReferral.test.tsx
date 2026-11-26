@@ -17,9 +17,9 @@ function Destination() {
   const { pathname, search } = useLocation();
   return <p>{pathname + search}</p>;
 }
-function renderMenu() {
+function renderMenu(passLabel?: string) {
   render(<MemoryRouter initialEntries={["/app"]}><Routes>
-    <Route path="/app" element={<AppSidebar />} />
+    <Route path="/app" element={<AppSidebar passLabel={passLabel} />} />
     <Route path="/profile" element={<Destination />} />
   </Routes></MemoryRouter>);
 }
@@ -49,4 +49,11 @@ it("does not expose the shortcut in Office or to signed-out visitors", () => {
   renderMenu();
   expect(screen.queryByRole("button", { name: "קבל עוד אזכורים" })).toBeNull();
   expect(screen.queryByRole("link", { name: "צור קשר" })).toBeNull();
+});
+
+
+it("displays the active paid status, instead of the baseline account tier", () => {
+  renderMenu("חבילה שבועית פעילה");
+  expect(screen.getByText("חבילה שבועית פעילה")).toBeInTheDocument();
+  expect(screen.queryByText("Test")).not.toBeInTheDocument();
 });
