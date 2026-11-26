@@ -44,8 +44,9 @@ export function parseForeignArticleInput(raw: string): ArticleFields {
   // A terminal publication year is explicit; a year embedded in a title is not.
   const year = text.match(/(?:\(\s*|,\s*)((?:1[6-9]|20)\d{2})\s*\)?[.,;\s]*$/);
   if (year) fields.year = year[1];
-  // Full or partial publication coordinates after the title.
-  const publication = text.match(/,\s*(\d{1,4})\s+([A-Z][A-Za-z.&'’ -]+?)\s+(\d{1,5})(?:\s*[-–]\s*\d+)?(?:\s*,\s*(\d+(?:\s*[-–]\s*\d+)?))?\s*(?:\(((?:1[6-9]|20)\d{2})\))?[.\s]*$/);
+  // Full or partial publication coordinates after the title. Tolerate one
+  // stray period at the volume/journal boundary in user input only.
+  const publication = text.match(/,\s*(\d{1,4})(?:\s*\.\s*|\s+)([A-Z][A-Za-z.&'’ -]+?)\s+(\d{1,5})(?:\s*[-–]\s*\d+)?(?:\s*,\s*(\d+(?:\s*[-–]\s*\d+)?))?\s*(?:\(((?:1[6-9]|20)\d{2})\))?[.\s]*$/);
   if (publication && plausibleJournal(publication[2])) {
     fields.volume = publication[1];
     fields.journal = publication[2].trim();

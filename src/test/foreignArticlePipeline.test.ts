@@ -1,5 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { runCitation } from "@/lib/runCitation";
+import { detectForeignSource, extractJournalArticle } from "@/data/bluebook/extract";
+import { parseForeignArticleInput } from "../../supabase/functions/_shared/foreignArticle";
 import { renderJournalArticle } from "@/data/bluebook/render";
 import { runForeignLookup, type ForeignLookupInput } from "../../supabase/functions/citation-chat/foreignLookup";
 
@@ -7,6 +9,11 @@ const boundaries = vi.hoisted(() => ({ invoke: vi.fn(), classify: vi.fn(), verif
 vi.mock("@/lib/functionError", () => ({ invokeFunction: boundaries.invoke }));
 vi.mock("@/lib/sourceTypeClassifier", () => ({ resolveSourceType: boundaries.classify }));
 vi.mock("@/lib/verifiedSources", () => ({ findVerifiedSourceMatch: boundaries.verified, classifyVerifiedSource: vi.fn(), getVerifiedCategoryLabel: vi.fn() }));
+// Quota accounting is a separate boundary; this suite must never call the live RPC.
+vi.mock("@/lib/citationTrialQuota", async (original) => ({
+  ...await original<typeof import("@/lib/citationTrialQuota")>(),
+  accountForLocalCitation: vi.fn(async () => undefined),
+}));
 vi.mock("@/lib/refundResponse", () => ({ handleRefundResponse: vi.fn() }));
 vi.mock("@/lib/costTelemetry", async (original) => ({ ...await original<typeof import("@/lib/costTelemetry")>(), reportZeroWork: boundaries.zero }));
 
@@ -90,6 +97,32 @@ describe("foreign article client / edge / renderer integration", () => {
     expect(result.citation).toContain("213–214");
     expect(result.citation).not.toContain("703");
     expect(result.warningMsg).toContain("סותרים");
+  });
+
+  const waggonerTitle = "Spousal Rights in Our Multiple-Marriage Society: The Revised Uniform Probate Code";
+  const waggoner = (separator: string) =>
+    `Waggoner, ${waggonerTitle}, 26${separator}REAL PROP. PROB. & TR. J. 683, 725–34 (1992)`;
+
+  it.each([" ", " .", ". ", ".", " . "])("parses the supplied publication with separator %j without search", async (separator) => {
+    const rawInput = waggoner(separator);
+    const expected = {
+      authors: "Waggoner", articleTitle: waggonerTitle, volume: "26",
+      journal: "REAL PROP. PROB. & TR. J.", firstPage: "683", pinpoint: "725–34", year: "1992",
+    };
+    expect(parseForeignArticleInput(rawInput)).toEqual(expected);
+    expect(extractJournalArticle(rawInput)).toEqual(expected);
+    expect(detectForeignSource(rawInput)?.sourceType).toBe("foreign_journal_article");
+    const result = await runCitation({ rawInput, overrideType: "foreign_journal_article", useVerifiedStore: false });
+    expect(result.citation).toContain("26 ");
+    expect(result.citation).toContain("683, 725–34 (1992)");
+    expect(result.citation).not.toContain("[חסר");
+    expect(result.status).toBe("valid");
+    expect(boundaries.invoke).not.toHaveBeenCalled();
+  });
+
+  it.each(["", "..", "; "])("does not reinterpret unsupported separator %j", (separator) => {
+    expect(extractJournalArticle(waggoner(separator))).toBeNull();
+    expect(parseForeignArticleInput(waggoner(separator)).volume).toBeUndefined();
   });
 
   it("keeps complete article input on its existing no-engine fast path", async () => {
