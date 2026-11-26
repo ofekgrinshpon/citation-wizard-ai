@@ -73,7 +73,7 @@ export function citationUserText(text: string): string {
 }
 /** Presentation-only quote/whitespace normalization; no words or source tokens can be replaced. */
 export function citationBindingText(text: string): string {
-  return text.replace(/״/g, '"').replace(/׳/g, "'").replace(/\s+/g, " ").trim();
+  return text.replace(/[״“”]/g, '"').replace(/׳/g, "'").replace(/\s+/g, " ").trim();
 }
 const lookupFieldKinds: Record<string, readonly string[]> = {
   case: ["caseName", "volume", "reporter", "firstPage", "pinpoint", "paragraph", "court", "year", "docket", "databaseIdentifier", "starPinpoint", "decisionDate", "reporterVolume", "neutral", "ukVolume", "ukSeries", "parallel", "unparsedRemainder"],

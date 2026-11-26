@@ -45,6 +45,15 @@ function fixture() {
   } };
 }
 describe("batch A actual server pre-cache route guard", () => {
+  it("curly article quotes pass the actual handler binding guard with all live transports closed", async () => {
+    const raw = 'עומר יחזקאל פלד, “חישוב הנזק בתנאי אי-ודאות”';
+    const message = 'עומר יחזקאל פלד, "חישוב הנזק בתנאי אי-ודאות"';
+    const h = fixture();
+    await h.invoke({ rawInput: raw, messages: [{ role: "user", content: message }], pastedCitation: pasted.buildPastedCitation(message) });
+    expect(h.construct).toHaveBeenCalledTimes(1);
+    expect(h.claim).toHaveBeenCalledTimes(1);
+    expect(h.provider).not.toHaveBeenCalled();
+  });
   it("actual server rederives manual family conflict rather than trusting forged client sourceKind", async () => {
     const raw = "Brown v. Board of Education"; const h = fixture();
     const r = await h.invoke({ rawInput: raw, messages: [{ role: "user", content: raw }],

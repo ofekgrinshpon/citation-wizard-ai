@@ -38,6 +38,30 @@ describe("batch A pure supplied-evidence contract", () => {
     expect(c.rawInput).toBe(raw); expect(c.fingerprint).toBe(rawCitationFingerprint(raw));
     expect(c.route).toBe("israeli"); expect(c.identityVerified).toBe(false);
   });
+  it.each(['“חישוב הנזק בתנאי אי-ודאות”', '״חישוב הנזק בתנאי אי-ודאות״', '"חישוב הנזק בתנאי אי-ודאות"'])("article quote variants bind without replacing original input: %s", title => {
+    const raw = `עומר יחזקאל פלד, ${title}`;
+    const message = 'עומר יחזקאל פלד, "חישוב הנזק בתנאי אי-ודאות"';
+    const c = guardPastedCitationRequest({ rawInput: raw, messages: [{ role: "user", content: message }], pastedCitation: buildPastedCitation(message) });
+    expect(c.conflicts).toEqual([]);
+    expect(c.route).toBe("existing");
+    expect(c.rawInput).toBe(raw);
+    expect(c.fingerprint).toBe(rawCitationFingerprint(raw));
+    expect(c.identityVerified).toBe(false);
+  });
+  it("curly quote normalization does not permit changed article content", () => {
+    const raw = 'עומר יחזקאל פלד, “חישוב הנזק בתנאי אי-ודאות”';
+    const c = guardPastedCitationRequest({ rawInput: raw, messages: [{ role: "user", content: 'עומר יחזקאל פלד, "מאמר אחר"' }] });
+    expect(c.route).toBe("preserve");
+    expect(c.conflicts).toContain("request_text_conflict");
+  });
+  it("equivalent curly quotes do not excuse a forged exact-raw fingerprint", () => {
+    const raw = 'עומר יחזקאל פלד, “חישוב הנזק בתנאי אי-ודאות”';
+    const message = 'עומר יחזקאל פלד, "חישוב הנזק בתנאי אי-ודאות"';
+    const c = guardPastedCitationRequest({ rawInput: raw, messages: [{ role: "user", content: message }],
+      pastedCitation: { ...buildPastedCitation(raw), fingerprint: rawCitationFingerprint(message) } });
+    expect(c.route).toBe("preserve");
+    expect(c.conflicts).toContain("contract_input_mismatch");
+  });
   it("bounded repeated evidence cannot mask conflicting jurisdictions or discard raw spans", () => {
     const raw = "BVerfG ".repeat(200) + "347 U.S. 483 (1954)";
     const c = buildPastedCitation(raw);
