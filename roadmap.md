@@ -1,5 +1,11 @@
 # Roadmap — research → memo → draft handoff (legal-research-v2)
 
+## Hebrew journal articles (2026-11-26, local only)
+- [x] Preserve partial supplied journals and bind unquoted identities to source records, never word-count guesses.
+- [x] Read publication fields from the target academic record; generated JSON is never publication evidence. Reuse the existing second search for missing fields; public academic HTML only, no redirects or crawling.
+- [x] Separate discovered issue metadata from Rule 24.6 presentation; preserve supplied and cached citations. Volume 39 is continuous; volume 5 is not assumed continuous, and low pages never prove restart.
+- [x] Offline regressions for Brunner, Pelled, Friedmann and another journal, plus actual-handler fixture replay; no typo correction, deployment or paid calls. Live Sonar/actual-page coverage is not verified.
+
 ## Takbull one-time checkout (2026-11-24)
 - [x] Accept the observed signed page callback (OrderStatus 3, Action null); 64 local payment tests passed; deployed only the page receiver and hash-gated settlement status guard, retaining service-only privileges.
 - [x] Build purchase-specific pending orders and atomic, idempotent settlement.

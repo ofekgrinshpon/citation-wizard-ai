@@ -10,11 +10,14 @@ export interface ArticleRequest {
   topic: string;
   pinpoint: string;
   suppliedCitation?: string;
+  /** Unquoted identity stays intact until a source proves both boundaries. */
+  freeformIdentity?: string;
 }
 export interface ArticleEvidence {
   fields: ArticleFields;
   sourceUrl: string;
   quote: string;
+  pagination?: "continuous" | "restarted";
 }
 export interface ArticleResolution {
   request: ArticleRequest;
@@ -22,6 +25,7 @@ export interface ArticleResolution {
   provenance: Partial<Record<ArticleField, { status: "supplied" | "evidence" | "conflict"; sources: string[] }>>;
   conflicts: ArticleField[];
   matched: boolean;
+  renderNotebook?: boolean;
 }
 
 const clean = (s: unknown): string => typeof s === "string" ? s.replace(/[\u200e\u200f\u202a-\u202e\u2066-\u2069]/g, "").trim() : "";
@@ -38,6 +42,8 @@ const LABELS: Partial<Record<ArticleField, string>> = {
   editor: "(?:עורך|עורכים|עורכת|עורכות)", edition: "מהדורה", translator: "(?:מתרגם|מתרגמת|מתרגמים)",
   newspaperSection: "חלק בעיתון", newspaperDate: "תאריך העיתון",
 };
+
+const JOURNALS = ["פורום עיוני משפט", "משפטים על אתר", "עיוני משפט", "משפטים", "הפרקליט", "מחקרי משפט", "דין ודברים", "משפט וממשל", "משפט ועסקים", "מעשי משפט", "עלי משפט", "מאזני משפט", "תיאוריה וביקורת", "המשפט", "חוקים", "פלילים"];
 
 function plausibleVolume(value: string): boolean {
   const base = value.split("/")[0].replace(/["״׳']/g, "");
@@ -96,6 +102,10 @@ function publicationTail(raw: string, kind: ArticleRequest["kind"]): { fields: A
     } else if (pageOnly) {
       container = pageOnly[1];
       tail = pageOnly[2] + pageOnly[3];
+    } else if (kind === "journal" && JOURNALS.some(journal => same(tail, journal))) {
+      // A supplied journal is useful even without volume, page or date.
+      container = tail;
+      tail = "";
     }
   }
   if (container) fields[kind === "article_in_book" ? "bookTitle" : "journalName"] = container.trim();
@@ -157,21 +167,33 @@ export function createHebrewArticleRequest(raw: string, inBook = false): Article
   const supplied: ArticleFields = { ...citation?.fields, ...labeledFields(raw) };
   const pinpoint = raw.match(PINPOINT)?.[1]?.replace(/\s+עד\s+/g, "–") || citation?.pinpoint || "";
   const natural = raw.match(/(?:המאמר|מאמר)\s+של\s+(.+?)\s+(?:על|בנושא|בעניין)\s+(.+?)(?:[,;\n]|\s+ב?עמוד|\.$|$)/);
+  let identityRaw = raw;
+  if (!inBook && !citation && !natural && !/[;\n|]/.test(raw)) {
+    const journal = JOURNALS.find(name => raw.trim().endsWith(` ${name}`));
+    if (journal) {
+      supplied.journalName = supplied.journalName || journal;
+      identityRaw = raw.trim().slice(0, -journal.length).trim();
+    }
+  }
   if (natural && !supplied.author) supplied.author = natural[1].trim();
   if (!supplied.articleTitle) {
-    const bare = !natural && !citation ? bareArticleTitle(raw) : undefined;
+    const bare = !natural && !citation ? bareArticleTitle(identityRaw) : undefined;
     const quoted = raw.match(/["“]([^"”]{3,})["”]/);
     if (bare) supplied.articleTitle = bare;
     else if (quoted) supplied.articleTitle = quoted[1];
   }
   return { raw, kind, supplied, topic: natural?.[2]?.trim().replace(/["“”]/g, "") || "", pinpoint,
     suppliedCitation: citation?.quote,
+    freeformIdentity: !inBook && !citation && !natural && !supplied.author && bareArticleTitle(identityRaw) ? bareArticleTitle(identityRaw) : undefined,
   };
 }
 
 export function articleIdentityMatches(request: ArticleRequest, fields: ArticleFields): boolean {
   if (!fields.articleTitle || !fields.author) return false;
-  if (request.supplied.articleTitle && !same(request.supplied.articleTitle, fields.articleTitle)) return false;
+  if (request.freeformIdentity) {
+    const identity = request.freeformIdentity;
+    if (![fields.articleTitle, `${fields.author} ${fields.articleTitle}`, `${fields.articleTitle} ${fields.author}`].some(value => same(identity, value))) return false;
+  } else if (request.supplied.articleTitle && !same(request.supplied.articleTitle, fields.articleTitle)) return false;
   if (request.supplied.author && !same(request.supplied.author, fields.author)) return false;
   if (request.topic) {
     const titleTokens = normalizeArticleText(fields.articleTitle).split(" ");
@@ -196,28 +218,37 @@ export function collectHebrewArticleEvidence(request: ArticleRequest, proposed: 
     const sourceUrl = clean(r.url);
     if (!/^https?:\/\//.test(sourceUrl)) continue;
     const snippet = clean(r.snippet);
+    // Separated labels are acceptable only inside this article's own record,
+    // with both title and author attested. They do not come from proposed JSON.
+    const ownFields = labeledFields(snippet);
+    if (request.kind === "journal" && ownFields.articleTitle && ownFields.author && articleIdentityMatches(request, ownFields) &&
+        same(clean(r.title), ownFields.articleTitle)) {
+      records.push({ fields: ownFields, sourceUrl, quote: snippet });
+      continue;
+    }
     const references = citationRecords(snippet, request.kind);
     for (const record of references) {
       if (articleIdentityMatches(request, record.fields)) records.push({ ...record, sourceUrl });
     }
     if (references.length || !articleIdentityMatches(request, candidate)) continue;
     const heading = normalizeArticleText(clean(r.title));
-    const title = normalizeArticleText(candidate.articleTitle!);
-    const author = normalizeArticleText(candidate.author!);
+    if (!candidate.articleTitle || !candidate.author) continue;
+    const title = normalizeArticleText(candidate.articleTitle);
+    const author = normalizeArticleText(candidate.author);
     const ownHeading = heading === title || heading === `${title} ${author}` || heading === `${author} ${title}` || heading.startsWith(`${title} |`) || heading.startsWith(`${title} /`);
     if (!ownHeading) continue;
     const normalizedSnippet = normalizeArticleText(snippet);
     // The author must be attributed in this record, not inferred from a URL.
     const labeled = labeledFields(snippet);
-    const attributed = (labeled.author && same(labeled.author, candidate.author!)) ||
+    const attributed = (labeled.author && same(labeled.author, candidate.author)) ||
       normalizedSnippet.startsWith(`${title} ${author}`) || normalizedSnippet.startsWith(`${author} ${title}`);
     if (!attributed) continue;
-    if (labeled.author && !same(labeled.author, candidate.author!)) continue;
+    if (labeled.author && !same(labeled.author, candidate.author)) continue;
     let fields: ArticleFields = { ...candidate, ...labeled };
     // Compact catalog/PDF headers use title + author + publication tuple.
     const headerPatterns = [
-      new RegExp(`^\\s*${escape(candidate.articleTitle!)}\\s+(?:מאת\\s+)?${escape(candidate.author!)}\\s+(.+)$`),
-      new RegExp(`^\\s*${escape(candidate.author!)}\\s+${escape(candidate.articleTitle!)}\\s+(.+)$`),
+      new RegExp(`^\\s*${escape(candidate.articleTitle)}\\s+(?:מאת\\s+)?${escape(candidate.author)}\\s+(.+)$`),
+      new RegExp(`^\\s*${escape(candidate.author)}\\s+${escape(candidate.articleTitle)}\\s+(.+)$`),
     ];
     const plain = snippet.replace(/[־–—]/g, "-");
     for (const pattern of headerPatterns) {
@@ -231,6 +262,11 @@ export function collectHebrewArticleEvidence(request: ArticleRequest, proposed: 
 
 export function resolveHebrewArticle(request: ArticleRequest, evidence: ArticleEvidence[]): ArticleResolution {
   const identityMatches = evidence.filter(e => articleIdentityMatches(request, e.fields));
+  if (request.freeformIdentity) {
+    const identities = new Map(identityMatches.map(e => [normalizeArticleText(`${e.fields.author}|${e.fields.articleTitle}`), e.fields]));
+    const identity = identities.size === 1 ? [...identities.values()][0] : undefined;
+    if (identity?.author && identity.articleTitle) request = { ...request, supplied: { ...request.supplied, author: identity.author, articleTitle: identity.articleTitle } };
+  }
   const publicationFields: ArticleField[] = ["journalName", "bookTitle", "volume", "notebook", "firstPage", "year", "hebrewYear"];
   // A conflicting edition/publication is an incompatible donor as a whole.
   // Preserving the supplied volume while borrowing its page/year makes a hybrid.
@@ -259,7 +295,21 @@ export function resolveHebrewArticle(request: ArticleRequest, evidence: ArticleE
       provenance[field] = { status: "evidence", sources: [...new Set(rows.map(e => e.sourceUrl))] };
     }
   }
-  return { request, fields, provenance, conflicts, matched: matching.length > 0 && !ambiguous };
+  // Metadata is not a rule to print an issue. Preserve supplied/cached forms;
+  // newly found issue numbers require actual restarted-pagination evidence.
+  const issueRows = matching.filter(e => e.fields.notebook && same(e.fields.notebook, fields.notebook || ""));
+  const continuous39 = same(fields.journalName || "", "עיוני משפט") && ["לט", "39"].includes(fields.volume || "");
+  const renderNotebook = request.kind !== "journal" || !!request.supplied.notebook ||
+    issueRows.some(e => e.sourceUrl.startsWith("verified-store:")) ||
+    (!continuous39 && issueRows.some(e => e.pagination === "restarted") && !issueRows.some(e => e.pagination === "continuous"));
+  return { request, fields, provenance, conflicts, matched: matching.length > 0 && !ambiguous, renderNotebook };
+}
+
+/** Presentation projection only; the evidence ledger keeps its issue facts. */
+export function hebrewArticlePresentationFields(result: ArticleResolution): ArticleFields {
+  const fields = { ...result.fields };
+  if (result.renderNotebook === false) delete fields.notebook;
+  return fields;
 }
 
 /** Classify an existing book-to-journal fallback only when the complete
@@ -297,7 +347,7 @@ export function isCompleteHebrewArticle(result: ArticleResolution): boolean {
 /** Rule 24's existing template, with immutable facts. Shared server range,
  * Hebrew-year and editor normalizers still run after this function. */
 export function renderHebrewArticle(result: ArticleResolution): string {
-  const f = result.fields;
+  const f = hebrewArticlePresentationFields(result);
   const missing = (field: ArticleField, label: string) => f[field] || `[חסר: ${label}]`;
   const inBook = result.request.kind === "article_in_book";
   const container = inBook ? missing("bookTitle", "שם הספר") : missing("journalName", "כתב עת");

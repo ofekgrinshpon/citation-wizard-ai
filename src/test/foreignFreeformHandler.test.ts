@@ -25,6 +25,8 @@ import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import { citationTextOnly } from "@/lib/citationSegments";
 import { CHAT_HOST, foreignFreeformSourceType, planCitationEvidence, planLocalCitation, planTypedRequest, resolveCitationResponse, selectForeignCaseChoice } from "@/lib/citationPlanner";
 import * as articles from "../../supabase/functions/_shared/hebrewArticleEvidence";
+import * as articleRecords from "../../supabase/functions/_shared/hebrewArticleRecord";
+import * as partyRoleWords from "../../supabase/functions/_shared/partyRoleWords";
 import * as dockets from "../../supabase/functions/_shared/caseTypePrefixes";
 import * as pastedCitation from "../../supabase/functions/_shared/pastedCitation";
 import * as hosts from "../../supabase/functions/_shared/trustedHosts";
@@ -90,6 +92,8 @@ function installHandler() {
       return new Response(script.page, { status: 200 });
     }, withCostTelemetry: (_name: string, fn: () => unknown) => fn(), setTelemetryFromBody: () => {}, recordZeroWork: () => {} },
     "../_shared/hebrewArticleEvidence.ts": articles,
+    "../_shared/hebrewArticleRecord.ts": articleRecords,
+    "../_shared/partyRoleWords.ts": partyRoleWords,
     "../_shared/caseTypePrefixes.ts": dockets,
     "../_shared/pastedCitation.ts": pastedCitation,
     "../_shared/trustedHosts.ts": hosts,

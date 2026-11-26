@@ -1,4 +1,5 @@
 import { buildGroundedHebrewJournalResultType, buildHebrewArticleValidation } from "../_shared/hebrewArticleValidation.ts";
+import { fetchHebrewArticleRecords } from "../_shared/hebrewArticleRecord.ts";
 import { PADI_EVIDENCE_DOMAINS, verifiedPadiPublication, findTypedPadiEvidence, findTypedPadiCitation, mergeTypedPadiEvidence, typedPadiDraftMatches, typedPadiMarker, typedSupremeFilingYear, type TypedPadiEvidence, type TypedPadiTarget } from "../_shared/padiPublicationEvidence.ts";
 import { isRoleWordParty } from "../_shared/partyRoleWords.ts";
 import { isHebrewBookTitleQuery, projectHebrewBookProof, buildHebrewBookChoice, hebrewBookPartial, selectHebrewBook } from "../_shared/citationPure/hebrewBookChoice.ts";
@@ -102,7 +103,7 @@ import { normalizeEditorPlacement } from "../_shared/articleCitationValidator.ts
 import {
   articleRawInput, createHebrewArticleRequest, collectHebrewArticleEvidence, groundedHebrewJournalFallback,
   resolveHebrewArticle, renderHebrewArticle, isCompleteHebrewArticle,
-  cachedHebrewArticleEvidence,
+  cachedHebrewArticleEvidence, hebrewArticlePresentationFields,
   type ArticleEvidence,
 } from "../_shared/hebrewArticleEvidence.ts";
 import {
@@ -3929,8 +3930,11 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
             try { proposed = JSON.parse(json.replace(/([\u0590-\u05FF])"([\u0590-\u05FF])/g, "$1\u05F4$2")); } catch { /* Keep supplied fields on malformed provider output. */ }
           }
           articleEvidence.push(...collectHebrewArticleEvidence(articleRequest, proposed, artData?.search_results));
+          if (!isCompleteHebrewArticle(resolveHebrewArticle(articleRequest, articleEvidence))) {
+            articleEvidence.push(...await fetchHebrewArticleRecords(articleRequest, artData?.search_results, fetch));
+          }
           const initial = resolveHebrewArticle(articleRequest, articleEvidence);
-          if (initial.matched && proposed.author && proposed.articleTitle) {
+          if (initial.matched && isCompleteHebrewArticle(initial) && proposed.author && proposed.articleTitle) {
             // Reuse the existing author-check call; its source records are
             // subject to the same identity/field gate as the first retrieval.
             const verify = await verifyBiblioAuthor(PERPLEXITY_API_KEY, "article", String(proposed.articleTitle));
@@ -3938,11 +3942,16 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
               articleTitle: proposed.articleTitle, author: verify.author,
             }, verify.search_results));
           }
-          if (!initial.matched) {
-            const fallback = await fallbackBiblioSearch(PERPLEXITY_API_KEY, articleRequest.raw, "article");
+          if (!isCompleteHebrewArticle(initial)) {
+            const missing = ["journalName", "volume", "firstPage", "year"].filter(field => !initial.fields[field as keyof typeof initial.fields]);
+            const focusedQuery = `${articleRequest.raw}\nאתר את רשומת הפרסום של אותו מאמר בלבד. פרטים שסופקו או אומתו: ${JSON.stringify(initial.fields)}. חפש רק את החסר: ${missing.join(", ")}. אין לתקן כותרת או מחבר ואין להחליף כתב עת שסופק.`;
+            const fallback = await fallbackBiblioSearch(PERPLEXITY_API_KEY, focusedQuery, "article");
             if (fallback && fallback.kind !== "book") articleEvidence.push(...collectHebrewArticleEvidence(
               articleRequest, fallback.proposed, fallback.searchResults,
             ));
+            if (fallback && fallback.kind !== "book" && !isCompleteHebrewArticle(resolveHebrewArticle(articleRequest, articleEvidence))) {
+              articleEvidence.push(...await fetchHebrewArticleRecords(articleRequest, fallback.searchResults, fetch));
+            }
           }
         } catch (e) {
           console.error("[article] grounded retrieval failed:", e);
@@ -3953,7 +3962,7 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
       const articleResolution = resolveHebrewArticle(articleRequest, articleEvidence);
       const content = articleContent();
       return completeResponse(new Response(JSON.stringify({ content,
-        hebrewArticleValidation: buildHebrewArticleValidation(articleRequest.raw, content, articleResolution.fields),
+        hebrewArticleValidation: buildHebrewArticleValidation(articleRequest.raw, content, hebrewArticlePresentationFields(articleResolution)),
       }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       }), isCompleteHebrewArticle(articleResolution) ? "article" : "never");

@@ -18,6 +18,8 @@ import { createContext, runInContext } from "node:vm";
 import ts from "typescript";
 import { describe, expect, it, vi } from "vitest";
 import * as articles from "../../supabase/functions/_shared/hebrewArticleEvidence";
+import * as articleRecords from "../../supabase/functions/_shared/hebrewArticleRecord";
+import * as partyRoleWords from "../../supabase/functions/_shared/partyRoleWords";
 import * as dockets from "../../supabase/functions/_shared/caseTypePrefixes";
 import * as pastedCitation from "../../supabase/functions/_shared/pastedCitation";
 import * as hosts from "../../supabase/functions/_shared/trustedHosts";
@@ -220,7 +222,7 @@ runInContext(compileEntrypoint(readFileSync(resolve(__dirname, "../../supabase/f
 const guardModule = guardContext.exports;
 type RpcResult = { data: Record<string, unknown> | null; error: { message: string } | null };
 type TestRpc = (name: string, args: Record<string, unknown>) => Promise<RpcResult>;
-async function runHandler(options: { raw?: string; rawInputNull?: boolean; records?: unknown[]; candidate?: Record<string, unknown>; cached?: Array<Record<string, unknown>>; fail?: boolean; fallback?: boolean; label?: string; noPplx?: boolean; foreign?: Record<string, unknown>; foreignResult?: Record<string, unknown>; foreignThrows?: boolean; formatterReply?: string; compiledEntrypoint?: string; baselineGuard?: unknown; diagnostic?: unknown; admin?: boolean; roleFails?: boolean; preflightOnly?: boolean; realForeign?: boolean; requestId?: string | null; retryOfRequestId?: unknown; batchId?: string | null; rpcImpl?: TestRpc; providerStatus?: number; providerThrows?: boolean; failStage?: string; malformedStage?: string; providerJson?: unknown; onProvider?: () => void; providerGate?: Promise<void>; serviceUnavailable?: boolean; version?: number | null; providerJsonStage?: string; stageJson?: unknown; statusStage?: { stage: string; status: number } } = {}) {
+async function runHandler(options: { pageHtml?: string; raw?: string; rawInputNull?: boolean; records?: unknown[]; candidate?: Record<string, unknown>; cached?: Array<Record<string, unknown>>; fail?: boolean; fallback?: boolean; label?: string; noPplx?: boolean; foreign?: Record<string, unknown>; foreignResult?: Record<string, unknown>; foreignThrows?: boolean; formatterReply?: string; compiledEntrypoint?: string; baselineGuard?: unknown; diagnostic?: unknown; admin?: boolean; roleFails?: boolean; preflightOnly?: boolean; realForeign?: boolean; requestId?: string | null; retryOfRequestId?: unknown; batchId?: string | null; rpcImpl?: TestRpc; providerStatus?: number; providerThrows?: boolean; failStage?: string; malformedStage?: string; providerJson?: unknown; onProvider?: () => void; providerGate?: Promise<void>; serviceUnavailable?: boolean; version?: number | null; providerJsonStage?: string; stageJson?: unknown; statusStage?: { stage: string; status: number } } = {}) {
   const calls: Array<{ stage: string; body: Record<string, unknown> }> = [];
   const claimClients: Array<{ key: string; options?: unknown }> = [];
   const rpc = vi.fn(options.rpcImpl || (async (name: string, args: Record<string, unknown>) => ({ data: name === "begin_citation_request"
@@ -279,6 +281,8 @@ async function runHandler(options: { raw?: string; rawInputNull?: boolean; recor
     }) },
     "../_shared/costTelemetry.ts": { trackedFetch: fetchProvider, withCostTelemetry: (_name: string, fn: () => unknown) => fn(), setTelemetryFromBody: () => {}, recordZeroWork: zero },
     "../_shared/hebrewArticleEvidence.ts": articles,
+    "../_shared/hebrewArticleRecord.ts": articleRecords,
+    "../_shared/partyRoleWords.ts": partyRoleWords,
     "../_shared/caseTypePrefixes.ts": dockets,
     "../_shared/pastedCitation.ts": pastedCitation,
     "../_shared/trustedHosts.ts": hosts,
@@ -313,7 +317,7 @@ async function runHandler(options: { raw?: string; rawInputNull?: boolean; recor
     return modules[name];
   }, console: { log: () => {}, error: () => {}, warn: () => {} }, URL, Request, Response, Headers, crypto, TextEncoder,
   Deno: { env: { get: (name: string) => name === "SUPABASE_SERVICE_ROLE_KEY" && options.serviceUnavailable ? undefined : name === "SUPABASE_SERVICE_ROLE_KEY" ? "fixture-service" : name === "SUPABASE_ANON_KEY" ? "fixture-anon" : name === "CITATION_CHAT_OPENWEB_FALLBACK" ? "off" : name === "PERPLEXITY_API_KEY" && options.noPplx ? undefined : "mock-only" } },
-  fetch: () => { throw new Error("Unmocked network is prohibited"); },
+  fetch: async () => { if (options.pageHtml) return new Response(options.pageHtml, { headers: { "Content-Type": "text/html" } }); throw new Error("Unmocked network is prohibited"); },
   }));
   const raw = options.raw || natural;
   const label = options.label || "מאמר";
@@ -407,7 +411,7 @@ describe("article boundary through the real edge handler", () => {
     expect(r.calls.map(c => c.stage)).toEqual(["article_retrieval_tier1", "author_check"]);
     expect(r.calls.every(c => c.body.model === "sonar-pro")).toBe(true);
     expect(r.rpc.mock.calls.filter(c => c[0] === "begin_citation_request")).toHaveLength(1);
-    expect(r.rpc.mock.calls.at(-1)).toMatchObject(["finish_citation_request", { _outcome: "succeeded" }]);
+    expect(r.rpc.mock.calls.find(c => c[0] === "finish_citation_request")).toMatchObject(["finish_citation_request", { _outcome: "succeeded" }]);
   });
 
   it("ignores unranked and wrong-work cache records", async () => {
@@ -466,7 +470,7 @@ describe("article boundary through the real edge handler", () => {
     const r = await runHandler({ raw: "בג״ץ 1308/17", label: "פסיקה (מאגר)", cached: [{ source_name: "בג״ץ 1308/17", full_citation: citation, source_type: "case_law_database" }] });
     expect(r.body.content).toBe(citation);
     expect(r.calls).toHaveLength(0);
-    expect(r.rpc).not.toHaveBeenCalled();
+    expect(r.rpc.mock.calls.map(([name]) => name)).toEqual(["consume_local_citation_trial", "confirm_citation_referral_success"]);
     expect(r.zero).toHaveBeenCalledWith("server_verified_store", "cache_hit");
   });
 
@@ -625,7 +629,7 @@ describe("chapter routing remains outside the journal article correction", () =>
     const r = await runHandler({ ...chapterOptions, raw: chapter.articleTitle, cached: [{ source_name: chapter.articleTitle, full_citation: complete, source_type: "article_in_book" }] });
     expect(r.body.content).toBe(complete);
     expect(r.calls).toEqual([]);
-    expect(r.rpc).not.toHaveBeenCalled();
+    expect(r.rpc.mock.calls.map(([name]) => name)).toEqual(["consume_local_citation_trial", "confirm_citation_referral_success"]);
     expect(r.zero).toHaveBeenCalledWith("server_verified_store", "cache_hit");
   });
 
@@ -1096,5 +1100,29 @@ describe("grounded Hebrew journal result type after an initial book guess", () =
     expect(r.body).not.toHaveProperty("groundedJournalResultType");
     expect((await runFallback([record(full)], rendered, { ...proposedJournal, kind: "article_in_book" })).body)
       .not.toHaveProperty("groundedJournalResultType");
+  });
+});
+
+
+describe("journal publication pages through the actual handler (offline)", () => {
+  it("reads an academic record for unquoted input and returns the same facts to display validation", async () => {
+    const title = "עוד לפרשנות החקיקה הישראלית החדשה";
+    const pageHtml = `<meta name="citation_title" content="${title}"><meta name="citation_author" content="דניאל פרידמן"><meta name="citation_journal_title" content="עיוני משפט"><meta name="citation_volume" content="ה"><meta name="citation_firstpage" content="463"><meta name="citation_publication_date" content="1977/06">`;
+    const r = await runHandler({ raw: `דניאל פרידמן ${title}`, records: [{ url: "https://law.tau.ac.il/publication/example", title, snippet: "פרטי הפרסום נמצאים ברשומה" }], pageHtml, candidate: { author: "דניאל פרידמן", articleTitle: title, journalName: "משפטים", firstPage: "291", year: "2018" } });
+    expect(r.status).toBe(200);
+    expect(r.body.hebrewArticleValidation.fields).toMatchObject({ author: "דניאל פרידמן", articleTitle: title, journalName: "עיוני משפט", volume: "ה", firstPage: "463", year: "1977" });
+    expect(r.body.content).toBe(`דניאל פרידמן "${title}" **עיוני משפט** ה 463 (1977).`);
+    expect(r.calls.some(call => call.stage === "formatter")).toBe(false);
+  });
+  it("targets missing fields on the existing second search while preserving a supplied journal", async () => {
+    const raw = 'דניאל פרידמן "עוד לפרשנות החקיקה הישראלית החדשה" עיוני משפט';
+    const r = await runHandler({ raw, records: [], candidate: { author: "דניאל פרידמן", articleTitle: "עוד לפרשנות החקיקה הישראלית החדשה" } });
+    expect(r.calls.map(call => call.stage)).toEqual(["article_retrieval_tier1", "biblio_fallback"]);
+    const messages = JSON.stringify(r.calls[1]?.body.messages);
+    expect(messages).toContain('journalName');
+    expect(messages).toContain('עיוני משפט');
+    expect(messages).toContain('volume, firstPage, year');
+    expect(r.body.hebrewArticleValidation.fields.journalName).toBe("עיוני משפט");
+    expect(r.body.hebrewArticleValidation.fields.firstPage).toBeUndefined();
   });
 });
