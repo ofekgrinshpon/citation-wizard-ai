@@ -192,6 +192,16 @@ const Auth = () => {
         )}
 
         <div className="bg-card border border-border rounded-xl p-6 shadow-sm">
+          {!isLogin && (
+            <p className="mb-4 text-xs leading-5 text-muted-foreground">
+              הפרטים משמשים לפתיחת החשבון ולאימות ההתחברות ועשויים לעבור לספק האימות והאירוח לצורך זה.
+              אין חובה לפי חוק למסור אותם, אבל בלי פרטי האימות לא ניתן לפתוח חשבון. שם מלא בטופס אינו חובה.
+              אם בוחרים ב־Google, נקבל את פרטי הפרופיל ש־Google תשתף לזיהוי החשבון.
+              אפשר לפנות ל־<a href="mailto:privacy@relexlm.com" className="text-primary underline" dir="ltr">privacy@relexlm.com</a>{" "}
+              לעיון או תיקון. לפרטים על מפעיל השירות ופרטיות:{" "}
+              <a href="/privacy" target="_blank" rel="noopener noreferrer" className="text-primary underline">מדיניות הפרטיות</a>.
+            </p>
+          )}
           <form onSubmit={handleSubmit} className="space-y-3.5">
             {!isLogin && (
               <div>
