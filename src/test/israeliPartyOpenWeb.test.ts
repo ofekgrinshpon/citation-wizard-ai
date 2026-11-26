@@ -1,3 +1,4 @@
+import * as partyRoleWords from "../../supabase/functions/_shared/partyRoleWords";
 import * as articleValidation from "../../supabase/functions/_shared/hebrewArticleValidation";
 import * as pure_render from "../../supabase/functions/_shared/citationPure/render";
 import * as pure_completion from "../../supabase/functions/_shared/citationPure/completion";
@@ -106,7 +107,7 @@ type Handler = (req: Request) => Promise<Response>;
 let handler: Handler;
 type Call = { url: string; body: Record<string, unknown> };
 const calls: Call[] = [];
-let fixture: { tier1: unknown; openWeb: unknown; openWebSearch: unknown[]; verify: unknown; verifySearch?: unknown[]; date: unknown;
+let fixture: { tier1: unknown; openWeb: unknown; openWebSearch: unknown[]; tier1Search?: unknown[]; verify: unknown; verifySearch?: unknown[]; date: unknown;
   docket?: unknown; docketSearch?: unknown[]; formatter?: string };
 
 const chat = (content: unknown, extra: Record<string, unknown> = {}) =>
@@ -123,6 +124,7 @@ function install() {
   runInContext(compile(readFileSync(resolve(__dirname, "../../supabase/functions/_shared/citationUsageGuard.ts"), "utf8")), guardContext);
   const modules: Record<string, unknown> = {
     "../_shared/hebrewArticleValidation.ts": articleValidation,
+    "../_shared/partyRoleWords.ts": partyRoleWords,
     "../_shared/citationPure/hebrewBookChoice.ts": hebrewBookChoice,
     "https://deno.land/std@0.168.0/http/server.ts": { serve: (fn: Handler) => { handler = fn; } },
     "npm:@supabase/supabase-js@2.117.2": { createClient: () => ({
@@ -141,7 +143,7 @@ function install() {
       if (fixture.docket && url.includes("perplexity") && !("search_domain_filter" in body) && !isOpenWebParty(call)) {
         return chat(fixture.docket, { search_results: fixture.docketSearch ?? [] });
       }
-      if (isTier1Party(call)) return chat(fixture.tier1, { citations: [] });
+      if (isTier1Party(call)) return chat(fixture.tier1, { citations: [], search_results: fixture.tier1Search ?? [] });
       if (isOpenWebParty(call)) return chat(fixture.openWeb, { search_results: fixture.openWebSearch, citations: fixture.openWebSearch.map((r) => (r as { url: string }).url) });
       if (contentOf(call).includes("פורסם בפד")) return chat(fixture.verify, { search_results: fixture.verifySearch ?? [] });
       return chat(fixture.date);
@@ -206,47 +208,75 @@ beforeAll(() => {
   install();
 });
 
-describe("party-name search with an open-web complementary pass", () => {
-  it("finds the docket on the open web when the legal databases return nothing", async () => {
-    reset({ openWeb: { results: [KOL_HAAM] }, openWebSearch: [WIKI], verify: { isPublished: true, padi_volume: "ז", padi_page: "871", year: "1953" }, verifySearch: [{ ...WIKI, url: "https://www.gov.il/reports/kol-haam.pdf" }], date: { date: "16.10.1953", year: "1953" } });
-    const prompt = await post("קול העם נ' שר הפנים", "party-openweb-0001");
+describe("party-name search through the real handler and bounded search", () => {
+  // Frozen result-title shape and real date/caption from Psikan DNP 1329/16.
+  const dnp = { url: "https://psikan.com/rulings/דנפ-1329-16",
+    title: "דנ״פ 1329/16 רומן זדורוב נ׳ מדינת ישראל · החלטה, 5.7.2016 · פסיקן",
+    snippet: "לפניי בקשה לדיון נוסף בפסק דינו של בית משפט זה בע״פ 7939/10 זדורוב נ׳ מדינת ישראל (23.12.2015)." };
+  const raw = "זדורוב נ׳ מדינת ישראל";
+  const forged = { found: true, caseType: "ע״פ", caseNumber: "999/10", party1: "רומן זדורוב", party2: "מדינת ישראל",
+    date:"12.2.2015", isPublished:true, padi_page:"618", databaseName:"נבו", source_url:dnp.url };
+
+  it("ignores fabricated model rows; formats one grounded decision without Gemini or a second search", async () => {
+    reset({ tier1: { results: [forged] }, tier1Search: [dnp] });
+    const {body, prompt} = await postResponse(raw, "party-openweb-0001");
+    expect(calls.filter(isTier1Party)).toHaveLength(1);
+    expect(calls).toHaveLength(1);
+    expect(prompt).toBe("");
+    expect(body.israeliPartyLookup.records[0]).toMatchObject({caseNumber:"1329/16", date:"5.7.2016"});
+    expect(body.content).toContain("1329/16");
+    expect(body.content).not.toMatch(/999|7939|618|נבו|<!--DATA:/);
+  });
+
+  it("uses the exact same proof gate for the sole complementary pass and never invokes Gemini", async () => {
+    reset({ tier1: { results: [forged] }, openWeb: { results: [] }, openWebSearch: [dnp] });
+    const {body} = await postResponse(raw, "party-openweb-0002");
     expect(calls.filter(isTier1Party)).toHaveLength(1);
     expect(calls.filter(isOpenWebParty)).toHaveLength(1);
-    expect(prompt).toContain("73/53");
-    expect(prompt).toContain("פ\\\"ד ז 871");
+    expect(calls).toHaveLength(2);
+    expect(body.israeliPartyLookup.records[0].caseNumber).toBe("1329/16");
   });
 
-  it("keeps the case unpublished and labelled as snippet evidence when trusted publishers do not confirm פ\"ד", async () => {
-    reset({ openWeb: { results: [KOL_HAAM] }, openWebSearch: [WIKI], verify: { isPublished: false } });
-    const prompt = await post("קול העם נ' שר הפנים", "party-openweb-0002");
-    expect(prompt).toContain("73/53");
-    expect(prompt).not.toContain("פ\\\"ד ז 871");
-    expect(prompt).toContain(SNIPPET_EVIDENCE_DB_NAME);
+  it("does not produce options or fallback text from model-only or unrelated cited snippets", async () => {
+    reset({ tier1: { results: [forged] }, openWeb: { results: [forged] },
+      openWebSearch: [dnp, WIKI] });
+    const {body, prompt} = await postResponse("ע״פ זדורוב נ׳ מדינת ישראל", "party-openweb-0003");
+    expect(calls).toHaveLength(2);
+    expect(prompt).toBe("");
+    expect(body.israeliPartyLookup.records).toEqual([]);
+    expect(body.content).not.toMatch(/7939|1329|999|618|<!--DATA:/);
+    expect(body.content).toContain("לא נמצאה החלטה");
   });
 
-  it("still verifies an open-web פ\"ד claim even when the proof page is a trusted database", async () => {
-    const nevoPage = { ...WIKI, url: "https://www.nevo.co.il/psika_html/elyon/kol-haam.htm" };
-    reset({ openWeb: { results: [{ ...KOL_HAAM, source_url: nevoPage.url }] }, openWebSearch: [nevoPage], verify: { isPublished: false } });
-    const prompt = await post("קול העם נ' שר הפנים", "party-openweb-0005");
-    expect(calls.some((c) => contentOf(c).includes("פורסם בפד"))).toBe(true);
-    expect(prompt).toContain("73/53");
-    expect(prompt).not.toContain("פ\\\"ד ז 871");
+  it("emits only structured rows for different confirmed decisions on the same docket", async () => {
+    // Decision dates corroborated by the 2015 judgments / Supreme review; the
+    // fixture shapes are frozen mock index rows, not live-provider captures.
+    const row = (date: string, kind: string, id: string) => ({ url: `https://psikan.com/rulings/עפ-7939-10/${id}`,
+      title: `ע״פ 7939/10 | בית המשפט העליון | רומן זדורוב נ׳ מדינת ישראל | ${kind}, ${date}` });
+    reset({ tier1: { results: [forged] }, tier1Search: [row("23.12.2015", "פסק דין", "a"), row("17.3.2013", "החלטה", "b"), dnp] });
+    const {body, prompt} = await postResponse("ע״פ זדורוב נ׳ מדינת ישראל", "party-openweb-0004");
+    expect(calls).toHaveLength(1);
+    expect(prompt).toBe("");
+    expect(body.israeliPartyLookup.records.map((r: {date:string}) => r.date)).toEqual(["23.12.2015","17.3.2013"]);
+    expect(body.content).not.toMatch(/\d+\.|<!--DATA:/);
   });
 
-  it("uses nothing from the open web when no page proves the docket and parties", async () => {
-    reset({ openWeb: { results: [{ ...KOL_HAAM, caseNumber: "999/53" }] }, openWebSearch: [WIKI] });
-    const prompt = await post("קול העם נ' שר הפנים", "party-openweb-0003");
-    expect(calls.filter(isOpenWebParty)).toHaveLength(1);
-    expect(prompt).not.toContain("999/53");
-    expect(prompt).toContain("לא נמצאו פסקי דין רלוונטיים");
+  it("abstains on a malformed classified party caption without any provider call", async () => {
+    reset({});
+    const {body, prompt} = await postResponse("החלטה: זדורוב נ׳ מדינת ישראל", "party-openweb-0006");
+    expect(calls).toHaveLength(0);
+    expect(prompt).toBe("");
+    expect(body.israeliPartyLookup.records).toEqual([]);
+    expect(body.content).toContain("לא נמצאה החלטה");
   });
 
-  it("does not search the open web when the legal databases already found the case", async () => {
-    const nevo = { ...KOL_HAAM, isPublished: false, padi_volume: "", padi_page: "", source_url: "https://www.nevo.co.il/x" };
-    reset({ tier1: { results: [nevo] } });
-    await post("קול העם נ' שר הפנים", "party-openweb-0004");
-    expect(calls.filter(isTier1Party)).toHaveLength(1);
-    expect(calls.filter(isOpenWebParty)).toHaveLength(0);
+  it("preserves a justified single identity without inventing the hearing/decision date", async () => {
+    reset({ tier1Search: [{ ...dnp, title: "דנ״פ 1329/16 רומן זדורוב נ׳ מדינת ישראל" }] });
+    const {body} = await postResponse(raw, "party-openweb-0005");
+    expect(calls).toHaveLength(1);
+    expect(body.israeliPartyLookup.records[0]).toMatchObject({caseNumber:"1329/16", date:""});
+    expect(body.content).toContain("[חסר: תאריך]");
+    expect(body.content).not.toContain("23.12.2015");
   });
 });
 

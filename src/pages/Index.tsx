@@ -1,3 +1,4 @@
+import { selectIsraeliPartyDecision, type IsraeliPartyChoice } from "../../supabase/functions/_shared/israeliPartyDecisions.ts";
 import { needsNeutralDocketLookup } from "../../supabase/functions/_shared/pastedCitation";
 import { useState, useRef, useEffect } from "react";
 import { applyOverride, chatClassificationKey, planGeneration, reconcileRecord, type GenerationPlan } from "@/lib/foreignClassification";
@@ -63,6 +64,8 @@ interface Message {
   foreignChoice?: import("@/lib/foreignCaseChoice").ForeignCaseChoice;
   /** In memory only: "which country?" asked instead of guessing, bound to this reply's input. */
   countryQuestion?: import("@/lib/countryQuestion").CountryQuestion;
+  israeliPartyChoice?: IsraeliPartyChoice;
+  israeliPartyChoiceAccountId?: string;
 }
 
 import { applyYearPreferences, isLegislationInput, extractLawNameFromInput, extractCitationFromResponse, type YearPreferences } from "@/lib/citationUtils";
@@ -85,7 +88,7 @@ import { renderUnpublishedLocal } from "@/lib/unpublishedWorkLocal";
 import { renderPeriodicalLocal } from "@/lib/periodicalLocal";
 import { renderBookLocal } from "@/lib/bookLocal";
 import { citationManualChoice, preparePastedCitation } from "@/lib/pastedCitationAdapter";
-import { planCitationEvidence, planLocalCitation, planTypedRequest, resolveCitationResponse, selectForeignCaseChoice, selectBookEditionChoice, selectHebrewBookChoice, needsBoundBookLookup, foreignFreeformSourceType, CHAT_HOST } from "@/lib/citationPlanner";
+import { planCitationEvidence, planLocalCitation, planTypedRequest, resolveCitationResponse, selectForeignCaseChoice, selectBookEditionChoice, selectHebrewBookChoice, needsBoundBookLookup, needsBoundIsraeliPartyLookup, foreignFreeformSourceType, CHAT_HOST } from "@/lib/citationPlanner";
 import { useCitationCheckoutReady, useCitationPasses } from "@/hooks/useCitationPasses";
 import { CitationPackPrompt } from "@/components/CitationPackPrompt";
 import { CitationPassPurchaseOptions } from "@/components/CitationPassAccount";
@@ -240,7 +243,7 @@ const Index = () => {
   const citationScope = useRef({ accountId: user?.id, projectId, mode });
   citationScope.current = { accountId: user?.id, projectId, mode };
   useEffect(() => {
-    setMessages(prev => prev.map(m => m.bookEditionChoice || m.hebrewBookChoice ? { ...m, bookEditionChoice: undefined, bookEditionChoiceAccountId: undefined, hebrewBookChoice: undefined, hebrewBookChoiceAccountId: undefined } : m));
+    setMessages(prev => prev.map(m => m.bookEditionChoice || m.hebrewBookChoice || m.israeliPartyChoice ? { ...m, bookEditionChoice: undefined, bookEditionChoiceAccountId: undefined, hebrewBookChoice: undefined, hebrewBookChoiceAccountId: undefined, israeliPartyChoice: undefined, israeliPartyChoiceAccountId: undefined } : m));
   }, [user?.id, projectId, mode]);
 
   const clearCitationRetry = () => {
@@ -468,7 +471,7 @@ const Index = () => {
         const groundedSourceType = !article?.manual && resolved.kind === "legacy"
           ? getGroundedJournalType(article?.sourceType, pasted.contract.rawInput, data)
           : undefined;
-        await onSuccess?.(reply, isCurrent, historyRequestId, plan.kind === "typed" || !!statuteRequest || !!safety || !!caseRequest,
+        await onSuccess?.(reply, isCurrent, historyRequestId, plan.kind === "typed" || !!statuteRequest || !!safety || !!caseRequest || (resolved.kind === "terminal" && !!resolved.resolution.israeliPartyLookup),
           resolved.kind === "terminal" ? resolved.resolution : undefined, groundedSourceType);
       }
       if (!isCurrent()) throw Object.assign(new Error("CITATION_RETRY_STALE"), { handled: true });
@@ -623,13 +626,13 @@ const Index = () => {
           }
         }
 
-        setMessages([...newMessages, { role: "assistant", content: finalReply, completion: resolution?.completion, pastedCitation: resolution?.pastedCitation, foreignChoice: resolution?.foreignChoice, bookEditionChoice: resolution?.bookEditionChoice, bookEditionChoiceAccountId: user?.id, hebrewBookChoice: resolution?.hebrewBookChoice, hebrewBookChoiceAccountId: user?.id, countryQuestion: resolution?.countryQuestion }]);
+        setMessages([...newMessages, { role: "assistant", content: finalReply, completion: resolution?.completion, pastedCitation: resolution?.pastedCitation, foreignChoice: resolution?.foreignChoice, bookEditionChoice: resolution?.bookEditionChoice, bookEditionChoiceAccountId: user?.id, hebrewBookChoice: resolution?.hebrewBookChoice, hebrewBookChoiceAccountId: user?.id, countryQuestion: resolution?.countryQuestion, israeliPartyChoice: resolution?.israeliPartyChoice, israeliPartyChoiceAccountId: user?.id }]);
         setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: sourceType as SourceType }));
         setMessageRawInputs((prev) => ({ ...prev, [assistantIndex]: rawText }));
         // Credit already charged server-side by citation-chat (no frontend double-charge).
 
         const extractedCitation = extractCitationFromResponse(reply);
-        if (!resolution?.bookEditionChoice && !resolution?.hebrewBookChoice) saveCitationHistoryRecord({
+        if (!resolution?.bookEditionChoice && !resolution?.hebrewBookChoice && !resolution?.israeliPartyChoice) saveCitationHistoryRecord({
           raw_input: fullRawInput,
           formatted_output: extractedCitation || reply,
           source_type: sourceType !== "unknown" ? sourceLabel : null,
@@ -638,7 +641,7 @@ const Index = () => {
         }, historyRequestId, isCurrent).then(() => { if (isCurrent()) setCitationRefreshKey(k => k + 1); }).catch(() => { if (isCurrent()) toast.error("האזכור מוצג, אך שמירתו בהיסטוריה לא אושרה. אפשר להעתיק אותו ולבדוק את מצב הבקשה במסך השחזור."); });
 
         // A list of options is not a citation: never verify it, and never hold the chat busy while the user chooses.
-        const isVerifiedClean = !resolution?.bookEditionChoice && !resolution?.hebrewBookChoice && !resolution?.foreignChoice && !/\[חסר:/.test(reply) && !/⚠️/.test(reply);
+        const isVerifiedClean = !resolution?.israeliPartyLookup && !resolution?.bookEditionChoice && !resolution?.hebrewBookChoice && !resolution?.foreignChoice && !/\[חסר:/.test(reply) && !/⚠️/.test(reply);
         const isFragment = !extractedCitation || extractedCitation.length < 10;
         if (isVerifiedClean && !isFragment) {
           await saveVerifiedSource(fullRawInput, extractedCitation, sourceType !== "unknown" ? sourceLabel : null, undefined, telemetry, isCurrent);
@@ -689,13 +692,13 @@ const Index = () => {
           }
         }
 
-        setMessages([...newMessages, { role: "assistant", content: finalReply, completion: resolution?.completion, pastedCitation: resolution?.pastedCitation, foreignChoice: resolution?.foreignChoice, bookEditionChoice: resolution?.bookEditionChoice, bookEditionChoiceAccountId: user?.id, hebrewBookChoice: resolution?.hebrewBookChoice, hebrewBookChoiceAccountId: user?.id, countryQuestion: resolution?.countryQuestion }]);
+        setMessages([...newMessages, { role: "assistant", content: finalReply, completion: resolution?.completion, pastedCitation: resolution?.pastedCitation, foreignChoice: resolution?.foreignChoice, bookEditionChoice: resolution?.bookEditionChoice, bookEditionChoiceAccountId: user?.id, hebrewBookChoice: resolution?.hebrewBookChoice, hebrewBookChoiceAccountId: user?.id, countryQuestion: resolution?.countryQuestion, israeliPartyChoice: resolution?.israeliPartyChoice, israeliPartyChoiceAccountId: user?.id }]);
         setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: sourceType as SourceType }));
         setMessageRawInputs((prev) => ({ ...prev, [assistantIndex]: rawText }));
         // Credit already charged server-side by citation-chat (no frontend double-charge).
 
         const extractedCitation = extractCitationFromResponse(reply);
-        if (!resolution?.bookEditionChoice && !resolution?.hebrewBookChoice) saveCitationHistoryRecord({
+        if (!resolution?.bookEditionChoice && !resolution?.hebrewBookChoice && !resolution?.israeliPartyChoice) saveCitationHistoryRecord({
           raw_input: fullRawInput,
           formatted_output: extractedCitation || reply,
           source_type: sourceType !== "unknown" ? sourceLabel : null,
@@ -704,7 +707,7 @@ const Index = () => {
         }, historyRequestId, isCurrent).then(() => { if (isCurrent()) setCitationRefreshKey(k => k + 1); }).catch(() => { if (isCurrent()) toast.error("האזכור מוצג, אך שמירתו בהיסטוריה לא אושרה. אפשר להעתיק אותו ולבדוק את מצב הבקשה במסך השחזור."); });
 
         // A list of options is not a citation: never verify it, and never hold the chat busy while the user chooses.
-        const isVerifiedClean = !resolution?.bookEditionChoice && !resolution?.hebrewBookChoice && !resolution?.foreignChoice && !/\[חסר:/.test(reply) && !/⚠️/.test(reply);
+        const isVerifiedClean = !resolution?.israeliPartyLookup && !resolution?.bookEditionChoice && !resolution?.hebrewBookChoice && !resolution?.foreignChoice && !/\[חסר:/.test(reply) && !/⚠️/.test(reply);
         const isFragment = !extractedCitation || extractedCitation.length < 10;
         if (isVerifiedClean && !isFragment) {
           await saveVerifiedSource(fullRawInput, extractedCitation, sourceType !== "unknown" ? sourceLabel : null, undefined, telemetry, isCurrent);
@@ -771,13 +774,13 @@ const Index = () => {
       const onCitationSuccess = async (reply: string, isCurrent: () => boolean, historyRequestId?: string, _typed?: boolean, resolution?: import("@/lib/citationPlanner").CitationResolution, groundedSourceType?: "article") => {
         const assistantIndex = messages.length;
         const extractedCitation = extractCitationFromResponse(reply);
-        const { type: effectiveSourceType, label: effectiveSourceLabel } = getCitationResultType(groundedSourceType ?? (resolution?.sourceType === "book" ? "book" : sourceType), extractedCitation);
-        setMessages((prev) => [...prev, { role: "assistant", content: reply, completion: resolution?.completion, pastedCitation: resolution?.pastedCitation, foreignChoice: resolution?.foreignChoice, bookEditionChoice: resolution?.bookEditionChoice, bookEditionChoiceAccountId: user?.id, hebrewBookChoice: resolution?.hebrewBookChoice, hebrewBookChoiceAccountId: user?.id, countryQuestion: resolution?.countryQuestion }]);
+        const { type: effectiveSourceType, label: effectiveSourceLabel } = getCitationResultType(groundedSourceType ?? (resolution?.sourceType === "book" || resolution?.israeliPartyLookup ? resolution.sourceType ?? sourceType : sourceType), extractedCitation);
+        setMessages((prev) => [...prev, { role: "assistant", content: reply, completion: resolution?.completion, pastedCitation: resolution?.pastedCitation, foreignChoice: resolution?.foreignChoice, bookEditionChoice: resolution?.bookEditionChoice, bookEditionChoiceAccountId: user?.id, hebrewBookChoice: resolution?.hebrewBookChoice, hebrewBookChoiceAccountId: user?.id, countryQuestion: resolution?.countryQuestion, israeliPartyChoice: resolution?.israeliPartyChoice, israeliPartyChoiceAccountId: user?.id }]);
         setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: effectiveSourceType }));
         setMessageRawInputs((prev) => ({ ...prev, [assistantIndex]: rawInput }));
         // Credit already charged server-side by citation-chat (no frontend double-charge).
 
-        if (!resolution?.bookEditionChoice && !resolution?.hebrewBookChoice) saveCitationHistoryRecord({
+        if (!resolution?.bookEditionChoice && !resolution?.hebrewBookChoice && !resolution?.israeliPartyChoice) saveCitationHistoryRecord({
           raw_input: rawInput,
           formatted_output: extractedCitation || reply,
           source_type: effectiveSourceLabel,
@@ -786,7 +789,7 @@ const Index = () => {
         }, historyRequestId, isCurrent).then(() => { if (isCurrent()) setCitationRefreshKey(k => k + 1); }).catch(() => { if (isCurrent()) toast.error("האזכור מוצג, אך שמירתו בהיסטוריה לא אושרה. אפשר להעתיק אותו ולבדוק את מצב הבקשה במסך השחזור."); });
 
         // A list of options is not a citation: never verify it, and never hold the chat busy while the user chooses.
-        const isVerifiedClean = !resolution?.bookEditionChoice && !resolution?.hebrewBookChoice && !resolution?.foreignChoice && !/\[חסר:/.test(reply) && !/⚠️/.test(reply);
+        const isVerifiedClean = !resolution?.israeliPartyLookup && !resolution?.bookEditionChoice && !resolution?.hebrewBookChoice && !resolution?.foreignChoice && !/\[חסר:/.test(reply) && !/⚠️/.test(reply);
         const isFragment = !extractedCitation || extractedCitation.length < 10 || /^\d+\.?$/.test(extractedCitation.trim());
         if (isVerifiedClean && !isFragment) {
           await saveVerifiedSource(rawInput, extractedCitation, effectiveSourceLabel, undefined, telemetry, isCurrent);
@@ -900,7 +903,7 @@ const Index = () => {
     try {
       const fullRawInput = buildFullRawInput(rawText, messages);
       const isPinpoint = PINPOINT_RE.test(rawText);
-      const verifiedMatch = pasted.local || needsNeutralDocketLookup(pasted.contract) || needsBoundBookLookup(sourceType, normalized) ? null : compatibleArticleCache(sourceType, normalized, await findVerifiedSourceMatch(normalized));
+      const verifiedMatch = pasted.local || needsNeutralDocketLookup(pasted.contract) || needsBoundBookLookup(sourceType, normalized) || needsBoundIsraeliPartyLookup(sourceType, normalized) ? null : compatibleArticleCache(sourceType, normalized, await findVerifiedSourceMatch(normalized));
 
       // Short-circuit only for direct/canonical verified matches — aliases go through suggestion UI
       if (verifiedMatch && !isPinpoint) {
@@ -940,7 +943,7 @@ const Index = () => {
 
       // Check for similar (fuzzy) verified source match
       if (!isPinpoint && !pasted.local) {
-        const similarMatch = needsNeutralDocketLookup(pasted.contract) || needsBoundBookLookup(sourceType, normalized) ? null : compatibleArticleCache(sourceType, normalized, verifiedMatch ?? await findSimilarVerifiedSource(normalized));
+        const similarMatch = needsNeutralDocketLookup(pasted.contract) || needsBoundBookLookup(sourceType, normalized) || needsBoundIsraeliPartyLookup(sourceType, normalized) ? null : compatibleArticleCache(sourceType, normalized, verifiedMatch ?? await findSimilarVerifiedSource(normalized));
         if (similarMatch) {
           setPendingSuggestion({
             suggestion: similarMatch,
@@ -972,7 +975,7 @@ const Index = () => {
 
         // Display, history and verification use the same result classification.
         const extractedCitation = extractCitationFromResponse(reply);
-        const { type: effectiveSourceType, label: effectiveSourceLabel } = getCitationResultType(groundedSourceType ?? (resolution?.sourceType === "book" ? "book" : sourceType), extractedCitation);
+        const { type: effectiveSourceType, label: effectiveSourceLabel } = getCitationResultType(groundedSourceType ?? (resolution?.sourceType === "book" || resolution?.israeliPartyLookup ? resolution.sourceType ?? sourceType : sourceType), extractedCitation);
 
         // Post-response validation using the citation engine
         let finalReply = reply;
@@ -988,7 +991,7 @@ const Index = () => {
           }
         }
 
-        setMessages([...newMessages, { role: "assistant", content: finalReply, completion: resolution?.completion, pastedCitation: resolution?.pastedCitation, foreignChoice: resolution?.foreignChoice, bookEditionChoice: resolution?.bookEditionChoice, bookEditionChoiceAccountId: user?.id, hebrewBookChoice: resolution?.hebrewBookChoice, hebrewBookChoiceAccountId: user?.id, countryQuestion: resolution?.countryQuestion }]);
+        setMessages([...newMessages, { role: "assistant", content: finalReply, completion: resolution?.completion, pastedCitation: resolution?.pastedCitation, foreignChoice: resolution?.foreignChoice, bookEditionChoice: resolution?.bookEditionChoice, bookEditionChoiceAccountId: user?.id, hebrewBookChoice: resolution?.hebrewBookChoice, hebrewBookChoiceAccountId: user?.id, countryQuestion: resolution?.countryQuestion, israeliPartyChoice: resolution?.israeliPartyChoice, israeliPartyChoiceAccountId: user?.id }]);
         setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: effectiveSourceType }));
         setMessageRawInputs((prev) => ({ ...prev, [assistantIndex]: rawText }));
         // Credit already charged server-side by citation-chat (no frontend double-charge).
@@ -1002,12 +1005,12 @@ const Index = () => {
           project_id: currentProject?.id || null,
         };
 
-        if (!resolution?.bookEditionChoice && !resolution?.hebrewBookChoice) saveCitationHistoryRecord(citationPayload, historyRequestId, isCurrent).then(() => { if (isCurrent()) setCitationRefreshKey(k => k + 1); }).catch(() => { if (isCurrent()) toast.error("האזכור מוצג, אך שמירתו בהיסטוריה לא אושרה. אפשר להעתיק אותו ולבדוק את מצב הבקשה במסך השחזור."); });
+        if (!resolution?.bookEditionChoice && !resolution?.hebrewBookChoice && !resolution?.israeliPartyChoice) saveCitationHistoryRecord(citationPayload, historyRequestId, isCurrent).then(() => { if (isCurrent()) setCitationRefreshKey(k => k + 1); }).catch(() => { if (isCurrent()) toast.error("האזכור מוצג, אך שמירתו בהיסטוריה לא אושרה. אפשר להעתיק אותו ולבדוק את מצב הבקשה במסך השחזור."); });
         logActivity("יצירת אזכור", { source_type: effectiveSourceLabel ?? sourceLabel, raw_input: fullRawInput.slice(0, 100) });
 
         // Only verify if we have a real, complete citation (not a fragment, not missing data)
         // A list of options is not a citation: never verify it, and never hold the chat busy while the user chooses.
-        const isVerifiedClean = !resolution?.bookEditionChoice && !resolution?.hebrewBookChoice && !resolution?.foreignChoice && !/\[חסר:/.test(reply) && !/⚠️/.test(reply);
+        const isVerifiedClean = !resolution?.israeliPartyLookup && !resolution?.bookEditionChoice && !resolution?.hebrewBookChoice && !resolution?.foreignChoice && !/\[חסר:/.test(reply) && !/⚠️/.test(reply);
         const isFragment = !extractedCitation || extractedCitation.length < 10 || /^\d+\.?$/.test(extractedCitation.trim());
         // Don't save pinpoint references to verified sources — they are specific references, not master records
 
@@ -1115,7 +1118,7 @@ const Index = () => {
       const onCitationSuccess = async (reply: string, isCurrent: () => boolean, historyRequestId?: string, _typed?: boolean, resolution?: import("@/lib/citationPlanner").CitationResolution) => {
         setMessages((prev) => {
           const updated = [...prev];
-          updated[i] = { role: "assistant", content: reply, completion: resolution?.completion, pastedCitation: resolution?.pastedCitation, foreignChoice: resolution?.foreignChoice, bookEditionChoice: resolution?.bookEditionChoice, bookEditionChoiceAccountId: user?.id, hebrewBookChoice: resolution?.hebrewBookChoice, hebrewBookChoiceAccountId: user?.id, countryQuestion: resolution?.countryQuestion };
+          updated[i] = { role: "assistant", content: reply, completion: resolution?.completion, pastedCitation: resolution?.pastedCitation, foreignChoice: resolution?.foreignChoice, bookEditionChoice: resolution?.bookEditionChoice, bookEditionChoiceAccountId: user?.id, hebrewBookChoice: resolution?.hebrewBookChoice, hebrewBookChoiceAccountId: user?.id, countryQuestion: resolution?.countryQuestion, israeliPartyChoice: resolution?.israeliPartyChoice, israeliPartyChoiceAccountId: user?.id };
           return updated;
         });
         // Only this explicit, successful generation may vouch for the choice.
@@ -1405,7 +1408,7 @@ const Index = () => {
                             }
 
                             // Check verified sources first
-                            const verifiedMatch = editPasted.country || needsNeutralDocketLookup(editPasted.contract) || needsBoundBookLookup(sourceType, normalized) ? null : compatibleArticleCache(sourceType, normalized, await findVerifiedSourceMatch(normalized));
+                            const verifiedMatch = editPasted.country || needsNeutralDocketLookup(editPasted.contract) || needsBoundBookLookup(sourceType, normalized) || needsBoundIsraeliPartyLookup(sourceType, normalized) ? null : compatibleArticleCache(sourceType, normalized, await findVerifiedSourceMatch(normalized));
                             if (verifiedMatch) {
                               const normalizedSourceName = normalizeAbbreviations(verifiedMatch.source_name).toLowerCase();
                               const comparableInput = sourceType === "foreign_journal_article" ? normalized.toLowerCase() : normalized;
@@ -1440,13 +1443,13 @@ const Index = () => {
                             } else {
                               const onCitationSuccess = async (reply: string, isCurrent: () => boolean, historyRequestId?: string, _typed?: boolean, resolution?: import("@/lib/citationPlanner").CitationResolution, groundedSourceType?: "article") => {
                                 const assistantIndex = updatedMessages.length;
-                                setMessages([...updatedMessages, { role: "assistant", content: reply, completion: resolution?.completion, pastedCitation: resolution?.pastedCitation, foreignChoice: resolution?.foreignChoice, bookEditionChoice: resolution?.bookEditionChoice, bookEditionChoiceAccountId: user?.id, hebrewBookChoice: resolution?.hebrewBookChoice, hebrewBookChoiceAccountId: user?.id, countryQuestion: resolution?.countryQuestion }]);
+                                setMessages([...updatedMessages, { role: "assistant", content: reply, completion: resolution?.completion, pastedCitation: resolution?.pastedCitation, foreignChoice: resolution?.foreignChoice, bookEditionChoice: resolution?.bookEditionChoice, bookEditionChoiceAccountId: user?.id, hebrewBookChoice: resolution?.hebrewBookChoice, hebrewBookChoiceAccountId: user?.id, countryQuestion: resolution?.countryQuestion, israeliPartyChoice: resolution?.israeliPartyChoice, israeliPartyChoiceAccountId: user?.id }]);
                                 setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: groundedSourceType ?? (sourceType as SourceType) }));
                                 setMessageRawInputs((prev) => ({ ...prev, [assistantIndex]: newContent }));
 
                                 const extractedCitation = extractCitationFromResponse(reply);
                                 // A list of options is not a citation: never verify it, and never hold the chat busy while the user chooses.
-                                const isVerifiedClean = !resolution?.bookEditionChoice && !resolution?.hebrewBookChoice && !resolution?.foreignChoice && !/\[חסר:/.test(reply) && !/⚠️/.test(reply);
+                                const isVerifiedClean = !resolution?.israeliPartyLookup && !resolution?.bookEditionChoice && !resolution?.hebrewBookChoice && !resolution?.foreignChoice && !/\[חסר:/.test(reply) && !/⚠️/.test(reply);
                                 const isFragment = !extractedCitation || extractedCitation.length < 10;
                                 if (isVerifiedClean && !isFragment) {
                                   await saveVerifiedSource(newContent, extractedCitation, groundedSourceType ? SOURCE_TYPE_LABELS[groundedSourceType] : sourceType !== "unknown" ? sourceLabel : null, undefined, editTel, isCurrent);
@@ -1477,7 +1480,7 @@ const Index = () => {
                           setCitationStatus(null);
                           setMessages((prev) => {
                             const updated = [...prev];
-                            updated[i] = { ...updated[i], content: newContent, completion: undefined, pastedCitation: undefined, foreignChoice: undefined, bookEditionChoice: undefined, bookEditionChoiceAccountId: undefined, hebrewBookChoice: undefined, hebrewBookChoiceAccountId: undefined, countryQuestion: undefined };
+                            updated[i] = { ...updated[i], content: newContent, completion: undefined, pastedCitation: undefined, foreignChoice: undefined, bookEditionChoice: undefined, bookEditionChoiceAccountId: undefined, hebrewBookChoice: undefined, hebrewBookChoiceAccountId: undefined, countryQuestion: undefined, israeliPartyChoice: undefined, israeliPartyChoiceAccountId: undefined };
                             return updated;
                           });
                           toast.success("האזכור עודכן בהצלחה");
@@ -1622,6 +1625,33 @@ const Index = () => {
                         project_id: currentProject?.id || null,
                       }).then(() => setCitationRefreshKey(k => k + 1)).catch(() => toast.error("האזכור מוצג, אך שמירתו בהיסטוריה לא אושרה."));
                     }
+                  } : undefined}
+                  onSelectIsraeliPartyChoice={msg.role === "assistant" && msg.israeliPartyChoice ? (optionId: string) => {
+                    const choice = msg.israeliPartyChoice;
+                    if (!choice || loading) return false;
+                    const scope = { accountId: user?.id, projectId, mode };
+                    const isCurrent = () => citationScope.current.accountId === scope.accountId &&
+                      citationScope.current.projectId === scope.projectId && citationScope.current.mode === scope.mode;
+                    if (!isCurrent() || msg.israeliPartyChoiceAccountId !== scope.accountId) return false;
+                    const raw = rawInputFor(i);
+                    const selected = selectIsraeliPartyDecision(choice, optionId, raw) ??
+                      selectIsraeliPartyDecision(choice, optionId, normalizeAbbreviations(raw));
+                    if (!selected) {
+                      toast.error("הבחירה כבר אינה תואמת לקלט. שלחו את המקור מחדש.");
+                      return false;
+                    }
+                    setCitationStatus(null);
+                    setMessages(prev => prev.map((m, j) => j === i && m.israeliPartyChoice === choice
+                      ? { ...m, content: selected.reply, israeliPartyChoice: undefined, israeliPartyChoiceAccountId: undefined } : m));
+                    setMessageSourceTypes(prev => ({ ...prev, [i]: selected.sourceType }));
+                    if (scope.accountId) {
+                      void saveCitationHistoryRecord({ raw_input: raw, formatted_output: selected.citation,
+                        source_type: SOURCE_TYPE_LABELS[selected.sourceType], user_id: scope.accountId, project_id: currentProject?.id || null,
+                      }, undefined, isCurrent).then(() => {
+                        if (isCurrent()) setCitationRefreshKey(k => k + 1);
+                      }).catch(() => { if (isCurrent()) toast.error("האזכור מוצג, אך שמירתו בהיסטוריה לא אושרה."); });
+                    }
+                    return true;
                   } : undefined}
                   onSelectOption={(optionText: string) => {
                     setCitationStatus(null);

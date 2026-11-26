@@ -282,3 +282,10 @@ export function groundOpenWebPartyResults(
   }
   return { accepted, rejected };
 }
+
+// The party-only route uses own-decision records rather than the legacy
+// proximity helper above. Exported here for the citation handler.
+export {
+  groundIsraeliPartyDecisions, isIsraeliPartyLookupInput, parseIsraeliPartyQuery, partyChoicePrompt, partyNoMatch, renderIsraeliPartyDecision,
+  type IsraeliPartyChoice,
+} from "./israeliPartyDecisions.ts";
