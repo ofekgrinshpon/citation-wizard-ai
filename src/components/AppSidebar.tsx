@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import { Pencil, Infinity as InfinityIcon, HelpCircle, Gift, Mail } from "lucide-react";
 import { UserGuideModal } from "@/components/guide/UserGuideModal";
 
-export function AppSidebar() {
+export function AppSidebar({ passLabel }: { passLabel?: string | null } = {}) {
   const { user, isAdmin } = useAuth();
   const { isOfficeAddin } = useOffice();
   const navigate = useNavigate();
@@ -21,6 +21,7 @@ export function AppSidebar() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editName, setEditName] = useState("");
   const [guideOpen, setGuideOpen] = useState(false);
+  const accountLabel = user && passLabel ? passLabel : isAdminCredits ? "Admin" : planMeta.label;
 
 
   const initial = useMemo(() => {
@@ -90,7 +91,7 @@ export function AppSidebar() {
       <button
         onClick={() => navigate("/profile?tab=account")}
         className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-muted transition-colors text-right w-full group"
-        title={isAdminCredits ? "Admin — ללא הגבלה" : planMeta.label}
+        title={isAdminCredits ? `Admin — ללא הגבלה${passLabel && user ? ` · ${accountLabel}` : ""}` : accountLabel}
       >
         <span
           aria-hidden
@@ -103,7 +104,7 @@ export function AppSidebar() {
             {displayName || user?.email || "הפרופיל שלי"}
           </span>
           <span className="text-[11px] text-muted-foreground truncate">
-            {isAdminCredits ? "Admin" : planMeta.label}
+            {accountLabel}
           </span>
           <span className="text-[10px] text-muted-foreground/70 mt-0.5">ניהול חשבון</span>
         </span>

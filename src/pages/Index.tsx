@@ -90,7 +90,7 @@ import { useCitationCheckoutReady, useCitationPasses } from "@/hooks/useCitation
 import { CitationPackPrompt } from "@/components/CitationPackPrompt";
 import { CitationPassPurchaseOptions } from "@/components/CitationPassAccount";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { activePassSummary } from "@/lib/citationPassHeader";
+import { activePassSummary, sidebarCitationPassLabel } from "@/lib/citationPassHeader";
 import type { CitationManualChoice } from "../../supabase/functions/_shared/pastedCitation";
 
 interface PendingVerification {
@@ -277,6 +277,10 @@ const Index = () => {
   const { sourceQuota, quotaError, referralPending, refreshQuota, freeRemaining } = useCitationSourceQuota(user?.id);
   const paidPass = paidPasses.resolved && !paidPasses.error ? activePassSummary(paidPasses.passes, Date.now(), freeRemaining) : null;
   const paidPassPending = !!user && !paidPasses.resolved;
+  const sidebarPassLabel = !user || isOfficeAddin ? null
+    : paidPassPending ? "בודקים חבילות…"
+    : paidPasses.error ? "סטטוס החבילות לא זמין"
+    : sidebarCitationPassLabel(paidPasses.passes);
   const quotaBlocksNew = !!sourceQuota && (sourceQuota.loading || sourceQuota.remaining <= 0);
   const showTrialPackPrompt = canChoosePack && !paidPass && !quotaError &&
     !!sourceQuota && !sourceQuota.loading && sourceQuota.remaining === 0;
@@ -1272,7 +1276,7 @@ const Index = () => {
               <span className="text-sm font-semibold text-foreground">תפריט</span>
               <button onClick={() => setSidebarOpen(false)} className="text-muted-foreground p-1">✕</button>
             </div>
-            <AppSidebar />
+            <AppSidebar passLabel={sidebarPassLabel} />
           </div>
         </div>
       )}
@@ -1282,7 +1286,7 @@ const Index = () => {
         {/* Right sidebar — desktop only */}
         {user && !isOfficeAddin && (
           <div className="hidden md:flex self-stretch">
-            <AppSidebar />
+            <AppSidebar passLabel={sidebarPassLabel} />
           </div>
         )}
 

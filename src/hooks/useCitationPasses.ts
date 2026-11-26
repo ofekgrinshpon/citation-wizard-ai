@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { unexpiredSettledCitationPasses } from "@/lib/citationPassHeader";
 import { CITATION_TRIAL_CHANGED } from "@/lib/citationTrialQuota";
 import { citationCheckoutReady, citationPassStatus, type CitationPassStatus } from "@/lib/citationPassClient";
 
@@ -43,5 +44,21 @@ export function useCitationPasses(userId: string | undefined) {
     const timer = setInterval(() => void refresh(), 10000);
     return () => clearInterval(timer);
   }, [scoped, refresh]);
+  // Refresh derived labels/counts locally at the next expiry, even if the
+  // user never leaves this tab. The same account-scoped response is reused.
+  const [, tick] = useState(0);
+  const nextExpiry = Math.min(...unexpiredSettledCitationPasses(scoped?.passes ?? []).map(p => Date.parse(p.expiresAt!)));
+  useEffect(() => {
+    if (!Number.isFinite(nextExpiry)) return;
+    let timer: ReturnType<typeof setTimeout>;
+    const arm = () => {
+      const remaining = nextExpiry - Date.now();
+      if (remaining <= 0) { tick(n => n + 1); return; }
+      // A calendar-month pass can outlast the browser's largest timer delay.
+      timer = setTimeout(arm, Math.min(remaining, 2_147_483_647));
+    };
+    arm();
+    return () => clearTimeout(timer);
+  }, [nextExpiry]);
   return { passes: scoped?.passes ?? [], error: scoped?.error ?? false, resolved: !!scoped, loading, refresh };
 }

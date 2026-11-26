@@ -1,4 +1,4 @@
-import { cleanup, renderHook, waitFor } from "@testing-library/react";
+import { act, cleanup, renderHook, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { useCitationCheckoutReady, useCitationPasses } from "@/hooks/useCitationPasses";
 import { citationCheckoutReady, citationPassStatus } from "@/lib/citationPassClient";
@@ -32,4 +32,24 @@ describe("header pass count refreshes after usage", () => {
     window.dispatchEvent(new Event(CITATION_TRIAL_CHANGED));
     await waitFor(() => expect(vi.mocked(citationPassStatus).mock.calls.length).toBe(calls + 1));
   });
+});
+
+
+it("updates the paid label at expiry without an extra server request", async () => {
+  const { sidebarCitationPassLabel } = await import("@/lib/citationPassHeader");
+  vi.useFakeTimers();
+  try {
+    vi.setSystemTime(new Date("2026-11-26T10:00:00Z"));
+    vi.mocked(citationPassStatus).mockResolvedValueOnce([{ id: "expiring", offerId: "citation_week_pass_v1",
+      status: "active", activatedAt: "2026-11-19T10:00:00Z", expiresAt: "2026-11-26T10:00:01Z", usedRatio: 0 }]);
+    const { result } = renderHook(() => sidebarCitationPassLabel(useCitationPasses("account-A").passes));
+    await act(async () => {});
+    expect(result.current).toBe("חבילה שבועית פעילה");
+    act(() => vi.advanceTimersByTime(1000));
+    expect(result.current).toBeNull();
+    expect(citationPassStatus).toHaveBeenCalledTimes(1);
+  } finally {
+    cleanup();
+    vi.useRealTimers();
+  }
 });

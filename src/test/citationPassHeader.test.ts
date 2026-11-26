@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { activePassSummary } from "@/lib/citationPassHeader";
+import { activePassSummary, sidebarCitationPassLabel } from "@/lib/citationPassHeader";
 import type { CitationPassStatus } from "@/lib/citationPassClient";
 
 const now = Date.parse("2026-11-25T12:00:00Z");
@@ -25,5 +25,22 @@ describe("header remaining count for purchased passes", () => {
   it("returns nothing for pending, expired or past-expiry passes, keeping the free-trial view", () => {
     expect(activePassSummary([pass({ status: "pending", expiresAt: null }), pass({ status: "expired" }), pass({ expiresAt: "2026-11-25T11:00:00Z" })], now)).toBeNull();
     expect(activePassSummary([], now)).toBeNull();
+  });
+});
+
+describe("sidebar paid package label", () => {
+  it("names weekly and monthly passes, ignoring pending orders", () => {
+    expect(sidebarCitationPassLabel([pass({}), pass({ status: "pending", expiresAt: null })], now)).toBe("חבילה שבועית פעילה");
+    expect(sidebarCitationPassLabel([pass({ offerId: "citation_month_pass_v1" })], now)).toBe("חבילה חודשית פעילה");
+  });
+  it("describes exhausted quota until the exact expiry without calling it free", () => {
+    const exhausted = pass({ status: "exhausted", usedRatio: 1 });
+    expect(sidebarCitationPassLabel([exhausted], now)).toBe("חבילה שבועית · המכסה נוצלה");
+    expect(sidebarCitationPassLabel([exhausted], Date.parse(exhausted.expiresAt!))).toBeNull();
+  });
+  it("shows both overlapping active packages but not a past expiry", () => {
+    const month = pass({ offerId: "citation_month_pass_v1", expiresAt: "2026-12-24T00:00:00Z" });
+    expect(sidebarCitationPassLabel([pass({}), month], now)).toBe("2 חבילות אזכורים פעילות");
+    expect(sidebarCitationPassLabel([pass({}), month], Date.parse("2026-12-01T00:00:00Z"))).toBe("חבילה חודשית פעילה");
   });
 });

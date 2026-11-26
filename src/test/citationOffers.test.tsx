@@ -43,7 +43,7 @@ describe('selected one-time citation passes, before payment activation', () => {
     expect(screen.queryByRole('link')).not.toBeInTheDocument();
   });
   it('both offer presentations consume the canonical catalogue, with no checkout call', () => {
-    expect(readFileSync('src/pages/Profile.tsx','utf8')).toContain('<CitationPassAccount />');
+    expect(readFileSync('src/pages/Profile.tsx','utf8')).toContain('<CitationPassAccount state={passState} />');
     expect(readFileSync('src/pages/Landing.tsx','utf8')).toContain('<LaunchPricing enabled={checkoutReady}');
     for (const path of ['src/components/CitationPlanOffers.tsx','src/components/launch/LaunchPricing.tsx']) {
       const source = readFileSync(path,'utf8');

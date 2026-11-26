@@ -12,7 +12,9 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { format } from "date-fns";
-import { CitationPassAccount } from "@/components/CitationPassAccount";
+import { CitationPassAccount, PurchasedCitationPassSummary } from "@/components/CitationPassAccount";
+import { useCitationPasses } from "@/hooks/useCitationPasses";
+import { sidebarCitationPassLabel } from "@/lib/citationPassHeader";
 import { useUsage, WINDOW_LEVEL_LABEL, PERIOD_LEVEL_LABEL } from "@/hooks/useUsage";
 import { UsageLimitsInfoDialog } from "@/components/usage/UsageLimitsInfoDialog";
 import { TopupOptions } from "@/components/usage/TopupOptions";
@@ -110,6 +112,9 @@ const Profile = () => {
   const [usageInfoOpen, setUsageInfoOpen] = useState(false);
   const { rows: ledger, loading: ledgerLoading, error: ledgerError, refresh: retryLedger } = useCreditLedger(50);
   const account = useAccountProfile();
+  const passState = useCitationPasses(user?.id);
+  const passLabel = passState.error ? null : sidebarCitationPassLabel(passState.passes);
+  const showLegacyUsage = passState.resolved && !passState.error && !passLabel;
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const defaultTab = searchParams.get("tab") || "profile";
@@ -241,8 +246,9 @@ const Profile = () => {
                 <div className="flex items-center justify-between flex-wrap gap-2">
                   <div className="flex items-center gap-3">
                     <h3 className="text-foreground font-bold text-base">התוכנית שלי</h3>
-                    {usage && <Badge variant={usage.isPaid && !usage.isExpired ? "default" : "secondary"}>{usagePlanMeta.label}</Badge>}
-                    {usage?.isExpired && <Badge variant="destructive">פג תוקף</Badge>}
+                    {passLabel && <Badge>{passLabel}</Badge>}
+                    {showLegacyUsage && usage && <Badge variant={usage.isPaid && !usage.isExpired ? "default" : "secondary"}>{usagePlanMeta.label}</Badge>}
+                    {showLegacyUsage && usage?.isExpired && <Badge variant="destructive">פג תוקף</Badge>}
                   </div>
                   <button
                     type="button"
@@ -253,7 +259,15 @@ const Profile = () => {
                   </button>
                 </div>
 
-                {sourceQuota ? (
+                {!passState.resolved ? (
+                  <p role="status" className="text-sm text-muted-foreground">בודקים את מצב החבילות…</p>
+                ) : passState.error ? (
+                  <p role="alert" className="text-sm text-destructive">לא ניתן היה לטעון את מצב החבילות.
+                    {" "}<button type="button" className="underline" onClick={() => void passState.refresh()}>בדיקה מחדש</button>
+                  </p>
+                ) : passLabel ? (
+                  <PurchasedCitationPassSummary passes={passState.passes} />
+                ) : sourceQuota ? (
                   <div className="space-y-2 text-sm" role="status">
                     {quotaError ? <>
                       <p>לא ניתן היה לטעון את מכסת ההתנסות.</p>
@@ -345,10 +359,10 @@ const Profile = () => {
               </div>
 
               {/* Plan options */}
-              <CitationPassAccount />
+              <CitationPassAccount state={passState} />
 
               {/* Usage add-ons */}
-              {!isAdmin && (usage?.canPurchaseTopup ?? false) && (
+              {showLegacyUsage && !isAdmin && (usage?.canPurchaseTopup ?? false) && (
                 <div className="bg-card border border-border rounded-xl p-6 space-y-3">
                   <h4 className="text-sm font-bold text-foreground">תוספת שימוש</h4>
                   <TopupOptions />
