@@ -1,3 +1,5 @@
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Pencil } from "lucide-react";
 import { mapEditedWordInput, wordEditCoordinates, editedProtection } from "@/lib/wordInputOverride";
 import { FormattedCitation } from "@/components/FormattedCitation";
@@ -9,7 +11,7 @@ import type { GenerationPlan, ClassificationRecord } from "@/lib/foreignClassifi
 import { planWordFootnote, hasMultipleSourceSignals, isUnboundRepeatReference } from "@/lib/wordFootnotePlan";
 import { CitationRequestStatusLink } from "./CitationRequestStatusLink";
 import { WordNoteSelection } from "./WordNoteSelection";
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import { FootnoteReviewCard, type ReviewCardCell } from "./FootnoteReviewCard";
 import { useAuth } from "@/hooks/useAuth";
 import { useProjects } from "@/hooks/useProjects";
@@ -50,7 +52,7 @@ function hostForeignLabel(type: string | undefined): string | undefined {
 }
 
 export type WordSourceQuota = { remaining: number; loading?: boolean; referralPending?: boolean };
-export function WordFootnoteWorkflow({ onBusyChange, sourceQuota }: { onBusyChange?: (busy: boolean) => void; sourceQuota?: WordSourceQuota }) {
+export function WordFootnoteWorkflow({ onBusyChange, sourceQuota, active = true }: { onBusyChange?: (busy: boolean) => void; sourceQuota?: WordSourceQuota; active?: boolean }) {
   const { user } = useAuth();
   const { currentProject } = useProjects();
   const noteListId=useId();
@@ -60,9 +62,24 @@ export function WordFootnoteWorkflow({ onBusyChange, sourceQuota }: { onBusyChan
   const [openNotes, setOpenNotes] = useState<Set<string>>(new Set());
   const [editingRow, setEditingRow] = useState<number | null>(null);
   const stepHeading = useRef<HTMLHeadingElement>(null);
-  useEffect(() => { stepHeading.current?.focus(); }, [step]);
+  const lastStep = useRef(step);
+  useEffect(() => {
+    if (active && lastStep.current !== step) stepHeading.current?.focus({ preventScroll: true });
+    lastStep.current = step;
+  }, [active, step]); // Returning to the pane does not move focus or scroll.
   const [rows, setRows] = useState<Row[]>([]);
   const [busy, setBusy] = useState(false);
+  const [resetOpen, setResetOpen] = useState(false);
+  const hasOpenWork = !!session || busy;
+  useEffect(() => {
+    if (!hasOpenWork) return;
+    const warn = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue = true;
+    };
+    window.addEventListener("beforeunload", warn);
+    return () => window.removeEventListener("beforeunload", warn);
+  }, [hasOpenWork]);
   const [selectedSourceIds, setSelectedSourceIds] = useState<Set<string>>(new Set());
   const sourceMapKey = rows.map(row => `${row.sourceId}:${row.input}`).join("\n");
   const quotaLimit = sourceQuota && !sourceQuota.loading && Number.isFinite(sourceQuota.remaining)
@@ -104,6 +121,7 @@ export function WordFootnoteWorkflow({ onBusyChange, sourceQuota }: { onBusyChan
 
   const clear = () => {
     epoch.current++;
+    setResetOpen(false);
     selectionMap.current = ""; setSelectedSourceIds(new Set());
     setInputEdits({}); setInputEditor(null);
     setStep(0); setOpenNotes(new Set()); setEditingRow(null);
@@ -112,7 +130,7 @@ export function WordFootnoteWorkflow({ onBusyChange, sourceQuota }: { onBusyChan
     if (inputRef.current) inputRef.current.value = "";
   };
   const invalidate = () => { epoch.current++; };
-  useEffect(() => { blockedNotes.current.clear(); clear(); return invalidate; }, [scope]);
+  useLayoutEffect(() => { blockedNotes.current.clear(); clear(); return invalidate; }, [scope]);
 
   const importFile = async (file: File | undefined) => {
     if (!file || lock.current) return;
@@ -261,8 +279,8 @@ export function WordFootnoteWorkflow({ onBusyChange, sourceQuota }: { onBusyChan
         const message = failure.userMessage || "ההפקה לא הושלמה. לא ננסה שוב אוטומטית.";
         if (owner === currentScope.current) {
           blockedNotes.current.set(noteKey(row), { requestId, message });
-          // May update status only for the exact same reimported note, never deliver stale text.
-          setRows(old => old.map(r => r.id === row.id && noteKey(r) === noteKey(row) ? { ...r, status: "error", requestId, errorMsg: message, approved: false } : r));
+          // Preserve the duplicate-request guard across reset, but never update a new
+          // document's UI from a stale callback, even if the source text is identical.
         }
         if (!isCurrent()) break;
         setRows(old => old.map(r => r.id === row.id ? { ...r, status: "error", output: null, bookEditionChoice: undefined, foreignChoice: undefined, retryChoice: undefined, requestId, errorMsg: message, approved: false } : r));
@@ -423,6 +441,21 @@ export function WordFootnoteWorkflow({ onBusyChange, sourceQuota }: { onBusyChan
     setStep(next); setSelection(null); setEditingRow(null); setError(""); setNotice("");
   };
   return <section aria-label="תיקון הערות שוליים במסמך Word" dir="rtl" className="overflow-hidden rounded-2xl border border-border bg-card text-foreground">
+    <AlertDialog open={active && resetOpen} onOpenChange={setResetOpen}>
+      <AlertDialogContent dir="rtl">
+        <AlertDialogHeader>
+          <AlertDialogTitle>לבטל את העבודה ולאפס את המסמך?</AlertDialogTitle>
+          <AlertDialogDescription>
+            הסימונים והתיקונים יימחקו מהמסך. קובץ ה־Word המקורי לא ישתנה. לא יישלחו בקשות נוספות;
+            בקשה שכבר נשלחה עשויה להסתיים ולהיספר במכסה, אבל תוצאתה לא תיכנס למסמך חדש.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>המשך בעבודה</AlertDialogCancel>
+          <AlertDialogAction onClick={clear}>אפס מסמך</AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
     <header className="space-y-2 border-b border-border p-4 sm:p-6">
       <h3 className="text-xl font-bold">בדיקת הערות שוליים במסמך Word</h3>
       <p className="text-sm leading-6 text-muted-foreground">העלו מסמך Word, המערכת תסרוק את הערות השוליים, תבדוק את האזכורים לפי הכללים ותאפשר לכם לאשר את התיקונים לפני הורדת קובץ מעודכן.</p>
@@ -445,7 +478,7 @@ export function WordFootnoteWorkflow({ onBusyChange, sourceQuota }: { onBusyChan
         <div className="min-w-0 w-full sm:w-auto sm:flex-1"><p className="text-xs text-muted-foreground">{filename ? "המסמך שנבחר" : "קוראים את המסמך…"}</p><p dir="auto" className="break-all text-sm font-semibold">{filename}</p></div>
         <div className="flex flex-wrap gap-2">
           <button type="button" className={button} disabled={busy} onClick={() => inputRef.current?.click()}>החלפת מסמך</button>
-          <button type="button" className={button} onClick={clear}>סגירה וניקוי</button>
+          <button type="button" className={button} onClick={() => setResetOpen(true)}>ביטול עבודה והתחלה מחדש</button>
         </div>
         <p className="w-full text-xs text-muted-foreground">החלפה או סגירה ימחקו את הסימונים והתיקונים מהמסך. הקובץ המקורי לא ישתנה.</p>
       </div>}
@@ -480,7 +513,9 @@ export function WordFootnoteWorkflow({ onBusyChange, sourceQuota }: { onBusyChan
           </div>}
           <p className="text-sm">מתוכננות עד {readyCount} בקשות למקורות מתוך {new Set(readyRows.map(r=>r.noteId)).size} הערות. דברי הסבר מוגנים אינם נשלחים. {sourceQuota ? "כל מקור שנבחר נספר בנפרד, גם כשיש כמה מקורות באותה הערה." : "אין כאן הבטחה למספר חיובים: המנוע הקיים קובע את פעולות האיתור וההשלמה ואת השימוש במכסת החשבון."}</p>
           <button type="button" className={primaryButton} disabled={busy || !readyCount} onClick={() => void generate()}>{busy ? "הבדיקה מתבצעת…" : readyCount ? `בדוק ${readyCount} מקורות` : "אין הערות נוספות לבדיקה"}</button>
-          {batchProgress && <div role="status" aria-live="polite"><p>{batchProgress.stopping?"העצירה מתבצעת; בקשה שכבר נשלחה תושלם ועשויה להשתמש במכסת החשבון. לא יישלחו בקשות נוספות.":`בודקים מקור ${batchProgress.current} מתוך ${batchProgress.total}.`}</p><button type="button" className={button} disabled={batchProgress.stopping} onClick={()=>{stopBatch.current=true;setBatchProgress(old=>old?{...old,stopping:true}:old);}}>עצור שליחת בקשות נוספות</button></div>}
+          {batchProgress && <div role="status" aria-live="polite"><p>{batchProgress.stopping?"העצירה מתבצעת; בקשה שכבר נשלחה תושלם ועשויה להשתמש במכסת החשבון. לא יישלחו בקשות נוספות.":`בודקים מקור ${batchProgress.current} מתוך ${batchProgress.total}.`}</p><button type="button" className={button} disabled={batchProgress.stopping} onClick={()=>{stopBatch.current=true;setBatchProgress(old=>old?{...old,stopping:true}:old);}}>עצור שליחת בקשות נוספות</button>
+            <button type="button" className={button} onClick={() => setResetOpen(true)}>בטל בדיקה ואפס מסמך</button>
+          </div>}
           {batchDone && !busy && <div role="status" className="rounded-lg border border-primary/30 bg-background p-3 text-sm">
             <p className="font-semibold">בדיקת ההערות הושלמה – {pendingCount} הצעות ממתינות לאישור.</p>
             <p>ההערות שנבדקו נפתחו למטה. עברו על ההצעות ואשרו אותן לפני ההורדה.</p>

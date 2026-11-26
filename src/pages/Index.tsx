@@ -44,7 +44,7 @@ import {
 } from "@/lib/verifiedSources";
 import { VerifiedSuggestionCard } from "@/components/VerifiedSuggestionCard";
 import { AppSidebar } from "@/components/AppSidebar";
-import { FootnotesSection } from "@/components/FootnotesSection";
+import { WordFootnotePane } from "@/components/FootnotesSection";
 import { CitationHistorySidebar } from "@/components/CitationHistorySidebar";
 import { QAHistorySidebar } from "@/components/QAHistorySidebar";
 import { ResearchConversationSidebar } from "@/components/research-chat/ResearchConversationSidebar";
@@ -1136,6 +1136,20 @@ const Index = () => {
     }
   };
 
+  const nonChatQuotaNotices = <>
+    {showTrialPackPrompt && (mode === "batch" || mode === "bibliography") && (
+      <div ref={packPromptRef} tabIndex={-1}><CitationPackPrompt onChoose={showPacks} /></div>
+    )}
+    {(!showTrialPackPrompt || mode === "legalqa") && sourceQuota && (quotaError || (!sourceQuota.loading && sourceQuota.remaining === 0)) && (
+      <div role="status" dir="rtl" className="my-3 rounded-lg border border-border bg-muted/50 p-3 text-sm">
+        {quotaError ? trialQuotaUnavailableMessage : trialQuotaReachedMessage}{" "}
+        {quotaError
+          ? <button type="button" className="underline" onClick={() => void refreshQuota()}>בדיקה מחדש</button>
+          : <button type="button" className="underline" onClick={() => navigate("/profile?tab=account")}>לעמוד החשבון</button>}
+      </div>
+    )}
+  </>;
+
   return (
     <div className={`flex flex-col h-screen font-sans bg-background text-foreground ${isOfficeAddin ? "compact-mode" : ""}`}>
       <Dialog open={canChoosePack && packsOpen} onOpenChange={setPacksOpen}>
@@ -1274,25 +1288,16 @@ const Index = () => {
 
         {/* Main column */}
         <div className="flex-1 flex flex-col overflow-hidden min-w-0">
+        <WordFootnotePane key={JSON.stringify([user?.id, projectId])} active={mode === "batch"} sourceQuota={sourceQuota}>
+          {nonChatQuotaNotices}
+        </WordFootnotePane>
         {/* Main content */}
-        <div
+        <div hidden={mode === "batch"}
           className="flex-1 overflow-y-auto px-3 sm:px-4"
           style={{ maxWidth: 860, margin: "0 auto", width: "100%" }}
         >
-        {showTrialPackPrompt && (mode === "batch" || mode === "bibliography") && (
-          <div ref={packPromptRef} tabIndex={-1}><CitationPackPrompt onChoose={showPacks} /></div>
-        )}
-        {(!showTrialPackPrompt || mode === "legalqa") && sourceQuota && (quotaError || (!sourceQuota.loading && sourceQuota.remaining === 0)) && (
-          <div role="status" dir="rtl" className="my-3 rounded-lg border border-border bg-muted/50 p-3 text-sm">
-            {quotaError ? trialQuotaUnavailableMessage : trialQuotaReachedMessage}{" "}
-            {quotaError
-              ? <button type="button" className="underline" onClick={() => void refreshQuota()}>בדיקה מחדש</button>
-              : <button type="button" className="underline" onClick={() => navigate("/profile?tab=account")}>לעמוד החשבון</button>}
-          </div>
-        )}
-        {mode === "batch" ? (
-          <FootnotesSection sourceQuota={sourceQuota} />
-        ) : mode === "bibliography" ? (
+        {mode !== "batch" && nonChatQuotaNotices}
+        {mode === "batch" ? null : mode === "bibliography" ? (
           <BibliographyGenerator sourceQuota={sourceQuota} />
         ) : mode === "legalqa" ? (
           <LegalQAChat

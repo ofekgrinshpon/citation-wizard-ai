@@ -2,6 +2,7 @@ import { bookEditionResult, editionRaw } from "./fixtures/bookEditionResult";
 import {act,fireEvent,render,screen,waitFor,within} from '@testing-library/react';
 import {beforeEach,describe,it,expect,vi} from 'vitest';
 import {WordFootnoteWorkflow} from '../components/WordFootnoteWorkflow';
+import {WordFootnotePane} from '../components/FootnotesSection';
 const mocks=vi.hoisted(()=>({inspect:vi.fn(),embed:vi.fn(),check:vi.fn(),checkGroup:vi.fn(),run:vi.fn(),account:'a',project:'p'}));
 vi.mock('@/lib/docxFootnoteRoundtrip',()=>({inspectDocxFootnotes:mocks.inspect,embedStyledFootnotes:mocks.embed,checkStyledFootnote:mocks.check,checkStyledFootnotes:mocks.checkGroup}));
 vi.mock('@/lib/runCitation',()=>({runCitation:mocks.run}));
@@ -20,6 +21,10 @@ async function result(){await waitFor(()=>expect(screen.getByLabelText('התיק
 function approve(){fireEvent.click(screen.getByRole('button',{name:'אשר תיקון לאזכור 1'}));}
 function openCard(name:RegExp){const b=screen.getByRole('button',{name});if(b.getAttribute('aria-expanded')!=='true')fireEvent.click(b);}
 function back(){fireEvent.click(screen.getByRole('button',{name:'חזרה לטקסט הסבר שלא לשנות'}));}
+function resetDocument(trigger='ביטול עבודה והתחלה מחדש'){
+  fireEvent.click(screen.getByRole('button',{name:trigger}));
+  fireEvent.click(within(screen.getByRole('alertdialog')).getByRole('button',{name:'אפס מסמך'}));
+}
 beforeEach(()=>{vi.clearAllMocks();localStorage.clear();mocks.account='a';mocks.project='p';mocks.inspect.mockResolvedValue({notes:[note('Author, Title (2020)')],skippedNotes:[]});mocks.run.mockResolvedValue({citation:'Corrected',status:'valid',sourceType:'book'});mocks.embed.mockResolvedValue(new Uint8Array([1]));mocks.checkGroup.mockResolvedValue(null);mocks.check.mockResolvedValue(null);URL.createObjectURL=vi.fn(()=>'blob:test');URL.revokeObjectURL=vi.fn();vi.spyOn(HTMLAnchorElement.prototype,'click').mockImplementation(()=>{});});
 describe('Word default engine flow',()=>{
  it('makes no automatic calls and sends a full unmarked note to the SAME engine contract',async()=>{
@@ -53,10 +58,10 @@ describe('Word default engine flow',()=>{
   mocks.checkGroup.mockImplementation(async(_s:any,patches:any[])=>patches[0].id==='42'?'unsafe':null);fireEvent.click(screen.getByRole('button',{name:/המשך להורדה/}));fireEvent.click(screen.getByRole('button',{name:/הורדת עותק מתוקן/}));await waitFor(()=>expect(mocks.embed).toHaveBeenCalledTimes(1));expect(mocks.embed.mock.calls[0][1].map((p:any)=>p.id)).toEqual(['7']);expect(await screen.findByText(/נשארו ללא שינוי כי לא ניתן היה לשמר/)).toBeInTheDocument();
  });
  it('blocks repeated clicks, reset prevents stale delivery and pending note cannot be resent',async()=>{
-  let resolve!:(v:any)=>void;mocks.run.mockImplementation(()=>new Promise(r=>resolve=r));render(<WordFootnoteWorkflow/>);await upload();review();generate();await waitFor(()=>expect(mocks.run).toHaveBeenCalledTimes(1));fireEvent.click(screen.getByRole('button',{name:'הבדיקה מתבצעת…'}));expect(screen.getByRole('button',{name:'חזרה לטקסט הסבר שלא לשנות'})).toBeDisabled();fireEvent.click(screen.getByRole('button',{name:'סגירה וניקוי'}));expect(mocks.run.mock.calls[0][0].isResultCurrent()).toBe(false);await upload();review();expect(screen.getByRole('button',{name:'אין הערות נוספות לבדיקה'})).toBeDisabled();await act(async()=>resolve({citation:'Late',status:'valid',sourceType:'book'}));expect(screen.queryByDisplayValue('Late')).not.toBeInTheDocument();
+  let resolve!:(v:any)=>void;mocks.run.mockImplementation(()=>new Promise(r=>resolve=r));render(<WordFootnoteWorkflow/>);await upload();review();generate();await waitFor(()=>expect(mocks.run).toHaveBeenCalledTimes(1));fireEvent.click(screen.getByRole('button',{name:'הבדיקה מתבצעת…'}));expect(screen.getByRole('button',{name:'חזרה לטקסט הסבר שלא לשנות'})).toBeDisabled();resetDocument();expect(mocks.run.mock.calls[0][0].isResultCurrent()).toBe(false);await upload();review();expect(screen.getByRole('button',{name:'אין הערות נוספות לבדיקה'})).toBeDisabled();await act(async()=>resolve({citation:'Late',status:'valid',sourceType:'book'}));expect(screen.queryByDisplayValue('Late')).not.toBeInTheDocument();
  });
  it('keeps uncertain request locked after changing protection and reimport',async()=>{
-  mocks.run.mockRejectedValue({requestId:'pending-123',userMessage:'uncertain'});render(<WordFootnoteWorkflow/>);await upload();review();generate();await screen.findAllByText('pending-123');back();protect(0,7);review();expect(screen.getByRole('button',{name:'אין הערות נוספות לבדיקה'})).toBeDisabled();fireEvent.click(screen.getByRole('button',{name:'סגירה וניקוי'}));await upload();review();expect(screen.getByRole('button',{name:'אין הערות נוספות לבדיקה'})).toBeDisabled();expect(mocks.run).toHaveBeenCalledTimes(1);
+  mocks.run.mockRejectedValue({requestId:'pending-123',userMessage:'uncertain'});render(<WordFootnoteWorkflow/>);await upload();review();generate();await screen.findAllByText('pending-123');back();protect(0,7);review();expect(screen.getByRole('button',{name:'אין הערות נוספות לבדיקה'})).toBeDisabled();resetDocument();await upload();review();expect(screen.getByRole('button',{name:'אין הערות נוספות לבדיקה'})).toBeDisabled();expect(mocks.run).toHaveBeenCalledTimes(1);
  });
  it('clears state on account change while request is in flight',async()=>{
   let resolve!:(v:any)=>void;mocks.run.mockImplementation(()=>new Promise(r=>resolve=r));const view=render(<WordFootnoteWorkflow/>);await upload();review();generate();await waitFor(()=>expect(mocks.run).toHaveBeenCalledTimes(1));mocks.account='other';view.rerender(<WordFootnoteWorkflow/>);await act(async()=>resolve({citation:'Late',status:'valid',sourceType:'book'}));expect(screen.queryByText('paper.docx')).not.toBeInTheDocument();expect(screen.queryByDisplayValue('Late')).not.toBeInTheDocument();
@@ -82,7 +87,7 @@ describe('Word default engine flow',()=>{
  it('does not submit existing unbound repeated citations or approve newly returned ones',async()=>{
   mocks.inspect.mockResolvedValueOnce({notes:[note('שם, בעמ׳ 12.')],skippedNotes:[]});
   render(<WordFootnoteWorkflow/>);await upload();expect(screen.getByText(/אין עדיין קישור מאומת/)).toBeInTheDocument();review();expect(mocks.run).not.toHaveBeenCalled();
-  fireEvent.click(screen.getByRole('button',{name:'סגירה וניקוי'}));await upload();review();mocks.run.mockResolvedValue({citation:'Ibid.',status:'valid',sourceType:'book'});generate();
+  resetDocument();await upload();review();mocks.run.mockResolvedValue({citation:'Ibid.',status:'valid',sourceType:'book'});generate();
   await screen.findByText(/הפניה למקור קודם שלא קושר/);expect(screen.getByRole('button',{name:'אשר תיקון לאזכור 1'})).toBeDisabled();
  });
 
@@ -249,5 +254,53 @@ describe('Word edition choice',()=>{
  it('can leave year missing locally',async()=>{
   mocks.inspect.mockResolvedValue({notes:[note(editionRaw)],skippedNotes:[]});mocks.run.mockResolvedValue(bookEditionResult());render(<WordFootnoteWorkflow/>);await upload();review();generate();
   fireEvent.click(await screen.findByRole('button',{name:/להשאיר את השנה חסרה/}));await waitFor(()=>expect(screen.queryByRole('group',{name:'בחירת מהדורת הספר'})).not.toBeInTheDocument());expect(mocks.run).toHaveBeenCalledTimes(1);
+ });
+});
+
+describe('persistent Word tab',()=>{
+ it('continues the in-flight check while hidden and preserves the same document, approved edits and scroll',async()=>{
+  let done!:(v:any)=>void;mocks.run.mockImplementationOnce(()=>new Promise(r=>done=r));
+  const tree=(active:boolean)=><><button>אזכור מהיר</button><WordFootnotePane active={active}/></>;
+  const {rerender}=render(tree(true)); await upload(); review(); generate();
+  await waitFor(()=>expect(mocks.run).toHaveBeenCalledTimes(1));
+  const input=screen.getByLabelText('מסמך DOCX');
+  const pane=input.closest('section')!.parentElement!.parentElement!;
+  pane.scrollTop=240;fireEvent.scroll(pane);
+  rerender(tree(false));
+  expect(screen.queryByRole('region',{name:'תיקון הערות שוליים במסמך Word'})).not.toBeInTheDocument();
+  expect(mocks.run.mock.calls[0][0].isResultCurrent()).toBe(true);
+  await act(async()=>done({citation:'Corrected',status:'valid',sourceType:'book'}));
+  pane.scrollTop=0;
+  rerender(tree(true));await result();expect(pane.scrollTop).toBe(240);approve();
+  rerender(tree(false));rerender(tree(true));
+  expect(screen.getByLabelText('מסמך DOCX')).toBe(input);
+  expect(screen.getByRole('button',{name:/המשך להורדה · 1 אושרו/})).toBeEnabled();
+  expect(mocks.run).toHaveBeenCalledTimes(1);
+  expect(localStorage.length).toBe(0);expect(sessionStorage.length).toBe(0);
+ });
+ it('requires confirmation and discards a late result without sending the rest of the batch',async()=>{
+  let done!:(v:any)=>void;mocks.run.mockImplementationOnce(()=>new Promise(r=>done=r));
+  mocks.inspect.mockResolvedValueOnce({notes:[note('First (2020)'),{...note('Second (2021)'),id:'7'}],skippedNotes:[]});
+  render(<WordFootnotePane active/>);await upload();review();generate();
+  await waitFor(()=>expect(mocks.run).toHaveBeenCalledTimes(1));
+  fireEvent.click(screen.getByRole('button',{name:'בטל בדיקה ואפס מסמך'}));
+  fireEvent.click(within(screen.getByRole('alertdialog')).getByRole('button',{name:'המשך בעבודה'}));
+  expect(mocks.run.mock.calls[0][0].isResultCurrent()).toBe(true);
+  resetDocument('בטל בדיקה ואפס מסמך');
+  expect(mocks.run.mock.calls[0][0].isResultCurrent()).toBe(false);
+  expect(screen.queryByText('paper.docx')).not.toBeInTheDocument();
+  expect(screen.getByRole('button',{name:'בחירת מסמך Word'})).toBeEnabled();
+  await upload();review();await act(async()=>done({citation:'Late',status:'valid',sourceType:'book'}));
+  expect(screen.queryByDisplayValue('Late')).not.toBeInTheDocument();
+  expect(mocks.run).toHaveBeenCalledTimes(1);
+  generate();await result();expect(mocks.run).toHaveBeenCalledTimes(2);
+ });
+ it('registers the native reload warning only while a document is open, including in a hidden tab',async()=>{
+  const {rerender}=render(<WordFootnotePane active/>);
+  const warns=()=>{const event=new Event('beforeunload',{cancelable:true});window.dispatchEvent(event);return event.defaultPrevented;};
+  expect(warns()).toBe(false);
+  await upload();expect(warns()).toBe(true);
+  rerender(<WordFootnotePane active={false}/>);expect(warns()).toBe(true);
+  rerender(<WordFootnotePane active/>);resetDocument();expect(warns()).toBe(false);
  });
 });
