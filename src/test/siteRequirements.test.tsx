@@ -36,7 +36,7 @@ describe('public business pages',()=>{
  });
 });
 
-describe('approved unpublished legal amendments',()=>{
+describe('legal terms and billing disclosure',()=>{
  it('sets the approved delivery deadline and start of term',()=>{
   const terms=readFileSync('src/content/legal/terms.ts','utf8');
   expect(terms).toContain('בתוך 24 שעות ממועד אימות התשלום');
@@ -47,7 +47,7 @@ describe('approved unpublished legal amendments',()=>{
   expect(terms).toContain('אם השירות שנרכש לא סופק, הלקוח יהיה זכאי להשבת הסכום ששולם בעדו. החזר בשל אי־אספקה אינו מותנה בשיקול דעת המפעיל או בבקשה בתוך שבעה ימים. אין באמור כדי לגרוע מכל זכות ביטול או החזר המוקנית לפי דין.');
   expect(terms).toContain('ובמקרים שאינם מקנים זכות להחזר לפי דין או לפי תנאים אלה');
   expect(terms).not.toContain('לאחר מכן, החזרים יינתנו לפי שיקול דעת');
-  expect(readFileSync('src/content/legal/version.ts','utf8')).toContain('LEGAL_VERSION = "2026-11-12"');
+  expect(readFileSync('src/content/legal/version.ts','utf8')).toContain('LEGAL_VERSION = "2026-11-26"');
  });
 });
 
@@ -58,4 +58,22 @@ describe('public release excludes private operator draft',()=>{
   expect(terms).not.toContain('שם: אופק');
   expect(terms).not.toContain('\nכתובת:');
  });
+});
+
+it('aligns the commercial disclosures and points to billing without limiting statutory cancellation',()=>{
+  const terms=readFileSync('src/content/legal/terms.ts','utf8');
+  expect(terms).toContain('100 מקורות ל־7 ימים, במחיר כולל של 39 ₪');
+  expect(terms).toContain('250 מקורות לחודש קלנדרי אחד, במחיר כולל של 65 ₪');
+  expect(terms).toContain('אין חידוש אוטומטי');
+  expect(terms).toContain('mailto:billing@relexlm.com');
+  expect(terms).toContain('אינם תנאים למימוש זכות לפי דין');
+  expect(terms).not.toContain('סמכות השיפוט הייחודית');
+});
+it('separates the Word document from the selected text and explains provider and signup processing',()=>{
+  const privacy=readFileSync('src/content/legal/privacy.ts','utf8');
+  expect(privacy).toContain('המסמך המקורי המלא לא נשלח לשרת');
+  expect(privacy).toContain('קטע שסומן כהסבר מוגן לא נשלח לבדיקה');
+  expect(privacy).toContain('תקבול מעבדת את התשלום');
+  expect(privacy).toContain('ReLex, מיזם בהקמה');
+  expect(readFileSync('src/pages/Auth.tsx','utf8')).toContain('בלי פרטי האימות לא ניתן לפתוח חשבון');
 });
