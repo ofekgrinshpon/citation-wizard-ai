@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { createHebrewArticleRequest, resolveHebrewArticle, renderHebrewArticle, collectHebrewArticleEvidence } from "../../supabase/functions/_shared/hebrewArticleEvidence";
-import { readHebrewArticleRecord, fetchHebrewArticleRecords, isHebrewArticleRecordUrl } from "../../supabase/functions/_shared/hebrewArticleRecord";
+import { readHebrewArticleRecord, fetchHebrewArticleRecords, isHebrewArticleRecordUrl, isNliArticleRecordUrl } from "../../supabase/functions/_shared/hebrewArticleRecord";
 
 // Explicit offline records exercise the grammar; these are not captured Sonar
 // payloads and do not establish live-provider coverage.
@@ -17,6 +17,86 @@ const resolved = (raw: string, page = html()) => {
 };
 
 describe("source-bound Hebrew journal completion", () => {
+  // Synthetic dedicated-record fixtures, not a captured NLI page or proof
+  // that the live catalogue currently serves this metadata representation.
+  const nli = "https://www.nli.org.il/he/articles/RAMBI990000000000000001/NLI";
+  const f = fixtures[2];
+  const req = () => createHebrewArticleRequest(`${f.author} ${f.title}`);
+  const reference = (tail = "עיוני משפט ה 463 (1977)", author = f.author) => ({
+    title: "פסק דין", url: "https://supremedecisions.court.gov.il/example", snippet: `${author} "${f.title}" ${tail}`,
+  });
+  const primary = () => readHebrewArticleRecord(req(), html(f), nli);
+  it("admits only dedicated NLI article paths, not its entire domain", () => {
+    expect(isNliArticleRecordUrl(nli)).toBe(true);
+    expect(isHebrewArticleRecordUrl(nli)).toBe(true);
+    for (const path of ["/he/search", "/he/books/NNL_ALEPH990000000000000001/NLI", "/he/authorities/1", "/he/articles/collection/NLI"]) {
+      expect(isHebrewArticleRecordUrl(`https://www.nli.org.il${path}`)).toBe(false);
+    }
+    expect(isNliArticleRecordUrl(nli.replace("www.nli.org.il", "www.nli.org.il.evil.test"))).toBe(false);
+    expect(isNliArticleRecordUrl(nli + "?redirect=evil")).toBe(false);
+  });
+  it("reads a standalone ScholarlyArticle, not webpage or book metadata", () => {
+    const record = { "@type": "ScholarlyArticle", headline: f.title, author: { "@type": "Person", name: f.author },
+      isPartOf: { "@type": "PublicationIssue", issueNumber: "3", isPartOf: { "@type": "PublicationVolume", volumeNumber: "ה", isPartOf: { "@type": "Periodical", name: f.journal } } },
+      pageStart: "463", datePublished: "1977" };
+    const page = (o: unknown) => `<script type="application/ld+json">${JSON.stringify(o)}</script>`;
+    expect(readHebrewArticleRecord(req(), page(record), nli)[0]?.fields).toMatchObject({ firstPage: "463", year: "1977", volume: "ה", notebook: "3", journalName: "עיוני משפט" });
+    expect(readHebrewArticleRecord(req(), page({ ...record, "@type": "Book" }), nli)).toEqual([]);
+    expect(readHebrewArticleRecord(req(), page({ ...record, author: { "@type": "Person", name: "דוד פרידמן" } }), nli)).toEqual([]);
+    expect(readHebrewArticleRecord(req(), page({ ...record, pageStart: "בעמ׳ 489–488", datePublished: undefined, dateModified: "2026" }), nli)[0]?.fields.firstPage).toBeUndefined();
+  });
+  it("accepts a complete judicial citation as backup with the full supplied identity", () => {
+    const e = collectHebrewArticleEvidence(req(), {}, [reference()]);
+    expect(resolveHebrewArticle(req(), e).fields).toMatchObject({ firstPage: "463", year: "1977", volume: "ה", journalName: "עיוני משפט" });
+  });
+  it.each(["עיוני משפט ה בעמ׳ 489–488 (1977)", "עיוני משפט ה בעמ' 489–488 (1977)", "עיוני משפט בעמ׳ 489–488 (1977)"])("never promotes a pinpoint into opening page: %s", tail => {
+    const r = resolveHebrewArticle(req(), collectHebrewArticleEvidence(req(), {}, [reference(tail)]));
+    expect(r.fields.firstPage).toBeUndefined();
+    expect(r.matched).toBe(false);
+  });
+  it("keeps the opening page when a separate pinpoint follows it", () => {
+    expect(resolveHebrewArticle(req(), collectHebrewArticleEvidence(req(), {}, [reference("עיוני משפט ה 463, בעמ׳ 489–488 (1977)")])).fields.firstPage).toBe("463");
+  });
+  it.each(["עיוני משפט ה 463", "עיוני משפט 463 (1977)", "עיוני משפט ה (1977)"])("rejects an incomplete secondary tuple: %s", tail => {
+    expect(collectHebrewArticleEvidence(req(), {}, [reference(tail)])).toEqual([]);
+  });
+  it("does not globally equate initials with full names", () => {
+    expect(collectHebrewArticleEvidence(req(), {}, [reference(undefined, "ד׳ פרידמן")])).toEqual([]);
+    expect(collectHebrewArticleEvidence(createHebrewArticleRequest(f.title), {}, [reference(undefined, "ד׳ פרידמן")])).toEqual([]);
+  });
+  it("cannot use judicial page headings or separate labels to bypass the full-reference gate", () => {
+    expect(collectHebrewArticleEvidence(req(), { author: f.author, articleTitle: f.title }, [{
+      ...reference(), title: f.title,
+      snippet: `שם המאמר: ${f.title}; מחבר: ${f.author}; כתב עת: עיוני משפט; עמוד ראשון: 489; שנה: 1977`,
+    }])).toEqual([]);
+  });
+  it("binds initials only through a direct same-title full-name record", () => {
+    const direct = primary();
+    expect(collectHebrewArticleEvidence(req(), {}, [reference(undefined, "ד׳ פרידמן")], direct)).toHaveLength(1);
+    expect(collectHebrewArticleEvidence(req(), {}, [reference(undefined, "י׳ פרידמן")], direct)).toEqual([]);
+    const otherTitle = direct.map(e => ({ ...e, fields: { ...e.fields, articleTitle: "מאמר אחר" } }));
+    expect(collectHebrewArticleEvidence(req(), {}, [reference(undefined, "ד׳ פרידמן")], otherTitle)).toEqual([]);
+  });
+  it.each([false, true])("direct publication prevails over conflicting judicial pages, regardless of order: %s", reverse => {
+    const secondary = collectHebrewArticleEvidence(req(), {}, [reference("עיוני משפט ה 489 (1977)")]);
+    const evidence = [...primary(), ...secondary];
+    const r = resolveHebrewArticle(req(), reverse ? evidence.reverse() : evidence);
+    expect(r.fields.firstPage).toBe("463");
+    expect(r.conflicts).not.toContain("firstPage");
+    expect(r.provenance.firstPage?.sources).toEqual([nli]);
+  });
+  it("preserves supplied fields even against a direct record", () => {
+    const supplied = createHebrewArticleRequest(`${f.author} "${f.title}" עיוני משפט ה 489 (1977)`);
+    const r = resolveHebrewArticle(supplied, primary());
+    expect(r.fields.firstPage).toBe("489");
+    expect(r.conflicts).toContain("firstPage");
+  });
+  it("prioritizes NLI reads without adding to the two-page budget", async () => {
+    const fetcher = vi.fn(async (_url: RequestInfo | URL, _init?: RequestInit) => new Response(html(f), { headers: { "Content-Type": "text/html" } }));
+    await fetchHebrewArticleRecords(req(), [{ url }, { url: "https://law.huji.ac.il/article/example" }, { url: nli }], fetcher as typeof fetch);
+    expect(fetcher).toHaveBeenCalledTimes(2);
+    expect(fetcher.mock.calls[0][0]).toBe(nli);
+  });
   it.each(fixtures)("reads separate fields for $author without generated publication JSON", f => {
     const r = resolved(`${f.author} "${f.title}"`, html(f));
     expect(r.fields).toMatchObject({ journalName: f.journal, volume: f.volume, firstPage: f.page, year: f.year });

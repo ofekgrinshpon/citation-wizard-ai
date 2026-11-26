@@ -18,6 +18,8 @@ export interface ArticleEvidence {
   sourceUrl: string;
   quote: string;
   pagination?: "continuous" | "restarted";
+  /** Set only by the fetched, identity-bound article record reader. */
+  origin?: "direct_record" | "reference";
 }
 export interface ArticleResolution {
   request: ArticleRequest;
@@ -74,6 +76,9 @@ function labeledFields(text: string): ArticleFields {
 function publicationTail(raw: string, kind: ArticleRequest["kind"]): { fields: ArticleFields; pinpoint: string } {
   const fields: ArticleFields = {};
   let tail = clean(raw).replace(/\.\s*$/, "");
+  // A pinpoint cannot stand in the opening-page slot, including inside the
+  // would-be container captured by the fallback grammar.
+  if (kind === "journal" && PINPOINT.test(tail.split(/[,;]/)[0])) return { fields: {}, pinpoint: "" };
   const year = tail.match(new RegExp(`(?:\\(\\s*([^()]*?)\\s*(${YEAR})\\s*\\)|\\s+(${YEAR}))\\s*[.,]?\\s*$`));
   if (year) {
     const value = year[2] || year[3];
@@ -205,7 +210,7 @@ export function articleIdentityMatches(request: ArticleRequest, fields: ArticleF
 
 /** Accept full reference records, or metadata on the target article's own
  * heading. Mere title/author mentions in another work are insufficient. */
-export function collectHebrewArticleEvidence(request: ArticleRequest, proposed: Record<string, unknown>, results: unknown): ArticleEvidence[] {
+export function collectHebrewArticleEvidence(request: ArticleRequest, proposed: Record<string, unknown>, results: unknown, directEvidence: ArticleEvidence[] = []): ArticleEvidence[] {
   if (!Array.isArray(results)) return [];
   const candidate: ArticleFields = {
     articleTitle: clean(proposed.articleTitle || proposed.title) || request.supplied.articleTitle,
@@ -218,19 +223,29 @@ export function collectHebrewArticleEvidence(request: ArticleRequest, proposed: 
     const sourceUrl = clean(r.url);
     if (!/^https?:\/\//.test(sourceUrl)) continue;
     const snippet = clean(r.snippet);
+    let judicial = /פסק[־ -]?דין|פסיקה/.test(clean(r.title));
+    try {
+      judicial ||= /(?:^|\.)(?:court\.gov\.il|nevo\.co\.il|takdin\.co\.il|psakdin\.co\.il)$/.test(new URL(sourceUrl).hostname);
+    } catch { continue; }
     // Separated labels are acceptable only inside this article's own record,
     // with both title and author attested. They do not come from proposed JSON.
     const ownFields = labeledFields(snippet);
-    if (request.kind === "journal" && ownFields.articleTitle && ownFields.author && articleIdentityMatches(request, ownFields) &&
+    if (!judicial && request.kind === "journal" && ownFields.articleTitle && ownFields.author && articleIdentityMatches(request, ownFields) &&
         same(clean(r.title), ownFields.articleTitle)) {
-      records.push({ fields: ownFields, sourceUrl, quote: snippet });
+      records.push({ fields: ownFields, sourceUrl, quote: snippet, origin: "reference" });
       continue;
     }
     const references = citationRecords(snippet, request.kind);
     for (const record of references) {
-      if (articleIdentityMatches(request, record.fields)) records.push({ ...record, sourceUrl });
+      const f = record.fields;
+      // Secondary references must attest every publication role together.
+      if (request.kind === "journal" && !(f.author && f.articleTitle && f.journalName && f.volume && f.firstPage && (f.year || f.hebrewYear))) continue;
+      const abbreviated = request.kind === "journal" && /^[א-ת][׳']\s+/.test(clean(f.author));
+      if ((!abbreviated && articleIdentityMatches(request, f)) || directEvidence.some(e => referenceIdentityFromDirect(request, f, e))) {
+        records.push({ ...record, sourceUrl, origin: "reference" });
+      }
     }
-    if (references.length || !articleIdentityMatches(request, candidate)) continue;
+    if (references.length || (request.kind === "journal" && judicial) || !articleIdentityMatches(request, candidate)) continue;
     const heading = normalizeArticleText(clean(r.title));
     if (!candidate.articleTitle || !candidate.author) continue;
     const title = normalizeArticleText(candidate.articleTitle);
@@ -255,13 +270,30 @@ export function collectHebrewArticleEvidence(request: ArticleRequest, proposed: 
       const tail = plain.match(pattern)?.[1];
       if (tail) fields = { ...fields, ...publicationTail(tail, request.kind).fields };
     }
-    if (articleIdentityMatches(request, fields)) records.push({ fields, sourceUrl, quote: snippet });
+    if (articleIdentityMatches(request, fields)) records.push({ fields, sourceUrl, quote: snippet, origin: "reference" });
   }
   return records;
 }
 
+/** Initials are not global aliases. One fetched full-name record must prove
+ * this exact title and requested identity before a secondary name can bind. */
+function referenceIdentityFromDirect(request: ArticleRequest, fields: ArticleFields, direct: ArticleEvidence): boolean {
+  if (direct.origin !== "direct_record" || !articleIdentityMatches(request, direct.fields) ||
+      !fields.articleTitle || !direct.fields.articleTitle || !same(fields.articleTitle, direct.fields.articleTitle)) return false;
+  const abbreviated = clean(fields.author).match(/^([א-ת])[׳']\s+(.+)$/);
+  const full = normalizeArticleText(direct.fields.author || "").split(" ");
+  return !!abbreviated && full.length >= 2 && full[0].length > 1 && full[0].startsWith(abbreviated[1]) &&
+    same(abbreviated[2], full.slice(1).join(" "));
+}
+
 export function resolveHebrewArticle(request: ArticleRequest, evidence: ArticleEvidence[]): ArticleResolution {
-  const identityMatches = evidence.filter(e => articleIdentityMatches(request, e.fields));
+  const direct = evidence.filter(e => e.origin === "direct_record" && articleIdentityMatches(request, e.fields));
+  const identityMatches = evidence.flatMap(e => {
+    if (!(request.kind === "journal" && e.origin === "reference" && /^[א-ת][׳']\s+/.test(clean(e.fields.author))) && articleIdentityMatches(request, e.fields)) return [e];
+    const witnesses = direct.filter(d => referenceIdentityFromDirect(request, e.fields, d));
+    const authors = new Set(witnesses.map(d => normalizeArticleText(d.fields.author || "")));
+    return authors.size === 1 && witnesses[0] ? [{ ...e, fields: { ...e.fields, author: witnesses[0].fields.author } }] : [];
+  });
   if (request.freeformIdentity) {
     const identities = new Map(identityMatches.map(e => [normalizeArticleText(`${e.fields.author}|${e.fields.articleTitle}`), e.fields]));
     const identity = identities.size === 1 ? [...identities.values()][0] : undefined;
@@ -270,8 +302,15 @@ export function resolveHebrewArticle(request: ArticleRequest, evidence: ArticleE
   const publicationFields: ArticleField[] = ["journalName", "bookTitle", "volume", "notebook", "firstPage", "year", "hebrewYear"];
   // A conflicting edition/publication is an incompatible donor as a whole.
   // Preserving the supplied volume while borrowing its page/year makes a hybrid.
-  const matching = identityMatches.filter(e => !publicationFields.some(field =>
-    request.supplied[field] && e.fields[field] && !same(request.supplied[field]!, e.fields[field]!)));
+  const preferred = identityMatches.filter(e => e.origin !== "reference" || !direct.some(d =>
+    publicationFields.some(field => {
+      const primary = d.fields[field], secondary = e.fields[field];
+      return primary && secondary && !same(primary, secondary);
+    })));
+  const matching = preferred.filter(e => !publicationFields.some(field => {
+    const supplied = request.supplied[field], value = e.fields[field];
+    return supplied && value && !same(supplied, value);
+  }));
   const fields: ArticleFields = { ...request.supplied };
   const provenance: ArticleResolution["provenance"] = {};
   const conflicts: ArticleField[] = [];
@@ -282,7 +321,10 @@ export function resolveHebrewArticle(request: ArticleRequest, evidence: ArticleE
     new Set(matching.map(e => e.fields[field as ArticleField]).filter(Boolean).map(v => normalizeArticleText(v!))).size > 1);
   for (const field of ARTICLE_FIELDS) {
     const rows = matching.filter(e => e.fields[field]);
-    const rejectedConflict = identityMatches.some(e => request.supplied[field] && e.fields[field] && !same(request.supplied[field]!, e.fields[field]!));
+    const rejectedConflict = preferred.some(e => {
+      const supplied = request.supplied[field], value = e.fields[field];
+      return supplied && value && !same(supplied, value);
+    });
     const values = new Set(rows.map(e => normalizeArticleText(e.fields[field]!)));
     const supplied = request.supplied[field];
     const conflict = values.size > 1 || rejectedConflict ||

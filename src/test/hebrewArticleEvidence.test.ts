@@ -318,6 +318,7 @@ async function runHandler(options: { pageHtml?: string; raw?: string; rawInputNu
   }, console: { log: () => {}, error: () => {}, warn: () => {} }, URL, Request, Response, Headers, crypto, TextEncoder,
   Deno: { env: { get: (name: string) => name === "SUPABASE_SERVICE_ROLE_KEY" && options.serviceUnavailable ? undefined : name === "SUPABASE_SERVICE_ROLE_KEY" ? "fixture-service" : name === "SUPABASE_ANON_KEY" ? "fixture-anon" : name === "CITATION_CHAT_OPENWEB_FALLBACK" ? "off" : name === "PERPLEXITY_API_KEY" && options.noPplx ? undefined : "mock-only" } },
   fetch: async () => { if (options.pageHtml) return new Response(options.pageHtml, { headers: { "Content-Type": "text/html" } }); throw new Error("Unmocked network is prohibited"); },
+  AbortController, setTimeout, clearTimeout,
   }));
   const raw = options.raw || natural;
   const label = options.label || "מאמר";
@@ -327,6 +328,19 @@ async function runHandler(options: { pageHtml?: string; raw?: string; rawInputNu
 }
 
 describe("article boundary through the real edge handler", () => {
+  it("reads a direct NLI article before accepting a conflicting complete judicial snippet", async () => {
+    const title = "עוד לפרשנות החקיקה הישראלית החדשה";
+    const pageHtml = `<meta name="citation_title" content="${title}"><meta name="citation_author" content="דניאל פרידמן"><meta name="citation_journal_title" content="עיוני משפט"><meta name="citation_volume" content="ה"><meta name="citation_firstpage" content="463"><meta name="citation_publication_date" content="1977">`;
+    const r = await runHandler({ raw: `דניאל פרידמן ${title}`, pageHtml,
+      candidate: { author: "דניאל פרידמן", articleTitle: title }, records: [
+        { url: "https://www.nli.org.il/he/articles/RAMBI990000000000000001/NLI", title, snippet: "רשומת מאמר" },
+        { url: "https://supremedecisions.court.gov.il/example", title: "פסק דין", snippet: `דניאל פרידמן "${title}" עיוני משפט ה 489 (1977)` },
+      ] });
+    expect(r.status).toBe(200);
+    expect(r.body.hebrewArticleValidation.fields.firstPage).toBe("463");
+    expect(r.body.hebrewArticleValidation.fields.year).toBe("1977");
+    expect(r.calls.map(c => c.stage)).toEqual(["article_retrieval_tier1", "author_check"]);
+  });
   it("passes authorized observation through the real handler and lookup without changing requests, output or credit calls", async () => {
     const clock = vi.spyOn(Date, "now").mockReturnValue(Date.parse("2026-10-11T10:00:00Z"));
     try {

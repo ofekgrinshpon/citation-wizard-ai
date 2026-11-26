@@ -3919,7 +3919,7 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
             messages: [
               { role: "system", content: `אתה עוזר מחקר משפטי ישראלי. אתר את המאמר המבוקש, גם כשהבקשה מתארת אותו בשפה טבעית. החזר JSON בלבד:
 {"found":true,"type":"journal"|"article_in_book","author":"שם המחבר/ים","articleTitle":"שם המאמר","journalName":"","bookTitle":"","bookAuthor":"","volume":"","notebook":"","firstPage":"","year":0,"hebrewYear":"","editor":""}
-הסתמך על רשומה ביבליוגרפית של אותו מאמר או על העמוד הראשון שלו. אל תשתמש בפרטי מאמר אחר שמצטט אותו. הפרד בין עמוד תחילת המאמר לבין העמודים שהמשתמש מבקש. שנה היא שנת הדפוס המופיעה במאמר; תאריך העלאה או עדכון של דף אינטרנט אינו שנת פרסום. אם מופיעה רק שנה עברית, שמור אותה ללא המרה. אל תנחש שדות חסרים. אם אין זיהוי, החזר {"found":false}.` },
+${articleRequest.kind === "journal" ? "העדף רשומת מאמר ייעודית בספרייה הלאומית (רמב״י, nli.org.il/he/articles) או רשומת כתב העת המקורי. החזר את כתובת הרשומה בין מקורות החיפוש. פסיקה היא גיבוי בלבד: נדרש אזכור יחיד הכולל מחבר, כותרת, כתב עת, כרך, עמוד פתיחה ושנה. אין לראות בהפניה בעמ׳ עמוד פתיחה. " : ""}הסתמך על רשומה ביבליוגרפית של אותו מאמר או על העמוד הראשון שלו. אל תשתמש בפרטי מאמר אחר שמצטט אותו. הפרד בין עמוד תחילת המאמר לבין העמודים שהמשתמש מבקש. שנה היא שנת הדפוס המופיעה במאמר; תאריך העלאה או עדכון של דף אינטרנט אינו שנת פרסום. אם מופיעה רק שנה עברית, שמור אותה ללא המרה. אל תנחש שדות חסרים. אם אין זיהוי, החזר {"found":false}.` },
               { role: "user", content: articleRequest.raw },
             ],
           }, "article");
@@ -3929,10 +3929,10 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
           if (json) {
             try { proposed = JSON.parse(json.replace(/([\u0590-\u05FF])"([\u0590-\u05FF])/g, "$1\u05F4$2")); } catch { /* Keep supplied fields on malformed provider output. */ }
           }
-          articleEvidence.push(...collectHebrewArticleEvidence(articleRequest, proposed, artData?.search_results));
-          if (!isCompleteHebrewArticle(resolveHebrewArticle(articleRequest, articleEvidence))) {
-            articleEvidence.push(...await fetchHebrewArticleRecords(articleRequest, artData?.search_results, fetch));
-          }
+          // Read direct records before deciding whether snippets suffice.
+          // A complete but wrong secondary reference cannot suppress this read.
+          articleEvidence.push(...await fetchHebrewArticleRecords(articleRequest, artData?.search_results, fetch));
+          articleEvidence.push(...collectHebrewArticleEvidence(articleRequest, proposed, artData?.search_results, articleEvidence));
           const initial = resolveHebrewArticle(articleRequest, articleEvidence);
           if (initial.matched && isCompleteHebrewArticle(initial) && proposed.author && proposed.articleTitle) {
             // Reuse the existing author-check call; its source records are
@@ -3940,17 +3940,17 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
             const verify = await verifyBiblioAuthor(PERPLEXITY_API_KEY, "article", String(proposed.articleTitle));
             if (verify) articleEvidence.push(...collectHebrewArticleEvidence(articleRequest, {
               articleTitle: proposed.articleTitle, author: verify.author,
-            }, verify.search_results));
+            }, verify.search_results, articleEvidence));
           }
           if (!isCompleteHebrewArticle(initial)) {
             const missing = ["journalName", "volume", "firstPage", "year"].filter(field => !initial.fields[field as keyof typeof initial.fields]);
-            const focusedQuery = `${articleRequest.raw}\nאתר את רשומת הפרסום של אותו מאמר בלבד. פרטים שסופקו או אומתו: ${JSON.stringify(initial.fields)}. חפש רק את החסר: ${missing.join(", ")}. אין לתקן כותרת או מחבר ואין להחליף כתב עת שסופק.`;
+            const focusedQuery = `${articleRequest.raw}\n${articleRequest.kind === "journal" ? "אתר תחילה רשומת מאמר ייעודית בספרייה הלאומית (רמב״י, nli.org.il/he/articles) או בכתב העת המקורי; החזר כתובת רשומה. פסיקה היא גיבוי רק באזכור מלא יחיד הכולל מחבר, כותרת, כתב עת, כרך, עמוד פתיחה ושנה. " : ""}אתר את רשומת הפרסום של אותו מאמר בלבד. פרטים שסופקו או אומתו: ${JSON.stringify(initial.fields)}. חפש רק את החסר: ${missing.join(", ")}. אין לתקן כותרת או מחבר ואין להחליף כתב עת שסופק.`;
             const fallback = await fallbackBiblioSearch(PERPLEXITY_API_KEY, focusedQuery, "article");
-            if (fallback && fallback.kind !== "book") articleEvidence.push(...collectHebrewArticleEvidence(
-              articleRequest, fallback.proposed, fallback.searchResults,
-            ));
-            if (fallback && fallback.kind !== "book" && !isCompleteHebrewArticle(resolveHebrewArticle(articleRequest, articleEvidence))) {
+            if (fallback && fallback.kind !== "book") {
               articleEvidence.push(...await fetchHebrewArticleRecords(articleRequest, fallback.searchResults, fetch));
+              articleEvidence.push(...collectHebrewArticleEvidence(articleRequest, fallback.proposed, fallback.searchResults, articleEvidence));
+              // A later direct record may now bind initials in the first pass.
+              articleEvidence.push(...collectHebrewArticleEvidence(articleRequest, proposed, artData?.search_results, articleEvidence));
             }
           }
         } catch (e) {

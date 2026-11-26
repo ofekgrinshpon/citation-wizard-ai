@@ -1,5 +1,11 @@
 # Roadmap — research → memo → draft handoff (legal-research-v2)
 
+## Hebrew article primary records and judicial backup (2026-11-27)
+- [x] Add dedicated NLI article URL reads and explicit ScholarlyArticle/Highwire/labelled-record parsing, not a broad domain expansion; actual NLI markup remains unverified.
+- [x] Accept only complete judicial publication tuples; bind abbreviated authors through direct records and prefer direct evidence; pinpoint 489–488 cannot donate opening page 489.
+- [x] 283 offline tests passed, 1 skipped; automatic build OK. Deployed citation-chat after exact 79-file gate SHA-256 740c9229c6a47ba14837277c388e1f1b5d60fb3c58663d756817a5ed80ff0584; deployment submitted-source SHA-256 da48e1dcd8dc392a0bb3fa4a65bed5eedb6f73e1e21301c81cd021afafdd8b8c. No paid live search, secret access, production reads or frontend publication.
+- [ ] Verify an actual NLI article record end-to-end — blocked: public NLI requests returned Cloudflare challenge; fixtures are synthetic and no dedicated live Friedmann NLI record was identified. No claim that the original live query is resolved.
+
 ## Bibliography publication (2026-11-26)
 - [x] Add input-bound foreign decision/report choices; no search on selection and no unresolved row export. 307 offline regressions passed (1 skipped).
 - [x] Deploy reviewed citation-chat package (submitted SHA-256 3a010d47de66bb7f1aa380f53ab0f02c65cefae8a8499d127ea716ebd714df11); live Friedmann search returned 200, preserved supplied journal but still lacked first page/year. Donoghue returned 200; subsequent live choice check blocked by current account quota. No quota changes or uncertain retries.

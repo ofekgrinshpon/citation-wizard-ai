@@ -12,6 +12,12 @@ const textOnly = (text: string) => decode(text.replace(/<[^>]*>/g, " ")).replace
  * timestamps, navigation, other articles' references or cross-page joining. */
 export function readHebrewArticleRecord(request: ArticleRequest, html: string, sourceUrl: string): ArticleEvidence[] {
   if (request.kind !== "journal") return [];
+  // NLI is admitted only through its dedicated article URLs, never search,
+  // authority, book or collection pages. Only explicit article metadata binds.
+  if (isNliArticleRecordUrl(sourceUrl)) {
+    const linked = readNliArticleMetadata(request, html, sourceUrl);
+    if (linked.length) return linked;
+  }
   const values = new Map<string, string[]>();
   for (const tag of html.match(/<meta\b[^>]*>/gi) || []) {
     const attrs: Record<string, string> = {};
@@ -30,7 +36,7 @@ export function readHebrewArticleRecord(request: ArticleRequest, html: string, s
   if (date && /^(?:19|20)\d{2}(?:$|[-/])/.test(date)) fields.year = date.slice(0, 4);
   if (fields.firstPage && !/^\d{1,5}$/.test(fields.firstPage)) delete fields.firstPage;
   const metaMatches = articleIdentityMatches(request, fields);
-  const metaEvidence = metaMatches ? [{ fields, sourceUrl, quote: JSON.stringify(Object.fromEntries(values)) }] : [];
+  const metaEvidence: ArticleEvidence[] = metaMatches ? [{ fields, sourceUrl, quote: JSON.stringify(Object.fromEntries(values)), origin: "direct_record" }] : [];
   if (metaMatches && fields.journalName && fields.volume && fields.firstPage && fields.year) return metaEvidence;
 
   // Structured publication tables are read only when the page heading and an
@@ -54,7 +60,57 @@ export function readHebrewArticleRecord(request: ArticleRequest, html: string, s
     if (tableFields[key] && tableFields[key] !== value) return [];
     tableFields[key] = value;
   }
-  return articleIdentityMatches(request, tableFields) ? [{ fields: tableFields, sourceUrl, quote: textOnly(source) }] : metaEvidence;
+  return articleIdentityMatches(request, tableFields) ? [{ fields: tableFields, sourceUrl, quote: textOnly(source), origin: "direct_record" }] : metaEvidence;
+}
+
+export function isNliArticleRecordUrl(value: string): boolean {
+  try {
+    const u = new URL(value);
+    return u.protocol === "https:" && !u.username && !u.password && !u.port && !u.search &&
+      ["nli.org.il", "www.nli.org.il"].includes(u.hostname) &&
+      /^\/(?:he|en|ar)\/articles\/(?:NNL_ALEPH|RAMBI)\d+\/NLI\/?$/i.test(u.pathname);
+  } catch { return false; }
+}
+
+/** Schema.org article objects are independent records. No joining with book,
+ * navigation or other article objects; no publication dates from page chrome. */
+function readNliArticleMetadata(request: ArticleRequest, html: string, sourceUrl: string): ArticleEvidence[] {
+  const object = (v: unknown): Record<string, unknown> | undefined => v && typeof v === "object" && !Array.isArray(v) ? v as Record<string, unknown> : undefined;
+  const scalar = (v: unknown): string | undefined => typeof v === "string" && v.trim() ? v.trim() : typeof v === "number" && Number.isFinite(v) ? String(v) : undefined;
+  const hasType = (o: Record<string, unknown>, type: string) => [o["@type"]].flat().includes(type);
+  const records: ArticleEvidence[] = [];
+  for (const script of html.matchAll(/<script\b[^>]*type\s*=\s*["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi)) {
+    let parsed: unknown;
+    try { parsed = JSON.parse(script[1]); } catch { continue; }
+    const root = object(parsed);
+    const nodes = Array.isArray(parsed) ? parsed : Array.isArray(root?.["@graph"]) ? root["@graph"] : [parsed];
+    for (const node of nodes) {
+      const article = object(node);
+      if (!article || !hasType(article, "ScholarlyArticle")) continue;
+      const authors = [article.author].flat().map(a => {
+        const person = object(a);
+        return person && hasType(person, "Person") ? scalar(person.name) : scalar(a);
+      });
+      if (!authors.length || authors.some(a => !a)) continue;
+      let part = object(article.isPartOf);
+      const fields: ArticleFields = { articleTitle: scalar(article.headline) || scalar(article.name), author: authors.join(" ו") };
+      if (part && hasType(part, "PublicationIssue")) {
+        fields.notebook = scalar(part.issueNumber);
+        part = object(part.isPartOf);
+      }
+      if (part && hasType(part, "PublicationVolume")) {
+        fields.volume = scalar(part.volumeNumber);
+        part = object(part.isPartOf);
+      }
+      if (part && hasType(part, "Periodical")) fields.journalName = scalar(part.name);
+      const first = scalar(article.pageStart);
+      if (first && /^\d{1,5}$/.test(first)) fields.firstPage = first;
+      const date = scalar(article.datePublished);
+      if (date && /^(?:19|20)\d{2}(?:$|[-/])/.test(date)) fields.year = date.slice(0, 4);
+      if (articleIdentityMatches(request, fields)) records.push({ fields, sourceUrl, quote: JSON.stringify(article), origin: "direct_record" });
+    }
+  }
+  return records;
 }
 
 /** Fixed public academic origins, no credentials/ports/IPs, redirects or
@@ -63,13 +119,14 @@ export function isHebrewArticleRecordUrl(value: string): boolean {
   try {
     const url = new URL(value);
     return url.protocol === "https:" && !url.username && !url.password && !url.port &&
-      ["tau.ac.il", "huji.ac.il", "biu.ac.il", "haifa.ac.il"].some(host => url.hostname === host || url.hostname.endsWith(`.${host}`));
+      (isNliArticleRecordUrl(value) || ["tau.ac.il", "huji.ac.il", "biu.ac.il", "haifa.ac.il"].some(host => url.hostname === host || url.hostname.endsWith(`.${host}`)));
   } catch { return false; }
 }
 
 export async function fetchHebrewArticleRecords(request: ArticleRequest, results: unknown, fetchImpl: typeof fetch): Promise<ArticleEvidence[]> {
   if (request.kind !== "journal" || !Array.isArray(results)) return [];
-  const urls = [...new Set(results.flatMap(r => r && typeof r === "object" && typeof r.url === "string" && isHebrewArticleRecordUrl(r.url) ? [r.url] : []))].slice(0, 2);
+  const urls = [...new Set(results.flatMap(r => r && typeof r === "object" && typeof r.url === "string" && isHebrewArticleRecordUrl(r.url) ? [r.url] : []))]
+    .sort((a, b) => Number(isNliArticleRecordUrl(b)) - Number(isNliArticleRecordUrl(a))).slice(0, 2);
   const evidence: ArticleEvidence[] = [];
   for (const url of urls) {
     const controller = new AbortController();
