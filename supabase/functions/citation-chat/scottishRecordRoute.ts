@@ -1,6 +1,6 @@
 import { readScottishIdentity, scottishJudgmentUrl, parseScottishCitation, advanceScottishParagraphs } from "../_shared/citationPure/scottishDecision.ts";
 import { readBoundedBody, hasPdfHeader } from "../_shared/pdfExtractionProtocol.ts";
-import { extractPdfPagesBounded } from "../legal-research-v2/shared/pdfExtractionBoundary.ts";
+import { extractPdfPagesBounded } from "../_shared/pdfExtractionBoundary.ts";
 
 /** Single exact-neutral acquisition. Candidate discovery and planner wiring are separate. */
 export async function acquireScottishRecord(raw: string, candidate: string, deps: {
