@@ -559,7 +559,10 @@ function resolveCountryResponse(plan: TypedPlan, request: CountryLookupRequest, 
     const warningMsg = COUNTRY_FAIL_MESSAGES[a.reason];
     return { kind: "terminal", origin: request.kind === "case" ? "case" : "statute", resolution: { ...base, citation, reply: `${citation}\n⚠️ ${warningMsg}`, status: "warning", warningMsg } };
   }
-  const warningMsg = `הפרטים החסרים הושלמו מתוך: ${a.sourceUrls.join(", ")}. מומלץ לבדוק מול המקור.`;
+  const bgbSnapshot = /^BGB official XML snapshot (\d{4}-\d{2}-\d{2})$/.exec(a.provenance.title?.sourceTitle ?? "");
+  const warningMsg = bgbSnapshot
+    ? `מספר הסעיף אומת בעותק הרשמי של הקוד האזרחי הגרמני מ־${bgbSnapshot[1]}. מומלץ לבדוק את הנוסח העדכני: ${a.sourceUrls.join(", ")}.`
+    : `הפרטים החסרים הושלמו מתוך: ${a.sourceUrls.join(", ")}. מומלץ לבדוק מול המקור.`;
   const completion: ReturnType<typeof acceptCitationCompletion> = {
     fields: a.fields, provenance: a.provenance, quarantined: [], identityConfirmed: true, jurisdiction: request.jurisdiction,
     missing: [], conflicts: [], completeness: "complete",

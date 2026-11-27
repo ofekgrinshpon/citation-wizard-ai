@@ -1,3 +1,5 @@
+import { planContinentalLookup } from "../../supabase/functions/_shared/citationPure/countryLookup";
+import { citationRecoveryResult } from "../../supabase/functions/_shared/citationRecovery";
 import { supabase } from "@/integrations/supabase/client";
 import { citationRequests, citationRefundReceipt, type CitationRetryDescriptor } from "@/lib/citationRequestIdentity";
 import { refreshCitationSourceQuota, TRIAL_SOURCE_LIMIT, trialQuotaReachedMessage } from "@/lib/citationTrialQuota";
@@ -310,7 +312,20 @@ export async function invokeFunction<T = unknown>(
       const disambiguationResult = Array.isArray(choices) && choices.length > 1 && choices.every((choice) =>
         choice && ["US", "UK"].includes(choice.jurisdiction) && typeof choice.label === "string" &&
         !!choice.label.trim() && typeof choice.url === "string" && !!choice.url.trim());
-      const structuredForeign = requestedForeign && (articleResult || matchedResult || disambiguationResult);
+      // An explicit unmatched result for a bound continental request is a
+      // completed lookup, not a lost response. Let the planner preserve the
+      // user's input with a warning; never interpret unmatched data as evidence.
+      const continental = typeof requestedForeign?.rawInput === "string"
+        ? planContinentalLookup(requestedForeign.rawInput) : null;
+      const requestFields = requestedForeign?.parsedFields as Record<string, unknown> | undefined;
+      const continentalUnmatched = !!continental && requestedForeign?.enabled === true &&
+        requestedForeign.kind === continental.kind && requestedForeign.jurisdiction === continental.jurisdiction &&
+        !!requestFields && Object.keys(requestFields).length === 1 && requestFields.neutral === continental.parsedFields.neutral &&
+        foreign?.kind === continental.kind && foreign?.jurisdiction === continental.jurisdiction &&
+        identity?.matched === false && (identity.jurisdiction === undefined || identity.jurisdiction === continental.jurisdiction) &&
+        Array.isArray(identity.anchors) && identity.anchors.includes(continental.parsedFields.neutral) &&
+        typedFields && Object.keys(fields).length === 0 && !!citationRecoveryResult({ foreignLookup: foreign });
+      const structuredForeign = requestedForeign && (articleResult || matchedResult || disambiguationResult || continentalUnmatched);
       if (isCitation && (!payload || (!(typeof payload.content === "string" && payload.content.trim()) && !structuredForeign))) {
         throw new Error("Empty citation response");
       }
