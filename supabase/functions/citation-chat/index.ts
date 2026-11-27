@@ -67,8 +67,8 @@ function normalizeDatabaseName(urls: unknown, fallback: unknown): string {
   }
   return "";
 }
-import { CASE_DOCKET_RE, CASE_TYPE_PREFIX_RE, CASE_TYPE_PREFIXES, findBareDocket } from "../_shared/caseTypePrefixes.ts";
-import { classifyDocketCourt, buildCaseNumberQuery, buildCaseSystemPrompt, shouldRunPartyFollowup, shouldRunUnanchoredFollowup, buildPartyFollowupQuery, mergeFollowupFields, strictSnippetEvidence, SNIPPET_EVIDENCE_DB_NAME, isLowerCourt, isPrintedDistrictRef, groundOpenWebPartyResults } from "../_shared/caseLawQuery.ts";
+import { CASE_DOCKET_RE, CASE_TYPE_PREFIX_RE, findBareDocket } from "../_shared/caseTypePrefixes.ts";
+import { classifyDocketCourt, buildCaseNumberQuery, buildCaseSystemPrompt, shouldRunPartyFollowup, shouldRunUnanchoredFollowup, buildPartyFollowupQuery, mergeFollowupFields, strictSnippetEvidence, SNIPPET_EVIDENCE_DB_NAME, isLowerCourt, isPrintedDistrictRef, groundIsraeliPartyDecisions, isIsraeliPartyLookupInput, parseIsraeliPartyQuery, partyChoicePrompt, partyNoMatch, renderIsraeliPartyDecision, type IsraeliPartyChoice } from "../_shared/caseLawQuery.ts";
 import {
   TRUSTED_LEGAL,
   TRUSTED_PUB,
@@ -1971,7 +1971,11 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
     const earlyBookClass = userInput.match(/\[סיווג אוטומטי:\s*([^\]]+)\]/)?.[1];
     const earlyBookRaw = userInput.replace(/\[סיווג אוטומטי:\s*[^\]]+\]\s*/, "").replace(/\n?══ מנוע אזכור[\s\S]*?══════════════════════════════════\n?/m, "").trim();
     const titleBookNeedsLookup = !articleRequest && !!earlyBookClass && /ספרות|ספר/.test(earlyBookClass) && !/מאמר|פרק/.test(earlyBookClass) && isHebrewBookTitleQuery(earlyBookRaw);
-    if (!titleBookNeedsLookup && pastedContract.route !== "foreign" && SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY && userInput.length >= 2 && !["journal_article", "book", "book_chapter"].includes(foreignLookupRequest?.kind) && !statuteRequest) {
+    // A party caption can name several decisions. The verified store's
+    // generic name ranking cannot tell which dated legal record was requested.
+    const isBoundPartyLookup = pastedContract.route !== "foreign" && /פסיקה/.test(earlyBookClass ?? "") &&
+      isIsraeliPartyLookupInput(pastedContract.rawInput);
+    if (!titleBookNeedsLookup && !isBoundPartyLookup && pastedContract.route !== "foreign" && SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY && userInput.length >= 2 && !["journal_article", "book", "book_chapter"].includes(foreignLookupRequest?.kind) && !statuteRequest) {
       try {
         const sb = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
         const searchTerm = articleRequest?.raw || userInput
@@ -2356,50 +2360,24 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
 
     const isCaseLaw = Boolean((classMatch && /פסיקה/.test(classMatch[1])) || docketQuery);
 
-    // Extract embedded data blob (carried over from a prior party-search disambiguation list)
-    let selectionDataBlob: Record<string, unknown> | null = null;
-    if (isDisambiguationSelection) {
-      const blobMatch = userInput.match(/<!--DATA:([^>]+?)-->/);
-      if (blobMatch) {
-        try {
-          selectionDataBlob = JSON.parse(decodeURIComponent(blobMatch[1]));
-          console.log("[case-law] Disambiguation data blob parsed:", selectionDataBlob);
-        } catch (e) {
-          console.warn("[case-law] Failed to parse disambiguation data blob:", e);
-        }
-      }
-    }
-
-    // Accepts: "X נגד Y", "X נ' Y", "X נ״ Y", and bare "X נ Y".
-    // Length guard: each side must contain ≥2 Hebrew letters to avoid
-    // a stray middle-word `נ` triggering false positives.
-    const PARTY_RE = /([\u0590-\u05FF][\u0590-\u05FF\s'"״׳]*[\u0590-\u05FF])\s+(?:נגד|נ['׳״"\u2018\u2019\u05F3]?)\s+([\u0590-\u05FF][\u0590-\u05FF\s'"״׳]*[\u0590-\u05FF])/;
-    // Never let the party-name branch run when the user supplied a docket
-    // (prefixed OR bare) — it is the path that can override the docket.
-    const partyMatch = !docketQuery ? cleanedForParty.match(PARTY_RE) : null;
-
-
-    // If we have a data blob from prior party-search, use it directly — no Perplexity re-search
-    if (isDisambiguationSelection && isCaseLaw && selectionDataBlob) {
-      const r = selectionDataBlob as Record<string, string | boolean>;
-      const fullRef = `${r.caseType || "[חסר: סוג הליך]"} ${r.caseNumber || "[חסר: מספר תיק]"}`;
-      let details = `\n\n══ נתוני פסק דין שנבחר ══\n`;
-      details += `תיק: ${fullRef}\n`;
-      if (r.party1 && r.party2) details += `צדדים: **${r.party1}** נ' **${r.party2}**\n`;
-      if (r.court) details += `בית משפט: ${r.court}\n`;
-      if (r.isPublished && r.padi_volume) {
-        caseLawOverrideLabel = "פסיקה (דפוס)";
-        const part = r.padi_part ? `(${r.padi_part})` : "";
-        details += `פרסום: פ"ד ${r.padi_volume}${part} ${r.padi_page || ""}\n`;
-      } else if (r.databaseName) {
-        caseLawOverrideLabel = "פסיקה (מאגר)";
-        details += `מאגר: ${r.databaseName}\n`;
-      }
-      if (r.date) details += `תאריך: ${r.date}\n`;
-      if (r.year) details += `שנה: ${r.year}\n`;
-      details += `══ השתמש אך ורק בנתונים שלמעלה. אם נתון חסר — סמן [חסר:...]. ══`;
-      caseLawHint = details;
-      console.log("[case-law] Using selection data blob — skipping Perplexity");
+    const partyRaw = pastedContract.rawInput;
+    const partyQuery = !docketQuery && isCaseLaw && !isDisambiguationSelection && pastedContract.route !== "foreign"
+      ? parseIsraeliPartyQuery(partyRaw) : null;
+    const partyResponse = async (records: IsraeliPartyChoice["records"] = []) => {
+      const envelope = { version: 1, rawInput: partyRaw, records } satisfies IsraeliPartyChoice;
+      const single = records.length === 1 ? renderIsraeliPartyDecision(records[0], partyRaw) : null;
+      const content = single?.reply ?? (records.length ? `${partyChoicePrompt}
+⚠️ לא נבחרה החלטה אוטומטית.` : partyNoMatch(partyRaw));
+      return completeResponse(new Response(JSON.stringify({ content, israeliPartyLookup: envelope }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      }), single?.status === "valid" ? "legacy" : "never");
+    };
+    // Older clients may still replay a model-authored option from history.
+    // It is not a verified decision. Typed selections no longer post to the server.
+    if (isDisambiguationSelection && isCaseLaw && /<!--DATA:/u.test(userInput)) {
+      return completeResponse(new Response(JSON.stringify({
+        content: "⚠️ לא ניתן לאמת בחירה ישנה. חפשו מחדש לפי שמות הצדדים או מספר התיק.",
+      }), { headers: { ...corsHeaders, "Content-Type": "application/json" } }));
     } else if (isDisambiguationSelection && isCaseLaw && docketQuery) {
       console.log(`[case-law] Disambiguation selection detected (no blob), doing focused search for ${docketQuery.caseType} ${docketQuery.caseNum}`.trim());
     } else if (isDisambiguationSelection && isCaseLaw) {
@@ -2419,10 +2397,9 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
       console.log(`[case-law] No case number in selection, using parsed text hint`);
     }
 
-    // When disambiguation selection has a case number, allow the normal case-number search to proceed
-    // — UNLESS we already built the hint from a data blob.
-    const shouldSearchCaseLaw = isCaseLaw && !hasVerifiedCandidates && (docketQuery || partyMatch) && !(isDisambiguationSelection && !docketQuery) && !selectionDataBlob;
-    console.log(`[case-law] isCaseLaw=${isCaseLaw}, isDisambiguationSelection=${isDisambiguationSelection}, docket=${docketQuery ? `${docketQuery.caseType} ${docketQuery.caseNum}`.trim() : 'null'}, bare_docket=${bareDocket ? 'yes' : 'no'}, partyMatch=${partyMatch ? 'yes' : 'no'}, hasVerifiedCandidates=${hasVerifiedCandidates}, hasBlob=${!!selectionDataBlob}`);
+    // An explicit numbered selection without legacy embedded fields keeps the normal docket route.
+    const shouldSearchCaseLaw = isCaseLaw && !hasVerifiedCandidates && (docketQuery || partyQuery) && !(isDisambiguationSelection && !docketQuery);
+    console.log(`[case-law] isCaseLaw=${isCaseLaw}, isDisambiguationSelection=${isDisambiguationSelection}, docket=${docketQuery ? `${docketQuery.caseType} ${docketQuery.caseNum}`.trim() : 'null'}, bare_docket=${bareDocket ? 'yes' : 'no'}, partyMatch=${partyQuery ? 'yes' : 'no'}, hasVerifiedCandidates=${hasVerifiedCandidates}`);
 
     if (shouldSearchCaseLaw) {
       try {
@@ -3099,443 +3076,45 @@ serve((req) => withCostTelemetry("citation-chat", () => withCitationProviderOutc
               caseLawHint = `\n\n══ חיפוש פסק דין ══\nלא נמצאו נתונים מאומתים עבור ${fullCaseRef}.\nחובה להשתמש ב-[חסר:...] עבור כל שדה שאינו ידוע.\n══`;
             }
 
-          // ── Branch B: Search by party names (multi-result) ──
-          } else if (partyMatch) {
-            const rawParty1 = partyMatch[1].trim();
-            const party2 = partyMatch[2].trim();
-
-            // Strip a leading BIU procedure prefix from party1 (e.g. סע"ש, ת"א).
-            // Keep the prefix as the user-supplied caseType for filtering and search focus.
-            const normalizeQuotes = (s: string) => s.replace(/[״"]/g, '"').replace(/[׳']/g, "'");
-            let userCaseTypeNorm: string | null = null;
-            let party1 = rawParty1;
-            const leadingPrefixMatch = rawParty1.match(new RegExp("^(" + CASE_TYPE_PREFIX_RE.source + ")\\s+(.+)$"));
-            if (leadingPrefixMatch) {
-              userCaseTypeNorm = normalizeQuotes(leadingPrefixMatch[1]);
-              party1 = leadingPrefixMatch[2].trim();
-            } else if (partyMatch?.index !== undefined) {
-              // Fallback: prefix sitting just before the parties in the cleaned text.
-              const window = cleanedForParty.slice(Math.max(0, partyMatch.index - 20), partyMatch.index);
-              const localPrefix = window.match(new RegExp(CASE_TYPE_PREFIX_RE.source + "\\s*$"));
-              if (localPrefix) userCaseTypeNorm = normalizeQuotes(localPrefix[0]);
-            }
-
-            const searchQuery = userCaseTypeNorm
-              ? `${userCaseTypeNorm} ${party1} נגד ${party2}`
-              : `${party1} נגד ${party2}`;
-            console.log(`[case-law] Party-name search: "${searchQuery}" (rawParty1="${rawParty1}", party1="${party1}", party2="${party2}", caseType=${userCaseTypeNorm ?? 'none'})`);
-
-            const partySearchBody: Record<string, unknown> = {
+          // ── Branch B: Party-name decision retrieval; no model authors choices ──
+          } else if (partyQuery) {
+            const { caseType, party1, party2 } = partyQuery;
+            const lookupBody = {
               model: "sonar-pro",
-              search_domain_filter: ["nevo.co.il", "court.gov.il", "supreme.court.gov.il", "takdin.co.il", "lite.takdin.co.il", "psakdin.co.il"],
               messages: [
-                {
-                  role: "system",
-                  content: `אתה עוזר מחקר משפטי ישראלי. מצא את כל פסקי הדין הרלוונטיים בין הצדדים שניתנו.
-טיפ חיפוש: ב-https://lite.takdin.co.il/search-results מופיעים בעמוד אחד שמות הצדדים ומספר התיק — חפש שם כדי לאתר את הצדדים והדוקט.
-חשוב: בערכי המחרוזות בתוך ה-JSON, השתמש אך ורק בגרשיים עבריים (״ U+05F4) או בגרש (׳ U+05F3) במקום במירכאות כפולות (") — למשל "פד״י" במקום "פד"י", "פ״ד" במקום "פ"ד", "ע״א" במקום "ע"א". מירכאות כפולות בתוך ערך מחרוזת ישברו את ה-JSON.
-כללים:
-- מקסימום 5 תוצאות, ממוינות מהחדש לישן
-- שמות צדדים: שם משפחה בלבד לאנשים פרטיים, שם מלא לתאגידים. ללא תארים.
-- כלול את כל סוגי ההליכים (ערעור, בקשת רשות ערעור, משפט ראשוני וכו')
-- שדה "caseType" חייב להכיל את הקיצור הרשמי של סוג ההליך לפי כללי האזכור האחיד (למשל: סע״ש, ע״א, ת״א, בג״ץ, רע״א, עת״מ, תמ״ש, תפ״ח, ת״פ). אסור להחזיר תיאור מילולי כמו "תביעה" או "תביעה פלילית".
-- חובה לכבד את סדר הצדדים שהמשתמש כתב. אם פסק הדין הרשמי הפוך, אל תחזיר אותו אלא אם זה אכן הפסק שהמשתמש מבקש.
-- חובה למלא את שדות party1 ו-party2 לכל תוצאה. אם לא הצלחת לאמת שמות צדדים, אל תחזיר את התוצאה.
-- אם נתון תאריך מלא (DD.MM.YYYY) לא נמצא במקור — השאר את date ריק. אל תמציא תאריך.
-- ⚠️ קריטי לגבי פרסום בפ"ד: סמן isPublished=true ומלא padi_volume/padi_part/padi_page/year אך ורק אם ראית את הציון "פ"ד <כרך> <עמוד>" יחד עם מספר התיק המדויק במקור מהימן (nevo.co.il, supreme.court.gov.il, court.gov.il, psakdin.co.il). אסור להסיק כרך/עמוד/שנה מתוצאות takdin/lite.takdin — שם המידע מעורבב בין תיקים סמוכים. אם אינך בטוח, החזר isPublished=false ו-padi_volume/padi_part/padi_page/year ריקים.
-- חובה לכלול source_url לכל תוצאה — הקישור המדויק שממנו לקחת את שמות הצדדים והדוקט. ללא source_url התוצאה תיפסל.
-- אם לא נמצאו תוצאות, החזר {"results":[]}`,
-                },
-                {
-                  role: "user",
-                  content: userCaseTypeNorm
-                    ? `מצא את פסק הדין הישראלי מסוג ${userCaseTypeNorm} שבו ${party1} הוא צד א׳ ו-${party2} הוא צד ב׳. כלול את מספר התיק המלא, בית המשפט, תאריך פסק הדין המדויק (DD.MM.YYYY) ושם המאגר (תקדין/נבו/פדאור). חפש קודם ב-lite.takdin.co.il.`
-                    : `מצא את כל פסקי הדין הישראליים בין ${party1} ל${party2}. כלול ערעורים, בקשות רשות ערעור, ודיונים נוספים בין הצדדים. בדוק גם פרסום בפ״ד.`,
-                },
+                { role: "system", content: "אתר קישורים ישירים למסמכי החלטות ישראליות. חפש בכותרת מסמך נפרד לכל החלטה, עם סוג הליך, תיק, הצדדים בסדר שבו הם מופיעים במסמך, ותאריך מתן. אל תשתמש באזכורים של תיקים אחרים בתוך פסק דין. כלול גם החלטות בימים שונים של אותו תיק. החזר JSON בלבד עם שדה results; שדה source_url בכל תוצאה הוא קישור למסמך." },
+                { role: "user", content: `מצא החלטות בין ${party1} לבין ${party2}${caseType ? ` בסוג הליך ${caseType} בלבד ובסדר הזה` : ", בכל אחד משני סדרי הצדדים"}.` },
               ],
-              response_format: {
-                type: "json_schema",
-                json_schema: {
-                  schema: {
-                    type: "object",
-                    properties: {
-                      results: {
-                        type: "array",
-                        items: {
-                          type: "object",
-                          properties: {
-                            found: { type: "boolean" },
-                            caseType: { type: "string" },
-                            caseNumber: { type: "string" },
-                            party1: { type: "string" },
-                            party2: { type: "string" },
-                            date: { type: "string" },
-                            court: { type: "string" },
-                            isPublished: { type: "boolean" },
-                            padi_volume: { type: "string" },
-                            padi_part: { type: "string" },
-                            padi_page: { type: "string" },
-                            databaseName: { type: "string" },
-                            year: { type: "string" },
-                            source_url: { type: "string" },
-                          },
-                        },
-                      },
-                    },
-                    required: ["results"],
-                  },
-                },
-              },
+              response_format: { type: "json_schema", json_schema: { schema: { type: "object", required: ["results"],
+                properties: { results: { type: "array", items: { type: "object", properties: { source_url: { type: "string" } } } } } } } },
             };
-            const partySearchRun = await perplexityWithFallback(
-              PERPLEXITY_API_KEY,
-              partySearchBody,
-              `party:${searchQuery}`,
-            );
-            const partySearchResp = partySearchRun.resp!;
-            console.log(`[case-law] party tier=${partySearchRun.tier} tier1_trusted=${partySearchRun.tier1_trusted} tier2_fired=${partySearchRun.tier2_fired} tier2_trusted=${partySearchRun.tier2_trusted} dropped=${JSON.stringify(partySearchRun.tier2_dropped_hosts)}`);
-
-            if (partySearchResp.ok) {
-              const psData = await partySearchResp.json();
-              const psContent = psData.choices?.[0]?.message?.content || "";
-              console.log("[case-law] party-search sources:", JSON.stringify({
-                citations: psData.citations ?? null,
-                search_results: psData.search_results ?? null,
-                model: psData.model,
-              }));
-              console.log("[case-law] Party search result:", psContent);
-
-              const psJsonMatch = psContent.match(/\{[\s\S]*\}/);
-              if (psJsonMatch) {
-                const rawJson = psJsonMatch[0];
-                // Repair: replace unescaped ASCII " sitting between Hebrew letters
-                // (e.g. פ"ד, פד"י, ס"ח, ת"א, ע"א) with Hebrew gershayim ״ (U+05F4).
-                // These are never JSON delimiters in our domain.
-                const repairedJson = rawJson.replace(/([\u0590-\u05FF])"([\u0590-\u05FF])/g, "$1\u05F4$2");
-                let psParsed: Record<string, unknown> | null = null;
-                try {
-                  psParsed = JSON.parse(repairedJson);
-                } catch (e1) {
-                  console.warn("[case-law] First parse attempt failed, trying raw:", e1);
-                  try {
-                    psParsed = JSON.parse(rawJson);
-                  } catch (e2) {
-                    console.error("[case-law] Failed to parse party search JSON:", e2);
-                    caseLawHint = `\n\n══ חיפוש פסק דין ══\nלא הצלחתי לחפש פסקי דין בין ${party1} ל${party2}.\nבקש מהמשתמש לספק מספר תיק מדויק.\n══`;
-                  }
-                }
-                if (psParsed) {
-                  try {
-                  const rawResults = Array.isArray(psParsed.results) ? psParsed.results.filter((r: Record<string, unknown>) => r.found) : [];
-
-                  // ── Relevance filter: drop hallucinated results that share only a surname ──
-                  const STOPWORDS = new Set(["נ", "נגד", "של", "את", "עם", "על", "בין", "מדינת", "מדינה", "ה"]);
-                  const tokenize = (s: string): string[] =>
-                    s.split(/[\s,'"״׳\-־.()]+/u)
-                      .map((t) => t.trim())
-                      .filter((t) => t.length >= 3 && !STOPWORDS.has(t));
-                  const userP1Tokens = tokenize(party1);
-                  const userP2Tokens = tokenize(party2);
-                  const hasOverlap = (resultParty: string, tokens: string[]) =>
-                    tokens.length === 0 || tokens.some((t) => resultParty.includes(t));
-
-                  // Detect user-typed caseType prefix from the outer scope (already
-                  // stripped from rawParty1 above, or detected via 20-char window).
-                  // Already declared at outer scope: `userCaseTypeNorm`, `normalizeQuotes`.
-
-                  const isRelevantPartyResult = (r: Record<string, unknown>): boolean => {
-                    const rp1 = String(r.party1 || "");
-                    const rp2 = String(r.party2 || "");
-                    const rType = normalizeQuotes(String(r.caseType || ""));
-                    const rNum = String(r.caseNumber || "").trim();
-                    const hasParties = rp1.length > 0 && rp2.length > 0;
-
-                    // Strong match: result's caseType matches user's prefix AND has a docket.
-                    // This rescues correct results where Perplexity dropped party fields.
-                    const caseTypeMatchesUser = !!userCaseTypeNorm && rType === userCaseTypeNorm;
-                    const hasDocket = /\d/.test(rNum);
-
-                    if (hasParties) {
-                      // Order-preserving: result.p1 ⊇ user.p1 AND result.p2 ⊇ user.p2
-                      const sameOrder = hasOverlap(rp1, userP1Tokens) && hasOverlap(rp2, userP2Tokens);
-                      if (!sameOrder) {
-                        // Allow if caseType+docket strongly match user's request despite reversed parties
-                        if (caseTypeMatchesUser && hasDocket) {
-                          console.log(`[case-law] Keeping reversed-parties result on caseType+docket match: ${rType} ${rNum}`);
-                        } else {
-                          console.log(`[case-law] Dropping irrelevant result: "${rp1}" נ' "${rp2}" (user typed: "${party1}" / "${party2}")`);
-                          return false;
-                        }
-                      }
-                    } else {
-                      // Empty parties — keep only if caseType+docket strongly match user's request.
-                      if (!(caseTypeMatchesUser && hasDocket)) {
-                        console.log(`[case-law] Dropping empty-parties result without strong caseType match: caseType=${rType}, num=${rNum}`);
-                        return false;
-                      }
-                      console.log(`[case-law] Accepting empty-parties result on caseType+docket match: ${rType} ${rNum}`);
-                    }
-
-                    // If user supplied a caseType prefix, drop results from a different known prefix
-                    if (userCaseTypeNorm) {
-                      const rTypeIsKnownPrefix = CASE_TYPE_PREFIXES.some(
-                        (p) => normalizeQuotes(p) === rType,
-                      );
-                      if (rType && rTypeIsKnownPrefix && rType !== userCaseTypeNorm) {
-                        console.log(`[case-law] Dropping cross-jurisdiction result: caseType=${rType}, user=${userCaseTypeNorm}`);
-                        return false;
-                      }
-                    }
-                    return true;
-                  };
-                  let results = rawResults.filter(isRelevantPartyResult);
-
-                  console.log(`[case-law] Filtered ${rawResults.length} → ${results.length} relevant results`);
-
-                  // ── Open-web complementary search (at most once) ──
-                  // The restricted legal domains often hold no open page for
-                  // older rulings. Search once more without the domain filter;
-                  // a result survives only if one returned page shows its exact
-                  // docket next to both parties (groundOpenWebPartyResults).
-                  // Skipped when the tiered helper already searched the open web.
-                  if (results.length === 0 && !partySearchRun.tier2_fired) {
-                    try {
-                      const { search_domain_filter: _restricted, ...openWebBody } = partySearchBody;
-                      console.log(`[case-law] party_openweb firing for "${searchQuery}"`);
-                      const owResp = await trackedFetch("https://api.perplexity.ai/chat/completions", {
-                        method: "POST",
-                        headers: { Authorization: `Bearer ${PERPLEXITY_API_KEY}`, "Content-Type": "application/json" },
-                        body: JSON.stringify(openWebBody),
-                      }, { stage: "case_party_retrieval_tier2" });
-                      if (owResp.ok) {
-                        const ow = await owResp.json();
-                        const owSearch: Array<Record<string, unknown>> = Array.isArray(ow.search_results) ? ow.search_results : [];
-                        const owRaw = String(ow.choices?.[0]?.message?.content ?? "").match(/\{[\s\S]*\}/)?.[0];
-                        let owParsed: Record<string, unknown> | null = null;
-                        if (owRaw) {
-                          try { owParsed = JSON.parse(owRaw.replace(/([\u0590-\u05FF])"([\u0590-\u05FF])/g, "$1\u05F4$2")); }
-                          catch { try { owParsed = JSON.parse(owRaw); } catch { owParsed = null; } }
-                        }
-                        const owModel = owParsed && Array.isArray(owParsed.results) ? owParsed.results as Array<Record<string, unknown>> : [];
-                        const grounded = groundOpenWebPartyResults(owModel, owSearch, party1, party2);
-                        results = grounded.accepted.filter(isRelevantPartyResult);
-                        console.log(`[case-law] party_openweb model=${owModel.length} grounded=${grounded.accepted.length} rejected=${grounded.rejected} kept=${results.length} sources=${JSON.stringify(results.map((r) => r.source_url))}`);
-                      } else {
-                        console.log(`[case-law] party_openweb http ${owResp.status} → no results`);
-                      }
-                    } catch (e) {
-                      console.log(`[case-law] party_openweb failed: ${e instanceof Error ? e.message : String(e)}`);
-                    }
-                  }
-
-                  // ── Publication-data hallucination guard ──
-                  // Takdin/lite.takdin pages mix metadata between neighboring cases, so the
-                  // model often invents padi_volume/padi_page/year from sidebar noise.
-                  // Trust padi_* only when source_url is on a trusted publisher domain AND
-                  // the year is consistent with the docket year. Otherwise, run a focused
-                  // verification call; if that also fails, strip padi_* fields.
-                  const TRUSTED_PUB_DOMAINS = [
-                    "nevo.co.il",
-                    "supreme.court.gov.il",
-                    "court.gov.il",
-                    "psakdin.co.il",
-                  ];
-                  const docketYearOf = (caseNumber: string): number | null => {
-                    const m = String(caseNumber || "").match(/\/(\d{2,4})\b/);
-                    if (!m) return null;
-                    const n = parseInt(m[1], 10);
-                    if (Number.isNaN(n)) return null;
-                    if (n >= 1000) return n;
-                    // 2-digit: assume 19xx for ≥40, 20xx otherwise (Israeli legal docket convention)
-                    return n >= 40 ? 1900 + n : 2000 + n;
-                  };
-                  const isTrustedPubUrl = (url: unknown): boolean => {
-                    if (typeof url !== "string" || !url) return false;
-                    try {
-                      const host = new URL(url).hostname.toLowerCase();
-                      return TRUSTED_PUB_DOMAINS.some((d) => host === d || host.endsWith("." + d));
-                    } catch {
-                      return false;
-                    }
-                  };
-
-                  const verifyPadiPublication = async (
-                    caseType: string,
-                    caseNumber: string,
-                    party1: string, party2: string, decisionYear: string,
-                  ): Promise<{ verified: boolean; padi_volume?: string; padi_part?: string; padi_page?: string; year?: string } | null> => {
-                    try {
-                      const fullRef = `${caseType} ${caseNumber}`;
-                      const verifyResp = await trackedFetch("https://api.perplexity.ai/chat/completions", {
-                        method: "POST",
-                        headers: {
-                          Authorization: `Bearer ${PERPLEXITY_API_KEY}`,
-                          "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify({
-                          model: "sonar-pro",
-                          search_domain_filter: PADI_EVIDENCE_DOMAINS,
-                          messages: [
-                            {
-                              role: "system",
-                              content: `בדוק האם פסק דין ישראלי פורסם בפד"י, רק על סמך מקורות מהימנים (nevo / supreme.court.gov.il / court.gov.il / psakdin), או פרסום רשמי באתר הממשלה או הכנסת. חפש אזכור מלא עם סוג ההליך, המספר, שני הצדדים, כרך, חלק, עמוד ושנה באותו מקטע. אל תשתמש ב-takdin. החזר JSON בלבד:\n{"isPublished":true/false,"padi_volume":"כרך","padi_part":"חלק","padi_page":"עמוד ראשון","year":"YYYY"}\nאם לא ראית במפורש "פ"ד <כרך> <עמוד>" יחד עם מספר התיק, החזר {"isPublished":false}.`,
-                            },
-                            {
-                              role: "user",
-                              content: `האם ${fullRef} פורסם בפד"י? חפש "${caseNumber} פ\"ד" וציין כרך, חלק, עמוד ראשון ושנת פרסום.`,
-                            },
-                          ],
-                        }),
-                      }, { stage: "case_publication_check" });
-                      if (!verifyResp.ok) return null;
-                      const vData = await verifyResp.json();
-                      const proof = verifiedPadiPublication({ caseType, caseNumber, party1, party2, decisionYear }, vData);
-                      const range = proof ? PADI_VOLUME_YEAR_RANGES[proof.padi_volume] : null;
-                      if (!proof ||
-                          (range && (Number(decisionYear) < range[0] || Number(decisionYear) > range[1]))) return { verified: false };
-                      return { verified: true, ...proof };
-                    } catch (e) {
-                      console.error("[case-law] verifyPadiPublication error:", e);
-                      return null;
-                    }
-                  };
-
-                  for (const r of results) {
-                    // Normalize databaseName for unpublished results based on source_url
-                    if (!r.isPublished) {
-                      const normalized = normalizeDatabaseName(r.source_url, r.databaseName);
-                      if (normalized) r.databaseName = normalized;
-                    }
-                    const claimsPub = !!r.isPublished && !!r.padi_volume && String(r.padi_volume).trim() !== "";
-                    if (!claimsPub) continue;
-                    const dy = docketYearOf(String(r.caseNumber || ""));
-                    const ry = parseInt(String(r.year || ""), 10);
-                    const yearMismatch = dy != null && !Number.isNaN(ry) && Math.abs(ry - dy) > 3;
-                    const trusted = isTrustedPubUrl(r.source_url);
-                    const halfPub = (!!r.padi_volume) !== (!!r.padi_page);
-                    const dateMissing = !r.date || !String(r.date).trim();
-                    // Open-web פ"ד claims are never accepted without trusted verification.
-                    const suspect = yearMismatch || halfPub || (claimsPub && dateMissing) || !trusted || r.openWebProof === true;
-                    console.log(
-                      `[case-law] pub-guard: ${r.caseType} ${r.caseNumber} ` +
-                      `dy=${dy} ry=${ry} trustedUrl=${trusted} suspect=${suspect} src=${r.source_url ?? "none"}`,
-                    );
-                    if (!suspect) continue;
-                    const v = await verifyPadiPublication(String(r.caseType || userCaseTypeNorm || ""), String(r.caseNumber || ""),
-                      String(r.party1 || ""), String(r.party2 || ""), String(r.year || "").trim() || (String(r.date || "").match(/(\d{4})/)?.[1] ?? ""));
-                    if (v && v.verified && v.padi_volume) {
-                      console.log(`[case-law] pub-guard: verified, overriding padi_* for ${r.caseType} ${r.caseNumber}`);
-                      r.padi_volume = v.padi_volume;
-                      r.padi_part = v.padi_part || "";
-                      r.padi_page = v.padi_page || "";
-                      if (v.year) r.year = v.year;
-                      r.isPublished = true;
-                    } else {
-                      console.log(`[case-law] pub-guard: verification failed, stripping padi_* for ${r.caseType} ${r.caseNumber}`);
-                      r.padi_volume = "";
-                      r.padi_part = "";
-                      r.padi_page = "";
-                      r.isPublished = false;
-                      // Year may also be hallucinated from Takdin sidebar — keep only if it
-                      // matches the docket year window.
-                      if (yearMismatch) r.year = "";
-                    }
-                    // Re-normalize if pub-guard flipped isPublished to false
-                    if (!r.isPublished) {
-                      const normalized = normalizeDatabaseName(r.source_url, r.databaseName);
-                      if (normalized) r.databaseName = normalized;
-                    }
-                    // Reconcile decision date/year for surviving published cases (Rule 18).
-                    if (r.isPublished && r.padi_volume) {
-                      await reconcilePublishedDate(
-                        PERPLEXITY_API_KEY,
-                        String(r.caseType || userCaseTypeNorm || ""),
-                        String(r.caseNumber || ""),
-                        r as Record<string, unknown>,
-                      );
-                    }
-                  }
-
-
-                  if (results.length === 0) {
-                    console.log(`[case-law] No relevant results found for party search "${searchQuery}"`);
-                    caseLawHint = `\n\n══ חיפוש פסק דין ══\nלא נמצאו פסקי דין רלוונטיים בין ${party1} ל${party2}.\nבקש מהמשתמש לספק מספר תיק מדויק (למשל ע"פ 1234/56) לחיפוש מדויק יותר.\n══`;
-                  } else if (results.length === 1) {
-                    // Single result – use same logic as case-number search
-                    const r = results[0];
-                    // Fallback: if Perplexity dropped party fields, use the user-typed parties.
-                    const effP1 = (r.party1 && String(r.party1).trim()) || party1;
-                    const effP2 = (r.party2 && String(r.party2).trim()) || party2;
-                    const fullRef = `${r.caseType || userCaseTypeNorm || "[חסר: סוג הליך]"} ${r.caseNumber || "[חסר: מספר תיק]"}`;
-                    let details = `\n\n══ נתוני פסק דין שנמצאו בחיפוש ══\n`;
-                    details += `תיק: ${fullRef}\n`;
-                    details += `צדדים: **${effP1}** נ' **${effP2}**\n`;
-                    if (r.court) details += `בית משפט: ${r.court}\n`;
-                    if (r.isPublished && r.padi_volume) {
-                      caseLawOverrideLabel = "פסיקה (דפוס)";
-                      const part = r.padi_part ? `(${r.padi_part})` : "";
-                      details += `פרסום: פ"ד ${r.padi_volume}${part} ${r.padi_page || ""}\n`;
-                    } else if (r.databaseName) {
-                      caseLawOverrideLabel = "פסיקה (מאגר)";
-                      details += `מאגר: ${r.databaseName}\n`;
-                    }
-                    if (r.date && String(r.date).trim()) {
-                      details += `תאריך: ${r.date}\n`;
-                    } else {
-                      details += `תאריך: [חסר: תאריך]  ⚠️ חובה לכתוב במפורש "[חסר: תאריך]" באזכור — אסור להמציא תאריך.\n`;
-                    }
-                    if (r.year) details += `שנה: ${r.year}\n`;
-                    const partyLockLine = `\n⚠️ חובה מוחלטת: השתמש בשמות הצדדים בדיוק כפי שמופיעים כאן — "${effP1}" ו-"${effP2}". אסור להוסיף שמות פרטיים, תארים, "עזבון", "יורשי" או כל תוספת אחרת, גם אם אתה "זוכר" אותם ממקור אחר. כלל 18.4: שם משפחה בלבד לאנשים פרטיים.\n`;
-                    const spacingLine = `⚠️ חובה: רווח בין "פ\"ד" לכרך (למשל: פ"ד לג(2) 281, ולא פ"דלג).\n`;
-                    if (caseLawOverrideLabel === "פסיקה (דפוס)") {
-                      details += `${partyLockLine}${spacingLine}══ חובה לעצב כפסיקה (דפוס) לפי כלל 18, תוך שימוש בלעדי בנתונים שלמעלה. ══`;
-                    } else {
-                      details += `${partyLockLine}══ השתמש אך ורק בנתונים שלמעלה. אסור להוסיף מידע מהזיכרון. אם נתון חסר — סמן [חסר:...]. ══`;
-                    }
-                    caseLawHint = details;
-                  } else {
-                    // Multiple results – present disambiguation list with embedded data blobs
-                    console.log(`[case-law] Found ${results.length} relevant results for party search "${searchQuery}"`);
-                    let details = `\n\n══ נמצאו מספר פסקי דין תואמים ══\n`;
-                    details += `הצג למשתמש את הרשימה הבאה ובקש ממנו לבחור את פסק הדין הרלוונטי:\n\n`;
-                    results.forEach((r: Record<string, unknown>, i: number) => {
-                      const ref = `${r.caseType || userCaseTypeNorm || "?"} ${r.caseNumber || "?"}`;
-                      const effP1 = (r.party1 && String(r.party1).trim()) || party1;
-                      const effP2 = (r.party2 && String(r.party2).trim()) || party2;
-                      const parties = `${effP1} נ' ${effP2}`;
-                      const year = r.year || "";
-                      const court = r.court || "";
-                      // Embed full data so the selection branch can skip a re-search.
-                      // Backfill missing parties with user-typed values so downstream is consistent.
-                      const blob = encodeURIComponent(JSON.stringify({
-                        caseType: r.caseType || userCaseTypeNorm || "",
-                        caseNumber: r.caseNumber,
-                        party1: effP1, party2: effP2,
-                        date: r.date, court: r.court,
-                        isPublished: r.isPublished,
-                        padi_volume: r.padi_volume, padi_part: r.padi_part, padi_page: r.padi_page,
-                        databaseName: r.databaseName, year: r.year,
-                      }));
-                      details += `${i + 1}. ${ref} ${parties}${year ? ` (${year})` : ""}${court ? ` — ${court}` : ""}<!--DATA:${blob}-->\n`;
-                    });
-                    details += `\n══ שאל את המשתמש: "נמצאו מספר פסקי דין בין הצדדים. לאיזה פסק דין התכוונת?" והצג את הרשימה הממוספרת בדיוק כפי שהיא, כולל הסימון <!--DATA:...--> בסוף כל שורה (זהו סימן טכני שמועבר חזרה במערכת ולא מוצג למשתמש). לאחר שהמשתמש יבחר, עצב את האזכור לפי הנתונים שנמצאו. ══`;
-                    caseLawHint = details;
-                  }
-                  } catch (e) {
-                    console.error("[case-law] Error processing party search results:", e);
-                    caseLawHint = `\n\n══ חיפוש פסק דין ══\nלא הצלחתי לחפש פסקי דין בין ${party1} ל${party2}.\nבקש מהמשתמש לספק מספר תיק מדויק.\n══`;
-                  }
-                }
-              }
-            } else {
-              console.error("[case-law] Party search failed:", partySearchResp.status);
+            const searchParty = async (restricted: boolean) => {
+              const response = await trackedFetch("https://api.perplexity.ai/chat/completions", {
+                method: "POST",
+                headers: { Authorization: `Bearer ${PERPLEXITY_API_KEY}`, "Content-Type": "application/json" },
+                body: JSON.stringify(restricted ? { ...lookupBody, search_domain_filter: ["nevo.co.il", "court.gov.il",
+                  "supreme.court.gov.il", "supremedecisions.court.gov.il", "takdin.co.il", "lite.takdin.co.il", "psakdin.co.il", "psikan.com", "afiklaw.com", "din.co.il"] } : lookupBody),
+              }, { stage: restricted ? "case_party_retrieval_tier1" : "case_party_retrieval_tier2" });
+              if (!response.ok) return null;
+              try { return await response.json(); } catch { return null; }
+            };
+            const firstPass = await searchParty(true);
+            let records = groundIsraeliPartyDecisions(partyQuery, [firstPass]);
+            if (firstPass && records.length === 0) {
+              const open = await searchParty(false);
+              records = groundIsraeliPartyDecisions(partyQuery, [firstPass, open]);
             }
+            console.log(`[case-law] party_verified_records=${records.length}`);
+            return partyResponse(records);
           }
         }
       } catch (e) {
         console.error("Case law search error:", e);
       }
     }
+    // A party-only attempt with no usable evidence never falls into a model
+    // formatter that can manufacture a docket, date or option.
+    if (isBoundPartyLookup && !docketQuery && !isDisambiguationSelection) return partyResponse();
 
     // ── Legislation search via Perplexity ──
     let legislationHint = "";

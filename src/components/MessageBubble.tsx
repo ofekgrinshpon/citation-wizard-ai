@@ -1,3 +1,5 @@
+import { IsraeliPartyChoiceButtons } from "./IsraeliPartyChoiceButtons";
+import type { IsraeliPartyChoice } from "../../supabase/functions/_shared/israeliPartyDecisions.ts";
 import { BookEditionChoiceButtons } from "./BookEditionChoiceButtons";
 import { HebrewBookChoiceButtons } from "./HebrewBookChoiceButtons";
 import { useState } from "react";
@@ -33,6 +35,7 @@ interface Message {
   hebrewBookChoice?: import("@/lib/citationPlanner").CitationResolution["hebrewBookChoice"];
   foreignChoice?: import("@/lib/foreignCaseChoice").ForeignCaseChoice;
   countryQuestion?: import("@/lib/countryQuestion").CountryQuestion;
+  israeliPartyChoice?: IsraeliPartyChoice;
 }
 
 /** Extract rule number from a 📐 line */
@@ -48,6 +51,7 @@ interface MessageBubbleProps {
   onEdit?: (newContent: string) => void;
   onUpdateAssistantContent?: (newContent: string) => void;
   onSelectOption?: (optionText: string) => void;
+  onSelectIsraeliPartyChoice?: (optionId: string) => boolean | void;
   /** Record-bound foreign case choice (chat only). */
   /** Returns false when the choice was not applied, so the options unlock. */
   onSelectHebrewBookChoice?: (optionId: string) => boolean | void;
@@ -59,13 +63,14 @@ interface MessageBubbleProps {
   foreignScope?: { accountId: string | null | undefined; itemKey: string; input: string };
 }
 
-export function MessageBubble({ msg: rawMsg, detectedType, onChangeSourceType, onEdit, onUpdateAssistantContent, onSelectOption, onSelectBookEditionChoice, onSelectHebrewBookChoice, onSelectForeignChoice, onAnswerCountry, foreignScope }: MessageBubbleProps) {
+export function MessageBubble({ msg: rawMsg, detectedType, onChangeSourceType, onEdit, onUpdateAssistantContent, onSelectOption, onSelectIsraeliPartyChoice, onSelectBookEditionChoice, onSelectHebrewBookChoice, onSelectForeignChoice, onAnswerCountry, foreignScope }: MessageBubbleProps) {
   // Rule 1.10 safety net: enforce Hebrew number-range order on display/copy,
   // including cached messages produced before the server-side fix.
   const msg: Message = rawMsg.role === "assistant"
     ? { ...rawMsg, content: normalizeHebrewNumberRanges(rawMsg.content) }
     : rawMsg;
   const isUser = msg.role === "user";
+  const israeliPartyChoice = !isUser && onSelectIsraeliPartyChoice ? msg.israeliPartyChoice : undefined;
   const bookEditionChoice = !isUser && onSelectBookEditionChoice ? msg.bookEditionChoice : undefined;
   const hebrewBookChoice = !isUser && onSelectHebrewBookChoice ? msg.hebrewBookChoice : undefined;
   const foreignChoice = !isUser && onSelectForeignChoice ? msg.foreignChoice : undefined;
@@ -326,6 +331,7 @@ export function MessageBubble({ msg: rawMsg, detectedType, onChangeSourceType, o
             })}
 
             {hebrewBookChoice && <HebrewBookChoiceButtons key={hebrewBookChoice.fingerprint} choice={hebrewBookChoice} onSelect={onSelectHebrewBookChoice!} />}
+            {israeliPartyChoice && <IsraeliPartyChoiceButtons key={israeliPartyChoice.rawInput} choice={israeliPartyChoice} onSelect={onSelectIsraeliPartyChoice!} />}
             {bookEditionChoice && <BookEditionChoiceButtons key={bookEditionChoice.fingerprint} choice={bookEditionChoice} onSelect={onSelectBookEditionChoice!} />}
             {foreignChoice && (
               <ForeignCaseChoiceButtons key={`${foreignChoice.stage}|${foreignChoice.options.map((o) => o.id).join(",")}`} choice={foreignChoice} onSelect={onSelectForeignChoice!} />

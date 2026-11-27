@@ -1,3 +1,4 @@
+import { needsBoundIsraeliPartyLookup } from "@/lib/citationPlanner";
 import { needsNeutralDocketLookup } from "../../supabase/functions/_shared/pastedCitation";
 import { telemetryBody, reportZeroWork, type CostTelemetry } from "@/lib/costTelemetry";
 import {
@@ -265,7 +266,7 @@ export async function runCitation(opts: RunCitationOptions): Promise<RunCitation
   // 1) Verified-source store first — a direct hit costs no credit.
   let verifiedMatch: VerifiedSourceMatch | null = null;
   // AU/CA completion requests never read the verified store (pasted safety precedes cache).
-  if (opts.useVerifiedStore !== false && !needsNeutralDocketLookup(pasted.contract) && !pasted.countryLookup && !needsBoundBookLookup(sourceType, normalized)) {
+  if (opts.useVerifiedStore !== false && !needsNeutralDocketLookup(pasted.contract) && !pasted.countryLookup && !needsBoundBookLookup(sourceType, normalized) && !needsBoundIsraeliPartyLookup(sourceType, normalized)) {
     try {
       verifiedMatch = await findVerifiedSourceMatch(normalized);
     } catch {

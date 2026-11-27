@@ -1,3 +1,4 @@
+import { isIsraeliPartyLookupInput, readIsraeliPartyChoice, renderIsraeliPartyDecision, partyChoicePrompt, partyChoiceUnavailable, partyNoMatch, type IsraeliPartyChoice } from "../../supabase/functions/_shared/israeliPartyDecisions.ts";
 import { readHebrewBookChoice, selectHebrewBook, hebrewBookPartial, isHebrewBookTitleQuery, type HebrewBookChoice } from "../../supabase/functions/_shared/citationPure/hebrewBookChoice.ts";
 export type { HebrewBookChoice } from "../../supabase/functions/_shared/citationPure/hebrewBookChoice.ts";
 import { needsNeutralDocketLookup } from "../../supabase/functions/_shared/pastedCitation";
@@ -91,6 +92,9 @@ export interface CitationResolution {
   foreignChoice?: ForeignCaseChoice;
   bookEditionChoice?: BookEditionChoice;
   hebrewBookChoice?: HebrewBookChoice;
+  /** In-memory chat selection; cannot be reconstructed from reply text. */
+  israeliPartyChoice?: IsraeliPartyChoice;
+  israeliPartyLookup?: true;
   /** Chat only: ask which country a case is from instead of guessing (in memory, input-bound). */
   countryQuestion?: CountryQuestion;
   /** Word only: results without records; choosing one sends one new, disclosed check. */
@@ -388,6 +392,11 @@ export type ResponseResolution =
   | { kind: "reject"; code: "EMPTY_RESPONSE" }
   | { kind: "legacy" };
 
+/** An ambiguous party caption cannot take a single fuzzy cache hit. */
+export function needsBoundIsraeliPartyLookup(sourceType: SourceType | null | undefined, raw: string) {
+  return (sourceType === "case_law_database" || sourceType === "case_law_published") && isIsraeliPartyLookupInput(raw);
+}
+
 /** One terminal acceptance path for every existing typed request; legacy requests alone hand off. */
 export function resolveCitationResponse(plan: TypedPlan, data: Record<string, unknown> | null, caps: CitationHostCapabilities): ResponseResolution {
   const contract = plan.evidence.pasted.contract;
@@ -405,6 +414,22 @@ export function resolveCitationResponse(plan: TypedPlan, data: Record<string, un
   }
   const safety = readPastedCitationSafety(contract, data);
   if (safety) return { kind: "terminal", origin: "safety", resolution: { ...safety, status: "warning", pastedCitation: contract } };
+  if (plan.kind === "legacy" && !plan.caseRequest && contract.route !== "foreign" &&
+      needsBoundIsraeliPartyLookup(plan.sourceType, contract.rawInput)) {
+    const sourceType: SourceType = "case_law_database";
+    const sourceLabel = SOURCE_TYPE_LABELS[sourceType];
+    const base = { sourceType, sourceLabel, pastedCitation: contract, israeliPartyLookup: true as const };
+    const choice = readIsraeliPartyChoice(data?.israeliPartyLookup, contract.rawInput);
+    if (choice?.records.length === 1) {
+      const one = renderIsraeliPartyDecision(choice.records[0], contract.rawInput);
+      return { kind: "terminal", origin: "case", resolution: { ...base, ...one, sourceLabel: SOURCE_TYPE_LABELS[one.sourceType] } };
+    }
+    const warningMsg = choice ? (caps.host === "chat" ? partyChoicePrompt : partyChoiceUnavailable) : partyNoMatch(contract.rawInput).split("\n⚠️ ")[1];
+    const citation = escapeCitationLiteral(contract.rawInput);
+    const reply = choice && caps.host === "chat" ? partyChoicePrompt : `${citation}\n⚠️ ${warningMsg}`;
+    return { kind: "terminal", origin: "disambiguation", resolution: { ...base, reply, citation, warningMsg, status: "warning",
+      ...(choice && caps.host === "chat" ? { israeliPartyChoice: choice } : {}) } };
+  }
   const hebrewMarker = data?.hebrewBookLookup as {version?:number;rawInput?:string} | undefined;
   if ((plan.sourceType === "book" || plan.sourceType === "unknown" || !plan.sourceType) && !plan.caseRequest && !plan.articleRequest && hebrewMarker?.version === 1 && hebrewMarker.rawInput === contract.rawInput && isHebrewBookTitleQuery(contract.rawInput)) {
     const validated = readHebrewBookChoice(data?.hebrewBookChoice, contract.rawInput);
