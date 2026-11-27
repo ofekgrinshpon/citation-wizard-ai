@@ -15,7 +15,7 @@ export const RULEPACK_MANIFEST_VERSION = 1 as const;
 export const MANUAL_CHOICE_JURISDICTIONS = ["IL", "US", "UK", "DE", "AU", "CA", "FR", "UNKNOWN"] as const;
 export type ManualChoiceJurisdiction = typeof MANUAL_CHOICE_JURISDICTIONS[number];
 /** Typed-lookup wire jurisdictions. AU/CA are their own codes (bounded templates only), never cast. */
-export const LOOKUP_JURISDICTIONS = ["US", "UK", "OTHER", "UNKNOWN", "AU", "CA"] as const;
+export const LOOKUP_JURISDICTIONS = ["US", "UK", "OTHER", "UNKNOWN", "AU", "CA", "SG"] as const;
 export type LookupJurisdiction = typeof LOOKUP_JURISDICTIONS[number];
 /** Countries whose rulepacks are specified but disabled (no template, no completion). */
 export const PLANNED_JURISDICTIONS = ["AU", "CA", "DE", "FR"] as const;
@@ -24,7 +24,7 @@ export type RulepackStatus = "enabled" | "planned_disabled";
 export interface RulepackEntry {
   id: string;
   /** Rulepack scope; "GENERAL" = jurisdiction-independent general literature rules. */
-  jurisdiction: "US" | "UK" | "GENERAL" | "UNANCHORED" | "AU" | "CA" | "DE" | "FR";
+  jurisdiction: "US" | "UK" | "GENERAL" | "UNANCHORED" | "AU" | "CA" | "SG" | "DE" | "FR";
   jurisdictionId: string | null;
   subjurisdiction: string | null;
   family: string;
@@ -55,6 +55,8 @@ export const RULEPACK_MANIFEST: readonly RulepackEntry[] = Object.freeze([
   enabled({ id: "us.constitution", jurisdiction: "US", jurisdictionId: "us", family: "constitution", template: "U.S./state constitution provision (local only)", authority: { work: B21, edition: "21", rules: ["R11"] }, requiredFields: ["jurisdiction", "division"], completion: null }),
   enabled({ id: "us.statute", jurisdiction: "US", jurisdictionId: "us", family: "statute", template: "U.S.C. code section", authority: { work: B21, edition: "21", rules: ["R12"] }, requiredFields: ["titleNumber", "code", "section", "year"], completion: { kind: "statute", jurisdiction: "US" } }),
   enabled({ id: "uk.case", jurisdiction: "UK", jurisdictionId: "t2:united-kingdom", subjurisdiction: "t2:united-kingdom/england-and-wales", family: "case", template: "UK neutral/reported decision", authority: { work: B21, edition: "21", rules: ["T2.43"] }, requiredFields: ["caseName"], completion: { kind: "case", jurisdiction: "UK" } }),
+  enabled({ id: "sg.case.sgca_neutral", jurisdiction: "SG", jurisdictionId: "t2:singapore", family: "case", template: "Singapore Court of Appeal exact neutral", authority: { work: "Singapore Judiciary", edition: "official neutral form", rules: ["Neutral citation"], url: "https://www.elitigation.sg/gd/" }, requiredFields: ["caseName", "neutralYear", "court", "neutralNumber"], completion: { kind: "case", jurisdiction: "SG" }, exclusions: ["other courts", "determinations", "reporters", "judge selection", "pinpoints", "name-only search"] }),
+  enabled({ id: "sg.case.sghc_neutral", jurisdiction: "SG", jurisdictionId: "t2:singapore", family: "case", template: "Singapore General Division of the High Court exact neutral (2021 onward)", authority: { work: "Singapore Judiciary", edition: "official neutral form", rules: ["Neutral citation"], url: "https://www.elitigation.sg/gd/" }, requiredFields: ["caseName", "neutralYear", "court", "neutralNumber"], completion: { kind: "case", jurisdiction: "SG" }, exclusions: ["pre-2021 judgments", "other courts", "determinations", "reporters", "judge selection", "pinpoints", "name-only search"] }),
   enabled({ id: "uk.case.scot_session_neutral", jurisdiction: "UK", jurisdictionId: "t2:united-kingdom", family: "case", template: "Court of Session exact neutral (local draft)", authority: { work: "Scottish Courts and Tribunals Service", edition: "court neutral form", rules: ["Practice Note 5 of 2004"], url: "https://www.scotcourts.gov.uk/media/xqol4tqa/court-of-session-practice-note-number-5-of-2004-form-of-opinions-and-neutral-citation.pdf" }, requiredFields: ["caseName", "neutralYear", "court", "neutralNumber"], completion: { kind: "case", jurisdiction: "UK" }, exclusions: ["reporters", "page pinpoints", "name-only search", "paragraphs beyond bounded inspection"], notes: "Independent Bluebook styling check required before release." }),
   enabled({ id: "uk.case.scot_session_report", jurisdiction: "UK", jurisdictionId: "t2:united-kingdom", family: "case", template: "Court of Session with indexed Session Cases report (local draft)", authority: {work:"Scottish Council of Law Reporting",edition:"court neutral form",rules:["Publication reference"],url:"https://sclr-index.scottishlawreports.org.uk/"}, requiredFields:["caseName","neutralYear","court","neutralNumber","reporterYear","reporter","firstPage"], completion:{kind:"case",jurisdiction:"UK"}, exclusions:["pinpoints","other reporters","name-only search"],notes:"Only when Session Cases is explicitly requested. Bluebook 21 styling not independently verified." }),
   enabled({ id: "uk.statute", jurisdiction: "UK", jurisdictionId: "t2:united-kingdom", family: "statute", template: "UK Act (year, chapter)", authority: { work: B21, edition: "21", rules: ["T2.43"] }, requiredFields: ["statuteName", "year"], completion: { kind: "statute", jurisdiction: "UK" } }),
@@ -77,7 +79,7 @@ export const RULEPACK_MANIFEST: readonly RulepackEntry[] = Object.freeze([
 ]);
 
 const PLANNED_PREFIX: Record<string, ManualChoiceJurisdiction> = {
-  "t2:australia": "AU", "t2:canada": "CA", "t2:france-republic-of": "FR", "t2:germany-federal-republic-of": "DE",
+  "t2:singapore": "SG", "t2:australia": "AU", "t2:canada": "CA", "t2:france-republic-of": "FR", "t2:germany-federal-republic-of": "DE",
 };
 /** Classification jurisdiction id → manual-choice jurisdiction. Unlisted ids stay UNKNOWN (never US/IL). */
 export function rulepackJurisdictionFromId(id: string | undefined): ManualChoiceJurisdiction | null {
@@ -117,9 +119,9 @@ const GENERAL_FAMILIES = new Set(["book", "book_chapter", "journal_article", "un
  * UNKNOWN/OTHER cases resolve to the unanchored entry; AU/CA require an exact template id.
  */
 export function rulepackCapability(family: string, jurisdiction: string, templateId?: string): { local: boolean; lookup: boolean; lookupJurisdiction: LookupJurisdiction | null } {
-  const scope = GENERAL_FAMILIES.has(family) ? "GENERAL" : ["US", "UK", "AU", "CA"].includes(jurisdiction) ? jurisdiction
+  const scope = GENERAL_FAMILIES.has(family) ? "GENERAL" : ["US", "UK", "AU", "CA", "SG"].includes(jurisdiction) ? jurisdiction
     : family === "case" && (jurisdiction === "OTHER" || jurisdiction === "UNKNOWN") ? "UNANCHORED" : null;
-  const explicit = scope === "AU" || scope === "CA" || templateId?.startsWith("uk.case.scot_session_");
+  const explicit = scope === "AU" || scope === "CA" || scope === "SG" || templateId?.startsWith("uk.case.scot_session_");
   const entries = scope ? RULEPACK_MANIFEST.filter(e => e.status === "enabled" && e.jurisdiction === scope && e.family === family &&
     (explicit ? e.id === templateId : !e.id.startsWith("uk.case.scot_session_"))) : [];
   const completion = entries.find(e => e.completion)?.completion ?? null;

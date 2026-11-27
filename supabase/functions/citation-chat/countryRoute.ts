@@ -1,3 +1,5 @@
+import { lookupSingapore } from "./singaporeRecordRoute.ts";
+import { parseSingapore } from "../_shared/citationPure/singaporeDecision.ts";
 import { lookupSessionCases } from "./scottishSessionCasesRoute.ts";
 /**
  * Bounded country completion (server). A typed request always terminates here,
@@ -49,7 +51,7 @@ export function countrySourceBasis(url: string, jurisdiction: CountryJurisdictio
 export function isCountryLookupRequest(request: unknown): boolean {
   if (!request || typeof request !== "object" || Array.isArray(request)) return false;
   const r = request as Record<string, unknown>;
-  return r.jurisdiction === "AU" || r.jurisdiction === "CA" ||
+  return r.jurisdiction === "AU" || r.jurisdiction === "CA" || r.jurisdiction === "SG" ||
     (r.jurisdiction === "UK" && isScottishCountryWire(r.rawInput, r.parsedFields));
 }
 
@@ -108,6 +110,7 @@ export async function resolveCountryLookup(rawRequest: unknown, deps: CountryRou
   const request = validateCountryRequest(rawRequest);
   const fallbackShape = { kind: ((rawRequest as { kind?: string } | null)?.kind === "statute" ? "statute" : "case") as CountryFamily,
     jurisdiction: ((rawRequest as { jurisdiction?: string } | null)?.jurisdiction === "UK" ? "UK" :
+      (rawRequest as { jurisdiction?: string } | null)?.jurisdiction === "SG" ? "SG" :
       (rawRequest as { jurisdiction?: string } | null)?.jurisdiction === "CA" ? "CA" : "AU") as CountryLookupRequest["jurisdiction"] };
   if (!request) return { ...emptyResult(fallbackShape), error: "invalid_country_request" };
   const result = emptyResult(request);
@@ -123,6 +126,16 @@ export async function resolveCountryLookup(rawRequest: unknown, deps: CountryRou
       result.sources = [{ url:record.url,title:record.caption,tier:"tier1" }];
       return fill(result, request, { caseName:record.caption, reporterYear:record.reportYear,firstPage:record.firstPage },
         { url:record.url,title:record.caption,basis:"publisher_metadata" });
+    }
+    if (request.jurisdiction === "SG") {
+      const neutral = (parseSingapore(request.rawInput)?.neutral ?? null);
+      if (!neutral) return result;
+      result.identity.anchors.push(neutral);
+      const record = await lookupSingapore(request.rawInput, budget, doFetch);
+      if (!record) return result;
+      result.sources = [{ url: record.url, title: record.caption, tier: "tier1" }];
+      return fill(result, request, { caseName: record.caption },
+        { url: record.url, title: record.caption, basis: "official_record" });
     }
     if (!deps.apiKey) return { ...result, error: "missing_perplexity_credentials" };
     if (request.parsedFields.court === "ONCA") {
@@ -309,3 +322,5 @@ function fill(result: CountryLookupResponse, request: CountryLookupRequest, fiel
 export { countryCues };
 
 export { ONCA_ID } from "../_shared/citationPure/ontarioDecision.ts";
+
+export { parseSingapore };

@@ -1,3 +1,4 @@
+import { parseSingapore } from "../../supabase/functions/_shared/citationPure/singaporeDecision.ts";
 import { ONCA_ID } from "../../supabase/functions/_shared/citationPure/ontarioDecision.ts";
 import { extractBookIsbn } from "../../supabase/functions/_shared/citationPure/bookIsbn.ts";
 /**
@@ -54,7 +55,7 @@ export function validateCitationInput(raw: string): ValidationResult {
     return { valid: false, reason: "empty", messageHe: INVALID_MESSAGE_HE };
   }
 
-  if (ONCA_ID.test(text) || extractBookIsbn(text)) return { valid: true };
+  if (parseSingapore(text) || ONCA_ID.test(text) || extractBookIsbn(text)) return { valid: true };
 
   // Normalize whitespace once for length-based checks.
   const compact = text.replace(/\s+/g, "");

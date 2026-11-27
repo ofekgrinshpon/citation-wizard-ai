@@ -1,3 +1,7 @@
+import recentHighCourtRecord from "./fixtures/sgca/2023_SGHC_1.html?raw";
+import secondSingaporeRecord from "./fixtures/sgca/2024_SGCA_1.html?raw";
+import singaporeRecord from "./fixtures/sgca/2020_SGCA_119.html?raw";
+import wrongSingaporeRecord from "./fixtures/sgca/2021_SGHC_277.html?raw";
 import * as referralQualificationModule from "../../supabase/functions/citation-chat/referralQualification";
 import * as citationRenderModule from "../../supabase/functions/_shared/citationPure/render";
 import * as countryLookupModule from "../../supabase/functions/_shared/citationPure/countryLookup";
@@ -167,6 +171,68 @@ beforeAll(() => {
 });
 
 describe("real citation-chat handler", () => {
+  it.each([
+    ["official original", singaporeRecord, true],
+    ["other court citing the requested case", wrongSingaporeRecord, false],
+    ["other court with copied browser title", wrongSingaporeRecord.replace(/<title>[^<]+<\/title>/, "<title>[2020] SGCA 119</title>"), false],
+    ["missing page", null, false],
+  ] as const)("runs exact Singapore lookup through the actual planner and handler: %s", async (_label,page,matching) => {
+    const raw = "[2020] SGCA 119";
+    reset({ page });
+    const plan = planned(raw).typed!;
+    expect(plan?.foreignLookup).toMatchObject({kind:"case",jurisdiction:"SG"});
+    const result = await post(raw,plan.foreignLookup,"handler-sgca-fixture-"+matching);
+    expect(result.status, JSON.stringify(result.body)).toBe(200);
+    expect(calls.map(c=>c.url)).toEqual(["https://www.elitigation.sg/gd/s/2020_SGCA_119"]);
+    expect(result.body.foreignLookup).toMatchObject({identity:{matched:matching}});
+    const resolved=resolveCitationResponse(plan,result.body,CHAT_HOST);
+    expect(resolved.kind).toBe("terminal");
+    if (resolved.kind==="terminal") {
+      const citation = citationTextOnly(resolved.resolution.citation);
+      if (matching) expect(citation).toMatch(/^Denka .+ v Seraya .+ \[2020\] SGCA 119\.$/);
+      else expect(citation).not.toMatch(/Denka|Seraya/);
+    }
+  });
+  it("completes a second official SGCA judgment with an anonymized caption", async () => {
+    const raw = "2024 SGCA 1";
+    reset({page:secondSingaporeRecord});
+    const plan=planned(raw).typed!;
+    const result=await post(raw,plan.foreignLookup,"handler-sgca-wkm");
+    expect(result.status).toBe(200);
+    expect(calls.map(x=>x.url)).toEqual(["https://www.elitigation.sg/gd/s/2024_SGCA_1"]);
+    const resolved=resolveCitationResponse(plan,result.body,CHAT_HOST);
+    expect(resolved.kind).toBe("terminal");
+    if(resolved.kind==="terminal") expect(citationTextOnly(resolved.resolution.citation)).toBe("WKM v WKN [2024] SGCA 1.");
+  });
+  it.each([
+    ["[2021] SGHC 277",wrongSingaporeRecord,"Zhong Kai Construction Co Pte Ltd v Diamond Glass Enterprise Pte Ltd [2021] SGHC 277."],
+    ["2023 SGHC 1",recentHighCourtRecord,"Wingcrown Investment Pte Ltd v Mannepalli Gayatri Ram [2023] SGHC 1."],
+    ["[2021] SGHC 277",recentHighCourtRecord,null],
+    ["[2021] SGHC 277",wrongSingaporeRecord.replace(/General Division of the High Court — Suit No/g,"Court of Appeal — Suit No"),null],
+    ["[2021] SGHC 277",singaporeRecord.replaceAll("[2020] SGCA 119","[2021] SGHC 277"),null],
+  ] as const)("matches only the requested High Court original: %s", async (raw,page,expected) => {
+    reset({page});
+    const plan=planned(raw).typed!;
+    expect(plan?.foreignLookup).toMatchObject({kind:"case",jurisdiction:"SG",parsedFields:{court:"SGHC"}});
+    const result=await post(raw,plan.foreignLookup,"handler-sghc-"+(expected?"match":"rejected"));
+    expect(result.status).toBe(200);
+    const parts=raw.match(/(20\d{2})\]? SGHC (\d+)/)!;
+    expect(calls.map(x=>x.url)).toEqual([`https://www.elitigation.sg/gd/s/${parts[1]}_SGHC_${parts[2]}`]);
+    expect(result.body.foreignLookup).toMatchObject({identity:{matched:!!expected}});
+    const resolved=resolveCitationResponse(plan,result.body,CHAT_HOST);
+    expect(resolved.kind).toBe("terminal");
+    if(resolved.kind==="terminal") expect(citationTextOnly(resolved.resolution.citation)).toBe(expected ?? raw);
+  });
+  it.each(["[2020] SGHC 1","[2021] SGHC(A) 1","[2021] SGHC 277 [3]","[2020] SGCA 119 [3]","[2020] SGCA(I) 1"])("does not dispatch unsupported Singapore form: %s", async raw => {
+    reset();
+    const evidence=planCitationEvidence(raw,null);
+    expect(evidence.pasted.contract.route).toBe("preserve");
+    const wrong=await post(raw, {enabled:true,kind:"case",jurisdiction:"SG",rawInput:raw,
+      parsedFields:{neutralYear:"2020",court:"SGCA",neutralNumber:"119"}}, "handler-sgca-outside-scope");
+    expect(calls).toHaveLength(0);
+    expect(wrong.body.foreignLookup).toBeUndefined();
+  });
+
   it.each([
     {raw:"[2014] CSIH 69, Session Cases",page:kerrIndex,searches:0,url:"sclr-index.scottishlawreports.org.uk",citation:"Kerr v Mangan [2014] CSIH 69, 2015 SC 17."},
     {raw:"2023 ONCA 260",page:ontarioRecord,searches:1,url:"coadecisions.ontariocourts.ca",citation:"Husky Food Importers & Distributors Ltd. v. JH Whittaker & Sons Limited, 2023 ONCA 260."}
