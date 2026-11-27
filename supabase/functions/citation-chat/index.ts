@@ -95,7 +95,7 @@ import { bindFreeformLookup, chargeModel, createCitationBudget, bindFreeformResp
 import { boundBookCompletion, prepareBookAwareCitationDelivery, resolveBookCompletion } from "../_shared/citationPure/bookFinal.ts";
 import type { CitationRecoveryInput } from "../_shared/citationRecovery.ts";
 import { isStatuteLookupRequest, validateStatuteRequest, resolveStatuteLookup } from "./statuteRoute.ts";
-import { isCountryLookupRequest, resolveCountryLookup, validateCountryRequest } from "./countryRoute.ts";
+import { isCountryLookupRequest, ONCA_ID, resolveCountryLookup, validateCountryRequest } from "./countryRoute.ts";
 import { guardPastedCitationRequest, needsNeutralDocketLookup, pastedCitationWarning, suppliedLookupFieldsMatch, type PastedCitationContract } from "../_shared/pastedCitation.ts";
 import { createCitationDiagnosticCollector } from "../_shared/citationDiagnostic.ts";
 import { authorizeCitationDiagnostic, isCitationDiagnosticPreflight, CITATION_DIAGNOSTIC_BUILD, CITATION_DIAGNOSTIC_PARSER } from "../_shared/citationDiagnosticGate.ts";
@@ -1011,6 +1011,7 @@ function isValidCitationInputServer(raw: string): boolean {
     .replace(/══[\s\S]*?══+\s*/g, "")
     .trim();
   if (!text) return false;
+  if (ONCA_ID.test(text)) return true;
   const compact = text.replace(/\s+/g, "");
   if (SINGLE_CHAR_REPEAT_V.test(compact)) return false;
 

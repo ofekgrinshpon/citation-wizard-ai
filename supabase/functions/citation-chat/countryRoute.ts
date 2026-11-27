@@ -1,19 +1,23 @@
+import { lookupSessionCases } from "./scottishSessionCasesRoute.ts";
 /**
- * Bounded AU/CA online completion (server). A typed AU/CA request always ends
- * here with a typed result; it never falls through to the generic model, never
- * retries after an uncertain send and never fetches result pages (AustLII,
- * CanLII and JADE are read only through search results).
+ * Bounded country completion (server). A typed request always terminates here,
+ * never falls through to the generic model and never retries an uncertain send.
+ * Ontario and Scotland may inspect a single original court record; classic
+ * AU/CA templates use search results only.
  *
  * The server re-derives the request from the raw text and the explicit
  * country, so a client cannot widen the scope or forge supplied fields.
  */
 import {
   bindCountryChains, countryCues, countryPlanFromRaw, extractCountryChains, filterCountryDecisions, groupCountryDecisions,
-  auStatuteRecord, caStatuteRecord, selectStatuteRecords,
+  auStatuteRecord, caStatuteRecord, selectStatuteRecords, isScottishCountryWire,
   type CountryChainEvidence, type CountryDecision, type CountryFamily, type CountryFieldSource, type CountryJurisdiction, type CountryLookupRequest,
 } from "../_shared/citationPure/countryLookup.ts";
-import { canChargeSearch, createCitationBudget, type CitationBudget } from "../_shared/citationPure/freeformInterpret.ts";
+import { canChargeSearch, chargePageFetch, createCitationBudget, type CitationBudget } from "../_shared/citationPure/freeformInterpret.ts";
 import { searchOnce, textContainsParty, type ForeignLookupResult } from "./foreignLookup.ts";
+import { ontarioRecordUrl, readOntarioDecision } from "../_shared/citationPure/ontarioDecision.ts";
+import { acquireScottishRecord } from "./scottishRecordRoute.ts";
+import { scottishJudgmentUrl } from "../_shared/citationPure/scottishDecision.ts";
 import { trackedFetch } from "../_shared/costTelemetry.ts";
 
 const MAX_RAW = 2000;
@@ -44,8 +48,9 @@ export function countrySourceBasis(url: string, jurisdiction: CountryJurisdictio
 
 export function isCountryLookupRequest(request: unknown): boolean {
   if (!request || typeof request !== "object" || Array.isArray(request)) return false;
-  const j = (request as { jurisdiction?: unknown }).jurisdiction;
-  return j === "AU" || j === "CA";
+  const r = request as Record<string, unknown>;
+  return r.jurisdiction === "AU" || r.jurisdiction === "CA" ||
+    (r.jurisdiction === "UK" && isScottishCountryWire(r.rawInput, r.parsedFields));
 }
 
 /** Strict contract: the client's request must equal the plan re-derived from its raw text. */
@@ -55,7 +60,7 @@ export function validateCountryRequest(request: unknown): CountryLookupRequest |
   if (r.enabled !== true || (r.kind !== "case" && r.kind !== "statute")) return null;
   if (typeof r.rawInput !== "string" || !r.rawInput.trim() || r.rawInput.length > MAX_RAW) return null;
   if (Object.keys(r).some((k) => !["enabled", "kind", "jurisdiction", "rawInput", "parsedFields"].includes(k))) return null;
-  const plan = countryPlanFromRaw(r.rawInput, r.jurisdiction as CountryJurisdiction, r.kind as CountryFamily);
+  const plan = countryPlanFromRaw(r.rawInput, r.jurisdiction as CountryLookupRequest["jurisdiction"], r.kind as CountryFamily);
   if (plan?.kind !== "lookup") return null;
   const sent = r.parsedFields && typeof r.parsedFields === "object" && !Array.isArray(r.parsedFields) ? r.parsedFields as Record<string, unknown> : null;
   if (!sent) return null;
@@ -82,6 +87,7 @@ export interface CountryRouteDeps {
   budget?: CitationBudget;
   onProviderUnknown?: () => void;
   onError?: (error: unknown) => void;
+  extractScottishPdf?: NonNullable<Parameters<typeof acquireScottishRecord>[2]>["extract"];
 }
 
 function queryFor(request: CountryLookupRequest): string {
@@ -101,14 +107,29 @@ interface Hit { url: string; title?: string; snippet?: string; tier: "tier1" | "
 export async function resolveCountryLookup(rawRequest: unknown, deps: CountryRouteDeps): Promise<CountryLookupResponse> {
   const request = validateCountryRequest(rawRequest);
   const fallbackShape = { kind: ((rawRequest as { kind?: string } | null)?.kind === "statute" ? "statute" : "case") as CountryFamily,
-    jurisdiction: ((rawRequest as { jurisdiction?: string } | null)?.jurisdiction === "CA" ? "CA" : "AU") as CountryJurisdiction };
+    jurisdiction: ((rawRequest as { jurisdiction?: string } | null)?.jurisdiction === "UK" ? "UK" :
+      (rawRequest as { jurisdiction?: string } | null)?.jurisdiction === "CA" ? "CA" : "AU") as CountryLookupRequest["jurisdiction"] };
   if (!request) return { ...emptyResult(fallbackShape), error: "invalid_country_request" };
   const result = emptyResult(request);
-  if (!deps.apiKey) return { ...result, error: "missing_perplexity_credentials" };
   const doFetch = deps.fetchImpl ?? trackedFetch;
   const budget = deps.budget ?? createCitationBudget();
   try {
-    return await lookup(request, result, doFetch, deps.apiKey, budget);
+    if (request.jurisdiction === "UK" && request.parsedFields.reporter === "SC") {
+      const f = request.parsedFields;
+      const id = `[${f.neutralYear}] ${f.court} ${f.neutralNumber}`;
+      const record = await lookupSessionCases(id, budget, doFetch);
+      result.identity.anchors.push(id);
+      if (record.state !== "matched") return record.state === "unverified" ? { ...result, error:"lookup_failed" } : result;
+      result.sources = [{ url:record.url,title:record.caption,tier:"tier1" }];
+      return fill(result, request, { caseName:record.caption, reporterYear:record.reportYear,firstPage:record.firstPage },
+        { url:record.url,title:record.caption,basis:"publisher_metadata" });
+    }
+    if (!deps.apiKey) return { ...result, error: "missing_perplexity_credentials" };
+    if (request.parsedFields.court === "ONCA") {
+      return await lookupOntario(request, result, doFetch, deps.apiKey, budget);
+    }
+    if (request.jurisdiction === "UK") return await lookupScotland(request, result, doFetch, deps.apiKey, budget, deps.extractScottishPdf);
+    return await lookup({ ...request, jurisdiction: request.jurisdiction }, result, doFetch, deps.apiKey, budget);
   } catch (error) {
     deps.onProviderUnknown?.();
     deps.onError?.(error);
@@ -116,7 +137,83 @@ export async function resolveCountryLookup(rawRequest: unknown, deps: CountryRou
   }
 }
 
-async function lookup(request: CountryLookupRequest, result: CountryLookupResponse, doFetch: typeof fetch, apiKey: string, budget: CitationBudget): Promise<CountryLookupResponse> {
+// One discovery request plus one inspected first-party record. Redirects are
+// never followed; the returned search text can rank candidates but cannot fill fields.
+async function lookupOntario(request: CountryLookupRequest, result: CountryLookupResponse, doFetch: typeof fetch, apiKey: string, budget: CitationBudget): Promise<CountryLookupResponse> {
+  const id = `${request.parsedFields.neutralYear} ONCA ${request.parsedFields.neutralNumber}`;
+  const host = "coadecisions.ontariocourts.ca";
+  result.identity.anchors.push(id);
+  result.diagnostics.tier1Queried = true;
+  const hits = await searchOnce(`"${id}" Ontario Court of Appeal`, [host], doFetch, apiKey,
+    "foreign_search_tier1", undefined, "tier1", budget);
+  if (budget.unknown) return { ...result, error: "lookup_failed" };
+  const candidates = hits.flatMap(hit => {
+    const url = ontarioRecordUrl(hit?.url);
+    return url ? [{ url, exact: new RegExp(`\\b${id}\\b`).test(`${hit.title ?? ""} ${hit.snippet ?? ""}`) }] : [];
+  }).sort((a,b) => Number(b.exact)-Number(a.exact));
+  const url = candidates[0]?.url;
+  if (!url || !chargePageFetch(budget)) return result;
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), 7_000);
+  try {
+    const response = await doFetch(url, { redirect: "error", signal: ctrl.signal, headers: { Accept: "text/html" } });
+    if (!response.ok || (response.url && response.url !== url) ||
+        !/^text\/html(?:;|$)/i.test(response.headers.get("content-type") ?? "")) return result;
+    const reader = response.body?.getReader();
+    if (!reader) return result;
+    const decoder = new TextDecoder();
+    let body = "", bytes = 0;
+    for (;;) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      bytes += value.byteLength;
+      if (bytes > 512_000) { void reader.cancel().catch(() => {}); return result; }
+      body += decoder.decode(value, { stream: true });
+    }
+    const record = readOntarioDecision(id, url, body + decoder.decode());
+    if (!record) return result;
+    result.sources = [{ url, title: record.caption, tier: "tier1", strong: true }];
+    return fill(result, request, { caseName: record.caption }, { url, title: record.caption, basis: "official_record" });
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+/** A search hit can locate a PDF, but cannot supply any citation field. */
+async function lookupScotland(request: CountryLookupRequest, result: CountryLookupResponse, doFetch: typeof fetch,
+    apiKey: string, budget: CitationBudget, extract?: CountryRouteDeps["extractScottishPdf"]): Promise<CountryLookupResponse> {
+  const { neutralYear: year, court, neutralNumber: number } = request.parsedFields;
+  const id = `[${year}] ${court} ${number}`;
+  result.identity.anchors.push(id);
+  if (!canChargeSearch(budget)) return result;
+  result.diagnostics.tier1Queried = true;
+  const hits = await searchOnce(`"${id}" Court of Session judgment PDF`, ["scotcourts.gov.uk"], doFetch, apiKey,
+    "foreign_search_tier1", undefined, "tier1", budget);
+  if (budget.unknown) return { ...result, error: "lookup_failed" };
+  const exact = new RegExp(String.raw`(?:\[|\b)${year}\]?[ \t]+${court}[ \t]*${number}(?!\d)`);
+  const candidates = hits.flatMap(hit => {
+    const url = typeof hit.url === "string" ? scottishJudgmentUrl(hit.url) : null;
+    if (!url) return [];
+    const name = url.pathname.split("/").at(-1) ?? "";
+    const prefix = /^(20\d{2})(csih|csoh)([1-9]\d{0,3})(?:[.-]|$)/.exec(name);
+    if (prefix && (prefix[1] !== year || prefix[2] !== court.toLowerCase() || prefix[3] !== number)) return [];
+    const rank = prefix ? 3 : exact.test(hit.title ?? "") ? 2 : exact.test(hit.snippet ?? "") ? 1 : 0;
+    return rank ? [{ url: url.href, rank }] : [];
+  }).sort((a, b) => b.rank - a.rank);
+  const url = candidates[0]?.url;
+  if (!url || !chargePageFetch(budget)) return result;
+  const record = await acquireScottishRecord(request.rawInput, url, { fetch: doFetch, extract });
+  if (!record) return result;
+  result.sources = [{ url: record.sourceUrl, title: record.caption, tier: "tier1" }];
+  if ("paragraph" in record && typeof record.paragraph === "string") {
+    result.fields.paragraph = record.paragraph;
+    result.grounded.paragraph = true;
+    result.provenance.paragraph = { value: record.paragraph, sourceUrl: record.sourceUrl, basis: "document_inspection" };
+  }
+  return fill(result, request, { caseName: record.caption }, { url: record.sourceUrl, title: record.caption, basis: "official_record" });
+}
+
+async function lookup(request: CountryLookupRequest & { jurisdiction: CountryJurisdiction }, result: CountryLookupResponse, doFetch: typeof fetch, apiKey: string, budget: CitationBudget): Promise<CountryLookupResponse> {
   const J = request.jurisdiction;
   const f = request.parsedFields;
   const parties = request.kind === "case" ? f.caseName.match(/^(.+?)\s+(?:v\.?|c\.)\s+(.+)$/u)?.slice(1, 3) as [string, string] | undefined : undefined;
@@ -210,3 +307,5 @@ function fill(result: CountryLookupResponse, request: CountryLookupRequest, fiel
 }
 
 export { countryCues };
+
+export { ONCA_ID } from "../_shared/citationPure/ontarioDecision.ts";

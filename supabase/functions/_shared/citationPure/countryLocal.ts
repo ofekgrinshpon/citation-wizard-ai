@@ -17,7 +17,7 @@ export const AU_REPORTER_ANCHOR = /\(\d{4}\)\s+\d+\s+(?:CLR|FCR)\b/;
 export const AU_NEUTRAL_ANCHOR = /\[\d{4}\]\s+(?:HCA|FCA|FCAFC)\b/;
 export const AU_CODE_ANCHOR = /\((?:Cth)\)/;
 export const AU_SUFFIX_ANCHOR = /\(Austl\.\)\s*\.?\s*$/;
-export const CA_NEUTRAL_ANCHOR = /\b\d{4}\s+(?:SCC|CanLII)\b/;
+export const CA_NEUTRAL_ANCHOR = /\b\d{4}\s+(?:SCC|CanLII|ONCA)\b/;
 export const CA_REPORTER_ANCHOR = /\[\d{4}\]\s+\d+\s+(?:S\.C\.R\.|SCR\b)/;
 export const CA_CODE_ANCHOR = /(?<![A-Za-z.])(?:R\.?S\.?C\.?|S\.C\.),?\s+\d{4}\b/;
 export const CA_SUFFIX_ANCHOR = /\(Can\.\)\s*\.?\s*$/;
@@ -96,7 +96,9 @@ export function parseCountryLocal(raw: string, manual: CitationManualChoice | nu
       }
     } else match(new RegExp(String.raw`^(?<caseName>.+?)\s*\((?<reporterYear>\d{4})\)\s+(?<reporterVolume>\d+)\s+(?<reporter>CLR|FCR)\s+(?<firstPage>\d+)${pin}`), 'au.case.reported');
   } else if (jurisdiction === 'CA' && family === 'case') {
-    if (/\bSCC\b/.test(s)) {
+    if (/\bONCA\b/.test(s)) {
+      match(/^(?<caseName>.+?),\s+(?<neutralYear>20\d{2}) (?<court>ONCA) (?<neutralNumber>[1-9]\d{0,3})$/, 'ca.case.onca_neutral');
+    } else if (/\bSCC\b/.test(s)) {
       match(new RegExp(String.raw`^(?<caseName>.+?),?\s+(?<neutralYear>\d{4})\s+SCC\s+(?<neutralNumber>\d+)(?:,\s*\[(?<reporterYear>\d{4})\]\s+(?<reporterVolume>\d+)\s+(?<reporter>S\.C\.R\.|SCR)\s+(?<firstPage>\d+))?${pin}`), 'ca.case.scc_neutral');
     } else match(new RegExp(String.raw`^(?<caseName>.+?)(?:\s*\((?<decisionYear>\d{4})\))?,\s*\[(?<reporterYear>\d{4})\]\s+(?<reporterVolume>\d+)\s+(?<reporter>S\.C\.R\.|SCR)\s+(?<firstPage>\d+)${pin}`), 'ca.case.scr');
     if (ast.fields.reporterYear && Number(ast.fields.reporterYear.value) < 1975) ast.conflicts.push('scr_before_1975');
@@ -135,6 +137,7 @@ export function renderCountryLocal(ast: CountryAst) {
       case 'au.case.reported': citation = `${italic(f('caseName'))} (${e('reporterYear')}) ${e('reporterVolume')} ${e('reporter')} ${e('firstPage')}${paragraph || page} (Austl.).`; break;
       case 'au.case.neutral': citation = `${italic(f('caseName'))} [${e('neutralYear')}] ${e('court')} ${e('neutralNumber')} (${e('decisionDate')})${f('paragraph') ? ` [${e('paragraph')}]` : ''} (Austl.).`; break;
       case 'au.statute.cth': citation = `${italic(`${f('statuteName')} ${f('enactmentYear')}`)} (Cth)${f('subdivisions') ? ` ${e('subdivisions')}` : ''} (Austl.).`; break;
+      case 'ca.case.onca_neutral': citation = `${italic(f('caseName'))}, ${e('neutralYear')} ONCA ${e('neutralNumber')}.`; break;
       case 'ca.case.scc_neutral': citation = `${caName()}, ${e('neutralYear')} SCC ${e('neutralNumber')}${f('reporterYear') ? `, [${e('reporterYear')}] ${e('reporterVolume')} S.C.R. ${e('firstPage')}` : ''}${paragraph || page} (Can.).`; break;
       case 'ca.case.scr': citation = `${caName()}${f('decisionYear') && f('decisionYear') !== f('reporterYear') ? ` (${e('decisionYear')})` : ''}, [${e('reporterYear')}] ${e('reporterVolume')} S.C.R. ${e('firstPage')}${paragraph || page} (Can.).`; break;
       case 'ca.statute.federal': citation = `${e('statuteName')}, ${/^R/.test(f('code')) ? 'R.S.C.' : 'S.C.'} ${e(/^R/.test(f('code')) ? 'revisionYear' : 'enactmentYear')}, c ${e('chapter')}${f('subdivisions') ? `, ${e('subdivisions')}` : ''} (Can.).`; break;

@@ -417,7 +417,7 @@ export function resolveCitationResponse(plan: TypedPlan, data: Record<string, un
   }
   if (plan.kind === "legacy" || !plan.foreignLookup) return { kind: "legacy" };
   const response = data?.foreignLookup;
-  if (plan.evidence.pasted.countryLookup && (plan.foreignLookup.jurisdiction === "AU" || plan.foreignLookup.jurisdiction === "CA")) {
+  if (plan.evidence.pasted.countryLookup && plan.foreignLookup.jurisdiction === plan.evidence.pasted.countryLookup.jurisdiction) {
     return resolveCountryResponse(plan, plan.foreignLookup as unknown as CountryLookupRequest, response, data?.pastedCitation, caps);
   }
   const req = bindFreeformResponseFields(plan.foreignLookup, typeof plan.foreignLookup.rawInput === "string" ? plan.foreignLookup.rawInput : contract.rawInput, response);

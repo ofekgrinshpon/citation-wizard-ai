@@ -25,7 +25,7 @@ const NEW = [
 ] as const;
 
 describe("D1 manifest", () => {
-  it("existing routes plus six AU/CA templates with exact-country completion; DE/FR remain disabled with v21 authority", () => {
+  it("existing routes, bounded ONCA neutral route and unchanged DE/FR exclusions", () => {
     const enabledJ = new Set(RULEPACK_MANIFEST.filter(e => e.status === "enabled").map(e => e.jurisdiction));
     expect([...enabledJ].sort()).toEqual(["AU", "CA", "GENERAL", "UK", "UNANCHORED", "US"]);
     for (const j of ["AU", "CA", "DE", "FR"]) {
@@ -33,6 +33,12 @@ describe("D1 manifest", () => {
       expect(e.length).toBeGreaterThan(0);
       for (const x of e) {
         expect(x.status).toBe(j === "AU" || j === "CA" ? "enabled" : "planned_disabled"); expect(x.completion).toEqual(j === "AU" || j === "CA" ? { kind: x.family, jurisdiction: j } : null); expect(x.rendererId).toBe(j === "AU" || j === "CA" ? "foreign_bluebook_v22" : null);
+        if (x.id === "ca.case.onca_neutral") {
+          expect(x.authority.edition).toBe("court neutral form");
+          expect(x.authority.url).toMatch(/^https:\/\/www\.ontariocourts\.ca\//);
+          expect(x.exclusions).toEqual(["reporters", "pinpoints", "name-only search"]);
+          continue;
+        }
         expect(x.authority.edition).toBe("21"); expect(x.authority.url).toMatch(/\/bluebook\/v21\/tables\/t2-foreign-jurisdictions\//);
         expect(x.authority.observed).toBe("2026-10-21");
       }
