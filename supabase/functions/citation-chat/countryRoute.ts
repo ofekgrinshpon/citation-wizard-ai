@@ -132,8 +132,9 @@ export async function resolveCountryLookup(rawRequest: unknown, deps: CountryRou
       result.identity.anchors.push(id.key);
       const verified = await lookupContinental(id,budget,doFetch);
       if (!verified) return result;
-      result.sources = [{url:verified.url,tier:"tier1"}];
-      return fill(result,request,{[verified.field]:verified.value},{url:verified.url,basis:"official_record"});
+      const title = "sourceTitle" in verified ? verified.sourceTitle : undefined;
+      result.sources = [{url:verified.url,...(title ? {title} : {}),tier:"tier1"}];
+      return fill(result,request,{[verified.field]:verified.value},{url:verified.url,...(title ? {title} : {}),basis:"official_record"});
     }
     if (request.jurisdiction === "UK" && request.parsedFields.reporter === "SC") {
       const f = request.parsedFields;

@@ -2,6 +2,38 @@ import { boeArticleUrl, boeArticleVersion, continentalCaseDate, continentalCaseU
 import { chargePageFetch, type CitationBudget } from "../_shared/citationPure/freeformInterpret.ts";
 import { readBoundedBody } from "../_shared/pdfExtractionProtocol.ts";
 import { STC_GAZETTE_LOCATORS } from "./spanishGazetteLocators.ts";
+import { BGB_SNAPSHOT_DATE, BGB_TITLES } from "./germanBgbTitles.ts";
+
+const DAY = 86_400_000;
+export async function lookupGermanBgb(id: ContinentalId, budget: CitationBudget, fetchImpl: typeof fetch, now = Date.now()) {
+  if (id.template !== "de.statute.bgb" || !id.section || !id.direct || !chargePageFetch(budget)) return null;
+  const age = now - Date.parse(BGB_SNAPSHOT_DATE);
+  const snapshot = BGB_TITLES[id.section];
+  const fallback = () => snapshot && age >= 0 && age <= 45 * DAY
+    ? {field:"title",value:snapshot,url:id.direct!,sourceTitle:`BGB official XML snapshot ${BGB_SNAPSHOT_DATE}`}
+    : null;
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), 8_000);
+  try {
+    const r = await fetchImpl(id.direct,{redirect:"manual",signal:ctrl.signal,headers:{Accept:"text/html"}});
+    if (r.redirected || (r.url && r.url !== id.direct) || !r.ok ||
+        !/^text\/html(?:;|$)/i.test(r.headers.get("content-type") ?? "")) {
+      void r.body?.cancel().catch(() => {});
+      return !r.redirected && (!r.url || r.url === id.direct) && r.status >= 500 && r.status <= 599 ? fallback() : null;
+    }
+    const bytes = await readBoundedBody(r.body,256_000,ctrl.signal);
+    // The official page declares ISO-8859-1. Decode bytes directly rather
+    // than making server success depend on an optional codec implementation.
+    let html = "";
+    for (let i=0;i<bytes.length;i+=4096) html += String.fromCharCode(...bytes.subarray(i,i+4096));
+    const value = germanSectionTitle(id,html);
+    return value && !/weggefallen|aufgehoben/i.test(value) ? {field:"title",value,url:id.direct} : null;
+  } catch (error) {
+    // A destination/network error is not evidence that the section disappeared.
+    // Never substitute the snapshot for contradictory HTML or official 4xx.
+    return ctrl.signal.aborted || error instanceof TypeError ? fallback() : null;
+  } finally { clearTimeout(timer); }
+}
 
 
 /** Stop at the court's metadata boundary; the judgment body can be several MB. */
@@ -109,6 +141,7 @@ async function lookupSpanishCourt(id: ContinentalId, budget: CitationBudget, fet
 
 export async function lookupContinental(id: ContinentalId, budget: CitationBudget, fetchImpl: typeof fetch) {
   if (id.template === "es.case.stc") return await lookupSpanishCourt(id, budget, fetchImpl);
+  if (id.template === "de.statute.bgb") return await lookupGermanBgb(id,budget,fetchImpl);
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), 8_000);
   const fetchText = async (url: string, type: "html" | "xml" | "json", encoding = "utf-8") => {
@@ -126,10 +159,6 @@ export async function lookupContinental(id: ContinentalId, budget: CitationBudge
     if (id.template === "de.case.bverfg") {
       const record = germanDecisionRecord(id, await fetchText(germanDecisionApiUrl(id),"json"));
       return record ? {field:"decisionDate",...record} : null;
-    }
-    if (id.template === "de.statute.bgb" && id.direct) {
-      const value = germanSectionTitle(id,await fetchText(id.direct,"html","windows-1252"));
-      return value ? {field:"title",value,url:id.direct} : null;
     }
     const url = boeArticleUrl(id);
     if (!url) return null;

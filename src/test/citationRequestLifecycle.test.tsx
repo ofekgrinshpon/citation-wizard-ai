@@ -129,6 +129,21 @@ describe("citation request identity and transport", () => {
     expect(result.data).toMatchObject({ foreignLookup });
   });
 
+  it.each(["DE", "ES"])("delivers only a bound unmatched continental response (%s)", async (jurisdiction) => {
+    const rawInput = jurisdiction === "DE" ? "BGB § 823" : "STC 1/2024";
+    const kind = jurisdiction === "DE" ? "statute" : "case";
+    const foreignLookup = { kind, jurisdiction, fields: {}, grounded: {}, provenance: {}, sources: [],
+      identity: { matched: false, anchors: [rawInput], conflicts: [], jurisdiction },
+      diagnostics: { tier1Queried: false, tier2Fired: false } };
+    const request = { ...body(rawInput), foreignLookup: { enabled: true, rawInput, kind, jurisdiction,
+      parsedFields: { neutral: rawInput } } };
+    boundary.invoke.mockResolvedValueOnce({ data: { content: "", foreignLookup }, error: null });
+    expect(await invokeFunction("citation-chat", request)).toMatchObject({errorInfo:null,data:{foreignLookup}});
+    boundary.invoke.mockResolvedValueOnce({ data: { content: "", foreignLookup: {
+      ...foreignLookup, identity: { ...foreignLookup.identity, anchors: ["unrelated"] } } }, error: null });
+    expect((await invokeFunction("citation-chat", request)).errorInfo?.code).toBe("REQUEST_OUTCOME_UNKNOWN");
+  });
+
   it.each(["in_progress", "unknown", "failed", "succeeded"])("retains an already-started ID for status %s without paid auto-retries", async (status) => {
     boundary.invoke.mockResolvedValue(failure("REQUEST_ALREADY_STARTED", 409, { status }));
     await invokeFunction("citation-chat", body());

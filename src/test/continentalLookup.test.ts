@@ -5,6 +5,7 @@ import { acceptCountryResponse } from "../../supabase/functions/_shared/citation
 import { BOE_TEXT, germanDecisionApiUrl, germanDecisionRecord, parseContinental } from "../../supabase/functions/_shared/citationPure/continentalEvidence";
 import { guardPastedCitationRequest } from "../../supabase/functions/_shared/pastedCitation";
 import { resolveCountryLookup } from "../../supabase/functions/citation-chat/countryRoute";
+import { lookupGermanBgb } from "../../supabase/functions/citation-chat/continentalRoute";
 import { createCitationBudget } from "../../supabase/functions/_shared/citationPure/freeformInterpret";
 
 const f=(name:string)=>new Uint8Array(readFileSync(new URL("fixtures/continental/"+name,import.meta.url)));
@@ -38,7 +39,7 @@ function net(routes:Record<string,string>,hit?:string|string[]) {
    const xml=url.startsWith(BOE_TEXT);
    const mime=xml ? "application/xml" : url.includes("/v1/rechtsprechung?") ? "application/json" : "text/html";
    expect(new Headers(init?.headers).get("accept")).toBe(mime);
-   expect(init?.redirect).toBe(url.includes("tribunalconstitucional.es") ? "manual" : "error");
+   expect(init?.redirect).toBe(url.includes("tribunalconstitucional.es") || url.includes("gesetze-im-internet.de") ? "manual" : "error");
    const bytes=f(routes[url]);
    if (url.includes("tribunalconstitucional.es")) {
      // Real record STC 31/2010 was ~2.77 MiB; parsing must stop at the metadata marker.
@@ -88,6 +89,21 @@ describe("Germany and Spain official sources through the application planner and
   ["Constitución Española art. 49(2) as of 2024-02-16",{[BOE_TEXT+"/bloque/a49"]:"boe-xml"},undefined],
  ] as [string,Record<string,string>,string|undefined][])("fails closed for wrong record or effective version: %s",async (raw,routes,hit)=>{
   expect(await run(raw,routes,hit)).toEqual({kind:"fail",reason:"not_found"});
+ });
+ it("uses recent official BGB XML only for a temporary network outage", async()=>{
+   const id=parseContinental("BGB § 823")!;
+   const date=Date.parse("2026-11-27"), budget=createCitationBudget();
+   const unavailable=vi.fn(async()=>new Response(null,{status:503}));
+   const fallback=await lookupGermanBgb(id,budget,unavailable,date);
+   expect(fallback).toEqual({field:"title",value:"Schadensersatzpflicht",url:bgb,sourceTitle:"BGB official XML snapshot 2026-11-20"});
+   expect(budget.retrievals).toBe(1);
+   expect(unavailable).toHaveBeenCalledTimes(1);
+   const failedNetwork=vi.fn(async()=>{throw new TypeError("Fetch failed");});
+   expect(await lookupGermanBgb(id,createCitationBudget(),failedNetwork,date)).toEqual(fallback);
+   expect(await lookupGermanBgb(id,createCitationBudget(),failedNetwork,Date.parse("2027-02-01"))).toBeNull();
+   expect(await lookupGermanBgb(parseContinental("BGB § 9999")!,createCitationBudget(),failedNetwork,date)).toBeNull();
+   expect(await lookupGermanBgb(id,createCitationBudget(),vi.fn(async()=>new Response(null,{status:404})),date)).toBeNull();
+   expect(await lookupGermanBgb(id,createCitationBudget(),net({[bgb]:"de-bgb-824"}),date)).toBeNull();
  });
  it("rejects inconsistent, ambiguous or non-constitutional API results",()=>{
    const id=parseContinental(de)!;

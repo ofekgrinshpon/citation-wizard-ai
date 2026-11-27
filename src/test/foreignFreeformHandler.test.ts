@@ -81,7 +81,7 @@ type Handler = (req: Request) => Promise<Response>;
 let handler: Handler;
 const calls: Array<{ url: string; body: string }> = [];
 const finishes: Record<string, unknown>[] = [];
-let script: { hits: Hit[]; secondHits?: Hit[]; page: string | null; throwOnSearch: number | null; searches: number; interruptBody: boolean; continental?: Record<string,{body:string|Uint8Array<ArrayBuffer>;mime:string}>; irish?: { search: string; record: string } };
+let script: { hits: Hit[]; secondHits?: Hit[]; page: string | null; throwOnSearch: number | null; searches: number; interruptBody: boolean; continental?: Record<string,{body:string|Uint8Array<ArrayBuffer>;mime:string;status?:number}>; irish?: { search: string; record: string } };
 
 function installHandler() {
   const modules: Record<string, unknown> = {
@@ -107,7 +107,7 @@ function installHandler() {
       calls.push({ url, body: String(init?.body ?? "") });
       if (script.continental?.[url]) {
         const fixture=script.continental[url];
-        return new Response(fixture.body,{headers:{"content-type":fixture.mime}});
+        return new Response(fixture.body,{status:fixture.status,headers:{"content-type":fixture.mime}});
       }
       if (script.irish && url.startsWith("https://judgments.courts.ie/judgments")) {
         const data = new URL(url).pathname === "/judgments" ? script.irish.search : script.irish.record;
@@ -240,6 +240,26 @@ describe("real citation-chat handler", () => {
     const res=resolveCitationResponse(plan,result.body,CHAT_HOST);
     expect(res.kind).toBe("terminal");
     if(res.kind==="terminal" && matched) expect(res.resolution.completion?.identityConfirmed).toBe(true);
+  });
+
+  it("shows a dated official snapshot result when live BGB lookup is unavailable",async()=>{
+    vi.useFakeTimers({toFake:["Date"]});
+    vi.setSystemTime(new Date("2026-11-27T11:00:00Z"));
+    try {
+      const source="https://www.gesetze-im-internet.de/bgb/__823.html";
+      reset({continental:{[source]:{body:"temporary failure",mime:"text/html",status:503}}});
+      const raw="BGB § 823", plan=planned(raw).typed!;
+      const response=await post(raw,plan.foreignLookup,"handler-bgb-snapshot");
+      expect(response.status).toBe(200);
+      const result=resolveCitationResponse(plan,response.body,CHAT_HOST);
+      expect(result).toMatchObject({kind:"terminal",resolution:{
+        citation:"Bürgerliches Gesetzbuch [BGB] § 823.",
+        warningMsg:expect.stringContaining("2026-11-20"),
+        completion:{identityConfirmed:true,provenance:{title:{sourceUrl:source}}},
+      }});
+      expect(searchCalls()).toHaveLength(0);
+      expect(gatewayCalls()).toHaveLength(0);
+    } finally {vi.useRealTimers();}
   });
 
   it("completes a bare NZSC number through the app planner, actual handler and verified source rendering", async () => {

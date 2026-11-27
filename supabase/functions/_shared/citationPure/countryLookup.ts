@@ -579,7 +579,9 @@ export function acceptCountryResponse(request: CountryLookupRequest, raw: string
       id.template === "de.statute.bgb" ? `Bürgerliches Gesetzbuch [BGB] § ${id.section}.` :
       `Constitución Española [CE] art. ${id.section}${id.paragraph ? `(${id.paragraph})` : ""} (versión de ${value}).`;
     return {kind:"done",templateId:id.template,citation,fields:{[field]:value},
-      provenance:{[field]:{value,sourceUrl:url,basis:"official_record"}},sourceUrls:[url]};
+      provenance:{[field]:{value,sourceUrl:url,basis:"official_record",
+        ...(id.template === "de.statute.bgb" && /^BGB official XML snapshot \d{4}-\d{2}-\d{2}$/.test(str(p.sourceTitle)) ? {sourceTitle:str(p.sourceTitle)} : {})
+      }},sourceUrls:[url]};
   }
 
   if (request.jurisdiction === "NZ") {
