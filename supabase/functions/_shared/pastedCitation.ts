@@ -1,13 +1,14 @@
+import { parseContinental } from "./citationPure/continentalEvidence.ts";
 /** Batch A: pure supplied-text evidence, shared by browser and server. No I/O or identity claims. */
 import { CASE_DOCKET_RE, findBareDocket } from "./caseTypePrefixes.ts";
 import { LOOKUP_JURISDICTIONS, PLANNED_RULEPACK_WARNING, isGeneralFamily, isManualChoiceJurisdiction, isPlannedJurisdiction, readRulepackVersion, rulepackCapability, rulepackJurisdictionFromId } from "./citationPure/rulepack.ts";
-import { countryPlanFromRaw, planCountryLookup, isScottishCountryWire, planScottishLookup, planSingaporeLookup, planNzscLookup, planIescLookup } from "./citationPure/countryLookup.ts";
+import { countryPlanFromRaw, planCountryLookup, planContinentalLookup, isScottishCountryWire, planScottishLookup, planSingaporeLookup, planNzscLookup, planIescLookup } from "./citationPure/countryLookup.ts";
 const sameFields = (want: Record<string, string>, sent: unknown): boolean => !!sent && typeof sent === "object" && !Array.isArray(sent) &&
   Object.keys(sent).length === Object.keys(want).length && Object.entries(want).every(([k, v]) => (sent as Record<string, unknown>)[k] === v);
 import { parseCountryLocal, AU_REPORTER_ANCHOR, AU_NEUTRAL_ANCHOR, AU_CODE_ANCHOR, CA_NEUTRAL_ANCHOR, CA_REPORTER_ANCHOR, CA_CODE_ANCHOR, AU_SUFFIX_ANCHOR, CA_SUFFIX_ANCHOR, isLabelledLiterature } from "./citationPure/countryLocal.ts";
 export const PASTED_CITATION_VERSION = 1 as const;
 /** D1: AU/CA/FR are recorded (never cast to US/IL/UNKNOWN); their rulepacks are planned/disabled. */
-export type CitationJurisdiction = "IL" | "US" | "UK" | "DE" | "AU" | "CA" | "FR" | "SG" | "IE" | "NZ" | "UNKNOWN";
+export type CitationJurisdiction = "IL" | "US" | "UK" | "DE" | "ES" | "AU" | "CA" | "FR" | "SG" | "IE" | "NZ" | "UNKNOWN";
 export interface InputSpan { start: number; end: number }
 export interface SuppliedField {
   value: string | null;
@@ -110,6 +111,13 @@ export function buildPastedCitation(raw: string, manual: CitationManualChoice | 
       if (signal === "court" || signal === "reporter") candidates[signal].push(field(raw, m[0], "supplied_text"));
     }
   };
+  const continental = parseContinental(raw);
+  if (continental) add(/^.+$/m, continental.jurisdiction, continental.kind === "case" ? "court" : "code");
+  else {
+    add(/^\s*STC \d+\/\d{4}\b/, "ES", "court");
+    add(/^\s*(?:Constitución Española|BOE-A-1978-31229)\b/i, "ES", "code");
+    add(/^\s*(?:BGB\s+§|§\s*\d+[a-z]?\s+BGB\b)/, "DE", "code");
+  }
   // Bounded explicit signals, not a country dictionary or language detector.
   add(/\bBVerfG\b|\bBvR\b/, "DE", "court");
   add(/\bBVerfGE\b/, "DE", "reporter");
@@ -163,12 +171,12 @@ export function buildPastedCitation(raw: string, manual: CitationManualChoice | 
   const foreignShape = /[A-Za-z][^\n]*?\s+v(?:s)?\.?\s+[A-Za-z]/.test(raw);
   const caseInput = !!prefixed || !!bare || foreignShape || evidence.some(e => e.signal === "court" || e.signal === "reporter");
   // Existing parsed literature can contain numbers/case titles without becoming a decision.
-  const sourceKind = country?.family ?? (isScottishCountryWire(raw, null) ? "case" : parser?.kind) ?? (caseInput ? "case" : evidence.some(e => e.signal === "code") ? "statute" : null);
+  const sourceKind = continental?.kind ?? country?.family ?? (isScottishCountryWire(raw, null) ? "case" : parser?.kind) ?? (caseInput ? "case" : evidence.some(e => e.signal === "code") ? "statute" : null);
   const manualKind = citationSourceKind(manual?.sourceType);
   // This foundation gates decision-vs-other-family crossings only. Existing
   // literature/statute helpers retain their more precise subtype ambiguity gates.
   if (manualKind && sourceKind && manualKind !== sourceKind && (manualKind === "case" || sourceKind === "case")) conflicts.push("manual_source_kind_conflict");
-  const unsupported = jurisdiction === "DE" ? ["formatter_DE_not_supported"] :
+  const unsupported = continental && planContinentalLookup(raw) && !manual?.subjurisdiction ? [] : jurisdiction === "DE" || jurisdiction === "ES" ? [`formatter_${jurisdiction}_not_supported`] :
     // Disabled country packs block country-scoped families only; enabled general literature keeps its template.
     isPlannedJurisdiction(jurisdiction) && !(isGeneralFamily(manualKind ?? sourceKind) && sourceKind !== "case") ? [`rulepack_planned_disabled:${jurisdiction}`] :
     manual?.jurisdiction === "UNKNOWN" && (manual.jurisdictionId || manual.subjurisdiction) && caseInput ? ["jurisdiction_formatter_unknown"] : [];
@@ -251,10 +259,10 @@ export function guardPastedCitationRequest(body: { messages: Array<{ role: strin
   }
   const lookup = body.foreignLookup as { rawInput?: unknown; kind?: unknown; jurisdiction?: unknown; parsedFields?: unknown; enabled?: unknown } | null;
   // Bounded AU/CA completion: valid only as the exact plan re-derived from the raw text and the same country.
-  const countryRequest = !!lookup && typeof lookup === "object" && (lookup.jurisdiction === "AU" || lookup.jurisdiction === "CA" || lookup.jurisdiction === "SG" || lookup.jurisdiction === "NZ" || lookup.jurisdiction === "IE" ||
+  const countryRequest = !!lookup && typeof lookup === "object" && (lookup.jurisdiction === "AU" || lookup.jurisdiction === "CA" || lookup.jurisdiction === "SG" || lookup.jurisdiction === "NZ" || lookup.jurisdiction === "IE" || lookup.jurisdiction === "ES" || lookup.jurisdiction === "DE" ||
     (lookup.jurisdiction === "UK" && (isScottishCountryWire(raw, null) || isScottishCountryWire(lookup.rawInput, lookup.parsedFields))));
   const countryPlan = countryRequest && typeof lookup!.rawInput === "string" && (lookup!.kind === "case" || lookup!.kind === "statute")
-    ? countryPlanFromRaw(raw, lookup!.jurisdiction as "AU" | "CA" | "UK" | "SG" | "NZ" | "IE", lookup!.kind) : null;
+    ? countryPlanFromRaw(raw, lookup!.jurisdiction as "AU" | "CA" | "UK" | "SG" | "NZ" | "IE" | "DE" | "ES", lookup!.kind) : null;
   const countryValid = countryRequest && countryPlan?.kind === "lookup" && c.jurisdiction === lookup!.jurisdiction &&
     sameFields(countryPlan.request.parsedFields, lookup!.parsedFields);
   if (lookup && !countryRequest && (typeof lookup !== "object" || Array.isArray(lookup) || lookup.enabled !== true || typeof lookup.rawInput !== "string" ||
@@ -287,6 +295,6 @@ export function guardPastedCitationRequest(body: { messages: Array<{ role: strin
   if (manual?.subjurisdiction && c.jurisdiction === "UK" && manual.subjurisdiction !== "t2:united-kingdom/england-and-wales") {
     c.route = "preserve"; c.formatter = "unsupported"; c.unsupported.push("subjurisdiction_formatter_not_supported");
   }
-  if ((c.jurisdiction === "AU" || c.jurisdiction === "CA" || c.jurisdiction === "SG" || c.jurisdiction === "NZ" || c.jurisdiction === "IE" || isScottishCountryWire(raw, null)) && !countryValid) { c.route = "preserve"; c.unsupported.push("country_local_only_completion_disabled"); }
+  if ((c.jurisdiction === "AU" || c.jurisdiction === "CA" || c.jurisdiction === "SG" || c.jurisdiction === "NZ" || c.jurisdiction === "IE" || c.jurisdiction === "ES" || !!parseContinental(raw) || isScottishCountryWire(raw, null)) && !countryValid) { c.route = "preserve"; c.unsupported.push("country_local_only_completion_disabled"); }
   return c;
 }

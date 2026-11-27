@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<response>
+  <status>
+    <code>200</code>
+    <text>ok</text>
+  </status>
+  <data>
+    <bloque>
+      <id>a48</id>
+      <titulo>Artículo 48</titulo>
+      <fecha_actualizacion>19781229</fecha_actualizacion>
+      <url>https://www.boe.es/datosabiertos/api/legislacion-consolidada/id/BOE-A-1978-31229/texto/bloque/a48</url>
+    </bloque>
+<bloque>
+      <id>a49</id>
+      <titulo>Artículo 49</titulo>
+      <fecha_actualizacion>20240217</fecha_actualizacion>
+      <url>https://www.boe.es/datosabiertos/api/legislacion-consolidada/id/BOE-A-1978-31229/texto/bloque/a49</url>
+    </bloque></data></response>

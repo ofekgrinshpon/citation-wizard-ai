@@ -1,3 +1,4 @@
+import { parseContinental, continentalCaseUrl, realDate, BOE_TEXT } from "./continentalEvidence.ts";
 import { parseNzscNumber, nzscJudgmentUrl } from "./nzscDecision.ts";
 import { parseIesc, iescRecordUrl } from "./iescDecision.ts";
 import { parseSingapore } from "./singaporeDecision.ts";
@@ -23,6 +24,7 @@ export type CountryJurisdiction = "AU" | "CA";
 export type CountryFamily = "case" | "statute";
 export type CountryTemplateId =
   | "au.case.neutral" | "au.case.reported" | "au.statute.cth"
+  | "de.case.bverfg" | "de.statute.bgb" | "es.case.stc" | "es.statute.constitution"
   | "nz.case.nzsc_neutral"
   | "ie.case.iesc_neutral"
   | "sg.case.sgca_neutral" | "sg.case.sghc_neutral"
@@ -35,6 +37,8 @@ export const COUNTRY_FIELD_KEYS: Record<CountryFamily, readonly string[]> = {
   statute: ["statuteName", "enactmentYear", "revisionYear", "code", "chapter"],
 };
 const TEMPLATE_KEYS: Record<CountryTemplateId, readonly string[]> = {
+  "de.case.bverfg": ["neutral"], "es.case.stc": ["neutral"],
+  "de.statute.bgb": ["neutral"], "es.statute.constitution": ["neutral"],
   "nz.case.nzsc_neutral": ["neutralYear", "court", "neutralNumber"],
   "ie.case.iesc_neutral": ["neutralYear", "court", "neutralNumber"],
   "sg.case.sgca_neutral": ["neutralYear", "court", "neutralNumber"],
@@ -77,13 +81,18 @@ export function countryCues(raw: string): CountryJurisdiction | "ambiguous" | "n
 export interface CountryLookupRequest {
   enabled: true;
   kind: CountryFamily;
-  jurisdiction: CountryJurisdiction | "UK" | "SG" | "IE" | "NZ";
+  jurisdiction: CountryJurisdiction | "UK" | "SG" | "IE" | "NZ" | "DE" | "ES";
   rawInput: string;
   parsedFields: Record<string, string>;
 }
 /** UK is only a typed-country request for Court of Session input. */
 export function isScottishCountryWire(raw: unknown, fields: unknown): boolean {
   return (typeof raw === "string" && SCOTTISH_ANCHOR.test(raw)) || scottishCourt(rec(fields).court);
+}
+export function planContinentalLookup(raw: string): CountryLookupRequest | null {
+  const id = parseContinental(raw);
+  return id && rulepackCapability(id.kind,id.jurisdiction,id.template).lookup ? { enabled: true, kind: id.kind, jurisdiction: id.jurisdiction, rawInput: raw,
+    parsedFields: { neutral: id.key } } : null;
 }
 export function planSingaporeLookup(raw: string): CountryLookupRequest | null {
   const id = parseSingapore(raw);
@@ -197,6 +206,10 @@ export function planCountryLookup(ast: CountryAst | null, raw: string): CountryL
 
 /** The same plan, derived from raw text and an explicit country only (server re-derivation). */
 export function countryPlanFromRaw(raw: string, jurisdiction: CountryLookupRequest["jurisdiction"], kind: CountryFamily): CountryLookupDecision | null {
+  if (jurisdiction === "DE" || jurisdiction === "ES") {
+    const request = planContinentalLookup(raw);
+    return request && request.kind === kind && request.jurisdiction === jurisdiction ? {kind:"lookup",request} : null;
+  }
   if (jurisdiction === "NZ") {
     const request = kind === "case" ? planNzscLookup(raw) : null;
     return request ? { kind: "lookup", request } : null;
@@ -543,6 +556,32 @@ export function acceptCountryResponse(request: CountryLookupRequest, raw: string
   if (r.kind !== request.kind || r.jurisdiction !== request.jurisdiction || (identity.jurisdiction !== undefined && identity.jurisdiction !== request.jurisdiction)) return { kind: "fail", reason: "binding" };
   if (r.error !== undefined) return { kind: "fail", reason: "unavailable" };
   const conflicts = Array.isArray(identity.conflicts) ? identity.conflicts : [];
+  if (request.jurisdiction === "DE" || request.jurisdiction === "ES") {
+    const id = parseContinental(raw);
+    if (!id || id.jurisdiction !== request.jurisdiction || id.kind !== request.kind ||
+        Object.keys(request.parsedFields).length !== 1 || request.parsedFields.neutral !== id.key) return {kind:"fail",reason:"binding"};
+    if (conflicts.length) return {kind:"fail",reason:"conflict"};
+    if (identity.matched !== true) return {kind:"fail",reason:"not_found"};
+    const field = id.kind === "case" ? "decisionDate" : id.jurisdiction === "DE" ? "title" : "date";
+    const f = rec(r.fields), value = str(f[field]), p = rec(rec(r.provenance)[field]), url = str(p.sourceUrl);
+    const trusted = id.kind === "case" ?
+      continentalCaseUrl(id, url.replace(/\?view=details$/, "")) === url :
+      id.jurisdiction === "DE" ? id.direct === url : url === `${BOE_TEXT}/bloque/a${id.section}`;
+    const validDate = realDate(value) && (id.template === "es.case.stc" ? value.slice(0,4) === id.key.split("/")[1] :
+      id.template === "de.case.bverfg" ? value.replace(/-/g,"") === id.key.split(":")[4].slice(2,10) : value <= id.asOf!);
+    if (!trusted || !value || (field === "title" ? value.length > 170 || !/^[^<>\r\n]+$/.test(value) : !validDate) ||
+        Object.keys(f).length !== 1 || rec(r.grounded)[field] !== true || p.value !== value || p.basis !== "official_record" ||
+        !Array.isArray(r.sources) || !r.sources.some(source => rec(source).url === url) ||
+        !Array.isArray(identity.anchors) || identity.anchors.length !== 1 || identity.anchors[0] !== id.key ||
+        r.countryDecisions !== undefined || r.disambiguation !== undefined) return {kind:"fail",reason:"binding"};
+    const citation = id.template === "es.case.stc" ? `${id.key} (${value}).` :
+      id.template === "de.case.bverfg" ? `BVerfG, ${value}, ${id.key}.` :
+      id.template === "de.statute.bgb" ? `Bürgerliches Gesetzbuch [BGB] § ${id.section}.` :
+      `Constitución Española [CE] art. ${id.section}${id.paragraph ? `(${id.paragraph})` : ""} (versión de ${value}).`;
+    return {kind:"done",templateId:id.template,citation,fields:{[field]:value},
+      provenance:{[field]:{value,sourceUrl:url,basis:"official_record"}},sourceUrls:[url]};
+  }
+
   if (request.jurisdiction === "NZ") {
     const expected = planNzscLookup(raw), id = parseNzscNumber(raw), url = nzscJudgmentUrl(raw);
     if (!expected || !id || !url || Object.keys(request.parsedFields).length !== 3 ||

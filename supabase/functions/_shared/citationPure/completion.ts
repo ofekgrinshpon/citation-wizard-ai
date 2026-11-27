@@ -22,7 +22,7 @@ export interface CompletionAcceptance {
   suppliedFields?: Record<string, { value: string; spans: Array<{ start: number; end: number }> }>;
   quarantined: string[];
   identityConfirmed: boolean;
-  jurisdiction: "US" | "UK" | "OTHER" | "AU" | "CA" | "SG" | "IE" | "NZ" | null;
+  jurisdiction: "US" | "UK" | "OTHER" | "AU" | "CA" | "SG" | "IE" | "NZ" | "DE" | "ES" | null;
   missing: string[];
   conflicts: string[];
   completeness: "complete" | "partial" | "unconfirmed";

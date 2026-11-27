@@ -1,3 +1,9 @@
+import boeIndex from "./fixtures/continental/boe-index?raw";
+import boeArticle from "./fixtures/continental/boe-xml?raw";
+import * as continentalEvidence from "../../supabase/functions/_shared/citationPure/continentalEvidence";
+import stc148 from "./fixtures/continental/es-148?raw";
+import stc183 from "./fixtures/continental/es-183?raw";
+import deRecord from "./fixtures/continental/de-api-merits.json?raw";
 import { validateCitationInput } from "@/lib/citationInputValidation";
 import { PDF_BOUNDARY } from "../../supabase/functions/_shared/pdfExtractionProtocol";
 import nzscCover from "./fixtures/nzsc/case.worker.txt?raw";
@@ -75,7 +81,7 @@ type Handler = (req: Request) => Promise<Response>;
 let handler: Handler;
 const calls: Array<{ url: string; body: string }> = [];
 const finishes: Record<string, unknown>[] = [];
-let script: { hits: Hit[]; secondHits?: Hit[]; page: string | null; throwOnSearch: number | null; searches: number; interruptBody: boolean; irish?: { search: string; record: string } };
+let script: { hits: Hit[]; secondHits?: Hit[]; page: string | null; throwOnSearch: number | null; searches: number; interruptBody: boolean; continental?: Record<string,{body:string|Uint8Array<ArrayBuffer>;mime:string}>; irish?: { search: string; record: string } };
 
 function installHandler() {
   const modules: Record<string, unknown> = {
@@ -99,6 +105,10 @@ function installHandler() {
     "../_shared/costTelemetry.ts": { trackedFetch: async (target: string | URL, init?: RequestInit) => {
       const url = String(target);
       calls.push({ url, body: String(init?.body ?? "") });
+      if (script.continental?.[url]) {
+        const fixture=script.continental[url];
+        return new Response(fixture.body,{headers:{"content-type":fixture.mime}});
+      }
       if (script.irish && url.startsWith("https://judgments.courts.ie/judgments")) {
         const data = new URL(url).pathname === "/judgments" ? script.irish.search : script.irish.record;
         return new Response(data, { headers: {"content-type":"text/html; charset=utf-8"} });
@@ -137,6 +147,7 @@ function installHandler() {
     "./bookCrossrefTarget.ts": bookCrossrefTarget,
     "./bookCrossrefRoute.ts": bookCrossrefRoute,
     "./countryRoute.ts": countryRoute,
+    "../_shared/citationPure/continentalEvidence.ts": continentalEvidence,
     "../_shared/citationPure/bookFinal.ts": bookFinal,
     "../_shared/citationPure/freeformInterpret.ts": freeformInterpret,
   };
@@ -190,6 +201,47 @@ beforeAll(() => {
 });
 
 describe("real citation-chat handler", () => {
+  it.each([
+    ["STC 148/2021", "ES", "https://hj.tribunalconstitucional.es/es-ES/Resolucion/Show/26778", stc148, true],
+    ["STC 148/2021", "ES", "https://hj.tribunalconstitucional.es/es-ES/Resolucion/Show/26778", stc183, false],
+    ["ECLI:DE:BVerfG:2026:rs20261116.1bvr180322","DE","https://testphase.rechtsinformationen.bund.de/gerichtsentscheidungen/KVRE467482601",deRecord,true],
+  ] as const)("runs continental case through production handler fixtures: %s", async(raw,jurisdiction,url,page,matched)=>{
+    reset(jurisdiction==="DE"
+      ? {continental:{[continentalEvidence.germanDecisionApiUrl(continentalEvidence.parseContinental(raw)!)]:{body:page,mime:"application/json"}}}
+      : {continental:{[url]:{body:page,mime:"text/html"}}});
+    const plan=planned(raw).typed!;
+    expect(plan.foreignLookup).toMatchObject({kind:"case",jurisdiction});
+    const result=await post(raw,plan.foreignLookup,"handler-europe-"+jurisdiction+matched);
+    expect(result.status,JSON.stringify(result.body)).toBe(200);
+    expect(result.body.foreignLookup).toMatchObject({identity:{matched}});
+    expect(searchCalls()).toHaveLength(0);
+    if (jurisdiction==="ES") expect(calls.filter(c => c.url.startsWith("https://hj.tribunalconstitucional.es"))).toHaveLength(1);
+    expect(gatewayCalls()).toHaveLength(0);
+    const res=resolveCitationResponse(plan,result.body,CHAT_HOST);
+    expect(res.kind).toBe("terminal");
+    if(res.kind==="terminal" && matched) expect(res.resolution.completion?.identityConfirmed).toBe(true);
+  });
+  it.each([
+    ["BGB § 823","DE",true],
+    ["Constitución Española art. 49(2) as of 2024-02-17","ES",true],
+    ["Constitución Española art. 49(2) as of 2024-02-16","ES",false],
+  ] as const)("runs continental legislation through production handler fixtures: %s", async(raw,jurisdiction,matched)=>{
+    reset({continental:{
+      "https://www.gesetze-im-internet.de/bgb/__823.html":{body:new Uint8Array(readFileSync(resolve(__dirname,"fixtures/continental/de-bgb-823"))),mime:"text/html"},
+      [continentalEvidence.BOE_TEXT+"/bloque/a49"]:{body:boeArticle,mime:"application/xml"},
+    }});
+    const plan=planned(raw).typed!;
+    expect(plan.foreignLookup).toMatchObject({kind:"statute",jurisdiction});
+    const result=await post(raw,plan.foreignLookup,"handler-europe-statute-"+jurisdiction+matched);
+    expect(result.status,JSON.stringify(result.body)).toBe(200);
+    expect(result.body.foreignLookup).toMatchObject({identity:{matched}});
+    expect(searchCalls()).toHaveLength(0);
+    expect(gatewayCalls()).toHaveLength(0);
+    const res=resolveCitationResponse(plan,result.body,CHAT_HOST);
+    expect(res.kind).toBe("terminal");
+    if(res.kind==="terminal" && matched) expect(res.resolution.completion?.identityConfirmed).toBe(true);
+  });
+
   it("completes a bare NZSC number through the app planner, actual handler and verified source rendering", async () => {
     reset();
     const raw = "2024 NZSC 5";
