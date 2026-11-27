@@ -1,3 +1,4 @@
+import { ONCA_ID } from "../../supabase/functions/_shared/citationPure/ontarioDecision.ts";
 import { extractBookIsbn } from "../../supabase/functions/_shared/citationPure/bookIsbn.ts";
 /**
  * Heuristic validator for the אזכור אחיד (single citation / freetext) input.
@@ -53,7 +54,7 @@ export function validateCitationInput(raw: string): ValidationResult {
     return { valid: false, reason: "empty", messageHe: INVALID_MESSAGE_HE };
   }
 
-  if (extractBookIsbn(text)) return { valid: true };
+  if (ONCA_ID.test(text) || extractBookIsbn(text)) return { valid: true };
 
   // Normalize whitespace once for length-based checks.
   const compact = text.replace(/\s+/g, "");

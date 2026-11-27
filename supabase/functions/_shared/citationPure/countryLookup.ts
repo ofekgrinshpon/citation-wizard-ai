@@ -1,3 +1,4 @@
+import { sessionCasesRecordUrl, sessionCasesRequested } from "./scottishSessionCases.ts";
 /**
  * Bounded AU/CA online completion — pure contract shared by browser and Deno.
  *
@@ -10,11 +11,17 @@
  */
 import { auEvidence, caEvidence, parseCountryLocal, renderCountryLocal, type CountryAst } from "./countryLocal.ts";
 
+import { parseScottishCitation, SCOTTISH_ANCHOR, scottishCourt, scottishJudgmentUrl } from "./scottishDecision.ts";
+import { escapeCitationLiteral } from "./segments.ts";
+import { ONCA_ID, ontarioRecordUrl } from "./ontarioDecision.ts";
+import { rulepackCapability } from "./rulepack.ts";
+
 export type CountryJurisdiction = "AU" | "CA";
 export type CountryFamily = "case" | "statute";
 export type CountryTemplateId =
   | "au.case.neutral" | "au.case.reported" | "au.statute.cth"
-  | "ca.case.scc_neutral" | "ca.case.scr" | "ca.statute.federal";
+  | "uk.case.scot_session_neutral" | "uk.case.scot_session_report"
+  | "ca.case.onca_neutral" | "ca.case.scc_neutral" | "ca.case.scr" | "ca.statute.federal";
 
 /** Wire field keys for AU/CA lookups (must stay inside the recovery field list). */
 export const COUNTRY_FIELD_KEYS: Record<CountryFamily, readonly string[]> = {
@@ -24,6 +31,9 @@ export const COUNTRY_FIELD_KEYS: Record<CountryFamily, readonly string[]> = {
 const TEMPLATE_KEYS: Record<CountryTemplateId, readonly string[]> = {
   "au.case.neutral": ["neutralYear", "court", "neutralNumber", "decisionDate"],
   "au.case.reported": ["reporterYear", "reporterVolume", "reporter", "firstPage"],
+  "ca.case.onca_neutral": ["neutralYear", "court", "neutralNumber"],
+  "uk.case.scot_session_report": ["neutralYear", "court", "neutralNumber", "reporterYear", "reporter", "firstPage"],
+  "uk.case.scot_session_neutral": ["neutralYear", "court", "neutralNumber"],
   "ca.case.scc_neutral": ["neutralYear", "neutralNumber", "reporterYear", "reporterVolume", "reporter", "firstPage"],
   "ca.case.scr": ["reporterYear", "reporterVolume", "reporter", "firstPage"],
   "au.statute.cth": ["enactmentYear", "code"],
@@ -57,9 +67,20 @@ export function countryCues(raw: string): CountryJurisdiction | "ambiguous" | "n
 export interface CountryLookupRequest {
   enabled: true;
   kind: CountryFamily;
-  jurisdiction: CountryJurisdiction;
+  jurisdiction: CountryJurisdiction | "UK";
   rawInput: string;
   parsedFields: Record<string, string>;
+}
+/** UK is only a typed-country request for Court of Session input. */
+export function isScottishCountryWire(raw: unknown, fields: unknown): boolean {
+  return (typeof raw === "string" && SCOTTISH_ANCHOR.test(raw)) || scottishCourt(rec(fields).court);
+}
+export function planScottishLookup(raw: string): CountryLookupRequest | null {
+  const wantsReport = sessionCasesRequested(raw);
+  const match = parseScottishCitation(wantsReport ?? raw);
+  if (!match || !rulepackCapability("case", "UK", wantsReport ? "uk.case.scot_session_report" : "uk.case.scot_session_neutral").lookup) return null;
+  return { enabled: true, kind: "case", jurisdiction: "UK", rawInput: raw,
+    parsedFields: { neutralYear: match.year, court: match.court, neutralNumber: match.number, ...(match.paragraph ? { paragraph: match.paragraph } : {}), ...(wantsReport ? {reporter:"SC"} : {}) } };
 }
 export type CountryLookupDecision =
   | { kind: "lookup"; request: CountryLookupRequest }
@@ -134,13 +155,23 @@ export function planCountryLookup(ast: CountryAst | null, raw: string): CountryL
   const cue = countryCues(raw);
   if (cue === "ambiguous") return { kind: "blocked", reason: "country_form_conflict" };
   if (ast.conflicts.length || (cue !== "none" && cue !== ast.jurisdiction)) return null;
+  if (ast.family === "case" && ast.jurisdiction === "CA" && /\bONCA\b/.test(raw)) {
+    const id = ONCA_ID.exec(raw.trim());
+    if (!id || !rulepackCapability("case", "CA", "ca.case.onca_neutral").lookup) return null;
+    return { kind: "lookup", request: { enabled: true, kind: "case", jurisdiction: "CA", rawInput: raw,
+      parsedFields: { neutralYear: id[1], court: "ONCA", neutralNumber: id[2] } } };
+  }
   const supplied = ast.family === "case" ? caseSupplied(raw, ast.jurisdiction) : statuteSupplied(raw, ast.jurisdiction);
   if (!supplied) return null;
   return { kind: "lookup", request: { enabled: true, kind: ast.family, jurisdiction: ast.jurisdiction, rawInput: raw, parsedFields: supplied } };
 }
 
 /** The same plan, derived from raw text and an explicit country only (server re-derivation). */
-export function countryPlanFromRaw(raw: string, jurisdiction: CountryJurisdiction, kind: CountryFamily): CountryLookupDecision | null {
+export function countryPlanFromRaw(raw: string, jurisdiction: CountryLookupRequest["jurisdiction"], kind: CountryFamily): CountryLookupDecision | null {
+  if (jurisdiction === "UK") {
+    const request = kind === "case" ? planScottishLookup(raw) : null;
+    return request ? { kind: "lookup", request } : null;
+  }
   const ast = parseCountryLocal(raw, { jurisdiction, sourceType: kind === "case" ? "foreign_case_other" : "foreign" });
   if (!ast || ast.jurisdiction !== jurisdiction || ast.family !== kind) return null;
   return planCountryLookup(ast, raw);
@@ -437,6 +468,9 @@ export function composeCountryCitation(templateId: CountryTemplateId, f: Record<
   switch (templateId) {
     case "au.case.neutral": return `${f.caseName} [${f.neutralYear}] ${f.court} ${f.neutralNumber} (${f.decisionDate})`;
     case "au.case.reported": return `${f.caseName} (${f.reporterYear}) ${f.reporterVolume} ${f.reporter} ${f.firstPage}`;
+    case "uk.case.scot_session_report": return `${f.caseName} [${f.neutralYear}] ${f.court} ${f.neutralNumber}, ${f.reporterYear} SC ${f.firstPage}`;
+    case "uk.case.scot_session_neutral": return `${f.caseName} [${f.neutralYear}] ${f.court} ${f.neutralNumber}`;
+    case "ca.case.onca_neutral": return `${f.caseName}, ${f.neutralYear} ONCA ${f.neutralNumber}`;
     case "ca.case.scc_neutral": return `${f.caseName}, ${f.neutralYear} SCC ${f.neutralNumber}${f.reporterYear ? `, [${f.reporterYear}] ${f.reporterVolume} ${f.reporter ?? "S.C.R."} ${f.firstPage}` : ""}`;
     case "ca.case.scr": return `${f.caseName}${f.decisionYear ? ` (${f.decisionYear})` : ""}, [${f.reporterYear}] ${f.reporterVolume} ${f.reporter ?? "S.C.R."} ${f.firstPage}`;
     case "au.statute.cth": return `${f.statuteName} ${f.enactmentYear} (${f.code ?? "Cth"})`;
@@ -447,6 +481,7 @@ export function composeCountryCitation(templateId: CountryTemplateId, f: Record<
 function templateOf(request: CountryLookupRequest, f: Record<string, string>): CountryTemplateId | null {
   if (request.kind === "statute") return request.jurisdiction === "AU" ? "au.statute.cth" : "ca.statute.federal";
   if (request.jurisdiction === "AU") return f.neutralNumber || f.court ? "au.case.neutral" : f.reporter ? "au.case.reported" : null;
+  if (f.court === "ONCA") return "ca.case.onca_neutral";
   return f.neutralYear ? "ca.case.scc_neutral" : f.reporterYear ? "ca.case.scr" : null;
 }
 
@@ -467,6 +502,54 @@ export function acceptCountryResponse(request: CountryLookupRequest, raw: string
   if (r.kind !== request.kind || r.jurisdiction !== request.jurisdiction || (identity.jurisdiction !== undefined && identity.jurisdiction !== request.jurisdiction)) return { kind: "fail", reason: "binding" };
   if (r.error !== undefined) return { kind: "fail", reason: "unavailable" };
   const conflicts = Array.isArray(identity.conflicts) ? identity.conflicts : [];
+  if (request.jurisdiction === "UK") {
+    const expected = planScottishLookup(raw);
+    if (!expected || request.kind !== "case" || Object.keys(request.parsedFields).length !== Object.keys(expected.parsedFields).length ||
+      Object.entries(expected.parsedFields).some(([k, v]) => request.parsedFields[k] !== v)) return { kind: "fail", reason: "binding" };
+    if (conflicts.length) return { kind: "fail", reason: "conflict" };
+    if (identity.matched !== true) return { kind: "fail", reason: "not_found" };
+    const id = expected.parsedFields;
+    const anchor = `[${id.neutralYear}] ${id.court} ${id.neutralNumber}`;
+    if (!Array.isArray(identity.anchors) || identity.anchors.length !== 1 || identity.anchors[0] !== anchor ||
+      r.countryDecisions !== undefined || r.disambiguation !== undefined) return { kind: "fail", reason: "binding" };
+    const f = rec(r.fields), p = rec(rec(r.provenance).caseName);
+    const name = str(f.caseName);
+    if (id.reporter === "SC") {
+      const url = typeof p.sourceUrl === "string" ? sessionCasesRecordUrl(p.sourceUrl) : null;
+      const fields = ["caseName","reporterYear","firstPage"] as const;
+      if (!url || !Array.isArray(r.sources) || !r.sources.some(src => rec(src).url === url.href) ||
+          !/^.+ v .+$/.test(name) || name.length > 500 || Object.keys(f).length !== 3 ||
+          !/^20\d{2}$/.test(str(f.reporterYear)) || Number(f.reporterYear) < Number(id.neutralYear) ||
+          !/^[1-9]\d{0,5}$/.test(str(f.firstPage))) return { kind: "fail", reason: "binding" };
+      const provenance: Extract<CountryAcceptance,{kind:"done"}>["provenance"] = {};
+      for (const field of fields) {
+        const source = rec(rec(r.provenance)[field]);
+        if (rec(r.grounded)[field] !== true || source.value !== f[field] ||
+            source.sourceUrl !== url.href || source.basis !== "publisher_metadata") return { kind:"fail",reason:"binding" };
+        provenance[field] = { value: str(f[field]), sourceUrl: url.href, basis:"publisher_metadata" };
+      }
+      return {kind:"done",templateId:"uk.case.scot_session_report",
+        citation:`##${escapeCitationLiteral(name)}## ${anchor}, ${str(f.reporterYear)} SC ${str(f.firstPage)}.`,
+        fields:{caseName:name,reporterYear:str(f.reporterYear),firstPage:str(f.firstPage)},provenance,sourceUrls:[url.href]};
+    }
+    const url = typeof p.sourceUrl === "string" ? scottishJudgmentUrl(p.sourceUrl) : null;
+    if (Object.keys(f).length !== (id.paragraph ? 2 : 1) || !/^[^\r\n]+ v [^\r\n]+$/.test(name) || name.length > 500 ||
+      rec(r.grounded).caseName !== true || p.value !== name || p.basis !== "official_record" ||
+      !url || !Array.isArray(r.sources) || !r.sources.some(s => rec(s).url === url.href)) return { kind: "fail", reason: "binding" };
+    const provenance: Extract<CountryAcceptance, { kind: "done" }>["provenance"] = {
+      caseName: { value: name, sourceUrl: url.href, basis: "official_record" },
+    };
+    if (id.paragraph) {
+      const locator = rec(rec(r.provenance).paragraph);
+      if (f.paragraph !== id.paragraph || rec(r.grounded).paragraph !== true || locator.value !== id.paragraph ||
+          locator.sourceUrl !== url.href || locator.basis !== "document_inspection") return { kind: "fail", reason: "binding" };
+      provenance.paragraph = { value: id.paragraph, sourceUrl: url.href, basis: "document_inspection" };
+    }
+    const suffix = id.paragraph ? ` ${id.paragraph.split("–").map(n => `[${n}]`).join("–")}` : "";
+    return { kind: "done", templateId: "uk.case.scot_session_neutral",
+      citation: `##${escapeCitationLiteral(name)}## [${id.neutralYear}] ${id.court} ${id.neutralNumber}${suffix}.`,
+      fields: { caseName: name, ...(id.paragraph ? { paragraph: id.paragraph } : {}) }, provenance, sourceUrls: [url.href] };
+  }
   if (r.countryDecisions !== undefined && (r.locationChoiceRequired === true || conflicts.includes("ambiguous_record"))) {
     const decisions = readCountryDecisions(r.countryDecisions, request);
     if (!decisions) return { kind: "fail", reason: "binding" };
@@ -480,6 +563,12 @@ export function acceptCountryResponse(request: CountryLookupRequest, raw: string
   const supplied = request.parsedFields;
   const fields = rec(r.fields), grounded = rec(r.grounded), provenance = rec(r.provenance);
   const sources = Array.isArray(r.sources) ? r.sources.map(rec) : [];
+  if (supplied.court === "ONCA") {
+    const p = rec(provenance.caseName);
+    if (Object.keys(fields).length !== 1 || typeof fields.caseName !== "string" ||
+        p.basis !== "official_record" || !ontarioRecordUrl(p.sourceUrl) ||
+        ontarioRecordUrl(p.sourceUrl) !== p.sourceUrl) return { kind: "fail", reason: "binding" };
+  }
   const added: Record<string, string> = {};
   const prov: Extract<CountryAcceptance, { kind: "done" }>["provenance"] = {};
   for (const [k, v] of Object.entries(fields)) {

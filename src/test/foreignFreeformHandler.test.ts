@@ -19,6 +19,8 @@ import { webcrypto } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { TextEncoder } from "node:util";
+import kerrIndex from "./fixtures/scotland/kerr-index.html?raw";
+import ontarioRecord from "./fixtures/ontario/21380.html?raw";
 import { createContext, runInContext } from "node:vm";
 import ts from "typescript";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
@@ -78,7 +80,8 @@ function installHandler() {
         : { ok: true }, error: null }); },
       from: () => { const chain = { select: () => chain, eq: () => chain, or: () => chain, abortSignal: () => chain, limit: async () => ({ data: [] }), maybeSingle: async () => ({ data: null, error: null }) }; return chain; },
     }) },
-    "../_shared/costTelemetry.ts": { trackedFetch: async (url: string, init?: RequestInit) => {
+    "../_shared/costTelemetry.ts": { trackedFetch: async (target: string | URL, init?: RequestInit) => {
+      const url = String(target);
       calls.push({ url, body: String(init?.body ?? "") });
       if (url.includes("ai.gateway.lovable.dev")) return new Response(JSON.stringify({ choices: [{ message: { content: "formatter-fixture" } }] }), { status: 200 });
       if (url.includes("api.perplexity.ai/search")) {
@@ -89,7 +92,7 @@ function installHandler() {
         return new Response(JSON.stringify({ results: hits }), { status: 200 });
       }
       if (script.page === null) throw new Error("page fetch was not part of this fixture");
-      return new Response(script.page, { status: 200 });
+      return new Response(script.page, { status: 200, headers: { "content-type": "text/html; charset=utf-8" } });
     }, withCostTelemetry: (_name: string, fn: () => unknown) => fn(), setTelemetryFromBody: () => {}, recordZeroWork: () => {} },
     "../_shared/hebrewArticleEvidence.ts": articles,
     "../_shared/hebrewArticleRecord.ts": articleRecords,
@@ -164,6 +167,24 @@ beforeAll(() => {
 });
 
 describe("real citation-chat handler", () => {
+  it.each([
+    {raw:"[2014] CSIH 69, Session Cases",page:kerrIndex,searches:0,url:"sclr-index.scottishlawreports.org.uk",citation:"Kerr v Mangan [2014] CSIH 69, 2015 SC 17."},
+    {raw:"2023 ONCA 260",page:ontarioRecord,searches:1,url:"coadecisions.ontariocourts.ca",citation:"Husky Food Importers & Distributors Ltd. v. JH Whittaker & Sons Limited, 2023 ONCA 260."}
+  ])("executes the exact country request through the full handler: $raw", async ({raw,page,searches,url,citation}) => {
+    reset({page,hits:[{title:raw,url:"https://coadecisions.ontariocourts.ca/coa/coa/en/item/21380/index.do",snippet:raw}]});
+    const evidence=planCitationEvidence(raw,null);
+    const plan=planTypedRequest({evidence,sourceType:"foreign_case_other",input:raw,isPinpoint:false,manual:false,statutePrep:null,canonicalRaw:raw},CHAT_HOST);
+    expect(plan.foreignLookup).not.toBeNull();
+    const result=await post(raw,plan.foreignLookup,"handler-exact-country-"+searches);
+    expect(result.status,JSON.stringify(result.body)).toBe(200);
+    expect(searchCalls()).toHaveLength(searches);
+    expect(gatewayCalls()).toHaveLength(0);
+    expect(calls.filter(c=>c.url.includes(url))).toHaveLength(1);
+    const resolved=resolveCitationResponse(plan,result.body,CHAT_HOST);
+    expect(resolved.kind).toBe("terminal");
+    if(resolved.kind==="terminal") expect(citationTextOnly(resolved.resolution.citation)).toBe(citation);
+  });
+
   it("completes an exact ISBN from one structured record without discovery or formatter", async () => {
     reset({ page: JSON.stringify({ "ISBN:9780874172041": { title: "National Identity", authors: [{ name: "Anthony D. Smith" }], publish_date: "1993", identifiers: { isbn_13: ["9780874172041"] } } }) });
     const raw = "ISBN 9780874172041";
