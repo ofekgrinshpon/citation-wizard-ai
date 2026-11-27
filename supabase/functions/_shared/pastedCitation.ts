@@ -1,13 +1,13 @@
 /** Batch A: pure supplied-text evidence, shared by browser and server. No I/O or identity claims. */
 import { CASE_DOCKET_RE, findBareDocket } from "./caseTypePrefixes.ts";
 import { LOOKUP_JURISDICTIONS, PLANNED_RULEPACK_WARNING, isGeneralFamily, isManualChoiceJurisdiction, isPlannedJurisdiction, readRulepackVersion, rulepackCapability, rulepackJurisdictionFromId } from "./citationPure/rulepack.ts";
-import { countryPlanFromRaw, planCountryLookup, isScottishCountryWire, planScottishLookup } from "./citationPure/countryLookup.ts";
+import { countryPlanFromRaw, planCountryLookup, isScottishCountryWire, planScottishLookup, planSingaporeLookup } from "./citationPure/countryLookup.ts";
 const sameFields = (want: Record<string, string>, sent: unknown): boolean => !!sent && typeof sent === "object" && !Array.isArray(sent) &&
   Object.keys(sent).length === Object.keys(want).length && Object.entries(want).every(([k, v]) => (sent as Record<string, unknown>)[k] === v);
 import { parseCountryLocal, AU_REPORTER_ANCHOR, AU_NEUTRAL_ANCHOR, AU_CODE_ANCHOR, CA_NEUTRAL_ANCHOR, CA_REPORTER_ANCHOR, CA_CODE_ANCHOR, AU_SUFFIX_ANCHOR, CA_SUFFIX_ANCHOR, isLabelledLiterature } from "./citationPure/countryLocal.ts";
 export const PASTED_CITATION_VERSION = 1 as const;
 /** D1: AU/CA/FR are recorded (never cast to US/IL/UNKNOWN); their rulepacks are planned/disabled. */
-export type CitationJurisdiction = "IL" | "US" | "UK" | "DE" | "AU" | "CA" | "FR" | "UNKNOWN";
+export type CitationJurisdiction = "IL" | "US" | "UK" | "DE" | "AU" | "CA" | "FR" | "SG" | "UNKNOWN";
 export interface InputSpan { start: number; end: number }
 export interface SuppliedField {
   value: string | null;
@@ -120,6 +120,7 @@ export function buildPastedCitation(raw: string, manual: CitationManualChoice | 
   add(/\b(?:D\. Mass\.|S\.D\.N\.Y\.|\d+(?:st|nd|rd|th|d) Cir\.)/, "US", "court");
   add(/\bU\.\s?S\.\s?C\.|\bU\.\s?S\.\s?CONST\./, "US", "code");
   add(/\b(?:UKSC|UKHL|UKPC|EWCA|EWHC)\b/, "UK", "court");
+  if (/^(?:\[)?20\d{2}(?:\])?\s+(?:SGCA|SGHC|SGHCA)\b/i.test(raw.trim())) add(/\b(?:SGCA|SGHC|SGHCA)\b/i, "SG", "court");
   if (isScottishCountryWire(raw, null)) add(/\b(?:CSIH|CSOH)\b/, "UK", "court");
   add(/\b(?:WLR|All ER)\b/, "UK", "reporter");
   add(AU_REPORTER_ANCHOR, "AU", "reporter");
@@ -196,7 +197,7 @@ export function buildPastedCitation(raw: string, manual: CitationManualChoice | 
     formatter: unsupported.length ? "unsupported" : jurisdiction === "UNKNOWN" ? "unknown" : "existing_route",
     missing: country?.missing ?? missing, conflicts, unsupported, identityVerified: false,
     // An incomplete AU/CA template may ask for its missing facts only within the bounded completion plan.
-    route: conflicts.length || (isScottishCountryWire(raw, null) && (!planScottishLookup(raw) || !!manual?.subjurisdiction)) || country && !country.complete && planCountryLookup(country, raw)?.kind !== "lookup" ? "preserve" : route };
+    route: conflicts.length || (jurisdiction === "SG" && (!planSingaporeLookup(raw) || !!manual?.subjurisdiction)) || (isScottishCountryWire(raw, null) && (!planScottishLookup(raw) || !!manual?.subjurisdiction)) || country && !country.complete && planCountryLookup(country, raw)?.kind !== "lookup" ? "preserve" : route };
 }
 export function pastedCitationWarning(c: PastedCitationContract): string {
   return c.conflicts.length === 0 && c.unsupported.some(u => u.startsWith("rulepack_planned_disabled:")) ? PLANNED_RULEPACK_WARNING
@@ -248,10 +249,10 @@ export function guardPastedCitationRequest(body: { messages: Array<{ role: strin
   }
   const lookup = body.foreignLookup as { rawInput?: unknown; kind?: unknown; jurisdiction?: unknown; parsedFields?: unknown; enabled?: unknown } | null;
   // Bounded AU/CA completion: valid only as the exact plan re-derived from the raw text and the same country.
-  const countryRequest = !!lookup && typeof lookup === "object" && (lookup.jurisdiction === "AU" || lookup.jurisdiction === "CA" ||
+  const countryRequest = !!lookup && typeof lookup === "object" && (lookup.jurisdiction === "AU" || lookup.jurisdiction === "CA" || lookup.jurisdiction === "SG" ||
     (lookup.jurisdiction === "UK" && (isScottishCountryWire(raw, null) || isScottishCountryWire(lookup.rawInput, lookup.parsedFields))));
   const countryPlan = countryRequest && typeof lookup!.rawInput === "string" && (lookup!.kind === "case" || lookup!.kind === "statute")
-    ? countryPlanFromRaw(raw, lookup!.jurisdiction as "AU" | "CA" | "UK", lookup!.kind) : null;
+    ? countryPlanFromRaw(raw, lookup!.jurisdiction as "AU" | "CA" | "UK" | "SG", lookup!.kind) : null;
   const countryValid = countryRequest && countryPlan?.kind === "lookup" && c.jurisdiction === lookup!.jurisdiction &&
     sameFields(countryPlan.request.parsedFields, lookup!.parsedFields);
   if (lookup && !countryRequest && (typeof lookup !== "object" || Array.isArray(lookup) || lookup.enabled !== true || typeof lookup.rawInput !== "string" ||
@@ -284,6 +285,6 @@ export function guardPastedCitationRequest(body: { messages: Array<{ role: strin
   if (manual?.subjurisdiction && c.jurisdiction === "UK" && manual.subjurisdiction !== "t2:united-kingdom/england-and-wales") {
     c.route = "preserve"; c.formatter = "unsupported"; c.unsupported.push("subjurisdiction_formatter_not_supported");
   }
-  if ((c.jurisdiction === "AU" || c.jurisdiction === "CA" || isScottishCountryWire(raw, null)) && !countryValid) { c.route = "preserve"; c.unsupported.push("country_local_only_completion_disabled"); }
+  if ((c.jurisdiction === "AU" || c.jurisdiction === "CA" || c.jurisdiction === "SG" || isScottishCountryWire(raw, null)) && !countryValid) { c.route = "preserve"; c.unsupported.push("country_local_only_completion_disabled"); }
   return c;
 }
