@@ -1,6 +1,6 @@
 import { validateCitationInput } from "@/lib/citationInputValidation";
 import { PDF_BOUNDARY } from "../../supabase/functions/_shared/pdfExtractionProtocol";
-import nzscCover from "./fixtures/nzsc/2024-NZSC-5.txt?raw";
+import nzscCover from "./fixtures/nzsc/case.worker.txt?raw";
 import irishSearch from "./fixtures/iesc/search41.html?raw";
 import irishRecord from "./fixtures/iesc/record41.html?raw";
 import wrongIrishRecord from "./fixtures/iesc/record34.html?raw";
