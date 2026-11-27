@@ -1,3 +1,5 @@
+import { parseContinental } from "../_shared/citationPure/continentalEvidence.ts";
+import { lookupContinental } from "./continentalRoute.ts";
 import { lookupIesc } from "./iescRecordRoute.ts";
 import { parseIesc } from "../_shared/citationPure/iescDecision.ts";
 import { acquireNzscDecision } from "./nzscRecordRoute.ts";
@@ -55,7 +57,7 @@ export function countrySourceBasis(url: string, jurisdiction: CountryJurisdictio
 export function isCountryLookupRequest(request: unknown): boolean {
   if (!request || typeof request !== "object" || Array.isArray(request)) return false;
   const r = request as Record<string, unknown>;
-  return r.jurisdiction === "AU" || r.jurisdiction === "CA" || r.jurisdiction === "SG" || r.jurisdiction === "IE" || r.jurisdiction === "NZ" ||
+  return r.jurisdiction === "AU" || r.jurisdiction === "CA" || r.jurisdiction === "SG" || r.jurisdiction === "IE" || r.jurisdiction === "NZ" || r.jurisdiction === "DE" || r.jurisdiction === "ES" ||
     (r.jurisdiction === "UK" && isScottishCountryWire(r.rawInput, r.parsedFields));
 }
 
@@ -124,6 +126,15 @@ export async function resolveCountryLookup(rawRequest: unknown, deps: CountryRou
   const doFetch = deps.fetchImpl ?? trackedFetch;
   const budget = deps.budget ?? createCitationBudget();
   try {
+    if (request.jurisdiction === "DE" || request.jurisdiction === "ES") {
+      const id = parseContinental(request.rawInput);
+      if (!id) return result;
+      result.identity.anchors.push(id.key);
+      const verified = await lookupContinental(id,budget,doFetch);
+      if (!verified) return result;
+      result.sources = [{url:verified.url,tier:"tier1"}];
+      return fill(result,request,{[verified.field]:verified.value},{url:verified.url,basis:"official_record"});
+    }
     if (request.jurisdiction === "UK" && request.parsedFields.reporter === "SC") {
       const f = request.parsedFields;
       const id = `[${f.neutralYear}] ${f.court} ${f.neutralNumber}`;

@@ -1,3 +1,4 @@
+import { parseContinental } from "../../supabase/functions/_shared/citationPure/continentalEvidence.ts";
 import { parseIesc } from "../../supabase/functions/_shared/citationPure/iescDecision.ts";
 import { parseNzscNumber } from "../../supabase/functions/_shared/citationPure/nzscDecision.ts";
 import { parseSingapore } from "../../supabase/functions/_shared/citationPure/singaporeDecision.ts";
@@ -57,7 +58,7 @@ export function validateCitationInput(raw: string): ValidationResult {
     return { valid: false, reason: "empty", messageHe: INVALID_MESSAGE_HE };
   }
 
-  if (parseIesc(text) || parseNzscNumber(text) || parseSingapore(text) || ONCA_ID.test(text) || extractBookIsbn(text)) return { valid: true };
+  if (parseContinental(text) || parseIesc(text) || parseNzscNumber(text) || parseSingapore(text) || ONCA_ID.test(text) || extractBookIsbn(text)) return { valid: true };
 
   // Normalize whitespace once for length-based checks.
   const compact = text.replace(/\s+/g, "");

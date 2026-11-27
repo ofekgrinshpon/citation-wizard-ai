@@ -1,3 +1,4 @@
+import { parseContinental } from "../_shared/citationPure/continentalEvidence.ts";
 import { buildGroundedHebrewJournalResultType, buildHebrewArticleValidation } from "../_shared/hebrewArticleValidation.ts";
 import { fetchHebrewArticleRecords } from "../_shared/hebrewArticleRecord.ts";
 import { PADI_EVIDENCE_DOMAINS, verifiedPadiPublication, findTypedPadiEvidence, findTypedPadiCitation, mergeTypedPadiEvidence, typedPadiDraftMatches, typedPadiMarker, typedSupremeFilingYear, type TypedPadiEvidence, type TypedPadiTarget } from "../_shared/padiPublicationEvidence.ts";
@@ -1011,7 +1012,7 @@ function isValidCitationInputServer(raw: string): boolean {
     .replace(/══[\s\S]*?══+\s*/g, "")
     .trim();
   if (!text) return false;
-  if (parseSingapore(text) || parseNzscNumber(text) || parseIesc(text) || ONCA_ID.test(text)) return true;
+  if (parseContinental(text) || parseSingapore(text) || parseNzscNumber(text) || parseIesc(text) || ONCA_ID.test(text)) return true;
   const compact = text.replace(/\s+/g, "");
   if (SINGLE_CHAR_REPEAT_V.test(compact)) return false;
 

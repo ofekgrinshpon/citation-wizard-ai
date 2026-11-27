@@ -1,0 +1,34 @@
+{
+  "@type": "hydra:Collection",
+  "@context": "https://testphase.rechtsinformationen.bund.de/v1/context.jsonld",
+  "@id": "/v1/rechtsprechung?pageIndex=0&size=2",
+  "totalItems": 1,
+  "member": [
+    {
+      "@type": "SearchResult",
+      "item": {
+        "@type": "Decision",
+        "@id": "/v1/rechtsprechung/KVRE443042101",
+        "documentNumber": "KVRE443042101",
+        "ecli": "ECLI:DE:BVerfG:2021:rs20210324.1bvr265618",
+        "courtType": "BVerfG",
+        "decisionDate": "2021-03-24"
+      },
+      "textMatches": [
+        {
+          "@type": "SearchResultMatch",
+          "name": "ecli",
+          "text": "<mark>ECLI:DE:BVerfG</mark>:<mark>2021</mark>:<mark>rs20210324.1bvr265618</mark>",
+          "location": null
+        }
+      ]
+    }
+  ],
+  "view": {
+    "@type": "hydra:PartialCollectionView",
+    "first": "/v1/rechtsprechung?pageIndex=0&size=2",
+    "previous": null,
+    "next": null,
+    "last": "/v1/rechtsprechung?pageIndex=0&size=2"
+  }
+}

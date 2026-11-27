@@ -25,13 +25,19 @@ const NEW = [
 ] as const;
 
 describe("D1 manifest", () => {
-  it("existing routes, bounded ONCA neutral route and unchanged DE/FR exclusions", () => {
+  it("existing routes, bounded ONCA and continental routes, unchanged unsupported formats", () => {
     const enabledJ = new Set(RULEPACK_MANIFEST.filter(e => e.status === "enabled").map(e => e.jurisdiction));
-    expect([...enabledJ].sort()).toEqual(["AU", "CA", "GENERAL", "IE", "NZ", "SG", "UK", "UNANCHORED", "US"]);
+    expect([...enabledJ].sort()).toEqual(["AU", "CA", "DE", "ES", "GENERAL", "IE", "NZ", "SG", "UK", "UNANCHORED", "US"]);
     for (const j of ["AU", "CA", "DE", "FR"]) {
       const e = RULEPACK_MANIFEST.filter(x => x.jurisdiction === j);
       expect(e.length).toBeGreaterThan(0);
       for (const x of e) {
+        if (["de.case.bverfg","de.statute.bgb"].includes(x.id)) {
+          expect(x.status).toBe("enabled");
+          expect(x.completion).toEqual({kind:x.family,jurisdiction:j});
+          expect(x.authority.edition).toBe("official-source identity");
+          continue;
+        }
         expect(x.status).toBe(j === "AU" || j === "CA" ? "enabled" : "planned_disabled"); expect(x.completion).toEqual(j === "AU" || j === "CA" ? { kind: x.family, jurisdiction: j } : null); expect(x.rendererId).toBe(j === "AU" || j === "CA" ? "foreign_bluebook_v22" : null);
         if (x.id === "ca.case.onca_neutral") {
           expect(x.authority.edition).toBe("court neutral form");
@@ -47,9 +53,9 @@ describe("D1 manifest", () => {
   });
   it("lookup eligibility matches existing typed routes only", () => {
     for (const [k, j] of [["case", "US"], ["case", "UK"], ["case", "UNKNOWN"], ["statute", "US"], ["statute", "UK"], ["book", "OTHER"], ["book_chapter", "OTHER"], ["journal_article", "OTHER"],
-      ["case", "AU"], ["statute", "AU"], ["case", "CA"], ["statute", "CA"]])
+      ["case", "AU"], ["statute", "AU"], ["case", "CA"], ["statute", "CA"], ["case","DE"], ["statute","DE"], ["case","ES"], ["statute","ES"]])
       expect(rulepackLookupEligible(k, j)).toBe(true);
-    for (const [k, j] of [["book", "AU"], ["journal_article", "CA"], ["case", "DE"], ["statute", "FR"], ["statute", "OTHER"], ["statute", "UNKNOWN"], ["internet", "OTHER"]])
+    for (const [k, j] of [["book", "AU"], ["journal_article", "CA"], ["statute", "FR"], ["statute", "OTHER"], ["statute", "UNKNOWN"], ["internet", "OTHER"]])
       expect(rulepackLookupEligible(k, j)).toBe(false);
   });
   it("version fallback: absent legacy, 1 current, anything else unsupported", () => {
@@ -106,13 +112,13 @@ describe("D1 actual server guard", () => {
     expect(c.route).toBe("preserve"); expect(c.unsupported).toContain(j === "FR" ? `rulepack_planned_disabled:${j}` : "country_local_only_completion_disabled");
   });
   it("unknown manual jurisdiction strings are dropped, not cast", () => {
-    const c = guardPastedCitationRequest({ messages: msg("Smith v. Jones", { jurisdiction: "NZ" }), rawInput: "Smith v. Jones" });
+    const c = guardPastedCitationRequest({ messages: msg("Smith v. Jones", { jurisdiction: "ZZ" }), rawInput: "Smith v. Jones" });
     expect(c.manualChoice?.jurisdiction).toBeUndefined();
   });
   it("typed lookup jurisdiction outside the existing wire set is rejected", () => {
     const raw = "Mabo v. Queensland";
     const c = guardPastedCitationRequest({ messages: [{ role: "user", content: raw }], rawInput: raw,
-      foreignLookup: { enabled: true, kind: "case", jurisdiction: "DE", rawInput: raw, parsedFields: { caseName: raw } } });
+      foreignLookup: { enabled: true, kind: "case", jurisdiction: "ZZ", rawInput: raw, parsedFields: { caseName: raw } } });
     expect(c.route).toBe("preserve"); expect(c.conflicts).toContain("lookup_jurisdiction_unsupported");
   });
   it("an AU lookup without any Australian evidence or country choice is out of scope", () => {

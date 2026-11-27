@@ -4,7 +4,7 @@ import { escapeCitationLiteral } from "@/lib/citationSegments";
 import type { SourceType } from "@/data/abbreviations";
 import { isPlannedJurisdiction, rulepackJurisdictionFromId, rulepackLookupEligible } from "../../supabase/functions/_shared/citationPure/rulepack.ts";
 import { parseCountryLocal, renderCountryLocal } from "../../supabase/functions/_shared/citationPure/countryLocal.ts";
-import { planCountryLookup, planScottishLookup, planSingaporeLookup, planNzscLookup, planIescLookup } from "../../supabase/functions/_shared/citationPure/countryLookup.ts";
+import { planContinentalLookup, planCountryLookup, planScottishLookup, planSingaporeLookup, planNzscLookup, planIescLookup } from "../../supabase/functions/_shared/citationPure/countryLookup.ts";
 export const COUNTRY_FORM_CONFLICT_WARNING = "צורת האזכור משמשת גם במדינה אחרת (למשל SCC של הודו) ואינה תואמת למדינה שנבחרה; הקלט נשמר ללא חיפוש.";
 export function citationManualChoice(type?: SourceType, jurisdictionId?: string, subjurisdiction?: string): CitationManualChoice | null {
   if (!type && !jurisdictionId) return null;
@@ -28,6 +28,8 @@ export function preparePastedCitation(raw: string, manual: CitationManualChoice 
     return { contract, local: { citation, reply: `${citation}\n⚠️ ${COUNTRY_FORM_CONFLICT_WARNING}`, warningMsg: COUNTRY_FORM_CONFLICT_WARNING, status: "warning" as const }, detection, country, countryLookup: null };
   }
   if (contract.route === "preserve") return { contract, local: country && !contract.conflicts.length && !contract.unsupported.length ? renderCountryLocal(country) : preserved(), detection, country, countryLookup: null };
+  const eu = contract.route === "foreign" ? planContinentalLookup(raw) : null;
+  if (eu) return { contract, local: null, detection: null, country: null, countryLookup: eu };
   const nz = contract.route === "foreign" && contract.jurisdiction === "NZ" ? planNzscLookup(raw) : null;
   const ie = contract.route === "foreign" && contract.jurisdiction === "IE" ? planIescLookup(raw) : null;
   if (nz || ie) return { contract, local: null, detection: null, country: null, countryLookup: nz ?? ie };
