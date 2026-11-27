@@ -37,3 +37,17 @@ describe("NZSC original judgment evidence", () => {
     expect(await acquireNzscDecision(smith,{ fetch, extract:partial })).toBeNull();
   });
 });
+
+describe("actual worker extraction preserves NZSC identity", () => {
+  const read = (f: string) => readFileSync(`src/test/fixtures/nzsc/${f}.worker.txt`, "utf8");
+  it("verifies Smith and Austin despite the emitted running title and split NEW", () => {
+    expect(parseNzscCover("[2024] NZSC 5", nzscJudgmentUrl("[2024] NZSC 5")!, read("case"))?.secondParty).toBe("FONTERRA CO-OPERATIVE GROUP LIMITED");
+    expect(parseNzscCover("[2024] NZSC 124", nzscJudgmentUrl("[2024] NZSC 124")!, read("2024-NZSC-124"))?.secondParty).toBe("ROCHE PRODUCTS (NEW ZEALAND) LIMITED");
+  });
+  it("rejects the media release, same-parties leave decision and a swapped running-title ID", () => {
+    const url = nzscJudgmentUrl("[2024] NZSC 5")!;
+    expect(parseNzscCover("[2024] NZSC 5",url,read("MR-2024-NZSC-5"))).toBeNull();
+    expect(parseNzscCover("[2024] NZSC 5",url,read("2022-NZSC-35"))).toBeNull();
+    expect(parseNzscCover("[2024] NZSC 5",url,read("case").replace("[2024] NZSC 5","[2024] NZSC 50"))).toBeNull();
+  });
+});
