@@ -108,6 +108,7 @@ const countryOptions = (stage: "decision" | "location", decisions: CountryDecisi
 /** AU/CA choice from records already validated by `acceptCountryResponse` (no IO). */
 export function buildCountryCaseChoice(plan: TypedPlan, request: CountryLookupRequest, response: unknown, pastedCitation: unknown,
   stage: "decision" | "location", decisions: CountryDecision[]): ForeignCaseChoice | null {
+  if (request.jurisdiction !== "AU" && request.jurisdiction !== "CA") return null;
   if (!decisions.length || (stage === "location" && (decisions.length !== 1 || decisions[0].options.length < 2)) || (stage === "decision" && decisions.length < 2)) return null;
   const options = countryOptions(stage, decisions);
   if (options.some((o) => !o.url)) return null;

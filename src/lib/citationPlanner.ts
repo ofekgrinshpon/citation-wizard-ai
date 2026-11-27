@@ -491,8 +491,8 @@ export function resolveCitationResponse(plan: TypedPlan, data: Record<string, un
   const supplied = { ...wireSupplied, ...(plan.localFields ?? {}) };
   let rendered: { citation: string; reply?: string; missing?: string[]; warnings?: string[] } | null = null;
   const kind = req.kind as ForeignSourceKind;
-  // AU/CA never reach this US/UK/OTHER renderer (they resolve in resolveCountryResponse).
-  const acceptedJur = accepted.jurisdiction === "AU" || accepted.jurisdiction === "CA" ? null : accepted.jurisdiction;
+  // Exact-country completion renders in resolveCountryResponse; this renderer accepts only its own jurisdictions.
+  const acceptedJur = accepted.jurisdiction === "US" || accepted.jurisdiction === "UK" || accepted.jurisdiction === "OTHER" ? accepted.jurisdiction : null;
   const jur = acceptedJur ?? (req.jurisdiction === "US" || req.jurisdiction === "UK" ? req.jurisdiction : "OTHER");
   const effectiveType = kind === "case" ? toSourceType(kind, jur) : st ?? toSourceType(kind, jur);
   if (kind === "statute" && plan.statutePrep) {
