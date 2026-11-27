@@ -1,3 +1,15 @@
+import { validateCitationInput } from "@/lib/citationInputValidation";
+import { PDF_BOUNDARY } from "../../supabase/functions/_shared/pdfExtractionProtocol";
+import nzscCover from "./fixtures/nzsc/2024-NZSC-5.txt?raw";
+import irishSearch from "./fixtures/iesc/search41.html?raw";
+import irishRecord from "./fixtures/iesc/record41.html?raw";
+import wrongIrishRecord from "./fixtures/iesc/record34.html?raw";
+import mismatchedCourtLocator2019 from "./fixtures/sgca/2019_SGHC_18.html?raw";
+import paddedCourtHeading2019 from "./fixtures/sgca/2019_SGHC_2.html?raw";
+import highCourt2016 from "./fixtures/sgca/2016_SGHC_204.html?raw";
+import highCourt2005 from "./fixtures/sgca/2005_SGHC_10.html?raw";
+import highCourt2015 from "./fixtures/sgca/2015_SGHC_38.html?raw";
+import highCourt2018 from "./fixtures/sgca/2018_SGHC_1.html?raw";
 import recentHighCourtRecord from "./fixtures/sgca/2023_SGHC_1.html?raw";
 import secondSingaporeRecord from "./fixtures/sgca/2024_SGCA_1.html?raw";
 import singaporeRecord from "./fixtures/sgca/2020_SGCA_119.html?raw";
@@ -63,7 +75,7 @@ type Handler = (req: Request) => Promise<Response>;
 let handler: Handler;
 const calls: Array<{ url: string; body: string }> = [];
 const finishes: Record<string, unknown>[] = [];
-let script: { hits: Hit[]; secondHits?: Hit[]; page: string | null; throwOnSearch: number | null; searches: number; interruptBody: boolean };
+let script: { hits: Hit[]; secondHits?: Hit[]; page: string | null; throwOnSearch: number | null; searches: number; interruptBody: boolean; irish?: { search: string; record: string } };
 
 function installHandler() {
   const modules: Record<string, unknown> = {
@@ -87,6 +99,10 @@ function installHandler() {
     "../_shared/costTelemetry.ts": { trackedFetch: async (target: string | URL, init?: RequestInit) => {
       const url = String(target);
       calls.push({ url, body: String(init?.body ?? "") });
+      if (script.irish && url.startsWith("https://judgments.courts.ie/judgments")) {
+        const data = new URL(url).pathname === "/judgments" ? script.irish.search : script.irish.record;
+        return new Response(data, { headers: {"content-type":"text/html; charset=utf-8"} });
+      }
       if (url.includes("ai.gateway.lovable.dev")) return new Response(JSON.stringify({ choices: [{ message: { content: "formatter-fixture" } }] }), { status: 200 });
       if (url.includes("api.perplexity.ai/search")) {
         script.searches += 1;
@@ -94,6 +110,9 @@ function installHandler() {
         if (script.interruptBody) return { ok: true, status: 200, text: async () => { throw new Error("body interrupted"); }, json: async () => { throw new Error("body interrupted"); } } as unknown as Response;
         const hits = script.searches === 2 ? script.secondHits ?? script.hits : script.hits;
         return new Response(JSON.stringify({ results: hits }), { status: 200 });
+      }
+      if (url === "https://www.courtsofnz.govt.nz/assets/cases/2024/2024-NZSC-5.pdf") {
+        return new Response("%PDF-1.7 transport fixture", { headers: { "content-type": "application/pdf" } });
       }
       if (script.page === null) throw new Error("page fetch was not part of this fixture");
       return new Response(script.page, { status: 200, headers: { "content-type": "text/html; charset=utf-8" } });
@@ -171,6 +190,52 @@ beforeAll(() => {
 });
 
 describe("real citation-chat handler", () => {
+  it("completes a bare NZSC number through the app planner, actual handler and verified source rendering", async () => {
+    reset();
+    const raw = "2024 NZSC 5";
+    expect(validateCitationInput(raw).valid).toBe(true);
+    vi.stubGlobal("Deno", {env:{get:(key:string)=>key==="SUPABASE_URL"?"https://worker.test":"fixture-only"}});
+    const worker=vi.fn(async (_url:URL, init:RequestInit) => {
+      const text=nzscCover;
+      return new Response(JSON.stringify({version:PDF_BOUNDARY.version,request_id:new Headers(init.headers).get("x-pdf-request-id"),
+        result:{text,total_pages:1,pages_attempted:1,pages_extracted:1,first_page_extracted:1,last_page_extracted:1,
+          chars_extracted:text.length,stopped_reason:"document_end",latency_ms:1,pages:[{page:1,status:"read",start:0,end:text.length}]}}));
+    });
+    vi.stubGlobal("fetch",worker);
+    try {
+      const evidence=planCitationEvidence(raw,null);
+      const plan=planTypedRequest({evidence,sourceType:"foreign_case_other",input:raw,isPinpoint:false,manual:false,statutePrep:null,canonicalRaw:raw},CHAT_HOST);
+      expect(plan.foreignLookup?.jurisdiction).toBe("NZ");
+      const result=await post(raw,plan.foreignLookup,"handler-nzsc-exact-number");
+      expect(result.status,JSON.stringify(result.body)).toBe(200);
+      const resolved=resolveCitationResponse(plan,result.body,CHAT_HOST);
+      expect(resolved.kind,JSON.stringify(result.body)).toBe("terminal");
+      if(resolved.kind==="terminal") expect(citationTextOnly(resolved.resolution.citation)).toBe("MICHAEL JOHN SMITH v FONTERRA CO-OPERATIVE GROUP LIMITED [2024] NZSC 5.");
+      expect(worker).toHaveBeenCalledTimes(1);
+      expect(searchCalls()).toHaveLength(0);
+      expect(gatewayCalls()).toHaveLength(0);
+    } finally {
+      vi.stubGlobal("Deno",undefined);
+      vi.stubGlobal("fetch",vi.fn(()=>{throw new Error("Live network forbidden")}));
+    }
+  });
+
+  it.each([true,false])("binds Irish exact discovery to the official record (matching: %s)", async (matching) => {
+    const raw = "[2026] IESC 41";
+    reset({irish:{ search:irishSearch, record:matching ? irishRecord : wrongIrishRecord }});
+    const plan = planned(raw).typed!;
+    expect(plan.foreignLookup).toMatchObject({kind:"case",jurisdiction:"IE"});
+    const result = await post(raw,plan.foreignLookup,"handler-irish-"+matching);
+    expect(result.status,JSON.stringify(result.body)).toBe(200);
+    expect(searchCalls()).toHaveLength(0);
+    expect(gatewayCalls()).toHaveLength(0);
+    expect(calls.filter(c=>c.url.includes("judgments.courts.ie"))).toHaveLength(2);
+    expect(result.body.foreignLookup).toMatchObject({identity:{matched:matching}});
+    const resolved=resolveCitationResponse(plan,result.body,CHAT_HOST);
+    expect(resolved.kind).toBe("terminal");
+    if (matching && resolved.kind==="terminal") expect(citationTextOnly(resolved.resolution.citation)).toBe("Howley v McClean; Howley v Howard [2026] IESC 41.");
+  });
+
   it.each([
     ["official original", singaporeRecord, true],
     ["other court citing the requested case", wrongSingaporeRecord, false],
@@ -205,11 +270,19 @@ describe("real citation-chat handler", () => {
     if(resolved.kind==="terminal") expect(citationTextOnly(resolved.resolution.citation)).toBe("WKM v WKN [2024] SGCA 1.");
   });
   it.each([
+    ["[2019] SGHC 18",mismatchedCourtLocator2019,null],
+    ["[2019] SGHC 2",paddedCourtHeading2019,"Seraya Energy Pte Ltd v Denka Advantech Pte Ltd and another suit (YTL PowerSeraya Pte Ltd, third party) [2019] SGHC 2."],
+    ["[2016] SGHC 204",highCourt2016,"Tong Seak Kan and another v Jaya Sudhir a/l Jayaram [2016] SGHC 204."],
+    ["[2005] SGHC 10",highCourt2005,"Lin Tsang Kit and Another v Chng Thiam Kwee [2005] SGHC 10."],
+    ["[2015] SGHC 38",highCourt2015,"Golden Season Pte Ltd and others v Kairos Singapore Holdings Pte Ltd and another [2015] SGHC 38."],
+    ["[2018] SGHC 01",highCourt2018,"Public Prosecutor v Rahmat bin Karimon and another [2018] SGHC 1."],
+    ["[2015] SGHC 38",highCourt2005,null],
+    ["[2015] SGHC 38",highCourt2015.replace(/>High Court<\/td>/," >Court of Appeal</td>"),null],
     ["[2021] SGHC 277",wrongSingaporeRecord,"Zhong Kai Construction Co Pte Ltd v Diamond Glass Enterprise Pte Ltd [2021] SGHC 277."],
     ["2023 SGHC 1",recentHighCourtRecord,"Wingcrown Investment Pte Ltd v Mannepalli Gayatri Ram [2023] SGHC 1."],
     ["[2021] SGHC 277",recentHighCourtRecord,null],
     ["[2021] SGHC 277",wrongSingaporeRecord.replace(/General Division of the High Court — Suit No/g,"Court of Appeal — Suit No"),null],
-    ["[2021] SGHC 277",singaporeRecord.replaceAll("[2020] SGCA 119","[2021] SGHC 277"),null],
+    ["[2021] SGHC 277",singaporeRecord.replace(/\[2020\] SGCA 119/g,"[2021] SGHC 277"),null],
   ] as const)("matches only the requested High Court original: %s", async (raw,page,expected) => {
     reset({page});
     const plan=planned(raw).typed!;
@@ -217,13 +290,13 @@ describe("real citation-chat handler", () => {
     const result=await post(raw,plan.foreignLookup,"handler-sghc-"+(expected?"match":"rejected"));
     expect(result.status).toBe(200);
     const parts=raw.match(/(20\d{2})\]? SGHC (\d+)/)!;
-    expect(calls.map(x=>x.url)).toEqual([`https://www.elitigation.sg/gd/s/${parts[1]}_SGHC_${parts[2]}`]);
+    expect(calls.map(x=>x.url)).toEqual([`https://www.elitigation.sg/gd/s/${parts[1]}_SGHC_${Number(parts[2])}`]);
     expect(result.body.foreignLookup).toMatchObject({identity:{matched:!!expected}});
     const resolved=resolveCitationResponse(plan,result.body,CHAT_HOST);
     expect(resolved.kind).toBe("terminal");
     if(resolved.kind==="terminal") expect(citationTextOnly(resolved.resolution.citation)).toBe(expected ?? raw);
   });
-  it.each(["[2020] SGHC 1","[2021] SGHC(A) 1","[2021] SGHC 277 [3]","[2020] SGCA 119 [3]","[2020] SGCA(I) 1"])("does not dispatch unsupported Singapore form: %s", async raw => {
+  it.each(["[2018] SGHC 0","[2021] SGHC(A) 1","[2021] SGHC 277 [3]","[2020] SGCA 119 [3]","[2020] SGCA(I) 1"])("does not dispatch unsupported Singapore form: %s", async raw => {
     reset();
     const evidence=planCitationEvidence(raw,null);
     expect(evidence.pasted.contract.route).toBe("preserve");

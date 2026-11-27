@@ -1,3 +1,7 @@
+import { lookupIesc } from "./iescRecordRoute.ts";
+import { parseIesc } from "../_shared/citationPure/iescDecision.ts";
+import { acquireNzscDecision } from "./nzscRecordRoute.ts";
+import { parseNzscNumber } from "../_shared/citationPure/nzscDecision.ts";
 import { lookupSingapore } from "./singaporeRecordRoute.ts";
 import { parseSingapore } from "../_shared/citationPure/singaporeDecision.ts";
 import { lookupSessionCases } from "./scottishSessionCasesRoute.ts";
@@ -51,7 +55,7 @@ export function countrySourceBasis(url: string, jurisdiction: CountryJurisdictio
 export function isCountryLookupRequest(request: unknown): boolean {
   if (!request || typeof request !== "object" || Array.isArray(request)) return false;
   const r = request as Record<string, unknown>;
-  return r.jurisdiction === "AU" || r.jurisdiction === "CA" || r.jurisdiction === "SG" ||
+  return r.jurisdiction === "AU" || r.jurisdiction === "CA" || r.jurisdiction === "SG" || r.jurisdiction === "IE" || r.jurisdiction === "NZ" ||
     (r.jurisdiction === "UK" && isScottishCountryWire(r.rawInput, r.parsedFields));
 }
 
@@ -89,6 +93,7 @@ export interface CountryRouteDeps {
   budget?: CitationBudget;
   onProviderUnknown?: () => void;
   onError?: (error: unknown) => void;
+  extractNzscPdf?: NonNullable<Parameters<typeof acquireNzscDecision>[1]>["extract"];
   extractScottishPdf?: NonNullable<Parameters<typeof acquireScottishRecord>[2]>["extract"];
 }
 
@@ -111,6 +116,8 @@ export async function resolveCountryLookup(rawRequest: unknown, deps: CountryRou
   const fallbackShape = { kind: ((rawRequest as { kind?: string } | null)?.kind === "statute" ? "statute" : "case") as CountryFamily,
     jurisdiction: ((rawRequest as { jurisdiction?: string } | null)?.jurisdiction === "UK" ? "UK" :
       (rawRequest as { jurisdiction?: string } | null)?.jurisdiction === "SG" ? "SG" :
+      (rawRequest as { jurisdiction?: string } | null)?.jurisdiction === "NZ" ? "NZ" :
+      (rawRequest as { jurisdiction?: string } | null)?.jurisdiction === "IE" ? "IE" :
       (rawRequest as { jurisdiction?: string } | null)?.jurisdiction === "CA" ? "CA" : "AU") as CountryLookupRequest["jurisdiction"] };
   if (!request) return { ...emptyResult(fallbackShape), error: "invalid_country_request" };
   const result = emptyResult(request);
@@ -126,6 +133,26 @@ export async function resolveCountryLookup(rawRequest: unknown, deps: CountryRou
       result.sources = [{ url:record.url,title:record.caption,tier:"tier1" }];
       return fill(result, request, { caseName:record.caption, reporterYear:record.reportYear,firstPage:record.firstPage },
         { url:record.url,title:record.caption,basis:"publisher_metadata" });
+    }
+    if (request.jurisdiction === "NZ") {
+      const id = parseNzscNumber(request.rawInput);
+      if (!id || !chargePageFetch(budget)) return result;
+      result.identity.anchors.push(id.neutral);
+      const record = await acquireNzscDecision(request.rawInput, { fetch: doFetch, extract: deps.extractNzscPdf });
+      if (!record) return result;
+      const name = `${record.firstParty} v ${record.secondParty}`;
+      result.sources = [{ url: record.url, title: name, tier: "tier1" }];
+      return fill(result, request, { caseName: name }, { url: record.url, title: name, basis: "official_record" });
+    }
+    if (request.jurisdiction === "IE") {
+      const neutral = parseIesc(request.rawInput);
+      if (!neutral) return result;
+      result.identity.anchors.push(neutral);
+      const record = await lookupIesc(request.rawInput, budget, doFetch);
+      if (!record) return result;
+      result.sources = [{ url: record.url, title: record.caption, tier: "tier1" }];
+      return fill(result, request, { caseName: record.caption },
+        { url: record.url, title: record.caption, basis: "official_record" });
     }
     if (request.jurisdiction === "SG") {
       const neutral = (parseSingapore(request.rawInput)?.neutral ?? null);
@@ -323,4 +350,4 @@ export { countryCues };
 
 export { ONCA_ID } from "../_shared/citationPure/ontarioDecision.ts";
 
-export { parseSingapore };
+export { parseSingapore, parseNzscNumber, parseIesc };

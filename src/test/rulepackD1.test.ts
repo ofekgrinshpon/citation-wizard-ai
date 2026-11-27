@@ -27,7 +27,7 @@ const NEW = [
 describe("D1 manifest", () => {
   it("existing routes, bounded ONCA neutral route and unchanged DE/FR exclusions", () => {
     const enabledJ = new Set(RULEPACK_MANIFEST.filter(e => e.status === "enabled").map(e => e.jurisdiction));
-    expect([...enabledJ].sort()).toEqual(["AU", "CA", "GENERAL", "SG", "UK", "UNANCHORED", "US"]);
+    expect([...enabledJ].sort()).toEqual(["AU", "CA", "GENERAL", "IE", "NZ", "SG", "UK", "UNANCHORED", "US"]);
     for (const j of ["AU", "CA", "DE", "FR"]) {
       const e = RULEPACK_MANIFEST.filter(x => x.jurisdiction === j);
       expect(e.length).toBeGreaterThan(0);

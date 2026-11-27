@@ -12,8 +12,8 @@ export const CITATION_FIELD_KEYS = [
   "neutralYear", "neutralNumber", "reporterYear", "decisionYear", "enactmentYear", "revisionYear",
 ] as const;
 const kinds = ["case", "journal_article", "book", "book_chapter", "statute"];
-const jurisdictions = ["US", "UK", "OTHER", "UNKNOWN", "AU", "CA", "SG"];
-const recordJurisdictions = ["US", "UK", "AU", "CA", "SG"];
+const jurisdictions = ["US", "UK", "OTHER", "UNKNOWN", "AU", "CA", "SG", "NZ", "IE"];
+const recordJurisdictions = ["US", "UK", "AU", "CA", "SG", "NZ", "IE"];
 const bases = ["official_record", "structured_metadata", "publisher_metadata", "repository_metadata", "search_result_explicit", "document_inspection"];
 export function recoveryObject(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === "object" && !Array.isArray(value);
